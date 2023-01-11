@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from django.apps import apps
-from django.core import exceptions
 from django.db import transaction
 from django.db.models import Count
 from django.http import Http404
@@ -21,7 +20,6 @@ from ...common.renderers import PandasRenderers
 from ...common.views import create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
-from ..helper import get_assessment_id_param
 from .filters import InAssessmentFilter
 from .pagination import DisabledPagination
 
