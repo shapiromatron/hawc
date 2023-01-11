@@ -657,3 +657,57 @@ table.bordered td {
     background-color: #ec744c;
     border-color: #ec744c;
 }
+
+/* table column text alignment */
+.col-r-1 td:nth-child(1),
+.col-r-1 th:nth-child(1),
+.col-r-2 td:nth-child(2),
+.col-r-2 th:nth-child(2),
+.col-r-3 td:nth-child(3),
+.col-r-3 th:nth-child(3),
+.col-r-4 td:nth-child(4),
+.col-r-4 th:nth-child(4),
+.col-r-5 td:nth-child(5),
+.col-r-5 th:nth-child(5),
+.col-r-6 td:nth-child(6),
+.col-r-6 th:nth-child(6),
+.col-r-7 td:nth-child(7),
+.col-r-7 th:nth-child(7),
+.col-r-8 td:nth-child(8),
+.col-r-8 th:nth-child(8),
+.col-r-9 td:nth-child(9),
+.col-r-9 th:nth-child(9),
+.col-r-10 td:nth-child(10),
+.col-r-10 th:nth-child(10),
+.col-r-11 td:nth-child(11),
+.col-r-11 th:nth-child(11),
+.col-r-12 td:nth-child(12),
+.col-r-12 th:nth-child(12) {
+  text-align: right;
+}
+.col-l-1 td:nth-child(1),
+.col-l-1 th:nth-child(1),
+.col-l-2 td:nth-child(2),
+.col-l-2 th:nth-child(2),
+.col-l-3 td:nth-child(3),
+.col-l-3 th:nth-child(3),
+.col-l-4 td:nth-child(4),
+.col-l-4 th:nth-child(4),
+.col-l-5 td:nth-child(5),
+.col-l-5 th:nth-child(5),
+.col-l-6 td:nth-child(6),
+.col-l-6 th:nth-child(6),
+.col-l-7 td:nth-child(7),
+.col-l-7 th:nth-child(7),
+.col-l-8 td:nth-child(8),
+.col-l-8 th:nth-child(8),
+.col-l-9 td:nth-child(9),
+.col-l-9 th:nth-child(9),
+.col-l-10 td:nth-child(10),
+.col-l-10 th:nth-child(10),
+.col-l-11 td:nth-child(11),
+.col-l-11 th:nth-child(11),
+.col-l-12 td:nth-child(12),
+.col-l-12 th:nth-child(12) {
+  text-align: left;
+}
