@@ -7,13 +7,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
 
-from ..assessment.api import (
-    AssessmentLevelPermissions,
-    AssessmentViewset,
-    DoseUnitsViewset,
-    get_assessment_from_query,
-    get_assessment_id_param,
-)
+from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset, DoseUnitsViewset
+from ..assessment.helper import get_assessment_from_query, get_assessment_id_param
 from ..common.api import CleanupFieldsBaseViewSet, user_can_edit_object
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
