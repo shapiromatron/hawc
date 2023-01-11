@@ -9,6 +9,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -16,21 +17,28 @@ from . import exports, models, serializers
 
 
 class IVAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
-    model = models.IVEndpoint
+    model = Assessment
+    queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
+    def get_endpoint_queryset(self):
+        perms = self.assessment.user_permissions(self.request.user)
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment).order_by("id")
-        return self.model.objects.get_qs(self.assessment).order_by("id")
+            return models.IVEndpoint.objects.published(self.assessment).order_by("id")
+        return models.IVEndpoint.objects.get_qs(self.assessment).order_by("id")
 
-    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="full-export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def full_export(self, request, pk):
-        self.object_list = self.get_queryset()
+        self.get_object()
+        self.object_list = self.get_endpoint_queryset()
         exporter = exports.DataPivotEndpoint(
             self.object_list, filename=f"{self.assessment}-invitro"
         )
