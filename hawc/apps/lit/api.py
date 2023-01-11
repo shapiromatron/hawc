@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone
-from rest_framework import exceptions, mixins, status, viewsets
+from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.parsers import FileUploadParser
@@ -19,6 +19,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, OncePerMinuteThrottle, PaginationWithCount
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -29,6 +30,7 @@ from . import exports, models, serializers
 class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     filterset_class = None
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
@@ -36,7 +38,11 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def tags(self, request, pk):
         """
         Show literature tags for entire assessment.
@@ -46,7 +52,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, methods=("get", "post"))
+    @action(detail=True, methods=("get", "post"), permission_classes=(permissions.AllowAny,))
     def tagtree(self, request, pk, *args, **kwargs):
         """
         Get/Update literature tags for an assessment in tree-based structure
@@ -68,7 +74,11 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
             )
         return Response(serializer.data)
 
-    @action(detail=True, pagination_class=PaginationWithCount)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        pagination_class=PaginationWithCount,
+    )
     def references(self, request, pk):
         """
         Get references for an assessment
@@ -95,7 +105,12 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
             serializer = serializers.ReferenceSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-    @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+        url_path="reference-ids",
+    )
     def reference_ids(self, request, pk):
         """
         Get literature reference ids for all assessment references
@@ -110,26 +125,36 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         detail=True,
         methods=("get", "post"),
         url_path="reference-tags",
+        permission_classes=(permissions.AllowAny,),
         renderer_classes=PandasRenderers,
     )
     def reference_tags(self, request, pk):
         """
         Apply reference tags for all references in an assessment.
         """
-        instance = self.get_object()
+        assessment = self.get_object()
 
+        if self.request.method == "GET":
+            if not assessment.user_can_view_object(request.user):
+                raise exceptions.PermissionDenied()
         if self.request.method == "POST":
+            if not assessment.user_can_edit_object(request.user):
+                raise exceptions.PermissionDenied()
             serializer = serializers.BulkReferenceTagSerializer(
-                data=request.data, context={"assessment": instance}
+                data=request.data, context={"assessment": assessment}
             )
             serializer.is_valid(raise_exception=True)
             serializer.bulk_create_tags()
 
-        df = models.ReferenceTags.objects.as_dataframe(instance.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
+        df = models.ReferenceTags.objects.as_dataframe(assessment.id)
+        export = FlatExport(df=df, filename=f"reference-tags-{assessment.id}")
         return Response(export)
 
-    @action(detail=True, url_path="reference-year-histogram")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        url_path="reference-year-histogram",
+    )
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
         # get all the years for a given assessment
@@ -166,7 +191,11 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
         return Response(payload)
 
-    @action(detail=True, url_path="topic-model")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        url_path="topic-model",
+    )
     def topic_model(self, request, pk):
         assessment = self.get_object()
         if assessment.literature_settings.has_topic_model:
@@ -175,7 +204,12 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
             data = {"status": "No topic model available"}
         return Response(data)
 
-    @action(detail=True, methods=("post",), url_path="topic-model-request-refresh")
+    @action(
+        detail=True,
+        methods=("post",),
+        url_path="topic-model-request-refresh",
+        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+    )
     def topic_model_request_refresh(self, request, pk):
         assessment = self.get_object()
         assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
@@ -185,6 +219,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="references-download",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
@@ -203,7 +238,12 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, renderer_classes=PandasRenderers, url_path="tag-heatmap")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+        url_path="tag-heatmap",
+    )
     def tag_heatmap(self, request, pk):
         """
         Get tags formatted in a long format desireable for heatmaps.
@@ -223,6 +263,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="replace-hero",
+        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
     )
     def replace_hero(self, request, pk):
         """Replace old HERO ID with new HERO ID for selected references
@@ -247,6 +288,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="update-reference-metadata-from-hero",
+        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
     )
     def update_reference_metadata_from_hero(self, request, pk):
         """
@@ -263,6 +305,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         methods=("post",),
+        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
         parser_classes=(FileUploadParser,),
         renderer_classes=PandasRenderers,
         url_path="excel-to-json",
@@ -291,12 +334,17 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def references(self, request, pk):
         """
         Return all references for a given Search
@@ -316,7 +364,11 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def references(self, request, pk):
         """
         Return all references for a selected tag, including tag-descendants.
@@ -357,9 +409,12 @@ class ReferenceViewset(
     http_method_names = METHODS_NO_PUT
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     queryset = models.Reference.objects.all()
 
-    @action(detail=True, methods=("post",))
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+    )
     def tag(self, request, pk):
         response = {"status": "fail"}
         ref = self.get_object()
