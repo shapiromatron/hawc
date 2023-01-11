@@ -17,6 +17,7 @@ class AssessmentViewsetPermissions(IntegerChoices):
     CAN_VIEW_OBJECT = 1
     CAN_EDIT_OBJECT = 2
     CAN_EDIT_ASSESSMENT = 3
+    TEAM_MEMBER_OR_HIGHER = 4
 
     def has_permission(self, assessment, user, **kwargs):
         perms = AssessmentPermissions.get(assessment)

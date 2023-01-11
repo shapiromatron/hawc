@@ -15,6 +15,7 @@ from rest_framework.response import Response
 
 from ....services.epa.dsstox import RE_DTXSID
 from ...common.api.permissions import AssessmentLevelPermissions
+from ...common.constants import AssessmentViewsetPermissions
 from ...common.helper import FlatExport, re_digits
 from ...common.renderers import PandasRenderers
 from ...common.views import create_object_log
@@ -89,10 +90,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
-
-    PROJECT_MANAGER = "PROJECT_MANAGER"
-    TEAM_MEMBER = "TEAM_MEMBER"
-    create_requires = TEAM_MEMBER
+    action_perms = {}
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -101,13 +99,6 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         self.filter_queryset(self.get_queryset())
         data = self.model.get_all_tags(self.assessment.id)
         return Response(data)
-
-    def create(self, request, *args, **kwargs):
-        # get an assessment
-        assessment_id = get_assessment_id_param(self.request)
-        self.assessment = models.Assessment.objects.filter(id=assessment_id).first()
-        self.check_editing_permission(request)
-        return super().create(request, *args, **kwargs)
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -135,27 +126,16 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         super().perform_destroy(instance)
 
     @transaction.atomic
-    @action(detail=True, methods=("patch",))
+    @action(
+        detail=True, methods=("patch",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+    )
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
-        self.assessment = instance.get_assessment()
-        self.check_editing_permission(request)
         instance.moveWithinSiblingsToIndex(request.data["newIndex"])
         create_object_log(
             "Updated (moved)", instance, instance.get_assessment().id, self.request.user.id
         )
         return Response({"status": True})
-
-    def check_editing_permission(self, request):
-        if self.create_requires == self.PROJECT_MANAGER:
-            permissions_check = self.assessment.user_can_edit_assessment
-        elif self.create_requires == self.TEAM_MEMBER:
-            permissions_check = self.assessment.user_can_edit_object
-        else:
-            raise ValueError("invalid configuration of `create_requires`")
-
-        if not permissions_check(request.user):
-            raise exceptions.PermissionDenied()
 
 
 class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -179,7 +159,7 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=True)
+    @action(detail=True, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
     def endpoints(self, request, pk: int):
         """
         Optimized for queryset speed; some counts in get_queryset
@@ -337,11 +317,14 @@ class Assessment(AssessmentViewset):
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
-    @action(detail=True, url_path=r"logs/(?P<type>[\w]+)", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path=r"logs/(?P<type>[\w]+)",
+        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def logs(self, request: Request, pk: int, type: str):
         instance = self.get_object()
-        if not instance.user_is_team_member_or_higher(self.request.user):
-            raise PermissionDenied()
         serializer = AssessmentAuditSerializer.from_drf(data=dict(assessment=instance, type=type))
         export = serializer.export()
         return Response(export)
@@ -364,7 +347,11 @@ class DatasetViewset(AssessmentViewset):
             return self.model.objects.get_qs(self.assessment)
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def data(self, request, pk: int = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
@@ -373,11 +360,14 @@ class DatasetViewset(AssessmentViewset):
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)
 
-    @action(detail=True, renderer_classes=PandasRenderers, url_path=r"version/(?P<version>\d+)")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.TEAM_MEMBER_OR_HIGHER,
+        renderer_classes=PandasRenderers,
+        url_path=r"version/(?P<version>\d+)",
+    )
     def version(self, request, pk: int, version: int):
         instance = self.get_object()
-        if not self.assessment.user_is_team_member_or_higher(request.user):
-            raise PermissionDenied()
         revision = instance.revisions.filter(version=version).first()
         if revision is None or not revision.data_exists():
             raise Http404()
