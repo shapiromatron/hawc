@@ -20,4 +20,6 @@
 {% include "includes/paginator.html" with plural_object_name="conflicts" %}
 {% endblock content %}
 
-
+{% block extrajs %}
+{% include "common/helptext_popup_js.html" %}
+{% endblock extrajs %}

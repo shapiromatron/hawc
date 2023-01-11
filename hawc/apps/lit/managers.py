@@ -7,7 +7,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -598,13 +598,13 @@ class ReferenceManager(BaseManager):
 
         return refs
 
-    def get_overview_details(self, assessment):
+    def get_overview_details(self, assessment) -> dict[str, int]:
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
         total = refs.count()
         total_tagged = refs.annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0).count()
         total_untagged = total - total_tagged
-        total_searched = refs.filter(searches__search_type="s").distinct().count()
+        total_searched = refs.all().filter(searches__search_type="s").distinct().count()
         total_imported = total - total_searched
         overview = {
             "total_references": total,
@@ -613,6 +613,29 @@ class ReferenceManager(BaseManager):
             "total_searched": total_searched,
             "total_imported": total_imported,
         }
+        if assessment.literature_settings.conflict_resolution:
+            UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+            user_refs = UserReferenceTag.objects.filter(reference__in=refs)
+            overview.update(
+                needs_tagging=(
+                    refs.annotate(
+                        user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                    )
+                    .filter(user_tag_count__lt=2, tags__isnull=True)
+                    .count()
+                ),
+                conflicts=(
+                    refs.annotate(
+                        n_unapplied_reviews=Count(
+                            "user_tags", filter=Q(user_tags__is_resolved=False)
+                        )
+                    )
+                    .filter(n_unapplied_reviews__gt=1)
+                    .count()
+                ),
+                total_reviews=user_refs.count(),
+                total_users=user_refs.distinct("user_id").count(),
+            )
         return overview
 
     def get_pubmed_references(self, search, identifiers):
