@@ -1,11 +1,15 @@
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset
 from ..assessment.models import Assessment
+from ..assessment.serializers import AssessmentSerializer
 from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
+from .actions.model_metadata import EpiV2AssessmentMetadata
 
 
 class EpiAssessmentViewset(BaseAssessmentViewset):
@@ -35,3 +39,19 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 
     def get_queryset(self, *args, **kwargs):
         return self.model.objects.all()
+
+
+class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    model = Assessment
+    serializer_class = AssessmentSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return self.model.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        assessment = self.get_object()
+        if assessment.user_can_view_object(request.user):
+            eam = EpiV2AssessmentMetadata(None)
+            return eam.handle_assessment_request(request, assessment)
+        else:
+            raise PermissionDenied("Invalid permission to view assessment metadata")
