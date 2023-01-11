@@ -57,7 +57,9 @@ class LitOverview(BaseList):
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
             .filter(user_tags__user=self.request.user)
-            .count() if self.request.user.is_authenticated else 0
+            .count()
+            if self.request.user.is_authenticated
+            else 0
         )
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
         if context["obj_perms"]["edit"]:
@@ -546,18 +548,18 @@ class RefFilterList(BaseFilterList):
             "db_id",
             "search",
             "year",
-            "journal",
             "title_abstract",
             "authors",
+            "journal",
+            "order_by",
+            "paginate_by",
             "tags",
             "include_descendants",
             "anything_tagged",
-            "order_by",
-            "paginate_by",
         ],
         grid_layout={
             "rows": [
-                {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {
                     "columns": [
                         {
@@ -566,9 +568,10 @@ class RefFilterList(BaseFilterList):
                                 {
                                     "columns": [
                                         {"width": 12},
-                                        {"width": 12},
-                                        {"width": 12},
-                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                        {"width": 6},
+                                        {"width": 6},
                                     ]
                                 }
                             ],
@@ -587,7 +590,6 @@ class RefFilterList(BaseFilterList):
                         },
                     ]
                 },
-                {"columns": [{"width": 6}, {"width": 6}]},
             ]
         },
     )
