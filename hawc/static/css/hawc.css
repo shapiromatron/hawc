@@ -63,6 +63,11 @@ tfoot > tr > td {
     overflow-y: auto;
     resize:vertical;
 }
+.clickable:hover {
+    cursor: pointer;
+    background-color: #f3f3f3;
+    text-decoration: none;
+}
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
@@ -271,16 +276,14 @@ div.smart-tag.active {
 
 /* LITERATURE MODULE */
 .lit-review-box {
-    box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
     border-radius: 5px;
     padding: 16px;
+    margin-bottom: 24px;
     min-height: 6.5rem;
     display: flex;
     justify-content: center;
     flex-direction:column;
-    margin-bottom: 24px;
     color: black !important;
-    width: 30%;
     height: fit-content;
 }
 .lit-review-box.with-icon {
@@ -305,11 +308,6 @@ div.smart-tag.active {
     color: white;
     font-size: 2em;
     align-items:center;
-}
-.clickable:hover {
-    cursor: pointer;
-    background-color: #f3f3f3;
-    text-decoration:none;
 }
 #refFilter h4,
 #fullRefList p {
@@ -696,7 +694,12 @@ table.bordered td {
 .cursor-pointer {
     cursor: pointer;
 }
-
+.w-30 {
+    width: 30%!important;
+}
+.w-60 {
+    width: 60%!important;
+}
 .betatester {
     background-color: #ec744c;
     border-color: #ec744c;

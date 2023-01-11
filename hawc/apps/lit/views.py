@@ -57,7 +57,7 @@ class LitOverview(BaseList):
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
             .filter(user_tags__user=self.request.user)
-            .count()
+            .count() if self.request.user.is_authenticated else 0
         )
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
         if context["obj_perms"]["edit"]:

@@ -36,7 +36,8 @@
   <div class="row no-gutter">
     <div class="col-md-8">
       <div class="d-flex row justify-content-around">
-        <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:ref_search' assessment.pk %}">
+      {% comment %} row #1 {% endcomment %}
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:ref_search' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_references}}</p>
             <p class="small">total references</p>
@@ -45,7 +46,7 @@
             <i class="fa fa-file-text icon-bg" style="color: white; background-color: #162e51;"></i>
           </div>
         </a>
-        <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:ref_list' assessment.pk %}">
+        <a class="lit-review-box box-shadow with-icon clickable w-30"href="{% url 'lit:ref_list' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_tagged}}</p>
             <p class="small">tagged</p>
@@ -54,7 +55,7 @@
             <i class="fa fa-tags icon-bg" style="color: white; background-color: #162e51;"></i>
           </div>
         </a>
-        <a class="lit-review-box with-icon clickable"  target="_blank" href="{% url 'lit:ref_search' assessment.pk %}?tags=untagged">
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:ref_search' assessment.pk %}?tags=untagged">
           <div>
             <p class="h3 m-0 mt-1">{{overview.total_untagged}}</p>
             <p class="small">untagged</p>
@@ -66,7 +67,8 @@
             </span>
           </div>
         </a>
-        <div class="lit-review-box" style="width: 20%; height: 235px; min-width: 130px; justify-content: inherit;">
+        {% comment %} row #2 {% endcomment %}
+        <div class="lit-review-box box-shadow w-30" style="height: 235px">
           {% if obj_perms.edit %}
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}">Tag</a>
           {% endif %}
@@ -77,15 +79,14 @@
           <a class="btn btn-dark betatester mt-1 py-1" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         </div>
-        <div class="lit-review-box" style="width: 40%; height: 235px;">
+        <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">
           <p>references by year:</p>
           <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
           </div>
         </div>
         {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
-        <div style="width:30%">
-
-          <a class="lit-review-box with-icon clickable w-100" target="_blank" href="{% url 'lit:tag-conflicts' assessment.pk %}">
+        <div class="w-30">
+          <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag-conflicts' assessment.pk %}">
             <div>
               <p class="h3 m-0 mt-1">{{overview.conflicts}}</p>
               <p class="small">with tag conflicts</p>
@@ -94,8 +95,7 @@
               <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
             </div>
           </a>
-
-          <a class="lit-review-box with-icon clickable w-100" target="_blank" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
+          <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
             <div>
               <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
               <p class="small">need{{ overview.conflicts|pluralize:" ,s" }} further tagging</p>
@@ -104,10 +104,9 @@
               <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
             </div>
           </a>
-
-
         </div>
-        <div class="lit-review-box with-icon">
+        {% comment %} row #3 {% endcomment %}
+        <div class="lit-review-box box-shadow with-icon w-30">
           <div>
             <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> user{{ overview.total_users|pluralize }}</p>
           </div>
@@ -116,7 +115,7 @@
           </div>
         </div>
         {% if overview.my_reviews > 0 %}
-          <a class="lit-review-box with-icon clickable" target="_blank" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
+          <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
             <div>
               <p class="h3 m-0 mt-1">{{overview.my_reviews}}</p>
               <p class="small">reviews done by you</p>
@@ -130,21 +129,18 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="lit-review-box" style="width: 100%;">
+      <div class="lit-review-box box-shadow" style="width: 100%;">
         <p class="h4 m-0">Tagtree</p>
         <div id="tags"></div>
       </div>
-
     </div>
   </div>
 
-  {% if assessment.literature_settings.conflict_resolution and obj_perms.edit and overview.conflicts %}
+  {% if obj_perms.edit and overview.conflicts %}
     <div class="alert alert-danger mt-3">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>References have tag conflicts!</b><br>
-      <p>{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }}
-        {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution.
-        <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
+      <p>{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
     </div>
   {% endif %}
 
