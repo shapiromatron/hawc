@@ -63,6 +63,14 @@ tfoot > tr > td {
     overflow-y: auto;
     resize:vertical;
 }
+.clickable:hover {
+    cursor: pointer;
+    background-color: #f3f3f3;
+    text-decoration: none;
+}
+.box-shadow {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
@@ -267,6 +275,40 @@ div.smart-tag.active {
 }
 
 /* LITERATURE MODULE */
+.lit-review-box {
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 24px;
+    min-height: 6.5rem;
+    display: flex;
+    justify-content: center;
+    flex-direction:column;
+    color: black !important;
+    height: fit-content;
+}
+.lit-review-box.with-icon {
+    justify-content: space-between;
+    flex-direction: row;
+}
+.lit-review-box.with-icon div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.lit-icon {
+    padding-left: 16px;
+}
+.lit-icon .icon-bg {
+    display: flex !important;
+    justify-content: center;
+    background: #aacdec;
+    border-radius: 8px;
+    height: 55px;
+    width: 55px;
+    color: white;
+    font-size: 2em;
+    align-items:center;
+}
 #refFilter h4,
 #fullRefList p {
     overflow: hidden;
@@ -309,6 +351,7 @@ div.smart-tag.active {
     max-height: 120vh;
     background-color: #e0f0ff;
     border-radius: 7px;
+    height: 25rem;
 }
 .abstracts {
     font-size: 1.15rem;
@@ -344,9 +387,6 @@ div.smart-tag.active {
 .referenceTag{
     text-align: left;
     white-space: pre-wrap;
-}
-.refTagEditing {
-    cursor: pointer;
 }
 .abstract_label {
     font-weight: bold;
@@ -454,14 +494,6 @@ div.smart-tag.active {
     width: auto;
 }
 
-.tag-conf-item {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    padding: 16px;
-    margin: 16px 0px;
-    border-radius: 5px;
-    background-color: #ffffff;
-}
-
 .list-item-clicked,
 .list-item-clicked:hover {
     background-color: #eeeeee;
@@ -476,10 +508,11 @@ div.smart-tag.active {
     display: inline-block;
 }
 
-.refUserTagDiff {
-    color: #ffffff;
-    background-color: maroon;
-    border: 0.15rem dotted #ffffff;
+.refUserTagRemove {
+    color: rgb(128,0,0);
+    background-color: #ffffff;
+    border: 0.15rem dotted rgb(128,0,0);
+    text-decoration: line-through rgba(128,0,0,0.5);
 }
 
 .refTagSame {
@@ -640,6 +673,15 @@ table.bordered td {
     transition: opacity 1s ease-out;
 }
 
+/* fade in/out */
+.fade-in-out {
+    animation: fadeInOutKeyFrame 2s linear;
+}
+@keyframes fadeInOutKeyFrame {
+    0%,100% { opacity: 0 }
+    20%,80% { opacity: 1 }
+}
+
 /* quill */
 .ql-editor {
     background-color: white !important;
@@ -652,7 +694,12 @@ table.bordered td {
 .cursor-pointer {
     cursor: pointer;
 }
-
+.w-30 {
+    width: 30%!important;
+}
+.w-60 {
+    width: 60%!important;
+}
 .betatester {
     background-color: #ec744c;
     border-color: #ec744c;

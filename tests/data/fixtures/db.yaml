@@ -2387,7 +2387,7 @@
     user:
     - team@hawcproject.org
     reference: 10
-    is_resolved: true
+    is_resolved: false
     created: 2022-10-27 21:09:01.953588+00:00
     last_updated: 2022-10-27 21:09:02.014507+00:00
 - model: lit.userreferencetag
@@ -3494,6 +3494,13 @@
     version: BMDS270
     created: 2020-11-25 16:47:36.244091+00:00
     last_updated: 2020-11-25 16:47:36.244109+00:00
+- model: bmd.assessmentsettings
+  pk: 4
+  fields:
+    assessment: 4
+    version: BMDS270
+    created: 2022-10-27 21:02:29.790125+00:00
+    last_updated: 2022-10-27 21:02:29.790139+00:00
 - model: bmd.session
   pk: 2
   fields:

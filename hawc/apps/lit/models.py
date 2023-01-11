@@ -28,6 +28,7 @@ from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
+from ..assessment.models import Log
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -886,7 +887,7 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
-    def update_tags(self, user, tag_pks: list[int]):
+    def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
@@ -896,6 +897,9 @@ class Reference(models.Model):
         Args:
             user: The user requesting the tag changes
             tag_pks (list[int]): A list of tag IDs
+
+        Returns:
+            bool: If tags were also saved as consensus for Reference
         """
         # save user-level tags
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
@@ -905,12 +909,14 @@ class Reference(models.Model):
 
         # determine if we should save the reference-level tags
         update_reference_tags = False
-        if self.assessment.literature_settings.conflict_resolution:
-            if self.user_tags.count() >= 2:
+        conflict_resolution = self.assessment.literature_settings.conflict_resolution
+        if conflict_resolution:
+            unresolved_user_tags = self.user_tags.filter(is_resolved=False)
+            if unresolved_user_tags.count() >= 2:
                 tags = set(tag_pks)
                 if all(
                     tags == {tag.id for tag in user_tag.tags.all()}
-                    for user_tag in self.user_tags.all()
+                    for user_tag in unresolved_user_tags
                 ):
                     update_reference_tags = True
         else:
@@ -923,11 +929,24 @@ class Reference(models.Model):
             self.last_updated = timezone.now()
             self.save()
 
+        return conflict_resolution and update_reference_tags
+
     def has_user_tag_conflicts(self):
         return self.user_tags.filter(is_resolved=False).exists()
 
-    def resolve_user_tag_conflicts(self, user_tag: "UserReferenceTag"):
-        self.tags.set({tag.id for tag in user_tag.tags.all()})
+    @transaction.atomic
+    def resolve_user_tag_conflicts(self, user_id: int, user_tag: "UserReferenceTag"):
+        tags = {tag.id for tag in user_tag.tags.all()}
+        log_message = (
+            f"Update lit.Reference tags #{self.id}: use lit.UserReferenceTag #{user_tag.id}: {tags}"
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user_id,
+            message=log_message,
+            content_object=self,
+        )
+        self.tags.set(tags)
         self.save()
         self.user_tags.update(is_resolved=True)
 
@@ -958,7 +977,7 @@ class Reference(models.Model):
         d["editTagUrl"] = reverse("lit:tag", kwargs={"pk": self.assessment_id}) + f"?id={self.pk}"
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
-        d["tagHistoryUrl"] = reverse("lit:tag-history", kwargs={"pk": self.pk})
+        d["tagStatusUrl"] = reverse("lit:tag-status", kwargs={"pk": self.pk})
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
@@ -1176,19 +1195,19 @@ class UserReferenceTag(models.Model):
     def assessment_id(self) -> int:
         return self.reference.assessment_id
 
-    def get_tags_diff(self):
-        all_tags = set(self.reference.tags.all())
-        for user_tag in self.reference.user_tags.all():
-            if user_tag.id == self.id:
-                continue
-            all_tags.update(set(user_tag.tags.all()))
+    def consensus_diff(self):
+        # returns set operations done against consensus tags
+        consensus_tags = set(self.reference.tags.all())
         self_tags = set(self.tags.all())
-        tags_diff = self_tags.difference(all_tags)
-        tags_same = self_tags.intersection(all_tags)
-        return dict(diff=tags_diff, same=tags_same)
+        return dict(
+            intersection=self_tags.intersection(consensus_tags),
+            difference=self_tags.difference(consensus_tags),
+            reverse_difference=consensus_tags.difference(self_tags),
+        )
 
 
 reversion.register(LiteratureAssessment)
 reversion.register(Search)
-reversion.register(Reference)
-reversion.register(UserReferenceTag)
+reversion.register(ReferenceFilterTag)
+reversion.register(Reference, follow=["tags"])
+reversion.register(UserReferenceTag, follow=["tags"])
