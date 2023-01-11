@@ -2,7 +2,6 @@ import collections
 import itertools
 import logging
 import os
-import pandas as pd
 
 from django.apps import apps
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist

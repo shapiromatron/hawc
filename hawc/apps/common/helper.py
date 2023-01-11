@@ -9,6 +9,7 @@ from typing import Any, NamedTuple, Optional, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -26,7 +27,6 @@ from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import ValidationError as DRFValidationError
-from django.apps import apps
 
 logger = logging.getLogger(__name__)
 
