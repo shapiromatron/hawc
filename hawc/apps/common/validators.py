@@ -1,5 +1,6 @@
 import re
-from typing import Optional, Sequence
+from functools import partial
+from typing import Callable, Optional, Sequence
 from urllib import parse
 
 import bleach
@@ -7,6 +8,8 @@ from bleach.css_sanitizer import CSSSanitizer
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, URLValidator
 from django.utils.encoding import force_str
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
 hyperlink_regex = re.compile(r"href\s*=\s*['\"](.*?)['\"]")
@@ -218,3 +221,31 @@ class FlatJSON:
         if valid is False and raise_exception:
             raise ValidationError(cls.ERROR_MSG)
         return valid
+
+
+def _validate_json_pydantic(value: str, Model: type[BaseModel]):
+    """Validate a JSON string to ensure it conforms to a pydantic model
+
+    Args:
+        value (str): an input string
+        Model (type[BaseModel]): A matching pydantic schema
+
+    Raises:
+        django.core.exceptions.ValidationError: If data do not conform
+    """
+    try:
+        Model.parse_raw(value)
+    except PydanticValidationError as err:
+        raise ValidationError(err.json())
+
+
+def validate_json_pydantic(Model: type[BaseModel]) -> Callable:
+    """Create a django validator function to validate JSON in a string field
+
+    Args:
+        Model (type[BaseModel]): A Pydantic model class
+
+    Returns:
+        Callable: A django validator function to be used in a form or model
+    """
+    return partial(_validate_json_pydantic, Model=Model)

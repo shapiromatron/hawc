@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -25,4 +26,6 @@ class HawcValidateAuthToken(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
+        # create a django session for django view
+        login(request, request.user)
         return Response({"valid": True})

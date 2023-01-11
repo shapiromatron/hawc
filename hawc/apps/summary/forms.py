@@ -3,7 +3,6 @@ from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
 from django import forms
-from django.db.models import Q
 from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
@@ -13,7 +12,8 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, check_unique_for_assessment, form_actions_apply_filters
+from ..common.forms import BaseFormHelper, check_unique_for_assessment
+from ..common.validators import validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -644,98 +644,6 @@ class VisualSelectorForm(forms.Form):
         )
 
 
-class VisualFilterForm(forms.Form):
-    text = forms.CharField(required=False, help_text="Title or description text")
-
-    type_choices = [
-        ("", "<All>"),
-        ("v-0", "animal bioassay endpoint aggregation"),
-        ("v-1", "animal bioassay endpoint crossview"),
-        ("v-2", "risk of bias heatmap"),
-        ("v-3", "risk of bias barchart"),
-        ("v-4", "literature tagtree"),
-        ("v-5", "embedded external website"),
-        ("v-6", "exploratory heatmap"),
-        ("dp-ani", "Data pivot (animal bioassay)"),
-        ("dp-epi", "Data pivot (epidemiology)"),
-        ("dp-epimeta", "Data pivot (epidemiology meta-analysis/pooled-analysis)"),
-        ("dp-invitro", "Data pivot (in vitro)"),
-    ]
-    visual_type_filter = {
-        "v-0": 0,
-        "v-1": 1,
-        "v-2": 2,
-        "v-3": 3,
-        "v-4": 4,
-        "v-5": 5,
-        "v-6": 6,
-    }
-    dp_type_filter = {
-        "dp-ani": constants.StudyType.BIOASSAY,
-        "dp-epi": constants.StudyType.EPI,
-        "dp-epimeta": constants.StudyType.EPI_META,
-        "dp-invitro": constants.StudyType.IN_VITRO,
-    }
-    type = forms.ChoiceField(
-        label="Visualization type",
-        required=False,
-        choices=type_choices,
-        help_text="Type of visualization type to display",
-    )
-
-    published_choices = [
-        ("", "<All>"),
-        (True, "Published only"),
-        (False, "Unpublished only"),
-    ]
-    published = forms.ChoiceField(
-        required=False,
-        choices=published_choices,
-        widget=forms.Select,
-        initial="",
-        help_text="Published status for HAWC visualization",
-    )
-
-    def __init__(self, *args, **kwargs):
-        can_edit = kwargs.pop("can_edit", False)
-        super().__init__(*args, **kwargs)
-        if not can_edit:
-            self.fields.pop("published")
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-        helper.add_row("text", len(self.fields), "col-md-3")
-        return helper
-
-    def get_visual_filters(self):
-        filters = Q()
-        if text := self.cleaned_data.get("text"):
-            filters &= Q(title__icontains=text) | Q(caption__icontains=text)
-        if visual_type := self.cleaned_data.get("type"):
-            if visual_type.startswith("v-"):
-                filters &= Q(visual_type=self.visual_type_filter[visual_type])
-            if visual_type.startswith("dp-"):
-                filters &= Q(id=-1)
-        if published := self.cleaned_data.get("published"):
-            filters &= Q(published=published)
-        return filters
-
-    def get_datapivot_filters(self):
-        filters = Q()
-        if text := self.cleaned_data.get("text"):
-            filters &= Q(title__icontains=text) | Q(caption__icontains=text)
-        if visual_type := self.cleaned_data.get("type"):
-            if visual_type.startswith("dp-"):
-                filters &= Q(datapivotquery__evidence_type=self.dp_type_filter[visual_type])
-            if visual_type.startswith("v-"):
-                filters &= Q(id=-1)
-        if published := self.cleaned_data.get("published"):
-            filters &= Q(published=published)
-        return filters
-
-
 class EndpointAggregationForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -916,12 +824,21 @@ class ExternalSiteForm(VisualForm):
             Embed an external website. The following websites can be linked to:
         </p>
         <ul class="form-text text-muted">
-            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box. For example, <code>https://public.tableau.com/shared/JWH9N8XGN</code>.</li>
         </ul>
         <p class="form-text text-muted">
             If you'd like to link to another website, please contact us.
         </p>
         """,
+    )
+    filters = forms.CharField(
+        label="Data filters",
+        initial="[]",
+        validators=[validate_json_pydantic(constants.TableauFilterList)],
+        help_text="""<p class="form-text text-muted">
+        Data are expected to be in JSON format, where the each key is a filter name and value is a filter value.
+        For more details, view the <a href="https://help.tableau.com/current/api/embedding_api/en-us/docs/embedding_api_filter.html">Tableau documentation</a>. For example: <code>[{"field": "Category", "value": "Technology"}, {"field": "State", "value": "North Carolina,Virginia"}]</code>. To remove filters, set string to <code>[]</code>.
+        </p>""",
     )
 
     def __init__(self, *args, **kwargs):
@@ -930,6 +847,8 @@ class ExternalSiteForm(VisualForm):
         data = json.loads(self.instance.settings)
         if "external_url" in data:
             self.fields["external_url"].initial = data["external_url"]
+        if "filters" in data:
+            self.fields["filters"].initial = json.dumps(data["filters"])
 
         self.helper = self.setHelper()
 
@@ -940,6 +859,7 @@ class ExternalSiteForm(VisualForm):
                 external_url_hostname=self.cleaned_data["external_url_hostname"],
                 external_url_path=self.cleaned_data["external_url_path"],
                 external_url_query_args=self.cleaned_data["external_url_query_args"],
+                filters=json.loads(self.cleaned_data["filters"]),
             )
         )
         return super().save(commit)

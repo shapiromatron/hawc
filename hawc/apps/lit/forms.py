@@ -10,9 +10,15 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, QuillField, addPopupLink, check_unique_for_assessment
-from ..study.models import Study
+from ..common.forms import (
+    BaseFormHelper,
+    ConfirmationField,
+    QuillField,
+    addPopupLink,
+    check_unique_for_assessment,
+)
 from ..study.constants import StudyTypeChoices
+from ..study.models import Study
 from . import constants, models
 
 logger = logging.getLogger(__name__)
@@ -545,6 +551,7 @@ class TagReferenceForm(forms.ModelForm):
 class TagsCopyForm(forms.Form):
 
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
+    confirmation = ConfirmationField()
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)

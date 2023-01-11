@@ -3,6 +3,7 @@ from typing import Optional
 import pandas as pd
 
 from .client import BaseClient
+from .utils import fuzz_match
 
 
 class RiskOfBiasClient(BaseClient):
@@ -149,3 +150,33 @@ class RiskOfBiasClient(BaseClient):
         """
         url = f"{self.session.root_url}/rob/api/review/?assessment_id={assessment_id}"
         return self.session.get(url).json()
+
+    def compare_metrics(
+        self, src_assessment_id: int, dest_assessment_id: int
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """Match metrics across two different assessments, returning best-matched results.
+
+        This uses a fuzzy-text matching algorithm to attempt to match text between two different
+        assessments.  It returns the best metric-match from the destination, for each metric in the
+        source.
+
+        Adds three columns to the source metric dataframe:
+        - fuzz_key: the matching metric id form the destination
+        - fuzz_score: a similarity score between 0 and 100. 100 is an exact match
+        - fuzz_text: the text from the destination metric which was compared
+
+        Args:
+            src_assessment_id (int): The source assessment, try to match each metric
+            dest_assessment_id (int): The target assessment, where matches are returned from
+
+        Returns:
+            tuple[pd.DataFrame, pd.DataFrame]: Metrics with matches in source, Metrics in destination
+        """
+        src = self.metrics(src_assessment_id).assign(assessment_id=src_assessment_id)
+        dest = self.metrics(dest_assessment_id).assign(assessment_id=dest_assessment_id)
+        src.loc[:, "_comparison"] = src.short_name + " " + src.name + " " + src.description
+        dest.loc[:, "_comparison"] = dest.short_name + " " + dest.name + " " + dest.description
+        matched = fuzz_match(src, dest, "_comparison", "_comparison", "id").drop(
+            columns=["_comparison"]
+        )
+        return matched, dest
