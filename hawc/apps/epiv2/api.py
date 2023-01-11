@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset
 from ..assessment.models import Assessment
 from ..common.api.viewsets import EditPermissionsCheckMixin
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
 
@@ -11,7 +12,12 @@ from . import exports, models, serializers
 class EpiAssessmentViewset(BaseAssessmentViewset):
     model = Assessment
 
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
         """
         Retrieve epidemiology data for assessment.
