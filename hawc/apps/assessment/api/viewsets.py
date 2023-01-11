@@ -29,6 +29,7 @@ METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 
 class BaseAssessmentViewset(viewsets.GenericViewSet):
+    action_perms = {}
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter,)

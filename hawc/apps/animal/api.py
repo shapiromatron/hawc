@@ -8,8 +8,8 @@ from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset, DoseUnitsViewset
-from ..assessment.helper import get_assessment_from_query, get_assessment_id_param
 from ..common.api import CleanupFieldsBaseViewSet, user_can_edit_object
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -23,16 +23,22 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     model = models.Assessment
     queryset = models.Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
     def get_endpoint_queryset(self):
-        perms = self.assessment.get_obj_perms()
+        perms = self.assessment.user_permissions(self.request.user)
         if not perms["edit"]:
             return models.Endpoint.objects.published(self.assessment)
         return models.Endpoint.objects.get_qs(self.assessment)
 
-    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="full-export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
@@ -45,7 +51,12 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="endpoint-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="endpoint-export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
@@ -58,7 +69,12 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="study-heatmap",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def study_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the study-level (one row per study).
@@ -80,7 +96,12 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         export = FlatExport(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="endpoint-heatmap",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoint_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the endpoint level (one row per endpoint).
@@ -102,7 +123,12 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         export = FlatExport(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, url_path="endpoint-doses-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="endpoint-doses-heatmap",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoint_doses_heatmap(self, request, pk):
         """
         Return heatmap data with doses for assessment, at the {endpoint + dose unit} level.
@@ -124,7 +150,11 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         export = FlatExport(df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoints(self, request, pk):
         self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
@@ -142,7 +172,12 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         export = FlatExport(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, url_path="ehv-check", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="ehv-check",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def ehv_check(self, request, pk):
         _ = self.get_object()
         df = term_check(pk)
@@ -222,7 +257,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
-    list_actions = ["list", "effects", "rob_filter"]
+    list_actions = ["list", "effects", "rob_filter", "update_terms"]
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()
@@ -237,19 +272,17 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
             self.request.user.id,
         )
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
     def effects(self, request):
-        assessment_id = get_assessment_id_param(self.request)
-        effects = models.Endpoint.objects.get_effects(assessment_id)
+        effects = models.Endpoint.objects.get_effects(self.assessment.id)
         return Response(effects)
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
     def rob_filter(self, request):
 
         params = request.query_params
-        assessment_id = get_assessment_id_param(request)
 
-        query = Q(assessment_id=assessment_id)
+        query = Q(assessment=self.assessment)
 
         effects = params.get("effect[]")
         if effects:
@@ -267,16 +300,14 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=("post",))
+    @action(
+        detail=False, methods=("post",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+    )
     def update_terms(self, request):
-        # check assessment level permissions
-        assessment = get_assessment_from_query(request)
-        if not assessment.user_can_edit_object(request.user):
-            self.permission_denied(request)
         # update endpoint terms (all other validation done in manager)
-        updated_endpoints = self.model.objects.update_terms(request.data, assessment)
+        updated_endpoints = self.model.objects.update_terms(request.data, self.assessment)
         serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
-        assessment.bust_cache()
+        self.assessment.bust_cache()
         return Response(serializer.data)
 
 
