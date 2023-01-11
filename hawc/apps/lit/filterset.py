@@ -6,14 +6,6 @@ from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
 from . import models
 
 
-class TagChoices(TextChoices):
-    RESOLVED_AND_USER = "resolved_and_user", "Resolved and user tags"
-    RESOLVED_AND_MINE = "resolved_and_mine", "Resolved and my tags"
-    RESOLVED = "resolved", "Only resolved tags"
-    USER = "user", "Only user tags"
-    MINE = "mine", "Only my tags"
-
-
 class ReferenceFilterSet(BaseFilterSet):
     id = df.NumberFilter(label="HAWC ID", help_text="HAWC reference ID.")
     db_id = df.CharFilter(
@@ -107,16 +99,6 @@ class ReferenceFilterSet(BaseFilterSet):
             "needs_tagging",
         ]
 
-    def get_tag_choice(self) -> TagChoices:
-        # tag choices are only provided with conflict resolution enabled
-        if not self.assessment.literature_settings.conflict_resolution:
-            return TagChoices.RESOLVED
-        try:
-            return TagChoices(self.data.get("tag_choice"))
-        except ValueError:
-            # the default for conflict resolution is to use resolved and user tags
-            return TagChoices.RESOLVED_AND_USER
-
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.filter(assessment=self.assessment)
@@ -189,37 +171,6 @@ class ReferenceFilterSet(BaseFilterSet):
         )
         queryset = queryset.filter(user_tag_count__lt=2, tags__isnull=True)
         return queryset.distinct()
-
-    def filter_untagged(self, queryset, name, value):
-        if not value:
-            return queryset
-        tag_choice = self.get_tag_choice()
-        if tag_choice == TagChoices.RESOLVED_AND_USER:
-            return queryset.annotate(
-                resolved_tag_count=Count("tags"),
-                user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
-            ).filter(resolved_tag_count=0, user_tag_count=0)
-        elif tag_choice == TagChoices.RESOLVED_AND_MINE:
-            return queryset.annotate(
-                resolved_tag_count=Count("tags"),
-                user_tag_count=Count(
-                    "user_tags",
-                    filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
-                ),
-            ).filter(resolved_tag_count=0, user_tag_count=0)
-        elif tag_choice == TagChoices.RESOLVED:
-            return queryset.annotate(resolved_tag_count=Count("tags")).filter(resolved_tag_count=0)
-        elif tag_choice == TagChoices.USER:
-            return queryset.annotate(
-                user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
-            ).filter(user_tag_count=0)
-        elif tag_choice == TagChoices.MINE:
-            return queryset.annotate(
-                user_tag_count=Count(
-                    "user_tags",
-                    filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
-                )
-            ).filter(user_tag_count=0)
 
     def create_form(self):
         form = super().create_form()
