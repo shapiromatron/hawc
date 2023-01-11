@@ -13,6 +13,7 @@ from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.api import CleanupFieldsBaseViewSet, ReadWriteSerializerMixin
 from ..common.api.viewsets import EditPermissionsCheckMixin
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -21,27 +22,41 @@ from .actions.model_metadata import EpiAssessmentMetadata
 
 
 class EpiAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
-    model = models.Outcome
+    model = Assessment
+    queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
+    def get_outcome_queryset(self):
+        perms = self.assessment.user_permissions(self.request.user)
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return models.Outcome.objects.published(self.assessment)
+        return models.Outcome.objects.get_qs(self.assessment)
 
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
         """
         Retrieve epidemiology data for assessment.
         """
-        exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
+        self.get_object()
+        exporter = exports.OutcomeComplete(
+            self.get_outcome_queryset(), filename=f"{self.assessment}-epi"
+        )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="study-heatmap",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def study_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the study level (one row per study).
@@ -49,6 +64,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
+        self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
@@ -62,7 +78,12 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         export = FlatExport(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
         return Response(export)
 
-    @action(detail=True, url_path="result-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="result-heatmap",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def result_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the result level (one row per result).
@@ -70,6 +91,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
+        self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
