@@ -85,6 +85,7 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
         detail=True, url_path="settings", action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT
     )
     def rob_settings(self, request, pk):
+        self.get_object()
         ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
         return Response(ser.data)
 
