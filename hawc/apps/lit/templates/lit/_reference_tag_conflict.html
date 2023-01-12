@@ -20,7 +20,7 @@
                 <span><i>&lt;none&gt;</i></span>
             {% endfor %}
             {% for user_tag in ref.user_tags.all %}
-            <div class="tag-conf-item {% if forloop.first %} mt-1 {% endif %}">
+            <div class="{% if forloop.first %}mt-1{% endif %}">
                 <form>
                     <div>
                         <button class="approve btn btn-sm btn-success mr-2 align-center mb-2 mt-1"

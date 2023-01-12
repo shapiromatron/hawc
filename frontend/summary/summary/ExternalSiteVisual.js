@@ -22,6 +22,7 @@ class ExternalWebsite extends BaseVisual {
                     hostUrl={settings.external_url_hostname}
                     path={settings.external_url_path}
                     queryArgs={settings.external_url_query_args}
+                    filters={settings.filters}
                 />,
                 el
             );

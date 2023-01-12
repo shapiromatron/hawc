@@ -1,7 +1,8 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import Loading from "shared/components/Loading";
+
+import Loading from "/shared/components/Loading";
 
 import Modals from "./Modals";
 import TabContainer from "./TabContainer";

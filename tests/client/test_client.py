@@ -47,10 +47,18 @@ class TestClient(LiveServerTestCase, TestCase):
             client.set_authentication_token("123")
         assert err.value.status_code == 403
 
+        with pytest.raises(HawcClientException) as err:
+            client.session.get(f"{self.live_server_url}/assessment/1/")
+        assert err.value.status_code == 403
+
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
         resp = client.set_authentication_token(token)
         assert resp == {"valid": True}
+
+        # can also access regular Django views that are private
+        resp = client.session.get(f"{self.live_server_url}/assessment/1/")
+        assert resp.status_code == 200
 
     ####################
     # BaseClient tests #
@@ -89,7 +97,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # list of endpoints
         response = client.animal.endpoints(2)
         assert isinstance(response, list)
-        assert len(response) == 3
+        assert len(response) == 5
         assert response[0]["name"] == "Water T maze (learning error)"
         assert (
             response[0]["animal_group"]["experiment"]["study"]["short_citation"]
@@ -701,6 +709,17 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         df = client.riskofbias.metrics(self.db_keys.assessment_client)
         assert isinstance(df, pd.DataFrame) and df.shape == (11, 14)
+
+    def test_riskofbias_compare_metrics(self):
+        client = HawcClient(self.live_server_url)
+        df_src, df_dst = client.riskofbias.compare_metrics(
+            self.db_keys.assessment_client, self.db_keys.assessment_final
+        )
+        assert isinstance(df_src, pd.DataFrame) and df_src.shape == (11, 18)
+        assert isinstance(df_dst, pd.DataFrame) and df_dst.shape == (2, 16)
+        assert all(
+            col in df_src.columns for col in ["matched_key", "matched_score", "matched_text"]
+        )
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)

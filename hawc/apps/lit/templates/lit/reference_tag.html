@@ -5,8 +5,10 @@
     {% include 'common/filter_list.html' with plural_object_name='references' %}
   </div>
   <div id="main"></div>
+  {% include "includes/paginator.html" with plural_object_name="references" %}
 {% endblock %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
+  {% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

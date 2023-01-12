@@ -62,6 +62,7 @@ class BaseFormHelper(cf.FormHelper):
     error_text_inline = False
     use_custom_control = True
     include_media = False
+    field_template = "crispy_forms/layout/field.html"
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -274,3 +275,24 @@ class QuillField(forms.CharField):
         super().validate(value)
         if value:
             validators.validate_hyperlinks(value)
+
+
+class ConfirmationField(forms.CharField):
+    """A required field where a user must type in a fixed value; defaults to "confirm".
+
+    Args:
+        check_value (str): the value to check; defaults to "confirm".
+    """
+
+    def __init__(self, *args, **kw):
+        self.check_value = kw.pop("check_value", "confirm")
+        kwargs = dict(
+            max_length=32, required=True, help_text=f'Please type "{self.check_value}" to proceed.'
+        )
+        kwargs.update(kw)
+        super().__init__(*args, **kwargs)
+
+    def validate(self, value):
+        super().validate(value)
+        if value != self.check_value:
+            raise forms.ValidationError(f'The value of "{self.check_value}" is required.')

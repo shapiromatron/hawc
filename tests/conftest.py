@@ -25,6 +25,7 @@ class Keys:
         self.assessment_final = 2
         self.assessment_client = 3
         self.assessment_keys = [1, 2]
+        self.assessment_conflict_resolution = 4
 
         self.dataset_final = 2
         self.dataset_working = 1
@@ -35,6 +36,10 @@ class Keys:
 
         self.reference_linked = 1
         self.reference_unlinked = 3
+
+        self.reference_untagged = 9
+        self.reference_tag_conflict = 10
+        self.reference_tagged = 11
 
         self.animal_group_working = 1
         self.endpoint_working = 1

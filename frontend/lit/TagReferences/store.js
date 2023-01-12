@@ -1,121 +1,107 @@
 import _ from "lodash";
-import {action, observable, toJS} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
+import h from "shared/utils/helpers";
 
-import {sortReferences} from "../constants";
 import Reference from "../Reference";
 import TagTree from "../TagTree";
 
 class Store {
     config = null;
-    saveIndicatorElement = null;
     @observable tagtree = null;
     @observable references = [];
-    @observable selectedReference = null;
-    @observable selectedReferenceTags = null;
-    @observable selectedReferenceUserTags = null;
+    @observable reference = null;
+    @observable referenceTags = null;
+    @observable referenceUserTags = null;
     @observable errorOnSave = false;
+    @observable successMessage = "";
     @observable filterClass = "";
     @observable showInstructionsModal = false;
 
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
-        this.references = Reference.array(config.refs, this.tagtree);
+        this.references = Reference.array(config.refs, this.tagtree, false);
         // set first reference
         if (this.references.length > 0) {
-            this.changeSelectedReference(this.references[0]);
+            this.setReference(this.references[0]);
         }
     }
-
-    @action.bound changeSelectedReference(reference) {
-        this.selectedReference = reference;
-        this.selectedReferenceTags = reference.tags.slice(0); // shallow copy
-        this.selectedReferenceUserTags = reference.userTags.slice(0);
+    @computed get hasReference() {
+        return this.reference !== null;
+    }
+    @action.bound setReference(reference) {
+        this.reference = reference;
+        this.referenceTags = reference.tags.slice(0); // shallow copy
+        this.referenceUserTags = reference.userTags
+            ? reference.userTags.slice(0)
+            : reference.tags.slice(0);
+    }
+    hasTag(tags, tag) {
+        return !!_.find(tags, e => e.data.pk == tag.data.pk);
     }
     @action.bound addTag(tag) {
         if (
-            this.selectedReference &&
-            !_.find(
-                this.config.conflict_resolution
-                    ? this.selectedReferenceUserTags
-                    : this.selectedReferenceTags,
-                el => el.data.pk === tag.data.pk
-            )
+            this.hasReference &&
+            !_.find(this.referenceUserTags, el => el.data.pk === tag.data.pk)
         ) {
-            this.config.conflict_resolution
-                ? this.selectedReferenceUserTags.push(tag)
-                : this.selectedReferenceTags.push(tag);
+            this.referenceUserTags.push(tag);
         }
     }
     @action.bound removeTag(tag) {
-        _.remove(
-            this.config.conflict_resolution
-                ? this.selectedReferenceUserTags
-                : this.selectedReferenceTags,
-            el => el.data.pk === tag.data.pk
+        _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
+    }
+    @action.bound toggleTag(tag) {
+        return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);
+    }
+    @action.bound handleSaveSuccess(response) {
+        const {resolved} = response;
+        this.errorOnSave = false;
+        this.reference.userTags = toJS(this.referenceUserTags);
+        if (!this.config.conflict_resolution || resolved) {
+            this.reference.tags = toJS(this.referenceUserTags);
+        }
+        window.setTimeout(
+            action(() => {
+                const index = _.findIndex(
+                        this.references,
+                        ref => ref.data.pk === this.reference.data.pk
+                    ),
+                    nextIndex = this.references.length > index + 1 ? index + 1 : 0,
+                    reference = this.references[nextIndex];
+                this.successMessage = "";
+                this.setReference(reference);
+            }),
+            2000
         );
+        this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
+    }
+    @action.bound handleSaveFailure() {
+        this.errorOnSave = true;
     }
     @action.bound saveAndNext() {
+        this.successMessage = "";
+        this.errorOnSave = false;
         const payload = {
-                pk: this.selectedReference.data.pk,
-                tags: this.config.conflict_resolution
-                    ? this.selectedReferenceUserTags.map(tag => tag.data.pk)
-                    : this.selectedReferenceTags.map(tag => tag.data.pk),
+                pk: this.reference.data.pk,
+                tags: this.referenceUserTags.map(tag => tag.data.pk),
             },
-            success = () => {
-                const $el = $(this.saveIndicatorElement),
-                    index = _.findIndex(
-                        this.references,
-                        ref => ref.data.pk === this.selectedReference.data.pk
-                    );
-
-                if ($el.length !== 1) {
-                    throw "`this.saveIndicatorElement` not found.";
-                }
-
-                this.errorOnSave = false;
-                $el.fadeIn().fadeOut({
-                    complete: () => {
-                        this.selectedReference.tags = toJS(this.selectedReferenceTags);
-                        this.selectedReference.userTags = toJS(this.selectedReferenceUserTags);
-                        this.references.splice(index, 1, toJS(this.selectedReference));
-                        this.selectedReference = null;
-                        this.selectedReferenceTags = null;
-                        this.selectedReferenceUserTags = null;
-                        if (this.references.length > index + 1) {
-                            this.changeSelectedReference(this.references[index + 1]);
-                        } else {
-                            this.changeSelectedReference(this.references[0]);
-                        }
-                    },
-                });
-            },
-            failure = data => {
-                console.error(data);
-                this.errorOnSave = true;
-            };
-
-        $.post(`/lit/api/reference/${this.selectedReference.data.pk}/tag/`, payload, v =>
-            v.status === "success" ? success() : failure()
-        ).fail(failure);
+            url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
+        h.handleSubmit(
+            url,
+            "POST",
+            this.config.csrf,
+            payload,
+            this.handleSaveSuccess,
+            this.handleSaveFailure,
+            this.handleSaveFailure
+        );
     }
     @action.bound removeAllTags() {
-        this.config.conflict_resolution
-            ? (this.selectedReferenceUserTags = [])
-            : (this.selectedReferenceTags = []);
+        this.referenceUserTags = [];
     }
-    @action.bound setSaveIndicatorElement(el) {
-        this.saveIndicatorElement = el;
-    }
-
-    @action.bound sortReferences(sortBy) {
-        this.references = sortReferences(this.references, sortBy);
-    }
-
     @action.bound toggleSlideAway() {
         this.filterClass = this.filterClass == "" ? "slideAway" : "";
     }
-
     @action.bound setInstructionsModal(input) {
         this.showInstructionsModal = input;
     }

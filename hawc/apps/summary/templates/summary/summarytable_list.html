@@ -16,6 +16,8 @@
 </div>
 {% endif %}
 
+{% include 'common/filter_list.html' with plural_object_name='tables' %}
+
 {% if object_list.exists %}
   <table class="table table-sm table-striped">
     <colgroup>
@@ -50,7 +52,7 @@
     </tbody>
   </table>
   {% with total=object_list.count %}
-    <p><b>{{total}} table{{ total|pluralize }} available.</b></p>
+    <p><b>{{total}}</b> table{{total|pluralize}} found.</p>
   {% endwith %}
 {% else %}
   {% if obj_perms.edit %}

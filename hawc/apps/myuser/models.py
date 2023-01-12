@@ -38,6 +38,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     CAN_CREATE_ASSESSMENTS = "can-create-assessments"
+    backend = "django.contrib.auth.backends.ModelBackend"
 
     class Meta:
         ordering = ("last_name",)
