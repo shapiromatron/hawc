@@ -42,6 +42,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     http_method_names = METHODS_NO_PUT
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
     lookup_value_regex = re_digits

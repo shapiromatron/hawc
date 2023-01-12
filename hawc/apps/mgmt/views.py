@@ -64,7 +64,7 @@ class RobTaskMixin:
     def get_app_config(self, context) -> WebappConfig:
         assessment_id = self.assessment.id if hasattr(self, "assessment") else None
         task_url = (
-            reverse("mgmt:api:task-assessment-assignments", args=(assessment_id,))
+            reverse("mgmt:api:task-assessment-assignments")
             if assessment_id
             else reverse("mgmt:api:task-assignments")
         )
