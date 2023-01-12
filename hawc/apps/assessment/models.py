@@ -525,11 +525,7 @@ class AssessmentValue(models.Model):
     value = models.FloatField(
         help_text="The derived value",
     )
-    value_unit = models.CharField(
-        verbose_name="Value units",
-        max_length=32,
-        blank=True,
-    )
+    value_unit = models.CharField(verbose_name="Value units", max_length=32)
     confidence = models.CharField(
         max_length=64,
         blank=True,
@@ -578,7 +574,12 @@ class AssessmentValue(models.Model):
         blank=True,
         null=True,
         verbose_name="Key study",
-        help_text="Key existing study in HAWC for a key study. If it does not exist or there are multiple studies, leave blank and explain in comments",
+        help_text="Link to Key Study in HAWC. If it does not exist or there are multiple studies, leave blank and explain in comments",
+    )
+    evidence = models.TextField(
+        verbose_name="Evidence characterization",
+        blank=True,
+        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
     )
     tumor_type = models.CharField(
         max_length=128,
@@ -590,22 +591,16 @@ class AssessmentValue(models.Model):
         blank=True,
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
-    evidence = models.TextField(
-        verbose_name="Evidence characterization",
-        blank=True,
-        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
-    )
     adaf = models.BooleanField(
         verbose_name="ADAF applied?",
         default=False,
         help_text="Has an Age Dependent Adjustment Factor (ADAF) been applied?",
     )
-    non_adaf_value = models.CharField(
+    non_adaf_value = models.FloatField(
         verbose_name="Non-ADAF adjusted value",
-        max_length=64,
         blank=True,
-        default="",
-        help_text="Input the value without ADAF adjustment, if applicable",
+        null=True,
+        help_text="Value without ADAF adjustment (units the same as Value above)",
     )
     comments = models.TextField(blank=True)
     extra = models.JSONField(

@@ -268,9 +268,8 @@ class AssessmentValueForm(forms.ModelForm):
         helper.add_row("value_type", 3, "col-md-4")
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
-        helper.add_row("species_studied", 2, "col-md-6")
-        helper.add_row("tumor_type", 3, "col-md-4")
-        helper.add_row("adaf", 2, "col-md-6")
+        helper.add_row("species_studied", 3, "col-md-4")
+        helper.add_row("tumor_type", 4, "col-md-3")
         helper.add_row("comments", 2, "col-md-6")
 
         return helper
