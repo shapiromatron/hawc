@@ -598,7 +598,7 @@ class AssessmentValue(models.Model):
     adaf = models.BooleanField(
         verbose_name="ADAF applied?",
         default=False,
-        help_text="If Age Dependent Adjustment Factor was applied to the value",
+        help_text="Has an Age Dependent Adjustment Factor (ADAF) been applied?",
     )
     non_adaf_value = models.CharField(
         verbose_name="Non-ADAF adjusted value",
@@ -622,6 +622,20 @@ class AssessmentValue(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    @property
+    def show_cancer_fields(self):
+        return self.evaluation_type in [
+            constants.EvaluationType.CANCER,
+            constants.EvaluationType.BOTH,
+        ]
+
+    @property
+    def show_noncancer_fields(self):
+        return self.evaluation_type in [
+            constants.EvaluationType.NONCANCER,
+            constants.EvaluationType.BOTH,
+        ]
 
     def __str__(self):
         return f"Values for {self.assessment}"

@@ -38,7 +38,9 @@
             <td>{{object.pod_value|default:""}} {{object.pod_unit|default:""}}</td>
         </tr>
         {% endif %}
+        {% if object.show_noncancer_fields %}
         {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
+        {% endif %}
         {% optional_table_row "Species studied" object.species_studied|default:"" %}
         {% if object.study %}
         <tr>
@@ -46,11 +48,15 @@
             <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
         </tr>
         {% endif %}
-        {% optional_table_row "Extrapolation method" object.extrapolation_method %}
+        {% if object.show_cancer_fields %}
         {% optional_table_row "Tumor type" object.tumor_type %}
+        {% optional_table_row "Extrapolation method" object.extrapolation_method %}
+        {% endif %}
         {% optional_table_row "Evidence characterization" object.evidence %}
+        {% if object.show_cancer_fields %}
         {% optional_table_row "ADAF applied?" object.adaf %}
         {% optional_table_row "Non-ADAF adjusted value" object.non_adaf_value %}
+        {% endif %}
         {% optional_table_row "Comments" object.comments %}
         {% for key, value in object.extra.items %}
         <tr>
