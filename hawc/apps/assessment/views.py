@@ -394,8 +394,8 @@ class AssessmentRead(BaseDetail):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.prefetch_related(
-            "project_manager", "team_members", "reviewers", "datasets", "dtxsids"
-        )
+            "project_manager", "team_members", "reviewers", "datasets", "dtxsids", "values"
+        ).select_related("details")
         return qs
 
     def get_context_data(self, **kwargs):
@@ -412,6 +412,7 @@ class AssessmentRead(BaseDetail):
             if context["obj_perms"]["edit"]
             else context["object"].datasets.filter(published=True)
         )
+        context["values"] = self.object.values.order_by("value_type")
         return context
 
 

@@ -7,8 +7,6 @@
 {% url_or_span object.report_id object.report_url as content %}
 {% optional_table_row "Report Identifier" content %}
 {% optional_table_row "Peer Review Status" object.get_peer_review_status_display %}
-{% url_or_span object.qa_id object.qa_url as content %}
-{% optional_table_row "QA Identifier" content %}
 {% for key, value in object.extra.items %}
 <tr>
     <th>{{key}}</th>

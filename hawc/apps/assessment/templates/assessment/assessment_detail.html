@@ -1,5 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load hawc %}
 {% load hastext %}
 
 {% block content %}
@@ -213,6 +214,14 @@
         <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
       </tr>
 
+      {% if object.details and object.details.qa_id %}
+      {% url_or_span object.details.qa_id object.details.qa_url as qa_identifier %}
+      <tr>
+        <th>QA Identifier</th>
+        <td colspan="3">{{ qa_identifier }}</td>
+      </tr>
+      {% endif %}
+
       {% if internal_communications|hastext %}
       <tr>
         <th>Internal communications</th>
@@ -233,7 +242,7 @@
   {% if crud == "Read" %}
     {% include "assessment/fragments/attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
     {% include "assessment/_dataset_list.html" with object_list=datasets %}
-    {% include "assessment/fragments/assessmentvalue_list.html" with object_list=object.values.all %}
+    {% include "assessment/fragments/assessmentvalue_list.html" with object_list=values %}
   {% endif %}
 
 {% endblock content %}

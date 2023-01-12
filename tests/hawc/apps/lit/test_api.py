@@ -182,7 +182,7 @@ class TestLiteratureAssessmentViewset:
             {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None, "doi": None},
             {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None, "doi": None},
             {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None, "doi": None},
-            {"reference_id": 9, "pubmed_id": 27245597.0, "hero_id": None, "doi": None},
+            {"reference_id": 12, "pubmed_id": 28572920.0, "hero_id": None, "doi": None},
             {"reference_id": 9999, "pubmed_id": None, "hero_id": None, "doi": None},
         ]
 

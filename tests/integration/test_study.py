@@ -13,7 +13,7 @@ class TestStudy(PlaywrightTestCase):
             page, f"{self.live_server_url}/study/assessment/2/", "pm@hawcproject.org"
         )
         expect(page.locator("text=Short citation")).to_be_visible()
-        expect(page.locator("tbody tr")).to_have_count(5)
+        expect(page.locator("tbody tr")).to_have_count(4)
 
         # /study/:id/
         page.goto(self.live_server_url + "/study/7/")

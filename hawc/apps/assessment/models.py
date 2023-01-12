@@ -514,6 +514,7 @@ class AssessmentValue(models.Model):
         help_text="Substance evaluation conducted",
     )
     system = models.CharField(
+        verbose_name="System or health effect basis",
         max_length=128,
         help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
     )
@@ -524,15 +525,26 @@ class AssessmentValue(models.Model):
     value = models.FloatField(
         help_text="The derived value",
     )
-    value_unit = models.ForeignKey(
-        "assessment.DoseUnits",
-        verbose_name="Value units",
-        on_delete=models.CASCADE,
-        related_name="assessment_values",
+    value_unit = models.CharField(verbose_name="Value units", max_length=32)
+    confidence = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="Overall confidence for the value.",
+    )
+    duration = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Duration of value",
     )
     basis = models.TextField(
         blank=True,
         help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
+    )
+    pod_type = models.CharField(
+        verbose_name="POD Type",
+        max_length=32,
+        blank=True,
+        help_text="Point of departure type, for example, NOAEL, LOAEL, BMDL (10% extra risk)",
     )
     pod_value = models.FloatField(
         verbose_name="POD Value",
@@ -540,22 +552,21 @@ class AssessmentValue(models.Model):
         null=True,
         help_text="The Point of Departure (POD)",
     )
-    pod_unit = models.ForeignKey(
-        "assessment.DoseUnits",
+    pod_unit = models.CharField(
         verbose_name="POD units",
-        on_delete=models.SET_NULL,
+        max_length=32,
+        blank=True,
+        help_text="Units for the Point of Departure (POD)",
+    )
+    uncertainty = models.IntegerField(
         blank=True,
         null=True,
-        related_name="assessment_pods",
-        help_text="Units for the Point of Departure (POD)",
+        choices=constants.UncertaintyChoices.choices,
+        verbose_name="Uncertainty factor",
+        help_text="Composite uncertainty factor applied to POD to derive the final value",
     )
     species_studied = models.ForeignKey(
         "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
-    )
-    duration = models.CharField(
-        max_length=128,
-        blank=True,
-        help_text="Duration of key study supporting value derivation",
     )
     study = models.ForeignKey(
         "study.Study",
@@ -563,21 +574,15 @@ class AssessmentValue(models.Model):
         blank=True,
         null=True,
         verbose_name="Key study",
-        help_text="Key study in HAWC, if available",
+        help_text="Link to Key Study in HAWC. If it does not exist or there are multiple studies, leave blank and explain in comments",
     )
-    confidence = models.PositiveSmallIntegerField(
-        default=constants.Confidence.NA,
-        choices=constants.Confidence.choices,
-        help_text="Overall confidence for study or key studies",
-    )
-    uncertainty = models.FloatField(
+    evidence = models.TextField(
+        verbose_name="Evidence characterization",
         blank=True,
-        null=True,
-        verbose_name="Uncertainty factor",
-        help_text="Composite uncertainty factor applied to POD to derive the final value",
+        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
     )
     tumor_type = models.CharField(
-        max_length=64,
+        max_length=128,
         verbose_name="Tumor/Cancer type",
         blank=True,
         help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site)",
@@ -586,10 +591,16 @@ class AssessmentValue(models.Model):
         blank=True,
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
-    evidence = models.TextField(
-        verbose_name="Evidence characterization",
+    adaf = models.BooleanField(
+        verbose_name="ADAF applied?",
+        default=False,
+        help_text="Has an Age Dependent Adjustment Factor (ADAF) been applied?",
+    )
+    non_adaf_value = models.FloatField(
+        verbose_name="Non-ADAF adjusted value",
         blank=True,
-        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
+        null=True,
+        help_text="Value without ADAF adjustment (units the same as Value above)",
     )
     comments = models.TextField(blank=True)
     extra = models.JSONField(
@@ -606,6 +617,20 @@ class AssessmentValue(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    @property
+    def show_cancer_fields(self):
+        return self.evaluation_type in [
+            constants.EvaluationType.CANCER,
+            constants.EvaluationType.BOTH,
+        ]
+
+    @property
+    def show_noncancer_fields(self):
+        return self.evaluation_type in [
+            constants.EvaluationType.NONCANCER,
+            constants.EvaluationType.BOTH,
+        ]
 
     def __str__(self):
         return f"Values for {self.assessment}"

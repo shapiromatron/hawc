@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("epi", "0018_django31"),
-        ("study", "0012_study_eco"),
+        ("study", "0011_auto_20190416_2035"),
     ]
 
     operations = [
