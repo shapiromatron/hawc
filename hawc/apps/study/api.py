@@ -6,9 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
+from ..assessment.api import AssessmentLevelPermissions, InAssessmentFilter
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
+from ..common.api import CleanupFieldsBaseViewSet, DisabledPagination
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits
 from ..common.views import create_object_log

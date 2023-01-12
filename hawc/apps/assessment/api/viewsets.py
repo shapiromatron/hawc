@@ -13,7 +13,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from ....services.epa.dsstox import RE_DTXSID
-from ...common.api.permissions import AssessmentLevelPermissions
+from ...common.api import AssessmentLevelPermissions, DisabledPagination
 from ...common.constants import AssessmentViewsetPermissions
 from ...common.helper import FlatExport, re_digits
 from ...common.renderers import PandasRenderers
@@ -21,7 +21,6 @@ from ...common.views import create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
 from .filters import InAssessmentFilter
-from .pagination import DisabledPagination
 
 # all http methods except PUT
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]

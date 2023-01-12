@@ -2,7 +2,8 @@ from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, DisabledPagination
+from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
+from ..common.api import DisabledPagination
 from ..common.constants import AssessmentViewsetPermissions
 from . import models, serializers
 

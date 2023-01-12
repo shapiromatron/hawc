@@ -3,11 +3,11 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ...assessment.api import DisabledPagination
 from ..exceptions import ClassConfigurationException
 from ..views import bulk_create_object_log
 from .filters import CleanupBulkIdFilter
 from .mixins import ListUpdateModelMixin
+from .pagination import DisabledPagination
 from .permissions import CleanupFieldsPermissions, user_can_edit_object
 
 
