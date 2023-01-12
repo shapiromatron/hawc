@@ -15,6 +15,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import EditPermissionsCheckMixin
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -41,13 +42,18 @@ class SummaryAssessmentViewset(viewsets.GenericViewSet):
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, url_path="visual-heatmap-datasets")
+    @action(
+        detail=True,
+        url_path="visual-heatmap-datasets",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+    )
     def heatmap_datasets(self, request, pk):
         """Returns a list of the heatmap datasets available for an assessment."""
         instance = self.get_object()
@@ -76,7 +82,11 @@ class DataPivotViewset(AssessmentViewset):
             cls = serializers.CollectionDataPivotSerializer
         return cls
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def data(self, request, pk):
         obj = self.get_object()
         export = obj.get_dataset()
@@ -125,13 +135,17 @@ class SummaryTableViewset(AssessmentEditViewset):
     serializer_class = serializers.SummaryTableSerializer
     list_actions = ["list", "data"]
 
-    @action(detail=True, renderer_classes=(DocxRenderer,))
+    @action(
+        detail=True,
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=(DocxRenderer,),
+    )
     def docx(self, request, pk):
         obj = self.get_object()
         report = obj.to_docx(base_url=request._current_scheme_host)
         return Response(report)
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
     def data(self, request):
         ser = table_serializers.SummaryTableDataSerializer(
             data=request.query_params.dict(), context=self.get_serializer_context()
