@@ -6,9 +6,9 @@ from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentRootedTagTreeViewset,
     AssessmentViewset,
+    CleanupFieldsBaseViewSet,
 )
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers

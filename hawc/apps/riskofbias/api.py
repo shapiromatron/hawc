@@ -13,11 +13,13 @@ from ..assessment.api import (
     AssessmentEditViewset,
     AssessmentLevelPermissions,
     AssessmentViewset,
+    CleanupFieldsBaseViewSet,
+    CleanupFieldsPermissions,
     InAssessmentFilter,
+    get_assessment_id_param,
 )
-from ..assessment.helper import get_assessment_id_param
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import CleanupFieldsBaseViewSet, CleanupFieldsPermissions, DisabledPagination
+from ..common.api import DisabledPagination
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers

@@ -10,10 +10,11 @@ from ..assessment.api import (
     AssessmentEditViewset,
     AssessmentLevelPermissions,
     AssessmentViewset,
+    EditPermissionsCheckMixin,
     InAssessmentFilter,
 )
 from ..assessment.models import Assessment
-from ..common.api import DisabledPagination, EditPermissionsCheckMixin
+from ..common.api import DisabledPagination
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers

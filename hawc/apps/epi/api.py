@@ -8,11 +8,15 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
+from ..assessment.api import (
+    AssessmentEditViewset,
+    AssessmentLevelPermissions,
+    CleanupFieldsBaseViewSet,
+    EditPermissionsCheckMixin,
+)
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.api import CleanupFieldsBaseViewSet, ReadWriteSerializerMixin
-from ..common.api.viewsets import EditPermissionsCheckMixin
+from ..common.api import ReadWriteSerializerMixin
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers

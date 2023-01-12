@@ -1,9 +1,8 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset
+from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset, EditPermissionsCheckMixin
 from ..assessment.models import Assessment
-from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers

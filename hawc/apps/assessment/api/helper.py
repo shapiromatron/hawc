@@ -3,8 +3,8 @@ from typing import Optional
 from rest_framework import status
 from rest_framework.exceptions import APIException
 
-from ..common.helper import tryParseInt
-from . import models
+from ...common.helper import tryParseInt
+from .. import models
 
 
 class RequiresAssessmentID(APIException):

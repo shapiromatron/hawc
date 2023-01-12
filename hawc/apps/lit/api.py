@@ -16,9 +16,10 @@ from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
     AssessmentRootedTagTreeViewset,
+    CleanupFieldsBaseViewSet,
 )
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, OncePerMinuteThrottle, PaginationWithCount
+from ..common.api import OncePerMinuteThrottle, PaginationWithCount
 from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers

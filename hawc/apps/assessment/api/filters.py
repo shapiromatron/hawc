@@ -1,6 +1,6 @@
 from rest_framework import filters
 
-from ..helper import get_assessment_from_query
+from .helper import get_assessment_from_query
 
 
 class InAssessmentFilter(filters.BaseFilterBackend):
