@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="design",
-            name="habitat",
+            name="habitats",
             field=models.ManyToManyField(
                 help_text="Select one or more habitats to which the evidence applies.",
                 limit_choices_to={"category": 2},
@@ -256,7 +256,6 @@ class Migration(migrations.Migration):
             model_name="result",
             name="variability",
             field=models.ForeignKey(
-                blank=True,
                 help_text="Type of variability reported for the numeric response measure",
                 limit_choices_to={"category": 9},
                 on_delete=django.db.models.deletion.CASCADE,

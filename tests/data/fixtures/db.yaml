@@ -7654,14 +7654,15 @@
     study: 1
     design: 1
     study_setting: 6
-    habitat: 12
-    habitat_as_reported: ''
+    habitats_as_reported: ''
     climate_as_reported: ''
     created: 2022-08-18 17:45:22.970314+00:00
     last_updated: 2022-08-18 17:45:22.970314+00:00
     countries:
     - 3
     states: []
+    habitats:
+    - 12
     ecoregions:
     - 110
     climates:
@@ -7711,12 +7712,11 @@
     sample_size: null
     measure_type: null
     measure_value: null
-    description: ''
     variability: 94
     low_variability: null
     upper_variability: null
     statistical_sig_type: 99
-    statistical_sig_value: null
+    statistical_sig_value: "<0.01"
     derived_value: null
     created: 2022-08-17 16:20:45.453359+00:00
     last_updated: 2022-08-17 18:52:22.777238+00:00

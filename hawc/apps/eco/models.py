@@ -102,14 +102,14 @@ class Design(models.Model):
         help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')}, if known",
         related_name="+",
     )
-    habitat = models.ManyToManyField(
+    habitats = models.ManyToManyField(
         Vocab,
         limit_choices_to={"category": VocabCategories.HABITAT},
         help_text="Select one or more habitats to which the evidence applies.",
         related_name="+",
     )
-    habitat_as_reported = models.TextField(
-        verbose_name="Habitat as reported",
+    habitats_as_reported = models.TextField(
+        verbose_name="Habitats as reported",
         blank=True,
         help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
@@ -409,7 +409,6 @@ class Result(models.Model):
         limit_choices_to={"category": VocabCategories.RESPONSE_VARIABILITY},
         on_delete=models.CASCADE,
         related_name="+",
-        blank=True,
         help_text="Type of variability reported for the numeric response measure",
     )
     low_variability = models.FloatField(

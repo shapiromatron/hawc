@@ -32,19 +32,19 @@
                 {% endfor %}
             </td>
         </tr>
-        {% optional_table_row "Habitat" object.habitat %}
-        {% if object.habitat_as_reported|hastext %}
         <tr>
-            <th>Habitat as reported</th>
-            <td>{{object.habitat_as_reported|safe}}</td>
+            <th>Habitat</th>
+            <td>{% for object in object.habitats.all %}<span class="badge badge-secondary">{{object}}</span>{% endfor %}</td>
+        </tr>
+        {% if object.habitats_as_reported|hastext %}
+        <tr>
+            <th>Habitats as reported</th>
+            <td>{{object.habitats_as_reported|safe}}</td>
         </tr>
         {% endif %}
         <tr>
             <th>Climate</th>
-            <td>{% for object in object.climates.all %}
-                <span class="badge badge-secondary">{{object}}</span>
-                {% endfor %}
-            </td>
+            <td>{% for object in object.climates.all %}<span class="badge badge-secondary">{{object}}</span>{% endfor %}</td>
         </tr>
         {% if object.climate_as_reported|hastext %}
         <tr>

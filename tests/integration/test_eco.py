@@ -26,8 +26,8 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/designv2/\d+/update/")) as resp:
             page.locator("#design-update").click(delay=100)
         assert resp.value.ok is True
-        page.locator('textarea[name="habitat_as_reported"]').click()
-        page.locator('textarea[name="habitat_as_reported"]').fill("habitat update")
+        page.locator('textarea[name="habitats_as_reported"]').click()
+        page.locator('textarea[name="habitats_as_reported"]').fill("habitat update")
         page.locator("text=Save").click()
 
         # Create new Cause

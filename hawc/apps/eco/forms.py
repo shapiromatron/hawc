@@ -38,7 +38,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("habitat_as_reported", "climate_as_reported", "comment"):
+        for fld in ("habitats_as_reported", "climate_as_reported", "comment"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
@@ -56,7 +56,7 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("countries", 3, "col-md-4")
-        helper.add_row("habitat", 4, "col-md-3")
+        helper.add_row("habitats", 4, "col-md-3")
         return helper
 
 
@@ -166,7 +166,7 @@ class ResultForm(forms.ModelForm):
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("cause", 3, "col-md-4")
+        helper.add_row("name", 4, ["col-md-4", "col-md-3", "col-md-3", "col-md-2"])
         helper.add_row("relationship_direction", 2, "col-md-6")
         helper.add_row("measure_type", 4, "col-md-3")
         helper.add_row("variability", 3, "col-md-4")
