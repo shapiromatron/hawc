@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                             (40, "Screening-Level RfD"),
                             (50, "Screening-Level RfC"),
                             (60, "Organ-Specific RfD"),
-                            (35, "Organ-Specific RfC"),
+                            (70, "Organ-Specific RfC"),
                             (100, "Other"),
                         ],
                         help_text="Type of derived value",
