@@ -19,6 +19,7 @@ from ..assessment.api import (
 from ..assessment.helper import get_assessment_id_param
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import CleanupFieldsBaseViewSet, CleanupFieldsPermissions
+from ..common.constants import AssessmentViewsetPermissions
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -33,20 +34,21 @@ logger = logging.getLogger(__name__)
 
 
 class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
-    model = Study
+    model = Assessment
+    queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment.id)
-
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
+        self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
             self.get_queryset().none(),
@@ -56,8 +58,14 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
 
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="full-export",
+        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def full_export(self, request, pk):
+        self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset().none(),
@@ -73,7 +81,9 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
-    @action(detail=True, url_path="settings")
+    @action(
+        detail=True, url_path="settings", action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT
+    )
     def rob_settings(self, request, pk):
         ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
         return Response(ser.data)
@@ -195,12 +205,12 @@ class RiskOfBias(AssessmentEditViewset):
 
         return super().create(request, *args, **kwargs)
 
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
     def override_options(self, request, pk=None):
         object_ = self.get_object()
         return Response(object_.get_override_options())
 
-    @action(detail=False, methods=("post",))
+    @action(detail=False, methods=("post",), permission_classes=[])
     def create_v2(self, request):
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(data=request.data, **kw)
@@ -208,7 +218,7 @@ class RiskOfBias(AssessmentEditViewset):
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=("patch",))
+    @action(detail=True, methods=("patch",), permission_classes=[])
     def update_v2(self, request, *args, **kwargs):
         instance = self.get_object()
         kw = {"context": self.get_serializer_context()}
