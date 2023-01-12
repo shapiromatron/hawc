@@ -3,24 +3,6 @@ import React from "react";
 import $ from "$";
 
 class BaseModal extends React.Component {
-    /*
-     * Temporary solution to modal issue. Closes modal when user presses escape,
-     * however componentWillUnmount is not called so not ideal; should refactor
-     * when we build a React-based modal.
-     *
-     * Requires this button to be in the component, triggers the boostrap close
-     * event:
-     *
-     *      <button
-     *          ref={this.closer}
-     *          className="close"
-     *          type="button"
-     *          data-dismiss="modal">
-     *          ×
-     *      </button>
-     *
-     */
-
     constructor(props) {
         super(props);
         this.closer = React.createRef();

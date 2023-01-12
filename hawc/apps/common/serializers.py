@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import Any, Type, Union
 
 import jsonschema
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
 from pydantic import BaseModel
@@ -26,7 +26,7 @@ def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) ->
         data (Any): the data to be validated
 
     Raises:
-        ValidationError: a Django Validation error
+        ValidationError: a DRF Validation error
 
     Returns:
         BaseModel: The pydantic BaseModel
@@ -34,7 +34,7 @@ def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) ->
     try:
         return pydantic_class.parse_obj(data)
     except PydanticError as err:
-        raise ValidationError({field: err.json()})
+        raise DrfValidationError({field: err.json()})
 
 
 def validate_jsonschema(data: Any, schema: dict) -> Any:

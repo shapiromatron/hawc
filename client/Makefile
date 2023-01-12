@@ -22,7 +22,7 @@ build: clean  ## Build python distribution
 	twine check dist/*.whl
 
 upload-testpypi:  ## Upload packages to testpypi
-	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+	twine upload -r testpypi dist/*
 
 upload-pypi:  ## Upload packages to pypi
-	twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+	twine upload -r pypi dist/*

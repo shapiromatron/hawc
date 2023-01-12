@@ -10,6 +10,7 @@ from rest_framework.test import APIClient
 
 from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
+from hawc.apps.myuser.models import HAWCUser
 
 from ..test_utils import check_details_of_last_log_entry
 
@@ -181,7 +182,7 @@ class TestLiteratureAssessmentViewset:
             {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None, "doi": None},
             {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None, "doi": None},
             {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None, "doi": None},
-            {"reference_id": 9, "pubmed_id": 27245597.0, "hero_id": None, "doi": None},
+            {"reference_id": 12, "pubmed_id": 28572920.0, "hero_id": None, "doi": None},
             {"reference_id": 9999, "pubmed_id": None, "hero_id": None, "doi": None},
         ]
 
@@ -581,8 +582,8 @@ class TestReferenceDestroyApi:
 
 
 @pytest.mark.django_db
-class TestReferenceUpdateApi:
-    def test_permissions(self, db_keys):
+class TestReferenceViewset:
+    def test_update_permissions(self, db_keys):
 
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         data = {"title": "TestReferenceUpdateApi test"}
@@ -606,7 +607,7 @@ class TestReferenceUpdateApi:
         # make sure the object hasn't changed
         assert post_ref == pre_ref
 
-    def test_bad_requests(self, db_keys):
+    def test_update_bad_requests(self, db_keys):
         # test bad id
         url = reverse("lit:api:reference-detail", args=(-1,))
         data = {"title": "TestReferenceUpdateApi test"}
@@ -624,7 +625,7 @@ class TestReferenceUpdateApi:
         assert response.status_code == 400
         assert response.json() == {"tags": ["All tag ids are not from this assessment"]}
 
-    def test_valid_requests(self, db_keys):
+    def test_update_valid_requests(self, db_keys):
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -662,3 +663,128 @@ class TestReferenceUpdateApi:
         assert updated_reference.tags.count() == len(tags)
         for id in tags:
             assert updated_reference.tags.filter(id=id).exists()
+
+    def test_tag_permissions(self, db_keys):
+        ref: models.Reference = models.Reference.objects.get(id=db_keys.reference_tag_conflict)
+        update_tags_url = reverse("lit:api:reference-tag", args=(ref.pk,))
+        resolve_conflict_url = reverse("lit:api:reference-resolve-conflict", args=(ref.pk,))
+
+        assert ref.tags.count() == 0
+        assert ref.user_tags.count() == 2
+        assert ref.user_tags.filter(user__email="reviewer@hawcproject.org").exists() is False
+        assert ref.has_user_tag_conflicts() is True
+
+        # reviewers can't update tags or resolve conflicts
+        client = APIClient()
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        response = client.post(update_tags_url, data={"tags": [32, 33]}, format="json")
+        assert response.status_code == 403
+
+        # no user tag was created
+        ref.refresh_from_db()
+        assert ref.user_tags.count() == 2
+        assert ref.user_tags.filter(user__email="reviewer@hawcproject.org").exists() is False
+
+        user_tag_id = ref.user_tags.first().pk
+        response = client.post(resolve_conflict_url, data={"user_tag_id": user_tag_id})
+        assert response.status_code == 403
+
+        # tags were not added to the reference/conflict was not resolved
+        ref.refresh_from_db()
+        assert ref.tags.count() == 0
+        assert ref.has_user_tag_conflicts() is True
+
+    def test_conflict_valid(self, db_keys):
+        ref: models.Reference = models.Reference.objects.get(id=db_keys.reference_untagged)
+        pm = HAWCUser.objects.get(email="pm@hawcproject.org")
+        tm = HAWCUser.objects.get(email="team@hawcproject.org")
+
+        pm_tags = [32]
+        tm_tags = [33]
+
+        update_tags_url = reverse("lit:api:reference-tag", args=(ref.pk,))
+        resolve_conflict_url = reverse("lit:api:reference-resolve-conflict", args=(ref.pk,))
+
+        client = APIClient()
+
+        assert ref.user_tags.count() == 0
+        assert ref.has_user_tag_conflicts() is False
+
+        # create a conflict by applying different tags as two different users
+        assert client.login(email=tm.email, password="pw") is True
+        response = client.post(update_tags_url, data={"tags": tm_tags}, format="json")
+        assert response.status_code == 200
+        client.logout()
+
+        assert client.login(email=pm.email, password="pw") is True
+        response = client.post(update_tags_url, data={"tags": pm_tags}, format="json")
+        assert response.status_code == 200
+
+        ref.refresh_from_db()
+        assert ref.user_tags.count() == 2
+        assert ref.has_user_tag_conflicts() is True
+        assert ref.tags.count() == 0
+
+        # resolve the conflict using Project Manager's tags
+        pm_user_tag = ref.user_tags.get(user=pm)
+        response = client.post(resolve_conflict_url, data={"user_tag_id": pm_user_tag.pk})
+        assert response.status_code == 200
+
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is False
+        assert list(ref.tags.values_list("id", flat=True)) == pm_tags
+
+    def test_tagging_valid(self, db_keys):
+        ref: models.Reference = models.Reference.objects.get(id=db_keys.reference_untagged)
+        client = APIClient()
+        assert client.login(email="pm@hawcproject.org", password="pw") is True
+
+        # test applying tags w/o conflict resolution
+        ref = models.Reference.objects.get(id=db_keys.reference_linked)
+        update_tags_url = reverse("lit:api:reference-tag", args=(ref.pk,))
+        tags = [2, 3]
+        response = client.post(update_tags_url, data={"tags": tags}, format="json")
+        assert response.status_code == 200
+
+        # tags are applied to the reference without creating a conflict
+        ref.refresh_from_db()
+        assert list(ref.tags.values_list("id", flat=True)) == tags
+        assert ref.has_user_tag_conflicts() is False
+
+    def test_tagging_invalid(self, db_keys):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        url = reverse("lit:api:reference-tag", args=(-1,))
+
+        # test bad id
+        data = {"tags": [2, 3]}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+        # test bad tag
+        url = reverse("lit:api:reference-tag", args=(db_keys.reference_linked,))
+        data = {"tags": [2, 3, -1]}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"tags": "Array of tags must be valid primary keys"}
+
+    def test_conflict_invalid(self, db_keys):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        url = reverse("lit:api:reference-resolve-conflict", args=(-1,))
+
+        # test bad ref id
+        data = {"user_tag_id": 1}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+        # test bad user_tag_id (wrong reference)
+        url = reverse("lit:api:reference-resolve-conflict", args=(db_keys.reference_tag_conflict,))
+        data = {"user_tag_id": 1}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+        # test bad user_tag_id (doesn't exist)
+        data = {"user_tag_id": -1}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404

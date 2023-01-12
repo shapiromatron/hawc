@@ -1,12 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-{% if obj_perms.edit and object.can_request_refresh %}
-<a id="refresh-topic-model" class="float-right btn btn-primary" href=".">
-  {% if object.has_topic_model %}Request model refresh{% else %}Build model{% endif %}
-</a>
-{% endif %}
-<h2>Topic model.</h2>
+<div class="d-flex justify-content-between">
+  <h2>Topic model.</h2>
+  <div>
+    {% if obj_perms.edit and object.can_request_refresh %}
+    <a id="refresh-topic-model" class="float-right btn btn-primary" href=".">
+      {% if object.has_topic_model %}Request model refresh{% else %}Build model{% endif %}
+    </a>
+    {% endif %}
+  </div>
+</div>
 
 {% if obj_perms.edit %}
   {% if object.topic_tsne_refresh_requested %}

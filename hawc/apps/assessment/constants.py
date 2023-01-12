@@ -53,15 +53,15 @@ class EvaluationType(models.IntegerChoices):
 
 
 class ValueType(models.IntegerChoices):
-    SCREEN_RFD = 0, "Screening-Level RfD"
-    SCREEN_RFC = 5, "Screening-Level RfC"
-    ORGAN_RFD = 10, "Organ-Specific RfD"
-    ORGAN_RFC = 15, "Organ-Specific RfC"
-    OVERALL_RFD = 20, "Overall RfD"
-    OVERALL_RFC = 25, "Overall RfC"
-    IUR = 30, "IUR"
-    OSF = 35, "OSF"
-    OTHER = 45, "Other"
+    OVERALL_RFD = 0, "Overall RfD"
+    OVERALL_RFC = 10, "Overall RfC"
+    IUR = 20, "IUR"
+    OSF = 30, "OSF"
+    SCREEN_RFD = 40, "Screening-Level RfD"
+    SCREEN_RFC = 50, "Screening-Level RfC"
+    ORGAN_RFD = 60, "Organ-Specific RfD"
+    ORGAN_RFC = 70, "Organ-Specific RfC"
+    OTHER = 100, "Other"
 
 
 class Confidence(models.IntegerChoices):
@@ -69,3 +69,18 @@ class Confidence(models.IntegerChoices):
     MEDIUM = 20, "Medium"
     LOW = 10, "Low"
     NA = 0, "Not Applicable"
+
+
+class UncertaintyChoices(models.IntegerChoices):
+    ONE = 1, "1"
+    THREE = 3, "3"
+    TEN = 10, "10"
+    THIRTY = 30, "30"
+    ONE_HUNDRED = 100, "100"
+    THREE_HUNDRED = 300, "300"
+    ONE_THOUSAND = 1_000, "1,000"
+    THREE_THOUSAND = 3_000, "3,000"
+    TEN_THOUSAND = 10_000, "10,000"
+    THIRTY_THOUSAND = 30_000, "30,000"
+    ONE_HUNDRED_THOUSAND = 100_000, "100,000"
+    THREE_HUNDRED_THOUSAND = 300_000, "300,000"

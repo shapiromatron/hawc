@@ -110,7 +110,7 @@ class TestPubmed:
         assert i_pks.count() == initial_identifiers + 22
         assert (
             models.Reference.objects.filter(identifiers__in=i_pks).count()
-            == initial_identifiers + 22
+            == initial_identifiers + 23
         )
 
 
@@ -148,7 +148,7 @@ class TestHero:
 
         # check expected results
         assert models.Search.objects.count() == initial_searches + 1
-        assert models.Identifiers.objects.count() == initial_identifiers + 2
+        assert models.Identifiers.objects.count() == initial_identifiers + 3
         assert models.Reference.objects.count() == initial_refs + 1
 
         search = models.Search.objects.get(assessment=assessment_pk, title="example search")
@@ -160,6 +160,9 @@ class TestHero:
         )
         assert models.Identifiers.objects.get(
             unique_id="10.1016/j.chemosphere.2021.132378", database=constants.ReferenceDatabase.DOI
+        )
+        assert models.Identifiers.objects.get(
+            unique_id="34592212", database=constants.ReferenceDatabase.PUBMED
         )
 
         assert ref.searches.all()[0] == search

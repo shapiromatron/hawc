@@ -7,7 +7,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -49,6 +49,9 @@ class _ReferenceFilterTagManager(_TaggableManager):
         full_taglist = self.through.tag_model().get_descendants_pks(self.instance.assessment_id)
         selected_tags = set(tag_pks).intersection(full_taglist)
 
+        if len(selected_tags) < len(tag_pks):
+            raise ValueError("At least one of the given tags belongs to a different assessment.")
+
         tagrefs = []
         for tag_id in selected_tags:
             tagrefs.append(self.through(tag_id=tag_id, content_object=self.instance))
@@ -74,8 +77,153 @@ class PubMedQueryManager(BaseManager):
     assessment_relation = "search__assessment"
 
 
+class IdentifiersQuerySet(models.QuerySet):
+    def _associate_identifiers(
+        self, identifier_to_associated_id: dict, associated_id_to_identifier: dict
+    ) -> tuple[dict, list]:
+        """
+        Creates a dict of identifier to associated identifier given some intermediary dicts.
+
+        Args:
+            identifier_to_associated_id (dict): dict of identifier to associated id (ie PubMed/DOI string)
+            associated_id_to_identifier (dict): dict of associated ids from first argument to matching identifiers
+
+        Returns:
+            tuple[dict, list]: dict of identifier to associated identifier,
+                list of identifiers where associated identifier wasn't resolved
+        """
+        identifier_to_associated_identifier = {}
+        missing_identifiers = []
+
+        for identifier, associated_id in identifier_to_associated_id.items():
+            found = associated_id in associated_id_to_identifier
+            if found:
+                identifier_to_associated_identifier[identifier] = associated_id_to_identifier[
+                    associated_id
+                ]
+            else:
+                missing_identifiers.append(identifier)
+        return identifier_to_associated_identifier, missing_identifiers
+
+    def associated_doi(self, create: bool) -> dict:
+        """
+        Maps associated DOI identifier with each identifier in this queryset if it exists.
+
+        Args:
+            create (bool): Whether to create any missing DOI identifiers
+
+        Returns:
+            dict: Mapping of each identifier in this queryset to its associated DOI identifier.
+                If the association cannot be resolved, the key is left out.
+        """
+        # find associated doi ids
+        identifier_to_associated_doi = {
+            identifier: str(doi)
+            for identifier in self
+            if (doi := get_doi_from_identifier(identifier))
+        }
+
+        # find associated doi identifiers
+        doi_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.DOI,
+            unique_id__in=identifier_to_associated_doi.values(),
+        )
+        doi_to_matching_identifier = {
+            identifier.unique_id: identifier for identifier in doi_identifiers
+        }
+
+        # map identifiers to associated doi identifiers
+        identifier_to_associated_identifier, missing_identifiers = self._associate_identifiers(
+            identifier_to_associated_doi, doi_to_matching_identifier
+        )
+
+        if create and missing_identifiers:
+            # create any missing doi identifiers
+            missing_doi_identifiers = [
+                self.model(
+                    database=constants.ReferenceDatabase.DOI,
+                    unique_id=identifier_to_associated_doi[identifier],
+                )
+                for identifier in missing_identifiers
+            ]
+            created_doi_identifiers = self.model.objects.bulk_create(missing_doi_identifiers)
+
+            # add these new doi identifiers to the association map
+            _identifier_to_associated_doi = {
+                identifier: identifier_to_associated_doi[identifier]
+                for identifier in missing_identifiers
+            }
+            _doi_to_matching_identifier = {
+                identifier.unique_id: identifier for identifier in created_doi_identifiers
+            }
+            _identifier_to_associated_identifier, _ = self._associate_identifiers(
+                _identifier_to_associated_doi, _doi_to_matching_identifier
+            )
+            identifier_to_associated_identifier.update(_identifier_to_associated_identifier)
+
+        return identifier_to_associated_identifier
+
+    def associated_pubmed(self, create: bool) -> dict:
+        """
+        Maps associated PubMed identifier with each identifier in this queryset if it exists.
+
+        Args:
+            create (bool): Whether to create any missing PubMed identifiers
+
+        Returns:
+            dict: Mapping of each identifier in this queryset to its associated PubMed identifier.
+                If the association cannot be resolved, the key is left out.
+        """
+        # find associated pubmed ids
+        identifier_to_associated_pubmed = {
+            identifier: str(pmid)
+            for identifier in self
+            if (pmid := identifier.get_content().get("PMID"))
+        }
+
+        # find associated pubmed identifiers
+        pubmed_identifiers = self.model.objects.filter(
+            database=constants.ReferenceDatabase.PUBMED,
+            unique_id__in=identifier_to_associated_pubmed.values(),
+        )
+        pubmed_to_matching_identifier = {
+            identifier.unique_id: identifier for identifier in pubmed_identifiers
+        }
+
+        # map identifiers to associated pubmed identifiers
+        identifier_to_associated_identifier, missing_identifiers = self._associate_identifiers(
+            identifier_to_associated_pubmed, pubmed_to_matching_identifier
+        )
+
+        if create and missing_identifiers:
+            # create any missing pubmed identifiers
+            fetcher = pubmed.PubMedFetch(
+                [identifier_to_associated_pubmed[identifier] for identifier in missing_identifiers]
+            )
+            fetched_content = fetcher.get_content()
+            created_pubmed_identifiers = self.model.objects.bulk_create_pubmed_ids(fetched_content)
+
+            # add these new pubmed identifiers to the association map
+            _identifier_to_associated_pubmed = {
+                identifier: identifier_to_associated_pubmed[identifier]
+                for identifier in missing_identifiers
+            }
+            _pubmed_to_matching_identifier = {
+                identifier.unique_id: identifier for identifier in created_pubmed_identifiers
+            }
+            _identifier_to_associated_identifier, _ = self._associate_identifiers(
+                _identifier_to_associated_pubmed, _pubmed_to_matching_identifier
+            )
+            identifier_to_associated_identifier.update(_identifier_to_associated_identifier)
+
+        return identifier_to_associated_identifier
+
+
 class IdentifiersManager(BaseManager):
     assessment_relation = "references__assessment"
+
+    def get_queryset(self):
+        return IdentifiersQuerySet(self.model, using=self._db)
 
     def get_from_ris(self, search_id, references):
         # Return a queryset of identifiers for each object in RIS file.
@@ -352,13 +500,13 @@ class ReferenceQuerySet(models.QuerySet):
         )
         return self.exclude(query).distinct("pk")
 
-    def user_tags(self, user_id: int) -> dict[int, list[int]]:
+    def unresolved_user_tags(self, user_id: int) -> dict[int, list[int]]:
         # Return a dictionary of reference_id: list[tag_ids] items for all references in a queryset
         # TODO - update to annotate queryset with Django 4.1?
         # https://docs.djangoproject.com/en/4.1/ref/contrib/postgres/expressions/#arraysubquery-expressions
         UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
         user_qs = (
-            UserReferenceTag.objects.filter(reference__in=self, user=user_id)
+            UserReferenceTag.objects.filter(reference__in=self, user=user_id, is_resolved=False)
             .annotate(tag_ids=ArrayAgg("tags__id"))
             .values_list("reference_id", "tag_ids")
         )
@@ -420,17 +568,15 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
+        pubmed_map = identifiers.associated_pubmed(create=True)
+        doi_map = identifiers.associated_doi(create=True)
+
         for identifier in identifiers:
             # check if any identifiers have a pubmed ID that already exists
             # in database. If not, save a new reference.
-            content = json.loads(identifier.content)
-            pmid = content.get("PMID", None)
 
-            if pmid:
-                ref = self.get_qs(search.assessment).filter(
-                    identifiers__unique_id=str(pmid),
-                    identifiers__database=constants.ReferenceDatabase.PUBMED,
-                )
+            if pubmed_identifier := pubmed_map.get(identifier):
+                ref = self.get_qs(search.assessment).filter(identifiers=pubmed_identifier)
             else:
                 ref = self.none()
 
@@ -441,26 +587,24 @@ class ReferenceManager(BaseManager):
             else:
                 ref = identifier.create_reference(search.assessment)
                 ref.save()
+                if pubmed_identifier:
+                    ref.identifiers.add(pubmed_identifier)
 
-            Identifiers = apps.get_model("lit", "Identifiers")
-            if doi := get_doi_from_identifier(identifier):
-                doi_id, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.ReferenceDatabase.DOI
-                )
-                ref.identifiers.add(doi_id)
+            if doi_identifier := doi_map.get(identifier):
+                ref.identifiers.add(doi_identifier)
             ref.searches.add(search)
             ref.identifiers.add(identifier)
             refs.append(ref)
 
         return refs
 
-    def get_overview_details(self, assessment):
+    def get_overview_details(self, assessment) -> dict[str, int]:
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
         total = refs.count()
         total_tagged = refs.annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0).count()
         total_untagged = total - total_tagged
-        total_searched = refs.filter(searches__search_type="s").distinct().count()
+        total_searched = refs.all().filter(searches__search_type="s").distinct().count()
         total_imported = total - total_searched
         overview = {
             "total_references": total,
@@ -469,6 +613,29 @@ class ReferenceManager(BaseManager):
             "total_searched": total_searched,
             "total_imported": total_imported,
         }
+        if assessment.literature_settings.conflict_resolution:
+            UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+            user_refs = UserReferenceTag.objects.filter(reference__in=refs)
+            overview.update(
+                needs_tagging=(
+                    refs.annotate(
+                        user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                    )
+                    .filter(user_tag_count__lt=2, tags__isnull=True)
+                    .count()
+                ),
+                conflicts=(
+                    refs.annotate(
+                        n_unapplied_reviews=Count(
+                            "user_tags", filter=Q(user_tags__is_resolved=False)
+                        )
+                    )
+                    .filter(n_unapplied_reviews__gt=1)
+                    .count()
+                ),
+                total_reviews=user_refs.count(),
+                total_users=user_refs.distinct("user_id").count(),
+            )
         return overview
 
     def get_pubmed_references(self, search, identifiers):
@@ -493,17 +660,15 @@ class ReferenceManager(BaseManager):
         if refs:
             identifiers = identifiers.exclude(references__in=refs)
 
-        Identifiers = apps.get_model("lit", "Identifiers")
+        doi_map = identifiers.associated_doi(create=True)
+
         # don't bulkcreate because we need the pks
         for identifier in identifiers:
             ref = identifier.create_reference(search.assessment)
             ref.save()
             ref.searches.add(search)
             ref.identifiers.add(identifier)
-            if doi := get_doi_from_identifier(identifier):
-                doi_identifier, _ = Identifiers.objects.get_or_create(
-                    unique_id=doi, database=constants.ReferenceDatabase.DOI
-                )
+            if doi_identifier := doi_map.get(identifier):
                 ref.identifiers.add(doi_identifier)
             refs.append(ref)
 

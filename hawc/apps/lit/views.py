@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Q
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -53,6 +54,13 @@ class LitOverview(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
+        context["overview"]["my_reviews"] = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .filter(user_tags__user=self.request.user)
+            .count()
+            if self.request.user.is_authenticated
+            else 0
+        )
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
         if context["obj_perms"]["edit"]:
             context["need_import_count"] = models.Reference.objects.get_references_ready_for_import(
@@ -252,40 +260,60 @@ class TagReferences(BaseFilterList):
         filterset.ReferenceFilterSet,
         fields=[
             "title_abstract",
+            "needs_tagging",
             "search",
             "id",
-            "tag_choice",
             "tags",
             "include_descendants",
-            "untagged",
+            "anything_tagged",
+            "order_by",
+            "my_tags",
+            "include_mytag_descendants",
+            "anything_tagged_me",
         ],
         grid_layout={
             "rows": [
                 {
                     "columns": [
+                        {"width": 5, "extra_css": "px-4 pl-5 py-2"},
+                        {"width": 2, "extra_css": "px-2 pt-3 d-flex align-items-center"},
+                        {"width": 5, "extra_css": "px-4 py-2 pr-5"},
+                    ]
+                },
+                {
+                    "columns": [
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12, "extra_css": "pl-5 pr-4 py-2"},
+                                        {"width": 12, "extra_css": "pl-5 pr-4 pt-2"},
+                                        {"width": 6, "extra_css": "pl-5 pr-4 pb-2"},
+                                        {"width": 6, "extra_css": "px-4 pb-2"},
+                                    ]
+                                }
+                            ],
                         },
                         {
                             "width": 6,
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12, "extra_css": "pl-4 pr-5 py-2"},
+                                        {"width": 12, "extra_css": "pl-4 pr-5 pt-2"},
+                                        {"width": 6, "extra_css": "px-4 pb-2"},
+                                        {"width": 6, "extra_css": "pr-5 pb-2"},
                                     ]
                                 }
                             ],
                         },
                     ]
-                }
+                },
             ]
         },
     )
-    paginate_by = None
+    paginate_by = 100
 
     def get_queryset(self):
         return (
@@ -304,9 +332,9 @@ class TagReferences(BaseFilterList):
 
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
-        ref_tags = context["object_list"].user_tags(user_id=self.request.user.id)
+        ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
         for reference in references:
-            reference["user_tags"] = ref_tags.get(reference["pk"], [])
+            reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
@@ -327,31 +355,64 @@ class ConflictResolution(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
-        fields=["id", "title_abstract", "tag_choice", "tags", "include_descendants"],
+        fields=[
+            "id",
+            "title_abstract",
+            "tags",
+            "include_descendants",
+            "anything_tagged",
+            "my_tags",
+            "include_mytag_descendants",
+            "anything_tagged_me",
+        ],
         grid_layout={
             "rows": [
                 {
                     "columns": [
+                        {"width": 6},
+                        {"width": 6},
+                    ]
+                },
+                {
+                    "columns": [
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                    ]
+                                }
+                            ],
                         },
                         {
                             "width": 6,
-                            "rows": [{"columns": [{"width": 12}, {"width": 12}, {"width": 12}]}],
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                    ]
+                                }
+                            ],
                         },
                     ]
-                }
+                },
             ]
         },
     )
-    paginate_by = None
+    paginate_by = 100
 
     def get_queryset(self):
+        n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
         return (
             super()
             .get_queryset()
-            .filter(user_tags__is_resolved=False)
+            .annotate(n_unapplied_reviews=n_unapplied_reviews)
+            .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
@@ -487,15 +548,14 @@ class RefFilterList(BaseFilterList):
             "db_id",
             "search",
             "year",
-            "journal",
             "title_abstract",
             "authors",
-            "tag_choice",
-            "tags",
-            "include_descendants",
-            "untagged",
+            "journal",
             "order_by",
             "paginate_by",
+            "tags",
+            "include_descendants",
+            "anything_tagged",
         ],
         grid_layout={
             "rows": [
@@ -508,9 +568,10 @@ class RefFilterList(BaseFilterList):
                                 {
                                     "columns": [
                                         {"width": 12},
-                                        {"width": 12},
-                                        {"width": 12},
-                                        {"width": 12},
+                                        {"width": 6},
+                                        {"width": 6},
+                                        {"width": 6},
+                                        {"width": 6},
                                     ]
                                 }
                             ],
@@ -520,7 +581,6 @@ class RefFilterList(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
                                         {"width": 12},
                                         {"width": 6},
                                         {"width": 6},
@@ -656,6 +716,30 @@ class RefDetail(BaseDetail):
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_ref_app_startup(self, context)
+
+
+class ReferenceTagStatus(TeamMemberOrHigherMixin, BaseDetail):
+    template_name = "lit/reference_tag_status.html"
+    model = models.Reference
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("assessment")
+            .prefetch_related("identifiers", "tags", "user_tags__tags", "user_tags__user")
+        )
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object().get_assessment()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Tag status"
+        )
+        context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
+        return context
 
 
 class RefEdit(BaseUpdate):

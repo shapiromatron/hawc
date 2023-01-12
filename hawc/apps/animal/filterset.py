@@ -134,6 +134,7 @@ class EndpointFilterSet(BaseFilterSet):
         field_name="animal_group__dosing_regime__doses__dose_units",
         label="Dose units",
         queryset=DoseUnits.objects.all(),
+        distinct=True,
     )
     order_by = df.OrderingFilter(
         fields=(
