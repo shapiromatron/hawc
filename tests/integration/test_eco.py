@@ -39,11 +39,12 @@ class TestEco(PlaywrightTestCase):
         page.locator('input[role="searchbox"]').type("term")
         page.locator('li[role="option"]:has-text("term")').click()
         page.get_by_label("Level*").fill("test!")
-        page.locator('select[name="level_units"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("grams")
         page.locator('select[name="duration"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("test")
-        page.locator("#cause-save").click()
+        page.locator('input[role="searchbox"]').fill("3 days")
+        # buggy?
+        page.locator("#cause-save").focus()
+        page.locator("#cause-save").click(delay=100)
+        page.locator("#cause-save").click(delay=100)
         # clone cause
         with page.expect_response(re.compile(r"/eco/cause/\d+/clone/")) as resp:
             page.locator("#cause-clone").nth(1).click(delay=100)
