@@ -15,7 +15,7 @@ _successful_post = {
     "habitats": ["12"],
     "habitats_as_reported": "habitat here",
     "climates": ["103"],
-    "climate_as_reported": "climate here",
+    "climates_as_reported": "climate here",
 }
 
 

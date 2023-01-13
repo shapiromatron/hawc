@@ -110,6 +110,7 @@ class TestDesignChildren:
         # result create
         url = reverse("eco:result-create", args=[design.id])
         inputs = {
+            "name": "result",
             "cause": cause.id,
             "effect": effect.id,
             "sort_order": 3,
