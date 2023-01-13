@@ -38,7 +38,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("habitat_as_reported", "climate_as_reported"):
+        for fld in ("habitats_as_reported", "climates_as_reported", "comments"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
@@ -56,13 +56,13 @@ class DesignForm(forms.ModelForm):
 
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("countries", 3, "col-md-4")
-        helper.add_row("habitat", 4, "col-md-3")
+        helper.add_row("habitats", 4, "col-md-3")
         return helper
 
 
 def _term_help_text():
     a = new_window_a(reverse_lazy("eco:term_list"), "term list")
-    return f"Controlled vocabulary term; view entire {a}."
+    return f"Controlled vocabulary term; view entire {a}. Select a term by name or numeric ID."
 
 
 class CauseForm(forms.ModelForm):
@@ -75,9 +75,6 @@ class CauseForm(forms.ModelForm):
             ),
             "species": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.CauseAutocomplete, field="species"
-            ),
-            "level": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.CauseAutocomplete, field="level"
             ),
             "level_units": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.CauseAutocomplete, field="level_units"
@@ -98,7 +95,7 @@ class CauseForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("as_reported", "comments"):
+        for fld in ("as_reported", "comments", "level"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         self.fields["term"].help_text = _term_help_text()
@@ -107,8 +104,9 @@ class CauseForm(forms.ModelForm):
         helper.form_tag = False
         helper.add_row("name", 2, ["col-md-4", "col-md-8"])
         helper.add_row("biological_organization", 2, "col-md-6")
-        helper.add_row("level", 3, "col-md-4")
+        helper.add_row("level", 3, ["col-md-6", "col-md-3", "col-md-3"])
         helper.add_row("duration", 3, "col-md-4")
+        helper.add_row("exposure", 3, "col-md-4")
         helper.add_row("as_reported", 2, "col-md-6")
         return helper
 
@@ -163,15 +161,15 @@ class ResultForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("relationship_comment", "modifying_factors_comment", "description"):
+        for fld in ("relationship_comment", "modifying_factors_comment", "comments"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        helper.add_row("cause", 3, "col-md-4")
+        helper.add_row("name", 4, ["col-md-4", "col-md-3", "col-md-3", "col-md-2"])
         helper.add_row("relationship_direction", 2, "col-md-6")
         helper.add_row("measure_type", 4, "col-md-3")
-        helper.add_row("variability", 3, "col-md-3")
+        helper.add_row("variability", 3, "col-md-4")
         helper.add_row("modifying_factors", 2, "col-md-6")
         helper.add_row("statistical_sig_type", 3, "col-md-4")
         return helper

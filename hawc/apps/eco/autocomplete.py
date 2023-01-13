@@ -32,7 +32,7 @@ class EcoregionAutocomplete(BaseAutocomplete):
 @register
 class NestedTermAutocomplete(BaseAutocomplete):
     model = models.NestedTerm
-    search_fields = ["name"]
+    search_fields = ("id", "name")
 
     def get_result_label(self, obj):
-        return obj.label()
+        return f"{obj.label()} ({obj.id})"

@@ -27,7 +27,7 @@ class VocabAdmin(admin.ModelAdmin):
 class DesignAdmin(admin.ModelAdmin):
     form = forms.DesignForm
     list_display = ("id", "__str__", "study", "design", "created", "last_updated")
-    list_filter = ("design", "habitat")
+    list_filter = ("design", "habitats")
     search_fields = ("study__short_citation",)
 
     def get_queryset(self, request):

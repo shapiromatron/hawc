@@ -5,6 +5,7 @@ from typing import Any, Optional
 
 from django import template
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import QuerySet
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -21,6 +22,15 @@ def audit_url(object):
 def optional_table_row(name: str, value: Any) -> str:
     if value is not None and value != "":
         return mark_safe(f"<tr><th>{name}</th><td>{value}</td></tr>")
+    return ""
+
+
+@register.simple_tag
+def optional_table_list_row(name: str, qs: QuerySet) -> str:
+    items = qs.all()
+    if items:
+        items = ", ".join([f"<span>{item}</span>" for item in items])
+        return mark_safe(f"<tr><th>{name}</th><td>{items}</td></tr>")
     return ""
 
 

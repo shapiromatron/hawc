@@ -12,10 +12,10 @@ _successful_post = {
     "countries": ["2"],
     "states": [],
     "ecoregions": ["110"],
-    "habitat": "12",
-    "habitat_as_reported": "habitat here",
+    "habitats": ["12"],
+    "habitats_as_reported": "habitat here",
     "climates": ["103"],
-    "climate_as_reported": "climate here",
+    "climates_as_reported": "climate here",
 }
 
 

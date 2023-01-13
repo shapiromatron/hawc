@@ -26,8 +26,8 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/designv2/\d+/update/")) as resp:
             page.locator("#design-update").click(delay=100)
         assert resp.value.ok is True
-        page.locator('textarea[name="habitat_as_reported"]').click()
-        page.locator('textarea[name="habitat_as_reported"]').fill("habitat update")
+        page.locator('textarea[name="habitats_as_reported"]').click()
+        page.locator('textarea[name="habitats_as_reported"]').fill("habitat update")
         page.locator("text=Save").click()
 
         # Create new Cause
@@ -38,13 +38,13 @@ class TestEco(PlaywrightTestCase):
         page.locator('select[name="term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
         page.locator('li[role="option"]:has-text("term")').click()
-        page.locator('select[name="level"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("2")
-        page.locator('select[name="level_units"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("grams")
+        page.get_by_label("Level*").fill("test!")
         page.locator('select[name="duration"]+span.select2-container').click()
-        page.locator('input[role="searchbox"]').fill("test")
-        page.locator("#cause-save").click()
+        page.locator('input[role="searchbox"]').fill("3 days")
+        # buggy?
+        page.locator("#cause-save").focus()
+        page.locator("#cause-save").click(delay=100)
+        page.locator("#cause-save").click(delay=100)
         # clone cause
         with page.expect_response(re.compile(r"/eco/cause/\d+/clone/")) as resp:
             page.locator("#cause-clone").nth(1).click(delay=100)
@@ -76,6 +76,7 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/result/\d+/create/")) as resp:
             page.locator("#result-create").click()
         assert resp.value.ok is True
+        page.locator('input[name="name"]').fill("name!")
         page.locator('select[name="cause"]').select_option(index=2)
         page.locator('select[name="effect"]').select_option(index=2)
         page.locator('select[name="relationship_direction"]').select_option("0")
