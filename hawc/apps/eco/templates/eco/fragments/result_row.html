@@ -1,5 +1,6 @@
 {% load split %}
 <tr hx-target="this" hx-swap="outerHTML" id="result-{{object.id}}">
+    <td>{{object.name}}</td>
     <td>{{object.cause.name}}</td>
     <td>{{object.effect.name }}</td>
     <td>{{object.get_relationship_direction_display}}</td>
@@ -9,7 +10,6 @@
         <span class="badge badge-secondary">{{factor}}</span>
         {% endfor %}
     </td>
-    <td>{{object.description|safe }}</td>
     <td>{{object.derived_value }}</td>
     {% include "eco/fragments/_object_row.html" with model="result" %}
 </tr>

@@ -35,7 +35,7 @@ class NestedTerm(MP_Node):
 
     @property
     def nested_text(self) -> str:
-        return "- " * (self.depth - 1) + self.name
+        return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     def label(self) -> str:
         # expensive - calls `get_ancestors()`` for each item
@@ -79,14 +79,14 @@ class Design(models.Model):
         limit_choices_to={"category": VocabCategories.TYPE},
         on_delete=models.CASCADE,
         help_text="Select study design",
-        related_name="+",
+        related_name="designs_by_type",
     )
     study_setting = models.ForeignKey(
         Vocab,
         limit_choices_to={"category": VocabCategories.SETTING},
         on_delete=models.CASCADE,
         help_text="Select the setting in which evidence was generated",
-        related_name="+",
+        related_name="designs_by_setting",
     )
     countries = models.ManyToManyField(
         Country,
@@ -98,15 +98,16 @@ class Design(models.Model):
     )
     ecoregions = models.ManyToManyField(
         Vocab,
+        blank=True,
         limit_choices_to={"category": VocabCategories.ECOREGION},
         help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')}, if known",
-        related_name="+",
+        related_name="designs_by_ecoregion",
     )
     habitats = models.ManyToManyField(
         Vocab,
         limit_choices_to={"category": VocabCategories.HABITAT},
         help_text="Select one or more habitats to which the evidence applies.",
-        related_name="+",
+        related_name="designs_by_habitat",
     )
     habitats_as_reported = models.TextField(
         verbose_name="Habitats as reported",
@@ -117,17 +118,16 @@ class Design(models.Model):
         Vocab,
         limit_choices_to={"category": VocabCategories.CLIMATE},
         help_text=f"Select one or more {new_window_a('http://koeppen-geiger.vu-wien.ac.at/present.htm', 'Koppen climate classifications')} to which the evidence applies",
-        related_name="+",
+        related_name="designs_by_climate",
     )
-    climate_as_reported = models.TextField(
-        verbose_name="Climate as reported",
+    climates_as_reported = models.TextField(
+        verbose_name="Climates as reported",
         blank=True,
         help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
     )
-    comment = models.TextField(
-        verbose_name="Study Design Comments",
+    comments = models.TextField(
         blank=True,
-        help_text="Additional location information not previously described",
+        help_text="Additional information not described in other fields",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -303,7 +303,7 @@ class Effect(models.Model):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="effect_by_bio",
     )
     species = models.CharField(
         verbose_name="Species",
@@ -380,7 +380,7 @@ class Result(models.Model):
             Q(category=VocabCategories.RESPONSE_MEASURETYPE) & Q(parent__isnull=False)
         ),
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="result_by_measure",
         help_text="Response measure type",
         blank=True,
         null=True,
@@ -408,7 +408,7 @@ class Result(models.Model):
         verbose_name="Response variability",
         limit_choices_to={"category": VocabCategories.RESPONSE_VARIABILITY},
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="result_by_variability",
         help_text="Type of variability reported for the numeric response measure",
     )
     low_variability = models.FloatField(
@@ -441,7 +441,7 @@ class Result(models.Model):
         verbose_name="Statistical significance",
         limit_choices_to={"category": VocabCategories.STATISTICAL},
         on_delete=models.CASCADE,
-        related_name="+",
+        related_name="result_by_sig",
         help_text="Statistical significance measure reported",
     )
     statistical_sig_value = NumericTextField(
@@ -450,8 +450,7 @@ class Result(models.Model):
         default="",
         help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
     )
-    comment = models.TextField(
-        verbose_name="Comments",
+    comments = models.TextField(
         blank=True,
         help_text="Additional information not previously described",
     )

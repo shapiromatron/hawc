@@ -38,7 +38,7 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("habitats_as_reported", "climate_as_reported", "comment"):
+        for fld in ("habitats_as_reported", "climates_as_reported", "comments"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         if self.instance.id:
@@ -62,7 +62,7 @@ class DesignForm(forms.ModelForm):
 
 def _term_help_text():
     a = new_window_a(reverse_lazy("eco:term_list"), "term list")
-    return f"Controlled vocabulary term; view entire {a}."
+    return f"Controlled vocabulary term; view entire {a}. Select a term by name or numeric ID."
 
 
 class CauseForm(forms.ModelForm):
@@ -161,7 +161,7 @@ class ResultForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("relationship_comment", "modifying_factors_comment", "comment"):
+        for fld in ("relationship_comment", "modifying_factors_comment", "comments"):
             self.fields[fld].widget.attrs["rows"] = 3
 
         helper = BaseFormHelper(self)

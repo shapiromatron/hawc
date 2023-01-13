@@ -54,8 +54,8 @@
     <div class="card-body">
         <h3 class="card-title">Results</h3>
         <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,15,15,15,20,15' %}
-            {% bs4_thead 'Cause,Effect,Relationship Direction,Modifying Factors,Description,Derived Value' %}
+            {% bs4_colgroup '20,20,15,15,15,15' %}
+            {% bs4_thead 'Name,Cause,Effect,Relationship Direction,Modifying Factors,Value' %}
             <tbody id="result-tbody">
                 {% for object in results %}
                     {% include "eco/fragments/result_row.html" %}
