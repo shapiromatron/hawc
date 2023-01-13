@@ -96,6 +96,20 @@ class Migration(migrations.Migration):
             ),
             preserve_default=False,
         ),
+        migrations.RenameField(
+            model_name="design",
+            old_name="habitat_as_reported",
+            new_name="habitats_as_reported",
+        ),
+        migrations.AlterField(
+            model_name="design",
+            name="habitats_as_reported",
+            field=models.TextField(
+                blank=True,
+                help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
+                verbose_name="Habitats as reported",
+            ),
+        ),
         migrations.AlterField(
             model_name="cause",
             name="duration",

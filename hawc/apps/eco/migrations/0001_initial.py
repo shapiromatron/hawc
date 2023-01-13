@@ -196,11 +196,11 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(blank=True, max_length=128)),
                 (
-                    "habitats_as_reported",
+                    "habitat_as_reported",
                     models.TextField(
                         blank=True,
                         help_text="Copy and paste exact phrase up to 1-2 sentences from article. If not stated in the article, leave blank.",
-                        verbose_name="Habitats as reported",
+                        verbose_name="Habitat as reported",
                     ),
                 ),
                 (
