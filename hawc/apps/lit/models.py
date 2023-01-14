@@ -606,7 +606,7 @@ class Identifiers(models.Model):
 
     class Meta:
         unique_together = (("database", "unique_id"),)
-        index_together = (("database", "unique_id"),)
+        indexes = (models.Index(fields=("database", "unique_id")),)
         verbose_name_plural = "identifiers"
 
     def __str__(self):

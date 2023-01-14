@@ -289,7 +289,8 @@ window.addEventListener("load", function () {
       // form used when a new formset is added.
       $(".admin-autocomplete").not("[name*=__prefix__]").djangoAdminSelect2();
     });
-
+    // TODO - make sure still works
+    // https://docs.djangoproject.com/en/4.1/releases/4.1/#miscellaneous
     $(document).on(
       "formset:added",
       (function () {

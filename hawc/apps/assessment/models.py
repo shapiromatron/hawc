@@ -711,6 +711,7 @@ class Dataset(models.Model):
         return self.revisions.latest()
 
     def get_new_version_value(self) -> int:
+        # https://docs.djangoproject.com/en/4.1/releases/4.1/#reverse-foreign-key-changes-for-unsaved-model-instances
         try:
             return self.get_latest_revision().version + 1
         except (ValueError, models.ObjectDoesNotExist):

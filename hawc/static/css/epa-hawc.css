@@ -36,6 +36,9 @@ header.l-header * {
 .hawc-header a {
     text-decoration: none;
 }
+.unstyled-action-button {
+    color: var(--epa-primary);
+}
 
 /* override environment banner position */
 .env-banner {

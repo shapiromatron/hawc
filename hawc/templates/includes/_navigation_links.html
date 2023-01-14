@@ -28,7 +28,11 @@
             <a class="dropdown-item" href="{% url 'assessment:full_list' %}">View all assessments</a>
         {% endif %}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
+        {% comment %} TODO - check both styles - https://docs.djangoproject.com/en/4.1/releases/4.1/#log-out-via-get {% endcomment %}
+        <form class="dropdown-item" method="post" action="{% url 'user:logout' %}">
+            {% csrf_token %}
+            <button class="unstyled-action-button" type="submit">Logout</button>
+        </form>
     </div>
 </li>
 {% else %}
