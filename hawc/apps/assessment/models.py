@@ -713,7 +713,7 @@ class Dataset(models.Model):
     def get_new_version_value(self) -> int:
         try:
             return self.get_latest_revision().version + 1
-        except models.ObjectDoesNotExist:
+        except (ValueError, models.ObjectDoesNotExist):
             return 1
 
     def get_latest_df(self) -> pd.DataFrame:

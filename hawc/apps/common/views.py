@@ -148,9 +148,8 @@ class MessageMixin:
         if self.success_message is not None:
             messages.success(self.request, self.success_message, extra_tags="alert alert-success")
 
-    def delete(self, request, *args, **kwargs):
-        self.send_message()
-        return super().delete(request, *args, **kwargs)
+    # TODO - check delete still sends messages
+    # https://docs.djangoproject.com/en/4.0/releases/4.0/#deleteview-changes
 
     def form_valid(self, form):
         self.send_message()
@@ -499,9 +498,9 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
     crud = "Delete"
 
     @transaction.atomic
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.permission_check_user_can_edit()
+    def form_valid(self, form):
+        # TODO - ensure permission checks
+        # https://docs.djangoproject.com/en/4.0/releases/4.0/#generic-views
         success_url = self.get_success_url()
         self.create_log(self.object)
         self.object.delete()
