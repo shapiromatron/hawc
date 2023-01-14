@@ -70,7 +70,7 @@ class TestTopicModelTsne:
         ).to_frame()
         df, df_topics = topics.topic_model_tsne(input_df)
 
-        assert df.shape == (12, 3)
+        assert df.shape == (23, 3)
         assert set(df.columns.tolist()) == {"max_topic", "tsne_x", "tsne_y"}
 
         assert df_topics.shape == (10, 2)
