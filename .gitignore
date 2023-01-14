@@ -37,6 +37,7 @@ private/
 public/
 scripts/private
 venv/
+venv2/
 
 # keep folders; not contents
 hawc/static/bundles/*
