@@ -537,7 +537,7 @@ class ExposureCleanup(CleanupFieldsBaseViewSet):
 
 
 class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    model = models.Assessment
+    model = Assessment
     serializer_class = AssessmentSerializer
 
     def get_queryset(self, *args, **kwargs):

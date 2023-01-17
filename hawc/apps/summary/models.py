@@ -520,33 +520,6 @@ class Visual(models.Model):
             ],
         }
 
-    def copy_across_assessments(self, cw: dict):
-        old_id = self.id
-
-        study_cw = cw[get_model_copy_name(Study)]
-        new_study_ids = []
-        for study in self.studies.all().order_by("id"):
-            if study.id in study_cw:
-                new_study_ids.append(study_cw[study.id])
-            else:
-                logger.warning(f"Study {study.id} ({study}) missing from viz: {self.id}")
-        new_studies = list(Study.objects.filter(id__in=new_study_ids))
-        assert len(new_study_ids) == len(new_studies)
-
-        if self.endpoints.all().count() > 0:
-            raise NotImplementedError("Requires implementation to copy this visual type")
-
-        self.id = None
-        self.assessment_id = cw[get_model_copy_name(self.assessment)][self.assessment_id]
-        self.prefilters = Prefilter.copy_across_assessments(self.prefilters, cw)
-        self.settings = self._update_settings_across_assessments(cw)
-        self.save()
-
-        # set m2m settings
-        self.studies.set(new_studies)
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
     def _update_settings_across_assessments(self, cw: dict) -> str:
         settings = json.loads(self.settings)
 
@@ -659,9 +632,6 @@ class DataPivot(models.Model):
         settings_as_json["row_overrides"] = []
         return json.dumps(settings_as_json)
 
-    def copy_across_assessment(cw):
-        raise NotImplementedError("Only implemented on child classes")
-
 
 class DataPivotUpload(DataPivot):
     objects = managers.DataPivotUploadManager()
@@ -681,27 +651,6 @@ class DataPivotUpload(DataPivot):
     @property
     def visual_type(self):
         return "Data pivot (file upload)"
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        new_assessment_id = cw[get_model_copy_name(self.assessment)][self.assessment_id]
-
-        # copy base
-        base = self.datapivot_ptr
-        base.id = None
-        base.assessment_id = new_assessment_id
-        base.save()
-
-        # copy self
-        self.id = None
-        self.assessment_id = new_assessment_id
-        self.datapivot_ptr = base
-        self.save()
-
-        # TODO - check multitable inheritance
-        # TODO - improve prefilters and setttings?
-
-        cw[get_model_copy_name(self)][old_id] = self.id
 
     def _update_settings_across_assessments(self, cw: dict) -> str:
         # no changes required
@@ -888,25 +837,6 @@ class DataPivotQuery(DataPivot):
         else:
             raise ValueError("Unknown type")
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        new_assessment_id = cw[get_model_copy_name(self.assessment)][self.assessment_id]
-
-        # copy base
-        base = self.datapivot_ptr
-        base.id = None
-        base.assessment_id = new_assessment_id
-        base.save()
-
-        # copy self
-        self.id = None
-        self.assessment_id = new_assessment_id
-        self.datapivot_ptr = base
-        self.prefilters = Prefilter.copy_across_assessments(self.prefilters, cw)
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
     def _update_settings_across_assessments(self, cw: dict) -> str:
         try:
             settings = json.loads(self.settings)
@@ -1005,23 +935,6 @@ class Prefilter:
     @staticmethod
     def setFiltersFromObj(filters, prefilters):
         filters.update(json.loads(prefilters))
-
-    @staticmethod
-    def copy_across_assessments(prefilters: str, cw: dict) -> str:
-        filters = json.loads(prefilters)
-        for study_id_key in [
-            "animal_group__experiment__study__in",
-            "study_population__study__in",
-            "experiment__study__in",
-            "protocol__study__in",
-        ]:
-            if study_id_key in filters:
-                ids = []
-                for id_ in filters[study_id_key]:
-                    if int(id_) in cw[get_model_copy_name(Study)]:
-                        ids.append(str(cw[get_model_copy_name(Study)][int(id_)]))
-                filters[study_id_key] = ids
-        return json.dumps(filters)
 
 
 reversion.register(SummaryText)
