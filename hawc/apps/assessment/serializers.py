@@ -29,7 +29,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Assessment
-        fields = "__all__"
+        exclude = ("admin_notes",)
 
 
 class AssessmentMiniSerializer(serializers.ModelSerializer):
