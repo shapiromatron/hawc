@@ -277,7 +277,7 @@ class Assessment(models.Model):
     )
     admin_notes = models.TextField(
         blank=True,
-        help_text="This field is for capturing information about assessments (e.g., STICS numbers) that is only visible and accessible to HAWC Admins",
+        help_text="Additional information about this assessment; only visible to HAWC admins",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
