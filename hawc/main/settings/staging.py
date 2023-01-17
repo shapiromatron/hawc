@@ -1,5 +1,6 @@
 # flake8: noqa
 
+import json
 import os
 
 from .base import *
@@ -73,3 +74,14 @@ if email_backend == "SMTP" and EMAIL_MESSAGEID_FQDN is not None:
     from django.core.mail.utils import DNS_NAME
 
     DNS_NAME._fqdn = EMAIL_MESSAGEID_FQDN
+
+if SENTRY_DSN := os.environ.get("HAWC_SENTRY_DSN"):
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    SENTRY_SETTINGS = json.loads(
+        os.environ.get(
+            "HAWC_SENTRY_SETTINGS", '{"traces_sample_rate": 1.0, "send_default_pii": false}'
+        )
+    )
+    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()], **SENTRY_SETTINGS)
