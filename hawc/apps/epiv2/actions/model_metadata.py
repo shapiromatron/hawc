@@ -1,11 +1,8 @@
-from django.db.models.functions import Lower
-from rest_framework.response import Response
-
 from ...common.actions import BaseApiAction
 from ...epi.actions.model_metadata import NoInput, get_all_model_objects
 from ...epi.models import Country
 from ...study.models import Study
-from .. import constants, models
+from .. import constants
 
 
 class EpiV2AssessmentMetadata(BaseApiAction):
@@ -65,7 +62,3 @@ class EpiV2AssessmentMetadata(BaseApiAction):
             outcome=self.outcome_metadata(),
             data_extraction=self.data_extraction_metadata(),
         )
-
-    def handle_assessment_request(self, request, assessment):
-        self.assessment = assessment
-        return Response(self.evaluate())

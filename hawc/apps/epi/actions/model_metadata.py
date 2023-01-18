@@ -1,6 +1,5 @@
 from django.db.models.functions import Lower
 from pydantic import BaseModel
-from rest_framework.response import Response
 
 from hawc.apps.assessment.models import DoseUnits
 from hawc.apps.common.actions import BaseApiAction
@@ -82,9 +81,6 @@ class EpiAssessmentMetadata(BaseApiAction):
             design=dict(constants.Design.choices),
             countries=get_all_model_objects(Country, "name", "code"),
         )
-        import pdb
-
-        pdb.set_trace()
         metadata["assessment_specific_criteria"] = {
             c.id: c.description
             for c in Criteria.objects.filter(assessment=self.data["assessment"]).order_by(
