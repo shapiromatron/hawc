@@ -545,8 +545,8 @@ class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         assessment = self.get_object()
-        if assessment.user_can_view_object(request.user):
-            eam = EpiAssessmentMetadata(None)
-            return eam.handle_assessment_request(request, assessment)
-        else:
+        if not assessment.user_can_view_object(request.user):
             raise PermissionDenied("Invalid permission to view assessment metadata")
+
+        action = EpiAssessmentMetadata(data={"assessment": assessment})
+        return Response(action.evaluate())

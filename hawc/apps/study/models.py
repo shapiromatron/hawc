@@ -140,6 +140,11 @@ class Study(Reference):
             study.set_communications(internal_communications)
         return study
 
+    @classmethod
+    def metadata(cls) -> dict:
+        # return schema metadata for choice fields
+        return dict(coi_reported=dict(constants.CoiReported.choices))
+
     def __str__(self):
         return self.short_citation
 

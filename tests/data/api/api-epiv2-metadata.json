@@ -1,0 +1,190 @@
+{
+  "data_extraction": {
+    "ci_type": {
+      "NA": "N/A",
+      "Oth": "Other",
+      "P90": "10th/90th percentile",
+      "P95": "5th/95th percentile",
+      "P99": "1st/99th percentile",
+      "Rng": "Range [min, max]"
+    },
+    "effect_estimate_type": {
+      "Absolute Risk %": "Absolute Risk %",
+      "Absolute Risk Reduction/ Risk difference (ARR or RD)": "Absolute Risk Reduction/ Risk difference (ARR or RD)",
+      "Comparison of Means": "Comparison of Means",
+      "Hazard Ratio (HR)": "Hazard Ratio (HR)",
+      "Incidence Risk Ratio (IRR)": "Incidence Risk Ratio (IRR)",
+      "Mean difference": "Mean difference",
+      "Odds Ratio (OR)": "Odds Ratio (OR)",
+      "Percent change": "Percent change",
+      "Regression coefficient (\u03b2)": "Regression coefficient (\u03b2)",
+      "Relative Risk Ratio (RR)": "Relative Risk Ratio (RR)",
+      "Spearman's Correlation Coefficient": "Spearman's Correlation Coefficient",
+      "Standardized Incidence Ratio (SIR)": "Standardized Incidence Ratio (SIR)",
+      "Standardized Mortality Ratio (SMR)": "Standardized Mortality Ratio (SMR)",
+      "other": "other"
+    },
+    "significant": {
+      "0": "No",
+      "1": "Yes",
+      "2": "N/A",
+      "3": "NR"
+    },
+    "transforms": {
+      "": "<none>",
+      "N/A": "N/A",
+      "NR": "NR",
+      "cubic": "cubic",
+      "ln": "ln",
+      "log (unspecified basis)": "log (unspecified basis)",
+      "log(x+1)": "log(x+1)",
+      "log10": "log10",
+      "log2": "log2",
+      "other": "other",
+      "squared": "squared",
+      "z-score": "z-score"
+    },
+    "variance_type": {
+      "0": "N/A",
+      "1": "SD",
+      "2": "SE",
+      "3": "SEM",
+      "4": "GSD",
+      "5": "IQR (interquartile range)",
+      "6": "other"
+    }
+  },
+  "design": {
+    "age_profile": {
+      "AD": "Adults",
+      "CH": "Children and adolescents <18 yrs",
+      "OT": "Other",
+      "PW": "Pregnant women"
+    },
+    "countries": {
+      "DK": "Denmark",
+      "JP": "Japan",
+      "TW": "Taiwan"
+    },
+    "sex": {
+      "B": "Male and Female",
+      "F": "Female",
+      "M": "Male",
+      "U": "Not reported"
+    },
+    "source": {
+      "GP": "General population",
+      "OC": "Occupational",
+      "OT": "Other"
+    },
+    "study_design": {
+      "CC": "Case-control",
+      "CO": "Cohort",
+      "CR": "Case report",
+      "CS": "Cross-sectional",
+      "EC": "Ecological",
+      "NC": "Nested case-control",
+      "NT": "Non-randomized controlled trial",
+      "OT": "Other",
+      "RT": "Randomized controlled trial",
+      "SE": "Case series"
+    }
+  },
+  "exposure": {
+    "biomonitoring_matrix": {
+      "BLP": "Blood (portion: Plasma)",
+      "BLS": "Blood (portion: Serum)",
+      "BLW": "Blood (portion: Whole blood)",
+      "BM": "Breast milk",
+      "CF": "Cerebrospinal fluid",
+      "EB": "Exhaled breath",
+      "FC": "Feces",
+      "HR": "Hair",
+      "NL": "Nails",
+      "OT": "Other",
+      "SA": "Saliva",
+      "SE": "Semen",
+      "TE": "Teeth",
+      "UR": "Urine"
+    },
+    "biomonitoring_source": {
+      "CD": "Cord",
+      "ML": "Maternal",
+      "PL": "Paternal",
+      "PT": "From participant"
+    },
+    "exposure_route": {
+      "DE": "Dermal",
+      "IH": "Inhalation",
+      "IU": "In utero",
+      "IV": "Intravenous",
+      "OR": "Oral",
+      "UK": "Unknown/Total"
+    },
+    "measurement_type": {
+      "Air": "Air",
+      "Biomonitoring": "Biomonitoring",
+      "Direct administration - inhalation": "Direct administration - inhalation",
+      "Direct administration - oral": "Direct administration - oral",
+      "Drinking water": "Drinking water",
+      "Food": "Food",
+      "Modeled": "Modeled",
+      "Occupational": "Occupational",
+      "Questionnaire": "Questionnaire",
+      "other": "other"
+    }
+  },
+  "exposure_level": {
+    "ci_type": {
+      "NA": "N/A",
+      "Oth": "Other",
+      "P90": "10th/90th percentile",
+      "P95": "5th/95th percentile",
+      "P99": "1st/99th percentile",
+      "Rng": "Range [min, max]"
+    },
+    "variance_type": {
+      "0": "N/A",
+      "1": "SD",
+      "2": "SE",
+      "3": "SEM",
+      "4": "GSD",
+      "5": "IQR (interquartile range)",
+      "6": "other"
+    }
+  },
+  "outcome": {
+    "system": {
+      "CA": "Cancer",
+      "CV": "Cardiovascular",
+      "DE": "Dermal",
+      "DV": "Developmental",
+      "EN": "Endocrine",
+      "GI": "Gastrointestinal",
+      "HM": "Hematologic",
+      "HP": "Hepatic",
+      "IM": "Immune",
+      "MS": "Multi-System",
+      "MT": "Metabolic",
+      "MU": "Musculoskeletal",
+      "NV": "Nervous",
+      "OC": "Ocular",
+      "OT": "Other",
+      "RP": "Reproductive",
+      "RS": "Respiratory",
+      "UR": "Urinary",
+      "WB": "Whole Body"
+    }
+  },
+  "study": {
+    "coi_reported": {
+      "0": "Authors report they have no COI",
+      "1": "Authors disclosed COI",
+      "2": "Unknown",
+      "3": "Not reported",
+      "4": "---",
+      "5": "Not reported; no COI is inferred based on author affiliation and/or funding source",
+      "6": "Not reported; a COI is inferred based on author affiliation and/or funding source"
+    }
+  }
+}
