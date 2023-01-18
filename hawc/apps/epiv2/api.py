@@ -41,4 +41,4 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 
 class Metadata(viewsets.ViewSet):
     def list(self, request):
-        return EpiV2AssessmentMetadata().handle_request(request)
+        return EpiV2AssessmentMetadata.handle_request(request)
