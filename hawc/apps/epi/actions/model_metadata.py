@@ -1,10 +1,9 @@
 from django.db.models.functions import Lower
 from pydantic import BaseModel
 
-from hawc.apps.assessment.models import DoseUnits
-from hawc.apps.common.actions import BaseApiAction
-from hawc.apps.study.models import Study
-
+from ...assessment.models import DoseUnits
+from ...common.actions import BaseApiAction
+from ...study.models import Study
 from .. import constants
 from ..models import AdjustmentFactor, Country, Criteria, Ethnicity, ResultMetric
 
