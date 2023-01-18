@@ -329,4 +329,4 @@ class DoseUnits(DoseUnitsViewset):
 
 class Metadata(viewsets.ViewSet):
     def list(self, request):
-        return AnimalMetadata.handle_request(request)
+        return AnimalMetadata().handle_request(request)

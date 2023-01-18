@@ -1,11 +1,11 @@
 from django.db.models.functions import Lower
 from rest_framework.response import Response
 
-from hawc.apps.common.actions import BaseApiAction
-from hawc.apps.epi.actions.model_metadata import NoInput, get_all_model_objects
-from hawc.apps.epiv2 import constants, models
-
+from ...common.actions import BaseApiAction
+from ...epi.actions.model_metadata import NoInput, get_all_model_objects
 from ...epi.models import Country
+from ...study.models import Study
+from .. import constants, models
 
 
 class EpiV2AssessmentMetadata(BaseApiAction):
@@ -36,17 +36,10 @@ class EpiV2AssessmentMetadata(BaseApiAction):
         return metadata
 
     def exposure_level_metadata(self):
-        metadata = dict(
+        return dict(
             variance_type=dict(constants.VarianceType.choices),
             ci_type=dict(constants.ConfidenceIntervalType.choices),
         )
-        metadata["assessment_specific_chemicals"] = {
-            chem.id: chem.name
-            for chem in models.Chemical.objects.filter(
-                design__study__assessment=self.assessment
-            ).order_by(Lower("name"))
-        }
-        return metadata
 
     def outcome_metadata(self):
         metadata = dict(
@@ -55,27 +48,22 @@ class EpiV2AssessmentMetadata(BaseApiAction):
         return metadata
 
     def data_extraction_metadata(self):
-        metadata = dict(
+        return dict(
+            effect_estimate_type=dict(constants.EffectEstimateType.choices),
             ci_type=dict(constants.ConfidenceIntervalType.choices),
             variance_type=dict(constants.VarianceType.choices),
             significant=dict(constants.Significant.choices),
+            transforms=dict(constants.DataTransforms.choices),
         )
 
-        metadata["assessment_specific_adjustment_factors"] = {
-            af.id: {"name": af.name, "description": af.description}
-            for af in models.AdjustmentFactor.objects.filter(
-                design__study__assessment=self.assessment
-            ).order_by(Lower("name"))
-        }
-        return metadata
-
-    def evaluate(self):
+    def evaluate(self) -> dict:
         return dict(
+            study=Study.metadata(),
             design=self.design_metadata(),
-            exposure_metadata=self.exposure_metadata(),
-            exposure_level_metadata=self.exposure_level_metadata(),
-            outcome_metadata=self.outcome_metadata(),
-            data_extraction_metadata=self.data_extraction_metadata(),
+            exposure=self.exposure_metadata(),
+            exposure_level=self.exposure_level_metadata(),
+            outcome=self.outcome_metadata(),
+            data_extraction=self.data_extraction_metadata(),
         )
 
     def handle_assessment_request(self, request, assessment):

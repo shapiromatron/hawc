@@ -4,8 +4,10 @@ from rest_framework.response import Response
 
 from hawc.apps.assessment.models import DoseUnits
 from hawc.apps.common.actions import BaseApiAction
-from hawc.apps.epi import constants
-from hawc.apps.epi.models import AdjustmentFactor, Country, Criteria, Ethnicity, ResultMetric
+from hawc.apps.study.models import Study
+
+from .. import constants
+from ..models import AdjustmentFactor, Country, Criteria, Ethnicity, ResultMetric
 
 
 def get_all_model_objects(object_class, display_field="name", val_field="id"):
@@ -63,7 +65,7 @@ class EpiAssessmentMetadata(BaseApiAction):
 
         metadata["assessment_specific_adjustment_factors"] = {
             af.id: af.description
-            for af in AdjustmentFactor.objects.filter(assessment=self.assessment).order_by(
+            for af in AdjustmentFactor.objects.filter(assessment=self.data["assessment"]).order_by(
                 Lower("description")
             )
         }
@@ -80,18 +82,21 @@ class EpiAssessmentMetadata(BaseApiAction):
             design=dict(constants.Design.choices),
             countries=get_all_model_objects(Country, "name", "code"),
         )
+        import pdb
 
+        pdb.set_trace()
         metadata["assessment_specific_criteria"] = {
             c.id: c.description
-            for c in Criteria.objects.filter(assessment=self.assessment).order_by(
+            for c in Criteria.objects.filter(assessment=self.data["assessment"]).order_by(
                 Lower("description")
             )
         }
 
         return metadata
 
-    def evaluate(self):
+    def evaluate(self) -> dict:
         return dict(
+            study=Study.metadata(),
             study_population=self.study_population_metadata(),
             outcome=self.outcome_metadata(),
             result=self.result_metadata(),
@@ -101,7 +106,3 @@ class EpiAssessmentMetadata(BaseApiAction):
             exposure=self.exposure_metadata(),
             central_tendency=self.central_tendency_metadata(),
         )
-
-    def handle_assessment_request(self, request, assessment):
-        self.assessment = assessment
-        return Response(self.evaluate())
