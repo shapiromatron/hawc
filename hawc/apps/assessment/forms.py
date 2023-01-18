@@ -46,6 +46,7 @@ class AssessmentForm(forms.ModelForm):
             "enable_bmd",
             "enable_summary_text",
             "epi_version",
+            "admin_notes",
         )
         model = models.Assessment
         widgets = {

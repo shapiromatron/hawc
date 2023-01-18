@@ -1,18 +1,16 @@
-import collections
-import itertools
 import logging
 import os
 
 from django.apps import apps
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.db import models, transaction
+from django.db import models
 from django.http import Http404
 from django.urls import reverse
 from reversion import revisions as reversion
 
-from ..assessment.models import Assessment, Communication
+from ..assessment.models import Communication
 from ..common.helper import SerializerHelper, cleanHTML
-from ..lit.models import Reference, Search
+from ..lit.models import Reference
 from . import constants, managers
 
 logger = logging.getLogger(__name__)
@@ -143,97 +141,9 @@ class Study(Reference):
         return study
 
     @classmethod
-    @transaction.atomic
-    def copy_across_assessment(cls, studies, assessment, cw=None, copy_rob=False):
-
-        # copy selected studies from one assessment to another.
-        if cw is None:
-            cw = collections.defaultdict(dict)
-
-        # assert all studies come from a single assessment
-        source_assessment = (
-            Assessment.objects.filter(references__in=studies)
-            .distinct()
-            .values_list("id", flat=True)
-        )
-        if len(source_assessment) != 1:
-            raise ValueError("Studies must come from the same assessment")
-        source_assessment = source_assessment[0]
-        cw[Assessment.COPY_NAME][source_assessment] = assessment.id
-
-        # copy studies; flag if any epi-meta studies exist
-        any_epi_meta = False
-        for study in studies:
-            logger.info(f"Copying study {study.id} to assessment {assessment.id}")
-
-            # get child-types and copy
-            children = []
-
-            if copy_rob:
-                children.extend(list(study.riskofbiases.all().order_by("id")))
-
-            if study.bioassay:
-                children.extend(list(study.experiments.all().order_by("id")))
-
-            if study.epi:
-                children.extend(list(study.study_populations.all().order_by("id")))
-
-            if study.in_vitro:
-                children.extend(
-                    itertools.chain(
-                        study.ivchemicals.all().order_by("id"),
-                        study.ivcelltypes.all().order_by("id"),
-                        study.ivexperiments.all().order_by("id"),
-                    )
-                )
-
-            if study.epi_meta:
-                any_epi_meta = True
-                children.extend(list(study.meta_protocols.all().order_by("id")))
-
-            # copy study and references
-            study._copy_across_assessment(cw)
-
-            for child in children:
-                child.copy_across_assessments(cw)
-
-        # Copy epimeta.SingleResult after copying studies because to ensure
-        # Study clones have already been created.
-        if any_epi_meta:
-            logger.info("Copying epi results")
-            SingleResult = apps.get_model("epimeta", "SingleResult")
-            results = SingleResult.objects.filter(
-                meta_result__protocol__study__in=studies
-            ).order_by("id")
-            for result in results:
-                result.copy_across_assessments(cw)
-
-        return cw
-
-    def _copy_across_assessment(self, cw):
-        # copy reference and identifiers
-        # (except RIS which is assessment-specific)
-        ref = self.reference_ptr
-        idents = ref.identifiers.filter(database__in=[0, 1, 2]).values_list("id", flat=True)
-        ref.id = None
-        ref.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-        ref.save()
-        ref.identifiers.add(*idents)
-
-        # associate reference w/ manually added search else it'll be designated an
-        # orphan reference which could potentially be deleted by users.
-        manual_search = Search.objects.get_manually_added(ref.assessment_id)
-        manual_search.references.add(ref)
-
-        # copy study
-        old_id = self.id
-        self.id = None
-        self.reference_ptr = ref
-        self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-        self.save()
-
-        # save self to crosswalk
-        cw[self.COPY_NAME][old_id] = self.id
+    def metadata(cls) -> dict:
+        # return schema metadata for choice fields
+        return dict(coi_reported=dict(constants.CoiReported.choices))
 
     def __str__(self):
         return self.short_citation

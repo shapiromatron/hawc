@@ -1,15 +1,13 @@
 from django import forms
 from django.urls import reverse
 
-from hawc.apps.common.forms import BaseFormHelper
-
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import (
     AutocompleteSelectMultipleWidget,
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..common.forms import ArrayCheckboxSelectMultiple, QuillField
+from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, QuillField
 from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 from ..epi.autocomplete import CountryAutocomplete
 from . import autocomplete, constants, models
