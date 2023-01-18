@@ -5,12 +5,10 @@ from ...study.models import Study
 from .. import constants
 
 
-class EpiV2AssessmentMetadata(BaseApiAction):
+class EpiV2Metadata(BaseApiAction):
     """
-    Generate an assessment-specific dictionary of field choices for all epiv2 models.
+    Generate a dictionary of field choices for all epiv2 models.
     """
-
-    assessment = None
 
     input_model = NoInput
 

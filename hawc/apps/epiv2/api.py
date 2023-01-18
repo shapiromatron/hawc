@@ -7,7 +7,7 @@ from ..assessment.models import Assessment
 from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
-from .actions.model_metadata import EpiV2AssessmentMetadata
+from .actions.model_metadata import EpiV2Metadata
 
 
 class EpiAssessmentViewset(BaseAssessmentViewset):
@@ -41,4 +41,4 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 
 class Metadata(viewsets.ViewSet):
     def list(self, request):
-        return EpiV2AssessmentMetadata.handle_request(request)
+        return EpiV2Metadata.handle_request(request)
