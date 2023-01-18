@@ -9,7 +9,6 @@ from typing import Any, NamedTuple, Optional, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from django.apps import apps
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -304,13 +303,6 @@ class WebappConfig(PydanticModel):
 
 
 re_digits = r"\d+"
-
-
-def get_study_export_identifiers(qs: QuerySet, relation: str):
-    study_ids = set(qs.values_list(relation, flat=True))
-    studies = apps.get_model("study", "Study").objects.filter(pk__in=study_ids)
-    identifiers_df = apps.get_model("lit", "Reference").objects.identifiers_dataframe(studies)
-    return identifiers_df.set_index("reference_id")
 
 
 def get_id_from_choices(items, lookup_value):

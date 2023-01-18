@@ -1,6 +1,7 @@
 import logging
 import os
 
+import pandas as pd
 from django.apps import apps
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
@@ -248,6 +249,22 @@ class Study(Reference):
             ser["editable"],
             ser["published"],
         )
+
+    @classmethod
+    def identifiers_df(cls, qs: models.QuerySet, relation: str) -> pd.DataFrame:
+        """Returns a data frame with reference identifiers for each study in the QuerySet
+
+        Args:
+            qs (models.QuerySet): A QuerySet of an model with a relation to the study
+            relation (str): The relation string to the `Study.study_id` for this QuerySet
+
+        Returns:
+            pd.DataFrame: A data frame an index of study/reference id, and columns for identifiers
+        """
+        study_ids = qs.values_list(relation, flat=True)
+        studies = cls.objects.filter(id__in=study_ids)
+        identifiers_df = Reference.objects.identifiers_dataframe(studies)
+        return identifiers_df.set_index("reference_id")
 
     @classmethod
     def delete_caches(cls, ids):

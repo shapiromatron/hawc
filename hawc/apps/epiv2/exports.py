@@ -1,4 +1,4 @@
-from hawc.apps.common.helper import FlatFileExporter, get_study_export_identifiers
+from hawc.apps.common.helper import FlatFileExporter
 from hawc.apps.study.models import Study
 
 from . import models
@@ -24,8 +24,7 @@ class EpiFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
-        identifiers_df = get_study_export_identifiers(self.queryset, "design__study_id")
-
+        identifiers_df = Study.identifiers_df(self.queryset, "design__study_id")
         for obj in self.queryset:
             row = []
             row.extend(

@@ -2,7 +2,7 @@ from copy import copy
 from typing import Optional
 
 from ..assessment.models import DoseUnits
-from ..common.helper import FlatFileExporter, get_study_export_identifiers
+from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
 from . import constants, models
@@ -109,10 +109,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
-        identifiers_df = get_study_export_identifiers(
-            self.queryset, "animal_group__experiment__study_id"
-        )
-
+        identifiers_df = Study.identifiers_df(self.queryset, "animal_group__experiment__study_id")
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             row = []
