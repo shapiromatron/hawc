@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Optional
 
 import pandas as pd
 from django.apps import apps
@@ -220,18 +221,19 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser, identifiers_df=None):
+    def flat_complete_data_row(ser, identifiers_df: Optional[pd.DataFrame] = None) -> tuple:
+        try:
+            ident_row = (
+                identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
+            )
+        except KeyError:
+            ident_row = None
         return (
             ser["id"],
-            identifiers_df["hero_id"].get(ser["id"])
-            if identifiers_df is not None
-            else ser.get("hero_id", None),
-            identifiers_df["pubmed_id"].get(ser["id"])
-            if identifiers_df is not None
-            else ser.get("pubmed_id", None),
-            identifiers_df["doi"].get(ser["id"])
-            if identifiers_df is not None
-            else ser.get("doi", None),
+            # IDs can come from identifiers data frame if exists, else check study serializer
+            ident_row.hero_id if ident_row is not None else ser.get("hero_id", None),
+            ident_row.pubmed_id if ident_row is not None else ser.get("pubmed_id", None),
+            ident_row.doi if ident_row is not None else ser.get("doi", None),
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],
