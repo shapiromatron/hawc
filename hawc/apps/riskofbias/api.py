@@ -47,7 +47,6 @@ class RiskOfBiasAssessmentViewset(
     lookup_value_regex = re_digits
 
     def get_queryset(self):
-
         perms = self.get_obj_perms()
         if not perms["edit"]:
             return self.model.objects.published(self.assessment)

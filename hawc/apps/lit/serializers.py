@@ -102,15 +102,12 @@ class SearchSerializer(serializers.ModelSerializer):
 
 
 class IdentifiersSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["database"] = instance.get_database_display()
-        ret["url"] = instance.get_url()
-        return ret
+    database = serializers.CharField(source="get_database_display")
+    url = serializers.CharField(source="get_url")
 
     class Meta:
         model = models.Identifiers
-        fields = "__all__"
+        fields = ["id", "unique_id", "database", "url"]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

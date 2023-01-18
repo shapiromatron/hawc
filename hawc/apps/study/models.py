@@ -1,6 +1,8 @@
 import logging
 import os
+from typing import Optional
 
+import pandas as pd
 from django.apps import apps
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
@@ -197,6 +199,9 @@ class Study(Reference):
     def flat_complete_header_row():
         return (
             "study-id",
+            "study-hero_id",
+            "study-pubmed_id",
+            "study-doi",
             "study-url",
             "study-short_citation",
             "study-full_citation",
@@ -216,9 +221,19 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(ser, identifiers_df: Optional[pd.DataFrame] = None) -> tuple:
+        try:
+            ident_row = (
+                identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
+            )
+        except KeyError:
+            ident_row = None
         return (
             ser["id"],
+            # IDs can come from identifiers data frame if exists, else check study serializer
+            ident_row.hero_id if ident_row is not None else ser.get("hero_id", None),
+            ident_row.pubmed_id if ident_row is not None else ser.get("pubmed_id", None),
+            ident_row.doi if ident_row is not None else ser.get("doi", None),
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],
@@ -236,6 +251,22 @@ class Study(Reference):
             ser["editable"],
             ser["published"],
         )
+
+    @classmethod
+    def identifiers_df(cls, qs: models.QuerySet, relation: str) -> pd.DataFrame:
+        """Returns a data frame with reference identifiers for each study in the QuerySet
+
+        Args:
+            qs (models.QuerySet): A QuerySet of an model with a relation to the study
+            relation (str): The relation string to the `Study.study_id` for this QuerySet
+
+        Returns:
+            pd.DataFrame: A data frame an index of study/reference id, and columns for identifiers
+        """
+        study_ids = qs.values_list(relation, flat=True)
+        studies = cls.objects.filter(id__in=study_ids)
+        identifiers_df = Reference.objects.identifiers_dataframe(studies)
+        return identifiers_df.set_index("reference_id")
 
     @classmethod
     def delete_caches(cls, ids):
