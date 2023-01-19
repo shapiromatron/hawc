@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -20,7 +21,10 @@ class D3Plot {
             .attr("y", y)
             .attr("text-anchor", "middle")
             .attr("class", "dr_title")
-            .html(this.title_str);
+            .html(this.title_str)
+            .each(function() {
+                HAWCUtils.wrapText(this, 325);
+            });
     }
 
     add_final_rectangle() {
