@@ -145,6 +145,7 @@ class SummaryTable(models.Model):
         verbose_name="Publish table for public viewing",
         help_text="For assessments marked for public viewing, mark table to be viewable by public",
     )
+    caption = models.TextField(blank=True, validators=[validate_html_tags, validate_hyperlinks])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
