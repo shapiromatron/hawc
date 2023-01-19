@@ -9,15 +9,14 @@ class EndpointPlotContainer {
         this.endpoint = endpoint;
         this.plot_div = $(plot_id);
         this.plot_id = plot_id;
-
         if (!this.endpoint.hasEGdata()) {
             this.plot_div.html("<p>Plot unavailable.</p>");
         } else {
-            var options = {build_plot_startup: false};
-            this.plot_style = [
-                new Barplot(endpoint, this.plot_id, options, this),
-                new DRPlot(endpoint, this.plot_id, options, this),
-            ];
+            var options = {build_plot_startup: false},
+                scatter = new DRPlot(endpoint, this.plot_id, options, this),
+                bar = new Barplot(endpoint, this.plot_id, options, this),
+                isDichotomous = this.endpoint.isDichotomous();
+            this.plot_style = isDichotomous ? [scatter, bar] : [bar, scatter];
             this.toggle_views();
         }
     }

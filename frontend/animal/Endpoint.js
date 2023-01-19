@@ -219,6 +219,10 @@ class Endpoint extends Observee {
         return txt;
     }
 
+    isDichotomous() {
+        return this.data.data_type.startsWith("D");
+    }
+
     _calculate_stdev(eg) {
         // stdev is required for plotting; calculate if SE is specified
         var convert = this.data.data_type === "C" && parseInt(this.data.variance_type, 10) === 2;
