@@ -36,16 +36,8 @@ class DRPlot extends D3Plot {
 
         //update if plot is live
         if (this.parent && this.parent.plot === this) {
-            if (this.x_axis_settings.scale_type == "linear") {
-                this.x_axis_settings.domain = [
-                    this.min_x - this.max_x * this.buff,
-                    this.max_x * (1 + this.buff),
-                ];
-            } else {
-                this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
-            }
+            this.x_axis_settings.domain = [this.min_x, this.max_x];
             this.x_scale = this._build_scale(this.x_axis_settings);
-
             this.build_x_label();
             this.add_selected_endpoint_BMD();
             this.x_axis_change_chart_update();
@@ -167,21 +159,16 @@ class DRPlot extends D3Plot {
     _setPlottableDoseValues() {
         if (this.x_axis_settings.scale_type == "linear") {
             this.min_x = d3.min(_.map(this.values, "x"));
-            this.x_axis_settings.domain = [
-                this.min_x - this.max_x * this.buff,
-                this.max_x * (1 + this.buff),
-            ];
         } else {
             this.min_x = d3.min(_.map(this.values, "x_log"));
-            this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
         }
+        this.x_axis_settings.domain = [this.min_x, this.max_x];
     }
 
     set_defaults() {
         // Default settings for a DR plot instance
         this.line_colors = ["#BF3F34", "#545FF2", "#D9B343", "#228C5E", "#B27373"]; //bmd lines
         this.padding = {top: 40, right: 20, bottom: 40, left: 60};
-        this.buff = 0.05; // addition numerical-spacing around dose/response units
         this.radius = 7;
         this.x_axis_settings = {
             scale_type: this.endpoint.defaultDoseAxis(),
@@ -377,7 +364,7 @@ class DRPlot extends D3Plot {
         });
 
         $.extend(this.y_axis_settings, {
-            domain: [this.min_y - this.max_y * this.buff, this.max_y * (1 + this.buff)],
+            domain: [this.min_y, this.max_y],
             rangeRound: [this.h - BUFFER, BUFFER],
             x_translate: 0,
             y_translate: 0,
