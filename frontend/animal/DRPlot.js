@@ -74,14 +74,6 @@ class DRPlot extends D3Plot {
         this.add_title();
         this.add_legend();
         this.customize_menu();
-
-        var plot = this;
-        this.y_axis_label.on("click", function() {
-            plot.toggle_y_axis();
-        });
-        this.x_axis_label.on("click", function() {
-            plot.toggle_x_axis();
-        });
         this.trigger_resize();
     }
 
@@ -376,16 +368,17 @@ class DRPlot extends D3Plot {
     }
 
     add_axes() {
+        const BUFFER = 10;
         // customizations for axis updates
         $.extend(this.x_axis_settings, {
-            rangeRound: [0, this.w],
+            rangeRound: [BUFFER, this.w - BUFFER],
             x_translate: 0,
             y_translate: this.h,
         });
 
         $.extend(this.y_axis_settings, {
             domain: [this.min_y - this.max_y * this.buff, this.max_y * (1 + this.buff)],
-            rangeRound: [this.h, 0],
+            rangeRound: [this.h - BUFFER, BUFFER],
             x_translate: 0,
             y_translate: 0,
         });
