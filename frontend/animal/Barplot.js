@@ -26,7 +26,9 @@ class Barplot extends D3Plot {
         this.add_title();
         this.add_axes();
         this.add_bars();
-        this.add_error_bars();
+        if (!this.endpoint.isDichotomous()) {
+            this.add_error_bars();
+        }
         this.build_x_label();
         this.build_y_label();
         this.add_final_rectangle();
@@ -245,6 +247,7 @@ class Barplot extends D3Plot {
         $.extend(this.y_axis_settings, {
             domain: [this.min_y, this.max_y],
             rangeRound: [this.h, 0],
+            label_format: this.endpoint.isDichotomous() ? d3.format(".0%") : undefined,
             x_translate: 0,
             y_translate: 0,
         });
