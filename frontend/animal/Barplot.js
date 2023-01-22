@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import _ from "lodash";
 import D3Plot from "shared/utils/D3Plot";
 import h from "shared/utils/helpers";
@@ -34,11 +35,6 @@ class Barplot extends D3Plot {
         this.add_final_rectangle();
         this.add_legend();
         this.customize_menu();
-
-        var plot = this;
-        this.y_axis_label.on("click", function() {
-            plot.toggle_y_axis();
-        });
         this.trigger_resize();
     }
 
@@ -51,31 +47,24 @@ class Barplot extends D3Plot {
         if (this.parent) {
             this.parent.add_toggle_button(this);
         }
-        var plot = this;
-        var options = {
+        this.add_menu_button({
             id: "toggle_y_axis",
             cls: "btn btn-sm",
             title: "Change y-axis scale (shortcut: click the y-axis label)",
             text: "",
             icon: "fa fa-arrows-v",
-            on_click() {
-                plot.toggle_y_axis();
-            },
-        };
-        plot.add_menu_button(options);
+            on_click: () => this.toggle_y_axis(),
+        });
 
         if (this.endpoint.doseUnits.numUnits() > 1) {
-            options = {
+            this.add_menu_button({
                 id: "nextDoseUnits",
                 cls: "btn btn-sm",
                 title: "Change dose-units representation",
                 text: "",
                 icon: "fa fa-certificate",
-                on_click() {
-                    plot.endpoint.doseUnits.next();
-                },
-            };
-            plot.add_menu_button(options);
+                on_click: () => this.endpoint.doseUnits.next(),
+            });
         }
     }
 
@@ -121,7 +110,6 @@ class Barplot extends D3Plot {
     set_defaults() {
         // Default settings
         this.padding = {top: 40, right: 20, bottom: 40, left: 60};
-        this.buff = 0.05; // addition numerical-spacing around dose/response units
 
         this.x_axis_settings = {
             scale_type: "ordinal",
@@ -156,80 +144,58 @@ class Barplot extends D3Plot {
     get_dataset_info() {
         this.get_plot_sizes();
         // space lines in half-increments
-        var values,
-            val,
-            txt,
-            cls,
-            sigs_data,
-            e = this.endpoint,
+        let e = this.endpoint,
+            isDichotomous = e.isDichotomous(),
             data_type = e.data.data_type,
             min = Infinity,
-            max = -Infinity;
+            max = -Infinity,
+            values = _.chain(this.endpoint.data.groups)
+                .filter(d => d.isReported)
+                .map((v, i) => {
+                    let val, label, cls;
 
-        values = _.chain(this.endpoint.data.groups)
-            .map(function(v, i) {
-                if (data_type == "C") {
-                    val = v.response;
-                    txt = v.response;
-                } else if (data_type == "P") {
-                    val = v.response;
-                    txt = e.get_pd_string(v);
-                } else {
-                    val = v.incidence / v.n;
-                    txt = val;
-                }
+                    if (data_type == "C") {
+                        val = v.response;
+                        label = "";
+                    } else if (data_type == "P") {
+                        val = v.response;
+                        label = e.get_pd_string(v);
+                    } else {
+                        val = v.incidence / v.n;
+                        label = "";
+                    }
 
-                cls = "dose_bars";
-                if (e.data.NOEL == i) cls += " NOEL";
-                if (e.data.LOEL == i) cls += " LOEL";
+                    cls = "dose_bars";
+                    if (e.data.NOEL == i) cls += " NOEL";
+                    if (e.data.LOEL == i) cls += " LOEL";
 
-                min = Math.min(min, v.lower_ci || val);
-                max = Math.max(max, v.upper_ci || val);
+                    min = Math.min(min, v.lower_ci || val);
+                    max = Math.max(max, v.upper_ci || val);
 
-                return {
-                    isReported: v.isReported,
-                    dose: v.dose,
-                    value: val,
-                    high: v.upper_ci,
-                    low: v.lower_ci,
-                    txt,
-                    classes: cls,
-                    significance_level: v.significance_level,
-                };
-            })
-            .filter(function(d) {
-                return d.isReported;
-            })
-            .value();
+                    const is_significant = _.isNumber(v.significance_level);
+                    if (is_significant) {
+                        label += " *";
+                    }
+                    return {
+                        dose: v.dose,
+                        value: val,
+                        high: v.upper_ci,
+                        low: v.lower_ci,
+                        classes: cls,
+                        significance_level: v.significance_level,
+                        is_significant,
+                        label,
+                        label_y: isDichotomous ? val : val | v.upper_ci,
+                    };
+                })
+                .value();
 
-        sigs_data = _.chain(values)
-            .filter(v => v.significance_level > 0)
-            .map(function(v) {
-                return {
-                    x: v.dose,
-                    y: v.high || v.value,
-                    significance_level: v.significance_level,
-                };
-            })
-            .value();
-
-        if (this.endpoint.data.data_type == "C") {
-            min = min - max * this.buff;
-        } else {
-            min = 0;
-        }
-        max = max * (1 + this.buff);
-        if (this.default_y_scale == "log") {
-            min = Math.pow(10, Math.floor(Math.log10(min)));
-            max = Math.pow(10, Math.ceil(Math.log10(max)));
-        }
-
+        min = isDichotomous ? 0 : min;
         _.extend(this, {
             title_str: this.endpoint.data.name,
             x_label_text: `Doses (${this.endpoint.doseUnits.activeUnit.name})`,
             y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
-            sigs_data,
             min_y: min,
             max_y: max,
         });
@@ -274,28 +240,29 @@ class Barplot extends D3Plot {
             .attr("height", d => min - y(d.value))
             .attr("class", d => d.classes);
 
-        this.bars.append("svg:title").text(d => d.txt);
-
-        var sigs_group = this.vis.append("g");
-        this.sigs = sigs_group
+        let label_group = this.vis.append("g");
+        this.labels = label_group
             .selectAll("text")
-            .data(this.sigs_data)
+            .data(this.values)
             .enter()
             .append("svg:text")
-            .attr("x", d => x(d.x) + x.bandwidth() / 2)
-            .attr("y", d => y(d.y))
+            .attr("x", d => x(d.dose) + x.bandwidth() / 2)
+            .attr("y", d => y(d.label_y))
             .attr("text-anchor", "middle")
             .style("font-size", "18px")
             .style("font-weight", "bold")
             .style("cursor", "pointer")
-            .text("*");
 
-        this.sigs_labels = this.sigs.append("svg:title").text(function(d) {
-            return `Statistically significant at ${d.significance_level}`;
-        });
+            .text(d => d.label);
+
+        this.labels
+            .filter(d => d.is_significant)
+            .append("svg:title")
+            .text(d => `Statistically significant at ${d.significance_level}`);
     }
 
     x_axis_change_chart_update() {
+        // TODO - fix bug; not working? http://127.0.0.1:8000/ani/endpoint/25/
         this.xAxis.scale(this.x_scale);
         this.vis
             .selectAll(".x_axis")
@@ -310,7 +277,7 @@ class Barplot extends D3Plot {
         var y = this.y_scale,
             min = y(y.domain()[0]);
 
-        //rebuild y-axis
+        // rebuild y-axis
         this.yAxis
             .scale(y)
             .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
@@ -323,99 +290,66 @@ class Barplot extends D3Plot {
 
         this.rebuild_y_gridlines({animate: true});
 
-        //rebuild error-bars
-        var opt = {
-            y1(d) {
-                return y(d.low);
-            },
-            y2(d) {
-                return y(d.high);
-            },
-        };
-        this.build_line(opt, this.error_bars_vertical);
+        // rebuild error-bars
+        if (this.error_bar_group) {
+            let opts = [
+                    {y1: d => y(d.low), y2: d => y(d.high)},
+                    {y1: d => y(d.low), y2: d => y(d.low)},
+                    {y1: d => y(d.high), y2: d => y(d.high)},
+                ],
+                doms = [this.error_bars_vertical, this.error_bars_lower, this.error_bars_upper],
+                lines_args = _.zip(opts, doms);
 
-        opt.y2 = function(d) {
-            return y(d.low);
-        };
-        this.build_line(opt, this.error_bars_lower);
+            lines_args.forEach(args => this.build_line(args[0], args[1]));
+        }
 
-        opt = {
-            y1(d) {
-                return y(d.high);
-            },
-            y2(d) {
-                return y(d.high);
-            },
-        };
-        this.build_line(opt, this.error_bars_upper);
-
-        //rebuild dose-bars
+        // rebuild dose-bars
         this.bars
             .transition()
             .duration(1000)
             .attr("y", d => y(d.value))
             .attr("height", d => min - y(d.value));
 
-        this.sigs
+        this.labels
             .transition()
             .duration(1000)
-            .attr("y", d => y(d.y));
+            .attr("y", d => y(d.label_y));
     }
 
     add_error_bars() {
         var hline_width = this.w * 0.02,
             x = this.x_scale,
             y = this.y_scale,
-            bars = this.values.filter(function(v) {
-                return $.isNumeric(v.low) && $.isNumeric(v.high);
-            });
+            bars = this.values.filter(v => $.isNumeric(v.low) && $.isNumeric(v.high));
 
         this.error_bar_group = this.vis.append("g").attr("class", "error_bars");
-
-        var bar_options = {
+        this.error_bars_vertical = this.build_line({
             data: bars,
-            x1(d) {
-                return x(d.dose) + x.bandwidth() / 2;
-            },
-            y1(d) {
-                return y(d.low);
-            },
-            x2(d) {
-                return x(d.dose) + x.bandwidth() / 2;
-            },
-            y2(d) {
-                return y(d.high);
-            },
+            x1: d => x(d.dose) + x.bandwidth() / 2,
+            y1: d => y(d.low),
+            x2: d => x(d.dose) + x.bandwidth() / 2,
+            y2: d => y(d.high),
             classes: "dr_err_bars",
             append_to: this.error_bar_group,
-        };
-        this.error_bars_vertical = this.build_line(bar_options);
-
-        $.extend(bar_options, {
-            x1(d, i) {
-                return x(d.dose) + x.bandwidth() / 2 - hline_width;
-            },
-            y1(d) {
-                return y(d.low);
-            },
-            x2(d, i) {
-                return x(d.dose) + x.bandwidth() / 2 + hline_width;
-            },
-            y2(d) {
-                return y(d.low);
-            },
         });
-        this.error_bars_lower = this.build_line(bar_options);
-
-        $.extend(bar_options, {
-            y1(d) {
-                return y(d.high);
-            },
-            y2(d) {
-                return y(d.high);
-            },
+        this.error_bars_lower = this.build_line({
+            data: bars,
+            x1: d => x(d.dose) + x.bandwidth() / 2 - hline_width,
+            y1: d => y(d.low),
+            x2: d => x(d.dose) + x.bandwidth() / 2 + hline_width,
+            y2: d => y(d.low),
+            classes: "dr_err_bars",
+            append_to: this.error_bar_group,
         });
-        this.error_bars_upper = this.build_line(bar_options);
+        this.error_bars_upper = this.build_line({
+            data: bars,
+            x1: d => x(d.dose) + x.bandwidth() / 2 - hline_width,
+            y1: d => y(d.high),
+            x2: d => x(d.dose) + x.bandwidth() / 2 + hline_width,
+            y2: d => y(d.high),
+            classes: "dr_err_bars",
+            append_to: this.error_bar_group,
+        });
     }
 
     add_legend() {
