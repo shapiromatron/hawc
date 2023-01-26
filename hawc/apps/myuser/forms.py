@@ -16,6 +16,7 @@ from ..assessment.autocomplete import AssessmentAutocomplete
 from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper
 from ..common.helper import url_query
+from ..common.auth.turnstyle import validate
 from . import models
 
 _PASSWORD_HELP = (
@@ -271,10 +272,16 @@ class HAWCAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         self.next_url = kwargs.pop("next_url")
         super().__init__(*args, **kwargs)
+        self.enable_turnstyle = len(settings.TURNSTYLE_SITE) > 0
 
     def get_extra_text(self) -> str:
+        challenge = (
+            f'<div class="cf-turnstile mb-3" data-sitekey="{settings.TURNSTYLE_SITE}"></div>'
+            if self.enable_turnstyle
+            else ""
+        )
         text = f"""<a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
-        <br/><br/>
+        <br/><br/>{challenge}
         <a href="{reverse("user:reset_password")}">Forgot your password?</a>"""
         if AuthProvider.external in settings.AUTH_PROVIDERS:
             url = reverse("user:external_auth")
@@ -315,6 +322,13 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 )
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(self.error_messages["inactive"])
+
+        if settings.TURNSTYLE_SITE:
+            token = self.data.get("cf-turnstile-response", "")
+            response = validate(token)
+            if not response.success:
+                raise forms.ValidationError("Failed bot challenge - are you human?")
+
         return self.cleaned_data
 
 
