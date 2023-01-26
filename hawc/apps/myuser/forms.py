@@ -13,10 +13,10 @@ from django.urls import reverse
 
 from ...constants import AuthProvider
 from ..assessment.autocomplete import AssessmentAutocomplete
+from ..common.auth.turnstyle import validate
 from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper
 from ..common.helper import url_query
-from ..common.auth.turnstyle import validate
 from . import models
 
 _PASSWORD_HELP = (
