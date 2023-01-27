@@ -4,8 +4,6 @@ import pydantic
 import requests
 from django.conf import settings
 
-cloudflare_secret_key: Optional[str] = None
-
 
 class SiteVerifyRequest(pydantic.BaseModel):
     secret: str
