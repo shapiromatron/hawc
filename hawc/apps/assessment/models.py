@@ -418,8 +418,8 @@ class Assessment(models.Model):
             HAWCUser.objects.filter(
                 models.Q(assessment_pms=self.id) | models.Q(assessment_teams=self.id)
             )
-            .order_by("id")
-            .distinct("id")
+            .order_by("last_name", "id")
+            .distinct("id", "last_name")
         )
 
     def get_communications(self) -> str:

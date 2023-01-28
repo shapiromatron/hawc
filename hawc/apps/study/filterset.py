@@ -74,11 +74,7 @@ class StudyFilterSet(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["assigned_user"].queryset = (
-            self.assessment.pms_and_team_users()
-            .distinct("id", "last_name")
-            .order_by("last_name", "id")
-        )
+        form.fields["assigned_user"].queryset = self.assessment.pms_and_team_users()
         if not self.include_rob_authors:
             form.fields.pop("assigned_user")
         if not self.perms["edit"]:
