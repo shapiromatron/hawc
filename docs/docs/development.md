@@ -12,7 +12,7 @@ following applications installed on your local development system:
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
-- Python code must comply with code formatters and linters: black, flake8, and isort
+- Python code must comply with code formatters and linters: black and ruff
 - Javascript code must comply with eslint formatters
 - All unit-test (currently in python-only) must pass; please write test when contributing new code
 
@@ -429,7 +429,7 @@ When using the recommended settings below, your python and javascript code shoul
     "python.autoUpdateLanguageServer": true,
     "python.formatting.provider": "black",
     "python.languageServer": "Pylance",
-    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Enabled": false,
     "search.exclude": {
         "**/node_modules": true,
         "**/.git": true,

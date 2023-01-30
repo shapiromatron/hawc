@@ -1,24 +1,7 @@
 [tool.black]
 line-length = 100
-target-version = ['py36', 'py37', 'py38']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | bin
-  | build
-  | compose
-  | data
-  | dist
-  | docs
-  | frontend
-  | public
-  | requirements
-  | scripts/private
-  | venv
-)/
-'''
+target-version = ['py311']
+extend-exclude = '(data|docs|frontend|public|scripts/private)'
 
 [tool.coverage.run]
 omit = [
@@ -32,11 +15,7 @@ omit = [
   "*/bmds/*",
 ]
 
-[tool.isort]
-atomic = true
-include_trailing_comma = true
-known_first_party = ["hawc", "hawc_client"]
-known_third_party = ["bmds"]
-line_length = 100
-multi_line_output = 3
-skip = ["build/", "frontend/", "scripts/private/", "venv/"]
+[tool.ruff]
+select = ["B", "C4", "E", "F", "I", "RUF", "S", "W"]
+line-length = 100
+ignore = ["E501", "S101", "S106"]
