@@ -227,7 +227,13 @@ class SummaryTable(models.Model):
 
     def to_docx(self, base_url: str = "", landscape: bool = True):
         table = self.get_table()
-        docx = table.to_docx(parser=QuillParser(base_url=base_url), landscape=landscape)
+        docx = table.to_docx(
+            parser=QuillParser(base_url=base_url),
+            title=self.title,
+            url=self.get_absolute_url(),
+            caption=self.caption,
+            landscape=landscape,
+        )
         return ReportExport(docx=docx, filename=self.slug)
 
     @classmethod
