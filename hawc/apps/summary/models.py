@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from docx import Document as create_document
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
@@ -226,14 +227,15 @@ class SummaryTable(models.Model):
         return instance
 
     def to_docx(self, base_url: str = "", landscape: bool = True):
+        docx = create_document()
+        parser = QuillParser(base_url=base_url)
+        docx.add_heading(self.title)
+        url = self.get_absolute_url()
+        parser.feed(f'<p><a href="{url}">View Online</a></p>', docx)
         table = self.get_table()
-        docx = table.to_docx(
-            parser=QuillParser(base_url=base_url),
-            title=self.title,
-            url=self.get_absolute_url(),
-            caption=self.caption,
-            landscape=landscape,
-        )
+        table.to_docx(parser=parser, docx=docx, landscape=landscape)
+        if self.caption:
+            parser.feed(self.caption, docx)
         return ReportExport(docx=docx, filename=self.slug)
 
     @classmethod

@@ -110,9 +110,6 @@ class BaseTable(BaseCellGroup):
     def to_docx(
         self,
         parser: Optional[QuillParser] = None,
-        title: str = "",
-        url: str = "",
-        caption: str = "",
         docx: Optional[Document] = None,
         landscape: bool = True,
     ):
@@ -123,15 +120,6 @@ class BaseTable(BaseCellGroup):
         if landscape:
             to_landscape(docx)
 
-        # build title
-        if title:
-            docx.add_heading(title)
-
-        # build link back to hawc
-        if url:
-            parser.feed(f'<p><a href="{url}">View Online</a></p>', docx)
-
-        # build table
         table = docx.add_table(rows=self.rows, cols=self.columns)
         table_cells = table._cells
         table.style = "Table Grid"
@@ -152,10 +140,6 @@ class BaseTable(BaseCellGroup):
             for i, width in enumerate(self.column_widths[:columns]):
                 for table_cell in table_cells[i::columns]:
                     table_cell.width = Inches(width)
-
-        # add caption
-        if caption:
-            parser.feed(caption, docx)
 
         return docx
 
