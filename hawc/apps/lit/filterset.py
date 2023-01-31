@@ -155,20 +155,19 @@ class ReferenceFilterSet(BaseFilterSet):
                         filter=Q(user_tags__tags__in=tag_ids)
                         & Q(user_tags__is_resolved=False)
                         & Q(user_tags__user=self.request.user),
-                        )
-                    ).filter(mytag_count__gt=0)
+                    )
+                ).filter(mytag_count__gt=0)
         return queryset.distinct()
 
     def filter_anything_tagged_me(self, queryset, name, value):
         if not value:
             return queryset
         queryset = queryset.annotate(
-                    user_tag_count=Count(
-                        "user_tags",
-                        filter=Q(user_tags__is_resolved=False)
-                        & Q(user_tags__user=self.request.user),
-                    )
-                ).filter(user_tag_count__gt=0)
+            user_tag_count=Count(
+                "user_tags",
+                filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
+            )
+        ).filter(user_tag_count__gt=0)
         return queryset.distinct()
 
     def filter_needs_tagging(self, queryset, name, value):

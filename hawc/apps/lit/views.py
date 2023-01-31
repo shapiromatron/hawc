@@ -421,9 +421,9 @@ class ConflictResolution(BaseFilterList):
         return (
             super()
             .get_queryset()
-            .annotate(n_unapplied_reviews=Count(
-                        "user_tags__user",
-                        filter=Q(user_tags__is_resolved=False)))
+            .annotate(
+                n_unapplied_reviews=Count("user_tags__user", filter=Q(user_tags__is_resolved=False))
+            )
             .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
