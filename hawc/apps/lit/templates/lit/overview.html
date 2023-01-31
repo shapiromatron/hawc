@@ -130,7 +130,13 @@
     </div>
     <div class="col-md-4">
       <div class="lit-review-box box-shadow" style="width: 100%;">
-        <p class="h4 m-0">Tagtree</p>
+        <p class="h4 m-0">Tagtree
+          {% if assessment.literature_settings.conflict_resolution %}
+          {% include "common/helptext_popup.html" with text="Numbers show a count of references with that consensus tag applied" %}
+          {% else %}
+          {% include "common/helptext_popup.html" with text="Numbers show a count of references with that tag applied" %}
+          {% endif %}
+        </p>
         <div id="tags"></div>
       </div>
     </div>
@@ -167,7 +173,8 @@
 
   window.app.startup("litStartup", function(lit){
     let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
-    tagtree.render(document.getElementById('tags'), {handleTagClick: (x) => {window.location.href = x.get_list_link()}})
+    tagtree.add_references(config.references);
+    tagtree.render(document.getElementById('tags'), {handleTagClick: (x) => {window.location.href = x.get_list_link()}, showReferenceCount: true})
   });
 
   const histo = document.getElementById("referenceYearHistogram");
@@ -175,4 +182,5 @@
     window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
   }
 </script>
+{% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

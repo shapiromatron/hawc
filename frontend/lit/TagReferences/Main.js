@@ -16,15 +16,20 @@ class ReferenceListItem extends Component {
     render() {
         const {store, reference, selectedReferencePk} = this.props,
             isSelected = reference.data.pk === selectedReferencePk,
-            divClass = `d-flex justify-content-between reference ${isSelected ? "selected" : ""}`,
-            title = store.config.conflict_resolution ? "has resolved tag(s)" : "tagged";
+            divClass = `d-flex justify-content-between align-items-center reference ${isSelected ? "selected" : ""}`,
+            title = store.config.conflict_resolution ? "has consensus tag(s)" : "tagged";
 
         return (
             <div className={divClass} onClick={() => store.setReference(reference)}>
                 <p className="mb-0 pr-1">{reference.shortCitation()}</p>
-                {reference.tags.length > 0 ? (
-                    <i className="fa fa-fw fa-tags mx-1" title={title} aria-hidden="true"></i>
-                ) : null}
+                <div className="mr-1 d-flex" style={{"flex-wrap": "nowrap"}}>
+                    {reference.tags.length > 0 ? (
+                        <i className="fa fa-fw fa-tags small-tag-icon consensus mr-1" title={title} aria-hidden="true"></i>
+                    ) : null}
+                    {reference.userTags.length > 0 ? (
+                        <i className="fa fa-fw fa-tags small-tag-icon user" title={"has tags from you"} aria-hidden="true"></i>
+                    ) : null}
+                </div>
             </div>
         );
     }

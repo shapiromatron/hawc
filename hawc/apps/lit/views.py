@@ -69,6 +69,7 @@ class LitOverview(BaseList):
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["config"] = {
             "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+            "references": models.Reference.objects.tag_pairs(self.assessment.references.all()),
             "assessment_id": self.assessment.id,
             "referenceYearHistogramUrl": reverse(
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
@@ -417,11 +418,12 @@ class ConflictResolution(BaseFilterList):
     paginate_by = 100
 
     def get_queryset(self):
-        n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
         return (
             super()
             .get_queryset()
-            .annotate(n_unapplied_reviews=n_unapplied_reviews)
+            .annotate(n_unapplied_reviews=Count(
+                        "user_tags__user",
+                        filter=Q(user_tags__is_resolved=False)))
             .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")

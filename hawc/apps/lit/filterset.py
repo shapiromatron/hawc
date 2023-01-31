@@ -74,7 +74,7 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_needs_tagging",
         widget=CheckboxInput(),
         label="Needs Tagging",
-        help_text="References tagged by less than two people, and without resolved tags",
+        help_text="References tagged by less than two people, and without consensus tags",
     )
     paginate_by = PaginationFilter()
 
@@ -121,7 +121,7 @@ class ReferenceFilterSet(BaseFilterSet):
                 tag_ids = (
                     list(tag.get_tree(parent=tag).values_list("id", flat=True))
                     if include_descendants
-                    else [tag]
+                    else [tag.id]
                 )
                 queryset = queryset.filter(tags__in=tag_ids)
         return queryset.distinct()
@@ -134,7 +134,6 @@ class ReferenceFilterSet(BaseFilterSet):
 
     def filter_my_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_mytag_descendants", False)
-
         for tag in value:
             if tag == "untagged":
                 queryset = queryset.annotate(
@@ -148,19 +147,28 @@ class ReferenceFilterSet(BaseFilterSet):
                 tag_ids = (
                     list(tag.get_tree(parent=tag).values_list("id", flat=True))
                     if include_descendants
-                    else [tag]
+                    else [tag.id]
                 )
-                queryset = queryset.filter(
-                    user_tags__tags__in=tag_ids,
-                    user_tags__is_resolved=False,
-                    user_tags__user=self.request.user,
-                )
+                queryset = queryset.annotate(
+                    mytag_count=Count(
+                        "user_tags",
+                        filter=Q(user_tags__tags__in=tag_ids)
+                        & Q(user_tags__is_resolved=False)
+                        & Q(user_tags__user=self.request.user),
+                        )
+                    ).filter(mytag_count__gt=0)
         return queryset.distinct()
 
     def filter_anything_tagged_me(self, queryset, name, value):
         if not value:
             return queryset
-        queryset = queryset.filter(user_tags__is_resolved=False, user_tags__user=self.request.user)
+        queryset = queryset.annotate(
+                    user_tag_count=Count(
+                        "user_tags",
+                        filter=Q(user_tags__is_resolved=False)
+                        & Q(user_tags__user=self.request.user),
+                    )
+                ).filter(user_tag_count__gt=0)
         return queryset.distinct()
 
     def filter_needs_tagging(self, queryset, name, value):
@@ -195,6 +203,7 @@ class ReferenceFilterSet(BaseFilterSet):
             form.fields["my_tags"].queryset = tags
             form.fields["my_tags"].label_from_instance = lambda tag: tag.get_nested_name()
             form.fields["my_tags"].widget.attrs["size"] = 8
+            form.fields["tags"].label = "Consensus Tags"
         if "search" in form.fields:
             form.fields["search"].queryset = models.Search.objects.filter(
                 assessment=self.assessment
