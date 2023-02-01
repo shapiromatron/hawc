@@ -617,11 +617,11 @@ class ReferenceManager(BaseManager):
             UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
             user_refs = UserReferenceTag.objects.filter(reference__in=refs)
             overview.update(
-                needs_tagging=(
+                partially_tagged=(
                     refs.annotate(
                         user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
                     )
-                    .filter(user_tag_count__lt=2, tags__isnull=True)
+                    .filter(user_tag_count=1)
                     .count()
                 ),
                 conflicts=(

@@ -70,11 +70,11 @@ class ReferenceFilterSet(BaseFilterSet):
         ),
         help_text="How results will be ordered",
     )
-    needs_tagging = df.BooleanFilter(
-        method="filter_needs_tagging",
+    partially_tagged = df.BooleanFilter(
+        method="filter_partially_tagged",
         widget=CheckboxInput(),
-        label="Needs Tagging",
-        help_text="References tagged by less than two people, and without consensus tags",
+        label="Partially Tagged",
+        help_text="References with one unresolved user tag",
     )
     paginate_by = PaginationFilter()
 
@@ -96,7 +96,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "anything_tagged_me",
             "order_by",
             "paginate_by",
-            "needs_tagging",
+            "partially_tagged",
         ]
 
     def filter_queryset(self, queryset):
@@ -163,26 +163,26 @@ class ReferenceFilterSet(BaseFilterSet):
         if not value:
             return queryset
         queryset = queryset.annotate(
-            user_tag_count=Count(
+            my_tag_count=Count(
                 "user_tags",
                 filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
             )
-        ).filter(user_tag_count__gt=0)
+        ).filter(my_tag_count__gt=0)
         return queryset.distinct()
 
-    def filter_needs_tagging(self, queryset, name, value):
+    def filter_partially_tagged(self, queryset, name, value):
         if not value:
             return queryset
         queryset = queryset.annotate(
             user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
         )
-        queryset = queryset.filter(user_tag_count__lt=2, tags__isnull=True)
+        queryset = queryset.filter(user_tag_count=1)
         return queryset.distinct()
 
     def create_form(self):
         form = super().create_form()
         for field in [
-            "needs_tagging",
+            "partially_tagged",
             "tags",
             "my_tags",
             "anything_tagged",

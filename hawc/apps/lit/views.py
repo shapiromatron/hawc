@@ -261,7 +261,7 @@ class TagReferences(BaseFilterList):
         filterset.ReferenceFilterSet,
         fields=[
             "title_abstract",
-            "needs_tagging",
+            "partially_tagged",
             "search",
             "id",
             "tags",
