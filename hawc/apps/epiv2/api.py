@@ -1,3 +1,4 @@
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -6,6 +7,7 @@ from ..assessment.models import Assessment
 from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
+from .actions.model_metadata import EpiV2Metadata
 
 
 class EpiAssessmentViewset(BaseAssessmentViewset):
@@ -35,3 +37,8 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 
     def get_queryset(self, *args, **kwargs):
         return self.model.objects.all()
+
+
+class Metadata(viewsets.ViewSet):
+    def list(self, request):
+        return EpiV2Metadata.handle_request(request)

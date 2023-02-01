@@ -47,10 +47,13 @@
     "observation time": "",
     "observation time units": "not-reported",
     "overall pattern": "not-available",
+    "study doi": null,
+    "study hero_id": null,
     "study id": 6,
     "study identifier": "",
     "study name": "Letcher RJ et al. 2005",
     "study published": true,
+    "study pubmed_id": 15907334,
     "trend test result": "not significant"
   }
 ]
