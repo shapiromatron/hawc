@@ -635,6 +635,13 @@ class ReferenceManager(BaseManager):
                 ),
                 total_reviews=user_refs.count(),
                 total_users=user_refs.distinct("user_id").count(),
+                completely_untagged=(
+                    refs.annotate(
+                        user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                    )
+                    .filter(user_tag_count=0, tags__isnull=True)
+                    .count()
+                ),
             )
         return overview
 

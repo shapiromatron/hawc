@@ -95,7 +95,7 @@
               <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
             </div>
           </a>
-          <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
+          <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?partially_tagged=on">
             <div>
               <p class="h3 m-0 mt-1">{{overview.partially_tagged}}</p>
               <p class="small">partially tagged</p>
@@ -125,6 +125,18 @@
             </div>
           </a>
         {% endif %}
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
+          <div>
+            <p class="h3 m-0 mt-1">{{overview.completely_untagged}}</p>
+            <p class="small">completely untagged{% include "common/helptext_popup.html" with text="References that have no resolved tags and no user tags" %}</p>
+          </div>
+          <div class="lit-icon">
+            <span class="fa-stack fa-1x icon-bg" style="background-color: #ff9393;">
+              <i class="fa fa-tag fa-stack-1x" style="font-size: 0.65em;"></i>
+              <i class="fa fa-ban fa-stack-1x" style="font-size: 1.5em;"></i>
+            </span>
+          </div>
+        </a>
         {% endif %}
       </div>
     </div>

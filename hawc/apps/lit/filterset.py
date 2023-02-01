@@ -76,6 +76,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
+    completely_untagged = df.BooleanFilter(
+        method="filter_completely_untagged",
+        widget=CheckboxInput(),
+        label="Completely Untagged",
+        help_text="References that have no resolved tags and no user tags.",
+    )
     paginate_by = PaginationFilter()
 
     class Meta:
@@ -97,6 +103,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
             "partially_tagged",
+            "completely_untagged",
         ]
 
     def filter_queryset(self, queryset):
@@ -175,8 +182,16 @@ class ReferenceFilterSet(BaseFilterSet):
             return queryset
         queryset = queryset.annotate(
             user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+        ).filter(user_tag_count=1)
+        return queryset.distinct()
+
+    def filter_completely_untagged(self, queryset, name, value):
+        if not value:
+            return queryset
+        queryset = queryset.annotate(user_tag_count=Count("user_tags")).filter(
+            user_tag_count=0,
+            tags__isnull=True,
         )
-        queryset = queryset.filter(user_tag_count=1)
         return queryset.distinct()
 
     def create_form(self):
@@ -189,6 +204,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "anything_tagged_me",
             "include_mytag_descendants",
             "include_descendants",
+            "completely_untagged",
         ]:
             if field in form.fields:
                 form.fields[field].hover_help = True
