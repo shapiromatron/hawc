@@ -197,7 +197,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         Get all references in an assessment.
         """
         assessment = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        tags = models.ReferenceFilterTag.as_dataframe(assessment.id)
         exporter = exports.ReferenceFlatComplete(
             models.Reference.objects.get_qs(assessment)
             .prefetch_related("identifiers", "tags")
@@ -216,14 +216,19 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         assessment = self.get_object()
         if not assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        tags = models.ReferenceFilterTag.as_dataframe(assessment.id)
+        qs = (
+            models.UserReferenceTag.objects.filter(reference__assessment=assessment.id)
+            .select_related("reference", "user")
+            .prefetch_related("tags", "reference__identifiers")
+            .order_by("reference_id", "id")
+        )
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(assessment)
-            .prefetch_related("identifiers")
-            .order_by("id"),
+            qs,
             filename=f"references-user-tags-{assessment.name}",
             assessment=assessment,
             tags=tags,
+            user_tags=True,
         )
         return Response(exporter.build_export())
 
@@ -326,12 +331,12 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
         Return all references for a given Search
         """
         instance = self.get_object()
+        tags = models.ReferenceFilterTag.as_dataframe(instance.assessment_id)
         exporter = exports.ReferenceFlatComplete(
             instance.references.all(),
             filename=f"{instance.assessment}-search-{instance.slug}",
-            assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-            include_parent_tag=False,
+            assessment=instance.assessment_id,
+            tags=tags,
         )
         return Response(exporter.build_export())
 
@@ -347,6 +352,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         """
         tag = self.get_object()
         serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
+        tags = models.ReferenceFilterTag.as_dataframe(self.assessment.id)
         if serializer.is_valid():
             qs = (
                 models.Reference.objects.all()
@@ -358,8 +364,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
                 queryset=qs,
                 filename=f"{self.assessment}-{tag.slug}",
                 assessment=self.assessment,
-                tags=self.model.get_all_tags(self.assessment.id),
-                include_parent_tag=False,
+                tags=tags,
             )
             return Response(exporter.build_export())
         else:

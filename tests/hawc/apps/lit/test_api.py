@@ -83,8 +83,10 @@ class TestLiteratureAssessmentViewset:
     def test_export_user_tags(self, rewrite_data_files: bool, db_keys):
         pm_client = APIClient()
         assert pm_client.login(username="pm@hawcproject.org", password="pw") is True
-        url = reverse("lit:api:assessment-user-tag-export", args=(db_keys.assessment_final,))
-        fn = "api-lit-assessment-references-export.json"
+        url = reverse(
+            "lit:api:assessment-user-tag-export", args=(db_keys.assessment_conflict_resolution,)
+        )
+        fn = "api-lit-assessment-references-export-user-tags.json"
         self._test_flat_export(rewrite_data_files, fn, url, pm_client)
 
     def test_tags(self, db_keys):

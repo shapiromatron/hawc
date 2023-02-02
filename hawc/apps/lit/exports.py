@@ -1,5 +1,3 @@
-from copy import copy, deepcopy
-
 from django.utils.html import strip_tags
 
 from ..common.helper import FlatFileExporter
@@ -11,10 +9,12 @@ class ReferenceFlatComplete(FlatFileExporter):
     Returns an export of both references and reference tags
     """
 
-    def _get_header_row(self):
-        tags = self.kwargs.get("tags", None)
-        include_parent_tag = self.kwargs.get("include_parent_tag", False)
+    def _reference_data_rows(self, ref: models.Reference) -> list:
+        pass
 
+    def _get_header_row(self):
+        user_tags = self.kwargs.get("user_tags", False)
+        tags = self.kwargs["tags"]
         headers = [
             "HAWC ID",
             "HERO ID",
@@ -32,90 +32,64 @@ class ReferenceFlatComplete(FlatFileExporter):
             "Created",
             "Last updated",
         ]
-        if tags:
+        if user_tags:
             headers.extend(
-                models.ReferenceFilterTag.get_flattened_taglist(tags, include_parent_tag)
+                [
+                    "User Tag ID",
+                    "User Tag Author ID",
+                    "User Tag Author",
+                    "User Tags Resolved",
+                    "User Tags Last Updated",
+                ]
             )
+        headers.extend(tags.nested_name.tolist())
         return headers
 
+    def _get_reference_data(self, ref: models.Reference) -> list:
+        return [
+            ref.pk,
+            ref.get_hero_id(),
+            ref.get_pubmed_id(),
+            ref.get_doi_id(),
+            ref.ref_short_citation,
+            ref.ref_full_citation,
+            ref.title,
+            ref.authors,
+            ref.authors_short,
+            ref.year,
+            ref.journal,
+            strip_tags(ref.abstract),
+            ref.full_text_url,
+            ref.created,
+            ref.last_updated,
+        ]
+
     def _get_data_rows(self):
+        user_tags = self.kwargs.get("user_tags", False)
+        all_tag_ids = self.kwargs["tags"].id.tolist()
         rows = []
+        if user_tags:
+            for user_tag in self.queryset:
+                row = self._get_reference_data(user_tag.reference)
+                row.extend(
+                    [
+                        user_tag.id,
+                        user_tag.user.id,
+                        user_tag.user.get_full_name(),
+                        user_tag.is_resolved,
+                        user_tag.last_updated,
+                    ]
+                )
+                tags = set(tag.id for tag in user_tag.tags.all())
+                row.extend([tag in tags for tag in all_tag_ids])
+                rows.append(row)
 
-        def resetTags(tags):
-            def setFalse(obj):
-                obj["isTagged"] = False
-                for child in obj.get("children", []):
-                    setFalse(child)
-
-            tagsCopy = deepcopy(tags)
-            setFalse(tagsCopy)
-            return tagsCopy
-
-        tags_base = resetTags(self.kwargs.get("tags")[0])
-        include_parent_tag = self.kwargs.get("include_parent_tag", False)
-
-        def getTagRow(tags):
-            row = []
-
-            def printStatus(obj):
-                row.append(obj["isTagged"])
-                for child in obj.get("children", []):
-                    printStatus(child)
-
-            if include_parent_tag:
-                printStatus(tags)
-            else:
-                for child in tags.get("children", []):
-                    printStatus(child)
-            return row
-
-        def applyTags(tagslist, ref):
-            def applyTag(tagged, tagslist):
-                def checkMatch(tagged, tag, parents):
-                    parents = copy(parents)
-                    if tagged.id == tag["id"]:
-                        tag["isTagged"] = True
-                        for parent in parents:
-                            parent["isTagged"] = True
-
-                    parents.append(tag)
-                    for child in tag.get("children", []):
-                        checkMatch(tagged, child, parents)
-
-                if include_parent_tag:
-                    checkMatch(tagged, tagslist, [])
-                else:
-                    for child in tagslist.get("children", []):
-                        checkMatch(tagged, child, [])
-
-            for tag in ref.tags.all():
-                applyTag(tag, tagslist)
-
-        row = []
-        for ref in self.queryset:
-            row = [
-                ref.pk,
-                ref.get_hero_id(),
-                ref.get_pubmed_id(),
-                ref.get_doi_id(),
-                ref.ref_short_citation,
-                ref.ref_full_citation,
-                ref.title,
-                ref.authors,
-                ref.authors_short,
-                ref.year,
-                ref.journal,
-                strip_tags(ref.abstract),
-                ref.full_text_url,
-                ref.created,
-                ref.last_updated,
-            ]
-
-            tagsCopy = deepcopy(tags_base)
-            applyTags(tagsCopy, ref)
-            row.extend(getTagRow(tagsCopy))
-
-            rows.append(row)
+        else:
+            for ref in self.queryset:
+                row = self._get_reference_data(ref)
+                tags = set(tag.id for tag in ref.tags.all())
+                row.extend([tag in tags for tag in all_tag_ids])
+                rows.append(row)
 
         return rows
 
