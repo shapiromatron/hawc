@@ -106,14 +106,14 @@
           </a>
         </div>
         {% comment %} row #3 {% endcomment %}
-        <div class="lit-review-box box-shadow with-icon w-30">
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:user-tag-list' assessment.pk %}">
           <div>
             <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> user{{ overview.total_users|pluralize }}</p>
           </div>
           <div class="lit-icon">
             <i class="fa fa-users icon-bg"></i>
           </div>
-        </div>
+        </a>
         {% if overview.my_reviews > 0 %}
           <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
             <div>
@@ -125,7 +125,7 @@
             </div>
           </a>
         {% endif %}
-        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?completely_untagged=on">
           <div>
             <p class="h3 m-0 mt-1">{{overview.completely_untagged}}</p>
             <p class="small">completely untagged{% include "common/helptext_popup.html" with text="References that have no resolved tags and no user tags" %}</p>

@@ -142,5 +142,10 @@ urlpatterns = [
         views.ConflictResolution.as_view(),
         name="tag-conflicts",
     ),
+    path(
+        "assessment/<int:pk>/user-tags/",
+        views.UserTagList.as_view(),
+        name="user-tag-list",
+    ),
     path("api/", include((router.urls, "api"))),
 ]

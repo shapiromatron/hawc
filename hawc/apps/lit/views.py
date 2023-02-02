@@ -756,6 +756,25 @@ class ReferenceTagStatus(TeamMemberOrHigherMixin, BaseDetail):
         return context
 
 
+class UserTagList(ConflictResolution):
+    template_name="lit/reference_user_tags.html"
+
+    def get_queryset(self):
+        return (
+            self.filterset.qs.filter(user_tags__gt=0)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+                self.request.user, self.assessment, "Reference User Tags"
+        )
+        context["header"] = "Reference User Tags"
+        return context
+
+
 class RefEdit(BaseUpdate):
     success_message = "Reference updated."
     model = models.Reference
