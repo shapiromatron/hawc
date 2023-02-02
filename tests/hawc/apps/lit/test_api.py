@@ -1,6 +1,7 @@
 import json
 from io import BytesIO
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 import pytest
@@ -19,10 +20,13 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
-    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
+    def _test_flat_export(
+        self, rewrite_data_files: bool, fn: str, url: str, client: Optional[APIClient] = None
+    ):
+        if client is None:
+            client = APIClient()
+            assert client.login(username="reviewer@hawcproject.org", password="pw") is True
 
-        client = APIClient()
-        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -48,32 +52,40 @@ class TestLiteratureAssessmentViewset:
             reverse(
                 "lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)
             ),
-            reverse("lit:api:assessment-references-download", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-export", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
-        # topic model permissions
-        url = reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,))
-        assert anon_client.get(url).status_code == 403
-        assert rev_client.get(url).status_code == 200
-
-        tagtree_url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
-        # only reviewers and up can GET
-        assert anon_client.get(tagtree_url).status_code == 403
-        assert rev_client.get(tagtree_url).status_code == 200
+        # user-tag data
+        for url in [
+            reverse("lit:api:assessment-user-tag-export", args=(db_keys.assessment_final,)),
+        ]:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 403
+            assert pm_client.get(url).status_code == 200
 
         # only admins and up can POST
-        assert anon_client.post(tagtree_url).status_code == 403
-        assert rev_client.post(tagtree_url).status_code == 403
-        assert pm_client.post(tagtree_url, None).status_code != 403
+        url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
+        assert anon_client.post(url).status_code == 403
+        assert rev_client.post(url).status_code == 403
+        assert pm_client.post(url, None).status_code == 400  # validation; not permission error
 
-    def test_references_download(self, rewrite_data_files: bool, db_keys):
-        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
+    def test_export(self, rewrite_data_files: bool, db_keys):
+        url = reverse("lit:api:assessment-export", args=(db_keys.assessment_final,))
         fn = "api-lit-assessment-references-export.json"
         self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_export_user_tags(self, rewrite_data_files: bool, db_keys):
+        pm_client = APIClient()
+        assert pm_client.login(username="pm@hawcproject.org", password="pw") is True
+        url = reverse("lit:api:assessment-user-tag-export", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-references-export.json"
+        self._test_flat_export(rewrite_data_files, fn, url, pm_client)
 
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))

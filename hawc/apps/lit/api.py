@@ -191,12 +191,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         assessment.literature_settings.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        detail=True,
-        url_path="references-download",
-        renderer_classes=PandasRenderers,
-    )
-    def references_download(self, request, pk):
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def export(self, request, pk):
         """
         Get all references in an assessment.
         """
@@ -204,9 +200,28 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
         exporter = exports.ReferenceFlatComplete(
             models.Reference.objects.get_qs(assessment)
+            .prefetch_related("identifiers", "tags")
+            .order_by("id"),
+            filename=f"references-{assessment.name}",
+            assessment=assessment,
+            tags=tags,
+        )
+        return Response(exporter.build_export())
+
+    @action(detail=True, url_path="user-tag-export", renderer_classes=PandasRenderers)
+    def user_tag_export(self, request, pk):
+        """
+        Get all references in an assessment.
+        """
+        assessment = self.get_object()
+        if not assessment.user_is_team_member_or_higher(request.user):
+            raise PermissionDenied()
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        exporter = exports.ReferenceFlatComplete(
+            models.Reference.objects.get_qs(assessment)
             .prefetch_related("identifiers")
             .order_by("id"),
-            filename=f"references-{assessment}",
+            filename=f"references-user-tags-{assessment.name}",
             assessment=assessment,
             tags=tags,
         )
