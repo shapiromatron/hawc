@@ -69,7 +69,8 @@ class RiskOfBiasAssessmentViewset(
     @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        if not self.assessment.user_is_team_member_or_higher(request.user):
+            raise PermissionDenied()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset().none(),
