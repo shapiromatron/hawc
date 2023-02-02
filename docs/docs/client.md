@@ -45,6 +45,13 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### [2023-2](https://pypi.org/project/hawc-client/2023.2/) (January 2023)
+
+* Add new parameter to `set_authentication_token`, login, and returns  boolean instead of a dict.
+    - If False (default), a token based API session is created. This is consistent with previous behavior.
+    - If True, a django cookie-based session is set instead of a token-based API session. This may be used if
+        using the client to browse the website, however CSRF tokens would be required for form-based requests.
+
 #### [2023-1](https://pypi.org/project/hawc-client/2023.1/) (January 2023)
 
 * Added ``client.riskofbias.compare_metrics`` - align metrics when copying across assessments via fuzzy text matching

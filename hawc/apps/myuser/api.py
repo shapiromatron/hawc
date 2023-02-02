@@ -26,6 +26,6 @@ class HawcValidateAuthToken(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        # create a django session for django view
-        login(request, request.user)
+        if "login" in request.query_params:
+            login(request, request.user)
         return Response({"valid": True})
