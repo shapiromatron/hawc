@@ -261,8 +261,8 @@ class TagReferences(BaseFilterList):
         filterset.ReferenceFilterSet,
         fields=[
             "title_abstract",
+            "needs_tagging",
             "partially_tagged",
-            "completely_untagged",
             "search",
             "id",
             "tags",
@@ -757,7 +757,7 @@ class ReferenceTagStatus(TeamMemberOrHigherMixin, BaseDetail):
 
 
 class UserTagList(ConflictResolution):
-    template_name="lit/reference_user_tags.html"
+    template_name = "lit/reference_user_tags.html"
 
     def get_queryset(self):
         return (
@@ -769,7 +769,7 @@ class UserTagList(ConflictResolution):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-                self.request.user, self.assessment, "Reference User Tags"
+            self.request.user, self.assessment, "Reference User Tags"
         )
         context["header"] = "Reference User Tags"
         return context

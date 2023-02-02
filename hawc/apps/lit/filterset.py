@@ -70,17 +70,17 @@ class ReferenceFilterSet(BaseFilterSet):
         ),
         help_text="How results will be ordered",
     )
+    needs_tagging = df.BooleanFilter(
+        method="filter_needs_tagging",
+        widget=CheckboxInput(),
+        label="Needs Tagging",
+        help_text="References tagged by less than two people",
+    )
     partially_tagged = df.BooleanFilter(
         method="filter_partially_tagged",
         widget=CheckboxInput(),
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
-    )
-    completely_untagged = df.BooleanFilter(
-        method="filter_completely_untagged",
-        widget=CheckboxInput(),
-        label="Completely Untagged",
-        help_text="References that have no resolved tags and no user tags.",
     )
     paginate_by = PaginationFilter()
 
@@ -103,7 +103,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
             "partially_tagged",
-            "completely_untagged",
+            "needs_tagging",
         ]
 
     def filter_queryset(self, queryset):
@@ -185,13 +185,13 @@ class ReferenceFilterSet(BaseFilterSet):
         ).filter(user_tag_count=1)
         return queryset.distinct()
 
-    def filter_completely_untagged(self, queryset, name, value):
+    def filter_needs_tagging(self, queryset, name, value):
         if not value:
             return queryset
-        queryset = queryset.annotate(user_tag_count=Count("user_tags")).filter(
-            user_tag_count=0,
-            tags__isnull=True,
+        queryset = queryset.annotate(
+            user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
         )
+        queryset = queryset.filter(user_tag_count__lt=2, tags__isnull=True)
         return queryset.distinct()
 
     def create_form(self):
@@ -204,7 +204,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "anything_tagged_me",
             "include_mytag_descendants",
             "include_descendants",
-            "completely_untagged",
+            "needs_tagging",
         ]:
             if field in form.fields:
                 form.fields[field].hover_help = True
