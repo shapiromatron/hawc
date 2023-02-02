@@ -3,6 +3,7 @@ import json
 import logging
 import pickle
 import re
+from copy import copy
 from io import BytesIO
 from math import ceil
 from urllib import parse
@@ -821,24 +822,40 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         exc.add_child(name="Tier III")
 
     @classmethod
-    def get_flattened_taglist(cls, tagslist, include_parent=True):
+    def get_flattened_taglist(cls, tags: dict):
         # expects tags dictionary dump_bulk format
-        lst = []
+        names = []
 
-        def appendChildren(obj, parents):
-            parents = parents + "|" if parents != "" else parents
-            txt = parents + obj["data"]["name"]
-            lst.append(txt)
+        def recurse(obj, parents):
+            txt = f'{parents}{"|" if parents else ""}{obj["data"]["name"]}'
+            names.append(txt)
             for child in obj.get("children", []):
-                appendChildren(child, txt)
+                recurse(child, txt)
 
-        if include_parent:
-            appendChildren(tagslist[0], "")
-        else:
-            for child in tagslist[0].get("children", []):
-                appendChildren(child, "")
+        for tag in tags[0].get("children", []):
+            recurse(tag, "")
 
-        return lst
+        return names
+
+    @classmethod
+    def get_tree_descendants(cls, tags: dict) -> dict[int, list[set[int]]]:
+        descendants = {}
+
+        def recurse(tag: dict, parents: list[set]):
+            id = tag["id"]
+            for parent in parents:
+                parent.add(id)
+
+            descendants[id] = {id}
+            parents.append(descendants[id])
+
+            for child in tag.get("children", []):
+                recurse(child, copy(parents))
+
+        for tag in tags[0].get("children", []):
+            recurse(tag, [])
+
+        return descendants
 
 
 class ReferenceTags(ItemBase):

@@ -42,7 +42,8 @@ class ReferenceFlatComplete(FlatFileExporter):
                     "User Tags Last Updated",
                 ]
             )
-        headers.extend(tags.nested_name.tolist())
+
+        headers.extend(models.ReferenceFilterTag.get_flattened_taglist(tags))
         return headers
 
     def _get_reference_data(self, ref: models.Reference) -> list:
@@ -66,7 +67,7 @@ class ReferenceFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         user_tags = self.kwargs.get("user_tags", False)
-        all_tag_ids = self.kwargs["tags"].id.tolist()
+        tag_tree = models.ReferenceFilterTag.get_tree_descendants(self.kwargs["tags"])
         rows = []
         if user_tags:
             for user_tag in self.queryset:
@@ -80,15 +81,24 @@ class ReferenceFlatComplete(FlatFileExporter):
                         user_tag.last_updated,
                     ]
                 )
-                tags = set(tag.id for tag in user_tag.tags.all())
-                row.extend([tag in tags for tag in all_tag_ids])
+                user_tags_applied = set(tag.id for tag in user_tag.tags.all())
+                row.extend(
+                    [
+                        any(uta in ancestors for uta in user_tags_applied)
+                        for ancestors in tag_tree.values()
+                    ]
+                )
                 rows.append(row)
-
         else:
             for ref in self.queryset:
                 row = self._get_reference_data(ref)
-                tags = set(tag.id for tag in ref.tags.all())
-                row.extend([tag in tags for tag in all_tag_ids])
+                reference_tags = set(tag.id for tag in ref.tags.all())
+                row.extend(
+                    [
+                        any(ref_tag in ancestors for ref_tag in reference_tags)
+                        for ancestors in tag_tree.values()
+                    ]
+                )
                 rows.append(row)
 
         return rows
