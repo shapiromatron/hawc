@@ -4,11 +4,12 @@ import re
 from collections import defaultdict
 from datetime import timedelta
 from math import inf
-from typing import Any, NamedTuple, Optional, Union
+from typing import Any, Callable, NamedTuple, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -490,3 +491,29 @@ class PydanticToDjangoError:
                 ]
             ValidationError = DRFValidationError if self.drf else DjangoValidationError
             raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
+
+
+def cacheable(
+    callable: Callable, cache_key: str, flush: bool = False, cache_duration: int = -1, **kw
+) -> Any:
+    """Get the result from cache or call method to recreate and cache.
+
+    Args:
+        callable (Callable): method to evaluation if not found in cache
+        cache_key (str): the cache key to get/set
+        flush (bool, default False): Force flush the cache and re-evaluate.
+        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR
+
+    Returns:
+        The result from the callable, either from cache or regenerated.
+    """
+    if flush:
+        cache.delete(cache_key)
+    result = cache.get(cache_key)
+    if result is None:
+        result = callable(**kw)
+        if cache_duration < 0:
+            cache_duration = settings.CACHE_1_HR
+        print("set")
+        cache.set(cache_key, result, cache_duration)
+    return result
