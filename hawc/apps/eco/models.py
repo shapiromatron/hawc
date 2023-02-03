@@ -1,6 +1,7 @@
+import pandas as pd
 import reversion
 from django.db import models
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.urls import reverse, reverse_lazy
 from django.utils.text import format_lazy
 from treebeard.mp_tree import MP_Node
@@ -44,6 +45,24 @@ class NestedTerm(MP_Node):
             path += f"{node.name} > "
         path += f"{self.name}"
         return path
+
+    @classmethod
+    def as_dataframe(cls) -> pd.DataFrame:
+        max_depth = NestedTerm.objects.aggregate(value=Max("depth"))["value"]
+        rows = []
+        nesting = [None] * max_depth
+        for term in NestedTerm.objects.all():
+            depth = term.depth
+            nesting[depth - 1] = term.name
+            nesting[depth:] = [None] * (max_depth - depth)
+            rows.append([term.id, depth, *nesting])
+
+        df = pd.DataFrame(
+            data=rows,
+            columns=["ID", "Depth", *[f"Level {i+1}" for i in range(len(nesting))]],
+        ).fillna("-")
+
+        return df
 
 
 class Vocab(models.Model):
