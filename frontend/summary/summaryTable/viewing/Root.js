@@ -17,7 +17,12 @@ class Root extends Component {
             return <Loading />;
         }
         const Component = getViewTableComponent(table);
-        return <Component store={tableStore} />;
+        return (
+            <>
+                <Component store={tableStore} />
+                <div dangerouslySetInnerHTML={{__html: table.caption}} />
+            </>
+        );
     }
 }
 
