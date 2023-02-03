@@ -65,6 +65,12 @@
     </li>
 
     <li>
+        <b>Ecological data</b><br>
+        <a class='btn btn-primary' href="{% url 'eco:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
+    </li>
+
+    <li>
         <b>Visualizations</b><br>
         <p class='form-text text-muted'>
             Visualizations can be exported into SVG and PNG formats;
