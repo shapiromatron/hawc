@@ -672,6 +672,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_full_data(self):
         client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
         response = client.riskofbias.full_data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
