@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
 
 
 # Design
@@ -76,6 +76,40 @@ class DesignDelete(BaseDelete):
 # Term preview
 class NestedTermList(ListView):
     model = models.NestedTerm
+    paginate_by = 2000
+    filterset_class = filterset.NestedTermFilterset
+
+    def get_queryset(self):
+        qs = self.filterset.qs
+        ids = []
+        for node in qs.iterator():
+            ids.append(node.id)
+            for node in node.get_ancestors():
+                ids.append(node.id)
+        full_qs = models.NestedTerm.objects.filter(id__in=ids)
+        return full_qs
+
+    def get_base_queryset(self):
+        return models.NestedTerm.objects.all()
+
+    def get_filterset_kwargs(self):
+        return dict(
+            data=self.request.GET,
+            queryset=self.get_base_queryset(),
+            request=self.request,
+            assessment=None,
+        )
+
+    @property
+    def filterset(self):
+        if not hasattr(self, "_filterset"):
+            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
+        return self._filterset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(form=self.filterset.form)
+        return context
 
 
 # Viewsets
