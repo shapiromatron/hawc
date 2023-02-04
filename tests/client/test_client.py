@@ -47,18 +47,30 @@ class TestClient(LiveServerTestCase, TestCase):
             client.set_authentication_token("123")
         assert err.value.status_code == 403
 
-        with pytest.raises(HawcClientException) as err:
-            client.session.get(f"{self.live_server_url}/assessment/1/")
-        assert err.value.status_code == 403
+        url_private_api = f"{self.live_server_url}/assessment/api/assessment/1/"
+        url_private_view = f"{self.live_server_url}/assessment/1/"
+
+        for url in [url_private_api, url_private_view]:
+            with pytest.raises(HawcClientException) as err:
+                client.session.get(url)
+            assert err.value.status_code == 403
 
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
-        resp = client.set_authentication_token(token)
-        assert resp == {"valid": True}
 
-        # can also access regular Django views that are private
-        resp = client.session.get(f"{self.live_server_url}/assessment/1/")
+        # login; create a DRF token-based session
+        assert client.set_authentication_token(token, login=False) is True
+        resp = client.session.get(url_private_api)
         assert resp.status_code == 200
+        with pytest.raises(HawcClientException) as err:
+            client.session.get(url_private_view)
+        assert err.value.status_code == 403
+
+        # login; create a Django based cookie session (CSRF tokens required)
+        assert client.set_authentication_token(token, login=True) is True
+        for url in [url_private_api, url_private_view]:
+            resp = client.session.get(url)
+            assert resp.status_code == 200
 
     ####################
     # BaseClient tests #
