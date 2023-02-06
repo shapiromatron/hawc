@@ -3,7 +3,7 @@
 {% load cache %}
 
 {% block content %}
-{% cache 3600 eco-termlist %}
+
 <h2>Ecological cause/effect term list</h2>
 {% include 'common/filter_list.html' with plural_object_name='nested terms' %}
 <p class="text-muted">
@@ -12,9 +12,9 @@ A complete list of all ecological cause/effect terms in HAWC. Click 'Filter nest
 <ul class="list-unstyled">
 {% for object in object_list %}
 <li>
-    <span class="badge badge-primary">Depth {{ object.depth}}</span>&ensp;{{object.nested_text}}&ensp;<span class="badge badge-secondary">{{object.id}}</span>
+    <span class="badge badge-primary">Depth {{ object.depth}}</span>&ensp;{{object.nested_text}}&ensp;<span class="badge badge-secondary">{{object.id}}</span> <span class="badge badge-secondary">{{object.path}}</span>
 </li>
 {% endfor %}
 </ul>
-{% endcache %}
+
 {% endblock content %}

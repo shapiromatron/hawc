@@ -79,15 +79,25 @@ class NestedTermList(ListView):
     paginate_by = 2000
     filterset_class = filterset.NestedTermFilterset
 
+    def include_ancestors(self, queryset=None):
+        paths = queryset.values_list("path", "depth")
+        parent_paths = set(queryset.values_list("path", flat=True))
+        steplen = queryset.model.steplen
+        for node in paths:  # for every node in the list,
+            for parent_node in range(
+                node[1]
+            ):  # and for every parent of that node, (i.e. for the depth of the node)
+                parent_paths.add(
+                    node[0][0 : ((parent_node + 1) * steplen)]
+                )  # grab the parent's path
+        return queryset.model.objects.filter(path__in=parent_paths)
+
     def get_queryset(self):
         qs = self.filterset.qs
-        ids = []
-        for node in qs.iterator():
-            ids.append(node.id)
-            for node in node.get_ancestors():
-                ids.append(node.id)
-        full_qs = models.NestedTerm.objects.filter(id__in=ids)
-        return full_qs
+        if qs.count() == self.model.objects.all().count():
+            return qs
+        else:
+            return self.include_ancestors(qs)
 
     def get_base_queryset(self):
         return models.NestedTerm.objects.all()
