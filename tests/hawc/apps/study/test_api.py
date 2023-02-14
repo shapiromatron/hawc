@@ -35,7 +35,6 @@ class TestStudyViewset:
             "searches": [],
             "identifiers": [
                 {
-                    "content": "demo-content",
                     "database": "HERO",
                     "id": 6,
                     "unique_id": "2",
@@ -50,6 +49,9 @@ class TestStudyViewset:
             "journal": "",
             "abstract": "",
             "full_text_url": "",
+            "pubmed_id": None,
+            "hero_id": 2,
+            "doi": None,
             "created": "2020-01-25T09:23:16.370427-05:00",
             "last_updated": "2020-02-27T15:14:41.479008-05:00",
             "block_id": None,

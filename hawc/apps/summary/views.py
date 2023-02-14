@@ -567,10 +567,10 @@ class DataPivotNew(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        if self.request.GET.get("reset_row_overrides"):
-            kwargs["initial"]["settings"] = models.DataPivot.reset_row_overrides(
-                kwargs["initial"]["settings"]
-            )
+        reset_rows = self.request.GET.get("reset_row_overrides")
+        settings = kwargs["initial"].get("settings")
+        if reset_rows and settings:
+            kwargs["initial"].update(settings=models.DataPivot.reset_row_overrides(settings))
         return kwargs
 
 

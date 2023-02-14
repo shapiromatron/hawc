@@ -1,7 +1,5 @@
-import collections
 import json
 import math
-from itertools import chain
 from typing import Any
 
 import numpy as np
@@ -190,19 +188,6 @@ class Experiment(models.Model):
             Endpoint.objects.filter(animal_group__experiment__in=ids).values_list("id", flat=True)
         )
 
-    def copy_across_assessments(self, cw):
-        children = list(self.animal_groups.all().order_by("id"))
-        old_id = self.id
-        self.id = None
-        self.study_id = cw[Study.COPY_NAME][self.study_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        cw[AnimalGroup.COPY_NAME]["parents"] = collections.defaultdict(list)
-        for child in children:
-            child.copy_across_assessments(cw)
-        for child in self.animal_groups.all():
-            child.complete_copy(cw)
-
     def get_study(self):
         return self.study
 
@@ -388,41 +373,6 @@ class AnimalGroup(models.Model):
             return True
         return self.dosing_regime.can_delete()
 
-    def copy_across_assessments(self, cw, skip_siblings: bool = False):
-        children = list(self.endpoints.all().order_by("id"))
-        old_id = self.id
-        parent_ids = [p.id for p in self.parents.all()]
-        self.id = None
-        self.experiment_id = cw[Experiment.COPY_NAME][self.experiment_id]
-        self.save()
-
-        # set two-way sibling relationship; use skip_siblings to prevent recursion
-        if self.siblings and not skip_siblings:
-            if self.siblings_id not in cw[self.COPY_NAME]:
-                self.siblings.copy_across_assessments(cw, skip_siblings=True)
-            self.siblings_id = cw[self.COPY_NAME][self.siblings_id]
-            self.__class__.objects.filter(id=self.siblings_id).update(siblings_id=self.id)
-            self.save()
-
-        cw[self.COPY_NAME][old_id] = self.id
-        cw[self.COPY_NAME]["parents"][self.id] = parent_ids
-        for child in children:
-            child.copy_across_assessments(cw)
-
-    def complete_copy(self, cw):
-        # copy parent animal group over
-        for old_parent_id in cw[self.COPY_NAME]["parents"][self.id]:
-            parent_id = cw[AnimalGroup.COPY_NAME][old_parent_id]
-            self.parents.add(AnimalGroup.objects.get(pk=parent_id))
-        # only create dosing_regime if it doesn't exist
-        dosing_regime_created = DosingRegime.objects.filter(
-            pk=cw[DosingRegime.COPY_NAME].get(self.dosing_regime_id, None)
-        ).exists()
-        if not dosing_regime_created:
-            self.dosing_regime.copy_across_assessments(cw)
-        self.dosing_regime_id = cw[DosingRegime.COPY_NAME][self.dosing_regime_id]
-        self.save()
-
     def get_study(self):
         return self.experiment.get_study()
 
@@ -583,16 +533,6 @@ class DosingRegime(models.Model):
         else:
             return doses
 
-    def copy_across_assessments(self, cw):
-        children = list(self.dose_groups.all().order_by("id"))
-        old_id = self.id
-        self.id = None
-        self.dosed_animals_id = cw[AnimalGroup.COPY_NAME].get(self.dosed_animals_id, None)
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.dosed_animals.get_study()
 
@@ -629,13 +569,6 @@ class DoseGroup(models.Model):
             cols.append(v)
 
         return cols
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.dose_regime_id = cw[DosingRegime.COPY_NAME][self.dose_regime_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 class Endpoint(BaseEndpoint):
@@ -1230,36 +1163,6 @@ class Endpoint(BaseEndpoint):
         except ObjectDoesNotExist:
             return None
 
-    def copy_across_assessments(self, cw):
-        children = chain(
-            list(self.groups.all().order_by("id")),
-            list(self.bmd_sessions.all().order_by("id")),
-        )
-        effects = list(self.effects.all().order_by("id"))
-
-        old_id = self.id
-        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-
-        # copy base endpoint
-        base = self.baseendpoint_ptr
-        base.id = None
-        base.assessment_id = new_assessment_id
-        base.save()
-
-        # copy endpoint
-        self.id = None
-        self.baseendpoint_ptr = base
-        self.assessment_id = new_assessment_id
-        self.animal_group_id = cw[AnimalGroup.COPY_NAME][self.animal_group_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
-        self.effects.set(effects)
-
-        # copy other children
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.animal_group.get_study()
 
@@ -1535,13 +1438,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             ser["dose_group_id"] == endpoint["LOEL"],
             ser["dose_group_id"] == endpoint["FEL"],
         )
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.endpoint_id = cw[Endpoint.COPY_NAME][self.endpoint_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 reversion.register(Experiment)

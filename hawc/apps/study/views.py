@@ -3,12 +3,10 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewPermissions
-from ..common.crumbs import Breadcrumb
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
@@ -130,48 +128,6 @@ class StudyDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("study:list", kwargs={"pk": self.assessment.pk})
-
-
-class StudiesCopy(BaseUpdate):
-    """
-    Copy one or more studies from one assessment to another. This will copy
-    all nested data as well.
-    """
-
-    model = Assessment
-    template_name = "study/studies_copy.html"
-    form_class = forms.StudiesCopy
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Copy study",
-            extras=[
-                Breadcrumb.from_object(self.assessment),
-                Breadcrumb(name="Studies", url=reverse("study:list", args=(self.assessment.id,))),
-            ],
-        )
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
-
-    @transaction.atomic
-    def form_valid(self, form):
-        models.Study.copy_across_assessment(
-            form.cleaned_data["studies"], form.cleaned_data["assessment"]
-        )
-        msg = "Studies copied!"
-        self.success_message = msg
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy("study:list", kwargs={"pk": self.assessment.id})
 
 
 class StudyRoBRedirect(StudyRead):
