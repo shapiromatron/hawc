@@ -13,7 +13,7 @@ class AssessmentViewPermissions(IntegerChoices):
     VIEWER = 3
 
 
-class AssessmentViewsetPermissions(IntegerChoices):
+class AssessmentViewSetPermissions(IntegerChoices):
     CAN_VIEW_OBJECT = 1
     CAN_EDIT_OBJECT = 2
     CAN_EDIT_ASSESSMENT = 3

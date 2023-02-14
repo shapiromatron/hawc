@@ -20,7 +20,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -41,7 +41,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def tags(self, request, pk):
@@ -77,7 +77,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         pagination_class=PaginationWithCount,
     )
     def references(self, request, pk):
@@ -108,7 +108,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
         url_path="reference-ids",
     )
@@ -153,7 +153,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         url_path="reference-year-histogram",
     )
     def reference_year_histogram(self, request, pk):
@@ -194,7 +194,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         url_path="topic-model",
     )
     def topic_model(self, request, pk):
@@ -209,7 +209,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         detail=True,
         methods=("post",),
         url_path="topic-model-request-refresh",
-        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
     )
     def topic_model_request_refresh(self, request, pk):
         assessment = self.get_object()
@@ -220,7 +220,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="references-download",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
@@ -241,7 +241,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
         url_path="tag-heatmap",
     )
@@ -264,7 +264,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="replace-hero",
-        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
     )
     def replace_hero(self, request, pk):
         """Replace old HERO ID with new HERO ID for selected references
@@ -289,7 +289,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="update-reference-metadata-from-hero",
-        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
     )
     def update_reference_metadata_from_hero(self, request, pk):
         """
@@ -306,7 +306,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         methods=("post",),
-        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
         parser_classes=(FileUploadParser,),
         renderer_classes=PandasRenderers,
         url_path="excel-to-json",
@@ -343,7 +343,7 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def references(self, request, pk):
@@ -367,7 +367,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def references(self, request, pk):
@@ -414,7 +414,7 @@ class ReferenceViewset(
     queryset = models.Reference.objects.all()
 
     @action(
-        detail=True, methods=("post",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def tag(self, request, pk):
         response = {"status": "fail"}

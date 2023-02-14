@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from . import models, serializers
 
 
@@ -32,7 +32,7 @@ class TaskViewSet(AssessmentEditViewset):
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def assessment_assignments(self, request):
         # Tasks assigned to user for a specific assessment
         qs = (

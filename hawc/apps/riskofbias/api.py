@@ -20,7 +20,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -45,7 +45,7 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def export(self, request, pk):
@@ -62,7 +62,7 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="full-export",
-        action_perms=AssessmentViewsetPermissions.TEAM_MEMBER_OR_HIGHER,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):
@@ -83,7 +83,7 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
     @action(
-        detail=True, url_path="settings", action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT
+        detail=True, url_path="settings", action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT
     )
     def rob_settings(self, request, pk):
         self.get_object()
@@ -207,7 +207,7 @@ class RiskOfBias(AssessmentEditViewset):
 
         return super().create(request, *args, **kwargs)
 
-    @action(detail=True, methods=["get"], action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=True, methods=["get"], action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def override_options(self, request, pk=None):
         object_ = self.get_object()
         return Response(object_.get_override_options())

@@ -9,7 +9,7 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
 )
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -33,7 +33,7 @@ class IVAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="full-export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):

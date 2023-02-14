@@ -13,7 +13,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.views import create_object_log
 from ..riskofbias.serializers import RiskOfBiasSerializer
@@ -49,7 +49,7 @@ class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
                 "riskofbiases__scores__overridden_objects__content_object",
             ).select_related("assessment")
 
-    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_scores(self, request):
         scores = self.model.objects.rob_scores(self.assessment.pk)
         return Response(scores)
@@ -76,7 +76,7 @@ class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     @action(
         detail=True,
         url_path="all-rob",
-        action_perms=AssessmentViewsetPermissions.TEAM_MEMBER_OR_HIGHER,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
     )
     def rob(self, request, pk: int):
         study = self.get_object()

@@ -3,7 +3,7 @@ import logging
 from django.db import models
 from rest_framework import exceptions, permissions
 
-from ...common.constants import AssessmentViewsetPermissions
+from ...common.constants import AssessmentViewSetPermissions
 from .helper import get_assessment_from_query
 
 logger = logging.getLogger(__name__)
@@ -62,12 +62,12 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     default_list_actions = ["list"]
     default_action_perms = {
-        "retrieve": AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
-        "list": AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
-        "update": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
-        "partial_update": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
-        "destroy": AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
-        "metadata": AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        "retrieve": AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        "list": AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        "update": AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
+        "partial_update": AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
+        "destroy": AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
+        "metadata": AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
     }
 
     def fix_view_action(self, request, view):

@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from . import models, serializers, tasks
 
 
@@ -20,7 +20,7 @@ class Session(AssessmentViewset):
             return serializers.SessionSerializer
 
     @action(
-        detail=True, methods=["post"], action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+        detail=True, methods=["post"], action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def execute(self, request, pk=None):
         instance = self.get_object()
@@ -30,14 +30,14 @@ class Session(AssessmentViewset):
         tasks.execute.delay(instance.id)
         return Response({"started": True})
 
-    @action(detail=True, methods=["get"], action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=True, methods=["get"], action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def execute_status(self, request, pk=None):
         # ping until execution is complete
         session = self.get_object()
         return Response({"finished": session.is_finished})
 
     @action(
-        detail=True, methods=("post",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def selected_model(self, request, pk=None):
         session = self.get_object()

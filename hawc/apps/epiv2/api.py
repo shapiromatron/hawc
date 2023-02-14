@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset, EditPermissionsCheckMixin
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
 from .actions.model_metadata import EpiV2Metadata
@@ -16,7 +16,7 @@ class EpiAssessmentViewset(BaseAssessmentViewset):
     @action(
         detail=True,
         url_path="export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def export(self, request, pk):

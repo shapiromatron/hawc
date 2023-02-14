@@ -17,7 +17,7 @@ from ..assessment.api import (
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.api import ReadWriteSerializerMixin
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -42,7 +42,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def export(self, request, pk):
@@ -58,7 +58,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="study-heatmap",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def study_heatmap(self, request, pk):
@@ -85,7 +85,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="result-heatmap",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def result_heatmap(self, request, pk):

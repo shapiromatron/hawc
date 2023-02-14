@@ -15,7 +15,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -52,7 +52,7 @@ class SummaryAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="visual-heatmap-datasets",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
     )
     def heatmap_datasets(self, request, pk):
         """Returns a list of the heatmap datasets available for an assessment."""
@@ -84,7 +84,7 @@ class DataPivotViewset(AssessmentViewset):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def data(self, request, pk):
@@ -137,7 +137,7 @@ class SummaryTableViewset(AssessmentEditViewset):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=(DocxRenderer,),
     )
     def docx(self, request, pk):
@@ -145,7 +145,7 @@ class SummaryTableViewset(AssessmentEditViewset):
         report = obj.to_docx(base_url=request._current_scheme_host)
         return Response(report)
 
-    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def data(self, request):
         ser = table_serializers.SummaryTableDataSerializer(
             data=request.query_params.dict(), context=self.get_serializer_context()

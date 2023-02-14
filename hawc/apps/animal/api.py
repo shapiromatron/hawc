@@ -14,7 +14,7 @@ from ..assessment.api import (
     DoseUnitsViewset,
     user_can_edit_object,
 )
-from ..common.constants import AssessmentViewsetPermissions
+from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -41,7 +41,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="full-export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):
@@ -59,7 +59,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="endpoint-export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def endpoint_export(self, request, pk):
@@ -77,7 +77,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="study-heatmap",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def study_heatmap(self, request, pk):
@@ -104,7 +104,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="endpoint-heatmap",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def endpoint_heatmap(self, request, pk):
@@ -131,7 +131,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="endpoint-doses-heatmap",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def endpoint_doses_heatmap(self, request, pk):
@@ -157,7 +157,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def endpoints(self, request, pk):
@@ -180,7 +180,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="ehv-check",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def ehv_check(self, request, pk):
@@ -277,12 +277,12 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
             self.request.user.id,
         )
 
-    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def effects(self, request):
         effects = models.Endpoint.objects.get_effects(self.assessment.id)
         return Response(effects)
 
-    @action(detail=False, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_filter(self, request):
 
         params = request.query_params
@@ -306,7 +306,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         return Response(serializer.data)
 
     @action(
-        detail=False, methods=("post",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+        detail=False, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def update_terms(self, request):
         # update endpoint terms (all other validation done in manager)

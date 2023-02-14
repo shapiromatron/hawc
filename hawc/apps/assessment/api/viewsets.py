@@ -14,7 +14,7 @@ from rest_framework.response import Response
 
 from ....services.epa.dsstox import RE_DTXSID
 from ...common.api import CleanupBulkIdFilter, DisabledPagination, ListUpdateModelMixin
-from ...common.constants import AssessmentViewsetPermissions
+from ...common.constants import AssessmentViewSetPermissions
 from ...common.exceptions import ClassConfigurationException
 from ...common.helper import FlatExport, re_digits
 from ...common.renderers import PandasRenderers
@@ -228,7 +228,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     @transaction.atomic
     @action(
-        detail=True, methods=("patch",), action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT
+        detail=True, methods=("patch",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -260,7 +260,7 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=True, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def endpoints(self, request, pk: int):
         """
         Optimized for queryset speed; some counts in get_queryset
@@ -421,7 +421,7 @@ class Assessment(AssessmentViewset):
     @action(
         detail=True,
         url_path=r"logs/(?P<type>[\w]+)",
-        action_perms=AssessmentViewsetPermissions.CAN_EDIT_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def logs(self, request: Request, pk: int, type: str):
@@ -450,7 +450,7 @@ class DatasetViewset(AssessmentViewset):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def data(self, request, pk: int = None):
@@ -463,7 +463,7 @@ class DatasetViewset(AssessmentViewset):
 
     @action(
         detail=True,
-        action_perms=AssessmentViewsetPermissions.TEAM_MEMBER_OR_HIGHER,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
         renderer_classes=PandasRenderers,
         url_path=r"version/(?P<version>\d+)",
     )
