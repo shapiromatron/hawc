@@ -34,35 +34,9 @@ class AssessmentPermissions(BaseModel):
             cache.set(key, perms, settings.CACHE_1_HR)
         return perms
 
-    def can_view_object(self, user) -> bool:
+    def project_manager_or_higher(self, user) -> bool:
         """
-        Superusers can view all, noneditible reviews can be viewed, team
-        members or project managers can view.
-        Anonymous users on noneditable projects cannot view, nor can those who
-        are non members of a project.
-        """
-        if self.public:
-            return True
-        return self.part_of_team(user)
-
-    def can_edit_object(self, user) -> bool:
-        """
-        If person has enhanced permissions beyond the general public, which may
-        be used to view attachments associated with a study.
-        """
-        if user.is_superuser:
-            return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return self.editable and (
-                user.id in self.project_manager or user.id in self.team_members
-            )
-
-    def can_edit_assessment(self, user) -> bool:
-        """
-        If person is superuser or assessment is editible and user is a project
-        manager or team member.
+        Check if user is superuser or project-manager
         """
         if user.is_superuser:
             return True
@@ -71,10 +45,20 @@ class AssessmentPermissions(BaseModel):
         else:
             return user.id in self.project_manager
 
-    def part_of_team(self, user) -> bool:
+    def team_member_or_higher(self, user) -> bool:
         """
-        Used for permissions-checking if attachments for a study can be
-        viewed. Checks to ensure user is part of the team.
+        Check if person is superuser, project manager, or team member
+        """
+        if user.is_superuser:
+            return True
+        elif user.is_anonymous:
+            return False
+        else:
+            return user.id in self.project_manager or user.id in self.team_members
+
+    def reviewer_or_higher(self, user) -> bool:
+        """
+        If person is superuser, project manager, team member, or reviewer
         """
         if user.is_superuser:
             return True
@@ -87,22 +71,33 @@ class AssessmentPermissions(BaseModel):
                 or user.id in self.reviewers
             )
 
-    def team_member_or_higher(self, user) -> bool:
+    def can_edit_object(self, user) -> bool:
         """
-        Check if user is superuser, project-manager, or team-member, otherwise False.
+        If person has enhanced permissions beyond the general public, which may
+        be used to view attachments associated with a study.
         """
         if user.is_superuser:
             return True
-        elif user.is_anonymous:
-            return False
-        else:
-            return user.id in self.project_manager or user.id in self.team_members
+        return self.editable and self.team_member_or_higher(user)
+
+    def can_view_object(self, user) -> bool:
+        """
+        Superusers can view all, noneditible reviews can be viewed, team
+        members or project managers can view.
+        Anonymous users on noneditable projects cannot view, nor can those who
+        are non members of a project.
+        """
+        if self.public:
+            return True
+        return self.reviewer_or_higher(user)
 
     def can_edit_study(self, study, user) -> bool:
         """
         Check if user can edit a study; dependent on if study is editable
         """
-        return self.can_edit_assessment(user) or (study.editable and self.can_edit_object(user))
+        return self.project_manager_or_higher(user) or (
+            study.editable and self.can_edit_object(user)
+        )
 
     def can_view_study(self, study, user) -> bool:
         """
@@ -114,5 +109,5 @@ class AssessmentPermissions(BaseModel):
         return {
             "view": self.can_view_study(study, user) if study else self.can_view_object(user),
             "edit": self.can_edit_study(study, user) if study else self.can_edit_object(user),
-            "edit_assessment": self.can_edit_assessment(user),
+            "edit_assessment": self.project_manager_or_higher(user),
         }

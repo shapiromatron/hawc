@@ -72,7 +72,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-epi-study-heatmap-pub-{unpublished}"
         df = cache.get(key)
@@ -99,7 +99,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-epi-result-heatmap-pub-{unpublished}"
         df = cache.get(key)

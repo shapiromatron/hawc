@@ -91,7 +91,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
         df = cache.get(key)
@@ -118,7 +118,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
         df = cache.get(key)
@@ -145,7 +145,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
         df = cache.get(key)
@@ -165,7 +165,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
         df = cache.get(key)

@@ -33,7 +33,7 @@ class UnpublishedFilter(BaseFilterBackend):
             self.instance = get_object_or_404(queryset.model, **view.kwargs)
             view.assessment = self.instance.get_assessment()
 
-        if not view.assessment.user_is_part_of_team(request.user):
+        if not view.assessment.user_is_reviewer_or_higher(request.user):
             queryset = queryset.filter(published=True)
         return queryset
 
