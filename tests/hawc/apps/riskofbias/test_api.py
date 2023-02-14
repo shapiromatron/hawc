@@ -17,52 +17,58 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 @pytest.mark.django_db
 class TestRiskOfBiasAssessmentViewset:
-    def test_permissions(self, db_keys):
+    def test_full_export(self, rewrite_data_files: bool, db_keys):
+        # permission check
+        anon_client = APIClient()
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
-        anon_client = APIClient()
+        tm_client = APIClient()
+        assert tm_client.login(username="team@hawcproject.org", password="pw") is True
 
-        urls = [
-            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_working,)),
-            reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,)),
-        ]
-        for url in urls:
-            assert anon_client.get(url).status_code == 403
-            assert rev_client.get(url).status_code == 200
+        url = reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,))
+        assert anon_client.get(url).status_code == 403
+        assert rev_client.get(url).status_code == 403
+        assert tm_client.get(url).status_code == 200
 
-    def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = Path(DATA_ROOT / "api-rob-assessment-full-export.json")
         url = (
             reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
         )
 
-        client = APIClient()
-        resp = client.get(url)
+        # check data
+        resp = tm_client.get(url)
         assert resp.status_code == 200
-
         data = resp.json()
-
         if rewrite_data_files:
             Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
         assert data == json.loads(fn.read_text())
 
     def test_export(self, rewrite_data_files: bool, db_keys):
+        # permission check
+        anon_client = APIClient()
+        rev_client = APIClient()
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
+        tm_client = APIClient()
+        assert tm_client.login(username="team@hawcproject.org", password="pw") is True
+
+        url = reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,))
+        assert anon_client.get(url).status_code == 403
+        assert rev_client.get(url).status_code == 403
+        assert tm_client.get(url).status_code == 200
+
+        # data check
         fn = Path(DATA_ROOT / "api-rob-assessment-export.json")
         url = (
             reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
             + "?format=json"
         )
 
-        client = APIClient()
-        resp = client.get(url)
+        resp = anon_client.get(url)
         assert resp.status_code == 200
-
         data = resp.json()
-
         if rewrite_data_files:
             Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-
         assert data == json.loads(fn.read_text())
 
     def test_PandasXlsxRenderer(self, db_keys):

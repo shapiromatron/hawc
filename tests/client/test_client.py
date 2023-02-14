@@ -685,6 +685,14 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_full_data(self):
         client = HawcClient(self.live_server_url)
+
+        # permission denied
+        with pytest.raises(HawcClientException) as err:
+            client.riskofbias.full_data(self.db_keys.assessment_client)
+            assert err.status_code == 403
+
+        # successful response
+        client.authenticate("team@hawcproject.org", "pw")
         response = client.riskofbias.full_data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 

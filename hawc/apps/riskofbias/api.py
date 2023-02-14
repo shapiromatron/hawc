@@ -62,7 +62,7 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="full-export",
-        action_perms=AssessmentViewsetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewsetPermissions.TEAM_MEMBER_OR_HIGHER,
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):

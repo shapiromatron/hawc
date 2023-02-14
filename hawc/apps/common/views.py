@@ -270,9 +270,9 @@ class AssessmentPermissionsMixin:
         elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
             has_permission = self.assessment.user_can_view_object(self.request.user)
 
-        logger.debug("Permissions checked")
         if not has_permission:
             raise PermissionDenied()
+        logger.debug("Permissions checked")
 
         return obj
 
