@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer

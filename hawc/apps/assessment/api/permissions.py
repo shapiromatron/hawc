@@ -3,7 +3,7 @@ import logging
 from django.db import models
 from rest_framework import exceptions, permissions
 
-from ...common.constants import AssessmentViewSetPermissions
+from ...assessment.constants import AssessmentViewSetPermissions
 from .helper import get_assessment_from_query
 
 logger = logging.getLogger(__name__)

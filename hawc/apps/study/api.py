@@ -11,9 +11,9 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     InAssessmentFilter,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.views import create_object_log
 from ..riskofbias.serializers import RiskOfBiasSerializer

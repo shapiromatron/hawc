@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset
-from ..common.constants import AssessmentViewSetPermissions
+from ..assessment.constants import AssessmentViewSetPermissions
 from . import models, serializers, tasks
 
 

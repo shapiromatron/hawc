@@ -19,8 +19,8 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
-from .constants import AssessmentViewPermissions
 from .crumbs import Breadcrumb
 from .filterset import BaseFilterSet
 from .helper import WebappConfig, tryParseInt
@@ -238,15 +238,15 @@ class AssessmentPermissionsMixin:
         # TODO remove?
         logger.debug("Permissions checked")
         if self.model == Assessment:
-            canEdit = self.assessment.user_can_edit_assessment(self.request.user)
+            can_edit = self.assessment.user_can_edit_assessment(self.request.user)
         else:
             self.deny_for_locked_study(
                 self.request.user,
                 self.assessment,
                 self.get_object_for_study_editability_check(),
             )
-            canEdit = self.assessment.user_can_edit_object(self.request.user)
-        if not canEdit:
+            can_edit = self.assessment.user_can_edit_object(self.request.user)
+        if not can_edit:
             raise PermissionDenied
 
     def check_queryset_study_editability(self, queryset):
@@ -261,18 +261,18 @@ class AssessmentPermissionsMixin:
         if not hasattr(self, "assessment"):
             self.assessment = obj.get_assessment()
 
-        has_permission = False
+        permission_checked = False
         if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
-            has_permission = self.assessment.user_can_edit_assessment(self.request.user)
+            permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
             self.deny_for_locked_study(self.request.user, self.assessment, obj)
-            has_permission = self.assessment.user_can_edit_object(self.request.user)
+            permission_checked = self.assessment.user_can_edit_object(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
-            has_permission = self.assessment.user_can_view_object(self.request.user)
+            permission_checked = self.assessment.user_can_view_object(self.request.user)
 
-        if not has_permission:
+        if not permission_checked:
             raise PermissionDenied()
-        logger.debug("Permissions checked")
+        logger.debug("Permissions checked: object")
 
         return obj
 
@@ -286,19 +286,19 @@ class AssessmentPermissionsMixin:
         if not hasattr(self, "assessment"):
             raise ValueError("No assessment object; required to check permission")
 
-        has_permission = False
+        permission_checked = False
         if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
             self.check_queryset_study_editability(queryset)
-            has_permission = self.assessment.user_can_edit_assessment(self.request.user)
+            permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
             self.check_queryset_study_editability(queryset)
-            has_permission = self.assessment.user_can_edit_object(self.request.user)
+            permission_checked = self.assessment.user_can_edit_object(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
-            has_permission = self.assessment.user_can_view_object(self.request.user)
+            permission_checked = self.assessment.user_can_view_object(self.request.user)
 
-        logger.debug("Permissions checked")
-        if not has_permission:
+        if not permission_checked:
             raise PermissionDenied()
+        logger.debug("Permissions checked: queryset)")
 
         return queryset
 

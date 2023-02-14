@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewSetPermissions
 from . import models, serializers
 
 

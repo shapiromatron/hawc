@@ -18,9 +18,9 @@ from ..assessment.api import (
     InAssessmentFilter,
     get_assessment_id_param,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer

@@ -29,7 +29,6 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView, V
 from django.views.generic.edit import CreateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
-from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
@@ -418,21 +417,21 @@ class AssessmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
     model = models.Assessment
     form_class = forms.AssessmentForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = "Assessment modules updated."
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentDelete(BaseDelete):
     model = models.Assessment
     success_url = reverse_lazy("portal")
     success_message = "Assessment deleted."
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentClearCache(MessageMixin, View):
@@ -635,7 +634,7 @@ class CleanExtractedData(BaseEndpointList):
 
     breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -693,7 +692,7 @@ class CleanStudyRoB(BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
     breadcrumb_active_name = "Clean reviews"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -808,7 +807,7 @@ class AssessmentLogList(BaseList):
     breadcrumb_active_name = "Logs"
     template_name = "assessment/assessment_log_list.html"
     paginate_by = 25
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         qs = super().get_queryset()

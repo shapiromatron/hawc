@@ -18,9 +18,9 @@ from ..assessment.api import (
     AssessmentRootedTagTreeViewset,
     CleanupFieldsBaseViewSet,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer

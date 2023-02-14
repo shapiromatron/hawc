@@ -10,8 +10,8 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
 from ..animal.models import Endpoint
-from ..common.constants import AssessmentViewPermissions
+from ..assessment.constants import AssessmentViewPermissions
 from ..common.helper import WebappConfig
 from ..common.views import BaseDelete, BaseDetail, BaseList, BaseUpdate
 from . import forms, models

@@ -14,7 +14,7 @@ from ..assessment.api import (
     DoseUnitsViewset,
     user_can_edit_object,
 )
-from ..common.constants import AssessmentViewSetPermissions
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer

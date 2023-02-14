@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset, EditPermissionsCheckMixin
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
 from .actions.model_metadata import EpiV2Metadata

@@ -11,7 +11,7 @@ class RiskOfBiasClient(BaseClient):
     Client class for risk of bias requests.
     """
 
-    def data(self, assessment_id: int) -> pd.DataFrame:
+    def export(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves risk of bias data for the given assessment.
         This includes only final reviews.
@@ -26,7 +26,7 @@ class RiskOfBiasClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def full_data(self, assessment_id: int) -> pd.DataFrame:
+    def full_export(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves full risk of bias data for the given assessment.
         This includes user-level reviews.

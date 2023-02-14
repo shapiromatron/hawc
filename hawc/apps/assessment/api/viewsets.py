@@ -14,13 +14,13 @@ from rest_framework.response import Response
 
 from ....services.epa.dsstox import RE_DTXSID
 from ...common.api import CleanupBulkIdFilter, DisabledPagination, ListUpdateModelMixin
-from ...common.constants import AssessmentViewSetPermissions
 from ...common.exceptions import ClassConfigurationException
 from ...common.helper import FlatExport, re_digits
 from ...common.renderers import PandasRenderers
 from ...common.views import bulk_create_object_log, create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
+from ..constants import AssessmentViewSetPermissions
 from .filters import InAssessmentFilter
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
 

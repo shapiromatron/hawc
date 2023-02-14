@@ -5,8 +5,8 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import (

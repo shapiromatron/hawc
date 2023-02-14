@@ -1,8 +1,8 @@
 from django.middleware.csrf import get_token
 from django.urls import reverse
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewPermissions
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import (

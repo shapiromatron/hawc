@@ -13,9 +13,9 @@ from ..assessment.api import (
     EditPermissionsCheckMixin,
     InAssessmentFilter,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer

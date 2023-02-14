@@ -8,8 +8,8 @@ from ..assessment.api import (
     AssessmentViewset,
     CleanupFieldsBaseViewSet,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer

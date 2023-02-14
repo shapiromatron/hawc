@@ -14,10 +14,10 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     EditPermissionsCheckMixin,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.api import ReadWriteSerializerMixin
-from ..common.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
