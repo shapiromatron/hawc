@@ -562,7 +562,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
-        # self.permission_check_user_can_view()
+        self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
