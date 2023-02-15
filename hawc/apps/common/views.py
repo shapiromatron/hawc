@@ -226,16 +226,12 @@ class AssessmentPermissionsMixin:
 
         raise ValueError("Cannot determine permissions object")
 
-    # todo remove this next?
     def permission_check_user_can_view(self):
-        # TODO remove?
         logger.debug("Permissions checked")
         if not self.assessment.user_can_view_object(self.request.user):
             raise PermissionDenied
 
-    # todo remove this next?
     def permission_check_user_can_edit(self):
-        # TODO remove?
         logger.debug("Permissions checked")
         if self.model == Assessment:
             can_edit = self.assessment.user_can_edit_assessment(self.request.user)
@@ -336,42 +332,6 @@ class TimeSpentOnPageMixin:
         return response
 
 
-class CanCreateMixin:
-    """
-    Checks to make sure that the user has appropriate permissions before adding
-    a new object to the assessment. Requires a self.assessment variable to be
-    created before rendering.
-    """
-
-    def user_can_create_object(self, assessment):
-        """
-        If person is superuser or assessment is editable and user is a project
-        manager or team member.
-        """
-        logger.debug("Permissions checked")
-        if self.request.user.is_superuser:
-            return True
-        elif self.request.user.is_anonymous:
-            return False
-        else:
-            return (assessment.editable is True) and (
-                (self.request.user in assessment.project_manager.all())
-                or (self.request.user in assessment.team_members.all())
-            )
-
-    def get(self, request, *args, **kwargs):
-        if self.user_can_create_object(self.assessment):
-            return super().get(request, *args, **kwargs)
-        else:
-            raise PermissionDenied
-
-    def post(self, request, *args, **kwargs):
-        if self.user_can_create_object(self.assessment):
-            return super().post(request, *args, **kwargs)
-        else:
-            raise PermissionDenied
-
-
 class CopyAsNewSelectorMixin:
 
     copy_model = None  # required
@@ -450,7 +410,7 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.permission_check_user_can_edit()  # todo - remove? in get_object?
+        self.permission_check_user_can_edit()
         success_url = self.get_success_url()
         self.create_log(self.object)
         self.object.delete()
@@ -532,8 +492,8 @@ class BaseCreate(
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        self.assessment = self.parent.get_assessment()  # todo - remove? in get_object?
-        self.permission_check_user_can_edit()  # todo - remove? in get_object?
+        self.assessment = self.parent.get_assessment()
+        self.permission_check_user_can_edit()
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -601,8 +561,8 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        self.assessment = self.parent.get_assessment()  # TODO - remove?
-        self.permission_check_user_can_view()  # TODO - remove? in get_queryset?
+        self.assessment = self.parent.get_assessment()
+        # self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):

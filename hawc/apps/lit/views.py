@@ -615,7 +615,7 @@ class RefDelete(BaseDelete):
 
     def permission_check_user_can_edit(self):
         # perform standard check
-        super().permission_check_user_can_edit()  # TODO -remove? in BaseDelete?
+        super().permission_check_user_can_edit()
         # and additional check
         if self.object.has_study:
             raise PermissionDenied("Cannot delete - object has related study")
