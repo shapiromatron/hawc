@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Iterable, Optional, Type
 from urllib.parse import urlparse
 
 import reversion
@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.db import transaction
+from django.db import models, transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -226,25 +226,6 @@ class AssessmentPermissionsMixin:
 
         raise ValueError("Cannot determine permissions object")
 
-    def permission_check_user_can_view(self):
-        logger.debug("Permissions checked")
-        if not self.assessment.user_can_view_object(self.request.user):
-            raise PermissionDenied
-
-    def permission_check_user_can_edit(self):
-        logger.debug("Permissions checked")
-        if self.model == Assessment:
-            can_edit = self.assessment.user_can_edit_assessment(self.request.user)
-        else:
-            self.deny_for_locked_study(
-                self.request.user,
-                self.assessment,
-                self.get_object_for_study_editability_check(),
-            )
-            can_edit = self.assessment.user_can_edit_object(self.request.user)
-        if not can_edit:
-            raise PermissionDenied
-
     def check_queryset_study_editability(self, queryset):
         first_object = queryset.first()
         if first_object is None:
@@ -395,8 +376,7 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
             "breadcrumbs": self.get_breadcrumbs(),
         }
         for key, value in extras.items():
-            if key not in kwargs:
-                kwargs[key] = value
+            kwargs.setdefault(key, value)
         context = super().get_context_data(**kwargs)
         if self.breadcrumb_active_name:
             context["breadcrumbs"].append(Breadcrumb(name=self.breadcrumb_active_name))
@@ -410,12 +390,20 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
     @transaction.atomic
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.permission_check_user_can_edit()
+        self.check_delete()
         success_url = self.get_success_url()
         self.create_log(self.object)
         self.object.delete()
         self.send_message()
         return HttpResponseRedirect(success_url)
+
+    def check_delete(self):
+        """Additional permission checks for DELETE requests; not GET requests.
+
+        This may be useful for situations where you need to explain to a user why they cannot
+        delete an object in the GET, and if they try, we can raise an exception here.
+        """
+        pass
 
     def create_log(self, obj):
         create_object_log("Deleted", obj, self.assessment.id, self.request.user.id)
@@ -432,8 +420,7 @@ class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteVi
             "breadcrumbs": self.get_breadcrumbs(),
         }
         for key, value in extras.items():
-            if key not in kwargs:
-                kwargs[key] = value
+            kwargs.setdefault(key, value)
         context = super().get_context_data(**kwargs)
         return context
 
@@ -471,8 +458,7 @@ class BaseUpdate(
             "breadcrumbs": self.get_breadcrumbs(),
         }
         for key, value in extras.items():
-            if key not in kwargs:
-                kwargs[key] = value
+            kwargs.setdefault(key, value)
         context = super().get_context_data(**kwargs)
         return context
 
@@ -485,15 +471,14 @@ class BaseUpdate(
 class BaseCreate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
 ):
-    parent_model = None  # required
-    parent_template_name: Optional[str] = None  # required
+    parent_model: Type[models.Model]
+    parent_template_name: str
     crud = "Create"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def dispatch(self, *args, **kwargs):
-        self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        self.assessment = self.parent.get_assessment()
-        self.permission_check_user_can_edit()
+        parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
+        self.parent = self.get_object(object=parent)  # call for assessment permissions check
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -522,8 +507,7 @@ class BaseCreate(
             "breadcrumbs": self.get_breadcrumbs(),
         }
         for key, value in extras.items():
-            if key not in kwargs:
-                kwargs[key] = value
+            kwargs.setdefault(key, value)
         context = super().get_context_data(**kwargs)
         context[self.parent_template_name] = self.parent
         return context
@@ -562,7 +546,6 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
-        self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -573,8 +556,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
             "breadcrumbs": self.get_breadcrumbs(),
         }
         for key, value in extras.items():
-            if key not in kwargs:
-                kwargs[key] = value
+            kwargs.setdefault(key, value)
         context = super().get_context_data(**kwargs)
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
@@ -705,20 +687,17 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 
 class BaseFilterList(BaseList):
-    filterset_class: BaseFilterSet
+    filterset_class: Type[BaseFilterSet]
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
         value = self.filterset.form.cleaned_data.get("paginate_by")
         return tryParseInt(value, default=self.paginate_by, min_value=10, max_value=500)
 
-    def get_base_queryset(self):
-        return self.model.objects.all()
-
     def get_filterset_kwargs(self):
         return dict(
             data=self.request.GET,
-            queryset=self.get_base_queryset(),
+            queryset=super().get_queryset(),
             request=self.request,
             assessment=self.assessment,
         )

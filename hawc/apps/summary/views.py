@@ -42,7 +42,7 @@ class SummaryTextList(BaseList):
 
     def get_queryset(self):
         rt = self.model.get_assessment_root_node(self.assessment.id)
-        return self.model.objects.filter(pk__in=[rt.pk])
+        return super().get_queryset().filter(pk__in=[rt.pk])
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(

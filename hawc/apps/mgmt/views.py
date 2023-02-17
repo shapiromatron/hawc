@@ -110,7 +110,9 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
 
     def get_queryset(self):
         return (
-            self.model.objects.owned_by(self.request.user)
+            super()
+            .get_queryset()
+            .owned_by(self.request.user)
             .filter(study__assessment=self.assessment)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
@@ -135,7 +137,7 @@ class TaskDashboard(BaseList):
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
-        return self.model.objects.assessment_qs(self.assessment.id)
+        return super().get_queryset().assessment_qs(self.assessment.id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

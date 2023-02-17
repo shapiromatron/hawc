@@ -36,7 +36,9 @@ class LitOverview(BaseList):
     breadcrumb_active_name = "Literature review"
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment).exclude(slug="manual-import")
+        return (
+            super().get_queryset().filter(assessment=self.assessment).exclude(slug="manual-import")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -613,10 +615,7 @@ class RefDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
-    def permission_check_user_can_edit(self):
-        # perform standard check
-        super().permission_check_user_can_edit()
-        # and additional check
+    def check_delete(self):
         if self.object.has_study:
             raise PermissionDenied("Cannot delete - object has related study")
 

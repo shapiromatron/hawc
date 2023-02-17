@@ -36,7 +36,6 @@ class AssessLogicUpdate(BaseUpdate):
 
 # BMD sessions
 class SessionCreate(RedirectView):
-    # TODO - change to BaseUpdate view; no assessment.can_edit_object in views.py
     def get_redirect_url(self, *args, **kwargs):
         self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
         if not self.object.assessment.can_edit_object(self.request.user):
@@ -53,7 +52,7 @@ class SessionList(BaseList):
     parent_template_name = "object"
 
     def get_queryset(self):
-        return self.model.objects.filter(endpoint=self.parent)
+        return super().get_queryset().filter(endpoint=self.parent)
 
 
 def _get_session_config(self, context) -> WebappConfig:

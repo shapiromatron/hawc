@@ -390,11 +390,11 @@ class AssessmentRead(BaseDetail):
     model = models.Assessment
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.prefetch_related(
-            "project_manager", "team_members", "reviewers", "datasets", "dtxsids"
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related("project_manager", "team_members", "reviewers", "datasets", "dtxsids")
         )
-        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -810,9 +810,11 @@ class AssessmentLogList(BaseList):
     assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(assessment=self.assessment).select_related(
-            "assessment", "content_type", "user"
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .select_related("assessment", "content_type", "user")
         )
         self.form = forms.LogFilterForm(self.request.GET, assessment=self.assessment)
         if self.form.is_valid():
