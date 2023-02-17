@@ -277,12 +277,6 @@ class TagBySearch(TagReferences):
 
     model = models.Search
 
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(
-            self.model, slug=self.kwargs.get("slug"), assessment=self.kwargs.get("pk")
-        )
-        return self.object.get_assessment()
-
     def get_ref_qs_filters(self):
         return dict(searches=self.object)
 
@@ -299,10 +293,6 @@ class TagByReference(TagReferences):
     """
 
     model = models.Reference
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        return self.object.get_assessment()
 
     def get_ref_qs_filters(self):
         return dict(pk=self.object.pk)
@@ -321,10 +311,6 @@ class TagByTag(TagReferences):
 
     model = models.ReferenceFilterTag
 
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        return self.object.get_assessment()
-
     def get_ref_qs_filters(self):
         return dict(tags=self.object.pk)
 
@@ -340,10 +326,6 @@ class TagByUntagged(TagReferences):
     """
 
     model = Assessment
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
-        return self.object
 
     def get_ref_qs_filters(self):
         return dict(tags=self.object.pk)

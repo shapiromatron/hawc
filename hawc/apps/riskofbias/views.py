@@ -109,9 +109,6 @@ class ARoBTextEdit(BaseUpdate):
     success_message = "Help text has been updated."
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
@@ -204,9 +201,6 @@ class RobAssignmentList(BaseFilterList):
     paginate_by = 50
     filterset_class = StudyFilterSet
 
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
-
     def get_filterset_kwargs(self):
         kwargs = super().get_filterset_kwargs()
         kwargs["include_rob_authors"] = True
@@ -247,9 +241,6 @@ class RobAssignmentUpdate(BaseFilterList):
     filterset_class = StudyFilterSet
     paginate_by = 50
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_filterset_kwargs(self):
         kwargs = super().get_filterset_kwargs()
