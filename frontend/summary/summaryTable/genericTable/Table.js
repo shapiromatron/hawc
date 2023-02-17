@@ -10,13 +10,21 @@ import TableCellEdit from "./TableCellEdit";
 @observer
 class Table extends Component {
     render() {
-        const {dt} = this.props.store.settings;
-        return dt ? <DataTableWrapper>{this.renderTable()}</DataTableWrapper> : this.renderTable();
+        const {store, forceReadOnly} = this.props,
+            {editMode} = store,
+            {interactive} = store.settings,
+            useDt = interactive && !(editMode && !forceReadOnly);
+        return useDt ? (
+            <DataTableWrapper>{this.renderTable()}</DataTableWrapper>
+        ) : (
+            this.renderTable()
+        );
     }
     renderTable() {
         const {store, forceReadOnly} = this.props,
             {bodyRowIndexes, headerRowIndexes, cellsByRow} = store,
-            Cell = store.editMode && !forceReadOnly ? TableCellEdit : TableCell;
+            editMode = store.editMode && !forceReadOnly,
+            Cell = editMode ? TableCellEdit : TableCell;
         return (
             <table className="summaryTable table table-bordered table-sm">
                 <colgroup>
