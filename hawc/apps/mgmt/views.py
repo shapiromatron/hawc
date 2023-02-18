@@ -137,7 +137,7 @@ class TaskDashboard(BaseList):
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
-        return super().get_queryset().assessment_qs(self.assessment.id)
+        return super().get_queryset().filter(study__assessment_id=self.assessment.id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
