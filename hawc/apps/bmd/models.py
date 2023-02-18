@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from ..animal.constants import DataType
+from ..animal.models import Endpoint
 from . import constants, managers
 
 
@@ -158,7 +159,7 @@ class Session(models.Model):
         return reverse("bmd:api:session-selected-model", args=[self.id])
 
     @classmethod
-    def create_new(cls, endpoint):
+    def create_new(cls, endpoint: Endpoint):
         dose_units = endpoint.get_doses_json(json_encode=False)[0]["id"]
         version = endpoint.assessment.bmd_settings.version
         return cls.objects.create(

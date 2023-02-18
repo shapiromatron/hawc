@@ -589,11 +589,11 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_import_reference_tags(self):
-        csv = "reference_id,tag_id\n5,14"
+        csv = "reference_id,tag_id\n1,2"
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.lit.import_reference_tags(
-            assessment_id=self.db_keys.assessment_final, csv=csv
+            assessment_id=self.db_keys.assessment_working, csv=csv
         )
         assert isinstance(response, pd.DataFrame)
 
@@ -678,14 +678,22 @@ class TestClient(LiveServerTestCase, TestCase):
     # RiskOfBiasClient tests #
     ##########################
 
-    def test_riskofbias_data(self):
+    def test_riskofbias_export(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.data(self.db_keys.assessment_client)
+        response = client.riskofbias.export(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
-    def test_riskofbias_full_data(self):
+    def test_riskofbias_full_export(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.full_data(self.db_keys.assessment_client)
+
+        # permission denied
+        with pytest.raises(HawcClientException) as err:
+            client.riskofbias.full_export(self.db_keys.assessment_client)
+            assert err.status_code == 403
+
+        # successful response
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.full_export(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_riskofbias_create(self):
