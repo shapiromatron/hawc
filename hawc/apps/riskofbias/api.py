@@ -214,6 +214,7 @@ class RiskOfBias(AssessmentEditViewset):
 
     @action(detail=False, methods=("post",), permission_classes=[])
     def create_v2(self, request):
+        # perms checked in serializer
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(data=request.data, **kw)
         serializer.is_valid(raise_exception=True)
@@ -222,6 +223,7 @@ class RiskOfBias(AssessmentEditViewset):
 
     @action(detail=True, methods=("patch",), permission_classes=[])
     def update_v2(self, request, *args, **kwargs):
+        # perms checked in serializer
         instance = self.get_object()
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(

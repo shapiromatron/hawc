@@ -12,7 +12,6 @@ from ..assessment.api import (
     AssessmentViewset,
     CleanupFieldsBaseViewSet,
     DoseUnitsViewset,
-    user_can_edit_object,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
@@ -180,7 +179,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
     @action(
         detail=True,
         url_path="ehv-check",
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
         renderer_classes=PandasRenderers,
     )
     def ehv_check(self, request, pk):
@@ -194,6 +193,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
+    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return (
@@ -205,8 +205,6 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
 
     @transaction.atomic
     def perform_create(self, serializer):
-        # permissions check # todo herE?
-        user_can_edit_object(serializer.study, self.request.user, raise_exception=True)
         super().perform_create(serializer)
         create_object_log(
             "Created",
@@ -220,6 +218,7 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
+    permission_classes = (AssessmentLevelPermissions,)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -263,6 +262,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
     list_actions = ["list", "effects", "rob_filter", "update_terms"]
+    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()

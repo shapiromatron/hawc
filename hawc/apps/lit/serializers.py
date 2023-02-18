@@ -47,7 +47,6 @@ class SearchSerializer(serializers.ModelSerializer):
 
         user = self.context["request"].user
         if not data["assessment"].user_can_edit_object(user):
-            # TODO - move authentication check outside validation?
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
 
         # set slug value based on title; assert it's unique

@@ -1,4 +1,5 @@
 import logging
+from collections import ChainMap
 
 from django.db import models
 from rest_framework import exceptions, permissions
@@ -93,12 +94,9 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     def assessment_permission(self, view):
         action_perms = getattr(view, "action_perms", {})
-        if isinstance(action_perms, dict):
-            action_perms = dict(self.default_action_perms, **action_perms)
-            assessment_permission = action_perms[view.action]
-        else:
-            assessment_permission = action_perms
-        return assessment_permission
+        if isinstance(action_perms, dict):  # viewset
+            return ChainMap(action_perms, self.default_action_perms)[view.action]
+        return action_perms  # custom action
 
     def has_object_permission(self, request, view, obj):
         if not hasattr(view, "assessment"):

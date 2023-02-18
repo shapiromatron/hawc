@@ -31,6 +31,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Validate parent object
         self.study = get_matching_instance(Study, self.initial_data, "study_id")
+        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
         # add additional checks from forms.ExperimentForm
         form = forms.ExperimentForm(data=data, parent=self.study)
