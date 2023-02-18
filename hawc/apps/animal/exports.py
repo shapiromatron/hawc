@@ -109,10 +109,15 @@ class EndpointGroupFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
+        identifiers_df = Study.identifiers_df(self.queryset, "animal_group__experiment__study_id")
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             row = []
-            row.extend(Study.flat_complete_data_row(ser["animal_group"]["experiment"]["study"]))
+            row.extend(
+                Study.flat_complete_data_row(
+                    ser["animal_group"]["experiment"]["study"], identifiers_df
+                )
+            )
             row.extend(models.Experiment.flat_complete_data_row(ser["animal_group"]["experiment"]))
             row.extend(models.AnimalGroup.flat_complete_data_row(ser["animal_group"]))
             ser_dosing_regime = ser["animal_group"]["dosing_regime"]

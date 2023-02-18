@@ -69,17 +69,17 @@ const EvidenceForm = observer(props => {
                                     />
                                 </th>
                                 <th>
-                                    Factors that decrease certainty
-                                    <HelpTextPopup
-                                        title="Help-text"
-                                        content={`${HELP_TEXT.IRIS_HANDBOOK} For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that decreased certainty`}
-                                    />
-                                </th>
-                                <th>
                                     Factors that increase certainty
                                     <HelpTextPopup
                                         title="Help-text"
                                         content={`${HELP_TEXT.IRIS_HANDBOOK} For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that increased certainty`}
+                                    />
+                                </th>
+                                <th>
+                                    Factors that decrease certainty
+                                    <HelpTextPopup
+                                        title="Help-text"
+                                        content={`${HELP_TEXT.IRIS_HANDBOOK} For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that decreased certainty`}
                                     />
                                 </th>
                                 <th>
@@ -159,17 +159,17 @@ const EvidenceForm = observer(props => {
                 <td>
                     <FactorsForm
                         store={store}
-                        updateKey={`${contentType}.rows[${index}].uncertain_factors`}
-                        content={row.uncertain_factors}
-                        isIncreasing={false}
+                        updateKey={`${contentType}.rows[${index}].certain_factors`}
+                        content={row.certain_factors}
+                        isIncreasing={true}
                     />
                 </td>
                 <td>
                     <FactorsForm
                         store={store}
-                        updateKey={`${contentType}.rows[${index}].certain_factors`}
-                        content={row.certain_factors}
-                        isIncreasing={true}
+                        updateKey={`${contentType}.rows[${index}].uncertain_factors`}
+                        content={row.uncertain_factors}
+                        isIncreasing={false}
                     />
                 </td>
                 <td>

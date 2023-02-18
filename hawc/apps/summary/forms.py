@@ -12,7 +12,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, check_unique_for_assessment
+from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from ..common.validators import validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
@@ -448,6 +448,7 @@ class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
         exclude = ("assessment", "table_type")
+        field_classes = {"caption": QuillField}
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
@@ -458,10 +459,11 @@ class SummaryTableForm(forms.ModelForm):
         # TODO - we shouldn't have to do this; and 400 errors are not rendering
         # instead, switch to htmx or use a REST API
         if self.initial:
-            self.instance.content = self.initial["content"]
             self.instance.title = self.initial["title"]
-            self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
+            self.instance.content = self.initial["content"]
+            self.instance.published = self.initial["published"]
+            self.instance.caption = self.initial["caption"]
 
     def clean_slug(self):
         return check_unique_for_assessment(self, "slug")

@@ -12,7 +12,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2022.07"
+__version__ = "2023.2"
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
@@ -55,11 +55,18 @@ class HawcClient(BaseClient):
         """
         self.session.authenticate(email, password)
 
-    def set_authentication_token(self, token: str) -> dict:
+    def set_authentication_token(self, token: str, login: bool = False) -> bool:
         """
-        Set authentication token (browser session specific)
+        Set authentication token for hawc client session.
 
         Args:
             token (str): authentication token from your user profile
+            login (bool, default False): if True, creates a django cookie-based session for HAWC
+                similar to a standard web-browser. If False (default), creates a token-
+                based django session for using the API. Requests using cookie-based sessions
+                require CSRF tokens, so form functionality will be limited.
+
+        Returns
+            bool: Returns true if session is valid
         """
-        return self.session.set_authentication_token(token)
+        return self.session.set_authentication_token(token, login)
