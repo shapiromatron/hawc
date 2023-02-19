@@ -1,4 +1,5 @@
 {% extends 'assessment-rooted.html' %}
+{% load bs4 %}
 
 {% block content %}
 <h2 class="d-inline-block">{{assessment.get_rob_name_display}} requirements</h2>
@@ -32,13 +33,30 @@
 {% else %}
 <nav class="mb-2">
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <button class="nav-link active" id="nav-home-tab" data-toggle="tab" data-target="#nav-bioassay" type="button" role="tab" aria-controls="nav-bioassay" aria-selected="true">Bioassay</button>
+    <button class="nav-link active" id="nav-contact-tab" data-toggle="tab" data-target="#nav-overview" type="button" role="tab" aria-controls="nav-overview" aria-selected="false">Overview</button>
+    <button class="nav-link" id="nav-home-tab" data-toggle="tab" data-target="#nav-bioassay" type="button" role="tab" aria-controls="nav-bioassay" aria-selected="true">Bioassay</button>
     <button class="nav-link" id="nav-profile-tab" data-toggle="tab" data-target="#nav-epi" type="button" role="tab" aria-controls="nav-epi" aria-selected="false">Epidemiology</button>
     <button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-invitro" type="button" role="tab" aria-controls="nav-invitro" aria-selected="false">In Vitro</button>
   </div>
 </nav>
-<div class="tab-content px-1" id="nav-tabContent">
-  <div class="tab-pane fade show active" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
+<div class="tab-content px-3" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
+    <h3>Metric requirements by health domain</h3>
+    <table class="table table-sm table-striped">
+      {% bs4_colgroup '25,30,15,15,15' %}
+      {% bs4_thead 'Domain,Metric,Bioassay,Epidemiology,In Vitro' %}
+      <tbody>{% for metric in metrics %}
+        <tr>
+          <td>{{metric.domain.name}}</td>
+          <td>{{metric.name}}</td>
+          <td>{{metric.required_animal|yesno:'✔,-'}}</td>
+          <td>{{metric.required_epi|yesno:'✔,-'}}</td>
+          <td>{{metric.required_in_vitro|yesno:'✔,-'}}</td>
+        </tr>
+      {% endfor %}</tbody>
+    </table>
+  </div>
+  <div class="tab-pane fade" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
   {% include "riskofbias/component/domain_list.html" with qs=bioassay_metrics %}
   </div>
   <div class="tab-pane fade" id="nav-epi" role="tabpanel" aria-labelledby="nav-epi-tab">

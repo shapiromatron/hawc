@@ -60,17 +60,18 @@ class ARoBDetail(BaseList):
             return list(domains.values())
 
         context = super().get_context_data(**kwargs)
-        context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
-        qs = list(
+        metrics = list(
             models.RiskOfBiasMetric.objects.filter(domain__assessment_id=self.assessment.id)
             .select_related("domain")
             .order_by("domain__sort_order", "sort_order")
         )
         context.update(
-            bioassay_metrics=grouped(list(filter(lambda d: d.required_animal is True, qs))),
-            epi_metrics=grouped(list(filter(lambda d: d.required_epi is True, qs))),
-            invitro_metrics=grouped(list(filter(lambda d: d.required_invitro is True, qs))),
+            metrics=metrics,
+            no_data=metrics == len(metrics) == 0,
+            bioassay_metrics=grouped(list(filter(lambda d: d.required_animal is True, metrics))),
+            epi_metrics=grouped(list(filter(lambda d: d.required_epi is True, metrics))),
+            invitro_metrics=grouped(list(filter(lambda d: d.required_invitro is True, metrics))),
         )
         return context
 

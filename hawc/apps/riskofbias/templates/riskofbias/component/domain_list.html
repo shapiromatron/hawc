@@ -2,7 +2,7 @@
     {% for metric in domain %}
         {% if forloop.first %}
         <h4>{{metric.domain.name}}</h4>
-        <p class="mb-0">{{metric.domain.description}}</p>
+        <p class="mb-0">{{metric.domain.description|safe}}</p>
         {% endif %}
         <p><b>{{metric.name}}</b></p>
         <p class="mb-0">{{metric.description|safe}}</p>
