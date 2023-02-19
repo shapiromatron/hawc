@@ -56,18 +56,6 @@ class ARoBDetail(BaseList):
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
         return context
 
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="riskofbiasStartup",
-            page="RobMetricsStartup",
-            data=dict(
-                assessment_id=self.assessment.id,
-                api_url=f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-                is_editing=False,
-                csrf=get_token(self.request),
-            ),
-        )
-
 
 class ARoBEdit(BaseDetail):
     """
