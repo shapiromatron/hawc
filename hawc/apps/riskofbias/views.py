@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
@@ -51,9 +53,25 @@ class ARoBDetail(BaseList):
     template_name = "riskofbias/arob_detail.html"
 
     def get_context_data(self, **kwargs):
+        def grouped(metrics: list) -> list[list[dict]]:
+            domains = defaultdict(list)
+            for metric in metrics:
+                domains[metric.domain.id].append(metric)
+            return list(domains.values())
+
         context = super().get_context_data(**kwargs)
         context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
         context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        qs = list(
+            models.RiskOfBiasMetric.objects.filter(domain__assessment_id=self.assessment.id)
+            .select_related("domain")
+            .order_by("domain__sort_order", "sort_order")
+        )
+        context.update(
+            bioassay_metrics=grouped(list(filter(lambda d: d.required_animal is True, qs))),
+            epi_metrics=grouped(list(filter(lambda d: d.required_epi is True, qs))),
+            invitro_metrics=grouped(list(filter(lambda d: d.required_invitro is True, qs))),
+        )
         return context
 
 

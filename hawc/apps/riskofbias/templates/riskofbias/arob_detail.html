@@ -30,6 +30,23 @@
 {% if no_data %}
 {% include 'riskofbias/_arob_none_alert.html' %}
 {% else %}
-
+<nav class="mb-2">
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" id="nav-home-tab" data-toggle="tab" data-target="#nav-bioassay" type="button" role="tab" aria-controls="nav-bioassay" aria-selected="true">Bioassay</button>
+    <button class="nav-link" id="nav-profile-tab" data-toggle="tab" data-target="#nav-epi" type="button" role="tab" aria-controls="nav-epi" aria-selected="false">Epidemiology</button>
+    <button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-invitro" type="button" role="tab" aria-controls="nav-invitro" aria-selected="false">In Vitro</button>
+  </div>
+</nav>
+<div class="tab-content px-1" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
+  {% include "riskofbias/component/domain_list.html" with qs=bioassay_metrics %}
+  </div>
+  <div class="tab-pane fade" id="nav-epi" role="tabpanel" aria-labelledby="nav-epi-tab">
+  {% include "riskofbias/component/domain_list.html" with qs=epi_metrics %}
+  </div>
+  <div class="tab-pane fade" id="nav-invitro" role="tabpanel" aria-labelledby="nav-invitro-tab">
+  {% include "riskofbias/component/domain_list.html" with qs=invitro_metrics %}
+  </div>
+</div>
 {% endif %}
 {% endblock %}
