@@ -55,6 +55,7 @@
         </tr>
       {% endfor %}</tbody>
     </table>
+    <div id="line" style="width:300px;height:300px;"></div>
   </div>
   <div class="tab-pane fade" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
   {% include "riskofbias/component/domain_list.html" with qs=bioassay_metrics %}
@@ -68,3 +69,13 @@
 </div>
 {% endif %}
 {% endblock %}
+
+{% block extrajs %}
+{{ plotting|json_script:"config" }}
+<script>
+$(document).ready(function(){
+  const data = JSON.parse(document.getElementById("config").innerHTML);
+  window.app.renderPlotlyFigure(document.getElementById("line"), data.line);
+});
+</script>
+{% endblock extrajs %}

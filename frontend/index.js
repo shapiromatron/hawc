@@ -1,5 +1,6 @@
 import "./shared/startup";
 
+import {renderPlotlyFigure} from "shared/components/PlotlyFigure";
 import renderPlotlyFromApi from "shared/renderPlotlyFromApi";
 import DynamicFormset from "shared/utils/DynamicFormset";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -12,6 +13,7 @@ window.app = {
     DynamicFormset,
     HAWCUtils,
     getConfig,
+    renderPlotlyFigure,
     renderPlotlyFromApi,
     startup,
 };

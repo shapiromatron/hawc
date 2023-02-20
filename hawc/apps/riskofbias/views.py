@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import plotly.express as px
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
@@ -10,7 +11,7 @@ from django.urls import reverse, reverse_lazy
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, plotly_to_dict
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -72,6 +73,7 @@ class ARoBDetail(BaseList):
             bioassay_metrics=grouped(list(filter(lambda d: d.required_animal is True, metrics))),
             epi_metrics=grouped(list(filter(lambda d: d.required_epi is True, metrics))),
             invitro_metrics=grouped(list(filter(lambda d: d.required_invitro is True, metrics))),
+            plotting=dict(line=plotly_to_dict(px.line(x=[1, 2, 3], y=[4, 5, 6]))),
         )
         return context
 
