@@ -113,7 +113,8 @@ class StudyEvaluationSerializer(serializers.Serializer):
         if (
             "request" in self.context
             and data["published_only"] is False
-            and data["assessment_id"].user_is_part_of_team(self.context["request"].user) is False
+            and data["assessment_id"].user_is_reviewer_or_higher(self.context["request"].user)
+            is False
         ):
             raise serializers.ValidationError(
                 {"published_only": "Must be part of team to view unpublished data."}
