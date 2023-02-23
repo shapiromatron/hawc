@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import BaseAssessmentViewset
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
@@ -41,7 +42,12 @@ class Session(BaseAssessmentViewset):
         kwargs["partial"] = True
         return self.update(request, *args, **kwargs)
 
-    @action(detail=True, methods=["get"], url_path="execute-status")
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="execute-status",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
     def execute_status(self, request, pk=None):
         instance = self.get_object()
         if instance.version.startswith("BMDS2"):

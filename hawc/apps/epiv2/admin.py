@@ -44,6 +44,7 @@ class DesignAdmin(admin.ModelAdmin):
         "last_updated",
     )
     list_filter = ("study_design", "created")
+    raw_id_fields = ("study",)
     inlines = [
         ChemicalInline,
         ExposureInline,

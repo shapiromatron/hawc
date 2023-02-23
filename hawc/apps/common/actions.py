@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Type, Union
+from typing import Any, ClassVar, Optional, Type, Union
 
 import pandas as pd
 import pydantic
@@ -24,8 +24,8 @@ class BaseApiAction:
 
     input_model: ClassVar[DataModel]  # should be defined
 
-    def __init__(self, data: dict):
-        self.data = data
+    def __init__(self, data: Optional[dict] = None):
+        self.data: dict = data or {}
         self.errors: dict[str, list] = defaultdict(list)
         self.inputs = None
 

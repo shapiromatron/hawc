@@ -41,8 +41,6 @@ from ..common.views import (
     CloseIfSuccessMixin,
     LoginRequiredMixin,
     MessageMixin,
-    ProjectManagerOrHigherMixin,
-    TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
     beta_tester_required,
     create_object_log,
@@ -392,11 +390,13 @@ class AssessmentRead(BaseDetail):
     model = models.Assessment
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.prefetch_related(
-            "project_manager", "team_members", "reviewers", "datasets", "dtxsids", "values"
-        ).select_related("details")
-        return qs
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "project_manager", "team_members", "reviewers", "datasets", "dtxsids", "values"
+            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -420,18 +420,21 @@ class AssessmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
     model = models.Assessment
     form_class = forms.AssessmentForm
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = "Assessment modules updated."
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentDelete(BaseDelete):
     model = models.Assessment
     success_url = reverse_lazy("portal")
     success_message = "Assessment deleted."
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentClearCache(MessageMixin, View):
@@ -654,19 +657,13 @@ class BaseEndpointList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         eps = self.model.endpoint.related.related_model.objects.get_qs(self.assessment.id).count()
-
         os = self.model.outcome.related.related_model.objects.get_qs(self.assessment.id).count()
-
         mrs = apps.get_model("epimeta", "metaresult").objects.get_qs(self.assessment.id).count()
-
         iveps = self.model.ivendpoint.related.related_model.objects.get_qs(
             self.assessment.id
         ).count()
-
         alleps = eps + os + mrs + iveps
-
         context.update(
             {
                 "ivendpoints": iveps,
@@ -676,11 +673,10 @@ class BaseEndpointList(BaseList):
                 "total_endpoints": alleps,
             }
         )
-
         return context
 
 
-class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
+class CleanExtractedData(BaseEndpointList):
     """
     To add a model to clean,
      - add TEXT_CLEANUP_FIELDS = {...fields} to the model
@@ -694,9 +690,7 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
 
     breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -750,13 +744,11 @@ class RasterizeCss(View):
         return JsonResponse({"template": get_styles_svg_definition()})
 
 
-class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
+class CleanStudyRoB(BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
     breadcrumb_active_name = "Clean reviews"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs["pk"])
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -865,20 +857,20 @@ class LogObjectList(ListView):
         return context
 
 
-class AssessmentLogList(TeamMemberOrHigherMixin, BaseList):
+class AssessmentLogList(BaseList):
     parent_model = models.Assessment
     model = models.Log
     breadcrumb_active_name = "Logs"
     template_name = "assessment/assessment_log_list.html"
     paginate_by = 25
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(models.Assessment, pk=kwargs["pk"])
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.filter(assessment=self.assessment).select_related(
-            "assessment", "content_type", "user"
+        qs = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .select_related("assessment", "content_type", "user")
         )
         self.form = forms.LogFilterForm(self.request.GET, assessment=self.assessment)
         if self.form.is_valid():
