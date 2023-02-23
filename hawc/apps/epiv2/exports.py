@@ -24,9 +24,14 @@ class EpiFlatComplete(FlatFileExporter):
 
     def _get_data_rows(self):
         rows = []
+        identifiers_df = Study.identifiers_df(self.queryset, "design__study_id")
         for obj in self.queryset:
             row = []
-            row.extend(Study.flat_complete_data_row(obj.design.study.get_json(json_encode=False)))
+            row.extend(
+                Study.flat_complete_data_row(
+                    obj.design.study.get_json(json_encode=False), identifiers_df
+                )
+            )
             row.extend(obj.design.flat_complete_data_row())
             row.extend(obj.exposure_level.chemical.flat_complete_data_row())
             row.extend(obj.exposure_level.exposure_measurement.flat_complete_data_row())

@@ -1,17 +1,24 @@
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset
+from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset, EditPermissionsCheckMixin
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.api.viewsets import EditPermissionsCheckMixin
 from ..common.renderers import PandasRenderers
 from . import exports, models, serializers
+from .actions.model_metadata import EpiV2Metadata
 
 
 class EpiAssessmentViewset(BaseAssessmentViewset):
     model = Assessment
 
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
         """
         Retrieve epidemiology data for assessment.
@@ -35,3 +42,8 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 
     def get_queryset(self, *args, **kwargs):
         return self.model.objects.all()
+
+
+class Metadata(viewsets.ViewSet):
+    def list(self, request):
+        return EpiV2Metadata.handle_request(request)

@@ -440,8 +440,8 @@ class EndpointListV2(BaseList):
 class EndpointTags(EndpointFilterList):
     # List of Endpoints associated with an assessment and tag
 
-    def get_base_queryset(self):
-        return self.model.objects.tag_qs(self.assessment.pk, self.kwargs["tag_slug"])
+    def get_queryset(self):
+        return super().get_queryset().tag_qs(self.assessment.pk, self.kwargs["tag_slug"])
 
 
 class EndpointRead(BaseDetail):
