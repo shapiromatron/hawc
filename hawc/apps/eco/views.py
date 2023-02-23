@@ -3,7 +3,8 @@ from django.shortcuts import render
 from django.views.generic import ListView
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
+from ..common.models import include_related
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate, FilterSetMixin
 from ..study.models import Study
 from . import filterset, forms, models
 
@@ -74,52 +75,16 @@ class DesignDelete(BaseDelete):
 
 
 # Term preview
-class NestedTermList(ListView):
+class NestedTermList(FilterSetMixin, ListView):
     model = models.NestedTerm
-    paginate_by = 2000
-    filterset_class = filterset.NestedTermFilterset
-
-    def include_ancestors(self, queryset=None):
-        paths = queryset.values_list("path", "depth")
-        parent_paths = set(queryset.values_list("path", flat=True))
-        steplen = queryset.model.steplen
-        for node in paths:  # for every node in the list,
-            for parent_node in range(
-                node[1]
-            ):  # and for every parent of that node, (i.e. for the depth of the node)
-                parent_paths.add(
-                    node[0][0 : ((parent_node + 1) * steplen)]
-                )  # grab the parent's path
-        return queryset.model.objects.filter(path__in=parent_paths)
+    paginate_by = 100
+    filterset_class = filterset.NestedTermFilterSet
 
     def get_queryset(self):
-        qs = self.filterset.qs
-        if qs.count() == self.model.objects.all().count():
-            return qs
-        else:
-            return self.include_ancestors(qs)
-
-    def get_base_queryset(self):
-        return models.NestedTerm.objects.all()
-
-    def get_filterset_kwargs(self):
-        return dict(
-            data=self.request.GET,
-            queryset=self.get_base_queryset(),
-            request=self.request,
-            assessment=None,
-        )
-
-    @property
-    def filterset(self):
-        if not hasattr(self, "_filterset"):
-            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
-        return self._filterset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(form=self.filterset.form)
-        return context
+        qs = super().get_queryset()
+        if self.filterset.has_query:
+            return include_related(qs)
+        return qs
 
 
 # Viewsets

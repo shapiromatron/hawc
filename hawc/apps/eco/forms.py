@@ -185,8 +185,6 @@ class ResultForm(forms.ModelForm):
         resp_var = cleaned_data.get("variability")
         lower_measure = cleaned_data.get("low_variability")
         upper_measure = cleaned_data.get("upper_variability")
-
-        print(resp_var)
         if (lower_measure or upper_measure) and not resp_var:
             self.add_error("variability", self.RESPONSE_VARIABILITY_REQ)
 
