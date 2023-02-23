@@ -1,10 +1,10 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, DisabledPagination
-from ..assessment.models import Assessment
+from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
+from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.api import DisabledPagination
 from . import models, serializers
 
 
@@ -12,17 +12,18 @@ class TaskViewSet(AssessmentEditViewset):
     http_method_names = ["get", "patch", "head", "options", "trace"]
     assessment_filter_args = "study__assessment"
     model = models.Task
+    list_actions = ["list", "assessment_assignments"]
     serializer_class = serializers.TaskSerializer
     permission_classes = (
-        AssessmentLevelPermissions,
         permissions.IsAuthenticated,
+        AssessmentLevelPermissions,
     )
     pagination_class = DisabledPagination
 
     def get_queryset(self):
         return super().get_queryset().select_related("owner", "study", "study__assessment")
 
-    @action(detail=False)
+    @action(detail=False, permission_classes=(permissions.IsAuthenticated,))
     def assignments(self, request):
         # Tasks assigned to user.
         qs = self.model.objects.owned_by(request.user).select_related(
@@ -31,13 +32,12 @@ class TaskViewSet(AssessmentEditViewset):
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["get"])
-    def assessment_assignments(self, request, pk=None):
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
+    def assessment_assignments(self, request):
         # Tasks assigned to user for a specific assessment
-        assessment = get_object_or_404(Assessment, pk=pk)
         qs = (
             self.model.objects.owned_by(request.user)
-            .filter(study__assessment=assessment)
+            .filter(study__assessment=self.assessment)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)

@@ -9,26 +9,14 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt
-from ..common.views import (
-    AssessmentPermissionsMixin,
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseList,
-    BaseUpdate,
-    MessageMixin,
-    ProjectManagerOrHigherMixin,
-    TeamMemberOrHigherMixin,
-    WebappMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
 from . import constants, filterset, forms, models
 
 
@@ -49,7 +37,9 @@ class LitOverview(BaseList):
     breadcrumb_active_name = "Literature review"
 
     def get_queryset(self):
-        return self.model.objects.filter(assessment=self.assessment).exclude(slug="manual-import")
+        return (
+            super().get_queryset().filter(assessment=self.assessment).exclude(slug="manual-import")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -79,16 +69,15 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
+class SearchCopyAsNewSelector(BaseDetail):
     """
     Select an existing search and copy-as-new
     """
 
+    model = Assessment
     template_name = "lit/search_copy_selector.html"
     form_class = forms.SearchSelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -257,6 +246,7 @@ class TagReferences(BaseFilterList):
     template_name = "lit/reference_tag.html"
     parent_model = Assessment
     model = models.Reference
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
         fields=[
@@ -369,6 +359,7 @@ class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
     parent_model = Assessment
     model = models.Reference
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
         fields=[
@@ -627,7 +618,7 @@ class RefFilterList(BaseFilterList):
         )
 
 
-class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
+class RefUploadExcel(BaseUpdate):
     """
     Upload Excel files and update reference details.
     """
@@ -635,9 +626,7 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     model = Assessment
     template_name = "lit/reference_upload_excel.html"
     form_class = forms.ReferenceExcelUploadForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -667,15 +656,13 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         return reverse_lazy("lit:overview", args=[self.assessment.pk])
 
 
-class RefListExtract(TeamMemberOrHigherMixin, MessageMixin, FormView):
+class RefListExtract(BaseUpdate):
     template_name = "lit/reference_extract_list.html"
     breadcrumb_active_name = "Prepare for extraction"
     model = Assessment
     form_class = forms.BulkReferenceStudyExtractForm
     success_message = "Selected references were successfully converted to studies."
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -725,9 +712,10 @@ class RefDetail(BaseDetail):
         return _get_ref_app_startup(self, context)
 
 
-class ReferenceTagStatus(TeamMemberOrHigherMixin, BaseDetail):
+class ReferenceTagStatus(BaseDetail):
     template_name = "lit/reference_tag_status.html"
     model = models.Reference
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         return (
@@ -736,9 +724,6 @@ class ReferenceTagStatus(TeamMemberOrHigherMixin, BaseDetail):
             .select_related("assessment")
             .prefetch_related("identifiers", "tags", "user_tags__tags", "user_tags__user")
         )
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object().get_assessment()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -793,10 +778,7 @@ class RefDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
-    def permission_check_user_can_edit(self):
-        # perform standard check
-        super().permission_check_user_can_edit()
-        # and additional check
+    def check_delete(self):
         if self.object.has_study:
             raise PermissionDenied("Cannot delete - object has related study")
 
@@ -847,7 +829,7 @@ class RefTopicModel(BaseDetail):
         return context
 
 
-class TagsUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):
+class TagsUpdate(BaseDetail):
     """
     Update tags for an assessment. Note that right now, only project managers
     of the assessment can update tags. (we use the Assessment as the model in an
@@ -856,9 +838,7 @@ class TagsUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):
 
     model = Assessment
     template_name = "lit/tags_update.html"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object()
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -890,13 +870,11 @@ class TagsUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):
         )
 
 
-class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+class LiteratureAssessmentUpdate(BaseUpdate):
     success_message = "Literature assessment settings updated."
     model = models.LiteratureAssessment
     form_class = forms.LiteratureAssessmentForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object().assessment
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -907,7 +885,7 @@ class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
         return reverse_lazy("lit:overview", args=(self.assessment.id,))
 
 
-class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
+class TagsCopy(BaseUpdate):
     """
     Remove exiting tags and copy all tags from a separate assessment.
     """
@@ -916,15 +894,10 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
     template_name = "lit/tags_copy.html"
     form_class = forms.TagsCopyForm
     success_message = "Literature tags for this assessment have been updated"
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        self.permission_check_user_can_edit()
-        return super().dispatch(*args, **kwargs)
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
         context["breadcrumbs"] = lit_overview_crumbs(
             self.request.user, self.assessment, "Copy tags"
         )
@@ -944,12 +917,10 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
         return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
 
 
-class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
+class BulkTagReferences(BaseDetail):
     model = Assessment
     template_name = "lit/bulk_tag_references.html"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -964,3 +935,17 @@ class BulkTagReferences(TeamMemberOrHigherMixin, BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
+
+
+class ReferenceTagHistory(BaseDetail):
+    template_name = "lit/reference_tag_history.html"
+    model = models.Reference
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Tag history"
+        )
+        context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
+        return context

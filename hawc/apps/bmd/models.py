@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from ..animal.constants import DataType
-from ..common.models import get_model_copy_name
+from ..animal.models import Endpoint
 from . import constants, managers
 
 
@@ -49,15 +49,6 @@ class AssessmentSettings(models.Model):
     @property
     def can_create_sessions(self):
         return self.version == constants.BmdsVersion.BMDS330
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.assessment_id = cw[self.assessment.COPY_NAME][self.assessment_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
 
 
 class LogicField(models.Model):
@@ -117,15 +108,6 @@ class LogicField(models.Model):
         objects = [cls(assessment_id=assessment.id, **obj) for i, obj in enumerate(text["objects"])]
         cls.objects.bulk_create(objects)
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.assessment_id = cw[self.assessment.COPY_NAME][self.assessment_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
 
 class Session(models.Model):
     objects = managers.SessionManager()
@@ -177,7 +159,7 @@ class Session(models.Model):
         return reverse("bmd:api:session-selected-model", args=[self.id])
 
     @classmethod
-    def create_new(cls, endpoint):
+    def create_new(cls, endpoint: Endpoint):
         dose_units = endpoint.get_doses_json(json_encode=False)[0]["id"]
         version = endpoint.assessment.bmd_settings.version
         return cls.objects.create(
@@ -293,19 +275,6 @@ class Session(models.Model):
         if self.endpoint is not None:
             return self.endpoint.get_study()
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        children = list(self.models.all().order_by("id"))
-
-        self.id = None
-        self.endpoint_id = cw[self.endpoint.COPY_NAME][self.endpoint_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
-
 
 class Model(models.Model):
     objects = managers.ModelManager()
@@ -353,19 +322,6 @@ class Model(models.Model):
 
         self.save()
 
-    def copy_across_assessments(self, cw):
-        children = list(self.selectedmodel_set.all().order_by("id"))
-        old_id = self.id
-
-        self.id = None
-        self.session_id = cw[get_model_copy_name(self.session)][self.session_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
-
 
 class SelectedModel(models.Model):
     objects = managers.SelectedModelManager()
@@ -387,13 +343,3 @@ class SelectedModel(models.Model):
 
     def get_assessment(self):
         return self.endpoint.get_assessment()
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.model_id = cw[get_model_copy_name(self.model)][self.model_id]
-        self.endpoint_id = cw[self.endpoint.COPY_NAME][self.endpoint_id]
-        self.save()
-
-        cw[get_model_copy_name(self)][old_id] = self.id

@@ -19,7 +19,6 @@ urlpatterns = [
         views.IdentifierStudyCreate.as_view(),
         name="create_from_identifier",
     ),
-    path("assessment/<int:pk>/copy-studies/", views.StudiesCopy.as_view(), name="studies_copy"),
     path("<int:pk>/", views.StudyRead.as_view(), name="detail"),
     path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),
     path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),

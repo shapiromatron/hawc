@@ -142,6 +142,7 @@ class Migration(migrations.Migration):
             name="database",
             field=models.IntegerField(
                 choices=[
+                    (0, "Manually added"),
                     (1, "PubMed"),
                     (2, "HERO"),
                     (3, "RIS (EndNote/Reference Manager)"),
@@ -157,6 +158,7 @@ class Migration(migrations.Migration):
             name="source",
             field=models.PositiveSmallIntegerField(
                 choices=[
+                    (0, "Manually added"),
                     (1, "PubMed"),
                     (2, "HERO"),
                     (3, "RIS (EndNote/Reference Manager)"),

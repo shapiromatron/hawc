@@ -39,6 +39,7 @@ class Root extends Component {
                     </TabPanel>
                     <TabPanel>
                         <Table store={tableStore} forceReadOnly={true} />
+                        <div dangerouslySetInnerHTML={{__html: tableObject.caption}} />
                     </TabPanel>
                 </Tabs>
                 <FormActions

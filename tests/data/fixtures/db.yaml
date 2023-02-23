@@ -6517,6 +6517,7 @@
     assessment: 1
     title: 'Generic #1'
     slug: Generic-1
+    caption: <p>Example table caption</p>
     content:
       cells:
       - row: 0
@@ -6644,6 +6645,7 @@
     assessment: 1
     title: 'Evidence profile #1'
     slug: Evidence-Profile-1
+    caption: <p>Example table caption</p>
     content:
       animal:
         rows:
@@ -6758,6 +6760,7 @@
     assessment: 1
     title: 'Study evaluation #1'
     slug: Study-Evaluation-1
+    caption: <p>Example table caption</p>
     content:
       rows:
       - id: 1
