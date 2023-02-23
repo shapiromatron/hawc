@@ -27,7 +27,7 @@ class TermViewSet(GenericViewSet):
         return Response(export)
 
 
-class AssessmentViewset(GenericViewSet):
+class AssessmentViewSet(GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}

@@ -5,7 +5,7 @@ from . import api, views
 
 router = SimpleRouter()
 router.register("terms", api.TermViewSet, basename="terms")
-router.register("assessment", api.AssessmentViewset, basename="assessment")
+router.register("assessment", api.AssessmentViewSet, basename="assessment")
 
 app_name = "eco"
 urlpatterns = [
