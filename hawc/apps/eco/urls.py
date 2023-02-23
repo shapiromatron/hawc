@@ -1,9 +1,15 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
 
-from . import views
+from . import api, views
+
+router = SimpleRouter()
+router.register("terms", api.TermViewSet, basename="terms")
+router.register("assessment", api.AssessmentViewSet, basename="assessment")
 
 app_name = "eco"
 urlpatterns = [
+    path("api/", include((router.urls, "api"))),
     path("terms/", views.NestedTermList.as_view(), name="term_list"),
     path(
         "study/<int:pk>/design/create/",

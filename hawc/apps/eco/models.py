@@ -1,6 +1,7 @@
+import pandas as pd
 import reversion
 from django.db import models
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.urls import reverse, reverse_lazy
 from django.utils.text import format_lazy
 from treebeard.mp_tree import MP_Node
@@ -44,6 +45,24 @@ class NestedTerm(MP_Node):
             path += f"{node.name} > "
         path += f"{self.name}"
         return path
+
+    @classmethod
+    def as_dataframe(cls) -> pd.DataFrame:
+        max_depth = NestedTerm.objects.aggregate(value=Max("depth"))["value"]
+        rows = []
+        nesting = [None] * max_depth
+        for term in NestedTerm.objects.all():
+            depth = term.depth
+            nesting[depth - 1] = term.name
+            nesting[depth:] = [None] * (max_depth - depth)
+            rows.append([term.id, depth, *nesting])
+
+        df = pd.DataFrame(
+            data=rows,
+            columns=["ID", "Depth", *[f"Level {i+1}" for i in range(len(nesting))]],
+        ).fillna("-")
+
+        return df
 
 
 class Vocab(models.Model):
@@ -490,6 +509,32 @@ class Result(models.Model):
                 category=VocabCategories.STATISTICAL, value="Not applicable"
             ),
         }
+
+    @classmethod
+    def complete_df(cls, assessment_id: int) -> pd.DataFrame:
+        study_df = Study.objects.filter(assessment_id=assessment_id).flat_df().add_prefix("study-")
+        design_df = (
+            Design.objects.filter(study__assessment_id=assessment_id)
+            .flat_df()
+            .add_prefix("design-")
+        )
+        cause_df = (
+            Cause.objects.filter(study__assessment_id=assessment_id).flat_df().add_prefix("cause-")
+        )
+        effect_df = (
+            Effect.objects.filter(study__assessment_id=assessment_id)
+            .flat_df()
+            .add_prefix("effect-")
+        )
+        result_df = (
+            cls.objects.filter(design__study__assessment_id=assessment_id)
+            .flat_df()
+            .add_prefix("result-")
+        )
+        tmp1 = pd.merge(effect_df, result_df, left_on="effect-id", right_on="result-effect_id")
+        tmp2 = pd.merge(cause_df, tmp1, left_on="cause-id", right_on="result-cause_id")
+        tmp3 = pd.merge(design_df, tmp2, left_on="design-id", right_on="result-design_id")
+        return pd.merge(study_df, tmp3, left_on="study-id", right_on="design-study_id")
 
 
 reversion.register(Design)

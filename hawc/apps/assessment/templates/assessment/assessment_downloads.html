@@ -9,7 +9,7 @@
   </p>
 
   <ul>
-    {% if assessment.enable_literature_review %}
+    {% if assessment.enable_literature_review and assessment.has_lit_data %}
     <li>
         <b>Literature-review</b><br>
         <a class='btn btn-primary' href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download</a><br>
@@ -17,7 +17,7 @@
     </li>
     {% endif %}
 
-    {% if assessment.enable_risk_of_bias %}
+    {% if assessment.enable_risk_of_bias and assessment.has_rob_data %}
     <li>
         <b>{{assessment.get_rob_name_display}} report</b><br>
         <a class='btn btn-primary'
@@ -34,13 +34,16 @@
     {% endif %}
 
     {% if assessment.enable_data_extraction %}
+    {% if assessment.has_animal_data %}
     <li>
         <b>Animal bioassay data</b><br>
         <a class='btn btn-primary' href="{% url 'animal:api:assessment-full-export' assessment.pk %}?format=xlsx">Complete export</a> &nbsp;
         <a class='btn btn-primary' href="{% url 'animal:api:assessment-endpoint-export' assessment.pk %}?format=xlsx">Endpoint summary</a><br>
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
+    {% endif %}
 
+    {% if assessment.has_epi_data %}
     <li>
         <b>Epidemiology data</b><br>
         {% if assessment.epi_version == EpiVersion.V1 %}
@@ -51,18 +54,31 @@
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
         {% endif %}
     </li>
+    {% endif %}
 
+    {% if assessment.has_epimeta_data %}
     <li>
         <b>Epidemiology meta-analysis data</b><br>
         <a class='btn btn-primary' href="{% url 'meta:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
+    {% endif %}
 
+    {% if assessment.has_invitro_data %}
     <li>
         <b>In-vitro data</b><br>
         <a class='btn btn-primary' href="{% url 'invitro:api:assessment-full-export' assessment.pk %}?format=xlsx">Download</a><br>
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
+    {% endif %}
+
+    {% if assessment.has_eco_data %}
+    <li>
+        <b>Ecological data</b><br>
+        <a class='btn btn-primary' href="{% url 'eco:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
+    </li>
+    {% endif %}
 
     <li>
         <b>Visualizations</b><br>
