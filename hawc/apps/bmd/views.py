@@ -1,21 +1,14 @@
 from functools import partialmethod
 
-from django.core.exceptions import BadRequest
+from django.core.exceptions import BadRequest, PermissionDenied
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
 from ..animal.models import Endpoint
-from ..assessment.models import Assessment
+from ..assessment.constants import AssessmentViewPermissions
 from ..common.helper import WebappConfig
-from ..common.views import (
-    BaseDelete,
-    BaseDetail,
-    BaseList,
-    BaseUpdate,
-    ProjectManagerOrHigherMixin,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseDelete, BaseDetail, BaseList, BaseUpdate
 from . import forms, models
 
 
@@ -29,27 +22,24 @@ class AssessSettingsRead(BaseDetail):
         return super().get_object(object=obj, **kwargs)
 
 
-class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+class AssessSettingsUpdate(BaseUpdate):
     success_message = "BMD Settings updated."
     model = models.AssessmentSettings
     form_class = forms.AssessmentSettingsForm
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_object(self, **kwargs):
         # get the bmd settings of the specified assessment
         obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
         return super().get_object(object=obj, **kwargs)
 
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=kwargs["pk"])
-
 
 # BMD sessions
-class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
-        return self.object.assessment
-
+class SessionCreate(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
+        self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
+        if not self.object.assessment.can_edit_object(self.request.user):
+            raise PermissionDenied()
         try:
             obj = models.Session.create_new(self.object)
         except ValueError:
@@ -63,7 +53,7 @@ class SessionList(BaseList):
     parent_template_name = "object"
 
     def get_queryset(self):
-        return self.model.objects.filter(endpoint=self.parent)
+        return super().get_queryset().filter(endpoint=self.parent)
 
 
 def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig:
@@ -96,14 +86,11 @@ class SessionDetail(BaseDetail):
     get_app_config = partialmethod(_get_session_config, is_editing=False)
 
 
-class SessionUpdate(TeamMemberOrHigherMixin, BaseDetail):
+class SessionUpdate(BaseDetail):
     success_message = "BMD session updated."
     model = models.Session
     get_app_config = partialmethod(_get_session_config, is_editing=True)
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(models.Session, pk=kwargs["pk"])
-        return self.object.get_assessment()
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
