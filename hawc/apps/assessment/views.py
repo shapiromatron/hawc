@@ -497,6 +497,7 @@ class AssessmentDetailUpdate(BaseUpdate):
 class AssessmentValueCreate(BaseCreate):
     success_message = "Assessment Value created."
     model = models.AssessmentValue
+    parent_template_name = "assessment"
     parent_model = models.Assessment
     form_class = forms.AssessmentValueForm
 
@@ -517,6 +518,7 @@ class AssessmentValueDetail(BaseDetail):
 
 class AssessmentValueDelete(BaseDelete):
     model = models.AssessmentValue
+    success_message = "Assessment Value deleted."
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
