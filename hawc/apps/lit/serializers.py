@@ -47,7 +47,6 @@ class SearchSerializer(serializers.ModelSerializer):
 
         user = self.context["request"].user
         if not data["assessment"].user_can_edit_object(user):
-            # TODO - move authentication check outside validation?
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
 
         # set slug value based on title; assert it's unique
@@ -102,15 +101,12 @@ class SearchSerializer(serializers.ModelSerializer):
 
 
 class IdentifiersSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["database"] = instance.get_database_display()
-        ret["url"] = instance.get_url()
-        return ret
+    database = serializers.CharField(source="get_database_display")
+    url = serializers.CharField(source="get_url")
 
     class Meta:
         model = models.Identifiers
-        fields = "__all__"
+        fields = ["id", "unique_id", "database", "url"]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

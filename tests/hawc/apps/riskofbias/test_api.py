@@ -499,26 +499,6 @@ class TestBulkRobCleanupApis:
             "score_symbol": "++",
         }
 
-        # TODO: evaluate how to correctly add header
-
-        # # patch
-        # url = reverse("riskofbias:api:scores-list") + assessment_query + f"&ids={data['id']}"
-        # resp = c.patch(
-        #     url,
-        #     {"score": 16, "notes": "<p>More content here.</p>"},
-        #     headers={"X-CUSTOM-BULK-OPERATION": "true"},
-        #     format="json",
-        # )
-        # assert resp.status_code == 201
-
-        # # ensure patch went through
-        # resp = c.get(detail_url, format="json")
-        # data = resp.json()
-        # assert resp.status_code == 200
-        # assert data["id"] == 1
-        # assert data["score"] == 16
-        # assert data["notes"] == "<p>More content here.</p>"
-
 
 @pytest.mark.django_db
 class TestRobAssignmentApi:
