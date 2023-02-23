@@ -11,4 +11,4 @@ class NestedTermFilterSet(BaseFilterSet):
 
     @property
     def has_query(self) -> bool:
-        return self.data["name__contains"] != ""
+        return self.data.get("name__contains", "") != ""
