@@ -1,19 +1,19 @@
-from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from ..assessment.api import AssessmentLevelPermissions
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.api import LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models
 
 
-class TermViewSet(viewsets.GenericViewSet):
+class TermViewSet(GenericViewSet):
     serializer_class = UnusedSerializer
     permission_classes = [IsAuthenticated]
 
@@ -27,18 +27,21 @@ class TermViewSet(viewsets.GenericViewSet):
         return Response(export)
 
 
-class AssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
-    parent_model = Assessment
+class AssessmentViewset(GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
-    filterset_class = None
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        renderer_classes=PandasRenderers,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
     def export(self, request, pk):
         """
         Export entire ecological dataset.

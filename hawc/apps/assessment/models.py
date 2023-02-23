@@ -441,6 +441,47 @@ class Assessment(models.Model):
     def set_communications(self, text: str):
         Communication.set_message(self, text)
 
+    @property
+    def has_rob_data(self) -> bool:
+        return (
+            apps.get_model("riskofbias", "RiskOfBias").objects.filter(study__assessment=self).count()
+            > 0
+        )
+
+    @property
+    def has_animal_data(self) -> bool:
+        return (
+            apps.get_model("animal", "Experiment").objects.filter(study__assessment=self).count()
+            > 0
+        )
+
+    @property
+    def has_epi_data(self) -> bool:
+        models = (
+            ("epi", "StudyPopulation")
+            if self.epi_version == constants.EpiVersion.V1
+            else ("epiv2", "Design")
+        )
+        return apps.get_model(*models).objects.filter(study__assessment=self).count() > 0
+
+    @property
+    def has_epimeta_data(self) -> bool:
+        return (
+            apps.get_model("epimeta", "MetaProtocol").objects.filter(study__assessment=self).count()
+            > 0
+        )
+
+    @property
+    def has_invitro_data(self) -> bool:
+        return (
+            apps.get_model("invitro", "IVExperiment").objects.filter(study__assessment=self).count()
+            > 0
+        )
+
+    @property
+    def has_eco_data(self) -> bool:
+        return apps.get_model("eco", "Design").objects.filter(study__assessment=self).count() > 0
+
 
 class AssessmentDetail(models.Model):
     objects = managers.AssessmentDetailManager()
