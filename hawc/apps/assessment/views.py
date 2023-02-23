@@ -474,6 +474,7 @@ class AssessmentDetailCreate(BaseCreate):
     success_message = "Assessment Details created."
     model = models.AssessmentDetail
     parent_model = models.Assessment
+    parent_template_name = "assessment"
     form_class = forms.AssessmentDetailForm
 
     def get_success_url(self):
