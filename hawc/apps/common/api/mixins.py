@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import DataError
-from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import status
 from rest_framework.exceptions import ValidationError as DrfValidationError
@@ -107,16 +106,6 @@ class DynamicFieldsMixin:
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:
                     self.fields.pop(field_name)
-
-
-class LegacyAssessmentAdapterMixin:
-    """
-    A mixin that allows API viewsets to interact with legacy methods.
-    """
-
-    def set_legacy_attr(self, pk):
-        self.parent = get_object_or_404(self.parent_model, pk=pk)
-        self.assessment = self.parent.get_assessment()
 
 
 class ReadWriteSerializerMixin:

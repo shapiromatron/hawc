@@ -327,15 +327,20 @@ class Assessment(models.Model):
     def user_can_edit_assessment(self, user, perms: AssessmentPermissions = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
-        return perms.can_edit_assessment(user)
+        return perms.project_manager_or_higher(user)
 
-    def user_is_part_of_team(self, user) -> bool:
+    def user_is_reviewer_or_higher(self, user) -> bool:
+        """Reviewer or higher"""
         perms = self.get_permissions()
-        return perms.part_of_team(user)
+        return perms.reviewer_or_higher(user)
 
     def user_is_team_member_or_higher(self, user) -> bool:
         perms = self.get_permissions()
         return perms.team_member_or_higher(user)
+
+    def user_is_project_manager_or_higher(self, user) -> bool:
+        perms = self.get_permissions()
+        return perms.project_manager_or_higher(user)
 
     def get_vocabulary_display(self) -> str:
         # override default method

@@ -8,26 +8,24 @@ from rest_framework.response import Response
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
-    DisabledPagination,
+    CleanupFieldsBaseViewSet,
     InAssessmentFilter,
-    get_assessment_id_param,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
+from ..common.api import DisabledPagination
 from ..common.helper import re_digits
 from ..common.views import create_object_log
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models, serializers
 
 
-class Study(
-    mixins.CreateModelMixin,
-    viewsets.ReadOnlyModelViewSet,
-):
+class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     list_actions = ["list", "rob_scores"]
     lookup_value_regex = re_digits
@@ -51,13 +49,12 @@ class Study(
                 "riskofbiases__scores__overridden_objects__content_object",
             ).select_related("assessment")
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_scores(self, request):
-        assessment_id = get_assessment_id_param(request)
-        scores = self.model.objects.rob_scores(assessment_id)
+        scores = self.model.objects.rob_scores(self.assessment.pk)
         return Response(scores)
 
-    @action(detail=False)
+    @action(detail=False, permission_classes=[])
     def types(self, request):
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
@@ -76,15 +73,19 @@ class Study(
             self.request.user.id,
         )
 
-    @action(detail=True, url_path="all-rob")
+    @action(
+        detail=True,
+        url_path="all-rob",
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    )
     def rob(self, request, pk: int):
         study = self.get_object()
-        if not self.assessment.user_is_team_member_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
         serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=("post",), url_path="create-from-identifier")
+    @action(
+        detail=False, methods=("post",), url_path="create-from-identifier", permission_classes=[]
+    )
     def create_from_identifier(self, request):
         # check permissions
         assessment = get_object_or_404(Assessment, id=request.data.get("assessment_id", -1))
