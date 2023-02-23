@@ -47,18 +47,30 @@ class TestClient(LiveServerTestCase, TestCase):
             client.set_authentication_token("123")
         assert err.value.status_code == 403
 
-        with pytest.raises(HawcClientException) as err:
-            client.session.get(f"{self.live_server_url}/assessment/1/")
-        assert err.value.status_code == 403
+        url_private_api = f"{self.live_server_url}/assessment/api/assessment/1/"
+        url_private_view = f"{self.live_server_url}/assessment/1/"
+
+        for url in [url_private_api, url_private_view]:
+            with pytest.raises(HawcClientException) as err:
+                client.session.get(url)
+            assert err.value.status_code == 403
 
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
-        resp = client.set_authentication_token(token)
-        assert resp == {"valid": True}
 
-        # can also access regular Django views that are private
-        resp = client.session.get(f"{self.live_server_url}/assessment/1/")
+        # login; create a DRF token-based session
+        assert client.set_authentication_token(token, login=False) is True
+        resp = client.session.get(url_private_api)
         assert resp.status_code == 200
+        with pytest.raises(HawcClientException) as err:
+            client.session.get(url_private_view)
+        assert err.value.status_code == 403
+
+        # login; create a Django based cookie session (CSRF tokens required)
+        assert client.set_authentication_token(token, login=True) is True
+        for url in [url_private_api, url_private_view]:
+            resp = client.session.get(url)
+            assert resp.status_code == 200
 
     ####################
     # BaseClient tests #
@@ -576,11 +588,11 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_import_reference_tags(self):
-        csv = "reference_id,tag_id\n5,14"
+        csv = "reference_id,tag_id\n1,2"
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.lit.import_reference_tags(
-            assessment_id=self.db_keys.assessment_final, csv=csv
+            assessment_id=self.db_keys.assessment_working, csv=csv
         )
         assert isinstance(response, pd.DataFrame)
 
@@ -665,14 +677,22 @@ class TestClient(LiveServerTestCase, TestCase):
     # RiskOfBiasClient tests #
     ##########################
 
-    def test_riskofbias_data(self):
+    def test_riskofbias_export(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.data(self.db_keys.assessment_client)
+        response = client.riskofbias.export(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
-    def test_riskofbias_full_data(self):
+    def test_riskofbias_full_export(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.full_data(self.db_keys.assessment_client)
+
+        # permission denied
+        with pytest.raises(HawcClientException) as err:
+            client.riskofbias.full_export(self.db_keys.assessment_client)
+            assert err.status_code == 403
+
+        # successful response
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.full_export(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_riskofbias_create(self):

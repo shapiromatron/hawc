@@ -7,7 +7,6 @@ from reversion import revisions as reversion
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..epi.models import AdjustmentFactor, Criteria, ResultMetric
-from ..study.models import Study
 from . import constants, managers
 
 
@@ -70,16 +69,6 @@ class MetaProtocol(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
-
-    def copy_across_assessments(self, cw):
-        children = list(self.results.all())
-        old_id = self.id
-        self.id = None
-        self.study_id = cw[Study.COPY_NAME][self.study_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
     @staticmethod
     def flat_complete_header_row():
@@ -252,13 +241,6 @@ class MetaResult(models.Model):
             ser["notes"],
         )
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.protocol_id = cw[MetaProtocol.COPY_NAME][self.protocol_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
     def get_study(self):
         if self.protocol is not None:
             return self.protocol.get_study()
@@ -374,14 +356,6 @@ class SingleResult(models.Model):
             ser["ci_units"],
             ser["notes"],
         )
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.meta_result_id = cw[MetaResult.COPY_NAME][self.meta_result_id]
-        self.study_id = cw[Study.COPY_NAME][self.study_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
     def get_study(self):
         if self.meta_result is not None:
