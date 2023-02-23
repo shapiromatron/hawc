@@ -167,9 +167,25 @@ class ResultForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 4, ["col-md-4", "col-md-3", "col-md-3", "col-md-2"])
-        helper.add_row("relationship_direction", 2, "col-md-6")
-        helper.add_row("measure_type", 4, "col-md-3")
-        helper.add_row("variability", 3, "col-md-4")
+        helper.add_row(
+            "relationship_direction", 4, ["col-md-2", "col-md-4", "col-md-3", "col-md-3"]
+        )
         helper.add_row("modifying_factors", 2, "col-md-6")
-        helper.add_row("statistical_sig_type", 3, "col-md-4")
+        helper.add_row("measure_type", 4, "col-md-3")
+        helper.add_row("variability", 4, ["col-md-2", "col-md-2", "col-md-2", "col-md-6"])
         return helper
+
+    RESPONSE_VARIABILITY_REQ = (
+        "Response variability is required if a lower or upper response measure is given."
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        resp_var = cleaned_data.get("variability")
+        lower_measure = cleaned_data.get("low_variability")
+        upper_measure = cleaned_data.get("upper_variability")
+        if (lower_measure or upper_measure) and not resp_var:
+            self.add_error("variability", self.RESPONSE_VARIABILITY_REQ)
+
+        return cleaned_data

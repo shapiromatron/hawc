@@ -222,7 +222,7 @@ class Cause(models.Model):
         verbose_name="Level (numeric)",
         blank=True,
         null=True,
-        help_text="Units associated with the treatment/exposure/dose level, if applicable",
+        help_text="Specific numeric value of treatment/exposure/dose level, if applicable",
     )
     level_units = models.CharField(
         verbose_name="Level units",
@@ -257,7 +257,7 @@ class Cause(models.Model):
         verbose_name="Exposure metric (numeric)",
         blank=True,
         null=True,
-        help_text="Specific exposure metric reported, if applicable",
+        help_text="Specific numeric value of exposure metric reported, if applicable",
     )
     exposure_units = models.CharField(
         verbose_name="Exposure metric units",
@@ -392,6 +392,34 @@ class Result(models.Model):
         blank=True,
         help_text="Describe the relationship in 1-2 sentences",
     )
+    statistical_sig_type = models.ForeignKey(
+        Vocab,
+        verbose_name="Statistical significance",
+        limit_choices_to={"category": VocabCategories.STATISTICAL},
+        on_delete=models.CASCADE,
+        related_name="result_by_sig",
+        help_text="Statistical significance measure reported",
+    )
+    statistical_sig_value = NumericTextField(
+        max_length=16,
+        blank=True,
+        default="",
+        verbose_name="Statistical significance value",
+        help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
+    )
+    modifying_factors = models.CharField(
+        verbose_name="Modifying factors",
+        blank=True,
+        max_length=256,
+        default="",
+        help_text="A comma-separated list of modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
+    )
+    modifying_factors_comment = models.TextField(
+        verbose_name="Modifying factors comment",
+        max_length=256,
+        blank=True,
+        help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
+    )
     measure_type = models.ForeignKey(
         Vocab,
         verbose_name="Response measure type",
@@ -429,6 +457,8 @@ class Result(models.Model):
         on_delete=models.CASCADE,
         related_name="result_by_variability",
         help_text="Type of variability reported for the numeric response measure",
+        null=True,
+        blank=True,
     )
     low_variability = models.FloatField(
         verbose_name="Lower response measure",
@@ -441,33 +471,6 @@ class Result(models.Model):
         blank=True,
         help_text="Upper numerical bound of the response variability",
         null=True,
-    )
-    modifying_factors = models.CharField(
-        verbose_name="Modifying factors",
-        blank=True,
-        max_length=256,
-        default="",
-        help_text="A comma-separated list of modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
-    )
-    modifying_factors_comment = models.TextField(
-        verbose_name="Modifying factors comment",
-        max_length=256,
-        blank=True,
-        help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
-    )
-    statistical_sig_type = models.ForeignKey(
-        Vocab,
-        verbose_name="Statistical significance",
-        limit_choices_to={"category": VocabCategories.STATISTICAL},
-        on_delete=models.CASCADE,
-        related_name="result_by_sig",
-        help_text="Statistical significance measure reported",
-    )
-    statistical_sig_value = NumericTextField(
-        max_length=16,
-        blank=True,
-        default="",
-        help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
     )
     comments = models.TextField(
         blank=True,

@@ -686,7 +686,7 @@ class BaseUpdateWithFormset(BaseUpdate):
         return super().get_context_data(**kwargs)
 
 
-class BaseFilterList(BaseList):
+class FilterSetMixin:
     filterset_class: Type[BaseFilterSet]
     paginate_by = 25
 
@@ -699,7 +699,6 @@ class BaseFilterList(BaseList):
             data=self.request.GET,
             queryset=super().get_queryset(),
             request=self.request,
-            assessment=self.assessment,
         )
 
     @property
@@ -715,6 +714,13 @@ class BaseFilterList(BaseList):
         context = super().get_context_data(**kwargs)
         context.update(form=self.filterset.form)
         return context
+
+
+class BaseFilterList(FilterSetMixin, BaseList):
+    def get_filterset_kwargs(self):
+        kw = super().get_filterset_kwargs()
+        kw.update(assessment=self.assessment)
+        return kw
 
 
 class HeatmapBase(BaseList):
