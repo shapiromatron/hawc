@@ -9,7 +9,7 @@
   </p>
 
   <ul>
-    {% if assessment.enable_literature_review %}
+    {% if assessment.enable_literature_review and assessment.has_lit_data %}
     <li>
         <b>Literature-review</b><br>
         <a class='btn btn-primary' href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download</a><br>

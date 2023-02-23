@@ -441,46 +441,51 @@ class Assessment(models.Model):
     def set_communications(self, text: str):
         Communication.set_message(self, text)
 
+    def _has_data(self, app: str, model: str, filter: str = "study__assessment") -> bool:
+        """Check if associated model has any data for this assessment in HAWC
+
+        Args:
+            app (str): the application name
+            model (str): the model name
+            filter (str): the filter to apply to check for status
+
+        Returns:
+            bool: True if data exists, False otherwise
+        """
+        return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
+
+    @property
+    def has_lit_data(self) -> bool:
+        return self._has_data("lit", "Reference")
+
     @property
     def has_rob_data(self) -> bool:
-        return (
-            apps.get_model("riskofbias", "RiskOfBias").objects.filter(study__assessment=self).count()
-            > 0
-        )
+        return self._has_data("riskofbias", "RiskOfBias")
 
     @property
     def has_animal_data(self) -> bool:
-        return (
-            apps.get_model("animal", "Experiment").objects.filter(study__assessment=self).count()
-            > 0
-        )
+        return self._has_data("animal", "Experiment")
 
     @property
     def has_epi_data(self) -> bool:
-        models = (
-            ("epi", "StudyPopulation")
-            if self.epi_version == constants.EpiVersion.V1
-            else ("epiv2", "Design")
-        )
-        return apps.get_model(*models).objects.filter(study__assessment=self).count() > 0
+        if self.epi_version == constants.EpiVersion.V1:
+            return self._has_data("epi", "StudyPopulation")
+        elif self.epi_version == constants.EpiVersion.V2:
+            return self._has_data("epiv2", "Design")
+        else:
+            raise ValueError("Unknown epi version")
 
     @property
     def has_epimeta_data(self) -> bool:
-        return (
-            apps.get_model("epimeta", "MetaProtocol").objects.filter(study__assessment=self).count()
-            > 0
-        )
+        return self._has_data("epimeta", "MetaProtocol")
 
     @property
     def has_invitro_data(self) -> bool:
-        return (
-            apps.get_model("invitro", "IVExperiment").objects.filter(study__assessment=self).count()
-            > 0
-        )
+        return self._has_data("invitro", "IVExperiment")
 
     @property
     def has_eco_data(self) -> bool:
-        return apps.get_model("eco", "Design").objects.filter(study__assessment=self).count() > 0
+        return self._has_data("eco", "Design")
 
 
 class AssessmentDetail(models.Model):
