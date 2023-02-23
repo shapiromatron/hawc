@@ -6,6 +6,7 @@ from django import forms
 from django_filters.utils import get_model_field
 from pydantic import BaseModel, conlist
 
+from ..assessment.models import Assessment
 from . import autocomplete
 from .forms import BaseFormHelper, form_actions_apply_filters
 
@@ -137,7 +138,7 @@ class FilterSet(df.filterset.BaseFilterSet, metaclass=FilterSetMetaclass):
 
 
 class BaseFilterSet(FilterSet):
-    def __init__(self, *args, assessment, **kwargs):
+    def __init__(self, *args, assessment: Optional[Assessment] = None, **kwargs):
         self.assessment = assessment
         super().__init__(*args, **kwargs)
 

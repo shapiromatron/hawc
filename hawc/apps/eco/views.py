@@ -3,9 +3,10 @@ from django.shortcuts import render
 from django.views.generic import ListView
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
+from ..common.models import include_related
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate, FilterSetMixin
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
 
 
 # Design
@@ -74,8 +75,16 @@ class DesignDelete(BaseDelete):
 
 
 # Term preview
-class NestedTermList(ListView):
+class NestedTermList(FilterSetMixin, ListView):
     model = models.NestedTerm
+    paginate_by = 100
+    filterset_class = filterset.NestedTermFilterSet
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.filterset.has_query:
+            return include_related(qs)
+        return qs
 
 
 # Viewsets
