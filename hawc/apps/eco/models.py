@@ -509,7 +509,7 @@ class Result(models.Model):
 
     @classmethod
     def complete_df(cls, assessment_id: int) -> pd.DataFrame:
-        study_df = Study.objects.filter(assessment_id=1118).flat_df().add_prefix("study-")
+        study_df = Study.objects.filter(assessment_id=assessment_id).flat_df().add_prefix("study-")
         design_df = (
             Design.objects.filter(study__assessment_id=assessment_id)
             .flat_df()
