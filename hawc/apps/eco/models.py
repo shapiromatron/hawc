@@ -385,6 +385,7 @@ class Result(models.Model):
         max_length=16,
         blank=True,
         default="",
+        verbose_name="Statistical significance value",
         help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
     )
     modifying_factors = models.CharField(

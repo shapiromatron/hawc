@@ -168,7 +168,7 @@ class ResultForm(forms.ModelForm):
         helper.form_tag = False
         helper.add_row("name", 4, ["col-md-4", "col-md-3", "col-md-3", "col-md-2"])
         helper.add_row(
-            "relationship_direction", 4, ["col-md-2", "col-md-5", "col-md-2", "col-md-3"]
+            "relationship_direction", 4, ["col-md-2", "col-md-4", "col-md-3", "col-md-3"]
         )
         helper.add_row("modifying_factors", 2, "col-md-6")
         helper.add_row("measure_type", 4, "col-md-3")
