@@ -4,8 +4,8 @@ from django.db.models import Prefetch
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic.edit import FormView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
@@ -16,9 +16,6 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
-    MessageMixin,
-    ProjectManagerOrHigherMixin,
-    TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
     get_referrer,
 )
@@ -72,18 +69,15 @@ class ARoBDetail(BaseList):
         )
 
 
-class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
+class ARoBEdit(BaseDetail):
     """
     Displays a form for sorting and editing domain and metric.
     """
 
     crud = "Update"
-
     model = models.Assessment
     template_name = "riskofbias/arob_edit.html"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -107,18 +101,13 @@ class ARoBEdit(ProjectManagerOrHigherMixin, BaseDetail):
         )
 
 
-class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
+class ARoBTextEdit(BaseUpdate):
     parent_model = Assessment
     model = models.RiskOfBiasAssessment
     template_name = "riskofbias/arob_text_form.html"
     form_class = forms.RobTextForm
     success_message = "Help text has been updated."
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(self.model, assessment_id=self.assessment.pk)
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,15 +118,13 @@ class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
         return reverse_lazy("riskofbias:arob_detail", kwargs={"pk": self.assessment.pk})
 
 
-class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
+class ARoBCopy(BaseUpdate):
     model = models.RiskOfBiasDomain
     parent_model = Assessment
     template_name = "riskofbias/arob_copy.html"
     form_class = forms.RiskOfBiasCopyForm
     success_message = "Settings have been updated."
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -207,15 +194,12 @@ def get_rob_assignment_data(assessment, studies):
     }
 
 
-class RobAssignmentList(TeamMemberOrHigherMixin, BaseFilterList):
+class RobAssignmentList(BaseFilterList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_list.html"
     paginate_by = 50
     filterset_class = StudyFilterSet
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_filterset_kwargs(self):
         kwargs = super().get_filterset_kwargs()
@@ -250,15 +234,13 @@ class RobAssignmentList(TeamMemberOrHigherMixin, BaseFilterList):
         return WebappConfig(app="riskofbiasStartup", page="robAssignmentStartup", data=data)
 
 
-class RobAssignmentUpdate(ProjectManagerOrHigherMixin, BaseFilterList):
+class RobAssignmentUpdate(BaseFilterList):
     parent_model = Assessment
     model = Study
     template_name = "riskofbias/rob_assignment_update.html"
     filterset_class = StudyFilterSet
     paginate_by = 50
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_filterset_kwargs(self):
         kwargs = super().get_filterset_kwargs()
@@ -449,16 +431,13 @@ class RoBDetail(BaseDetail):
         return self.get_webapp_config("final")
 
 
-class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
+class RoBsDetailAll(RoBDetail):
     """
     Detailed view of all active risk of bias metric, including final.
     """
 
     template_name = "riskofbias/rob_detail_all.html"
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Study, pk=kwargs["pk"])
-        return self.object.get_assessment()
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

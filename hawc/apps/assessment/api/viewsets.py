@@ -1,154 +1,136 @@
-import logging
 from pathlib import Path
-from typing import Optional
 
 from django.apps import apps
-from django.core import exceptions
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Model
 from django.http import Http404
 from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException, PermissionDenied
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from hawc.services.epa import dsstox
+from ....services.epa.dsstox import RE_DTXSID
+from ...common.api import CleanupBulkIdFilter, DisabledPagination, ListUpdateModelMixin
+from ...common.exceptions import ClassConfigurationException
+from ...common.helper import FlatExport, re_digits
+from ...common.renderers import PandasRenderers
+from ...common.views import bulk_create_object_log, create_object_log
+from .. import models, serializers
+from ..actions.audit import AssessmentAuditSerializer
+from ..constants import AssessmentViewSetPermissions
+from .filters import InAssessmentFilter
+from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
 
-from ..common.helper import FlatExport, re_digits, tryParseInt
-from ..common.renderers import PandasRenderers
-from ..common.views import create_object_log
-from . import models, serializers
-from .actions.audit import AssessmentAuditSerializer
-
-
-class DisabledPagination(PageNumberPagination):
-    page_size = None
-
-
-logger = logging.getLogger(__name__)
-
-
-class RequiresAssessmentID(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Please provide an `assessment_id` argument to your GET request."
+# all http methods except PUT
+METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 
-class InvalidAssessmentID(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Assessment does not exist for given `assessment_id`."
-
-
-def get_assessment_id_param(request) -> int:
+class CleanupFieldsBaseViewSet(
+    ListUpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     """
-    If request doesn't contain an integer-based `assessment_id`, an exception is raised.
-    """
-    assessment_id = tryParseInt(request.GET.get("assessment_id"))
-    if assessment_id is None:
-        raise RequiresAssessmentID()
-    return assessment_id
+    Base Viewset for bulk updating text fields.
 
+    Implements three routes:
 
-def get_assessment_from_query(request) -> Optional[models.Assessment]:
-    """Returns assessment or raises exception if does not exist."""
-    assessment_id = get_assessment_id_param(request)
-    try:
-        return models.Assessment.objects.get(pk=assessment_id)
-    except models.Assessment.DoesNotExist:
-        raise InvalidAssessmentID()
+    - GET /?assessment_id=1: list data available for cleanup
+    - PATCH /?assessment_id=1&ids=1,2,3: modify selected data
+    - GET /fields/: list fields available for cleanup
 
-
-class JobPermissions(permissions.BasePermission):
-    """
-    Requires admin permissions where jobs have no associated assessment
-    or when part of a list, and assessment level permissions when jobs
-    have an associated assessment.
+    Model should have a TEXT_CLEANUP_FIELDS class attribute which is list of fields.
+    For bulk update, 'X-CUSTOM-BULK-OPERATION' header must be provided.
+    Serializer should implement DynamicFieldsMixin.
     """
 
-    def has_object_permission(self, request, view, obj):
-        if obj.assessment is None:
-            return bool(request.user and request.user.is_staff)
-        elif request.method in permissions.SAFE_METHODS:
-            return obj.assessment.user_can_view_object(request.user)
-        else:
-            return obj.assessment.user_can_edit_object(request.user)
+    model: Model = None  # must be added
+    assessment_filter_args: str = ""  # must be added
+    filter_backends = (CleanupBulkIdFilter,)
+    pagination_class = DisabledPagination
+    permission_classes = (CleanupFieldsPermissions,)
+    template_name = "assessment/endpointcleanup_list.html"
 
-    def has_permission(self, request, view):
-        if view.action == "list":
-            return bool(request.user and request.user.is_staff)
-        elif view.action == "create":
-            serializer = view.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            assessment = serializer.validated_data.get("assessment")
-            if assessment is None:
-                return bool(request.user and request.user.is_staff)
-            else:
-                return assessment.user_can_edit_object(request.user)
-        else:
-            # other actions are object specific,
-            # and will be caught by object permissions
-            return True
+    def get_queryset(self):
+        return self.model.objects.all()
 
+    @action(detail=False, methods=["get"])
+    def fields(self, request, format=None):
+        """
+        Return field names available for cleanup.
+        """
+        cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
+        TERM_FIELD_MAPPING = getattr(self.model, "TERM_FIELD_MAPPING", {})
+        return Response(
+            {"text_cleanup_fields": cleanup_fields, "term_field_mapping": TERM_FIELD_MAPPING}
+        )
 
-class AssessmentLevelPermissions(permissions.BasePermission):
-    default_list_actions = ["list"]
+    def partial_update_bulk(self, request, *args, **kwargs):
+        return super().partial_update_bulk(request, *args, **kwargs)
 
-    def has_object_permission(self, request, view, obj):
-        if not hasattr(view, "assessment"):
-            view.assessment = obj.get_assessment()
-        if request.method in permissions.SAFE_METHODS:
-            return view.assessment.user_can_view_object(request.user)
-        elif obj == view.assessment:
-            return view.assessment.user_can_edit_assessment(request.user)
-        else:
-            return view.assessment.user_can_edit_object(request.user)
-
-    def has_permission(self, request, view):
-        list_actions = getattr(view, "list_actions", self.default_list_actions)
-        if view.action in list_actions:
-            logger.debug("Permission checked")
-
-            if not hasattr(view, "assessment"):
-                view.assessment = get_assessment_from_query(request)
-
-            return view.assessment.user_can_view_object(request.user)
-
-        return True
+    def post_save_bulk(self, queryset, update_bulk_dict):
+        ids = list(queryset.values_list("id", flat=True))
+        bulk_create_object_log("Updated", queryset, self.request.user.id)
+        queryset.model.delete_caches(ids)
 
 
-class AssessmentReadPermissions(AssessmentLevelPermissions):
-    def has_object_permission(self, request, view, obj):
-        if not hasattr(view, "assessment"):
-            view.assessment = obj.get_assessment()
-        return view.assessment.user_can_view_object(request.user)
-
-
-class InAssessmentFilter(filters.BaseFilterBackend):
+class EditPermissionsCheckMixin:
     """
-    Filter objects which are in a particular assessment.
+    API Viewset mixin which provides permission checking during create/update/destroy operations.
+
+    Fires "user_can_edit_object" checks during requests to create/update/destroy. Viewsets mixing
+    this in can define a variable "edit_check_keys", which is a list of serializer attribute
+    keys that should be used as the source for the checks.
     """
 
-    default_list_actions = ["list"]
+    def get_object_checks(self, serializer):
+        """
+        Generates a list of model objects to check permissions against. Each object returned
+        can then be checked using user_can_edit_object, throwing an exception if necessary.
 
-    def filter_queryset(self, request, queryset, view):
-        list_actions = getattr(view, "list_actions", self.default_list_actions)
-        if view.action not in list_actions:
-            return queryset
+        Args:
+            serializer: the serializer of the associated viewset
 
-        if not hasattr(view, "assessment"):
-            view.assessment = get_assessment_from_query(request)
+        Returns:
+            List: A list of django model instances
+        """
+        objects = []
 
-        if not view.assessment_filter_args:
-            raise ValueError("Viewset requires the `assessment_filter_args` argument")
+        # if thing already is created, check that we can edit it
+        if serializer.instance and serializer.instance.pk:
+            objects.append(serializer.instance)
 
-        filters = {view.assessment_filter_args: view.assessment.id}
-        return queryset.filter(**filters)
+        # additional checks on other attributes
+        for checker_key in getattr(self, "edit_check_keys", []):
+            if checker_key in serializer.validated_data:
+                objects.append(serializer.validated_data.get(checker_key))
+
+        # ensure we have at least one object to check
+        if len(objects) == 0:
+            raise ClassConfigurationException("Permission check required; nothing to check")
+
+        return objects
+
+    def perform_create(self, serializer):
+        for object_ in self.get_object_checks(serializer):
+            user_can_edit_object(object_, self.request.user, raise_exception=True)
+        super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        for object_ in self.get_object_checks(serializer):
+            user_can_edit_object(object_, self.request.user, raise_exception=True)
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        user_can_edit_object(instance, self.request.user, raise_exception=True)
+        super().perform_destroy(instance)
 
 
 class BaseAssessmentViewset(viewsets.GenericViewSet):
+    action_perms = {}
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter,)
@@ -158,18 +140,11 @@ class BaseAssessmentViewset(viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
-    pass
-
-
-# all http methods except PUT
-METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
-
-
 class AssessmentEditViewset(viewsets.ModelViewSet):
     http_method_names = METHODS_NO_PUT
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
     lookup_value_regex = re_digits
@@ -203,6 +178,10 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
         super().perform_destroy(instance)
 
 
+class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
+    pass
+
+
 class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     """
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
@@ -212,10 +191,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
-
-    PROJECT_MANAGER = "PROJECT_MANAGER"
-    TEAM_MEMBER = "TEAM_MEMBER"
-    create_requires = TEAM_MEMBER
+    action_perms = {}
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -224,13 +200,6 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         self.filter_queryset(self.get_queryset())
         data = self.model.get_all_tags(self.assessment.id)
         return Response(data)
-
-    def create(self, request, *args, **kwargs):
-        # get an assessment
-        assessment_id = get_assessment_id_param(self.request)
-        self.assessment = models.Assessment.objects.filter(id=assessment_id).first()
-        self.check_editing_permission(request)
-        return super().create(request, *args, **kwargs)
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -258,27 +227,16 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         super().perform_destroy(instance)
 
     @transaction.atomic
-    @action(detail=True, methods=("patch",))
+    @action(
+        detail=True, methods=("patch",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
-        self.assessment = instance.get_assessment()
-        self.check_editing_permission(request)
         instance.moveWithinSiblingsToIndex(request.data["newIndex"])
         create_object_log(
             "Updated (moved)", instance, instance.get_assessment().id, self.request.user.id
         )
         return Response({"status": True})
-
-    def check_editing_permission(self, request):
-        if self.create_requires == self.PROJECT_MANAGER:
-            permissions_check = self.assessment.user_can_edit_assessment
-        elif self.create_requires == self.TEAM_MEMBER:
-            permissions_check = self.assessment.user_can_edit_object
-        else:
-            raise ValueError("invalid configuration of `create_requires`")
-
-        if not permissions_check(request.user):
-            raise exceptions.PermissionDenied()
 
 
 class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -302,7 +260,7 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=True)
+    @action(detail=True, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def endpoints(self, request, pk: int):
         """
         Optimized for queryset speed; some counts in get_queryset
@@ -460,11 +418,14 @@ class Assessment(AssessmentViewset):
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
-    @action(detail=True, url_path=r"logs/(?P<type>[\w]+)", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path=r"logs/(?P<type>[\w]+)",
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def logs(self, request: Request, pk: int, type: str):
         instance = self.get_object()
-        if not instance.user_is_team_member_or_higher(self.request.user):
-            raise PermissionDenied()
         serializer = AssessmentAuditSerializer.from_drf(data=dict(assessment=instance, type=type))
         export = serializer.export()
         return Response(export)
@@ -487,7 +448,11 @@ class DatasetViewset(AssessmentViewset):
             return self.model.objects.get_qs(self.assessment)
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def data(self, request, pk: int = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
@@ -496,11 +461,14 @@ class DatasetViewset(AssessmentViewset):
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)
 
-    @action(detail=True, renderer_classes=PandasRenderers, url_path=r"version/(?P<version>\d+)")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+        renderer_classes=PandasRenderers,
+        url_path=r"version/(?P<version>\d+)",
+    )
     def version(self, request, pk: int, version: int):
         instance = self.get_object()
-        if not self.assessment.user_is_team_member_or_higher(request.user):
-            raise PermissionDenied()
         revision = instance.revisions.filter(version=version).first()
         if revision is None or not revision.data_exists():
             raise Http404()
@@ -510,7 +478,7 @@ class DatasetViewset(AssessmentViewset):
 
 class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = (permissions.AllowAny,)
-    lookup_value_regex = dsstox.RE_DTXSID
+    lookup_value_regex = RE_DTXSID
     model = models.DSSTox
     serializer_class = serializers.DSSToxSerializer
 

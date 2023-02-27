@@ -1,19 +1,12 @@
-from django.core.exceptions import BadRequest
+from django.core.exceptions import BadRequest, PermissionDenied
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
 from ..animal.models import Endpoint
-from ..assessment.models import Assessment
+from ..assessment.constants import AssessmentViewPermissions
 from ..common.helper import WebappConfig
-from ..common.views import (
-    BaseDelete,
-    BaseDetail,
-    BaseList,
-    BaseUpdate,
-    ProjectManagerOrHigherMixin,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseDelete, BaseDetail, BaseList, BaseUpdate
 from . import forms, models
 
 
@@ -27,31 +20,26 @@ class AssessSettingsRead(BaseDetail):
         return super(AssessSettingsRead, self).get_object(object=obj, **kwargs)
 
 
-class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+class AssessSettingsUpdate(BaseUpdate):
     success_message = "BMD Settings updated."
     model = models.AssessmentSettings
     form_class = forms.AssessmentSettingsForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
 
-class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+class AssessLogicUpdate(BaseUpdate):
     success_message = "BMD logic settings updated."
     model = models.LogicField
     form_class = forms.LogicFieldForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object().get_assessment()
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
 
 # BMD sessions
-class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
-    def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
-        return self.object.assessment
-
+class SessionCreate(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
+        self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
+        if not self.object.assessment.can_edit_object(self.request.user):
+            raise PermissionDenied()
         if not self.object.assessment.bmd_settings.can_create_sessions:
             raise BadRequest("Assessment BMDS version is unsupported, can't create a new session.")
         obj = models.Session.create_new(self.object)
@@ -64,7 +52,7 @@ class SessionList(BaseList):
     parent_template_name = "object"
 
     def get_queryset(self):
-        return self.model.objects.filter(endpoint=self.parent)
+        return super().get_queryset().filter(endpoint=self.parent)
 
 
 def _get_session_config(self, context) -> WebappConfig:
