@@ -134,7 +134,7 @@ class ExploratoryHeatmapStore {
         if (this.settings.data_url === value) {
             return;
         }
-        this.root.dataset = null;
+        this.root.base.dataset = null;
         this.settings.data_url = value;
         this.root.base.dataRefreshRequired = true;
         this.root.base.dataUrl = value.length > 0 ? value : null;
