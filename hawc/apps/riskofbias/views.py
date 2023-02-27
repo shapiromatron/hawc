@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Iterable
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -53,7 +54,8 @@ class ARoBDetail(BaseList):
     template_name = "riskofbias/arob_detail.html"
 
     def get_context_data(self, **kwargs):
-        def grouped(metrics: list) -> list[list[dict]]:
+        def grouped(metrics: Iterable) -> list[list[models.RiskOfBiasMetric]]:
+            """Returns an ordered list of metrics within an ordered list of domains"""
             domains = defaultdict(list)
             for metric in metrics:
                 domains[metric.domain.id].append(metric)
@@ -69,9 +71,9 @@ class ARoBDetail(BaseList):
         context.update(
             metrics=metrics,
             no_data=metrics == len(metrics) == 0,
-            bioassay_metrics=grouped(list(filter(lambda d: d.required_animal is True, metrics))),
-            epi_metrics=grouped(list(filter(lambda d: d.required_epi is True, metrics))),
-            invitro_metrics=grouped(list(filter(lambda d: d.required_invitro is True, metrics))),
+            bioassay_metrics=grouped(filter(lambda d: d.required_animal is True, metrics)),
+            epi_metrics=grouped(filter(lambda d: d.required_epi is True, metrics)),
+            invitro_metrics=grouped(filter(lambda d: d.required_invitro is True, metrics)),
         )
         return context
 
