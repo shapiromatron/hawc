@@ -1,8 +1,13 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+from textwrap import dedent
+from uuid import uuid4
+
 from django import template
+from django.utils.html import escapejs
 from django.utils.safestring import mark_safe
+from plotly.graph_objs._figure import Figure
 
 register = template.Library()
 
@@ -39,4 +44,23 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     """
     return mark_safe(
         f'<tr {tr_attrs}><td colspan="100%"><p class="text-center mb-0">{text}</p></td></tr>'
+    )
+
+
+@register.simple_tag()
+def plotly(fig: Figure) -> str:
+    """Generate a plotly figure"""
+    id = uuid4()
+    return mark_safe(
+        dedent(
+            f"""
+    <div id="{id}"><span class="text-muted">Loading...</span></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", startup, false);
+        function startup () {{
+            const data = JSON.parse("{escapejs(fig.to_json())}")
+            window.app.renderPlotlyFigure(document.getElementById("{id}"), data);
+        }};
+    </script>"""
+        )
     )

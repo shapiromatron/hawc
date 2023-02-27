@@ -2,6 +2,7 @@ import json
 import logging
 from typing import Any
 
+import plotly.express as px
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -410,6 +411,7 @@ class AssessmentRead(BaseDetail):
             if context["obj_perms"]["edit"]
             else context["object"].datasets.filter(published=True)
         )
+        context["fig"] = px.line(x=[1, 2, 3], y=[4, 5, 6])
         return context
 
 

@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load hastext %}
+{% load bs4 %}
 
 {% block content %}
   <h2 class="d-inline-block">{{object}}</h2>
@@ -93,6 +94,11 @@
       <tr>
         <th>Year</th>
         <td>{{object.year}}</td>
+      </tr>
+
+      <tr>
+        <th>Figure</th>
+        <td>{% plotly fig %}</td>
       </tr>
 
       <tr>
