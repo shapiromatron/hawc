@@ -113,4 +113,4 @@ To prevent bots from attempting to login to the server, you can optionally enabl
 - `TURNSTYLE_SITE`: site key, this is used by the client to interact (public)
 - `TURNSTYLE_KEY`: secret key, used by the server to verify the response (private)
 
-If these variables are unset (development, default), Turnstyle disabled.
+By default. human verification is disabled.
