@@ -482,8 +482,7 @@ class Result(models.Model):
     class Meta:
         verbose_name = "Result"
         verbose_name_plural = "Results"
-        unique_together = (("effect", "sort_order"),)
-        ordering = ("effect", "sort_order")
+        ordering = ("design", "cause", "effect", "sort_order")
 
     def __str__(self):
         return f"{self.cause} | {self.effect}"
