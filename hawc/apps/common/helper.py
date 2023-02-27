@@ -1,5 +1,4 @@
 import decimal
-import json
 import logging
 import re
 from collections import defaultdict
@@ -23,7 +22,6 @@ from django.utils.http import urlencode
 from docx.document import Document
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter
-from plotly.graph_objs._figure import Figure
 from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
@@ -472,7 +470,3 @@ class PydanticToDjangoError:
                 ]
             ValidationError = DRFValidationError if self.drf else DjangoValidationError
             raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
-
-
-def plotly_to_dict(fig: Figure) -> dict:
-    return json.loads(fig.to_json())
