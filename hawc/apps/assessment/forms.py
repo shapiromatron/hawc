@@ -191,6 +191,9 @@ class AssessmentValueForm(forms.ModelForm):
             "system": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="system"
             ),
+            "species_studied": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="species_studied"
+            ),
             "duration": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="duration"
             ),
@@ -209,9 +212,6 @@ class AssessmentValueForm(forms.ModelForm):
             ),
             "pod_unit": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_unit"
-            ),
-            "species_studied": AutocompleteSelectWidget(
-                autocomplete_class=autocomplete.SpeciesAutocomplete
             ),
             "pod_type": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_type"
@@ -270,7 +270,7 @@ class AssessmentValueForm(forms.ModelForm):
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
         helper.add_row("species_studied", 3, "col-md-4")
-        helper.add_row("tumor_type", 4, "col-md-3")
+        helper.add_row("tumor_type", 3, "col-md-4")
         helper.add_row("comments", 2, "col-md-6")
 
         return helper

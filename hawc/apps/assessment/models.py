@@ -589,7 +589,8 @@ class AssessmentValue(models.Model):
     duration = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Duration of value",
+        verbose_name="Value duration",
+        help_text="Duration associated with the value (e.g., Chronic, Subchronic)",
     )
     basis = models.TextField(
         blank=True,
@@ -620,8 +621,10 @@ class AssessmentValue(models.Model):
         verbose_name="Uncertainty factor",
         help_text="Composite uncertainty factor applied to POD to derive the final value",
     )
-    species_studied = models.ForeignKey(
-        "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
+    species_studied = models.TextField(
+        blank=True,
+        verbose_name="Species and strain studied",
+        help_text="Provide information about the animal(s) studied, including species and strain information",
     )
     study = models.ForeignKey(
         "study.Study",
@@ -647,15 +650,9 @@ class AssessmentValue(models.Model):
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
     adaf = models.BooleanField(
-        verbose_name="ADAF applied?",
+        verbose_name="Apply ADAF?",
         default=False,
-        help_text="Has an Age Dependent Adjustment Factor (ADAF) been applied?",
-    )
-    non_adaf_value = models.FloatField(
-        verbose_name="Non-ADAF adjusted value",
-        blank=True,
-        null=True,
-        help_text="Value without ADAF adjustment (units the same as Value above)",
+        help_text="When checked, the ADAF note will appear as a footnote for the value",
     )
     comments = models.TextField(blank=True)
     extra = models.JSONField(
