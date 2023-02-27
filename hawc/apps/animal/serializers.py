@@ -4,10 +4,11 @@ import json
 from django.db import transaction
 from rest_framework import serializers
 
+from ..assessment.api import user_can_edit_object
 from ..assessment.models import DoseUnits, DSSTox
 from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
-from ..common.api import DynamicFieldsMixin, user_can_edit_object
+from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
@@ -30,6 +31,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Validate parent object
         self.study = get_matching_instance(Study, self.initial_data, "study_id")
+        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
         # add additional checks from forms.ExperimentForm
         form = forms.ExperimentForm(data=data, parent=self.study)
