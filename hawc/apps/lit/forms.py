@@ -535,18 +535,6 @@ class ReferenceForm(forms.ModelForm):
         return instance
 
 
-class ReferenceFilterTagForm(forms.ModelForm):
-    class Meta:
-        model = models.ReferenceFilterTag
-        fields = "__all__"
-
-
-class TagReferenceForm(forms.ModelForm):
-    class Meta:
-        model = models.Reference
-        fields = ("tags",)
-
-
 class TagsCopyForm(forms.Form):
 
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)

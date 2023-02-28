@@ -217,7 +217,7 @@ class BaseFilterSet(FilterSet):
         return form
 
 
-def dynamic_filterset(_class: BaseFilterSet, **meta_kwargs):
+def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
     default_kwargs = _class._meta.__dict__
     Meta = type("Meta", (object,), {**default_kwargs, **meta_kwargs})
     return type("DynamicFilterset", (_class,), {"Meta": Meta})
