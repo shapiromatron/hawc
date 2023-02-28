@@ -19,9 +19,9 @@ class TestLiterature(PlaywrightTestCase):
         # /lit/assessment/:id/references/
         page.locator("text=Browse").click()
         expect(page).to_have_url(self.live_server_url + "/lit/assessment/2/references/")
-        expect(page.locator("text=Human Study (2)")).to_be_visible()
+        expect(page.locator("text=Human Study")).to_be_visible()
         expect(page.locator("#references_detail_div")).not_to_have_count(0)
-        page.locator("text=Human Study (2)").click()
+        page.locator("text=Human Study").click()
         expect(page.locator(".referenceDetail")).to_have_count(2)
 
         # /lit/assessment/:id/references/visualization/
@@ -79,7 +79,7 @@ class TestLiterature(PlaywrightTestCase):
 
         # check that selected tag has been applied
         page.goto(f"{self.live_server_url}/lit/assessment/4/references/")
-        page.locator("text=Animal Study (1)").click()
+        page.locator("text=Animal Study").click()
         expect(
             page.locator(
                 "text=Nutrient content of fish powder from low value fish and fish byproducts."
