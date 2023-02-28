@@ -74,16 +74,18 @@
           {% endif %}
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
+          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
           {% if user.is_beta_tester and can_topic_model %}
           <a class="btn btn-dark betatester mt-1 py-1" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         </div>
+        {% if overview.total_references > 10 %}
         <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">
-          <p>references by year:</p>
+          <p>References by year:</p>
           <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
           </div>
         </div>
+        {% endif %}
         {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
         <div class="w-30">
           <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag-conflicts' assessment.pk %}">
@@ -131,11 +133,7 @@
     <div class="col-md-4">
       <div class="lit-review-box box-shadow" style="width: 100%;">
         <p class="h4 m-0">Tagtree
-          {% if assessment.literature_settings.conflict_resolution %}
-          {% include "common/helptext_popup.html" with text="Numbers show a count of references with that consensus tag applied" %}
-          {% else %}
-          {% include "common/helptext_popup.html" with text="Numbers show a count of references with that tag applied" %}
-          {% endif %}
+          {% include "common/helptext_popup.html" with text="Tag, plus count of references with this tag applied" %}
         </p>
         <div id="tags"></div>
       </div>

@@ -24,17 +24,17 @@ class ReferenceListItem extends Component {
         return (
             <div className={divClass} onClick={() => store.setReference(reference)}>
                 <p className="mb-0 pr-1">{reference.shortCitation()}</p>
-                <div className="mr-1 d-flex" style={{"flex-wrap": "nowrap"}}>
+                <div className="mr-1 d-flex" style={{flexWrap: "nowrap"}}>
+                    {store.config.conflict_resolution && reference.userTags ? (
+                        <i
+                            className="fa fa-fw fa-tags small-tag-icon user"
+                            title={"has tags from you"}
+                            aria-hidden="true"></i>
+                    ) : null}
                     {reference.tags.length > 0 ? (
                         <i
                             className="fa fa-fw fa-tags small-tag-icon consensus mr-1"
                             title={title}
-                            aria-hidden="true"></i>
-                    ) : null}
-                    {reference.userTags.length > 0 ? (
-                        <i
-                            className="fa fa-fw fa-tags small-tag-icon user"
-                            title={"has tags from you"}
                             aria-hidden="true"></i>
                     ) : null}
                 </div>
@@ -64,6 +64,7 @@ class TagReferencesMain extends Component {
         const {store} = this.props,
             {hasReference, reference, referenceTags, referenceUserTags} = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
+
         return (
             <div className="row">
                 <div className={store.filterClass} id="refFilter">
@@ -214,7 +215,7 @@ class TagReferencesMain extends Component {
                     ) : (
                         <h4>Select a reference</h4>
                     )}
-                    {selectedReferencePk === null ? (
+                    {selectedReferencePk === -1 ? (
                         <div className="alert alert-danger">No references found.</div>
                     ) : null}
                     {this.state.pinInstructions && store.config.instructions.length > 0 ? (

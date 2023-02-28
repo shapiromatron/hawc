@@ -345,16 +345,6 @@ class TagReferences(BaseFilterList):
         )
 
 
-def cache_tag_parents(tag, tag_map):
-    tag.parents = []
-    path = tag.path
-    while len(path) > 4:
-        path = tag._get_parent_path_from_path(path)
-        if len(path) <= 4:
-            break
-        tag.parents.append(tag_map[path])
-
-
 class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
     parent_model = Assessment
@@ -411,7 +401,7 @@ class ConflictResolution(BaseFilterList):
             ]
         },
     )
-    paginate_by = 100
+    paginate_by = 50
 
     def get_queryset(self):
         return (
@@ -434,13 +424,7 @@ class ConflictResolution(BaseFilterList):
                 self.request.user, self.assessment, "Resolve Tag Conflicts"
             ),
         )
-        tag_map = {tag.path: tag for tag in tags}
-        for ref in context["object_list"]:
-            for tag in ref.tags.all():
-                cache_tag_parents(tag, tag_map)
-            for user_tag in ref.user_tags.all():
-                for tag in user_tag.tags.all():
-                    cache_tag_parents(tag, tag_map)
+        models.Reference.annotate_tag_parents(context["object_list"], tags)
         return context
 
 
@@ -732,12 +716,7 @@ class ReferenceTagStatus(BaseDetail):
         )
         context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
         tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-        tag_map = {tag.path: tag for tag in tags}
-        for tag in context["object"].tags.all():
-            cache_tag_parents(tag, tag_map)
-        for user_tag in context["object"].user_tags.all():
-            for tag in user_tag.tags.all():
-                cache_tag_parents(tag, tag_map)
+        models.Reference.annotate_tag_parents([self.object], tags)
         return context
 
 
