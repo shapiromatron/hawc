@@ -702,10 +702,13 @@ class BaseFilterList(BaseList):
             assessment=self.assessment,
         )
 
+    def get_filterset_class(self):
+        return self.get_filterset_class
+
     @property
     def filterset(self):
         if not hasattr(self, "_filterset"):
-            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
+            self._filterset = self.get_filterset_class()(**self.get_filterset_kwargs())
         return self._filterset
 
     def get_queryset(self):
