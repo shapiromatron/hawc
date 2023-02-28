@@ -52,7 +52,7 @@ class TestLiteratureAssessmentViewset:
             reverse(
                 "lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)
             ),
-            reverse("lit:api:assessment-export", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,)),
@@ -76,8 +76,8 @@ class TestLiteratureAssessmentViewset:
         assert pm_client.post(url, None).status_code == 400  # validation; not permission error
 
     def test_export(self, rewrite_data_files: bool, db_keys):
-        url = reverse("lit:api:assessment-export", args=(db_keys.assessment_final,))
-        fn = "api-lit-assessment-references-export.json"
+        url = reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-reference-export.json"
         self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_export_user_tags(self, rewrite_data_files: bool, db_keys):
@@ -86,7 +86,7 @@ class TestLiteratureAssessmentViewset:
         url = reverse(
             "lit:api:assessment-user-tag-export", args=(db_keys.assessment_conflict_resolution,)
         )
-        fn = "api-lit-assessment-references-export-user-tags.json"
+        fn = "api-lit-assessment-reference-export-user-tags.json"
         self._test_flat_export(rewrite_data_files, fn, url, pm_client)
 
     def test_tags(self, db_keys):

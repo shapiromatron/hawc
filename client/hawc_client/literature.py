@@ -188,7 +188,7 @@ class LiteratureClient(BaseClient):
         Returns:
             pd.DataFrame: References data
         """
-        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/export/"
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 

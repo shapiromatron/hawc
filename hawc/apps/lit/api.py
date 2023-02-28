@@ -220,11 +220,11 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        url_path="references-download",
+        url_path="reference-export",
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
-    def references_download(self, request, pk):
+    def reference_export(self, request, pk):
         """
         Get all references in an assessment.
         """
