@@ -70,7 +70,11 @@
         {% comment %} row #2 {% endcomment %}
         <div class="lit-review-box box-shadow w-30 justify-content-between py-4" style="height: 235px">
           {% if obj_perms.edit %}
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">Tag</a>
+            {% if assessment.literature_settings.conflict_resolution %}
+            <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&my_tags=untagged">Tag</a>
+            {% else %}
+            <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}?tags=untagged">Tag</a>
+            {% endif %}
           {% endif %}
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
