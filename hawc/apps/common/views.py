@@ -687,7 +687,7 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 
 class BaseFilterList(BaseList):
-    filterset_class: Type[BaseFilterSet]
+    filterset_class: type[BaseFilterSet]
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
@@ -702,8 +702,8 @@ class BaseFilterList(BaseList):
             assessment=self.assessment,
         )
 
-    def get_filterset_class(self):
-        return self.get_filterset_class
+    def get_filterset_class(self) -> type[BaseFilterSet]:
+        return self.filterset_class
 
     @property
     def filterset(self):
