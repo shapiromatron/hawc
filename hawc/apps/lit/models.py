@@ -1188,6 +1188,34 @@ class Reference(models.Model):
                 f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
             )
 
+    @classmethod
+    def annotate_tag_parents(cls, references: list, tags: models.QuerySet):
+        """Annotate tag parents for all tags and user tags.
+
+        Sets a new attribute (parents: list[Tag]) for each tag.
+
+        Args:
+            references (list): a list of references
+            tags (models.QuerySet): the full tag list for an assessment
+        """
+        tag_map = {tag.path: tag for tag in tags}
+
+        def _set_parents(tag):
+            tag.parents = []
+            current_path = tag.path
+            while True:
+                current_path = tag._get_parent_path_from_path(current_path)
+                if len(current_path) == 4:
+                    break
+                tag.parents.append(tag_map[current_path])
+
+        for reference in references:
+            for tag in reference.tags.all():
+                _set_parents(tag)
+            for user_tag in reference.user_tags.all():
+                for tag in user_tag.tags.all():
+                    _set_parents(tag)
+
 
 class UserReferenceTags(ItemBase):
     objects = managers.UserReferenceTagsManager()

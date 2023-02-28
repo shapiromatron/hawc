@@ -59,6 +59,7 @@ class LitOverview(BaseList):
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["config"] = {
             "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+            "references": models.Reference.objects.tag_pairs(self.assessment.references.all()),
             "assessment_id": self.assessment.id,
             "referenceYearHistogramUrl": reverse(
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
@@ -251,6 +252,7 @@ class TagReferences(BaseFilterList):
         fields=[
             "title_abstract",
             "needs_tagging",
+            "partially_tagged",
             "search",
             "id",
             "tags",
@@ -266,7 +268,11 @@ class TagReferences(BaseFilterList):
                 {
                     "columns": [
                         {"width": 5, "extra_css": "px-4 pl-5 py-2"},
-                        {"width": 2, "extra_css": "px-2 pt-3 d-flex align-items-center"},
+                        {
+                            "width": 2,
+                            "extra_css": "px-2 pt-3 d-flex flex-column",
+                            "rows": [{"columns": [{"width": 12}]}, {"columns": [{"width": 12}]}],
+                        },
                         {"width": 5, "extra_css": "px-4 py-2 pr-5"},
                     ]
                 },
@@ -395,27 +401,19 @@ class ConflictResolution(BaseFilterList):
             ]
         },
     )
-    paginate_by = 100
+    paginate_by = 50
 
     def get_queryset(self):
-        n_unapplied_reviews = Count("user_tags", filter=Q(user_tags__is_resolved=False))
         return (
             super()
             .get_queryset()
-            .annotate(n_unapplied_reviews=n_unapplied_reviews)
+            .annotate(
+                n_unapplied_reviews=Count("user_tags__user", filter=Q(user_tags__is_resolved=False))
+            )
             .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
-
-    def cache_tag_parents(self, tag, tag_map):
-        tag.parents = []
-        path = tag.path
-        while len(path) > 4:
-            path = tag._get_parent_path_from_path(path)
-            if len(path) <= 4:
-                break
-            tag.parents.append(tag_map[path])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -426,13 +424,7 @@ class ConflictResolution(BaseFilterList):
                 self.request.user, self.assessment, "Resolve Tag Conflicts"
             ),
         )
-        tag_map = {tag.path: tag for tag in tags}
-        for ref in context["object_list"]:
-            for tag in ref.tags.all():
-                self.cache_tag_parents(tag, tag_map)
-            for user_tag in ref.user_tags.all():
-                for tag in user_tag.tags.all():
-                    self.cache_tag_parents(tag, tag_map)
+        models.Reference.annotate_tag_parents(context["object_list"], tags)
         return context
 
 
@@ -723,6 +715,27 @@ class ReferenceTagStatus(BaseDetail):
             self.request.user, self.assessment, "Tag status"
         )
         context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Reference.annotate_tag_parents([self.object], tags)
+        return context
+
+
+class UserTagList(ConflictResolution):
+    template_name = "lit/reference_user_tags.html"
+
+    def get_queryset(self):
+        return (
+            self.filterset.qs.filter(user_tags__gt=0)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Reference User Tags"
+        )
+        context["header"] = "Reference User Tags"
         return context
 
 

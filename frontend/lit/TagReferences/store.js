@@ -56,7 +56,7 @@ class Store {
     @action.bound handleSaveSuccess(response) {
         const {resolved} = response;
         this.errorOnSave = false;
-        this.reference.userTags = toJS(this.referenceUserTags);
+        this.reference.userTags = resolved ? null : toJS(this.referenceUserTags);
         if (!this.config.conflict_resolution || resolved) {
             this.reference.tags = toJS(this.referenceUserTags);
         }
@@ -71,7 +71,7 @@ class Store {
                 this.successMessage = "";
                 this.setReference(reference);
             }),
-            2000
+            1000
         );
         this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
     }

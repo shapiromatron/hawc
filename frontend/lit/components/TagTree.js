@@ -49,7 +49,11 @@ class TagNode extends Component {
                         style={{flex: 1}}>
                         <span>
                             {tag.data.name}
-                            {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
+                            {showReferenceCount ? (
+                                <span className="ml-2 badge badge-dark">
+                                    {tag.get_references_deep().length}
+                                </span>
+                            ) : null}
                         </span>
                     </div>
                 </div>
@@ -103,7 +107,8 @@ class TagTree extends Component {
                 ))}
                 {untaggedHandleClick ? (
                     <p className="nestedTag mt-2" onClick={untaggedHandleClick}>
-                        Untagged References: ({untaggedCount})
+                        Untagged References:
+                        <span className="ml-2 badge badge-dark">{untaggedCount}</span>
                     </p>
                 ) : null}
             </div>

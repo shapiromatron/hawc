@@ -68,22 +68,24 @@
           </div>
         </a>
         {% comment %} row #2 {% endcomment %}
-        <div class="lit-review-box box-shadow w-30" style="height: 235px">
+        <div class="lit-review-box box-shadow w-30 justify-content-between py-4" style="height: 235px">
           {% if obj_perms.edit %}
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}">Tag</a>
+          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">Tag</a>
           {% endif %}
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
+          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
           {% if user.is_beta_tester and can_topic_model %}
           <a class="btn btn-dark betatester mt-1 py-1" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         </div>
+        {% if overview.total_references > 10 %}
         <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">
-          <p>references by year:</p>
+          <p>References by year:</p>
           <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
           </div>
         </div>
+        {% endif %}
         {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
         <div class="w-30">
           <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag-conflicts' assessment.pk %}">
@@ -98,7 +100,7 @@
           <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
             <div>
               <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
-              <p class="small">need{{ overview.conflicts|pluralize:" ,s" }} further tagging</p>
+              <p class="small">need{{ overview.needs_tagging|pluralize:"s," }} further tagging</p>
             </div>
             <div class="lit-icon">
               <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
@@ -106,14 +108,14 @@
           </a>
         </div>
         {% comment %} row #3 {% endcomment %}
-        <div class="lit-review-box box-shadow with-icon w-30">
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:user-tag-list' assessment.pk %}">
           <div>
             <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> user{{ overview.total_users|pluralize }}</p>
           </div>
           <div class="lit-icon">
             <i class="fa fa-users icon-bg"></i>
           </div>
-        </div>
+        </a>
         {% if overview.my_reviews > 0 %}
           <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
             <div>
@@ -130,7 +132,9 @@
     </div>
     <div class="col-md-4">
       <div class="lit-review-box box-shadow" style="width: 100%;">
-        <p class="h4 m-0">Tagtree</p>
+        <p class="h4 m-0">Tagtree
+          {% include "common/helptext_popup.html" with text="Tag, plus count of references with this tag applied" %}
+        </p>
         <div id="tags"></div>
       </div>
     </div>
@@ -167,7 +171,8 @@
 
   window.app.startup("litStartup", function(lit){
     let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
-    tagtree.render(document.getElementById('tags'), {handleTagClick: (x) => {window.location.href = x.get_list_link()}})
+    tagtree.add_references(config.references);
+    tagtree.render(document.getElementById('tags'), {handleTagClick: (x) => {window.location.href = x.get_list_link()}, showReferenceCount: true})
   });
 
   const histo = document.getElementById("referenceYearHistogram");
@@ -175,4 +180,5 @@
     window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
   }
 </script>
+{% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}
