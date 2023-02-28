@@ -192,7 +192,7 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def references_user_tags(self, assessment_id: int) -> pd.DataFrame:
+    def reference_user_tags(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves all user tag for all references for an assessment.
 
