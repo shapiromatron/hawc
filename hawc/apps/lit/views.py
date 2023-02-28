@@ -595,7 +595,14 @@ class RefFilterList(BaseFilterList):
         ],
         grid_layout={
             "rows": [
-                {"columns": [{"width": 3, "extra_css": "px-4"}, {"width": 3, "extra_css": "px-4"}, {"width": 3, "extra_css": "px-4"}, {"width": 3, "extra_css": "px-4"}]},
+                {
+                    "columns": [
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                    ]
+                },
                 {
                     "columns": [
                         {
