@@ -11,7 +11,7 @@
             <td><a href="{{object.get_absolute_url}}">{{object.get_evaluation_type_display}}</a></td>
             <td>{{object.get_value_type_display}}</td>
             <td>{{object.duration}}</td>
-            <td>{{object.value}} {{object.value_unit|default:""}}</td>
+            <td>{{object.value}} {{object.value_unit|default:""}}{% if object.adaf %}{% include "assessment/fragments/adaf_footnote.html" with text=adaf_footnote %}{% endif %}</td>
             <td>{{object.confidence}}</td>
             <td>{{object.system}}</td>
             <td>{{object.pod_type|default:"-"}}</td>
