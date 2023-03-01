@@ -366,10 +366,9 @@ div.smart-tag.active {
     transition: transform 250ms ease-in-out;
 }
 #litTagtree {
-    max-height: 120vh;
     background-color: #e0f0ff;
     border-radius: 7px;
-    height: 25rem;
+    height: 50rem;
 }
 .abstracts {
     font-size: 1.15rem;
@@ -452,14 +451,14 @@ div.smart-tag.active {
 .nestedTag>div.tagHoverAdd:hover::before {
     transform: scale(1, 1);
 }
-.tagHoverSimple {
+.tagHover {
     padding-left: 5px;
     display: inline-block;
     position: relative;
     border: 2px solid transparent;
     text-decoration: none;
 }
-.tagHoverSimple:hover, .tagSelected {
+.tagHover:hover, .tagSelected {
     font-weight: bold;
 }
 
