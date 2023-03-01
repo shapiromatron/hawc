@@ -287,16 +287,16 @@ class TagReferences(BaseFilterList):
                     "rows": [
                         {
                             "columns": [
-                                {"width": 5, "extra_css": "px-4 pl-5 py-2"},
+                                {"width": 5, "extra_css": "pl-4"},
                                 {
-                                    "width": 2,
-                                    "extra_css": "px-2 pt-3 d-flex flex-column",
+                                    "width": 3,
+                                    "extra_css": "px-3 pt-3 d-flex flex-column",
                                     "rows": [
                                         {"columns": [{"width": 12}]},
                                         {"columns": [{"width": 12}]},
                                     ],
                                 },
-                                {"width": 5, "extra_css": "px-4 py-2 pr-5"},
+                                {"width": 4, "extra_css": "pr-4"},
                             ]
                         },
                         {
@@ -306,10 +306,10 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "pl-5 pr-4 py-2"},
-                                                {"width": 12, "extra_css": "pl-5 pr-4 pt-2"},
-                                                {"width": 6, "extra_css": "pl-5 pr-4 pb-2"},
-                                                {"width": 6, "extra_css": "px-4 pb-2"},
+                                                {"width": 12, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-4 pt-2"},
+                                                {"width": 7, "extra_css": "pl-4 pb-2"},
+                                                {"width": 5, "extra_css": "pr-4 pb-2"},
                                             ]
                                         }
                                     ],
@@ -319,10 +319,10 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "pl-4 pr-5 py-2"},
-                                                {"width": 12, "extra_css": "pl-4 pr-5 pt-2"},
-                                                {"width": 6, "extra_css": "px-4 pb-2"},
-                                                {"width": 6, "extra_css": "pr-5 pb-2"},
+                                                {"width": 12, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-4 pt-2"},
+                                                {"width": 7, "extra_css": "px-4 pb-2"},
+                                                {"width": 5, "extra_css": "px-4 pb-2"},
                                             ]
                                         }
                                     ],
@@ -337,8 +337,8 @@ class TagReferences(BaseFilterList):
                 filterset.ReferenceFilterSet,
                 fields=[
                     "title_abstract",
-                    "id",
                     "search",
+                    "id",
                     "order_by",
                     "tags",
                     "include_descendants",
@@ -348,15 +348,19 @@ class TagReferences(BaseFilterList):
                     "rows": [
                         {
                             "columns": [
+                                {"width": 6, "extra_css": "px-3"},
+                                {"width": 6, "extra_css": "px-3"},
+                            ]
+                        },
+                        {
+                            "columns": [
                                 {
                                     "width": 6,
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 4, "extra_css": "px-4 py-2"},
-                                                {"width": 4, "extra_css": "px-3 py-2"},
-                                                {"width": 4, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 12, "extra_css": "px-3"},
                                             ]
                                         }
                                     ],
@@ -366,9 +370,9 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "px-4 pt-2"},
-                                                {"width": 6, "extra_css": "px-4 pb-2"},
-                                                {"width": 6, "extra_css": "px-4 pb-2"},
+                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 6, "extra_css": "pl-3"},
+                                                {"width": 6, "extra_css": "pr-3"},
                                             ]
                                         }
                                     ],
