@@ -460,14 +460,11 @@ div.smart-tag.active {
     text-decoration: none;
 }
 .tagHoverSimple:hover, .tagSelected {
-    --bg-h: 2px;
-    background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
-    background-size: 100% var(--bg-h);
-    background-position-x: left;
+    font-weight: bold;
 }
 
 .tagSelected {
-    font-weight: bold;
+    text-decoration: underline;
 }
 .reference {
     border-bottom: 3px solid lightgray;

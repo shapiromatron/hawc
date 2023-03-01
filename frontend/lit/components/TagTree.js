@@ -106,7 +106,7 @@ class TagTree extends Component {
                     />
                 ))}
                 {untaggedHandleClick ? (
-                    <p className="nestedTag mt-2" onClick={untaggedHandleClick}>
+                    <p className="nestedTag mt-2 tagHoverSimple" onClick={untaggedHandleClick}>
                         Untagged References:
                         <span className="ml-2 badge badge-dark">{untaggedCount}</span>
                     </p>
