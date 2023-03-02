@@ -43,7 +43,7 @@ class TagNode extends Component {
                         ) : null}
                     </div>
                     <div
-                        className={(showTagHoverAdd ? "tagHoverAdd" : "tagHoverSimple").concat(
+                        className={(showTagHoverAdd ? "tagHoverAdd" : "tagHover").concat(
                             tag === selectedTag ? " tagSelected" : ""
                         )}
                         style={{flex: 1}}>
@@ -92,9 +92,11 @@ class TagTree extends Component {
             untaggedHandleClick,
             untaggedCount,
             showTagHoverAdd,
+            untaggedReferencesSelected,
+            style,
         } = this.props;
         return (
-            <div id="litTagtree" className="resize-y p-2 mt-2">
+            <div id="litTagtree" className="resize-y p-2 mt-2" style={style}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}
@@ -106,7 +108,11 @@ class TagTree extends Component {
                     />
                 ))}
                 {untaggedHandleClick ? (
-                    <p className="nestedTag mt-2" onClick={untaggedHandleClick}>
+                    <p
+                        className={`nestedTag mt-2 tagHover ${
+                            untaggedReferencesSelected ? "tagSelected" : ""
+                        }`}
+                        onClick={untaggedHandleClick}>
                         Untagged References:
                         <span className="ml-2 badge badge-dark">{untaggedCount}</span>
                     </p>
@@ -123,11 +129,15 @@ TagTree.propTypes = {
     untaggedCount: PropTypes.number,
     untaggedHandleClick: PropTypes.func,
     showTagHoverAdd: PropTypes.bool,
+    untaggedReferencesSelected: PropTypes.bool,
+    style: PropTypes.object,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,
     handleTagClick: h.noop,
     showTagHoverAdd: false,
+    untaggedReferencesSelected: false,
+    style: {},
 };
 
 export default TagTree;

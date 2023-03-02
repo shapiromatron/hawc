@@ -60,8 +60,8 @@ class ReferenceFilterSet(BaseFilterSet):
     anything_tagged_me = df.BooleanFilter(
         method="filter_anything_tagged_me",
         widget=CheckboxInput(),
-        label="Anything tagged by me",
-        help_text="Check box to view references that you have tagged",
+        label="Tagged by me",
+        help_text="All references that you have tagged",
     )
     order_by = df.OrderingFilter(
         fields=(
