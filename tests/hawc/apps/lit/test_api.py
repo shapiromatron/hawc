@@ -80,6 +80,23 @@ class TestLiteratureAssessmentViewset:
         fn = "api-lit-assessment-reference-export.json"
         self._test_flat_export(rewrite_data_files, fn, url)
 
+    def test_references_export_format(self, db_keys):
+        url = reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_final,))
+        c = APIClient()
+        assert c.login(email="team@hawcproject.org", password="pw") is True
+
+        # base report; reference metadata plus columns for each tag
+        resp = c.get(url, {"tag": 12}).json()
+        assert len(resp) == 2
+        assert len(resp[0]) > 20
+        assert resp[0]["Inclusion"] is True
+
+        # table builder format
+        resp = c.get(url, {"tag": 12, "export_format": "table-builder"}).json()
+        assert len(resp) == 2
+        assert len(resp[0]) == 5
+        assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
+
     def test_export_user_tags(self, rewrite_data_files: bool, db_keys):
         pm_client = APIClient()
         assert pm_client.login(username="pm@hawcproject.org", password="pw") is True
@@ -274,31 +291,6 @@ class TestLiteratureAssessmentViewset:
         assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
         resp = c.post(url, {"file": csv}, HTTP_CONTENT_DISPOSITION=disposition)
         assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
-
-
-@pytest.mark.django_db
-class TestReferenceFilterTagViewset:
-    def test_references(self):
-        url = reverse("lit:api:tags-references", args=(12,))
-        c = APIClient()
-        assert c.login(email="pm@hawcproject.org", password="pw") is True
-
-        # base report; reference metadata plus columns for each tag
-        resp = c.get(url).json()
-        assert len(resp) == 2
-        assert len(resp[0]) > 20
-        assert resp[0]["Inclusion"] is True
-
-        # table builder format
-        resp = c.get(url, {"exporter": "table-builder"}).json()
-        assert len(resp) == 2
-        assert len(resp[0]) == 5
-        assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
-
-        # invalid exporter format
-        resp = c.get(url, {"exporter": "not-a-format"})
-        assert resp.status_code == 400
-        assert resp.json() == {"exporter": ['"not-a-format" is not a valid choice.']}
 
 
 @pytest.mark.vcr
