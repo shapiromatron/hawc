@@ -247,68 +247,6 @@ class TagReferences(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-    filterset_class = dynamic_filterset(
-        filterset.ReferenceFilterSet,
-        fields=[
-            "title_abstract",
-            "needs_tagging",
-            "partially_tagged",
-            "search",
-            "id",
-            "tags",
-            "include_descendants",
-            "anything_tagged",
-            "order_by",
-            "my_tags",
-            "include_mytag_descendants",
-            "anything_tagged_me",
-        ],
-        grid_layout={
-            "rows": [
-                {
-                    "columns": [
-                        {"width": 5, "extra_css": "px-4 pl-5 py-2"},
-                        {
-                            "width": 2,
-                            "extra_css": "px-2 pt-3 d-flex flex-column",
-                            "rows": [{"columns": [{"width": 12}]}, {"columns": [{"width": 12}]}],
-                        },
-                        {"width": 5, "extra_css": "px-4 py-2 pr-5"},
-                    ]
-                },
-                {
-                    "columns": [
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "pl-5 pr-4 py-2"},
-                                        {"width": 12, "extra_css": "pl-5 pr-4 pt-2"},
-                                        {"width": 6, "extra_css": "pl-5 pr-4 pb-2"},
-                                        {"width": 6, "extra_css": "px-4 pb-2"},
-                                    ]
-                                }
-                            ],
-                        },
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "pl-4 pr-5 py-2"},
-                                        {"width": 12, "extra_css": "pl-4 pr-5 pt-2"},
-                                        {"width": 6, "extra_css": "px-4 pb-2"},
-                                        {"width": 6, "extra_css": "pr-5 pb-2"},
-                                    ]
-                                }
-                            ],
-                        },
-                    ]
-                },
-            ]
-        },
-    )
     paginate_by = 100
 
     def get_queryset(self):
@@ -325,6 +263,125 @@ class TagReferences(BaseFilterList):
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
         )
         return context
+
+    def get_filterset_class(self):
+        conflict_resolution = self.assessment.literature_settings.conflict_resolution
+        if conflict_resolution:
+            return dynamic_filterset(
+                filterset.ReferenceFilterSet,
+                fields=[
+                    "title_abstract",
+                    "needs_tagging",
+                    "partially_tagged",
+                    "search",
+                    "id",
+                    "tags",
+                    "include_descendants",
+                    "anything_tagged",
+                    "order_by",
+                    "my_tags",
+                    "include_mytag_descendants",
+                    "anything_tagged_me",
+                ],
+                grid_layout={
+                    "rows": [
+                        {
+                            "columns": [
+                                {"width": 5, "extra_css": "pl-4"},
+                                {
+                                    "width": 3,
+                                    "extra_css": "px-3 pt-3 d-flex flex-column",
+                                    "rows": [
+                                        {"columns": [{"width": 12}]},
+                                        {"columns": [{"width": 12}]},
+                                    ],
+                                },
+                                {"width": 4, "extra_css": "pr-4"},
+                            ]
+                        },
+                        {
+                            "columns": [
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-4 pt-2"},
+                                                {"width": 7, "extra_css": "pl-4 pb-2"},
+                                                {"width": 5, "extra_css": "pr-4 pb-2"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-4 pt-2"},
+                                                {"width": 7, "extra_css": "px-4 pb-2"},
+                                                {"width": 5, "extra_css": "px-4 pb-2"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                            ]
+                        },
+                    ]
+                },
+            )
+        else:
+            return dynamic_filterset(
+                filterset.ReferenceFilterSet,
+                fields=[
+                    "title_abstract",
+                    "search",
+                    "id",
+                    "order_by",
+                    "tags",
+                    "include_descendants",
+                    "anything_tagged",
+                ],
+                grid_layout={
+                    "rows": [
+                        {
+                            "columns": [
+                                {"width": 6, "extra_css": "px-3"},
+                                {"width": 6, "extra_css": "px-3"},
+                            ]
+                        },
+                        {
+                            "columns": [
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 12, "extra_css": "px-3"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 6, "extra_css": "pl-3"},
+                                                {"width": 6, "extra_css": "pr-3"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                            ]
+                        },
+                    ]
+                },
+            )
 
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
@@ -366,8 +423,8 @@ class ConflictResolution(BaseFilterList):
             "rows": [
                 {
                     "columns": [
-                        {"width": 6},
-                        {"width": 6},
+                        {"width": 6, "extra_css": "px-4 py-2"},
+                        {"width": 6, "extra_css": "px-4 py-2"},
                     ]
                 },
                 {
@@ -377,9 +434,9 @@ class ConflictResolution(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
                                     ]
                                 }
                             ],
@@ -389,9 +446,9 @@ class ConflictResolution(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
                                     ]
                                 }
                             ],
@@ -542,7 +599,14 @@ class RefFilterList(BaseFilterList):
         ],
         grid_layout={
             "rows": [
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {
+                    "columns": [
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                    ]
+                },
                 {
                     "columns": [
                         {
@@ -550,11 +614,11 @@ class RefFilterList(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
                                     ]
                                 }
                             ],
@@ -564,9 +628,9 @@ class RefFilterList(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
                                     ]
                                 }
                             ],

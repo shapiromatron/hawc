@@ -77,7 +77,7 @@ class TagReferencesMain extends Component {
                         <div
                             id="fullRefList"
                             className="show card-body ref-container px-0 py-1 resize-y"
-                            style={{minHeight: "10vh", height: "70vh"}}>
+                            style={{height: "50rem"}}>
                             {store.references.map(reference => {
                                 return (
                                     <ReferenceListItem
