@@ -69,7 +69,7 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchCopyAsNewSelector(BaseDetail):
+class SearchCopyAsNewSelector(BaseUpdate):
     """
     Select an existing search and copy-as-new
     """
@@ -87,10 +87,9 @@ class SearchCopyAsNewSelector(BaseDetail):
         return context
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
 
     def form_valid(self, form):
         return HttpResponseRedirect(form.get_success_url())
