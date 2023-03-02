@@ -200,4 +200,5 @@ PandasRenderers = [
 ]
 
 if settings.DEBUG:
-    PandasRenderers.insert(0, PandasBrowsableAPIRenderer)
+    # insert at position 1 to keep JSON the default renderer
+    PandasRenderers.insert(1, PandasBrowsableAPIRenderer)
