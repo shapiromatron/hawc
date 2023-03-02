@@ -15,7 +15,7 @@ from ..common.autocomplete import (
 )
 from ..common.forms import (
     BaseFormHelper,
-    CopyAsNewSelectorForm,
+    CopyForm,
     check_unique_for_assessment,
     form_actions_create_or_close,
 )
@@ -193,7 +193,7 @@ class StudyPopulationForm(forms.ModelForm):
         return cleaned_data
 
 
-class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
+class StudyPopulationSelectorForm(CopyForm):
     label = "Study Population"
     parent_field = "study_id"
     autocomplete_class = autocomplete.StudyPopulationAutocomplete
@@ -310,7 +310,7 @@ class ExposureForm(forms.ModelForm):
         return helper
 
 
-class ExposureSelectorForm(CopyAsNewSelectorForm):
+class ExposureSelectorForm(CopyForm):
     label = "Exposure"
     parent_field = "study_population_id"
     autocomplete_class = autocomplete.ExposureAutocomplete
@@ -391,7 +391,7 @@ class OutcomeForm(forms.ModelForm):
         return helper
 
 
-class OutcomeSelectorForm(CopyAsNewSelectorForm):
+class OutcomeSelectorForm(CopyForm):
     label = "Outcome"
     parent_field = "study_population_id"
     autocomplete_class = autocomplete.OutcomeAutocomplete
@@ -451,13 +451,13 @@ class ComparisonSet(forms.ModelForm):
         return helper
 
 
-class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
+class ComparisonSetByStudyPopulationSelectorForm(CopyForm):
     label = "Comparison set"
     parent_field = "study_population_id"
     autocomplete_class = autocomplete.ComparisonSetAutocomplete
 
 
-class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorForm):
+class ComparisonSetByOutcomeSelectorForm(CopyForm):
     label = "Comparison set"
     parent_field = "outcome_id"
     autocomplete_class = autocomplete.ComparisonSetAutocomplete
@@ -701,7 +701,7 @@ class ResultForm(forms.ModelForm):
         return helper
 
 
-class ResultSelectorForm(CopyAsNewSelectorForm):
+class ResultSelectorForm(CopyForm):
     label = "Result"
     parent_field = "outcome_id"
     autocomplete_class = autocomplete.ResultAutocomplete

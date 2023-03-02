@@ -15,7 +15,15 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
+from ..common.views import (
+    BaseCopyForm,
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseList,
+    BaseUpdate,
+)
 from . import constants, filterset, forms, models
 
 
@@ -60,31 +68,22 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchCopyAsNewSelector(BaseDetail):
-    """
-    Select an existing search and copy-as-new
-    """
-
+class SearchCopyForm(BaseCopyForm):
     model = Assessment
-    template_name = "lit/search_copy_selector.html"
-    form_class = forms.SearchSelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    form_class = forms.SearchCopyForm
+    copy_model = models.Search
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Copy literature search or import"
+            self.request.user, self.assessment, "Copy search/import"
         )
         return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
-
-    def form_valid(self, form):
-        return HttpResponseRedirect(form.get_success_url())
 
 
 class SearchNew(BaseCreate):
@@ -723,10 +722,10 @@ class TagsCopy(BaseUpdate):
         return context
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        kw.pop("instance")
+        return kw
 
     def form_valid(self, form):
         form.copy_tags()

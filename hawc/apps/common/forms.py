@@ -6,8 +6,9 @@ from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.template.loader import render_to_string
+from django.urls import reverse
 
-from . import autocomplete, validators, widgets
+from . import validators, widgets
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -146,28 +147,30 @@ class BaseFormHelper(cf.FormHelper):
         self.layout.insert(len(self.layout) - 1, note)
 
 
-class CopyAsNewSelectorForm(forms.Form):
-    label = None
-    parent_field = None
-    autocomplete_class = None
+class CopyForm(forms.Form):
+    legend_text: str
+    help_text: str
+    create_url: str
+    selector: forms.ModelChoiceField
 
     def __init__(self, *args, **kwargs):
-        parent_id = kwargs.pop("parent_id")
+        self.parent = kwargs.pop("parent")
         super().__init__(*args, **kwargs)
-        self.setupSelector(parent_id)
+
+    def get_success_url(self):
+        item = self.cleaned_data["selector"]
+        url = reverse(self.create_url, args=(self.parent.id,))
+        return f"{url}?initial={item.id}"
 
     @property
     def helper(self):
-        return BaseFormHelper(self)
-
-    def setupSelector(self, parent_id):
-        filters = {self.parent_field: parent_id}
-        fld = autocomplete.AutocompleteChoiceField(
-            autocomplete_class=self.autocomplete_class, filters=filters, label=self.label
+        return BaseFormHelper(
+            self,
+            legend_text=self.legend_text,
+            help_text=self.help_text,
+            cancel_url=self.parent.get_absolute_url(),
+            submit_text="Copy selected",
         )
-        fld.widget.forward = ["search_fields", "order_by", "order_direction"]
-        fld.widget.attrs["class"] = "col-md-10"
-        self.fields["selector"] = fld
 
 
 def form_error_list_to_lis(form):

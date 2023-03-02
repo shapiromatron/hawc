@@ -1,23 +1,8 @@
-{% extends 'study/study_detail.html' %}
+{% extends 'assessment-rooted.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-
-  {% include "hawc/_copy_as_new.html" with name="experiment" notes="Select an existing experiment as a template to create a new one." %}
-
+{% crispy form %}
 {% endblock content %}
-
-{% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-
-      new window.app.HAWCUtils.InitialForm({
-        "form": $('form'),
-        "base_url": "{% url 'animal:experiment_new' object.pk %}",
-      });
-
-    });
-  </script>
-{% endblock extrajs %}
 

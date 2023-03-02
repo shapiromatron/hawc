@@ -54,9 +54,9 @@ urlpatterns = [
         name="experiment_new",
     ),
     path(
-        "study/<int:pk>/experiment/copy-as-new-selector/",
-        views.ExperimentCopyAsNewSelector.as_view(),
-        name="experiment_copy_selector",
+        "study/<int:pk>/experiment/copy/",
+        views.ExperimentCopyForm.as_view(),
+        name="experiment_copy",
     ),
     path(
         "experiment/<int:pk>/",
@@ -80,9 +80,9 @@ urlpatterns = [
         name="animal_group_new",
     ),
     path(
-        "experiment/<int:pk>/animal-group/copy-as-new-selector/",
-        views.AnimalGroupCopyAsNewSelector.as_view(),
-        name="animal_group_copy_selector",
+        "experiment/<int:pk>/animal-group/copy/",
+        views.AnimalGroupCopyForm.as_view(),
+        name="animal_group_copy",
     ),
     path(
         "animal-group/<int:pk>/",
@@ -100,9 +100,9 @@ urlpatterns = [
         name="animal_group_delete",
     ),
     path(
-        "animal-group/<int:pk>/endpoint/copy-as-new-selector/",
-        views.EndpointCopyAsNewSelector.as_view(),
-        name="endpoint_copy_selector",
+        "animal-group/<int:pk>/endpoint/copy/",
+        views.EndpointCopyForm.as_view(),
+        name="endpoint_copy",
     ),
     # Dosing Regime
     path(

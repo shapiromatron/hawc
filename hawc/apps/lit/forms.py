@@ -293,25 +293,16 @@ class SearchModelChoiceField(forms.ModelChoiceField):
         return f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
 
 
-class SearchSelectorForm(forms.Form):
+class SearchCopyForm(forms.Form):
 
-    searches = SearchModelChoiceField(
-        queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
-    )
+    selector = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
-            "pk", flat=True
-        )
-
-        self.fields["searches"].queryset = (
-            self.fields["searches"]
-            .queryset.filter(assessment__in=assessment_pks)
-            .exclude(title="Manual import")
-            .order_by("assessment_id")
+        self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
+            "assessment"
         )
 
     @property
@@ -329,7 +320,7 @@ class SearchSelectorForm(forms.Form):
         )
 
     def get_success_url(self):
-        search = self.cleaned_data["searches"]
+        search = self.cleaned_data["selector"]
         pattern = (
             "lit:search_new"
             if search.search_type == constants.SearchType.SEARCH

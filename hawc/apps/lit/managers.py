@@ -16,6 +16,7 @@ from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
+from ..assessment.models import Assessment
 from ..common.models import BaseManager
 from . import constants
 
@@ -67,6 +68,16 @@ class SearchManager(BaseManager):
             )
         except Exception:
             return None
+
+    def copyable(self, user) -> models.QuerySet:
+        assessment_pks = Assessment.objects.get_viewable_assessments(user).values_list(
+            "pk", flat=True
+        )
+        return (
+            self.model.objects.filter(assessment__in=assessment_pks)
+            .exclude(title="Manual import")
+            .order_by("assessment_id")
+        )
 
 
 class PubMedQueryManager(BaseManager):

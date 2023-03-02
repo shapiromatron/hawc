@@ -5,7 +5,7 @@ from django.forms.models import modelformset_factory
 from django.urls import reverse
 
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
+from ..common.forms import BaseFormHelper, CopyForm
 from ..epi.autocomplete import AdjustmentFactorAutocomplete, CriteriaAutocomplete
 from . import autocomplete, models
 
@@ -210,7 +210,7 @@ SingleResultFormset = modelformset_factory(
 )
 
 
-class MetaResultSelectorForm(CopyAsNewSelectorForm):
+class MetaResultSelectorForm(CopyForm):
     label = "Meta Result"
     parent_field = "protocol_id"
     autocomplete_class = autocomplete.MetaResultAutocomplete
