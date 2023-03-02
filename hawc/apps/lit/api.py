@@ -380,8 +380,9 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
         """
         instance = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(instance.assessment_id)
+        qs = instance.references.all().prefetch_related("identifiers", "tags").order_by("id")
         exporter = exports.ReferenceFlatComplete(
-            instance.references.all(),
+            queryset=qs,
             filename=f"{instance.assessment}-search-{instance.slug}",
             assessment=instance.assessment_id,
             tags=tags,
@@ -409,6 +410,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
             qs = (
                 models.Reference.objects.all()
                 .with_tag(tag=tag, descendants=serializer.include_descendants())
+                .prefetch_related("identifiers", "tags")
                 .order_by("id")
             )
             ExportClass = serializer.get_exporter()
