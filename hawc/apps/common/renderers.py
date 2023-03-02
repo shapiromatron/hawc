@@ -3,8 +3,8 @@ from io import BytesIO, StringIO
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from django.utils.text import slugify
 from django.conf import settings
+from django.utils.text import slugify
 from matplotlib.axes import Axes
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 from openpyxl.utils.exceptions import IllegalCharacterError
