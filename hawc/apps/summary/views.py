@@ -13,7 +13,15 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
+from ..common.views import (
+    BaseCreate,
+    BaseCopyForm,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseList,
+    BaseUpdate,
+)
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, serializers
 
@@ -172,28 +180,18 @@ class SummaryTableCreate(BaseCreate):
         )
 
 
-class SummaryTableCopy(BaseUpdate):
-    template_name = "summary/copy_selector.html"
-    model = Assessment
+class SummaryTableCopy(BaseCopyForm):
+    copy_model = models.SummaryTable
     form_class = forms.SummaryTableCopySelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    model = Assessment
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update(
-            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
-            assessment_id=self.assessment.id,
-            queryset=models.SummaryTable.objects.clonable_queryset(self.request.user).filter(
-                assessment=self.assessment
-            ),
-        )
-        return kwargs
-
-    def form_valid(self, form):
-        return HttpResponseRedirect(form.get_create_url())
+        kw = super().get_form_kwargs()
+        kw.update(parent=self.assessment, user=self.request.user)
+        return kw
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)  # TODO - fix crumbs?
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Copy existing",
@@ -440,6 +438,7 @@ class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         kwargs.update(

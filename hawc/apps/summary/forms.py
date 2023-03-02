@@ -12,7 +12,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
+from ..common.forms import CopyForm, BaseFormHelper, QuillField, check_unique_for_assessment
 from ..common.validators import validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
@@ -500,44 +500,30 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
         return f"{obj.assessment}: [{obj.get_table_type_display()}] {obj}"
 
 
-class SummaryTableCopySelectorForm(forms.Form):
-
-    table = SummaryTableModelChoiceField(
-        label="Summary table", queryset=models.Visual.objects.all()
+class SummaryTableCopySelectorForm(CopyForm):
+    legend_text = "Copy summary table"
+    help_text = "Select an existing summary table as a template to create a new one."
+    create_url = "summary:tables_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.SummaryTable.objects.all(), empty_label=None, label="Select template"
     )
 
-    def __init__(self, *args, **kwargs):
-        self.cancel_url = kwargs.pop("cancel_url")
-        self.assessment_id = kwargs.pop("assessment_id")
-        self.queryset = kwargs.pop("queryset")
-        super().__init__(*args, **kwargs)
-        self.fields["table"].queryset = self.queryset
+    def __init__(self, *args, **kw):
+        self.user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = models.SummaryTable.objects.clonable_queryset(
+            self.user
+        ).filter(assessment=self.parent)
 
-    @property
-    def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        return BaseFormHelper(
-            self,
-            legend_text="Select summary table",
-            help_text="""
-                Select an existing summary table and copy as a new summary table. You will be taken to a new view to
-                create a new table, but the form will be pre-populated using the values from
-                the currently-selected table.
-            """,
-            submit_text="Copy table",
-            cancel_url=self.cancel_url,
-        )
-
-    def get_create_url(self):
-        table = self.cleaned_data["table"]
+    def get_success_url(self):
+        table = self.cleaned_data["selector"]
         return (
-            reverse("summary:tables_create", args=(self.assessment_id, table.table_type))
-            + f"?initial={table.pk}"
+            reverse(self.create_url, args=(self.parent.id, table.table_type))
+            + f"?initial={table.id}"
         )
+
+    def get_cancel_url(self):
+        return reverse("summary:tables_list", args=(self.parent.id,))
 
 
 class VisualForm(forms.ModelForm):

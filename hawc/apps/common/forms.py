@@ -157,10 +157,13 @@ class CopyForm(forms.Form):
         self.parent = kwargs.pop("parent")
         super().__init__(*args, **kwargs)
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         item = self.cleaned_data["selector"]
         url = reverse(self.create_url, args=(self.parent.id,))
         return f"{url}?initial={item.id}"
+
+    def get_cancel_url(self) -> str:
+        return self.parent.get_absolute_url()
 
     @property
     def helper(self):
@@ -168,7 +171,7 @@ class CopyForm(forms.Form):
             self,
             legend_text=self.legend_text,
             help_text=self.help_text,
-            cancel_url=self.parent.get_absolute_url(),
+            cancel_url=self.get_cancel_url(),
             submit_text="Copy selected",
         )
 

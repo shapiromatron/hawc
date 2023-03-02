@@ -329,6 +329,9 @@ class SearchCopyForm(forms.Form):
         url = reverse(pattern, args=(self.assessment.pk,))
         return f"{url}?initial={search.pk}"
 
+    def get_cancel_url(self):
+        return reverse("lit:overview", args=(self.assessment.id,))
+
 
 def validate_external_id(
     db_type: int, db_id: Union[str, int]

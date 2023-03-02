@@ -17,7 +17,7 @@ from django.utils.decorators import method_decorator
 from django.utils.http import is_same_domain
 from django.views.generic import DetailView, ListView
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import CreateView, DeleteView, FormMixin, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
