@@ -837,8 +837,21 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 
         return names
 
+    TreeDescendantType = dict[int, list[set[int]]]
+
     @classmethod
-    def get_tree_descendants(cls, tags: dict) -> dict[int, list[set[int]]]:
+    def get_tree_descendants(cls, tags: dict) -> TreeDescendantType:
+        """
+        Returns a dictionary with each tag as the key, and its descendants as well as itself for
+        as a set of values. This is useful for checking if a parent tag should be considered true
+        given the status of a child tag.
+
+        Args:
+            tags (dict): a tag dictionary in dump_bulk formats
+
+        Returns:
+            TreeDescendantType: Returns output dictionary
+        """
         descendants = {}
 
         def recurse(tag: dict, parents: list[set]):

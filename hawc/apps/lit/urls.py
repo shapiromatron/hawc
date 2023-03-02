@@ -7,6 +7,7 @@ router = SimpleRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
 router.register(r"reference", api.ReferenceViewset, basename="reference")
 router.register(r"search", api.SearchViewset, basename="search")
+router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
 router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="reference-cleanup")
 
 app_name = "lit"

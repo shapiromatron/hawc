@@ -13,7 +13,12 @@ from rest_framework.exceptions import ParseError, PermissionDenied, ValidationEr
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
-from ..assessment.api import METHODS_NO_PUT, AssessmentLevelPermissions, CleanupFieldsBaseViewSet
+from ..assessment.api import (
+    METHODS_NO_PUT,
+    AssessmentLevelPermissions,
+    AssessmentRootedTagTreeViewset,
+    CleanupFieldsBaseViewSet,
+)
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
@@ -381,6 +386,11 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
+    model = models.ReferenceFilterTag
+    serializer_class = serializers.ReferenceFilterTagSerializer
 
 
 class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
