@@ -507,6 +507,7 @@ class SummaryTableCopySelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
         self.queryset = kwargs.pop("queryset")
@@ -616,6 +617,7 @@ class VisualSelectorForm(forms.Form):
     visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop('instance')
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
         self.queryset = kwargs.pop("queryset")
@@ -1104,6 +1106,7 @@ class DataPivotSelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
         super().__init__(*args, **kwargs)
