@@ -617,7 +617,7 @@ class VisualSelectorForm(forms.Form):
     visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop('instance')
+        kwargs.pop("instance")
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
         self.queryset = kwargs.pop("queryset")
