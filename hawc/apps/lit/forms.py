@@ -527,7 +527,7 @@ class TagsCopyForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("assessment", None)
+        self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
