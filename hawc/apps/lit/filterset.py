@@ -1,6 +1,7 @@
 import django_filters as df
 from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
+from django_filters import FilterSet
 
 from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
 from . import models
@@ -224,3 +225,24 @@ class ReferenceFilterSet(BaseFilterSet):
                 assessment=self.assessment
             )
         return form
+
+
+class ReferenceExportFilterSet(FilterSet):
+    searches = df.ModelChoiceFilter(queryset=models.Search.objects.all())
+    tag = df.ModelChoiceFilter(
+        queryset=models.ReferenceFilterTag.objects.all(), method="filter_tag"
+    )
+    include_descendants = df.BooleanFilter(method=filter_noop)
+    table_builder = df.BooleanFilter(method=filter_noop)
+
+    class Meta:
+        model = models.Reference
+        fields = [
+            "searches",
+            "tag",
+            "include_descendants",
+        ]
+
+    def filter_tag(self, queryset, name, value):
+        include_descendants = self.data.get("include_descendants", False)
+        return queryset.with_tag(tag=value, descendants=include_descendants)

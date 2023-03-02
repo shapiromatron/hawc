@@ -13,12 +13,7 @@ from rest_framework.exceptions import ParseError, PermissionDenied, ValidationEr
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
-from ..assessment.api import (
-    METHODS_NO_PUT,
-    AssessmentLevelPermissions,
-    AssessmentRootedTagTreeViewset,
-    CleanupFieldsBaseViewSet,
-)
+from ..assessment.api import METHODS_NO_PUT, AssessmentLevelPermissions, CleanupFieldsBaseViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
@@ -26,7 +21,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, models, serializers
+from . import exports, filterset, models, serializers
 
 
 class LiteratureAssessmentViewset(viewsets.GenericViewSet):
@@ -74,6 +69,8 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
             create_object_log(
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
+        else:
+            raise ValueError()
         return Response(serializer.data)
 
     @action(
@@ -229,16 +226,32 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         Get all references in an assessment.
         """
         assessment = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
-        exporter = exports.ReferenceFlatComplete(
+        queryset = (
             models.Reference.objects.get_qs(assessment)
             .prefetch_related("identifiers", "tags")
-            .order_by("id"),
+            .order_by("id")
+        )
+        fs = filterset.ReferenceExportFilterSet(
+            data=request.query_params,
+            queryset=queryset,
+            request=request,
+        )
+        if not fs.is_valid():
+            raise ValidationError(fs.errors)
+
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        Exporter = (
+            exports.TableBuilderFormat
+            if request.query_params.get("export_format") == "table-builder"
+            else exports.ReferenceFlatComplete
+        )
+        export = Exporter(
+            queryset=fs.qs,
             filename=f"references-{assessment.name}",
             assessment=assessment,
             tags=tags,
         )
-        return Response(exporter.build_export())
+        return Response(export.build_export())
 
     @action(
         detail=True,
@@ -368,61 +381,6 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
 
     def get_queryset(self):
         return self.model.objects.all()
-
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        renderer_classes=PandasRenderers,
-    )
-    def references(self, request, pk):
-        """
-        Return all references for a given Search
-        """
-        instance = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(instance.assessment_id)
-        qs = instance.references.all().prefetch_related("identifiers", "tags").order_by("id")
-        exporter = exports.ReferenceFlatComplete(
-            queryset=qs,
-            filename=f"{instance.assessment}-search-{instance.slug}",
-            assessment=instance.assessment_id,
-            tags=tags,
-        )
-        return Response(exporter.build_export())
-
-
-class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
-    model = models.ReferenceFilterTag
-    serializer_class = serializers.ReferenceFilterTagSerializer
-
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        renderer_classes=PandasRenderers,
-    )
-    def references(self, request, pk):
-        """
-        Return all references for a selected tag, including tag-descendants.
-        """
-        tag = self.get_object()
-        serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
-        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        if serializer.is_valid():
-            qs = (
-                models.Reference.objects.all()
-                .with_tag(tag=tag, descendants=serializer.include_descendants())
-                .prefetch_related("identifiers", "tags")
-                .order_by("id")
-            )
-            ExportClass = serializer.get_exporter()
-            exporter = ExportClass(
-                queryset=qs,
-                filename=f"{self.assessment}-{tag.slug}",
-                assessment=self.assessment,
-                tags=tags,
-            )
-            return Response(exporter.build_export())
-        else:
-            return Response(serializer.errors, status=400)
 
 
 class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
