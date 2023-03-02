@@ -15,7 +15,7 @@ from pydantic import Field, root_validator, validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
-from ..assessment.serializers import AssessmentRootedSerializer
+from ..assessment.api.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
