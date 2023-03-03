@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
             name="adaf",
             field=models.BooleanField(
                 default=False,
-                help_text="When checked, the ADAF note will appear as a footnote for the value",
+                help_text="When checked, the Age-Dependent Adjustment Factor (ADAF) note will appear next to the value",
                 verbose_name="Apply ADAF?",
             ),
         ),

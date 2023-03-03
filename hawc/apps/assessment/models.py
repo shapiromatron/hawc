@@ -581,6 +581,11 @@ class AssessmentValue(models.Model):
         help_text="The derived value",
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
+    adaf = models.BooleanField(
+        verbose_name="Apply ADAF?",
+        default=False,
+        help_text="When checked, the Age-Dependent Adjustment Factor (ADAF) note will appear next to the value",
+    )
     confidence = models.CharField(
         max_length=64,
         blank=True,
@@ -648,11 +653,6 @@ class AssessmentValue(models.Model):
     extrapolation_method = models.TextField(
         blank=True,
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
-    )
-    adaf = models.BooleanField(
-        verbose_name="Apply ADAF?",
-        default=False,
-        help_text="When checked, the ADAF note will appear as a footnote for the value",
     )
     comments = models.TextField(blank=True)
     extra = models.JSONField(
