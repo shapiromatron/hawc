@@ -28,10 +28,12 @@
             <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
             <td>{{object.value}} {{object.value_unit|default:""}}</td>
         </tr>
+        {% if object.confidence %}
         <tr>
-            <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value" %}</th>
+            <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value." %}</th>
             <td>{{object.confidence}}</td>
         </tr>
+        {% endif %}
         {% optional_table_row "Value duration" object.duration %}
         {% optional_table_row "Basis" object.basis %}
         {% optional_table_row "POD type" object.pod_type %}

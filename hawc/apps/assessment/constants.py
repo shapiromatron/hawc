@@ -4,7 +4,8 @@ from .permissions import AssessmentPermissions
 
 ADAF_FOOTNOTE = (
     "Age-Dependent Adjustment Factor (ADAF) should be applied to this value. "
-    "For more information on the application of ADAF to the toxicity value, see full report."
+    "For more information on the application of ADAF to the toxicity value, see full report. "
+    "See the Comments field for the ADAF reasoning."
 )
 
 
