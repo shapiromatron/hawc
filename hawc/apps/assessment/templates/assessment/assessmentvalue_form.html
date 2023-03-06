@@ -35,6 +35,17 @@
                 }
             };
         eval_type.on('change', showRelevantFields).trigger('change');
+
+        var adaf = $('#id_adaf'),
+            showAdafHelpText = function () {
+                if (adaf.is(':checked')) {
+                    $('#hint_id_comments').text("In addition to any other comments, describe the ADAF reasoning, e.g. supporting text about the mutagenic mode of action");
+                }
+                else {
+                    $('#hint_id_comments').text("");
+                }
+            };
+        adaf.on('change', showAdafHelpText).trigger('change');
     });
 </script>
 {% endblock extrajs %}

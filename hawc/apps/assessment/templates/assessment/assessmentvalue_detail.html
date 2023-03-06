@@ -21,15 +21,18 @@
         <col style="width: 70%;">
     </colgroup>
     <tbody>
-        {% optional_table_row "Evaluation Type" object.get_evaluation_type_display %}
+        {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
         {% optional_table_row "System or health effect basis" object.system %}
-        {% optional_table_row "Value Type" object.get_value_type_display %}
+        {% optional_table_row "Value type" object.get_value_type_display %}
         <tr>
             <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
             <td>{{object.value}} {{object.value_unit|default:""}}</td>
         </tr>
-        {% optional_table_row "Overall confidence" object.confidence %}
-        {% optional_table_row "Value Duration" object.duration %}
+        <tr>
+            <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value" %}</th>
+            <td>{{object.confidence}}</td>
+        </tr>
+        {% optional_table_row "Value duration" object.duration %}
         {% optional_table_row "Basis" object.basis %}
         {% optional_table_row "POD type" object.pod_type %}
         {% if object.pod_value %}
@@ -41,7 +44,7 @@
         {% if object.show_noncancer_fields %}
         {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
         {% endif %}
-        {% optional_table_row "Species and strain studied" object.species_studied|default:"" %}
+        {% optional_table_row "Species and strain" object.species_studied|default:"" %}
         {% if object.study %}
         <tr>
             <th>Key Study</th>

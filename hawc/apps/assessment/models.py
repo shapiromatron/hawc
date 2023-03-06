@@ -584,12 +584,12 @@ class AssessmentValue(models.Model):
     adaf = models.BooleanField(
         verbose_name="Apply ADAF?",
         default=False,
-        help_text="When checked, the Age-Dependent Adjustment Factor (ADAF) note will appear next to the value",
+        help_text="When checked, the Age-Dependent Adjustment Factor (ADAF) note will appear next to the value. If checked, describe the ADAF reasoning in the comments field, e.g. the chemical is carcinogenic by a mutagenic mode of action",
     )
     confidence = models.CharField(
         max_length=64,
         blank=True,
-        help_text="Overall confidence for the value.",
+        help_text="Confidence in the toxicity value",
     )
     duration = models.CharField(
         max_length=128,
@@ -628,7 +628,7 @@ class AssessmentValue(models.Model):
     )
     species_studied = models.TextField(
         blank=True,
-        verbose_name="Species and strain studied",
+        verbose_name="Species and strain",
         help_text="Provide information about the animal(s) studied, including species and strain information",
     )
     study = models.ForeignKey(
@@ -654,7 +654,9 @@ class AssessmentValue(models.Model):
         blank=True,
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
-    comments = models.TextField(blank=True)
+    comments = models.TextField(
+        blank=True, help_text=" "
+    )  # help text is a blank space so that it can be dynamically replaced in the form
     extra = models.JSONField(
         default=dict,
         blank=True,

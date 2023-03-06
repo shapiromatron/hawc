@@ -4,7 +4,19 @@
 <h3>Assessment Values</h3>
 <table class="table table-sm table-striped">
     {% bs4_colgroup '10,10,10,10,15,10,15,10,10' %}
-    {% bs4_thead 'Evaluation Type,System or Health Effect Basis,Value Type,Duration,Value,POD Type,Point of Departure,Composite Uncertainty Factor,Confidence' %}
+    <thead>
+        <tr>
+            <th>Evaluation type</th>
+            <th>System or health effect basis</th>
+            <th>Value type</th>
+            <th>Value duration</th>
+            <th>Value</th>
+            <th>POD type</th>
+            <th>Point of departure</th>
+            <th>Composite uncertainty factor</th>
+            <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value" %}</th>
+        </tr>
+    </thead>
     <tbody>
         {% for object in object_list %}
         <tr>
