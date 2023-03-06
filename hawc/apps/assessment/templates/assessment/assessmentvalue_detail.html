@@ -25,7 +25,7 @@
         {% optional_table_row "System or health effect basis" object.system %}
         {% optional_table_row "Value Type" object.get_value_type_display %}
         <tr>
-            <th>Value{% if object.adaf %}{% include "assessment/fragments/adaf_footnote.html" with text=adaf_footnote %}{% endif %}</th>
+            <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
             <td>{{object.value}} {{object.value_unit|default:""}}</td>
         </tr>
         {% optional_table_row "Overall confidence" object.confidence %}
