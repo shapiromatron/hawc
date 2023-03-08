@@ -19,7 +19,7 @@ from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
-from . import constants, exports, forms, models, tasks
+from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
 
@@ -410,23 +410,6 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # run chained tasks
         return chain(t1, t2, t3)()
-
-
-class ReferenceTagExportSerializer(serializers.Serializer):
-    nested = serializers.ChoiceField(choices=[("t", "true"), ("f", "false")], default="t")
-    exporter = serializers.ChoiceField(
-        choices=[("base", "base"), ("table-builder", "table builder")], default="base"
-    )
-    _exporters = {
-        "base": exports.ReferenceFlatComplete,
-        "table-builder": exports.TableBuilderFormat,
-    }
-
-    def get_exporter(self):
-        return self._exporters[self.validated_data["exporter"]]
-
-    def include_descendants(self):
-        return self.validated_data["nested"] == "t"
 
 
 class FilterReferences(PydanticDrfSerializer):
