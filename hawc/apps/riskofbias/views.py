@@ -278,7 +278,8 @@ class RobAssignmentUpdate(BaseFilterList):
         data.update(
             edit=True,
             users=[
-                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
+                {"id": user.id, "first_name": user.first_name, "last_name": user.last_name}
+                for user in self.assessment.pms_and_team_users()
             ],
             csrf=get_token(self.request),
         )
