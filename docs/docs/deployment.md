@@ -96,3 +96,21 @@ Fields include:
 - `ALLOW_RIS_IMPORTS`: If true, RIS imports are available when working on assessments. If false, the button is not there, but it's still possible for users to import via RIS if the can find the correct URL. Defaults to true.
 - `ANONYMOUS_ACCOUNT_CREATION`: If true, anonymous users can create accounts. If false, only staff can create new accounts via the admin. Defaults to true.
 - `THIS_IS_AN_EXAMPLE`: Does nothing; used to test configuration.
+
+### Application monitoring
+
+Application performance and monitoring can be optionally enabled using [Sentry](https://sentry.io/). To enable, add these two environment variables:
+
+- `HAWC_SENTRY_DSN` - site key, used for sentry data ingestion
+- `HAWC_SENTRY_SETTINGS`: JSON string of settings to pass to [client](https://docs.sentry.io/platforms/python/guides/django/configuration/options/), for example: `{"traces_sample_rate": 0.1, "send_default_pii": false}`
+
+By default, sentry integration is disabled.
+
+### Human verification
+
+To prevent bots from attempting to login to the server, you can optionally enable [Turnstyle](https://www.cloudflare.com/products/turnstile/). To enable, set these two additional environment variables:
+
+- `TURNSTYLE_SITE`: site key, this is used by the client to interact (public)
+- `TURNSTYLE_KEY`: secret key, used by the server to verify the response (private)
+
+By default. human verification is disabled.
