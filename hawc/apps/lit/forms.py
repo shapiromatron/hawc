@@ -300,6 +300,7 @@ class SearchSelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
@@ -311,7 +312,7 @@ class SearchSelectorForm(forms.Form):
             self.fields["searches"]
             .queryset.filter(assessment__in=assessment_pks)
             .exclude(title="Manual import")
-            .order_by("assessment_id")
+            .order_by("assessment_id", "title")
         )
 
     @property
@@ -527,7 +528,7 @@ class TagsCopyForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("assessment", None)
+        self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
