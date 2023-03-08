@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             name="HERO_access",
             field=models.BooleanField(
                 default=False,
-                help_text="All HERO links will redirect to the login-only HERO access page, allowing for full article text.",
-                verbose_name="HERO access",
+                help_text="Open HERO links using HERO Net (requires authentication), instead of public HERO (no authentication required).",
+                verbose_name="Has Authenticated HERO access",
             ),
         ),
     ]
