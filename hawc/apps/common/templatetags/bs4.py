@@ -40,3 +40,21 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     return mark_safe(
         f'<tr {tr_attrs}><td colspan="100%"><p class="text-center mb-0">{text}</p></td></tr>'
     )
+
+
+@register.tag(name="alert")
+def bs4_alert(parser, token):
+    args = token.contents.split()
+    alert_type = args[1] if len(args) > 1 else "danger"
+    nodelist = parser.parse(("endalert",))
+    parser.delete_first_token()
+    return AlertWrapperNode(nodelist, alert_type)
+
+
+class AlertWrapperNode(template.Node):
+    def __init__(self, nodelist, alert_type: str):
+        self.nodelist = nodelist
+        self.alert_type = alert_type
+
+    def render(self, context):
+        return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
