@@ -27,6 +27,7 @@ const renderPlotlyFigure = function(el, config) {
         ReactDOM.render(<PlotlyFigure {...config} />, el);
     } catch (error) {
         el.innerHTML = '<span class="text-danger">An error occurred</span>';
+        console.error(error);
     }
 };
 
