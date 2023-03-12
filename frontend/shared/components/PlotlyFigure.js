@@ -21,8 +21,13 @@ PlotlyFigure.propTypes = {
     layout: PropTypes.object,
 };
 
-const renderPlotlyFigure = function(el, data) {
-    ReactDOM.render(<PlotlyFigure {...data} />, el);
+const renderPlotlyFigure = function(el, config) {
+    el.innerHTML = "";
+    try {
+        ReactDOM.render(<PlotlyFigure {...config} />, el);
+    } catch (error) {
+        el.innerHTML = '<span class="text-danger">An error occurred</span>';
+    }
 };
 
 export {renderPlotlyFigure};

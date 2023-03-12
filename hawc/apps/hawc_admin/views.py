@@ -37,7 +37,6 @@ class Dashboard(View):
         df = fig = None
         if form.is_valid():
             df, fig = form.get_data()
-            fig = fig.to_json()
         context = dict(form=form, fig=fig, df=df)
         return render(request, "admin/fragments/growth.html", context)
 

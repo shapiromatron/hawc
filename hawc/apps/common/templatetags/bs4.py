@@ -66,22 +66,28 @@ class AlertWrapperNode(template.Node):
         return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
 
 
+_plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
+
+
 @register.simple_tag()
-def plotly(fig: Optional[Figure]) -> str:
-    """Generate a plotly figure"""
+def plotly(fig: Optional[Figure], event: str = "dom") -> str:
+    """Render a plotly figure
+
+    fig (Figure): the plotly figure to render
+    event: (Literal["dom", "htmx"]): the event that should trigger loading plotly
+    """
     if fig is None:
         return ""
+    if not event:
+        event = "dom"
     id = uuid4()
+    event = _plotly_events[event]
+    config = fig.to_json()
+    func = f'()=>{{window.app.renderPlotlyFigure(document.getElementById("{id}"), {config});}}'
     return mark_safe(
         dedent(
             f"""
     <div id="{id}"><span class="text-muted">Loading...</span></div>
-    <script>
-        document.addEventListener("DOMContentLoaded", startup, false);
-        function startup () {{
-            const data = JSON.parse("{escapejs(fig.to_json())}")
-            window.app.renderPlotlyFigure(document.getElementById("{id}"), data);
-        }};
-    </script>"""
+    <script>document.addEventListener("{event}", {func}, false);</script>"""
         )
     )
