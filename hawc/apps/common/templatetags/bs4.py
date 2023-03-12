@@ -6,7 +6,6 @@ from typing import Optional
 from uuid import uuid4
 
 from django import template
-from django.utils.html import escapejs
 from django.utils.safestring import mark_safe
 from plotly.graph_objs._figure import Figure
 
