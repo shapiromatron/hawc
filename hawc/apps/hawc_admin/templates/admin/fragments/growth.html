@@ -5,10 +5,6 @@
         {{ form.as_p }}
         {% csrf_token %}
     </form>
-    {% if fig %}
-        <div style="max-width: 800px">{% plotly fig "htmx" %}</div>
-    {% endif %}
-    {% if df is not None %}
-        {{ df.to_html|safe }}
-    {% endif %}
+    {% if fig %}{% plotly fig "htmx" %}{% endif %}
+    {% if df is not None %}{{ df.to_html|safe }}{% endif %}
 </div>

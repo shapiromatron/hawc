@@ -1,12 +1,12 @@
 {% load bs4 %}
 
 <h2>Active users</h2>
-<div style="max-width: 800px">{% plotly active "htmx" %}</div>
+{% plotly active "htmx" %}
 
 <h2>Days since login</h2>
-<div style="max-width: 800px">{% plotly growth.0 "htmx" %}</div>
-<div style="max-width: 800px">{% plotly growth.1 "htmx" %}</div>
+<div>{% plotly growth.0 "htmx" %}</div>
+<div>{% plotly growth.1 "htmx" %}</div>
 
 <h2>Days since last login</h2>
-<div style="max-width: 800px">{% plotly logins.0 "htmx" %}</div>
-<div style="max-width: 800px">{% plotly logins.1 "htmx" %}</div>
+<div>{% plotly logins.0 "htmx" %}</div>
+<div>{% plotly logins.1 "htmx" %}</div>
