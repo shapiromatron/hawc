@@ -4,9 +4,9 @@
 {% plotly active "htmx" %}
 
 <h2>Days since login</h2>
-<div>{% plotly growth.0 "htmx" %}</div>
-<div>{% plotly growth.1 "htmx" %}</div>
+{% plotly growth.0 "htmx" %}
+{% plotly growth.1 "htmx" %}
 
 <h2>Days since last login</h2>
-<div>{% plotly logins.0 "htmx" %}</div>
-<div>{% plotly logins.1 "htmx" %}</div>
+{% plotly logins.0 "htmx" %}
+{% plotly logins.1 "htmx" %}
