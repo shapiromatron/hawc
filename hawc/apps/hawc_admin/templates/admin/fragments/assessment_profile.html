@@ -7,7 +7,7 @@
         {% csrf_token %}
     </form>
     {% if fig %}
-    <div>{% plotly event="htmx" resizable=True %}</div>
+    <div>{% plotly fig event="htmx" resizable=True %}</div>
     {% else %}
     <p>No selected assessment or invalid assessment id.</p>
     {% endif %}
