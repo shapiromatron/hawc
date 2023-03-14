@@ -5,7 +5,6 @@
 {% load render_bundle from webpack_loader %}
 
 {% block extrahead %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc-admin.css' %}" />
     <script type="text/javascript" src="{% static 'vendor/jquery/3.6.3/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/htmx/1.8.5/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}

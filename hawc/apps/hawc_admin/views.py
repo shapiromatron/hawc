@@ -40,7 +40,7 @@ class Dashboard(View):
         context = dict(form=form, fig=fig, df=df)
         return render(request, "admin/fragments/growth.html", context)
 
-    # @method_decorator(cache_page(3600))
+    @method_decorator(cache_page(3600))
     def users(self, request: HttpRequest, *args, **kwargs):
         return render(
             request,
@@ -52,13 +52,13 @@ class Dashboard(View):
             },
         )
 
-    # @method_decorator(cache_page(3600))
+    @method_decorator(cache_page(3600))
     def assessment_size(self, request: HttpRequest, *args, **kwargs):
         df = methods.size_df()
         html = df.to_html(index=False, table_id="table", escape=False, border=0)
         return render(request, "admin/fragments/assessment_size.html", {"table": html})
 
-    # @method_decorator(cache_page(3600))
+    @method_decorator(cache_page(3600))
     def assessment_growth(self, request: HttpRequest, *args, **kwargs):
         matrix = methods.growth_matrix().to_html()
         return render(
