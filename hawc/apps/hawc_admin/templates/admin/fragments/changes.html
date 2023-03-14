@@ -7,14 +7,14 @@
     <p>&nbsp;</p>
 
     {% if lines %}
-    {% plotly lines "htmx" %}
+    {% plotly lines event="htmx" resizable=True %}
     {{lines_data.to_html|safe}}
     {% endif %}
 
     <p>&nbsp;</p>
 
     {% if boxplot %}
-    {% plotly boxplot "htmx" %}
+    {% plotly boxplot event="htmx" resizable=True %}
     {{boxplot_data.to_html|safe}}
     {% endif %}
 </div>

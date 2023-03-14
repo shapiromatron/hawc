@@ -69,20 +69,21 @@ _plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
 
 
 @register.simple_tag()
-def plotly(fig: Optional[Figure], event: str = "dom") -> str:
+def plotly(fig: Optional[Figure], **kw) -> str:
     """Render a plotly figure
 
     fig (Figure): the plotly figure to render
-    event: (Literal["dom", "htmx"]): the event that should trigger loading plotly
+    event: (Literal["dom", "htmx"]): the event that should trigger loading plotly. Defaults to
+        "dom" when dom is fully loaded. If set to "htmx", will render after htmx settles.
+    resizable: (bool, default False). If true, the figure can be resized by the user.
     """
     if fig is None:
         return ""
-    if not event:
-        event = "dom"
     id = uuid4()
-    event = _plotly_events[event]
     config = fig.to_json()
-    func = f'()=>{{window.app.renderPlotlyFigure(document.getElementById("{id}"), {config});}}'
+    event = _plotly_events[kw.get("event", "dom")]
+    resizable = str(bool(kw.get("resizable", False))).lower()
+    func = f'()=>{{window.app.renderPlotlyFigure(document.getElementById("{id}"), {config}, {resizable});}}'
     return mark_safe(
         dedent(
             f"""

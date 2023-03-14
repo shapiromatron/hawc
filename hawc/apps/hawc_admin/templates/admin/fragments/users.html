@@ -1,12 +1,12 @@
 {% load bs4 %}
 
 <h2>Active users</h2>
-{% plotly active "htmx" %}
+{% plotly active event="htmx" resizable=True %}
 
 <h2>Days since login</h2>
-{% plotly growth.0 "htmx" %}
-{% plotly growth.1 "htmx" %}
+{% plotly growth.0 event="htmx" resizable=True %}
+{% plotly growth.1 event="htmx" resizable=True %}
 
 <h2>Days since last login</h2>
-{% plotly logins.0 "htmx" %}
-{% plotly logins.1 "htmx" %}
+{% plotly logins.0 event="htmx" resizable=True %}
+{% plotly logins.1 event="htmx" resizable=True %}
