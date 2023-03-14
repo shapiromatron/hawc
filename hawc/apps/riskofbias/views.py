@@ -1,3 +1,6 @@
+from collections import defaultdict
+from typing import Iterable
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
@@ -51,22 +54,28 @@ class ARoBDetail(BaseList):
     template_name = "riskofbias/arob_detail.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["no_data"] = models.RiskOfBiasDomain.objects.get_qs(self.assessment).count() == 0
-        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
-        return context
+        def grouped(metrics: Iterable) -> list[list[models.RiskOfBiasMetric]]:
+            """Returns an ordered list of metrics within an ordered list of domains"""
+            domains = defaultdict(list)
+            for metric in metrics:
+                domains[metric.domain.id].append(metric)
+            return list(domains.values())
 
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="riskofbiasStartup",
-            page="RobMetricsStartup",
-            data=dict(
-                assessment_id=self.assessment.id,
-                api_url=f"{reverse('riskofbias:api:domain-list')}?assessment_id={self.assessment.id}",
-                is_editing=False,
-                csrf=get_token(self.request),
-            ),
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        metrics = list(
+            models.RiskOfBiasMetric.objects.filter(domain__assessment_id=self.assessment.id)
+            .select_related("domain")
+            .order_by("domain__sort_order", "sort_order")
         )
+        context.update(
+            metrics=metrics,
+            no_data=metrics == len(metrics) == 0,
+            bioassay_metrics=grouped(filter(lambda d: d.required_animal is True, metrics)),
+            epi_metrics=grouped(filter(lambda d: d.required_epi is True, metrics)),
+            invitro_metrics=grouped(filter(lambda d: d.required_invitro is True, metrics)),
+        )
+        return context
 
 
 class ARoBEdit(BaseDetail):
@@ -269,7 +278,8 @@ class RobAssignmentUpdate(BaseFilterList):
         data.update(
             edit=True,
             users=[
-                {"id": user.id, "name": str(user)} for user in self.assessment.pms_and_team_users()
+                {"id": user.id, "first_name": user.first_name, "last_name": user.last_name}
+                for user in self.assessment.pms_and_team_users()
             ],
             csrf=get_token(self.request),
         )

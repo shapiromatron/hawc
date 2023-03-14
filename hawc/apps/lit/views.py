@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count, Q
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
@@ -16,7 +17,15 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, listToUl, tryParseInt
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseList,
+    BaseUpdate,
+    create_object_log,
+)
 from . import constants, filterset, forms, models
 
 
@@ -69,7 +78,7 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchCopyAsNewSelector(BaseDetail):
+class SearchCopyAsNewSelector(BaseUpdate):
     """
     Select an existing search and copy-as-new
     """
@@ -87,10 +96,9 @@ class SearchCopyAsNewSelector(BaseDetail):
         return context
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
 
     def form_valid(self, form):
         return HttpResponseRedirect(form.get_success_url())
@@ -949,15 +957,14 @@ class TagsCopy(BaseUpdate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
         return kwargs
 
+    @transaction.atomic
     def form_valid(self, form):
+        url = reverse("lit:tags_update", kwargs={"pk": self.assessment.pk})
+        create_object_log("Bulk tag copy", self.object, self.object.id, self.request.user.id)
         form.copy_tags()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
+        return HttpResponseRedirect(url)
 
 
 class BulkTagReferences(BaseDetail):
