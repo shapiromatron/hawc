@@ -5,10 +5,11 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
@@ -25,7 +26,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, models, serializers
+from . import exports, filterset, models, serializers
 
 
 class LiteratureAssessmentViewset(viewsets.GenericViewSet):
@@ -73,6 +74,8 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
             create_object_log(
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
+        else:
+            raise ValueError()
         return Response(serializer.data)
 
     @action(
@@ -219,23 +222,66 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
     @action(
         detail=True,
-        url_path="references-download",
+        url_path="reference-export",
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
-    def references_download(self, request, pk):
+    def reference_export(self, request, pk):
+        """
+        Get all references in an assessment.
+        """
+        assessment = self.get_object()
+        queryset = (
+            models.Reference.objects.get_qs(assessment)
+            .prefetch_related("identifiers", "tags")
+            .order_by("id")
+        )
+        fs = filterset.ReferenceExportFilterSet(
+            data=request.query_params,
+            queryset=queryset,
+            request=request,
+        )
+        if not fs.is_valid():
+            raise ValidationError(fs.errors)
+
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        Exporter = (
+            exports.TableBuilderFormat
+            if request.query_params.get("export_format") == "table-builder"
+            else exports.ReferenceFlatComplete
+        )
+        export = Exporter(
+            queryset=fs.qs,
+            filename=f"references-{assessment.name}",
+            assessment=assessment,
+            tags=tags,
+        )
+        return Response(export.build_export())
+
+    @action(
+        detail=True,
+        url_path="user-tag-export",
+        renderer_classes=PandasRenderers,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    )
+    def user_tag_export(self, request, pk):
         """
         Get all references in an assessment.
         """
         assessment = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        qs = (
+            models.UserReferenceTag.objects.filter(reference__assessment=assessment.id)
+            .select_related("reference", "user")
+            .prefetch_related("tags", "reference__identifiers")
+            .order_by("reference_id", "id")
+        )
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(assessment)
-            .prefetch_related("identifiers")
-            .order_by("id"),
-            filename=f"references-{assessment}",
+            qs,
+            filename=f"references-user-tags-{assessment.name}",
             assessment=assessment,
             tags=tags,
+            user_tags=True,
         )
         return Response(exporter.build_export())
 
@@ -341,58 +387,10 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        renderer_classes=PandasRenderers,
-    )
-    def references(self, request, pk):
-        """
-        Return all references for a given Search
-        """
-        instance = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            instance.references.all(),
-            filename=f"{instance.assessment}-search-{instance.slug}",
-            assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-            include_parent_tag=False,
-        )
-        return Response(exporter.build_export())
-
 
 class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
-
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        renderer_classes=PandasRenderers,
-    )
-    def references(self, request, pk):
-        """
-        Return all references for a selected tag, including tag-descendants.
-        """
-        tag = self.get_object()
-        serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
-        if serializer.is_valid():
-            qs = (
-                models.Reference.objects.all()
-                .with_tag(tag=tag, descendants=serializer.include_descendants())
-                .order_by("id")
-            )
-            ExportClass = serializer.get_exporter()
-            exporter = ExportClass(
-                queryset=qs,
-                filename=f"{self.assessment}-{tag.slug}",
-                assessment=self.assessment,
-                tags=self.model.get_all_tags(self.assessment.id),
-                include_parent_tag=False,
-            )
-            return Response(exporter.build_export())
-        else:
-            return Response(serializer.errors, status=400)
 
 
 class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
@@ -413,17 +411,43 @@ class ReferenceViewset(
     action_perms = {}
     queryset = models.Reference.objects.all()
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action in ("tag", "resolve_conflict"):
+            qs = qs.select_related("assessment__literature_settings").prefetch_related(
+                "user_tags__tags", "tags"
+            )
+        return qs
+
     @action(
         detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def tag(self, request, pk):
         response = {"status": "fail"}
-        ref = self.get_object()
-        assessment = ref.assessment
+        instance = self.get_object()
+        assessment = instance.assessment
         if assessment.user_can_edit_object(self.request.user):
-            tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.tags.set(tag_pks)
-            ref.last_updated = timezone.now()
-            ref.save()
+            try:
+                tags = [int(tag) for tag in self.request.data.get("tags", [])]
+                resolved = instance.update_tags(request.user, tags)
+            except ValueError:
+                return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
             response["status"] = "success"
+            response["resolved"] = resolved
         return Response(response)
+
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
+    def resolve_conflict(self, request, pk):
+        instance = self.get_object()
+        assessment = instance.assessment
+        if not assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        user_reference_tag = get_object_or_404(
+            models.UserReferenceTag,
+            reference_id=instance.id,
+            id=int(request.POST.get("user_tag_id", -1)),
+        )
+        instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
+        return Response({"status": "ok"})
