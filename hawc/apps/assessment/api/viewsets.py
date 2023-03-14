@@ -48,8 +48,8 @@ class CleanupFieldsBaseViewSet(
     Serializer should implement DynamicFieldsMixin.
     """
 
-    model: Model = None  # must be added
-    assessment_filter_args: str = ""  # must be added
+    model: type[Model]
+    assessment_filter_args: str
     filter_backends = (CleanupBulkIdFilter,)
     pagination_class = DisabledPagination
     permission_classes = (CleanupFieldsPermissions,)
