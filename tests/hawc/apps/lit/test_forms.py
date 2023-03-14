@@ -34,21 +34,21 @@ class TestLiteratureAssessmentForm:
         assert len(form2.fields["extraction_tag"].choices) == 9
 
         # ensure we can save `extraction_tag == None`
-        form = LiteratureAssessmentForm(data={"extraction_tag": None}, instance=instance1)
+        data = form1.initial.copy()
+        data.update(extraction_tag=None)
+        form = LiteratureAssessmentForm(data=data, instance=instance1)
         assert form.is_valid()
 
         # ensure that a choice from our assessment is valid
-        form = LiteratureAssessmentForm(
-            data={"extraction_tag": form1.fields["extraction_tag"].choices[-1][0]},
-            instance=instance1,
-        )
+        data = form1.initial.copy()
+        data.update(extraction_tag=form1.fields["extraction_tag"].choices[-1][0])
+        form = LiteratureAssessmentForm(data=data, instance=instance1)
         assert form.is_valid()
 
         # ensure that a choice from another assessment is invalid
-        form = LiteratureAssessmentForm(
-            data={"extraction_tag": form2.fields["extraction_tag"].choices[-1][0]},
-            instance=instance1,
-        )
+        data = form1.initial.copy()
+        data.update(extraction_tag=form2.fields["extraction_tag"].choices[-1][0])
+        form = LiteratureAssessmentForm(data=data, instance=instance1)
         assert form.is_valid() is False
         assert (
             form.errors["extraction_tag"][0]
