@@ -25,12 +25,12 @@ class TermSelector extends Component {
                 name,
                 label,
                 helpText,
+                popupHelpText,
                 termIdField,
                 termTextField,
                 parentIdField,
                 store,
                 parentRequired,
-                popup,
             } = this.props,
             {object, debug, vocabulary_display} = store.config,
             useControlledVocabulary = store.useControlledVocabulary[termTextField],
@@ -67,7 +67,7 @@ class TermSelector extends Component {
                     </div>
                 ) : null}
                 <label htmlFor={this.randomId}>{label}</label>
-                {popup ? <HelpTextPopup content={helpText} title={label} /> : null}
+                {popupHelpText ? <HelpTextPopup content={popupHelpText} title={label} /> : null}
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
                         url={termUrlLookup[termIdField]}
@@ -129,12 +129,12 @@ class TermSelector extends Component {
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
-                {popup ? null : (
+                {helpText ? (
                     <div
                         className="form-text text-muted"
                         dangerouslySetInnerHTML={{__html: helpText}}
                     />
-                )}
+                ) : null}
                 {debug ? (
                     <ul>
                         <li>termId: {currentId}</li>
@@ -149,14 +149,14 @@ class TermSelector extends Component {
 TermSelector.propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    helpText: PropTypes.string.isRequired,
+    helpText: PropTypes.string,
+    popupHelpText: PropTypes.string,
     termIdField: PropTypes.string.isRequired,
     termTextField: PropTypes.string.isRequired,
     parentIdField: PropTypes.string,
     parentRequired: PropTypes.bool,
     store: PropTypes.object,
     idLookupAction: PropTypes.func,
-    popup: PropTypes.bool,
 };
 
 export default TermSelector;

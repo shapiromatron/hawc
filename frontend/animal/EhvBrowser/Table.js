@@ -1,8 +1,8 @@
-import {helpText} from "animal/EndpointForm/constants";
+import {helpTextWithEhv} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Modal from "shared/components/Modal";
+import HelpTextPopup from "shared/components/HelpTextPopup";
 import h from "shared/utils/helpers";
 
 const MAX_ROWS = 150;
@@ -11,8 +11,7 @@ const MAX_ROWS = 150;
 @observer
 class Table extends Component {
     render() {
-        const store = this.props.store,
-            {filteredDataset, query, showModal, modalText} = this.props.store,
+        const {filteredDataset, query} = this.props.store,
             regex = query.length > 0 ? new RegExp(h.escapeRegexString(query), "gi") : null,
             highlightedSpan = text => {
                 return regex ? (
@@ -46,66 +45,35 @@ class Table extends Component {
                             <tr>
                                 <th>
                                     System
-                                    <button
-                                        type="button"
-                                        className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {
-                                            store.updateModal(true, helpText.system, "System");
-                                        }}>
-                                        <i className="fa fa-question"></i>
-                                    </button>
+                                    <HelpTextPopup
+                                        title="System"
+                                        content={helpTextWithEhv.system}
+                                    />
                                 </th>
                                 <th>
                                     Organ
-                                    <button
-                                        type="button"
-                                        className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {
-                                            store.updateModal(true, helpText.organ, "Organ");
-                                        }}>
-                                        <i className="fa fa-question"></i>
-                                    </button>
+                                    <HelpTextPopup title="Organ" content={helpTextWithEhv.organ} />
                                 </th>
                                 <th>
                                     Effect
-                                    <button
-                                        type="button"
-                                        className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {
-                                            store.updateModal(true, helpText.effect, "Effect");
-                                        }}>
-                                        <i className="fa fa-question"></i>
-                                    </button>
+                                    <HelpTextPopup
+                                        title="Effect"
+                                        content={helpTextWithEhv.effect}
+                                    />
                                 </th>
                                 <th>
                                     Effect subtype
-                                    <button
-                                        type="button"
-                                        className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {
-                                            store.updateModal(
-                                                true,
-                                                helpText.effect_subtype,
-                                                "Effect subtype"
-                                            );
-                                        }}>
-                                        <i className="fa fa-question"></i>
-                                    </button>
+                                    <HelpTextPopup
+                                        title="Effect subtype"
+                                        content={helpTextWithEhv.effect_subtype}
+                                    />
                                 </th>
                                 <th>
                                     Endpoint/Outcome
-                                    <button
-                                        type="button"
-                                        className="ml-1 btn btn-sm btn-info"
-                                        onClick={() => {
-                                            store.updateModal(
-                                                true,
-                                                helpText.endpoint_name,
-                                                "Endpoint/Outcome"
-                                            );
-                                        }}>
-                                        <i className="fa fa-question"></i>
-                                    </button>
+                                    <HelpTextPopup
+                                        title="Endpoint/Outcome"
+                                        content={helpTextWithEhv.endpoint_name}
+                                    />
                                 </th>
                             </tr>
                         </thead>
@@ -148,25 +116,6 @@ class Table extends Component {
                         </tbody>
                     </table>
                 ) : null}
-                <Modal
-                    isShown={showModal}
-                    onClosed={() => {
-                        store.updateModal(false, "");
-                    }}>
-                    <div className="modal-header">
-                        <h4 className="mb-0">{store.modalHeader}</h4>
-                        <button
-                            type="button"
-                            className="float-right close"
-                            onClick={() => store.updateModal(false)}
-                            aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div
-                        className="modal-body container-fluid"
-                        dangerouslySetInnerHTML={{__html: modalText}}></div>
-                </Modal>
             </>
         );
     }
