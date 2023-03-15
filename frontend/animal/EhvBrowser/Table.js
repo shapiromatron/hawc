@@ -1,4 +1,4 @@
-import {helpTextWithEhv} from "animal/EndpointForm/constants";
+import {helpText} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -45,34 +45,28 @@ class Table extends Component {
                             <tr>
                                 <th>
                                     System
-                                    <HelpTextPopup
-                                        title="System"
-                                        content={helpTextWithEhv.system}
-                                    />
+                                    <HelpTextPopup title="System" content={helpText.system_popup} />
                                 </th>
                                 <th>
                                     Organ
-                                    <HelpTextPopup title="Organ" content={helpTextWithEhv.organ} />
+                                    <HelpTextPopup title="Organ" content={helpText.organ_popup} />
                                 </th>
                                 <th>
                                     Effect
-                                    <HelpTextPopup
-                                        title="Effect"
-                                        content={helpTextWithEhv.effect}
-                                    />
+                                    <HelpTextPopup title="Effect" content={helpText.effect_popup} />
                                 </th>
                                 <th>
                                     Effect subtype
                                     <HelpTextPopup
                                         title="Effect subtype"
-                                        content={helpTextWithEhv.effect_subtype}
+                                        content={helpText.effect_subtype_popup}
                                     />
                                 </th>
                                 <th>
                                     Endpoint/Outcome
                                     <HelpTextPopup
                                         title="Endpoint/Outcome"
-                                        content={helpTextWithEhv.endpoint_name}
+                                        content={helpText.endpoint_name_popup}
                                     />
                                 </th>
                             </tr>

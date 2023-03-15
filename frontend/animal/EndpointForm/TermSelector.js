@@ -130,10 +130,9 @@ class TermSelector extends Component {
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
                 {helpText ? (
-                    <div
+                    <small
                         className="form-text text-muted"
-                        dangerouslySetInnerHTML={{__html: helpText}}
-                    />
+                        dangerouslySetInnerHTML={{__html: helpText}}></small>
                 ) : null}
                 {debug ? (
                     <ul>
