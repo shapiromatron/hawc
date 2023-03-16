@@ -621,7 +621,7 @@ class ReferenceManager(BaseManager):
                     refs.annotate(
                         user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
                     )
-                    .filter(user_tag_count__lt=2, tags__isnull=True)
+                    .filter(user_tag_count__lt=2)
                     .count()
                 ),
                 conflicts=(

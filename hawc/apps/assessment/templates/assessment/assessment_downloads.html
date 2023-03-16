@@ -12,7 +12,12 @@
     {% if assessment.enable_literature_review and assessment.has_lit_data %}
     <li>
         <b>Literature-review</b><br>
-        <a class='btn btn-primary' href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download</a><br>
+        <a class='btn btn-primary' href="{% url 'lit:api:assessment-reference-export' assessment.pk %}?format=xlsx">Download</a><br>
+        {% if obj_perms.edit and assessment.literature_settings.conflict_resolution %}
+        <p class='form-text text-muted'>(no individual reviews)</p>
+        <a class='btn btn-primary' href="{% url 'lit:api:assessment-user-tag-export' assessment.pk %}?format=xlsx">Download complete</a>
+        <p class='form-text text-muted'>(includes individual reviews - only team members can view)</p>
+        {% endif %}
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
     {% endif %}
@@ -20,14 +25,11 @@
     {% if assessment.enable_risk_of_bias and assessment.has_rob_data %}
     <li>
         <b>{{assessment.get_rob_name_display}} report</b><br>
-        <a class='btn btn-primary'
-           href="{% url 'riskofbias:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
-
+        <a class='btn btn-primary' href="{% url 'riskofbias:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
         {% if obj_perms.edit %}
         <p class='form-text text-muted'>(no individual reviews)</p>
-        <a class='btn btn-primary'
-           href="{% url 'riskofbias:api:assessment-full-export' assessment.pk %}?format=xlsx">Download complete</a>
-           <p class='form-text text-muted'>(includes individual reviews - team-members and higher only)</p>
+        <a class='btn btn-primary' href="{% url 'riskofbias:api:assessment-full-export' assessment.pk %}?format=xlsx">Download complete</a>
+        <p class='form-text text-muted'>(includes individual reviews - only team members can view)</p>
         {% endif %}
         <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>

@@ -606,6 +606,12 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.lit.references(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_lit_reference_user_tags(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.lit.reference_user_tags(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
     def test_lit_reference(self):
         # get request
         client = HawcClient(self.live_server_url)

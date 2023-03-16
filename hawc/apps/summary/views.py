@@ -440,6 +440,7 @@ class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         kwargs.update(

@@ -309,6 +309,24 @@ div.smart-tag.active {
     font-size: 2em;
     align-items:center;
 }
+.small-tag-icon {
+    height: 20px;
+    width: 20px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+.small-tag-icon.consensus {
+    color: white;
+    background-color: rgb(22, 46, 81);
+}
+.small-tag-icon.user {
+    color: rgb(22, 46, 81);
+    border: 2px dotted rgb(22, 46, 81);
+    background-color: white;
+}
 #refFilter h4,
 #fullRefList p {
     overflow: hidden;
@@ -348,10 +366,9 @@ div.smart-tag.active {
     transition: transform 250ms ease-in-out;
 }
 #litTagtree {
-    max-height: 120vh;
     background-color: #e0f0ff;
     border-radius: 7px;
-    height: 25rem;
+    height: 50rem;
 }
 .abstracts {
     font-size: 1.15rem;
@@ -434,22 +451,19 @@ div.smart-tag.active {
 .nestedTag>div.tagHoverAdd:hover::before {
     transform: scale(1, 1);
 }
-.tagHoverSimple {
+.tagHover {
     padding-left: 5px;
     display: inline-block;
     position: relative;
     border: 2px solid transparent;
     text-decoration: none;
 }
-.tagHoverSimple:hover, .tagSelected {
-    --bg-h: 2px;
-    background: linear-gradient(0deg, #484848, #484848) no-repeat right bottom / 0 var(--bg-h);
-    background-size: 100% var(--bg-h);
-    background-position-x: left;
+.tagHover:hover, .tagSelected {
+    font-weight: bold;
 }
 
 .tagSelected {
-    font-weight: bold;
+    text-decoration: underline;
 }
 .reference {
     border-bottom: 3px solid lightgray;
@@ -457,14 +471,11 @@ div.smart-tag.active {
 }
 .reference:hover {
     cursor: pointer;
+    background-color: #d6d6d6;
 }
 .reference.selected {
     color: #ffffff;
-    background-color: #162e51;
-}
-.reference:hover {
-    color: #ffffff;
-    background-color: #1c4fb7;
+    background-color: #7f7f7f;
 }
 
 .hawc-mk {

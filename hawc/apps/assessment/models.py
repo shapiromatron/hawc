@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, Optional
 
 import pandas as pd
 from django.apps import apps
@@ -322,23 +322,22 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.to_dict(user)
 
-    def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_view_object(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_edit_object(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_edit_assessment(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.project_manager_or_higher(user)
 
     def user_is_reviewer_or_higher(self, user) -> bool:
-        """Reviewer or higher"""
         perms = self.get_permissions()
         return perms.reviewer_or_higher(user)
 
@@ -431,8 +430,8 @@ class Assessment(models.Model):
             HAWCUser.objects.filter(
                 models.Q(assessment_pms=self.id) | models.Q(assessment_teams=self.id)
             )
-            .order_by("id")
-            .distinct("id")
+            .order_by("last_name", "id")
+            .distinct("id", "last_name")
         )
 
     def get_communications(self) -> str:

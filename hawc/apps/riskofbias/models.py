@@ -510,7 +510,7 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:rob_assignments", args=(self.assessment_id,))
+        return reverse("riskofbias:rob_assignments", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment
