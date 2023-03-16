@@ -138,6 +138,7 @@ class RiskOfBiasCopyForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
@@ -172,6 +173,7 @@ class RiskOfBiasLoadApproachForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
