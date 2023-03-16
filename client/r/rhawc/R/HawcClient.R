@@ -151,7 +151,7 @@ HawcClient = function(baseUrl){
       return(as_data_frame(response))
     },
     lit_references = function(assessment_id) {
-      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/references-download/")
+      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/reference-export/")
       response = get_(url)
       return(as_data_frame(response))
     },

@@ -2,11 +2,8 @@ import json
 
 from rest_framework import serializers
 
-from ..assessment.serializers import (
-    AssessmentRootedSerializer,
-    DSSToxSerializer,
-    EffectTagsSerializer,
-)
+from ..assessment.api.serializers import AssessmentRootedSerializer
+from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer

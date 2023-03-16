@@ -687,7 +687,7 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 
 class FilterSetMixin:
-    filterset_class: Type[BaseFilterSet]
+    filterset_class: type[BaseFilterSet]
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
@@ -701,10 +701,13 @@ class FilterSetMixin:
             request=self.request,
         )
 
+    def get_filterset_class(self) -> type[BaseFilterSet]:
+        return self.filterset_class
+
     @property
     def filterset(self):
         if not hasattr(self, "_filterset"):
-            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
+            self._filterset = self.get_filterset_class()(**self.get_filterset_kwargs())
         return self._filterset
 
     def get_queryset(self):

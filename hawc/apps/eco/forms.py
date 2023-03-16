@@ -158,6 +158,12 @@ class ResultForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if design:
             self.instance.design = design
+        self.fields["cause"].queryset = self.fields["cause"].queryset.filter(
+            study_id=self.instance.design.study_id
+        )
+        self.fields["effect"].queryset = self.fields["effect"].queryset.filter(
+            study_id=self.instance.design.study_id
+        )
 
     @property
     def helper(self):

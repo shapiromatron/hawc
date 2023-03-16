@@ -3,6 +3,7 @@ import json
 import logging
 import pickle
 import re
+from copy import copy
 from io import BytesIO
 from math import ceil
 from urllib import parse
@@ -821,24 +822,53 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         exc.add_child(name="Tier III")
 
     @classmethod
-    def get_flattened_taglist(cls, tagslist, include_parent=True):
+    def get_flattened_taglist(cls, tags: dict):
         # expects tags dictionary dump_bulk format
-        lst = []
+        names = []
 
-        def appendChildren(obj, parents):
-            parents = parents + "|" if parents != "" else parents
-            txt = parents + obj["data"]["name"]
-            lst.append(txt)
+        def recurse(obj, parents):
+            txt = f'{parents}{"|" if parents else ""}{obj["data"]["name"]}'
+            names.append(txt)
             for child in obj.get("children", []):
-                appendChildren(child, txt)
+                recurse(child, txt)
 
-        if include_parent:
-            appendChildren(tagslist[0], "")
-        else:
-            for child in tagslist[0].get("children", []):
-                appendChildren(child, "")
+        for tag in tags[0].get("children", []):
+            recurse(tag, "")
 
-        return lst
+        return names
+
+    TreeDescendantType = dict[int, list[set[int]]]
+
+    @classmethod
+    def get_tree_descendants(cls, tags: dict) -> TreeDescendantType:
+        """
+        Returns a dictionary with each tag as the key, and its descendants as well as itself for
+        as a set of values. This is useful for checking if a parent tag should be considered true
+        given the status of a child tag.
+
+        Args:
+            tags (dict): a tag dictionary in dump_bulk formats
+
+        Returns:
+            TreeDescendantType: Returns output dictionary
+        """
+        descendants = {}
+
+        def recurse(tag: dict, parents: list[set]):
+            id = tag["id"]
+            for parent in parents:
+                parent.add(id)
+
+            descendants[id] = {id}
+            parents.append(descendants[id])
+
+            for child in tag.get("children", []):
+                recurse(child, copy(parents))
+
+        for tag in tags[0].get("children", []):
+            recurse(tag, [])
+
+        return descendants
 
 
 class ReferenceTags(ItemBase):
@@ -1170,6 +1200,34 @@ class Reference(models.Model):
             logger.write(
                 f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
             )
+
+    @classmethod
+    def annotate_tag_parents(cls, references: list, tags: models.QuerySet):
+        """Annotate tag parents for all tags and user tags.
+
+        Sets a new attribute (parents: list[Tag]) for each tag.
+
+        Args:
+            references (list): a list of references
+            tags (models.QuerySet): the full tag list for an assessment
+        """
+        tag_map = {tag.path: tag for tag in tags}
+
+        def _set_parents(tag):
+            tag.parents = []
+            current_path = tag.path
+            while True:
+                current_path = tag._get_parent_path_from_path(current_path)
+                if len(current_path) == 4:
+                    break
+                tag.parents.append(tag_map[current_path])
+
+        for reference in references:
+            for tag in reference.tags.all():
+                _set_parents(tag)
+            for user_tag in reference.user_tags.all():
+                for tag in user_tag.tags.all():
+                    _set_parents(tag)
 
 
 class UserReferenceTags(ItemBase):

@@ -43,13 +43,17 @@ class TagNode extends Component {
                         ) : null}
                     </div>
                     <div
-                        className={(showTagHoverAdd ? "tagHoverAdd" : "tagHoverSimple").concat(
+                        className={(showTagHoverAdd ? "tagHoverAdd" : "tagHover").concat(
                             tag === selectedTag ? " tagSelected" : ""
                         )}
                         style={{flex: 1}}>
                         <span>
                             {tag.data.name}
-                            {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
+                            {showReferenceCount ? (
+                                <span className="ml-2 badge badge-dark">
+                                    {tag.get_references_deep().length}
+                                </span>
+                            ) : null}
                         </span>
                     </div>
                 </div>
@@ -88,9 +92,11 @@ class TagTree extends Component {
             untaggedHandleClick,
             untaggedCount,
             showTagHoverAdd,
+            untaggedReferencesSelected,
+            style,
         } = this.props;
         return (
-            <div id="litTagtree" className="resize-y p-2 mt-2">
+            <div id="litTagtree" className="resize-y p-2 mt-2" style={style}>
                 {tagtree.rootNode.children.map((tag, i) => (
                     <TagNode
                         key={i}
@@ -102,8 +108,13 @@ class TagTree extends Component {
                     />
                 ))}
                 {untaggedHandleClick ? (
-                    <p className="nestedTag mt-2" onClick={untaggedHandleClick}>
-                        Untagged References: ({untaggedCount})
+                    <p
+                        className={`nestedTag mt-2 tagHover ${
+                            untaggedReferencesSelected ? "tagSelected" : ""
+                        }`}
+                        onClick={untaggedHandleClick}>
+                        Untagged References:
+                        <span className="ml-2 badge badge-dark">{untaggedCount}</span>
                     </p>
                 ) : null}
             </div>
@@ -118,11 +129,15 @@ TagTree.propTypes = {
     untaggedCount: PropTypes.number,
     untaggedHandleClick: PropTypes.func,
     showTagHoverAdd: PropTypes.bool,
+    untaggedReferencesSelected: PropTypes.bool,
+    style: PropTypes.object,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,
     handleTagClick: h.noop,
     showTagHoverAdd: false,
+    untaggedReferencesSelected: false,
+    style: {},
 };
 
 export default TagTree;
