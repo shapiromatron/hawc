@@ -6,6 +6,7 @@ EXTERNAL_LINK = 0
 
 
 class ReferenceDatabase(models.IntegerChoices):
+    MANUAL = 0, "Manually added"
     PUBMED = 1, "PubMed"
     HERO = 2, "HERO"
     RIS = 3, "RIS (EndNote/Reference Manager)"

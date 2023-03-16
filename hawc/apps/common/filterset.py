@@ -45,8 +45,9 @@ GridRow = ForwardRef("GridRow")
 class GridColumn(BaseModel):
     rows: list[GridRow] = []
 
-    breakpoint: Optional[str]
+    breakpoint: str = ""
     width: Optional[int]
+    extra_css: str = ""
 
     def apply_layout(self, helper, index):
         if self.rows:
@@ -60,9 +61,10 @@ class GridColumn(BaseModel):
 
     @property
     def css_class(self):
-        breakpoint = f"-{self.breakpoint}" if self.breakpoint is not None else ""
+        breakpoint = f"-{self.breakpoint}" if self.breakpoint else ""
         width = f"-{self.width}" if self.width is not None else ""
-        return f"col{breakpoint}{width}"
+        extra = f" {self.extra_css}" if self.extra_css else ""
+        return f"col{breakpoint}{width}{extra}"
 
 
 class GridRow(BaseModel):
@@ -215,7 +217,7 @@ class BaseFilterSet(FilterSet):
         return form
 
 
-def dynamic_filterset(_class: BaseFilterSet, **meta_kwargs):
+def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
     default_kwargs = _class._meta.__dict__
     Meta = type("Meta", (object,), {**default_kwargs, **meta_kwargs})
     return type("DynamicFilterset", (_class,), {"Meta": Meta})

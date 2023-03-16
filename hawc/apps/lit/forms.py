@@ -34,17 +34,44 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
     class Meta:
         model = models.LiteratureAssessment
-        fields = ("extraction_tag",)
+        fields = (
+            "conflict_resolution",
+            "extraction_tag",
+            "screening_instructions",
+            "name_list_1",
+            "color_list_1",
+            "keyword_list_1",
+            "name_list_2",
+            "color_list_2",
+            "keyword_list_2",
+            "name_list_3",
+            "color_list_3",
+            "keyword_list_3",
+        )
+        field_classes = {
+            "screening_instructions": QuillField,
+        }
+        widgets = {
+            "color_list_1": forms.TextInput(attrs={"type": "color"}),
+            "color_list_2": forms.TextInput(attrs={"type": "color"}),
+            "color_list_3": forms.TextInput(attrs={"type": "color"}),
+        }
 
     def setHelper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": "Update literature assessment settings",
                 "help_text": "Update literature settings for this assessment",
-                "cancel_url": reverse_lazy("lit:tags_update", args=(self.instance.assessment_id,)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
+        for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
+            self.fields[fld].widget.attrs["rows"] = 3
+        helper.add_row("conflict_resolution", 2, "col-md-6")
+        helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_3", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         return helper
 
 
@@ -300,6 +327,7 @@ class SearchSelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
@@ -311,7 +339,7 @@ class SearchSelectorForm(forms.Form):
             self.fields["searches"]
             .queryset.filter(assessment__in=assessment_pks)
             .exclude(title="Manual import")
-            .order_by("assessment_id")
+            .order_by("assessment_id", "title")
         )
 
     @property
@@ -508,18 +536,6 @@ class ReferenceForm(forms.ModelForm):
         return instance
 
 
-class ReferenceFilterTagForm(forms.ModelForm):
-    class Meta:
-        model = models.ReferenceFilterTag
-        fields = "__all__"
-
-
-class TagReferenceForm(forms.ModelForm):
-    class Meta:
-        model = models.Reference
-        fields = ("tags",)
-
-
 class TagsCopyForm(forms.Form):
 
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
@@ -527,7 +543,7 @@ class TagsCopyForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("assessment", None)
+        self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
