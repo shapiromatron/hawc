@@ -4652,6 +4652,7 @@
     domain: 3
     name: Was administered dose or exposure level adequately randomized?
     short_name: ''
+    key: demo-a
     description: Randomization requires that each human subject or animal had an equal
       chance of being assigned to any study group including controls (e.g., use of
       random number table or computer generated randomization).
@@ -4670,6 +4671,7 @@
     domain: 3
     name: Was allocation to study groups adequately concealed?
     short_name: ''
+    key: demo-b
     description: 'Allocation concealment requires that research personnel do not know
       which administered dose or exposure level is assigned at the start of a study.
       Human studies also require that allocation be concealed from human subjects
