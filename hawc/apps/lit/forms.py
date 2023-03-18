@@ -613,7 +613,7 @@ class BulkReferenceStudyExtractForm(forms.Form):
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=StudyTypeChoices.choices,
+        choices=StudyTypeChoices.filtered_choices(),
     )
 
     def clean_references(self):

@@ -18,7 +18,7 @@ class StudyFilterSet(BaseFilterSet):
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
-        choices=constants.StudyTypeChoices.choices,
+        choices=constants.StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
         empty_label="<All>",
