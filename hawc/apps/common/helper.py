@@ -514,6 +514,5 @@ def cacheable(
         result = callable(**kw)
         if cache_duration < 0:
             cache_duration = settings.CACHE_1_HR
-        print("set")
         cache.set(cache_key, result, cache_duration)
     return result

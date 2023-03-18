@@ -4,6 +4,7 @@ from typing import Optional
 
 import pandas as pd
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
@@ -356,6 +357,12 @@ class Study(Reference):
     def toggle_editable(self):
         self.editable = not self.editable
         self.save()
+
+    def data_types(self) -> list[bool]:
+        types = [self.bioassay, self.epi, self.epi_meta, self.in_vitro, self.eco]
+        if not settings.HAWC_FEATURES.ENABLE_ECO:
+            types = types[:-1]
+        return types
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):

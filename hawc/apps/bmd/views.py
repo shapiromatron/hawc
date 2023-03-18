@@ -38,7 +38,7 @@ class AssessSettingsUpdate(BaseUpdate):
 class SessionCreate(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
-        if not self.object.assessment.can_edit_object(self.request.user):
+        if not self.object.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
         try:
             obj = models.Session.create_new(self.object)

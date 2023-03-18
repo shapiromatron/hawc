@@ -645,7 +645,6 @@ class RefFilterList(BaseFilterList):
                         },
                     ]
                 },
-                {"columns": [{"width": 6}, {"width": 6}]},
             ]
         },
     )
@@ -986,17 +985,3 @@ class BulkTagReferences(BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
-
-
-class ReferenceTagHistory(BaseDetail):
-    template_name = "lit/reference_tag_history.html"
-    model = models.Reference
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Tag history"
-        )
-        context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
-        return context

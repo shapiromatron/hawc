@@ -1,5 +1,6 @@
 import traceback
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -43,7 +44,7 @@ class AssessmentSettings(models.Model):
 
     @property
     def can_create_sessions(self):
-        return self.version.startswith("BMDS3")
+        return settings.HAWC_FEATURES.ENABLE_BMDS_33 and self.version.startswith("BMDS3")
 
 
 class Session(models.Model):
