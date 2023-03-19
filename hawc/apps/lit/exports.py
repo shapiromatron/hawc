@@ -64,7 +64,6 @@ class ReferenceFlatComplete(FlatFileExporter):
         tag_tree = models.ReferenceFilterTag.get_tree_descendants(self.kwargs["tags"])
         user_tags = self.kwargs.get("user_tags", False)
         func = self._get_reference_rows_with_users if user_tags else self._get_reference_rows
-        print(tag_tree)
         return func(tag_tree)
 
     def _get_reference_rows(

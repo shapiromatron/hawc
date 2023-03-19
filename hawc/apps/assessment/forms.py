@@ -12,9 +12,15 @@ from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
+from hawc.apps.assessment import constants
+from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
+from ..common.autocomplete import (
+    AutocompleteSelectMultipleWidget,
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -117,6 +123,156 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
+        return helper
+
+
+class AssessmentDetailForm(forms.ModelForm):
+    CREATE_LEGEND = "Add additional Assessment details"
+    CREATE_HELP_TEXT = ""
+    UPDATE_HELP_TEXT = "Update additional details for this Assessment."
+
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
+    class Meta:
+        model = models.AssessmentDetail
+        fields = "__all__"
+        widgets = {
+            "project_type": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentDetailAutocomplete, field="project_type"
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if self.assessment:
+            self.fields["assessment"].initial = self.assessment
+            self.instance.assessment = self.assessment
+
+    def clean(self) -> dict:
+        cleaned_data = super().clean()
+        # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
+        if cleaned_data["extra"] is None:
+            cleaned_data["extra"] = dict()
+        return cleaned_data
+
+    @property
+    def helper(self):
+        self.fields["extra"].widget.attrs["rows"] = 3
+        if self.instance.id:
+            helper = BaseFormHelper(
+                self,
+                help_text=self.UPDATE_HELP_TEXT,
+                cancel_url=self.instance.get_absolute_url(),
+            )
+        else:
+            helper = BaseFormHelper(
+                self,
+                legend_text=self.CREATE_LEGEND,
+                help_text=self.CREATE_HELP_TEXT,
+                cancel_url=self.instance.assessment.get_absolute_url(),
+            )
+
+        helper.add_row("project_type", 3, "col-md-4")
+        helper.add_row("peer_review_status", 3, "col-md-4")
+        helper.add_row("report_id", 3, "col-md-4")
+        return helper
+
+
+class AssessmentValueForm(forms.ModelForm):
+    CREATE_LEGEND = "Create Assessment values"
+    CREATE_HELP_TEXT = ""
+    UPDATE_HELP_TEXT = "Update current assessment value."
+
+    class Meta:
+        model = models.AssessmentValue
+        exclude = ["assessment"]
+        widgets = {
+            "system": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="system"
+            ),
+            "duration": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="duration"
+            ),
+            "tumor_type": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="tumor_type"
+            ),
+            "extrapolation_method": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="extrapolation_method",
+            ),
+            "evidence": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="evidence"
+            ),
+            "value_unit": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="value_unit"
+            ),
+            "pod_unit": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_unit"
+            ),
+            "species_studied": AutocompleteSelectWidget(
+                autocomplete_class=autocomplete.SpeciesAutocomplete
+            ),
+            "pod_type": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_type"
+            ),
+            "confidence": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="confidence"
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+        self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
+        if cleaned_data["extra"] is None:
+            cleaned_data["extra"] = dict()
+
+        evaluation_type = cleaned_data.get("evaluation_type")
+        if evaluation_type != constants.EvaluationType.NONCANCER:
+            for field in ["tumor_type", "extrapolation_method", "evidence"]:
+                if not cleaned_data.get(field):
+                    msg = "Required for Cancer evaluation types."
+                    self.add_error(field, msg)
+        if evaluation_type != constants.EvaluationType.CANCER:
+            if not cleaned_data.get("uncertainty"):
+                msg = "Required for Noncancer evaluation types."
+                self.add_error("uncertainty", msg)
+
+    @property
+    def helper(self):
+        for fld in ["comments", "basis", "extra"]:
+            self.fields[fld].widget.attrs["rows"] = 3
+
+        if self.instance.id:
+            helper = BaseFormHelper(
+                self,
+                help_text=self.UPDATE_HELP_TEXT,
+                cancel_url=self.instance.get_absolute_url(),
+            )
+
+        else:
+            helper = BaseFormHelper(
+                self,
+                legend_text=self.CREATE_LEGEND,
+                help_text=self.CREATE_HELP_TEXT,
+                cancel_url=self.instance.assessment.get_absolute_url(),
+            )
+        helper.add_row("evaluation_type", 2, "col-md-6")
+        helper.add_row("value_type", 3, "col-md-4")
+        helper.add_row("confidence", 3, "col-md-4")
+        helper.add_row("pod_type", 4, "col-md-3")
+        helper.add_row("species_studied", 3, "col-md-4")
+        helper.add_row("tumor_type", 4, "col-md-3")
+        helper.add_row("comments", 2, "col-md-6")
+
         return helper
 
 
