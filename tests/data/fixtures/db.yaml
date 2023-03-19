@@ -1639,8 +1639,6 @@
   fields:
     unique_id: 10.1016/j.jep.2021.114077
     database: 4
-    unique_id: '27245597'
-    database: 1
     content: ''
     url: ''
 - model: lit.referencefiltertag

@@ -1,4 +1,4 @@
-from typing import ForwardRef, Optional, Type
+from typing import ForwardRef, Optional
 
 import django_filters as df
 from crispy_forms import layout as cfl
