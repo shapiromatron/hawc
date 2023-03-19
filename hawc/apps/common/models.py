@@ -490,6 +490,42 @@ def get_model_copy_name(instance: models.Model) -> str:
     return getattr(instance, "COPY_NAME", instance._meta.db_table)
 
 
+def include_related(
+    queryset: QuerySet, ancestors: bool = True, descendants: bool = True
+) -> QuerySet:
+    """Update treebeard.MP_Node QuerySet to include related objects.
+
+    Args:
+        queryset (QuerySet): A treebeard.MP_Node QuerySet
+        ancestors (bool, optional): Include direct ancestors of items in QuerySet
+        descendants (bool, optional): Include descendants of items in QuerySet
+
+    Returns:
+        A QuerySet containing items from the original queryset and any additional items
+    """
+    if not ancestors and not descendants:
+        return queryset
+
+    paths = list(queryset.values_list("path", "depth"))
+    if len(paths) == 0:
+        return queryset
+
+    filters = Q()
+    steplen = queryset.model.steplen
+    if ancestors:
+        parent_paths = []
+        for path, depth in paths:
+            for d in range(depth - 1):
+                parent_paths.append(path[: ((d + 1) * steplen)])
+        filters |= Q(path__in=parent_paths)
+
+    if descendants:
+        items = "|".join(p for p, _ in paths)
+        filters |= Q(path__regex=f"^({items}).+")
+
+    return queryset | queryset.model.objects.filter(filters)
+
+
 class NumericTextField(models.CharField):
     generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
     validators = [validators.NumericTextValidator()]
