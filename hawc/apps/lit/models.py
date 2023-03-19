@@ -772,7 +772,7 @@ class Identifiers(models.Model):
     def save(self, *args, **kwargs):
         if self.database == constants.ReferenceDatabase.DOI:
             self.unique_id = self.unique_id.lower()
-        return super(Identifiers, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
