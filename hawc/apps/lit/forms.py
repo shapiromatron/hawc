@@ -17,6 +17,7 @@ from ..common.forms import (
     addPopupLink,
     check_unique_for_assessment,
 )
+from ..study.constants import StudyTypeChoices
 from ..study.models import Study
 from . import constants, models
 
@@ -612,12 +613,7 @@ class BulkReferenceStudyExtractForm(forms.Form):
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=[
-            ("bioassay", "Animal bioassay"),
-            ("in_vitro", "In vitro"),
-            ("epi", "Epidemiology"),
-            ("epi_meta", "Epidemiology meta-analysis"),
-        ],
+        choices=StudyTypeChoices.filtered_choices(),
     )
 
     def clean_references(self):

@@ -54,3 +54,13 @@ class StrainAutocomplete(BaseAutocomplete):
 class DoseUnitsAutocomplete(BaseAutocomplete):
     model = models.DoseUnits
     search_fields = ["name"]
+
+
+@register
+class AssessmentDetailAutocomplete(BaseAutocomplete):
+    model = models.AssessmentDetail
+
+
+@register
+class AssessmentValueAutocomplete(BaseAutocomplete):
+    model = models.AssessmentValue

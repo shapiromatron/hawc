@@ -10,6 +10,7 @@ from rest_framework.test import APIClient
 def media_file():
     fn = Path(settings.MEDIA_ROOT) / "test.txt"
     if not fn.exists():
+        fn.parent.mkdir(parents=True, exist_ok=True)
         fn.write_text("hello\n")
 
 

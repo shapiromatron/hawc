@@ -1,4 +1,7 @@
 from django.contrib import admin
+from treebeard.admin import TreeAdmin
+
+from hawc.apps.common.admin import admin_edit_link
 
 from . import forms, models
 
@@ -24,7 +27,7 @@ class VocabAdmin(admin.ModelAdmin):
 class DesignAdmin(admin.ModelAdmin):
     form = forms.DesignForm
     list_display = ("id", "__str__", "study", "design", "created", "last_updated")
-    list_filter = ("design", "habitat")
+    list_filter = ("design", "habitats")
     search_fields = ("study__short_citation",)
 
     def get_queryset(self, request):
@@ -44,12 +47,22 @@ class CauseAdmin(admin.ModelAdmin):
         return qs.select_related("study", "term")
 
 
+class ResultInlineAdmin(admin.TabularInline):
+    model = models.Result
+    extra = 0
+    readonly_fields = (admin_edit_link,)
+
+    @admin.display(description="Detailed edit link")
+    def edit_link(self, instance):
+        return admin_edit_link(instance)
+
+
 @admin.register(models.Effect)
 class EffectAdmin(admin.ModelAdmin):
     form = forms.EffectForm
     list_display = ("id", "study", "term", "created", "last_updated")
-    list_filter = (("study", admin.RelatedOnlyFieldListFilter),)
     search_fields = ("study__short_citation",)
+    inlines = [ResultInlineAdmin]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -62,7 +75,6 @@ class ResultAdmin(admin.ModelAdmin):
     form = forms.ResultForm
     list_display = (
         "id",
-        "study",
         "design",
         "cause",
         "effect",
@@ -71,7 +83,6 @@ class ResultAdmin(admin.ModelAdmin):
         "last_updated",
     )
     list_filter = (
-        ("study", admin.RelatedOnlyFieldListFilter),
         ("design", admin.RelatedOnlyFieldListFilter),
         ("cause", admin.RelatedOnlyFieldListFilter),
         ("effect", admin.RelatedOnlyFieldListFilter),
@@ -79,4 +90,9 @@ class ResultAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related("study", "design", "cause", "effect")
+        return qs.select_related("design", "cause", "effect")
+
+
+@admin.register(models.NestedTerm)
+class NestedTermAdmin(TreeAdmin):
+    pass

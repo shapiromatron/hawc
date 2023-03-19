@@ -12,11 +12,13 @@ class AuthProvider(str, Enum):
 
 class FeatureFlags(BaseModel):
     THIS_IS_AN_EXAMPLE: bool = True
-    ENABLE_ECO: bool = False
     FIPS_MODE: bool = False
     DEFAULT_LITERATURE_CONFLICT_RESOLUTION: bool = False
     ALLOW_RIS_IMPORTS: bool = True
     ANONYMOUS_ACCOUNT_CREATION: bool = True
+    ENABLE_ECO: bool = False
+    ENABLE_ASSESSMENT_VALUES: bool = False
+    ENABLE_BMDS_33 = False
 
     @classmethod
     def from_env(cls, variable) -> "FeatureFlags":
