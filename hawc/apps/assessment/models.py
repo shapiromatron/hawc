@@ -654,8 +654,8 @@ class AssessmentValue(models.Model):
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
     comments = models.TextField(
-        blank=True, help_text=" "
-    )  # help text is a blank space so that it can be dynamically replaced in the form
+        blank=True, help_text="General comments related to the derivation of this value"
+    )
     extra = models.JSONField(
         default=dict,
         blank=True,

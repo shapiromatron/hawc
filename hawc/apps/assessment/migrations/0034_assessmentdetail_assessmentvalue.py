@@ -164,7 +164,13 @@ class Migration(migrations.Migration):
                         verbose_name="Non-ADAF adjusted value",
                     ),
                 ),
-                ("comments", models.TextField(blank=True)),
+                (
+                    "comments",
+                    models.TextField(
+                        blank=True,
+                        help_text="General comments related to the derivation of this value",
+                    ),
+                ),
                 (
                     "extra",
                     models.JSONField(
