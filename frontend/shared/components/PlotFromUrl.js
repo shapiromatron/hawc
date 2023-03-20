@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Plot from "react-plotly.js";
 import Loading from "shared/components/Loading";
+
+import PlotlyFigure from "./PlotlyFigure";
 
 class PlotFromUrl extends Component {
     static propTypes = {
@@ -37,14 +38,7 @@ class PlotFromUrl extends Component {
         if (data === null) {
             return <Loading />;
         }
-        return (
-            <Plot
-                data={data.data}
-                layout={data.layout}
-                useResizeHandler={true}
-                style={{width: "100%", height: "100%"}}
-            />
-        );
+        return <PlotlyFigure data={data.data} layout={data.layout} />;
     }
 }
 
