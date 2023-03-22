@@ -1,6 +1,8 @@
+import {helpText} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import HelpTextPopup from "shared/components/HelpTextPopup";
 import h from "shared/utils/helpers";
 
 const MAX_ROWS = 150;
@@ -41,11 +43,32 @@ class Table extends Component {
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>System</th>
-                                <th>Organ</th>
-                                <th>Effect</th>
-                                <th>Effect subtype</th>
-                                <th>Name</th>
+                                <th>
+                                    System
+                                    <HelpTextPopup title="System" content={helpText.system_popup} />
+                                </th>
+                                <th>
+                                    Organ
+                                    <HelpTextPopup title="Organ" content={helpText.organ_popup} />
+                                </th>
+                                <th>
+                                    Effect
+                                    <HelpTextPopup title="Effect" content={helpText.effect_popup} />
+                                </th>
+                                <th>
+                                    Effect subtype
+                                    <HelpTextPopup
+                                        title="Effect subtype"
+                                        content={helpText.effect_subtype_popup}
+                                    />
+                                </th>
+                                <th>
+                                    Endpoint/Outcome
+                                    <HelpTextPopup
+                                        title="Endpoint/Outcome"
+                                        content={helpText.endpoint_name_popup}
+                                    />
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
