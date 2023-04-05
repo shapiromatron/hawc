@@ -455,7 +455,7 @@ class Assessment(models.Model):
 
     @property
     def has_lit_data(self) -> bool:
-        return self._has_data("lit", "Reference")
+        return self._has_data("lit", "Reference", filter="assessment")
 
     @property
     def has_rob_data(self) -> bool:
