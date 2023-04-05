@@ -1,6 +1,9 @@
 -r base.txt
 -r docs.txt
 
+# build
+build==0.8.0
+
 # lint and formatting tools
 black==22.3.0
 flake8==4.0.1
