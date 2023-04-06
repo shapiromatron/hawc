@@ -560,6 +560,7 @@ class Visual(models.Model):
             return from_json(self.settings)
         raise ValueError("Incorrect visual type to get a custom Plotly visual.")
 
+
 class DataPivot(models.Model):
     objects = managers.DataPivotManager()
 
