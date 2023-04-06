@@ -570,6 +570,7 @@ class ReferenceExcelUploadForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
