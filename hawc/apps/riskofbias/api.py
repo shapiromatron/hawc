@@ -263,7 +263,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = get_assessment_id_param(request)
-        return get_object_or_404(self.parent_model, pk=assessment_id)
+        return get_object_or_404(Assessment, pk=assessment_id)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("overridden_objects__content_object")

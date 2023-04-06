@@ -39,7 +39,6 @@ class UnpublishedFilter(BaseFilterBackend):
 
 
 class SummaryAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}

@@ -512,21 +512,21 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
 
 class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["study_population", "outcome"]
-    assessment_filter_args = "assessment"  # todo: fix
+    assessment_filter_args = "study_population__study__assessment"
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
 
 
 class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["group"]
-    # assessment_filter_args = "group__assessment"
+    assessment_filter_args = "group__comparison_set__study_population__study__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
 class Group(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["comparison_set"]
-    assessment_filter_args = "assessment"  # todo: fix
+    assessment_filter_args = "comparison_set__study_population__study__assessment"
     model = models.Group
     serializer_class = serializers.GroupSerializer
 

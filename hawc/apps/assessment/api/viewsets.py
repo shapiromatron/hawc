@@ -146,7 +146,6 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
-    parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
     lookup_value_regex = re_digits
 
