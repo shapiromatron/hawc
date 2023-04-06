@@ -562,6 +562,7 @@ class VisualForm(forms.ModelForm):
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.EXPLORE_HEATMAP,
+            constants.VisualType.PLOTLY_JSON,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -927,6 +928,27 @@ class ExploreHeatmapForm(VisualForm):
         )
 
 
+class PlotlyJsonForm(VisualForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["settings"].label = "JSON for Plotly visual"
+        self.fields["settings"].help_text = (
+            "Create a Plotly visual in another tool, such as a Jupyter Notebook, and use the "
+            "to_json function to convert the figure to a JSON. Copy and paste that JSON here."
+        )
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "settings",
+            "caption",
+            "published",
+        )
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -937,6 +959,7 @@ def get_visual_form(visual_type):
             constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
             constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
+            constants.VisualType.PLOTLY_JSON: PlotlyJsonForm,
         }[visual_type]
     except Exception:
         raise ValueError()

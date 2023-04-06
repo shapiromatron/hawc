@@ -32,7 +32,7 @@ bleach[css]==5.0.1
 numpy==1.22.2
 pandas==1.4.3
   openpyxl==3.0.10
-plotly==5.6.0
+plotly==5.14.1
 pyarrow==7.0.0
 scipy==1.8.0
 nltk==3.7

@@ -24,6 +24,7 @@ class VisualType(models.IntegerChoices):
     LITERATURE_TAGTREE = 4, "literature tagtree"
     EXTERNAL_SITE = 5, "embedded external website"
     EXPLORE_HEATMAP = 6, "exploratory heatmap"
+    PLOTLY_JSON = 7, "plotly json"
 
 
 class SortOrder(models.TextChoices):

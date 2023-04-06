@@ -1,0 +1,11 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+
+{% block content %}
+<div class='visualization'>
+  <h2>{{object.title}}</h2>
+  {% plotly object.get_plotly_from_json %}
+  <p>{{object.caption}}</p>
+</div>
+{% endblock %}

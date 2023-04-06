@@ -346,6 +346,12 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         )
         return context
 
+    def get_template_names(self):
+        if self.object.visual_type == constants.VisualType.PLOTLY_JSON:
+            return "summary/visual_detail_plotly.html"
+        else:
+            return super().get_template_names()
+
 
 class VisualizationCreateSelector(BaseDetail):
     model = Assessment
@@ -392,6 +398,7 @@ class VisualizationCreate(BaseCreate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY_JSON,
         }:
             return "summary/visual_form_django.html"
         else:
@@ -499,6 +506,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY_JSON,
         }:
             return "summary/visual_form_django.html"
         else:
