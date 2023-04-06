@@ -514,7 +514,11 @@ class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["study_population", "outcome"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.ComparisonSet
-    serializer_class = serializers.ComparisonSetSerializer
+
+    def get_serializer_class(self):
+        if self.action in ["list"]:
+            return serializers.ComparisonSetLinkSerializer
+        return serializers.ComparisonSetSerializer
 
 
 class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
