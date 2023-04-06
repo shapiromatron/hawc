@@ -137,6 +137,17 @@
           href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
       </p>
     </div>
+    <div id="detail-7" class="col-md-12">
+      <h3>Custom Plotly Visual</h3>
+      <div class="row">
+        <img alt="Image of a graph made using plotly" class="col-md-10 col-md-offset-1"
+          src="{% static '/img/summary/exploratory-heatmap.png' %}">
+      </div>
+      <p class="form-text text-muted">
+        Add a visual using JSON generated from a Plotly visual that was created in another tool (such as a Jupyter
+        notebook).
+      </p>
+    </div>
   </div>
 </div>
 {% endblock %}
