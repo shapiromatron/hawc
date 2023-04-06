@@ -66,6 +66,18 @@ class AutocompleteWidgetMixin:
         self.filters.update(filters)
         self.url = self.autocomplete_class.url(**self.filters)
 
+    def filter_choices_to_render(self, selected_choices):
+        """Filter out un-selected choices if choices is a QuerySet.
+
+        patched - see https://github.com/yourlabs/django-autocomplete-light/pull/1321
+        """
+        try:
+            qs = self.choices.queryset.filter(pk__in=[c for c in selected_choices if c])
+        except ValueError:
+            # set queryset to empty set if filters are invalid
+            qs = self.choices.queryset.none()
+        self.choices.queryset = qs
+
 
 class AutocompleteSelectWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2):
     pass
