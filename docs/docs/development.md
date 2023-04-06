@@ -5,10 +5,10 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.9
+- [Python](https://www.python.org/) == 3.10
 - [Node.js](https://nodejs.org)
-- [Yarn](https://yarnpkg.com/)
-- [PostgreSQL](https://www.postgresql.org/) == 12
+- [Yarn](https://yarnpkg.com/) < 2
+- [PostgreSQL](https://www.postgresql.org/) >= 12
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
@@ -50,9 +50,9 @@ For Windows, use anaconda or miniconda to get requirements can be used to get de
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.9 postgresql=12
+conda install python=3.10 postgresql
 conda install -c conda-forge nodejs
-conda install -c conda-forge yarn
+conda install -c conda-forge yarn=1.22.19
 
 :: clone repository; we'll put in dev but you can put anywhere
 mkdir %HOMEPATH%\dev
