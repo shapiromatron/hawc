@@ -5,7 +5,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.9
+- [Python](https://www.python.org/) = 3.9
 - [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com/) < 2
 - [PostgreSQL](https://www.postgresql.org/) >= 12
