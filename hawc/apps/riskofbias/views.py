@@ -3,7 +3,9 @@ from typing import Iterable
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Prefetch
+from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -20,6 +22,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     TimeSpentOnPageMixin,
+    create_object_log,
     get_referrer,
 )
 from ..study.filterset import StudyFilterSet
@@ -111,7 +114,6 @@ class ARoBEdit(BaseDetail):
 
 
 class ARoBTextEdit(BaseUpdate):
-    parent_model = Assessment
     model = models.RiskOfBiasAssessment
     template_name = "riskofbias/arob_text_form.html"
     form_class = forms.RobTextForm
@@ -128,12 +130,10 @@ class ARoBTextEdit(BaseUpdate):
 
 
 class ARoBCopy(BaseUpdate):
-    model = models.RiskOfBiasDomain
-    parent_model = Assessment
+    model = Assessment
     template_name = "riskofbias/arob_copy.html"
     form_class = forms.RiskOfBiasCopyForm
-    success_message = "Settings have been updated."
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    success_message = "Domains and metrics have been updated."
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -150,17 +150,22 @@ class ARoBCopy(BaseUpdate):
         return context
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
 
+    @transaction.atomic
     def form_valid(self, form):
         form.evaluate()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("riskofbias:arob_update", args=(self.assessment.id,))
+        self.send_message()
+        create_object_log(
+            "replace",
+            self.assessment,
+            self.assessment.id,
+            self.request.user.id,
+            "Bulk replaced RiskOfBias Domain and Metrics",
+        )
+        return HttpResponseRedirect(reverse("riskofbias:arob_update", args=(self.assessment.id,)))
 
 
 class ARoBLoadApproach(ARoBCopy):

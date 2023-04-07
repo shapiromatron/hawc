@@ -64,10 +64,17 @@ class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
-    name = models.CharField(max_length=256)
-    short_name = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=256, help_text="Complete name of metric.")
+    short_name = models.CharField(
+        max_length=50, blank=True, help_text="Short name, may be used in visualizations."
+    )
+    key = models.CharField(
+        max_length=8,
+        blank=True,
+        help_text="A unique identifier if it is from a standard protocol or procedure; can be used to match metrics across assessments.",
+    )
     description = models.TextField(
-        blank=True, help_text="HTML text describing scoring of this field."
+        blank=True, help_text="Detailed instructions for how to apply this metric."
     )
     responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
     required_animal = models.BooleanField(

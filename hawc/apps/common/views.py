@@ -79,7 +79,7 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
-def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
+def create_object_log(verb: str, obj, assessment_id: int, user_id: int, log_message: str = ""):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
 
@@ -90,10 +90,12 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
         obj (Any): the object
         assessment_id (int): the object assessment id
         user_id (int): the user id
+        log_message (str): override for custom message
     """
     # Log action
     meta = obj._meta
-    log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
+    if not log_message:
+        log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
         assessment_id=assessment_id,
         user_id=user_id,
