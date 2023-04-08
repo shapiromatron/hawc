@@ -214,8 +214,8 @@ class FlatJSON:
 
         if not isinstance(value, dict):
             raise ValidationError(cls.ERROR_MSG)
-        for key, value in value.items():
-            if not isinstance(key, str) or isinstance(value, list | dict):
+        for key, val in value.items():
+            if not isinstance(key, str) or isinstance(val, list | dict):
                 valid = False
                 break
         if valid is False and raise_exception:

@@ -32,7 +32,7 @@ ADMINS: list[tuple[str, str]] = []
 _admin_names = os.getenv("DJANGO_ADMIN_NAMES", "")
 _admin_emails = os.getenv("DJANGO_ADMIN_EMAILS", "")
 if len(_admin_names) > 0 and len(_admin_emails) > 0:
-    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
+    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|"), strict=True))
 MANAGERS = ADMINS
 
 # add randomness to admin url

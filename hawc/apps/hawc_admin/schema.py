@@ -38,7 +38,10 @@ class CompleteSchemaGenerator(SchemaGenerator):
                     continue
                 if components_schemas[k] == components[k]:
                     continue
-                warnings.warn(f'Schema component "{k}" has been overriden with a different value.')
+                warnings.warn(
+                    f'Schema component "{k}" has been overridden with a different value.',
+                    stacklevel=1,
+                )
 
             components_schemas.update(components)
 

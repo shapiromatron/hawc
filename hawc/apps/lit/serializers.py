@@ -342,7 +342,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
     )
 
     def validate_replace(self, replace: list) -> list:
-        self.ref_ids, self.hero_ids = zip(*replace)
+        self.ref_ids, self.hero_ids = zip(*replace, strict=True)
         assessment = self.context["assessment"]
         references = models.Reference.objects.filter(id__in=self.ref_ids)
 

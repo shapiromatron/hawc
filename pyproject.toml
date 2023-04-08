@@ -18,8 +18,8 @@ omit = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-select = ["E", "W", "F", "I", "UP", "RUF"]
-ignore = ["E501"]
+select = ["E", "W", "F", "I", "UP", "RUF", "Q", "B"]
+ignore = ["E501", "B904", "B007"]
 
 [tool.ruff.isort]
 known-first-party = ["hawc", "hawc_client"]

@@ -1119,12 +1119,12 @@ class Reference(models.Model):
         year = content.get("year")
 
         # set all of the fields on this reference
-        setattr(self, "title", title)
-        setattr(self, "journal", journal)
-        setattr(self, "abstract", abstract)
-        setattr(self, "authors_short", authors_short)
-        setattr(self, "authors", authors)
-        setattr(self, "year", year)
+        self.title = title
+        self.journal = journal
+        self.abstract = abstract
+        self.authors_short = authors_short
+        self.authors = authors
+        self.year = year
 
         if save:
             self.save()

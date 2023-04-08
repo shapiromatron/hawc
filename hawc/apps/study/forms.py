@@ -58,7 +58,9 @@ class BaseStudyForm(forms.ModelForm):
 
         self.helper = self.setHelper()
 
-    def setHelper(self, inputs={}):
+    def setHelper(self, inputs: dict | None = None):
+        if inputs is None:
+            inputs = {}
         for fld in ("full_citation", "coi_details", "funding_source", "ask_author"):
             self.fields[fld].widget.attrs["rows"] = 3
         for fld in list(self.fields.keys()):

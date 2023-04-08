@@ -41,7 +41,7 @@ class Breadcrumb(BaseModel):
         crumbs = []
         while True:
             crumbs.append(cls.from_object(obj))
-            parent_key = getattr(obj, "BREADCRUMB_PARENT")
+            parent_key = obj.BREADCRUMB_PARENT
             if parent_key is None:
                 break
             obj = getattr(obj, parent_key)

@@ -1571,7 +1571,7 @@ class TestMetadataApi:
         # Disable non-assesssment-specific list view of metadata
         try:
             url = reverse("epi:api:metadata-list")
-            assert False
+            raise AssertionError()
         except NoReverseMatch:
             # This is correct behavior
             pass

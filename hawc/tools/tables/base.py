@@ -43,7 +43,7 @@ class BaseCell(BaseModel):
 
     @classmethod
     def parse_args(cls, *args):
-        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args)})
+        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args, strict=True)})
 
 
 class BaseCellGroup(BaseModel):
