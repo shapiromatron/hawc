@@ -42,7 +42,8 @@ def adopt_studies(assessment_id: int):
     new_refcount = manual.references.count()
 
     print(f"{old_refcount} + {orphans.count()} = {new_refcount}")
-    assert old_refcount + orphans.count() == new_refcount
+    if old_refcount + orphans.count() != new_refcount:
+        raise ValueError()
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ import os
 
 def _non_security_md5(*args, **kwargs):
     kwargs["usedforsecurity"] = False
-    return hashlib.md5(*args, **kwargs)
+    return hashlib.md5(*args, **kwargs)  # noqa: S324
 
 
 def monkey_patch_md5(modules_to_patch):

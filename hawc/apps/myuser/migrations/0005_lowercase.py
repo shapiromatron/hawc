@@ -8,7 +8,8 @@ def lowercase_emails(apps, schema_editor):
     # preflight-check
     emails = pd.Series(list(HAWCUser.objects.all().values_list("email", flat=True)))
     if emails.size > 0:
-        assert emails.size == emails.str.lower().unique().size
+        if emails.size != emails.str.lower().unique().size:
+            raise ValueError()
 
     for user in HAWCUser.objects.all():
         email = user.email.lower()

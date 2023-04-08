@@ -245,12 +245,12 @@ class PubMedParser:
                     normalize_author(f"{auth.find('LastName').text} {auth.find('Initials').text}")
                 )
             except Exception:
-                pass
+                logger.error("Error parsing LastName + Initials")
 
             try:
                 names.append(auth.find("CollectiveName").text)
             except Exception:
-                pass
+                logger.error("Error parsing CollectiveName")
 
         return {"authors": names, "authors_short": get_author_short_text(names)}
 

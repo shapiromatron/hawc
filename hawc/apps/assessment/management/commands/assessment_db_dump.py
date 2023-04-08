@@ -236,7 +236,7 @@ class Command(UnicodeCommand):
         model = getattr(field.model, field.name).through
         fields = self.get_select_fields(model)
         select_include = self.generate_select(fields, db_table)
-        qry = f'SELECT {select_include} FROM "{db_table}" WHERE "{db_table}"."{matchfield}" IN ({ids})'
+        qry = f'SELECT {select_include} FROM "{db_table}" WHERE "{db_table}"."{matchfield}" IN ({ids})'  # noqa: S608
         self.convert_copy(db_table, fields, qry)
 
     def convert_copy(self, db_table, fields, qry):

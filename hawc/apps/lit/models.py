@@ -217,7 +217,7 @@ class LiteratureAssessment(models.Model):
     def get_topic_tsne_data(self) -> dict:
         if not self.has_topic_model:
             raise ValueError("No data available.")
-        data = pickle.load(self.topic_tsne_data.file.file)
+        data = pickle.load(self.topic_tsne_data.file.file)  # noqa: S301
         data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
         data["topics"] = pd.read_parquet(BytesIO(data["topics"]), engine="pyarrow")
         return data

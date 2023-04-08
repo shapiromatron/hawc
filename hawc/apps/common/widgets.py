@@ -96,7 +96,7 @@ class ChoiceOtherWidget(MultiWidget):
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
-        ctx["widget"].update(jsid=randint(1, 99999), other_choice=self.other_choice)
+        ctx["widget"].update(jsid=randint(1, 99999), other_choice=self.other_choice)  # noqa: S311
         return ctx
 
 

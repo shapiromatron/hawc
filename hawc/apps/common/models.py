@@ -250,7 +250,7 @@ class AssessmentRootMixin:
                     f'{name} "{orphan.name}" {orphan.id} is orphaned [path={orphan.path}]. Deleting.'
                 )
                 cursor.execute(
-                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s",
+                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s",  # noqa: S608
                     [orphan.id],
                 )
             cursor.close()

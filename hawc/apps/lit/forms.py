@@ -587,8 +587,8 @@ class ReferenceExcelUploadForm(forms.Form):
             df = pd.read_excel(fn.file)
             df = df[["HAWC ID", "Full text URL"]]
             df["Full text URL"].fillna("", inplace=True)
-            assert df["HAWC ID"].dtype == np.int64
-            assert df["Full text URL"].dtype == np.object0
+            if df["HAWC ID"].dtype != np.int64 or df["Full text URL"].dtype != np.object0:
+                raise ValueError()
             self.cleaned_data["df"] = df
         except Exception as e:
             logger.warning(e)
