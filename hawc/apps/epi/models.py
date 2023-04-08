@@ -12,7 +12,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy.stats import t
 
-from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
+from ..assessment.models import BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..study.models import Study
 from . import constants, managers
@@ -48,13 +48,6 @@ class Criteria(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def copy_across_assessments(self, cw):
-        new_obj, _ = self._meta.model.objects.get_or_create(
-            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
-            description=self.description,
-        )
-        cw[self.COPY_NAME][self.id] = new_obj.id
-
 
 class Country(models.Model):
     objects = managers.CountryManager()
@@ -87,13 +80,6 @@ class AdjustmentFactor(models.Model):
     def __str__(self):
         return self.description
 
-    def copy_across_assessments(self, cw):
-        new_obj, _ = self._meta.model.objects.get_or_create(
-            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
-            description=self.description,
-        )
-        cw[self.COPY_NAME][self.id] = new_obj.id
-
 
 class Ethnicity(models.Model):
     objects = managers.EthnicityManger()
@@ -119,14 +105,6 @@ class StudyPopulationCriteria(models.Model):
     criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
 
     COPY_NAME = "spcriterias"
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.criteria_id = cw[Criteria.COPY_NAME][self.criteria_id]
-        self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 class StudyPopulation(models.Model):
@@ -317,26 +295,6 @@ class StudyPopulation(models.Model):
     def can_create_sets(self):
         return self.design not in self.OUTCOME_GROUP_DESIGNS
 
-    def copy_across_assessments(self, cw):
-        countries = list(self.countries.all().order_by("id"))
-        children = list(
-            itertools.chain(
-                self.criteria.all().order_by("id"),
-                self.spcriteria.all().order_by("id"),
-                self.exposures.all().order_by("id"),
-                self.comparison_sets.all().order_by("id"),
-                self.outcomes.all().order_by("id"),
-            )
-        )
-        old_id = self.id
-        self.id = None
-        self.study_id = cw[Study.COPY_NAME][self.study_id]
-        self.save()
-        self.countries.set(countries)
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.study
 
@@ -467,38 +425,6 @@ class Outcome(BaseEndpoint):
             ser["last_updated"],
         )
 
-    def copy_across_assessments(self, cw):
-        effects = list(self.effects.all().order_by("id"))
-        children = list(
-            itertools.chain(
-                self.comparison_sets.all().order_by("id"),
-                self.results.all().order_by("id"),
-            )
-        )
-
-        old_id = self.id
-        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-
-        # copy base endpoint
-        base = self.baseendpoint_ptr
-        base.id = None
-        base.assessment_id = new_assessment_id
-        base.save()
-
-        # copy outcome
-        self.id = None
-        self.baseendpoint_ptr = base
-        self.assessment_id = new_assessment_id
-        self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
-        self.effects.set(effects)
-
-        # copy other children
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.study_population.get_study()
 
@@ -591,21 +517,6 @@ class ComparisonSet(models.Model):
             ser["created"],
             ser["last_updated"],
         )
-
-    def copy_across_assessments(self, cw):
-        children = list(self.groups.all().order_by("id"))
-        old_id = self.id
-        self.id = None
-        if self.study_population_id:
-            self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        if self.outcome_id:
-            self.outcome_id = cw[Outcome.COPY_NAME][self.outcome_id]
-        if self.exposure_id:
-            self.exposure_id = cw[Exposure.COPY_NAME][self.exposure_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
     def get_study(self):
         if self.study_population:
@@ -727,19 +638,6 @@ class Group(models.Model):
             ser["created"],
             ser["last_updated"],
         )
-
-    def copy_across_assessments(self, cw):
-        children = list(self.descriptions.all().order_by("id"))
-        ethnicities = list(self.ethnicities.all().order_by("id"))
-
-        old_id = self.id
-        self.id = None
-        self.comparison_set_id = cw[ComparisonSet.COPY_NAME][self.comparison_set_id]
-        self.save()
-        self.ethnicities.set(ethnicities)
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
 
 class Exposure(models.Model):
@@ -944,18 +842,6 @@ class Exposure(models.Model):
             ser.get("last_updated"),
         )
 
-    def copy_across_assessments(self, cw):
-        children = list(self.central_tendencies.all().order_by("id"))
-        old_id = self.id
-
-        self.id = None
-        self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.study_population.get_study()
 
@@ -1055,14 +941,6 @@ class CentralTendency(models.Model):
             ser.get("upper_bound_interval"),
         )
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.exposure_id = cw[self.exposure.COPY_NAME][self.exposure_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
 
 class GroupNumericalDescriptions(models.Model):
     objects = managers.GroupNumericalDescriptionsManager()
@@ -1106,12 +984,8 @@ class GroupNumericalDescriptions(models.Model):
     def get_assessment(self):
         return self.group.get_assessment()
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.group_id = cw[Group.COPY_NAME][self.group_id]
-        self.save()
-        cw[GroupNumericalDescriptions.COPY_NAME][old_id] = self.id
+    def get_absolute_url(self):
+        return self.group.get_absolute_url()
 
 
 class ResultMetric(models.Model):
@@ -1154,14 +1028,6 @@ class ResultAdjustmentFactor(models.Model):
     included_in_final_model = models.BooleanField(default=True)
 
     COPY_NAME = "rfactors"
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.adjustment_factor_id = cw[AdjustmentFactor.COPY_NAME][self.adjustment_factor_id]
-        self.result_id = cw[Result.COPY_NAME][self.result_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 class Result(models.Model):
@@ -1349,27 +1215,6 @@ class Result(models.Model):
             ser["created"],
             ser["last_updated"],
         )
-
-    def copy_across_assessments(self, cw):
-        children = list(
-            itertools.chain(
-                self.adjustment_factors.all().order_by("id"),
-                self.resfactors.all().order_by("id"),
-                self.results.all().order_by("id"),
-            )
-        )
-        resulttags = list(self.resulttags.all().order_by("id"))
-
-        old_id = self.id
-        self.id = None
-        self.outcome_id = cw[Outcome.COPY_NAME][self.outcome_id]
-        self.comparison_set_id = cw[ComparisonSet.COPY_NAME][self.comparison_set_id]
-        self.save()
-        self.resulttags.set(resulttags)
-        cw[self.COPY_NAME][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
 
     def get_study(self):
         return self.outcome.get_study()
@@ -1765,14 +1610,6 @@ class GroupResult(models.Model):
                         high = rng[1]
 
             rg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.result_id = cw[Result.COPY_NAME][self.result_id]
-        self.group_id = cw[Group.COPY_NAME][self.group_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
     def get_assessment(self):
         return self.result.get_assessment()

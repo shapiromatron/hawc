@@ -3,6 +3,7 @@ import json
 import logging
 import pickle
 import re
+from copy import copy
 from io import BytesIO
 from math import ceil
 from urllib import parse
@@ -23,10 +24,12 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...constants import ColorblindColors
 from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
+from ..assessment.models import Log
 from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -34,6 +37,7 @@ from ..common.models import (
     NonUniqueTagBase,
     get_private_data_storage,
 )
+from ..myuser.models import HAWCUser
 from . import constants, managers, tasks
 
 logger = logging.getLogger(__name__)
@@ -62,12 +66,76 @@ class LiteratureAssessment(models.Model):
         on_delete=models.CASCADE,
         related_name="literature_settings",
     )
+    conflict_resolution = models.BooleanField(
+        default=settings.HAWC_FEATURES.DEFAULT_LITERATURE_CONFLICT_RESOLUTION,
+        verbose_name="Conflict resolution required",
+        help_text="Enable conflict resolution for reference screening. If enabled, at least two reviewers must independently review and tag literature, and tag conflicts must be resolved before tags are applied to a reference. If disabled, tags are immediately applied to references.  We do not recommend changing this setting after screening has begun.",
+    )
     extraction_tag = models.ForeignKey(
         "lit.ReferenceFilterTag",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        help_text="All references or child references of this tag will be marked as ready for extraction.",
+        help_text="References tagged with this tag or its descendants will be available for data extraction and study quality/risk of bias evaluation.",
+    )
+    screening_instructions = models.TextField(
+        blank=True,
+        help_text="""Add instructions for screeners. This information will be shown on the
+        literature screening page and will publicly available, if the assessment is made public.""",
+    )
+    name_list_1 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 1",
+        default="Positive",
+        help_text="Name for this list of keywords",
+    )
+    color_list_1 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 1",
+        default=ColorblindColors.BRIGHT[2],
+        help_text="Keywords in list 1 will be highlighted this color",
+    )
+    keyword_list_1 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    name_list_2 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 2",
+        default="Negative",
+        help_text="Name for this list of keywords",
+    )
+    color_list_2 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 2",
+        default=ColorblindColors.BRIGHT[1],
+        help_text="Keywords in list 2 will be highlighted this color",
+    )
+    keyword_list_2 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
+    )
+    name_list_3 = models.CharField(
+        max_length=64,
+        verbose_name="Name List 3",
+        default="Additional",
+        help_text="Name for this list of keywords",
+    )
+    color_list_3 = models.CharField(
+        max_length=7,
+        verbose_name="Highlight Color 3",
+        default=ColorblindColors.BRIGHT[0],
+        help_text="Keywords in list 3 will be highlighted this color",
+    )
+    keyword_list_3 = models.TextField(
+        blank=True,
+        help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
+         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
+         commas.""",
     )
     topic_tsne_data = models.FileField(
         blank=True,
@@ -174,6 +242,25 @@ class LiteratureAssessment(models.Model):
 
     def can_request_refresh(self) -> bool:
         return self.can_topic_model and self.topic_tsne_refresh_requested is None
+
+    def get_keyword_data(self) -> dict:
+        return {
+            "set1": {
+                "name": self.name_list_1,
+                "color": self.color_list_1,
+                "keywords": [word.strip() for word in self.keyword_list_1.split("|") if word],
+            },
+            "set2": {
+                "name": self.name_list_2,
+                "color": self.color_list_2,
+                "keywords": [word.strip() for word in self.keyword_list_2.split("|") if word],
+            },
+            "set3": {
+                "name": self.name_list_3,
+                "color": self.color_list_3,
+                "keywords": [word.strip() for word in self.keyword_list_3.split("|") if word],
+            },
+        }
 
 
 class Search(models.Model):
@@ -685,7 +772,7 @@ class Identifiers(models.Model):
     def save(self, *args, **kwargs):
         if self.database == constants.ReferenceDatabase.DOI:
             self.unique_id = self.unique_id.lower()
-        return super(Identifiers, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
@@ -735,24 +822,53 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         exc.add_child(name="Tier III")
 
     @classmethod
-    def get_flattened_taglist(cls, tagslist, include_parent=True):
+    def get_flattened_taglist(cls, tags: dict):
         # expects tags dictionary dump_bulk format
-        lst = []
+        names = []
 
-        def appendChildren(obj, parents):
-            parents = parents + "|" if parents != "" else parents
-            txt = parents + obj["data"]["name"]
-            lst.append(txt)
+        def recurse(obj, parents):
+            txt = f'{parents}{"|" if parents else ""}{obj["data"]["name"]}'
+            names.append(txt)
             for child in obj.get("children", []):
-                appendChildren(child, txt)
+                recurse(child, txt)
 
-        if include_parent:
-            appendChildren(tagslist[0], "")
-        else:
-            for child in tagslist[0].get("children", []):
-                appendChildren(child, "")
+        for tag in tags[0].get("children", []):
+            recurse(tag, "")
 
-        return lst
+        return names
+
+    TreeDescendantType = dict[int, list[set[int]]]
+
+    @classmethod
+    def get_tree_descendants(cls, tags: dict) -> TreeDescendantType:
+        """
+        Returns a dictionary with each tag as the key, and its descendants as well as itself for
+        as a set of values. This is useful for checking if a parent tag should be considered true
+        given the status of a child tag.
+
+        Args:
+            tags (dict): a tag dictionary in dump_bulk formats
+
+        Returns:
+            TreeDescendantType: Returns output dictionary
+        """
+        descendants = {}
+
+        def recurse(tag: dict, parents: list[set]):
+            id = tag["id"]
+            for parent in parents:
+                parent.add(id)
+
+            descendants[id] = {id}
+            parents.append(descendants[id])
+
+            for child in tag.get("children", []):
+                recurse(child, copy(parents))
+
+        for tag in tags[0].get("children", []):
+            recurse(tag, [])
+
+        return descendants
 
 
 class ReferenceTags(ItemBase):
@@ -801,6 +917,69 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    def update_tags(self, user, tag_pks: list[int]) -> bool:
+        """Update tags for user who requested this tags, and also potentially this reference.
+
+        This method was reviewed to try to reduce the number of db hits required, assuming that
+        the reference model has the required select and prefetch related, the tag comparisons
+        should not require any additional queries (but it may cause up to 5 db writes).
+
+        Args:
+            user: The user requesting the tag changes
+            tag_pks (list[int]): A list of tag IDs
+
+        Returns:
+            bool: If tags were also saved as consensus for Reference
+        """
+        # save user-level tags
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.is_resolved = False
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        # determine if we should save the reference-level tags
+        update_reference_tags = False
+        conflict_resolution = self.assessment.literature_settings.conflict_resolution
+        if conflict_resolution:
+            unresolved_user_tags = self.user_tags.filter(is_resolved=False)
+            if unresolved_user_tags.count() >= 2:
+                tags = set(tag_pks)
+                if all(
+                    tags == {tag.id for tag in user_tag.tags.all()}
+                    for user_tag in unresolved_user_tags
+                ):
+                    update_reference_tags = True
+        else:
+            update_reference_tags = True
+
+        # if we should save reference-level tags, do so
+        if update_reference_tags:
+            self.user_tags.update(is_resolved=True)
+            self.tags.set(tag_pks)
+            self.last_updated = timezone.now()
+            self.save()
+
+        return conflict_resolution and update_reference_tags
+
+    def has_user_tag_conflicts(self):
+        return self.user_tags.filter(is_resolved=False).exists()
+
+    @transaction.atomic
+    def resolve_user_tag_conflicts(self, user_id: int, user_tag: "UserReferenceTag"):
+        tags = {tag.id for tag in user_tag.tags.all()}
+        log_message = (
+            f"Update lit.Reference tags #{self.id}: use lit.UserReferenceTag #{user_tag.id}: {tags}"
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user_id,
+            message=log_message,
+            content_object=self,
+        )
+        self.tags.set(tags)
+        self.save()
+        self.user_tags.update(is_resolved=True)
+
     def get_absolute_url(self):
         return reverse("lit:ref_detail", args=(self.pk,))
 
@@ -825,10 +1004,10 @@ class Reference(models.Model):
             d[field] = getattr(self, field)
 
         d["url"] = self.get_absolute_url()
-        d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
+        d["editTagUrl"] = reverse("lit:tag", kwargs={"pk": self.assessment_id}) + f"?id={self.pk}"
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
-
+        d["tagStatusUrl"] = reverse("lit:tag-status", kwargs={"pk": self.pk})
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
@@ -1022,5 +1201,71 @@ class Reference(models.Model):
                 f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
             )
 
+    @classmethod
+    def annotate_tag_parents(cls, references: list, tags: models.QuerySet):
+        """Annotate tag parents for all tags and user tags.
 
-reversion.register(Reference)
+        Sets a new attribute (parents: list[Tag]) for each tag.
+
+        Args:
+            references (list): a list of references
+            tags (models.QuerySet): the full tag list for an assessment
+        """
+        tag_map = {tag.path: tag for tag in tags}
+
+        def _set_parents(tag):
+            tag.parents = []
+            current_path = tag.path
+            while True:
+                current_path = tag._get_parent_path_from_path(current_path)
+                if len(current_path) == 4:
+                    break
+                tag.parents.append(tag_map[current_path])
+
+        for reference in references:
+            for tag in reference.tags.all():
+                _set_parents(tag)
+            for user_tag in reference.user_tags.all():
+                for tag in user_tag.tags.all():
+                    _set_parents(tag)
+
+
+class UserReferenceTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="user_references"
+    )
+    content_object = models.ForeignKey("UserReferenceTag", on_delete=models.CASCADE)
+
+
+class UserReferenceTag(models.Model):
+    user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
+    reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
+    tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    is_resolved = models.BooleanField(
+        default=False, help_text="User specific tag differences are resolved for this reference"
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def assessment_id(self) -> int:
+        return self.reference.assessment_id
+
+    def consensus_diff(self):
+        # returns set operations done against consensus tags
+        consensus_tags = set(self.reference.tags.all())
+        self_tags = set(self.tags.all())
+        return dict(
+            intersection=self_tags.intersection(consensus_tags),
+            difference=self_tags.difference(consensus_tags),
+            reverse_difference=consensus_tags.difference(self_tags),
+        )
+
+
+reversion.register(LiteratureAssessment)
+reversion.register(Search)
+reversion.register(ReferenceFilterTag)
+reversion.register(Reference, follow=["tags"])
+reversion.register(UserReferenceTag, follow=["tags"])

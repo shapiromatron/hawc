@@ -7,20 +7,13 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView, TemplateView
+from django.views.generic import RedirectView, TemplateView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseList,
-    BaseUpdate,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, serializers
 
@@ -49,7 +42,7 @@ class SummaryTextList(BaseList):
 
     def get_queryset(self):
         rt = self.model.get_assessment_root_node(self.assessment.id)
-        return self.model.objects.filter(pk__in=[rt.pk])
+        return super().get_queryset().filter(pk__in=[rt.pk])
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -179,13 +172,11 @@ class SummaryTableCreate(BaseCreate):
         )
 
 
-class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
+class SummaryTableCopy(BaseUpdate):
     template_name = "summary/copy_selector.html"
     model = Assessment
     form_class = forms.SummaryTableCopySelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -449,6 +440,7 @@ class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         kwargs.update(
@@ -463,13 +455,11 @@ class VisualizationCopySelector(BaseDetail):
         return context
 
 
-class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
+class VisualizationCopy(BaseUpdate):
     template_name = "summary/copy_selector.html"
     model = Assessment
     form_class = forms.VisualSelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -578,10 +568,10 @@ class DataPivotNew(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        if self.request.GET.get("reset_row_overrides"):
-            kwargs["initial"]["settings"] = models.DataPivot.reset_row_overrides(
-                kwargs["initial"]["settings"]
-            )
+        reset_rows = self.request.GET.get("reset_row_overrides")
+        settings = kwargs["initial"].get("settings")
+        if reset_rows and settings:
+            kwargs["initial"].update(settings=models.DataPivot.reset_row_overrides(settings))
         return kwargs
 
 
@@ -613,14 +603,12 @@ class DataPivotFileNew(DataPivotNew):
         return context
 
 
-class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
+class DataPivotCopyAsNewSelector(BaseUpdate):
     # Select an existing assessed outcome as a template for a new one
     model = Assessment
     template_name = "summary/copy_selector.html"
     form_class = forms.DataPivotSelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

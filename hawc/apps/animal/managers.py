@@ -130,16 +130,14 @@ class EndpointQuerySet(QuerySet):
             dose_group_id=OuterRef("LOEL"),
             dose_units=dose_units,
         )
-        Model = apps.get_model("bmd", "Model")
-        bmd_qs = Model.objects.filter(
-            selectedmodel__endpoint=OuterRef("pk"), selectedmodel__dose_units=dose_units
-        )
+        Session = apps.get_model("bmd", "Session")
+        bmd_qs = Session.objects.filter(endpoint=OuterRef("pk"), dose_units=dose_units, active=True)
         return self.annotate(
             units_name=Value(dose_units.name, output_field=models.CharField()),
             noel_value=Subquery(noel_value_qs.values("dose")),
             loel_value=Subquery(loel_value_qs.values("dose")),
-            bmd=Subquery(bmd_qs.values("output__BMD")),
-            bmdl=Subquery(bmd_qs.values("output__BMDL")),
+            bmd=Subquery(bmd_qs.values("selected__bmd")),
+            bmdl=Subquery(bmd_qs.values("selected__bmdl")),
         )
 
 
@@ -151,23 +149,6 @@ class EndpointManager(BaseManager):
 
     def published(self, assessment_id=None):
         return self.get_qs(assessment_id).filter(animal_group__experiment__study__published=True)
-
-    def tag_qs(self, assessment_id, tag_slug=None):
-        AnimalGroup = apps.get_model("animal", "AnimalGroup")
-        Experiment = apps.get_model("animal", "Experiment")
-        Study = apps.get_model("study", "Study")
-        return (
-            self.filter(effects__slug=tag_slug)
-            .select_related("animal_group", "animal_group__dosing_regime")
-            .prefetch_related("animal_group__dosing_regime__doses")
-            .filter(
-                animal_group__in=AnimalGroup.objects.filter(
-                    experiment__in=Experiment.objects.filter(
-                        study__in=Study.objects.get_qs(assessment_id)
-                    )
-                )
-            )
-        )
 
     def optimized_qs(self, **filters):
         return (
@@ -207,7 +188,7 @@ class EndpointManager(BaseManager):
 
         DoseGroup = apps.get_model("animal", "DoseGroup")
         Endpoint = apps.get_model("animal", "Endpoint")
-        SelectedModel = apps.get_model("bmd", "SelectedModel")
+        Session = apps.get_model("bmd", "Session")
 
         # get endpoint level data
         values = dict(
@@ -235,17 +216,16 @@ class EndpointManager(BaseManager):
         values = dict(
             endpoint_id="endpoint id",
             dose_units_id="dose units id",
-            model__output__BMD="BMD",
-            model__output__BMDL="BMDL",
+            selected__bmd="bmd",
+            selected__bmdl="bmdl",
         )
-        qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
+        qs = Session.objects.filter(endpoint__assessment=assessment, active=True).values_list(
             *values.keys()
         )
         df2 = (
             pd.DataFrame(data=qs, columns=values.values())
             .dropna()
             .set_index(["endpoint id", "dose units id"])
-            .rename(columns=dict(BMD="bmd", BMDL="bmdl"))
         )
 
         # get dose regime values

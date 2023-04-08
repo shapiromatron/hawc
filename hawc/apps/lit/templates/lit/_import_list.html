@@ -1,6 +1,6 @@
 <h3>Results from imports</h3>
 {% if obj_perms.edit %}
   <div class="well">
-    <a href="{% url 'lit:search_tags_edit' assessment.pk object.slug %}" class="btn btn-primary">Tag literature</a>
+    <a href="{% url 'lit:tag' assessment.pk %}?search={{object.pk}}" class="btn btn-primary">Tag literature</a>
   </div>
 {% endif %}

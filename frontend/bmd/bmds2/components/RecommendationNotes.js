@@ -6,7 +6,7 @@ class RecommendationNotes extends React.Component {
         const {notes} = this.props;
         return notes ? (
             <p>
-                <b>BMD modeler notes:</b> {notes}
+                <b>Modeling notes:</b> {notes}
             </p>
         ) : null;
     }

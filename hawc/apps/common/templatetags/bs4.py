@@ -1,8 +1,13 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+from textwrap import dedent
+from typing import Optional
+from uuid import uuid4
+
 from django import template
 from django.utils.safestring import mark_safe
+from plotly.graph_objs._figure import Figure
 
 register = template.Library()
 
@@ -39,4 +44,50 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     """
     return mark_safe(
         f'<tr {tr_attrs}><td colspan="100%"><p class="text-center mb-0">{text}</p></td></tr>'
+    )
+
+
+@register.tag(name="alert")
+def bs4_alert(parser, token):
+    args = token.contents.split()
+    alert_type = args[1] if len(args) > 1 else "danger"
+    nodelist = parser.parse(("endalert",))
+    parser.delete_first_token()
+    return AlertWrapperNode(nodelist, alert_type)
+
+
+class AlertWrapperNode(template.Node):
+    def __init__(self, nodelist, alert_type: str):
+        self.nodelist = nodelist
+        self.alert_type = alert_type
+
+    def render(self, context):
+        return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
+
+
+_plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
+
+
+@register.simple_tag()
+def plotly(fig: Optional[Figure], **kw) -> str:
+    """Render a plotly figure
+
+    fig (Figure): the plotly figure to render
+    event: (Literal["dom", "htmx"]): the event that should trigger loading plotly. Defaults to
+        "dom" when dom is fully loaded. If set to "htmx", will render after htmx settles.
+    resizable: (bool, default False). If true, the figure can be resized by the user.
+    """
+    if fig is None:
+        return ""
+    id = uuid4()
+    config = fig.to_json()
+    event = _plotly_events[kw.get("event", "dom")]
+    resizable = str(bool(kw.get("resizable", False))).lower()
+    func = f'()=>{{window.app.renderPlotlyFigure(document.getElementById("{id}"), {config}, {resizable});}}'
+    return mark_safe(
+        dedent(
+            f"""
+    <div id="{id}"><span class="text-muted">Loading...</span></div>
+    <script>document.addEventListener("{event}", {func}, false);</script>"""
+        )
     )

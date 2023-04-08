@@ -21,10 +21,10 @@ class RobAssignmentStore extends StudyRobStore {
 
     @computed get authorOptions() {
         return _.chain(this.config.users)
+            .sortBy("last_name", "id")
             .map(d => {
-                return {id: d.id, label: d.name};
+                return {id: d.id, label: `${d.first_name} ${d.last_name}`};
             })
-            .sortBy("id")
             .value();
     }
 

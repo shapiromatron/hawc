@@ -1,5 +1,5 @@
 # web application
-Django==3.2.16
+Django==3.2.18
 django-crispy-forms==1.14.0
 django-filter==21.1
 django-redis==5.2.0
@@ -20,9 +20,9 @@ celery==5.2.7
 
 # utilities
 jsonschema==4.4.0
-lxml==4.9.1
+lxml==4.9.2
 psycopg2-binary==2.9.5
-redis==4.1.4
+redis==4.5.4
 requests==2.27.1
 pydantic==1.9.0
 myst-parser==0.16.1
@@ -37,10 +37,8 @@ pyarrow==10.0.1
 scipy==1.10.0
 nltk==3.7
 scikit-learn==1.2.0
+bmds==22.1
 
 # exports
 rispy==0.7.1
 python-docx==0.8.11
-
-# bmds; https://github.com/shapiromatron/bmds/commit/36c102cfc0340ad98efcb57686dfcd72a8a02895
-vendor/bmds-0.11.0.tar.gz

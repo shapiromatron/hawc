@@ -15,11 +15,11 @@ from pydantic import Field, root_validator, validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
-from ..assessment.serializers import AssessmentRootedSerializer
+from ..assessment.api.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
-from . import constants, exports, forms, models, tasks
+from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,6 @@ class SearchSerializer(serializers.ModelSerializer):
 
         user = self.context["request"].user
         if not data["assessment"].user_can_edit_object(user):
-            # TODO - move authentication check outside validation?
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
 
         # set slug value based on title; assert it's unique
@@ -102,15 +101,12 @@ class SearchSerializer(serializers.ModelSerializer):
 
 
 class IdentifiersSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["database"] = instance.get_database_display()
-        ret["url"] = instance.get_url()
-        return ret
+    database = serializers.CharField(source="get_database_display")
+    url = serializers.CharField(source="get_url")
 
     class Meta:
         model = models.Identifiers
-        fields = "__all__"
+        fields = ["id", "unique_id", "database", "url"]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):
@@ -297,9 +293,12 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
         ret["has_study"] = instance.has_study
         ret["url"] = instance.get_absolute_url()
-        ret["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": instance.pk})
-        ret["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": instance.pk})
-        ret["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": instance.pk})
+        ret["editTagUrl"] = (
+            reverse("lit:tag", args=(instance.assessment_id,)) + f"?id={instance.pk}"
+        )
+        ret["editReferenceUrl"] = reverse("lit:ref_edit", args=(instance.pk,))
+        ret["deleteReferenceUrl"] = reverse("lit:ref_delete", args=(instance.pk,))
+        ret["tagStatusUrl"] = reverse("lit:tag-status", args=(instance.pk,))
 
         ret["identifiers"] = [ident.to_dict() for ident in instance.identifiers.all()]
         ret["searches"] = [search.to_dict() for search in instance.searches.all()]
@@ -411,23 +410,6 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # run chained tasks
         return chain(t1, t2, t3)()
-
-
-class ReferenceTagExportSerializer(serializers.Serializer):
-    nested = serializers.ChoiceField(choices=[("t", "true"), ("f", "false")], default="t")
-    exporter = serializers.ChoiceField(
-        choices=[("base", "base"), ("table-builder", "table builder")], default="base"
-    )
-    _exporters = {
-        "base": exports.ReferenceFlatComplete,
-        "table-builder": exports.TableBuilderFormat,
-    }
-
-    def get_exporter(self):
-        return self._exporters[self.validated_data["exporter"]]
-
-    def include_descendants(self):
-        return self.validated_data["nested"] == "t"
 
 
 class FilterReferences(PydanticDrfSerializer):

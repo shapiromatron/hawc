@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
-from hawc.apps.assessment.models import Assessment, DoseUnits, Strain
+from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import (
     ComparisonSet,
     Criteria,
@@ -47,18 +47,30 @@ class TestClient(LiveServerTestCase, TestCase):
             client.set_authentication_token("123")
         assert err.value.status_code == 403
 
-        with pytest.raises(HawcClientException) as err:
-            client.session.get(f"{self.live_server_url}/assessment/1/")
-        assert err.value.status_code == 403
+        url_private_api = f"{self.live_server_url}/assessment/api/assessment/1/"
+        url_private_view = f"{self.live_server_url}/assessment/1/"
+
+        for url in [url_private_api, url_private_view]:
+            with pytest.raises(HawcClientException) as err:
+                client.session.get(url)
+            assert err.value.status_code == 403
 
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
-        resp = client.set_authentication_token(token)
-        assert resp == {"valid": True}
 
-        # can also access regular Django views that are private
-        resp = client.session.get(f"{self.live_server_url}/assessment/1/")
+        # login; create a DRF token-based session
+        assert client.set_authentication_token(token, login=False) is True
+        resp = client.session.get(url_private_api)
         assert resp.status_code == 200
+        with pytest.raises(HawcClientException) as err:
+            client.session.get(url_private_view)
+        assert err.value.status_code == 403
+
+        # login; create a Django based cookie session (CSRF tokens required)
+        assert client.set_authentication_token(token, login=True) is True
+        for url in [url_private_api, url_private_view]:
+            resp = client.session.get(url)
+            assert resp.status_code == 200
 
     ####################
     # BaseClient tests #
@@ -97,7 +109,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # list of endpoints
         response = client.animal.endpoints(2)
         assert isinstance(response, list)
-        assert len(response) == 3
+        assert len(response) == 5
         assert response[0]["name"] == "Water T maze (learning error)"
         assert (
             response[0]["animal_group"]["experiment"]["study"]["short_citation"]
@@ -279,8 +291,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_epi_metadata(self):
         client = HawcClient(self.live_server_url)
-        assessment = Assessment.objects.first()
-        response = client.epi.metadata(assessment.id)
+        response = client.epi.metadata(self.db_keys.assessment_client)
         assert isinstance(response, dict)
 
     def test_epi_create(self):
@@ -577,11 +588,11 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_import_reference_tags(self):
-        csv = "reference_id,tag_id\n5,14"
+        csv = "reference_id,tag_id\n1,2"
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.lit.import_reference_tags(
-            assessment_id=self.db_keys.assessment_final, csv=csv
+            assessment_id=self.db_keys.assessment_working, csv=csv
         )
         assert isinstance(response, pd.DataFrame)
 
@@ -593,6 +604,12 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_lit_references(self):
         client = HawcClient(self.live_server_url)
         response = client.lit.references(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
+    def test_lit_reference_user_tags(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.lit.reference_user_tags(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_reference(self):
@@ -666,14 +683,22 @@ class TestClient(LiveServerTestCase, TestCase):
     # RiskOfBiasClient tests #
     ##########################
 
-    def test_riskofbias_data(self):
+    def test_riskofbias_export(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.data(self.db_keys.assessment_client)
+        response = client.riskofbias.export(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
-    def test_riskofbias_full_data(self):
+    def test_riskofbias_full_export(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.full_data(self.db_keys.assessment_client)
+
+        # permission denied
+        with pytest.raises(HawcClientException) as err:
+            client.riskofbias.full_export(self.db_keys.assessment_client)
+            assert err.status_code == 403
+
+        # successful response
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.full_export(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_riskofbias_create(self):
@@ -709,15 +734,15 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_riskofbias_metrics(self):
         client = HawcClient(self.live_server_url)
         df = client.riskofbias.metrics(self.db_keys.assessment_client)
-        assert isinstance(df, pd.DataFrame) and df.shape == (11, 14)
+        assert isinstance(df, pd.DataFrame) and df.shape == (11, 15)
 
     def test_riskofbias_compare_metrics(self):
         client = HawcClient(self.live_server_url)
         df_src, df_dst = client.riskofbias.compare_metrics(
             self.db_keys.assessment_client, self.db_keys.assessment_final
         )
-        assert isinstance(df_src, pd.DataFrame) and df_src.shape == (11, 18)
-        assert isinstance(df_dst, pd.DataFrame) and df_dst.shape == (2, 16)
+        assert isinstance(df_src, pd.DataFrame) and df_src.shape == (11, 19)
+        assert isinstance(df_dst, pd.DataFrame) and df_dst.shape == (2, 17)
         assert all(
             col in df_src.columns for col in ["matched_key", "matched_score", "matched_text"]
         )
@@ -751,7 +776,7 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_study_list(self):
         client = HawcClient(self.live_server_url)
         df = client.study.studies(self.db_keys.assessment_client)
-        assert isinstance(df, pd.DataFrame) and df.shape == (1, 28)
+        assert isinstance(df, pd.DataFrame) and df.shape == (1, 29)
         assert df.short_citation.values == ["Yoshida R and Ogawa Y 2000"]
 
     def test_study_create_from_identifier(self):

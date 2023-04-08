@@ -8,17 +8,14 @@ import Recommendation from "../components/Recommendation";
 @observer
 class RecommendationTab extends React.Component {
     render() {
-        let {store} = this.props,
-            {config} = store;
+        let {store} = this.props;
 
         return (
             <Recommendation
-                editMode={config.editMode}
                 models={store.models}
                 bmrs={store.bmrs}
                 selectedModelId={store.selectedModelId}
                 selectedModelNotes={store.selectedModelNotes}
-                handleSaveSelected={(model_id, notes) => store.saveSelectedModel(model_id, notes)}
             />
         );
     }

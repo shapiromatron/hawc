@@ -20,11 +20,6 @@ urlpatterns = [
         views.AssessSettingsUpdate.as_view(),
         name="assess_settings_update",
     ),
-    path(
-        "assessment/<int:pk>/logic/update/",
-        views.AssessLogicUpdate.as_view(),
-        name="assess_logic_update",
-    ),
     # BMD create/read/update views
     path(
         "endpoint/<int:pk>/create/",

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import ColWidthTable from "./ColWidthTable";
+import ConfigurationModal from "./ConfigurationModal";
 import {EditCellModal} from "./EditCell";
 import Table from "./Table";
 
@@ -17,6 +18,11 @@ class TableForm extends Component {
                         <i className="fa fa-arrows-h mr-1"></i>Column width
                     </button>
                     <div className="float-right">
+                        <button
+                            className="btn btn-light mr-5"
+                            onClick={() => store.setConfigurationModal(true)}>
+                            <i className="fa fa-cog mr-1"></i>Configuration
+                        </button>
                         <button className="btn btn-light mx-1" onClick={store.addColumn}>
                             <i className="fa fa-plus mr-1"></i>Add column
                         </button>
@@ -33,6 +39,7 @@ class TableForm extends Component {
                 </p>
                 <Table store={store} />
                 <EditCellModal store={store} />
+                <ConfigurationModal store={store} />
             </>
         );
     }

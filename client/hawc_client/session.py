@@ -114,18 +114,31 @@ class HawcSession:
         token = response.json()["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
-    def set_authentication_token(self, token: str) -> dict:
+    def set_authentication_token(self, token: str, login: bool = False) -> bool:
         """
-        Set authentication token (browser session specific)
+        Set authentication token for hawc client session.
 
         Args:
             token (str): authentication token from your user profile
+            login (bool, default False): if True, creates a django cookie-based session for HAWC
+                similar to a standard web-browser. If False (default), creates a token-
+                based django session for using the API. Requests using cookie-based sessions
+                require CSRF tokens, so form functionality will be limited.
+
+        Returns
+            bool: Returns true if session is valid
         """
+        params = {}
+        if login:
+            params["login"] = 1
         self._session.headers.update(Authorization=f"Token {token}")
         url = f"{self.root_url}/user/api/validate-token/"
-        return self.get(url).json()
+        response = self.get(url, params).json()
+        if login:
+            self._session.headers.pop("Authorization")
+        return response["valid"]
 
-    def iter_pages(self, url: str, params: dict = None) -> Generator:
+    def iter_pages(self, url: str, params: Optional[dict] = None) -> Generator:
         """
         Generator that crawls paginated HAWC responses.
 

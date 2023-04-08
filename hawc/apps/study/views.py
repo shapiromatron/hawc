@@ -3,20 +3,11 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView
+from django.urls import reverse_lazy
+from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
-from ..common.crumbs import Breadcrumb
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseUpdate,
-    MessageMixin,
-    TeamMemberOrHigherMixin,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from . import filterset, forms, models
@@ -104,7 +95,7 @@ class StudyRead(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
+        attachments_viewable = self.assessment.user_is_reviewer_or_higher(self.request.user)
         context["config"] = {
             "studyContent": self.object.get_json(json_encode=False),
             "attachments_viewable": attachments_viewable,
@@ -137,51 +128,6 @@ class StudyDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("study:list", kwargs={"pk": self.assessment.pk})
-
-
-class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
-    """
-    Copy one or more studies from one assessment to another. This will copy
-    all nested data as well.
-    """
-
-    model = Assessment
-    template_name = "study/studies_copy.html"
-    form_class = forms.StudiesCopy
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Copy study",
-            extras=[
-                Breadcrumb.from_object(self.assessment),
-                Breadcrumb(name="Studies", url=reverse("study:list", args=(self.assessment.id,))),
-            ],
-        )
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["assessment"] = self.assessment
-        return kwargs
-
-    @transaction.atomic
-    def form_valid(self, form):
-        models.Study.copy_across_assessment(
-            form.cleaned_data["studies"], form.cleaned_data["assessment"]
-        )
-        msg = "Studies copied!"
-        self.success_message = msg
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy("study:list", kwargs={"pk": self.assessment.id})
 
 
 class StudyRoBRedirect(StudyRead):
@@ -222,7 +168,7 @@ class AttachmentRead(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
+        if self.assessment.user_is_reviewer_or_higher(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
             raise PermissionDenied

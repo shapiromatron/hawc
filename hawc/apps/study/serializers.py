@@ -1,3 +1,5 @@
+from typing import Optional, Union
+
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
@@ -25,6 +27,7 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Study
         fields = "__all__"
+        read_only_fields = ("identifiers", "searches")
 
 
 class SimpleStudySerializer(StudySerializer):
@@ -82,6 +85,21 @@ class VerboseStudySerializer(StudySerializer):
     rob_settings = AssessmentRiskOfBiasSerializer(source="assessment")
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
+
+    def _get_identifier(
+        self, identifiers: list, key: str, to_int: bool
+    ) -> Optional[Union[int, str]]:
+        for identifier in identifiers:
+            if identifier["database"] == key:
+                value = identifier["unique_id"]
+                return int(value) if to_int else value
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["hero_id"] = self._get_identifier(ret["identifiers"], "HERO", True)
+        ret["pubmed_id"] = self._get_identifier(ret["identifiers"], "PubMed", True)
+        ret["doi"] = self._get_identifier(ret["identifiers"], "DOI", False)
+        return ret
 
     def get_riskofbiases(self, study):
         return FinalRiskOfBiasSerializer(study.get_final_qs(), many=True).data
