@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -104,7 +104,7 @@ class DoseGroupManager(BaseManager):
 
 
 class EndpointQuerySet(QuerySet):
-    def annotate_dose_values(self, dose_units: Optional[DoseUnits] = None) -> QuerySet:
+    def annotate_dose_values(self, dose_units: DoseUnits | None = None) -> QuerySet:
         """Annotate dose unit-specific responses from queryset, if a dose-unit is available.
 
         Args:

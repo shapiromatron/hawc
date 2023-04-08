@@ -2,7 +2,6 @@
 Twitter Bootstrap 4 - helper methods
 """
 from textwrap import dedent
-from typing import Optional
 from uuid import uuid4
 
 from django import template
@@ -69,7 +68,7 @@ _plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
 
 
 @register.simple_tag()
-def plotly(fig: Optional[Figure], **kw) -> str:
+def plotly(fig: Figure | None, **kw) -> str:
     """Render a plotly figure
 
     fig (Figure): the plotly figure to render

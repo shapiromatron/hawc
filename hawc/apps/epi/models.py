@@ -903,7 +903,7 @@ class CentralTendency(models.Model):
         verbose_name_plural = "Central Tendencies"
 
     def __str__(self):
-        return "{CT id=%s, exposure=%s}" % (self.id, self.exposure)
+        return f"{{CT id={self.id}, exposure={self.exposure}}}"
 
     @staticmethod
     def flat_complete_header_row():

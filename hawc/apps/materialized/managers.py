@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -121,7 +121,7 @@ class FinalRiskOfBiasScoreManager(models.Manager):
     def get_queryset(self):
         return FinalRiskOfBiasScoreQuerySet(self.model, using=self._db)
 
-    def overall_endpoint_scores(self, assessment_id: int) -> Optional[pd.DataFrame]:
+    def overall_endpoint_scores(self, assessment_id: int) -> pd.DataFrame | None:
         qs = self.filter(
             study__assessment_id=assessment_id, metric__domain__is_overall_confidence=True
         )
@@ -140,7 +140,7 @@ class FinalRiskOfBiasScoreManager(models.Manager):
 
         return pd.DataFrame(data=rows, columns=("endpoint id", "overall study evaluation"))
 
-    def overall_result_scores(self, assessment_id: int) -> Optional[pd.DataFrame]:
+    def overall_result_scores(self, assessment_id: int) -> pd.DataFrame | None:
         qs = self.filter(
             study__assessment_id=assessment_id, metric__domain__is_overall_confidence=True
         )

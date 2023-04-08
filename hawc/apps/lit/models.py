@@ -612,8 +612,7 @@ class PubMedQuery(models.Model):
 
         if search.id_count > settings.PUBMED_MAX_QUERY_SIZE:
             raise TooManyPubMedResults(
-                "Too many PubMed references found: {0}; reduce query scope to "
-                "fewer than {1}".format(search.id_count, settings.PUBMED_MAX_QUERY_SIZE)
+                f"Too many PubMed references found: {search.id_count}; reduce query scope to fewer than {settings.PUBMED_MAX_QUERY_SIZE}"
             )
 
         search.get_ids()

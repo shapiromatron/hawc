@@ -721,7 +721,7 @@ class DataPivotQuery(DataPivot):
         if count > self.MAXIMUM_QUERYSET_COUNT:
             err = """
                 Current settings returned too many results
-                ({0} returned; a maximum of {1} are allowed);
+                ({} returned; a maximum of {} are allowed);
                 make your filtering settings more restrictive
                 (check units and/or prefilters).
             """.format(

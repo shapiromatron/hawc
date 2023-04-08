@@ -1,4 +1,3 @@
-from typing import Type
 
 from django.http import Http404
 from django.utils.encoding import force_str
@@ -9,7 +8,7 @@ from .views import BaseAutocomplete
 
 class AutocompleteRegistry:
     def __init__(self):
-        self._registry: dict[str, Type[BaseAutocomplete]] = {}
+        self._registry: dict[str, type[BaseAutocomplete]] = {}
 
     def validate(self, lookup):
         if not issubclass(lookup, BaseAutocomplete):
@@ -29,7 +28,7 @@ class AutocompleteRegistry:
             raise KeyError(f"The key {key} is not registered")
         del self._registry[key]
 
-    def get(self, key) -> Type[BaseAutocomplete]:
+    def get(self, key) -> type[BaseAutocomplete]:
         try:
             return self._registry[key]
         except KeyError:

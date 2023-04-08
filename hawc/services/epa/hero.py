@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import requests
 
@@ -20,7 +20,7 @@ def _parse_pseudo_json(d: dict, field: str) -> Any:
         return v
 
 
-def _force_int(val, default=None) -> Optional[int]:
+def _force_int(val, default=None) -> int | None:
     try:
         return int(val)
     except Exception:

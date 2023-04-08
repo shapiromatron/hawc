@@ -1,4 +1,3 @@
-from typing import Optional, Type
 
 from dal import autocomplete
 from dal_select2.widgets import I18N_PATH
@@ -36,9 +35,9 @@ class AutocompleteWidgetMixin:
 
     def __init__(
         self,
-        autocomplete_class: Type[BaseAutocomplete],
-        filters: Optional[dict] = None,
-        autocomplete_function: Optional[str] = None,
+        autocomplete_class: type[BaseAutocomplete],
+        filters: dict | None = None,
+        autocomplete_function: str | None = None,
         *args,
         **kwargs,
     ):
@@ -109,8 +108,8 @@ class AutocompleteTextWidget(AutocompleteWidgetMixin, autocomplete.Select2):
 class AutocompleteFieldMixin:
     def __init__(
         self,
-        autocomplete_class: Type[BaseAutocomplete],
-        filters: Optional[dict] = None,
+        autocomplete_class: type[BaseAutocomplete],
+        filters: dict | None = None,
         *args,
         **kwargs,
     ):

@@ -1,7 +1,7 @@
 """
 HAWC helper methods
 """
-from typing import Any, Optional
+from typing import Any
 
 from django import template
 from django.contrib.contenttypes.models import ContentType
@@ -35,5 +35,5 @@ def optional_table_list_row(name: str, qs: QuerySet) -> str:
 
 
 @register.simple_tag
-def url_or_span(text: str, url: Optional[str] = None):
+def url_or_span(text: str, url: str | None = None):
     return mark_safe(f'<a href="{url}">{text}</a>') if url else text

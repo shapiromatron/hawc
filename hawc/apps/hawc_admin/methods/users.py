@@ -27,7 +27,7 @@ def user_active():
     df2.loc[:, "text"] = (
         df2.nusers.astype(str)
         + f"/{ntotal} ("
-        + df2.frac_total.apply(lambda x: "{:.0%}".format(x))
+        + df2.frac_total.apply(lambda x: f"{x:.0%}")
         + ")"
     )
     df2.head(10)

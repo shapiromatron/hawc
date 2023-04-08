@@ -1,4 +1,3 @@
-from typing import Optional
 
 from docx import Document as create_document
 from docx.document import Document
@@ -109,8 +108,8 @@ class BaseTable(BaseCellGroup):
 
     def to_docx(
         self,
-        parser: Optional[QuillParser] = None,
-        docx: Optional[Document] = None,
+        parser: QuillParser | None = None,
+        docx: Document | None = None,
         landscape: bool = True,
     ):
         if parser is None:

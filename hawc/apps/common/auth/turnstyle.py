@@ -1,4 +1,3 @@
-from typing import Optional
 
 import pydantic
 import requests
@@ -8,19 +7,19 @@ from django.conf import settings
 class SiteVerifyRequest(pydantic.BaseModel):
     secret: str
     response: str
-    remoteip: Optional[str]
+    remoteip: str | None
 
 
 class SiteVerifyResponse(pydantic.BaseModel):
     success: bool
-    challenge_ts: Optional[str]
-    hostname: Optional[str]
+    challenge_ts: str | None
+    hostname: str | None
     error_codes: list[str] = pydantic.Field(alias="error-codes", default_factory=list)
-    action: Optional[str]
-    cdata: Optional[str]
+    action: str | None
+    cdata: str | None
 
 
-def validate(turnstile_response: str, user_ip: Optional[str] = None) -> SiteVerifyResponse:
+def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyResponse:
     url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
     model = SiteVerifyRequest(
         secret=settings.TURNSTYLE_KEY, response=turnstile_response, remoteip=user_ip

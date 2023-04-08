@@ -693,7 +693,7 @@ class RefUploadExcel(BaseUpdate):
         errors = models.Reference.objects.process_excel(form.cleaned_data["df"], self.assessment.id)
         if len(errors) > 0:
             msg = """References updated, but some errors were found
-                (references with errors were not updated): {0}""".format(
+                (references with errors were not updated): {}""".format(
                 listToUl(errors)
             )
         else:

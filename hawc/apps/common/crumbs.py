@@ -1,4 +1,3 @@
-from typing import Optional
 
 from django.urls import reverse
 from pydantic import BaseModel
@@ -6,7 +5,7 @@ from pydantic import BaseModel
 
 class Breadcrumb(BaseModel):
     name: str
-    url: Optional[str] = None
+    url: str | None = None
 
     @classmethod
     def build_root(cls, user) -> "Breadcrumb":
@@ -53,7 +52,7 @@ class Breadcrumb(BaseModel):
 
     @classmethod
     def build_crumbs(
-        cls, user, name: str, extras: Optional[list["Breadcrumb"]] = None
+        cls, user, name: str, extras: list["Breadcrumb"] | None = None
     ) -> list["Breadcrumb"]:
         """
         Build crumbs where there is not an assessment root.

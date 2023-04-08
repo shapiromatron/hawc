@@ -18,7 +18,7 @@ omit = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-select = ["E", "W", "F", "I"]
+select = ["E", "W", "F", "I", "UP"]
 ignore = ["E501"]
 
 [tool.ruff.isort]

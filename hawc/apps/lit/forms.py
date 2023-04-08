@@ -1,6 +1,5 @@
 import logging
 from io import StringIO
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -221,7 +220,7 @@ class RisImportForm(SearchForm):
             self.fields[
                 "import_file"
             ].help_text = """Unicode RIS export file
-                ({0} for EndNote RIS library preparation)""".format(
+                ({} for EndNote RIS library preparation)""".format(
                 addPopupLink(reverse_lazy("lit:ris_export_instructions"), "view instructions")
             )
         else:
@@ -365,8 +364,8 @@ class SearchSelectorForm(forms.Form):
 
 
 def validate_external_id(
-    db_type: int, db_id: Union[str, int]
-) -> tuple[Union[models.Identifiers, None], Union[list, dict, None]]:
+    db_type: int, db_id: str | int
+) -> tuple[models.Identifiers | None, list | dict | None]:
     """
     Validates an external ID.
     If the identifier already exists it is returned as the first part of a tuple.
@@ -405,7 +404,7 @@ def validate_external_id(
         raise ValueError(f"Unknown database type {db_type}.")
 
 
-def create_external_id(db_type: int, content: Union[list, dict]) -> models.Identifiers:
+def create_external_id(db_type: int, content: list | dict) -> models.Identifiers:
     """
     Creates an identifier with the given content.
     This works in tandem with validate_external_id, using the content returned from that method call.

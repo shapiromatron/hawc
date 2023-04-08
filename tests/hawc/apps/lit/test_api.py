@@ -1,7 +1,6 @@
 import json
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 import pytest
@@ -21,7 +20,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
     def _test_flat_export(
-        self, rewrite_data_files: bool, fn: str, url: str, client: Optional[APIClient] = None
+        self, rewrite_data_files: bool, fn: str, url: str, client: APIClient | None = None
     ):
         if client is None:
             client = APIClient()

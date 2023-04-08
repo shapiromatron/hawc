@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from typing import Any, NamedTuple, Union
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
@@ -254,7 +254,7 @@ class LogManager(BaseManager):
     assessment_relation = "assessment"
 
     def get_object_audit(
-        self, content_type: Union[ContentType, int], object_id: int
+        self, content_type: ContentType | int, object_id: int
     ) -> list[Event]:
         """
         Combines information from HAWC's internal logs and reversion logs for a more complete audit.

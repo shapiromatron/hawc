@@ -1,4 +1,3 @@
-from typing import Optional, Union
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
@@ -87,7 +86,7 @@ class VerboseStudySerializer(StudySerializer):
 
     def _get_identifier(
         self, identifiers: list, key: str, to_int: bool
-    ) -> Optional[Union[int, str]]:
+    ) -> int | str | None:
         for identifier in identifiers:
             if identifier["database"] == key:
                 value = identifier["unique_id"]

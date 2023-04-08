@@ -2,9 +2,10 @@ import decimal
 import logging
 import re
 from collections import defaultdict
+from collections.abc import Callable
 from datetime import timedelta
 from math import inf
-from typing import Any, Callable, NamedTuple, Optional, Union
+from typing import Any, NamedTuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -77,12 +78,12 @@ def strip_entities(value):
 
 
 def listToUl(list_):
-    return f"<ul>{''.join(['<li>{0}</li>'.format(d) for d in list_])}</ul>"
+    return f"<ul>{''.join([f'<li>{d}</li>' for d in list_])}</ul>"
 
 
 def tryParseInt(
     value: Any, default: int = None, min_value: int = -inf, max_value: int = inf
-) -> Optional[int]:
+) -> int | None:
     """Cast value to integer if possible, or return None
 
     Args:
@@ -113,7 +114,7 @@ def try_parse_list_ints(val: str = None) -> list[int]:
         return []
 
 
-def int_or_float(val: float) -> Union[int, float]:
+def int_or_float(val: float) -> int | float:
     """
     Tries to cast val to int without loss.
     If unable to, it returns the original float.
@@ -141,7 +142,7 @@ def map_enum(df: pd.DataFrame, field: str, choices: Choices, replace: bool = Fal
         df.rename(columns={key: field}, inplace=True)
 
 
-def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -> pd.DataFrame:
+def df_move_column(df: pd.DataFrame, target: str, after: str | None = None) -> pd.DataFrame:
     """Move target column after another column.
 
     Args:
@@ -319,7 +320,7 @@ class FlatFileExporter:
 class WebappConfig(PydanticModel):
     # single-page webapp configuration
     app: str
-    page: Optional[str] = None
+    page: str | None = None
     data: dict
 
 
@@ -469,8 +470,8 @@ class PydanticToDjangoError:
     def __init__(
         self,
         include_field: bool = True,
-        field: Optional[str] = None,
-        msg: Optional[str] = None,
+        field: str | None = None,
+        msg: str | None = None,
         drf: bool = False,
     ):
         self.include_field = include_field
