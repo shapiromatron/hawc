@@ -35,7 +35,6 @@ def patch_md5():
     if run_once is not None:
         return
     os.environ["HAWC_RUN_ONCE"] = "True"
-    print("FIPS monkeypatch enabled...")
     monkey_patch_md5(
         [
             "django.contrib.staticfiles.storage",

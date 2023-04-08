@@ -18,7 +18,7 @@ omit = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-select = ["F", "E", "W", "I", "UP", "S", "B", "RUF"]
+select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "RUF"]
 ignore = ["E501", "B904", "B007", "S308", "S113", "S314"]
 
 [tool.ruff.isort]
@@ -26,3 +26,6 @@ known-first-party = ["hawc", "hawc_client"]
 
 [tool.ruff.per-file-ignores]
 "test_*.py" = ["S101", "S106"]
+"scripts/*.py" = ["T201"]
+"**/management/**.py" = ["T201"]
+"**/migrations/**.py" = ["T201"]
