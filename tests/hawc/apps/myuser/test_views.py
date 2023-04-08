@@ -115,6 +115,31 @@ class TestLoginView:
 
         settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION = True
 
+    @pytest.mark.vcr
+    def test_turnstyle(self, settings):
+        url = reverse("user:login")
+        success = {"username": "pm@hawcproject.org", "password": "pw"}
+
+        # no turnstyle by default
+        c = Client()
+        resp = c.get(url)
+        assert b"challenges.cloudflare.com/turnstile" not in resp.content
+        assert b'data-sitekey="https://test-me.org"' not in resp.content
+        resp = c.post(url, data=success)
+        assert resp.status_code == 302
+        assert resp.url == "/portal/"
+
+        # turnstyle if enabled
+        c = Client()
+        settings.TURNSTYLE_SITE = "https://test-me.org"
+        settings.TURNSTYLE_KEY = "secret"
+        resp = c.get(url)
+        assert b"challenges.cloudflare.com/turnstile" in resp.content
+        assert b'data-sitekey="https://test-me.org"' in resp.content
+        resp = c.post(url, data=success)
+        assert resp.status_code == 200
+        assert resp.context["form"].errors == {"__all__": ["Failed bot challenge - are you human?"]}
+
 
 class ExternalAuthSetup(ExternalAuth):
     # mock user metdata handler for test case

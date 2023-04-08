@@ -461,7 +461,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         for bmd in bmds:
             # return first match
             if bmd["dose_units_id"] in preferred_units and bmd["model"] is not None:
-                return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
+                return [bmd["bmd"], bmd["bmdl"]]
         return [None, None]
 
     @staticmethod

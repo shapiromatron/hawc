@@ -31,7 +31,6 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model("riskofbias", "RiskOfBiasAssessment").build_default(instance)
 
         logger.info("Creating new BMD settings assessment creation")
-        apps.get_model("bmd", "LogicField").build_defaults(instance)
         apps.get_model("bmd", "AssessmentSettings").build_default(instance)
 
         logger.info("Creating default summary text")

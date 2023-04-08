@@ -3,12 +3,13 @@ from io import BytesIO, StringIO
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from django.conf import settings
 from django.utils.text import slugify
 from matplotlib.axes import Axes
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 from openpyxl.utils.exceptions import IllegalCharacterError
 from rest_framework import status
-from rest_framework.renderers import BaseRenderer
+from rest_framework.renderers import BaseRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 
 from .helper import FlatExport, ReportExport, rename_duplicate_columns
@@ -101,7 +102,7 @@ class PandasCsvRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return export.df.to_csv(index=False, line_terminator="\n")
+        return export.df.to_csv(index=False, lineterminator="\n")
 
 
 class PandasTsvRenderer(PandasBaseRenderer):
@@ -114,7 +115,7 @@ class PandasTsvRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return export.df.to_csv(index=False, sep="\t", line_terminator="\n")
+        return export.df.to_csv(index=False, sep="\t", lineterminator="\n")
 
 
 class PandasJsonRenderer(PandasBaseRenderer):
@@ -129,6 +130,25 @@ class PandasJsonRenderer(PandasBaseRenderer):
         if export.df.columns.has_duplicates:
             rename_duplicate_columns(export.df)
         return export.df.to_json(orient="records")
+
+
+class PandasBrowsableAPIRenderer(BrowsableAPIRenderer):
+    """
+    Renders dataframe using the DRF browser.
+
+    This can be useful in debugging to view the django debug toolbar
+    for database query performance.
+    """
+
+    def get_content(self, renderer, data, accepted_media_type, renderer_context):
+        # handle OPTIONS
+        if isinstance(data, dict):
+            return json.dumps(data, indent=4)
+
+        # handle dataframe
+        if data.df.columns.has_duplicates:
+            rename_duplicate_columns(data.df)
+        return data.df.to_json(orient="records", indent=4)
 
 
 class PandasXlsxRenderer(PandasBaseRenderer):
@@ -171,10 +191,14 @@ class PandasXlsxRenderer(PandasBaseRenderer):
         return f.getvalue()
 
 
-PandasRenderers = (
+PandasRenderers = [
     PandasJsonRenderer,
     PandasHtmlRenderer,
     PandasCsvRenderer,
     PandasTsvRenderer,
     PandasXlsxRenderer,
-)
+]
+
+if settings.DEBUG:
+    # insert at position 1 to keep JSON the default renderer
+    PandasRenderers.insert(1, PandasBrowsableAPIRenderer)

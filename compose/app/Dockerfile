@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED 1
 
@@ -10,7 +10,6 @@ COPY ./compose/app/sync.sh /app/bin/sync.sh
 COPY ./compose/app/web.sh /app/bin/web.sh
 COPY ./compose/app/workers.sh /app/bin/workers.sh
 COPY ./compose/app/cron.sh /app/bin/cron.sh
-COPY ./vendor/bmds-0.11.0.tar.gz /app/build/vendor/bmds-0.11.0.tar.gz
 
 # used in some dev/staging environments
 COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml

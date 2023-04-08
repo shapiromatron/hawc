@@ -23,10 +23,6 @@
       <tr><th>Last updated</th><td>{{object.last_updated}}</td></tr>
     </tbody>
   </table>
-
-  <h3>BMD decision logic</h3>
-  {% include "bmd/_logic_settings_detail_list.html" with object_list=assessment.bmd_logic_fields.all %}
-
 {% endblock %}
 
 {% block extrajs %}

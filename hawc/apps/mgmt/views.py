@@ -1,13 +1,13 @@
 from django.apps import apps
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin, WebappMixin
+from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
 from ..study.serializers import StudyAssessmentSerializer
 from . import models
 
@@ -64,7 +64,7 @@ class RobTaskMixin:
     def get_app_config(self, context) -> WebappConfig:
         assessment_id = self.assessment.id if hasattr(self, "assessment") else None
         task_url = (
-            reverse("mgmt:api:task-assessment-assignments", args=(assessment_id,))
+            reverse("mgmt:api:task-assessment-assignments")
             if assessment_id
             else reverse("mgmt:api:task-assignments")
         )
@@ -92,7 +92,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     template_name = "mgmt/user_assignments.html"
 
     def get_queryset(self):
-        return self.model.objects.owned_by(self.request.user)
+        return self.model.objects.all().owned_by(self.request.user)
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
@@ -110,8 +110,10 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
 
     def get_queryset(self):
         return (
-            self.model.objects.owned_by(self.request.user)
+            super()
+            .get_queryset()
             .filter(study__assessment=self.assessment)
+            .owned_by(self.request.user)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
 
@@ -128,16 +130,14 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
 
 
 # Assessment-level task views
-class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
+class TaskDashboard(BaseList):
     parent_model = Assessment
     model = models.Task
     template_name = "mgmt/assessment_dashboard.html"
-
-    def get_assessment(self, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
-        return self.model.objects.assessment_qs(self.assessment.id)
+        return super().get_queryset().filter(study__assessment_id=self.assessment.id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

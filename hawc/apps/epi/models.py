@@ -984,6 +984,9 @@ class GroupNumericalDescriptions(models.Model):
     def get_assessment(self):
         return self.group.get_assessment()
 
+    def get_absolute_url(self):
+        return self.group.get_absolute_url()
+
 
 class ResultMetric(models.Model):
     objects = managers.ResultMetricManager()

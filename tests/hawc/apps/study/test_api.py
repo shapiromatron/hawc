@@ -59,6 +59,7 @@ class TestStudyViewset:
             "epi": True,
             "epi_meta": False,
             "in_vitro": False,
+            "eco": True,
             "short_citation": "Foo et al.",
             "full_citation": "Foo et al. 2010",
             "coi_reported": "---",

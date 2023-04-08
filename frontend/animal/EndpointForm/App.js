@@ -9,13 +9,17 @@ import TermSelector from "./TermSelector";
 @observer
 class App extends Component {
     render() {
-        const {store} = this.props;
+        const {store} = this.props,
+            helpTextName = store.canUseControlledVocabulary
+                ? helpText.endpoint_name_ehv
+                : helpText.endpoint_name_no_ehv;
         return (
             <>
                 <TermSelector
                     name={"name"}
                     label={label.endpoint_name}
-                    helpText={helpText.endpoint_name}
+                    helpText={helpTextName}
+                    popupHelpText={helpText.endpoint_name_popup}
                     termIdField={"name_term_id"}
                     termTextField={"name"}
                     parentIdField={"effect_subtype_term_id"}
@@ -28,6 +32,7 @@ class App extends Component {
                             name={"system"}
                             label={label.system}
                             helpText={helpText.system}
+                            popupHelpText={helpText.system_popup}
                             termIdField={"system_term_id"}
                             termTextField={"system"}
                             parentRequired={false}
@@ -38,6 +43,7 @@ class App extends Component {
                             name={"organ"}
                             label={label.organ}
                             helpText={helpText.organ}
+                            popupHelpText={helpText.organ_popup}
                             termIdField={"organ_term_id"}
                             termTextField={"organ"}
                             parentIdField={"system_term_id"}
@@ -49,6 +55,7 @@ class App extends Component {
                             name={"effect"}
                             label={label.effect}
                             helpText={helpText.effect}
+                            popupHelpText={helpText.effect_popup}
                             termIdField={"effect_term_id"}
                             termTextField={"effect"}
                             parentIdField={"organ_term_id"}
@@ -60,6 +67,7 @@ class App extends Component {
                             name={"effect_subtype"}
                             label={label.effect_subtype}
                             helpText={helpText.effect_subtype}
+                            popupHelpText={helpText.effect_subtype_popup}
                             termIdField={"effect_subtype_term_id"}
                             termTextField={"effect_subtype"}
                             parentIdField={"effect_term_id"}

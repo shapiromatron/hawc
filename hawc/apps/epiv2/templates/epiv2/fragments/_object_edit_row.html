@@ -8,7 +8,7 @@
                 {% include "common/scientific_pulldown.html" %}
             </div>
             {% crispy form %}
-            <div class="form-row pull-right">
+            <div class="form-row float-right">
                 {% if form.instance.id %}
                 <button id="{{model}}-save" class="btn btn-sm btn-primary" hx-post="{% crud_url 'epiv2' model 'update' object.pk %}">
                     Save</button>
