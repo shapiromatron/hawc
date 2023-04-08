@@ -286,7 +286,7 @@ class PubMedParser:
 
             medline_date = tree.find(
                 "MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate"
-            )  # noqa
+            )
             if medline_date is not None:
                 year = re.search(r"(\d+){4}", medline_date.text)
                 if year is not None:

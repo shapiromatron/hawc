@@ -141,7 +141,7 @@ class ImportForm(SearchForm):
         if self.instance.id is None:
             self.fields[
                 "search_string"
-            ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
+            ].help_text = "Enter a comma-separated list of database IDs for import."
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
@@ -478,7 +478,7 @@ class ReferenceForm(forms.ModelForm):
 
         inputs = {
             "legend_text": "Update reference details",
-            "help_text": "Update reference information which was fetched from database or reference upload.",  # noqa
+            "help_text": "Update reference information which was fetched from database or reference upload.",
             "cancel_url": self.instance.get_absolute_url(),
         }
 

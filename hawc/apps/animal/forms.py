@@ -146,7 +146,8 @@ class AnimalGroupForm(ModelForm):
         else:
             le_choices = [
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ] + constants.Lifestage.choices
+                *constants.Lifestage.choices,
+            ]
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
@@ -154,7 +155,8 @@ class AnimalGroupForm(ModelForm):
         else:
             la_choices = [
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ] + constants.Lifestage.choices
+                *constants.Lifestage.choices,
+            ]
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(

@@ -152,8 +152,8 @@ class RiskOfBiasCopyForm(forms.Form):
         rob_name = self.assessment.get_rob_name_display().lower()
         helper = BaseFormHelper(
             self,
-            legend_text=f"Copy {rob_name} approach from another assessment",  # noqa
-            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
+            legend_text=f"Copy {rob_name} approach from another assessment",
+            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",
             cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
             submit_text="Copy from assessment",
         )

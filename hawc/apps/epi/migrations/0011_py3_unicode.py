@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name="age_of_exposure",
             field=models.CharField(
                 blank=True,
-                help_text='Textual age description for when exposure measurement sample was taken, treatment given, or age for which survey data apply [examples include:  specific age indicated in the study (e.g., "gestational week 20, 3 years of age, 10-12 years of age, previous 12 months") OR standard age categories: "fetal (in utero), neonatal (0-27 days), infancy (1-12 months) toddler (1-2 years), middle childhood (6-11 years, early adolescence (12-18 years),late adolescence (19-21 years), adulthood (>21),older adulthood (varies)" – based on NICHD Integratedpediatric terminology]',
+                help_text='Textual age description for when exposure measurement sample was taken, treatment given, or age for which survey data apply [examples include:  specific age indicated in the study (e.g., "gestational week 20, 3 years of age, 10-12 years of age, previous 12 months") OR standard age categories: "fetal (in utero), neonatal (0-27 days), infancy (1-12 months) toddler (1-2 years), middle childhood (6-11 years, early adolescence (12-18 years),late adolescence (19-21 years), adulthood (>21),older adulthood (varies)" - based on NICHD Integratedpediatric terminology]',
                 max_length=32,
             ),
         ),

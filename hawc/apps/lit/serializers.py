@@ -133,7 +133,7 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
     class Meta:
         model = models.Reference
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        fields = (*cleanup_fields, "id")
 
 
 class ReferenceTreeSerializer(serializers.Serializer):

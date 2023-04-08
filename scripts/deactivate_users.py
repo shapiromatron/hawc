@@ -10,7 +10,7 @@ from pathlib import Path
 import django
 from django.core import management
 from django.db import transaction
-from myuser.models import HAWCUser  # noqa: E402
+from myuser.models import HAWCUser
 
 ROOT = str(Path(__file__).parents[0].resolve())
 sys.path.append(ROOT)

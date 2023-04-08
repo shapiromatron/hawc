@@ -20,8 +20,8 @@ class AutocompleteWidgetMixin:
                 f"{settings.STATIC_URL}patched/dal/3.9.4/js/autocomplete_light.js",
                 f"autocomplete_light/select2{extra}.js",
                 f"{settings.STATIC_URL}patched/dal/3.9.4/js/select2text.js",
-            )
-            + i18n_file,
+                *i18n_file,
+            ),
             css={
                 "screen": (
                     f"admin/css/vendor/select2/select2{extra}.css",
