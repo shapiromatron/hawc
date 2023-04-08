@@ -7,7 +7,6 @@ from ..managers import ReferenceFilterTagManager
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0001_initial"),
     ]

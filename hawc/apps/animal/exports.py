@@ -9,7 +9,6 @@ from . import constants, models
 
 
 def get_gen_species_strain_sex(e, withN=False):
-
     gen = e["animal_group"]["generation"]
     if len(gen) > 0:
         gen += " "
@@ -277,7 +276,6 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return headers
 
     def _get_data_rows(self):
-
         preferred_units = self.kwargs.get("preferred_units", None)
 
         rows = []
@@ -500,7 +498,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             return (None, None)
 
     def _get_data_rows(self):
-
         preferred_units = self.kwargs.get("preferred_units", None)
 
         rows = []
@@ -648,7 +645,6 @@ class EndpointSummary(FlatFileExporter):
             return set(sorted([d["dose_units"]["name"] for d in doses]))
 
         def getDoses(doses, unit):
-
             doses = [d["dose"] for d in doses if d["dose_units"]["name"] == unit]
             return [f"{d:g}" for d in doses]
 

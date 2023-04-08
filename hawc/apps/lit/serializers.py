@@ -44,7 +44,6 @@ class SearchSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
-
         user = self.context["request"].user
         if not data["assessment"].user_can_edit_object(user):
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
@@ -317,7 +316,6 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-
         # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
@@ -344,7 +342,6 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
     )
 
     def validate_replace(self, replace: list) -> list:
-
         self.ref_ids, self.hero_ids = zip(*replace)
         assessment = self.context["assessment"]
         references = models.Reference.objects.filter(id__in=self.ref_ids)
@@ -395,7 +392,6 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         return replace
 
     def execute(self) -> ResultBase:
-
         # import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
 

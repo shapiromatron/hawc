@@ -52,7 +52,6 @@ class ExperimentForm(ModelForm):
 
     @property
     def helper(self):
-
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
@@ -330,7 +329,6 @@ class BaseDoseGroupFormSet(BaseModelFormSet):
 
 
 def dosegroup_formset_factory(groups, num_dose_groups):
-
     data = {
         "form-TOTAL_FORMS": str(len(groups)),
         "form-INITIAL_FORMS": 0,
@@ -434,7 +432,6 @@ class EndpointForm(ModelForm):
 
     @property
     def helper(self):
-
         vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
         if vocab_enabled:
             vocab = f"""&nbsp;The <a href="{reverse('vocab:ehv-browse')}">Environmental

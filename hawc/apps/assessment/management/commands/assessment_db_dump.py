@@ -262,7 +262,6 @@ class Command(UnicodeCommand):
         return ", ".join(select)
 
     def handle(self, *args, **options):
-
         self.id_list = options.get("id_list", -1)
 
         self.write_schema_pre_data()

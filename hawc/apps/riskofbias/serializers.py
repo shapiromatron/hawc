@@ -319,7 +319,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-
         rob = models.RiskOfBias.objects.create(
             study=validated_data["study"],
             final=validated_data["final"],

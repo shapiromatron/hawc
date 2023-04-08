@@ -31,7 +31,6 @@ def typeConvertPubmedResultsToInt(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0006_auto_20151021_1626"),
     ]

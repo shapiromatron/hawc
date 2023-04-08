@@ -42,7 +42,6 @@ def remove_merge_option(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0009_add_data_pivot_merge_option"),
     ]

@@ -17,7 +17,6 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 @pytest.mark.django_db
 class TestAssessmentViewset:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
-
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
@@ -98,7 +97,6 @@ class TestAssessmentViewset:
         self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
-
         # published
         fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
         url = (

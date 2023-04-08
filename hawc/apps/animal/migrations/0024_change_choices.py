@@ -14,7 +14,6 @@ def update_choices(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0023_update_help_text"),
     ]

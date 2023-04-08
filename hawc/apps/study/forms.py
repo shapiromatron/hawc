@@ -17,7 +17,6 @@ def eco_enabled() -> bool:
 
 
 class BaseStudyForm(forms.ModelForm):
-
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",

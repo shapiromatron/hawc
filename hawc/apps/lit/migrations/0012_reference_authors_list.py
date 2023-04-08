@@ -131,7 +131,6 @@ def update_pubmed_queries(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0011_auto_20190416_2035"),
     ]

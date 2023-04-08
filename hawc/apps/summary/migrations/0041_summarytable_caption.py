@@ -4,7 +4,6 @@ from hawc.apps.common import validators
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0040_tableau_filters"),
     ]

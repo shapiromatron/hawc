@@ -15,7 +15,6 @@ def mock_now():
 
 @patch("django.utils.timezone.now", side_effect=mock_now)
 class TestDateCheckboxInput:
-
     widget = DateCheckboxInput()
 
     def test_value_from_datadict(self, *args):
@@ -47,7 +46,6 @@ class TestSelectOtherWidget:
         assert self.widget.decompress("cuatro") == ["other", "cuatro"]
 
     def test_from_form(self):
-
         from_dd = self.widget.value_from_datadict
 
         # standard cases

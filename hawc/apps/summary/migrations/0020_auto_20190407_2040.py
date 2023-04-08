@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0019_datapivotupload_worksheet_name"),
     ]

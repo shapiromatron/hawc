@@ -316,7 +316,6 @@ class TimeSpentOnPageMixin:
 
 
 class CopyAsNewSelectorMixin:
-
     copy_model = None  # required
     template_name_suffix = "_copy_selector"
 

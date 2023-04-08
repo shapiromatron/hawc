@@ -56,7 +56,6 @@ class TooManyPubMedResults(Exception):
 
 
 class LiteratureAssessment(models.Model):
-
     DEFAULT_EXTRACTION_TAG = "Inclusion"
     TOPIC_MODEL_MIN_REFERENCES = 50
 

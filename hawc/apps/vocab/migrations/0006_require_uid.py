@@ -12,7 +12,6 @@ def set_fake_default(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("vocab", "0005_delete_comment"),
     ]

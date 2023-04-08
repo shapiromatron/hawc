@@ -12,7 +12,6 @@ def update_choices(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("study", "0010_auto_20190403_1934"),
     ]

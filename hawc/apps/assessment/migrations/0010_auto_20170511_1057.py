@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0009_assessment_enable_project_management"),
     ]

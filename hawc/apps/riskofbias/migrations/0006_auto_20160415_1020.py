@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("riskofbias", "0005_split_rob_robscore_20160414_1440"),
     ]

@@ -237,7 +237,6 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-
         errors = forms.EndpointGroupForm.clean_endpoint_group(
             self.context["endpoint_data"].get("data_type", "C"),
             self.context["endpoint_data"].get("variance_type", 0),

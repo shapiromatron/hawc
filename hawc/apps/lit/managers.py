@@ -518,7 +518,6 @@ class ReferenceQuerySet(models.QuerySet):
 
 
 class ReferenceManager(BaseManager):
-
     assessment_relation = "assessment"
 
     def get_queryset(self):
@@ -726,7 +725,6 @@ class ReferenceManager(BaseManager):
         """
         assessment_id = search.assessment_id
         for idents in identifiers:
-
             # check if existing reference is found
             ref = self.get_qs(assessment_id).filter(identifiers__in=idents).first()
 

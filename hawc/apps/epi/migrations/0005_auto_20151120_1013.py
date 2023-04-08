@@ -36,7 +36,6 @@ def revert_variances(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("epi", "0004_auto_20151105_1056"),
     ]

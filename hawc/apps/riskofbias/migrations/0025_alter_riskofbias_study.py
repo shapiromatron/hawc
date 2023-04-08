@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("study", "0011_auto_20190416_2035"),
         ("riskofbias", "0024_riskofbiasmetric_responses"),

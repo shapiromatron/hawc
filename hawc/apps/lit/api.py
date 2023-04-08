@@ -169,7 +169,6 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         )
         payload = {}
         if len(years) > 0:
-
             df = pd.DataFrame(years, columns=["Year"])
             nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
 

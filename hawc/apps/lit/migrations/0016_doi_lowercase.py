@@ -42,7 +42,6 @@ def set_doi_lowercase(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0015_unaccent"),
     ]

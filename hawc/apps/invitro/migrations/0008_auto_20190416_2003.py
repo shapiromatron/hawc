@@ -11,7 +11,6 @@ def update_choices(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("invitro", "0007_py3_unicode"),
     ]

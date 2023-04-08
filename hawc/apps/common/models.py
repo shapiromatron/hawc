@@ -137,7 +137,6 @@ class NonUniqueTagBase(models.Model):
 
 
 class AssessmentRootMixin:
-
     cache_template_taglist = NotImplementedAttribute
     cache_template_tagtree = NotImplementedAttribute
 
@@ -172,7 +171,6 @@ class AssessmentRootMixin:
         last_depth = -math.inf
         names: list[str] = []
         for node in qs:
-
             if node.depth == 1:
                 node.nested_name = node.name
             else:

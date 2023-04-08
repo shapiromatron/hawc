@@ -12,7 +12,6 @@ def set_multiple_generations(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0024_change_choices"),
     ]

@@ -24,7 +24,6 @@ def migrate_to_central_tendency(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("epi", "0012_create_central_tendency"),
     ]

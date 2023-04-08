@@ -13,7 +13,6 @@ def setName(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("epi", "0006_auto_20160614_0952"),
     ]

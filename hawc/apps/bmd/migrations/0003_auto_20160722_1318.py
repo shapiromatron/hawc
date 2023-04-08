@@ -16,7 +16,6 @@ def undoAssessmentVersion(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0018_auto_20160602_1007"),
         ("assessment", "0007_auto_20160426_1124"),

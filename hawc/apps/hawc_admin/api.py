@@ -13,7 +13,6 @@ from .actions import media_metadata_report
 
 
 class DashboardViewset(viewsets.ViewSet):
-
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 

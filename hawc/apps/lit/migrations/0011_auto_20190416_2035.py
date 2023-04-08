@@ -8,7 +8,6 @@ from ...common.models import CustomURLField
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0010_py3_unicode"),
     ]

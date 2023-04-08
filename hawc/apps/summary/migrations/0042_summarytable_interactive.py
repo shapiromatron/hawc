@@ -34,7 +34,6 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0041_summarytable_caption"),
     ]

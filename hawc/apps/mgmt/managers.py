@@ -68,7 +68,6 @@ class TaskManager(BaseManager):
 
         # create extraction tasks
         if assessment.enable_data_extraction:
-
             task = task_by_type(existing_tasks, constants.TaskType.EXTRACTION)
             if task is None:
                 new_tasks.append(self.model(study=study, type=constants.TaskType.EXTRACTION))

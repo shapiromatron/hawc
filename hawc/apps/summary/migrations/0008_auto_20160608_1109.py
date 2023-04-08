@@ -32,7 +32,6 @@ def remove_selected_metrics(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0007_auto_20160121_1507"),
     ]

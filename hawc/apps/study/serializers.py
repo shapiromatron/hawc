@@ -33,7 +33,6 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
 class SimpleStudySerializer(StudySerializer):
     def validate(self, data):
         if "reference_id" in self.initial_data:
-
             ref_id = self.initial_data.get("reference_id")
 
             try:

@@ -27,7 +27,6 @@ def migrate_scores(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("riskofbias", "0016_auto_20190407_2152"),
     ]

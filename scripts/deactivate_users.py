@@ -34,7 +34,6 @@ def deactivate_user(new_id: int, old_ids: list[int]):
     # deactivate old user ids, and reassign assessments for current user
     new_user = HAWCUser.objects.get(id=new_id)
     for old_user in HAWCUser.objects.filter(id__in=old_ids):
-
         for assessment in old_user.assessment_pms.all():
             if assessment not in new_user.assessment_pms.all():
                 new_user.assessment_pms.add(assessment)

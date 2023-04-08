@@ -62,7 +62,6 @@ class PandasBaseRenderer(BaseRenderer):
     """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-
         # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
         method = renderer_context["request"].method if "request" in renderer_context else None

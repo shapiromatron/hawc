@@ -11,7 +11,6 @@ def disable_conflict_resolution(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("lit", "0016_doi_lowercase"),

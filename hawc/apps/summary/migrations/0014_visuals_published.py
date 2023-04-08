@@ -15,7 +15,6 @@ def make_public(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0013_optional_captions"),
     ]

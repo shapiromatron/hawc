@@ -28,7 +28,6 @@ def runMigration(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0007_auto_20160426_1124"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

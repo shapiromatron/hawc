@@ -42,7 +42,6 @@ def hide_na_legend(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0010_add_nr_option"),
     ]

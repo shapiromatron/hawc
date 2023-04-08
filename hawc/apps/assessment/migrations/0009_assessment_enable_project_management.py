@@ -11,7 +11,6 @@ def disable_mgmt(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0008_auto_20160802_1626"),
     ]

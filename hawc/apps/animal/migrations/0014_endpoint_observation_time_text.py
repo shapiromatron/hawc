@@ -7,7 +7,6 @@ from django.db import migrations, models
 def setObservationTimeText(apps, schema_editor):
     Endpoint = apps.get_model("animal", "Endpoint")
     for ep in Endpoint.objects.all():
-
         txt = ""
 
         if ep.observation_time is None:
@@ -24,7 +23,6 @@ def setObservationTimeText(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0013_auto_20150924_1045"),
     ]

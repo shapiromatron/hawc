@@ -77,7 +77,6 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
 
 class SearchForm(forms.ModelForm):
-
     title_str = "Literature Search"
     help_text = (
         "Create a new literature search. Note that upon creation, "
@@ -209,7 +208,6 @@ class ImportForm(SearchForm):
 
 
 class RisImportForm(SearchForm):
-
     RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
     NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
@@ -297,7 +295,6 @@ class RisImportForm(SearchForm):
         """
         cleaned_data = super().clean()
         if "import_file" in cleaned_data and not self._errors:
-
             # convert BytesIO file to StringIO file
             with StringIO() as f:
                 f.write(cleaned_data["import_file"].read().decode("utf-8-sig"))
@@ -322,7 +319,6 @@ class SearchModelChoiceField(forms.ModelChoiceField):
 
 
 class SearchSelectorForm(forms.Form):
-
     searches = SearchModelChoiceField(
         queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
     )
@@ -440,7 +436,6 @@ def create_external_id(db_type: int, content: Union[list, dict]) -> models.Ident
 
 
 class ReferenceForm(forms.ModelForm):
-
     doi_id = forms.CharField(
         max_length=64,
         label="DOI",
@@ -538,7 +533,6 @@ class ReferenceForm(forms.ModelForm):
 
 
 class TagsCopyForm(forms.Form):
-
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
     confirmation = ConfirmationField()
 
@@ -560,7 +554,6 @@ class TagsCopyForm(forms.Form):
 
 
 class ReferenceExcelUploadForm(forms.Form):
-
     excel_file = forms.FileField(
         required=True,
         help_text="Upload an Excel file which contains at least two columns: "

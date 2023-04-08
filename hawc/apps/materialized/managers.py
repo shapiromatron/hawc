@@ -75,7 +75,6 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
         return endpoint_scores
 
     def outcome_scores(self, outcome_ids: list[int]) -> dict[tuple[int, int], dict]:
-
         Outcome = apps.get_model("epi", "Outcome")
 
         outcomes = Outcome.objects.filter(pk__in=outcome_ids).select_related("study_population")
@@ -94,7 +93,6 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
         return outcome_scores
 
     def result_scores(self, result_ids: list[int]) -> dict[tuple[int, int], dict]:
-
         Result = apps.get_model("epi", "Result")
         Outcome = apps.get_model("epi", "Outcome")
         Exposure = apps.get_model("epi", "Exposure")

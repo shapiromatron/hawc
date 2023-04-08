@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0014_auto_20190401_1852"),
         ("epi", "0011_py3_unicode"),

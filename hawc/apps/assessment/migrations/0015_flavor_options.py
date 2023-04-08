@@ -8,7 +8,6 @@ from ..models import Assessment
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0014_auto_20190401_1852"),
     ]

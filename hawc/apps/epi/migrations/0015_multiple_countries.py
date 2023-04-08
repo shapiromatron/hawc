@@ -14,7 +14,6 @@ def migrate_countries_m2m(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("epi", "0014_delete_exposure_fields"),
     ]

@@ -138,7 +138,6 @@ class PubMedFetch(PubMedUtility):
 
 
 class PubMedParser:
-
     ARTICLE = 0
     BOOK = 1
 

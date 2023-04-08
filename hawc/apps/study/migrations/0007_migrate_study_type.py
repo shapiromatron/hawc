@@ -25,7 +25,6 @@ def unset_study_types(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("study", "0006_new_study_type"),
     ]

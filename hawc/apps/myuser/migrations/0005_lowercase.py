@@ -23,7 +23,6 @@ def hero_access(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("myuser", "0004_license_v2"),
     ]

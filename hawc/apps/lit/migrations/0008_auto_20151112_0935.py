@@ -7,7 +7,6 @@ from ...common.models import CustomURLField
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0007_auto_20151103_0925"),
     ]

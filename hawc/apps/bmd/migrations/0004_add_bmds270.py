@@ -19,7 +19,6 @@ def updateAssessmentVersion(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bmd", "0003_auto_20160722_1318"),
     ]

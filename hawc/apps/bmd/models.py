@@ -142,7 +142,6 @@ class Session(models.Model):
         return constants.BmdInputSettings.parse_obj(self.inputs)
 
     def get_session(self, with_models=False):
-
         session = getattr(self, "_session", None)
 
         if session is None:

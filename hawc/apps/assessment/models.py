@@ -1092,7 +1092,6 @@ class DatasetRevision(models.Model):
 
 
 class Job(models.Model):
-
     JOB_TO_FUNC = {
         constants.JobType.TEST: jobs.test,
     }

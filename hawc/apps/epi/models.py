@@ -1581,7 +1581,6 @@ class GroupResult(models.Model):
         n_1, mu_1, sd_1 = get_control_group(rgs)
 
         for i, rg in enumerate(rgs):
-
             mean = low = high = None
 
             if estimate_type in ["median", "mean"] and variance_type in [
@@ -1589,7 +1588,6 @@ class GroupResult(models.Model):
                 "SE",
                 "SEM",
             ]:
-
                 n_2 = rg["n"]
                 mu_2 = rg["estimate"]
                 sd_2 = rg.get("stdev")
