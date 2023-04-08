@@ -1,4 +1,3 @@
-
 from ..common.autocomplete import BaseAutocomplete, SearchLabelMixin, register
 from . import models
 

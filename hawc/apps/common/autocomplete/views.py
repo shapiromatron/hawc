@@ -1,4 +1,3 @@
-
 from dal import autocomplete
 from django.http import HttpResponseForbidden
 

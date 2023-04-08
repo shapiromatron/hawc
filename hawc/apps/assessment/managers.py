@@ -253,9 +253,7 @@ class EventPair:
 class LogManager(BaseManager):
     assessment_relation = "assessment"
 
-    def get_object_audit(
-        self, content_type: ContentType | int, object_id: int
-    ) -> list[Event]:
+    def get_object_audit(self, content_type: ContentType | int, object_id: int) -> list[Event]:
         """
         Combines information from HAWC's internal logs and reversion logs for a more complete audit.
         Matching is attempted between these two log types to account for same operations.

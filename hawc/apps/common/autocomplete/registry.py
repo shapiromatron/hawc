@@ -1,4 +1,3 @@
-
 from django.http import Http404
 from django.utils.encoding import force_str
 from django.utils.module_loading import autodiscover_modules

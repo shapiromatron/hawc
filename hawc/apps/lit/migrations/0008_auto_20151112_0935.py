@@ -1,5 +1,3 @@
-
-
 from django.db import migrations
 
 from ...common.models import CustomURLField

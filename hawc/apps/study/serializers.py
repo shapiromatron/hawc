@@ -1,4 +1,3 @@
-
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
@@ -84,9 +83,7 @@ class VerboseStudySerializer(StudySerializer):
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
-    def _get_identifier(
-        self, identifiers: list, key: str, to_int: bool
-    ) -> int | str | None:
+    def _get_identifier(self, identifiers: list, key: str, to_int: bool) -> int | str | None:
         for identifier in identifiers:
             if identifier["database"] == key:
                 value = identifier["unique_id"]

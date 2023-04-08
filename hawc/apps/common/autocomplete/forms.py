@@ -1,4 +1,3 @@
-
 from dal import autocomplete
 from dal_select2.widgets import I18N_PATH
 from django.conf import settings
