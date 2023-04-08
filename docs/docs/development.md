@@ -389,6 +389,7 @@ py.test -sv tests/integration/test_login.py --pdb
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
+- [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 
 When using the recommended settings below, your python and javascript code should automatically format whenever you save to fix most, but not all requirements. In addition, you should have pretty good autocompletion. Python type annotations are enabled with warnings, but not enforced; this may change as we continue to annotate the existing codebase. You can add these settings to your overall VSCode settings.json file, or create a [workspace](https://code.visualstudio.com/docs/editor/workspaces) for HAWC and add it to the workspace settings.json file.
 
@@ -405,7 +406,11 @@ When using the recommended settings below, your python and javascript code shoul
         "editor.quickSuggestions": false
     },
     "[python]": {
+        "editor.formatOnSave": true,
         "editor.formatOnPaste": false,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true
+        }
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
@@ -426,7 +431,6 @@ When using the recommended settings below, your python and javascript code shoul
         "reportUnknownMemberType": "information",
     },
     "python.analysis.typeCheckingMode": "basic",
-    "python.autoUpdateLanguageServer": true,
     "python.formatting.provider": "black",
     "python.languageServer": "Pylance",
     "python.linting.flake8Enabled": false,
