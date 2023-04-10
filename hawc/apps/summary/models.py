@@ -557,7 +557,11 @@ class Visual(models.Model):
 
     def get_plotly_from_json(self):
         if self.visual_type == constants.VisualType.PLOTLY_JSON:
-            return from_json(self.settings)
+            try:
+                fig = from_json(self.settings)
+                return fig
+            except ValueError as e:
+                return e
         raise ValueError("Incorrect visual type to get a custom Plotly visual.")
 
 
