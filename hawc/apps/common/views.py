@@ -57,7 +57,7 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     Returns:
         str: A valid URL, with query params dropped
     """
-    url = request.META.get("HTTP_REFERER")
+    url = request.headers.get("referer")
     this_host = request.get_host()
 
     if default.startswith("https"):
