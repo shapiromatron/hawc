@@ -76,10 +76,6 @@ def strip_entities(value):
     return re.sub(r"&(?:\w+|#\d+);", "", force_str(value))
 
 
-def listToUl(list_):
-    return f"<ul>{''.join(['<li>{0}</li>'.format(d) for d in list_])}</ul>"
-
-
 def tryParseInt(
     value: Any, default: int = None, min_value: int = -inf, max_value: int = inf
 ) -> Optional[int]:
