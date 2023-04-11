@@ -25,7 +25,6 @@ LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_I18N = False
-USE_L10N = True
 USE_TZ = True
 
 ADMINS: list[tuple[str, str]] = []
