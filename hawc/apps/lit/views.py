@@ -698,7 +698,7 @@ class RefUploadExcel(BaseUpdate):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Reference upload"
+            self.request.user, self.assessment, "Update full text URLs"
         )
         return context
 

@@ -574,8 +574,8 @@ class ReferenceExcelUploadForm(forms.Form):
     @property
     def helper(self):
         inputs = {
-            "legend_text": "Upload full-text URLs",
-            "help_text": "Using an Excel file, upload full-text URLs for multiple references",
+            "legend_text": "Upload full text URLs",
+            "help_text": "Using an Excel file, upload full text URLs for multiple references",
             "cancel_url": reverse_lazy("lit:overview", args=[self.assessment.id]),
         }
         helper = BaseFormHelper(self, **inputs)
