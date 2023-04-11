@@ -187,6 +187,7 @@ AUTHENTICATION_BACKENDS = [
     "hawc.apps.common.auth.TokenBackend",
 ]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
+CSRF_TRUSTED_ORIGINS = os.getenv("HAWC_CSRF_TRUSTED_ORIGINS", "http://|https://").split("|")
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
 SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")

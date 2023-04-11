@@ -5,10 +5,10 @@ django-filter==21.1
 django-redis==5.2.0
 django-reversion==5.0.0
 django-autocomplete-light==3.9.4
-django-taggit==2.1.0
+django-taggit==3.1.0
 django-treebeard==4.5.1
 django-webpack-loader==1.4.1
-djangorestframework==3.13.1
+djangorestframework==3.14.0
   uritemplate==4.1.1  # schema dependencies
   pyyaml==6.0       # schema dependencies
 gunicorn==20.1.0

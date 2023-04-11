@@ -152,10 +152,6 @@ class MessageMixin:
         if self.success_message is not None:
             messages.success(self.request, self.success_message, extra_tags="alert alert-success")
 
-    def delete(self, request, *args, **kwargs):
-        self.send_message()
-        return super().delete(request, *args, **kwargs)
-
     def form_valid(self, form):
         self.send_message()
         return super().form_valid(form)
@@ -388,10 +384,14 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
 class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    # remove `delete` from method names
+    # delete method CBV different than post; we only need to implement POST
+    # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L220
+    # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L250
+    http_method_names = ["get", "post", "put", "patch", "head", "options", "trace"]
 
     @transaction.atomic
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
+    def form_valid(self, form):
         self.check_delete()
         success_url = self.get_success_url()
         self.create_log(self.object)

@@ -93,13 +93,13 @@ def test_study_crud_success(db_keys):
             assert response.status_code == 200
 
         # delete
-        with assertTemplateUsed("study/study_confirm_delete.html"):
-            response = c.get(reverse("study:delete", args=(pk,)))
-            assert response.status_code == 200
+        response = c.get(reverse("study:delete", args=(pk,)))
+        assertTemplateUsed(response, "study/study_confirm_delete.html")
+        assert response.status_code == 200
 
-        with assertTemplateUsed("study/study_list.html"):
-            response = c.post(reverse("study:delete", args=(pk,)), follow=True)
-            assert response.status_code == 200
+        response = c.post(reverse("study:delete", args=(pk,)), follow=True)
+        assertTemplateUsed(response, "study/study_list.html")
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db
