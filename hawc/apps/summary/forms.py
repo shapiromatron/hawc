@@ -1,4 +1,5 @@
 import json
+import plotly.io as pio
 from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
@@ -947,6 +948,15 @@ class PlotlyJsonForm(VisualForm):
             "caption",
             "published",
         )
+
+    def clean_settings(self):
+        settings: str = self.cleaned_data["settings"]
+        settings = settings.strip("'\"")
+        try:
+            pio.from_json(settings)
+        except ValueError as e:
+            raise forms.ValidationError(str(e))
+        return settings
 
 
 def get_visual_form(visual_type):
