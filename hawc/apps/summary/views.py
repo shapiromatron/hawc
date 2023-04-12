@@ -2,6 +2,7 @@ import itertools
 import json
 import re
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
@@ -400,6 +401,11 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY_JSON,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY_JSON
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                return "403.html"
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -508,6 +514,11 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY_JSON,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY_JSON
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                return "403.html"
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()

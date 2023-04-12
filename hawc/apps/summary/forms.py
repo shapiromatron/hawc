@@ -1,8 +1,8 @@
 import json
-import plotly.io as pio
 from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
+import plotly.io as pio
 from django import forms
 from django.urls import reverse
 from openpyxl import load_workbook
