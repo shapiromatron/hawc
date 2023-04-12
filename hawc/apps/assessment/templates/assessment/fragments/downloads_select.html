@@ -1,0 +1,24 @@
+<div class="input-group my-2" style="width: fit-content;" role="group" aria-label="Downlink link button group with format select">
+    <div class="input-group-prepend">
+        <a class="btn btn-primary" id="{{name}}-url" download="{{name}}-{{object.name}}" style="line-height: unset;" type="button" href="{{link}}?format={{format}}">{{button_text}} &nbsp; <i class="fa fa-download" aria-hidden="true"></i></a>
+    </div>
+    <select id="{{name}}" class="custom-select" required>
+        {% if file_options %} 
+            {% load split %}
+            {% split file_options as file_options %}
+            {% for option in file_options %}
+                {% if forloop.first %}
+                    <option selected value="{{option}}">{{option}}</option>
+                {% else %}
+                    <option value="{{option}}">{{option}}</option>
+                {% endif %}
+            {% endfor %} 
+        {% else %}
+        <option selected value="xlsx">xlsx</option>
+        <option value="json">json</option>
+        <option value="html">html</option>
+        <option value="csv">csv</option>
+        <option value="tsv">tsv</option>
+        {% endif %}
+    </select>
+</div>
