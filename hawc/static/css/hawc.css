@@ -85,6 +85,9 @@ tfoot > tr > td {
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
 }
+p {
+    margin-bottom: 0rem;
+}
 
 /* BOOTSTRAP 4 OVERRIDES */
 body {
