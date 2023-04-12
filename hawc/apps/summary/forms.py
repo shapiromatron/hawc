@@ -955,7 +955,10 @@ class PlotlyJsonForm(VisualForm):
         try:
             pio.from_json(settings)
         except ValueError as e:
-            raise forms.ValidationError(str(e))
+            msg = str(e)
+            if len(msg) > 200:  # cut off very long error messages
+                msg = msg[:200] + "..."
+            raise forms.ValidationError(msg)
         return settings
 
 
