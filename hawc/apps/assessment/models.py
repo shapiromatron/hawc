@@ -583,7 +583,7 @@ class AssessmentValue(models.Model):
     adaf = models.BooleanField(
         verbose_name="Apply ADAF?",
         default=False,
-        help_text="When checked, the Age-Dependent Adjustment Factor (ADAF) note will appear next to the value. If checked, describe the ADAF reasoning in the comments field, e.g. the chemical is carcinogenic by a mutagenic mode of action",
+        help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
     )
     confidence = models.CharField(
         max_length=64,
