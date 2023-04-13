@@ -2,26 +2,31 @@
 
 {% block content %}
 <h2>My assigned tasks</h2>
-{{ config.data.rob_studies }}
+    <h4>Pending risk of bias/study evaluation reviews</h4>
     <table class="table table-sm table-striped">
         <colgroup>
-            <col width="30%" />
-            <col width="70%" />
+            <col width="1/3" />
+            <col width="1/3" />
+            <col width="1/3" />
         </colgroup>
         <thead>
             <tr>
+                <th>Assessment</th>
                 <th>Study</th>
-                <th>Task</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for task in config.data.rob_studies %}
+            {% for rob in rob_task_list %}
             <tr>
                 <td>
-                    {{ task.assessment.name }}
+                    <a href="{{ rob.get_assessment.get_absolute_url }}">{{ rob.get_assessment }}</a>
                 </td>
                 <td>
-                    {{ task.short_citation }}
+                    <a href="{{ rob.study.get_absolute_url }}">{{ rob.study.short_citation }}</a>
+                </td>
+                <td>
+                    <a class="btn btn-light" href="{{ rob.get_edit_url }}"><i class="fa fa-edit"></i> Edit Review</a>
                 </td>
             </tr>
             {% endfor %}
