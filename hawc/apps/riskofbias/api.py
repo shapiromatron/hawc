@@ -1,7 +1,6 @@
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -16,7 +15,7 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
-    get_assessment_id_param,
+    get_assessment_from_query,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
@@ -261,9 +260,8 @@ class AssessmentScoreViewset(AssessmentEditViewset):
     serializer_class = serializers.RiskOfBiasScoreSerializer
     list_actions = ["list", "v2"]
 
-    def get_assessment(self, request, *args, **kwargs):
-        assessment_id = get_assessment_id_param(request)
-        return get_object_or_404(Assessment, pk=assessment_id)
+    def get_assessment(self, request, *args, **kwargs):  # TODO - remove - is this used?
+        return get_assessment_from_query(request)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("overridden_objects__content_object")
