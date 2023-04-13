@@ -96,7 +96,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
-    
+
     def get_review_tasks2(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
@@ -106,7 +106,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
-        context['rob_task_list'] = self.get_review_tasks2()
+        context["rob_task_list"] = self.get_review_tasks2()
         return context
 
 
