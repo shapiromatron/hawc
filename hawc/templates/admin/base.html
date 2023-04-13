@@ -25,4 +25,5 @@
     <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
     {% endif %}
     <a href="{% url 'portal' %}">Return to portal</a>
+    {% include "admin/color_theme_toggle.html" %}
 {% endblock %}
