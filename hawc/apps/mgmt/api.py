@@ -26,9 +26,9 @@ class TaskViewSet(AssessmentEditViewset):
     @action(detail=False, permission_classes=(permissions.IsAuthenticated,))
     def assignments(self, request):
         # Tasks assigned to user.
-        qs = self.model.objects.owned_by(request.user).select_related(
+        qs = self.model.objects.select_related(
             "owner", "study", "study__reference_ptr", "study__assessment"
-        )
+        ).owned_by(request.user)
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -36,8 +36,8 @@ class TaskViewSet(AssessmentEditViewset):
     def assessment_assignments(self, request):
         # Tasks assigned to user for a specific assessment
         qs = (
-            self.model.objects.owned_by(request.user)
-            .filter(study__assessment=self.assessment)
+            self.model.objects.filter(study__assessment=self.assessment)
+            .owned_by(request.user)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)

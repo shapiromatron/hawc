@@ -279,7 +279,7 @@ class AssessmentValueForm(forms.ModelForm):
 class AssessmentFilterForm(forms.Form):
     search = forms.CharField(required=False)
 
-    DEFAULT_ORDER_BY = "-last_updated"
+    DEFAULT_ORDER_BY = "-year"
     ORDER_BY_CHOICES = [
         ("name", "Name"),
         ("year", "Year, ascending"),

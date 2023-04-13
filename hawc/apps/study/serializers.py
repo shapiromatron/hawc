@@ -27,6 +27,7 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Study
         fields = "__all__"
+        read_only_fields = ("identifiers", "searches")
 
 
 class SimpleStudySerializer(StudySerializer):

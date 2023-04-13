@@ -2,9 +2,9 @@ import logging
 from io import StringIO
 from typing import Union
 
-import numpy as np
 import pandas as pd
 from django import forms
+from django.core.validators import URLValidator
 from django.db import transaction
 from django.urls import reverse, reverse_lazy
 
@@ -563,48 +563,80 @@ class ReferenceExcelUploadForm(forms.Form):
 
     excel_file = forms.FileField(
         required=True,
-        help_text="Upload an Excel file which contains at least two columns: "
-        'a "HAWC ID" column for the reference identifier, and a '
-        '"Full text URL" column which contains the URL for the '
-        "full text.",
+        help_text='Upload an Excel file with two columns: a "HAWC ID" column for the HAWC reference ID, and "Full text URL" column which contains a full text URL.',
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
         inputs = {
-            "legend_text": "Upload full-text URLs",
-            "help_text": "Using an Excel file, upload full-text URLs for multiple references",
+            "legend_text": "Upload full text URLs",
+            "help_text": "Using an Excel file, upload full text URLs for multiple references",
             "cancel_url": reverse_lazy("lit:overview", args=[self.assessment.id]),
         }
         helper = BaseFormHelper(self, **inputs)
         return helper
 
+    EXCEL_FORMAT_ERROR = 'Invalid Excel format. The first worksheet in the workbook must contain two columns- "HAWC ID" and "Full text URL", case sensitive.'
+
     def clean_excel_file(self):
         fn = self.cleaned_data["excel_file"]
+
+        # check extension
         if fn.name[-5:] not in [".xlsx", ".xlsm"] and fn.name[-4:] not in [".xls"]:
             raise forms.ValidationError(
                 "Must be an Excel file with an " "xlsx, xlsm, or xls file extension."
             )
 
+        # check parsing
         try:
             df = pd.read_excel(fn.file)
-            df = df[["HAWC ID", "Full text URL"]]
-            df["Full text URL"].fillna("", inplace=True)
-            assert df["HAWC ID"].dtype == np.int64
-            assert df["Full text URL"].dtype == np.object0
-            self.cleaned_data["df"] = df
         except Exception as e:
             logger.warning(e)
-            raise forms.ValidationError(
-                "Invalid Excel format. The first worksheet in the workbook "
-                'must contain at least two columns- "HAWC ID", and '
-                '"Full text URL", case sensitive.'
-            )
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+
+        # check column names
+        if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+
+        # check valid HAWC IDs
+        hawc_ids = df["HAWC ID"].tolist()
+        qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)
+        if unmatched := (set(hawc_ids) - set(qs.values_list("id", flat=True))):
+            raise forms.ValidationError(f"Invalid HAWC IDs: {list(unmatched)}")
+
+        # check valid URLs
+        url_errors = []
+        validator = URLValidator()
+        for _, (id, url) in df.iterrows():
+            try:
+                validator(url)
+            except forms.ValidationError:
+                url_errors.append(f"{url} [{id}]")
+        if len(url_errors) > 0:
+            raise forms.ValidationError(f"Invalid URLs: {', '.join(url_errors)}")
+
+        self.cleaned_data.update(df=df, qs=qs)
         return fn
+
+    def save(self):
+        df = self.cleaned_data["df"]
+        qs = self.cleaned_data["qs"]
+        qs_items = {el.id: el for el in qs}
+        updates: list[models.Reference] = []
+        for _, (id, url) in df.iterrows():
+            ref = qs_items[id]
+            ref.full_text_url = url
+            updates.append(ref)
+        logger.info(
+            f"Bulk updated {len(updates)} full text URLs for references in assessment {self.assessment.id}"
+        )
+        if updates:
+            models.Reference.objects.bulk_update(updates, ["full_text_url"])
 
 
 class BulkReferenceStudyExtractForm(forms.Form):

@@ -173,6 +173,9 @@ const helpers = {
     getBulkUrl(host, base, ids = null) {
         return `${host}${base}&ids=${ids}`;
     },
+    getUrlWithParameters(path, params) {
+        return `${path}?${new URLSearchParams(params).toString()}`;
+    },
     datetimeFormat(dt) {
         return moment(dt).format("MMMM Do YYYY, h:mm:ss a");
     },
