@@ -23,7 +23,7 @@ def get_assessment_id_param(request: Request) -> int:
     If request doesn't contain an integer-based `assessment_id`, an exception is raised.
     """
     assessment_id = tryParseInt(
-        request.request_params.get("assessment_id") or request.data.get("assessment_id")
+        request.query_params.get("assessment_id") or request.data.get("assessment_id")
     )
     if assessment_id is None:
         raise RequiresAssessmentID()
