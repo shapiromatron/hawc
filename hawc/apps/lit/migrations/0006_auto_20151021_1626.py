@@ -9,10 +9,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterIndexTogether(
             name="identifiers",
-            index_together=set(
-                [
-                    ("database", "unique_id"),
-                ]
-            ),
+            index_together=set([("database", "unique_id")]),
         ),
     ]
