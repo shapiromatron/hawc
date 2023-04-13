@@ -1,9 +1,32 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-    <h2>My assigned tasks</h2>
-    {% for task in task_list %}
-    {% endfor %}
+<h2>My assigned tasks</h2>
+{{ config.data.rob_studies }}
+    <table class="table table-sm table-striped">
+        <colgroup>
+            <col width="30%" />
+            <col width="70%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Study</th>
+                <th>Task</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in config.data.rob_studies %}
+            <tr>
+                <td>
+                    {{ task.assessment.name }}
+                </td>
+                <td>
+                    {{ task.short_citation }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <div id='main'></div>
 {% endblock %}
 
