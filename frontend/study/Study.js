@@ -86,7 +86,7 @@ class Study {
         );
         if (this.data.full_text_url)
             tbl.add_tbody_tr(
-                "Full-text link",
+                "Full text URL",
                 `<a href=${this.data.full_text_url}>${this.data.full_text_url}</a>`
             );
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
