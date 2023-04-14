@@ -2,10 +2,59 @@
 
 {% block content %}
 <h2>My assigned tasks</h2>
-    <input type="checkbox" name="completed-tasks" checked>
+<div>
+    <input type="checkbox" name="filter" checked style="margin: 4px">
     <label for="completed-tasks">Hide completed and abandoned tasks</label>
+
+    <h4>Chemical Z <a class="btn btn-sm btn-primary" href="/assessment/1/">View</a></h4>
+
+    <table style="width: 100%;" class="table table-sm table-striped">
+        <colgroup>
+            <col width="30%" />
+            <col width="70%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Study</th>
+                <th>Task</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <td></td>
+            <td>
+                <div class="row">
+                    <div class="col-md-auto">
+                        <div>
+                            <b>Status: </b>
+                            <i class="fa fa-circle" style="padding-left: 5px; padding-right: 5px; color: rgb(0, 204, 0);"></i>
+                            Completed
+                        </div>
+                        <div>
+                            <b>
+                                Task: 
+                            </b>
+                            <span>Data preparation</span>
+                        </div>
+                        <div>
+                            <b>Due date: </b>
+                            <span>07/06/2000</span>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <button type="button" class="btn btn-light"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    </div>
+
+                </div>
+            </td>
+        </tbody>
+    </table>
+</div>
+
+
+
     <h4>Pending risk of bias/study evaluation reviews</h4>
-    <table class="table table-sm table-striped">
+    <table style="width: 100%;" class="table table-sm table-striped">
         <thead>
             <tr>
                 <th>Assessment</th>
