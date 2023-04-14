@@ -6,9 +6,9 @@
     <input type="checkbox" name="filter" checked style="margin: 4px">
     <label for="completed-tasks">Hide completed and abandoned tasks</label>
 
-    {% for task in completed_tasks_list %}
+    {% for task in object_list %}
 
-    <h4>{{ task.get_assessment }} <a class="btn btn-sm btn-primary" href="task.get_absolute_url">View</a></h4>
+    <h4>{{ task.get_assessment }} <a class="btn btn-sm btn-primary" href="task.get_assessment.get_absolute_url">View</a></h4>
 
     <table style="width: 100%;" class="table table-sm table-striped">
         <colgroup>
@@ -29,18 +29,18 @@
                     <div class="col-md-auto">
                         <div>
                             <b>Status: </b>
-                            <i class="fa fa-circle" style="padding-left: 5px; padding-right: 5px; color: rgb(0, 204, 0);"></i>
-                            Completed
+                            <i class="fa fa-circle status-circle s{{ task.status }}"></i>
+                            {{ task.get_status_display|capfirst }}
                         </div>
                         <div>
                             <b>
                                 Task: 
                             </b>
-                            <span>Data preparation</span>
+                            <span>{{ task.get_type_display|capfirst }}</span>
                         </div>
                         <div>
                             <b>Due date: </b>
-                            <span>07/06/2000</span>
+                            <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
                         </div>
                     </div>
                     <div class="col-md">
@@ -59,9 +59,9 @@
     <table style="width: 100%;" class="table table-sm table-striped">
         <thead>
             <tr>
-                <th>Assessment</th>
-                <th>Study</th>
-                <th>Action</th>
+                <th style="width: 33%;">Assessment</th>
+                <th style="width: 33%;">Study</th>
+                <th style="width: 66%;">Action</th>
             </tr>
         </thead>
         <tbody>

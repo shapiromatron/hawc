@@ -102,18 +102,11 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         rob_tasks = self.get_rob_queryset(RiskOfBias)
         self._study_ids = rob_tasks.values_list("study_id", flat=True)
         return [rob for rob in rob_tasks if rob.is_complete is False]
-    
-    def get_completed_tasks(self):
-        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
-        rob_tasks = self.get_rob_queryset(RiskOfBias)
-        self._study_ids = rob_tasks.values_list("study_id", flat=True)
-        return [rob for rob in rob_tasks if rob.is_complete is True]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
         context["rob_task_list"] = self.get_review_tasks2()
-        context["completed_tasks_list"] = self.get_completed_tasks()
         return context
 
 

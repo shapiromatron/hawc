@@ -274,6 +274,27 @@ div.smart-tag.active {
     margin-bottom: 0 !important;  /* same as .mb-0  */
 }
 
+/* mgmt/task-assignment status  */
+.status-circle {
+    padding: 0 5px;
+}
+
+.status-circle.s10 {
+    color: #CFCFCF;
+}
+
+.status-circle.s20 {
+    color: #FFCC00;
+}
+
+.status-circle.s30 {
+    color: #00CC00;
+}
+
+.status-circle.s40 {
+    color: #CC3333;
+}
+
 /* LITERATURE MODULE */
 .lit-review-box {
     border-radius: 5px;
