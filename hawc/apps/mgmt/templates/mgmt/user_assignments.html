@@ -6,7 +6,9 @@
     <input type="checkbox" name="filter" checked style="margin: 4px">
     <label for="completed-tasks">Hide completed and abandoned tasks</label>
 
-    <h4>Chemical Z <a class="btn btn-sm btn-primary" href="/assessment/1/">View</a></h4>
+    {% for task in completed_tasks_list %}
+
+    <h4>{{ task.get_assessment }} <a class="btn btn-sm btn-primary" href="task.get_absolute_url">View</a></h4>
 
     <table style="width: 100%;" class="table table-sm table-striped">
         <colgroup>
@@ -21,7 +23,7 @@
         </thead>
         
         <tbody>
-            <td></td>
+            <td> <a href="{{ task.get_assessment.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
             <td>
                 <div class="row">
                     <div class="col-md-auto">
@@ -49,8 +51,8 @@
             </td>
         </tbody>
     </table>
+    {% endfor %}
 </div>
-
 
 
     <h4>Pending risk of bias/study evaluation reviews</h4>
