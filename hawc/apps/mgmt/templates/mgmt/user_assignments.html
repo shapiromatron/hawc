@@ -5,7 +5,75 @@
 <div>
     <label><input type="checkbox" name="filter" checked style="margin: 4px;">Hide completed and abandoned tasks</label>
 
-    {% if object_list %}
+    <!-- regrouping task list by completion -->
+
+    {% regroup object_list by get_assessment as assessment_list %}
+
+    {% for assessment in assessment_list %}
+    <h4>{{ assessment.grouper }} <a class="btn btn-sm btn-primary" href="{{ assessment.list.0.get_assessment.get_absolute_url }}">View</a></h4>
+
+    <table style="width: 100%;" class="table table-sm table-striped">
+        <colgroup>
+            <col width="30%" />
+            <col width="70%" />
+        </colgroup>
+
+        {% if assessment.list %}
+            {% with assessment.list.0.study as current_study %}
+                <thead>
+                    <tr>
+                        <th>Study</th>
+                        <th>Task</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in assessment.list %}
+                            {% if task.study != current_study %}
+                                {% with task.study as current_study %}
+                                    <tr>
+                                        <td> <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
+                                        <td></td>
+                                    </tr>
+                                {% endwith %}
+                            {% endif %}
+                            <tr>
+                                <td><a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-auto">
+                                            <div>
+                                                <b>Status: </b>
+                                                <i class="fa fa-circle status-circle s{{ task.status }}"></i>
+                                                {{ task.get_status_display|capfirst }}
+                                            </div>
+                                            <div>
+                                                <b>
+                                                    Task: 
+                                                </b>
+                                                <span>{{ task.get_type_display|capfirst }}</span>
+                                            </div>
+                                            <div>
+                                                <b>Due date: </b>
+                                                <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md">
+                                            <button type="button" class="btn btn-light"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                    {% endfor %}
+                </tbody>
+            {% endwith %}
+        {% endif %}
+    </table>
+{% endfor %}
+
+
+
+
+    <!-- {% if object_list %}
     {% for task in object_list %}
 
     {% if task.status != "completed" %}
@@ -106,7 +174,7 @@
     <div>
         <i>There are no tasks available</i>
     </div>
-    {% endif %}
+    {% endif %} -->
     
 
 <!-- risk of bias section -->
