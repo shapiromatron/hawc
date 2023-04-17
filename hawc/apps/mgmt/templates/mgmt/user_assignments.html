@@ -3,10 +3,58 @@
 {% block content %}
 <h2>My assigned tasks</h2>
 <div>
-    <input type="checkbox" name="filter" checked style="margin: 4px">
-    <label for="completed-tasks">Hide completed and abandoned tasks</label>
+    <label><input type="checkbox" name="filter" checked style="margin: 4px;">Hide completed and abandoned tasks</label>
 
+    {% if object_list %}
     {% for task in object_list %}
+
+    {% if task.status != "completed" %}
+
+    <h4>{{ task.get_assessment }} <a class="btn btn-sm btn-primary" href="{{ task.get_assessment.get_absolute_url }}">View</a></h4>
+
+    <table style="width: 100%;" class="table table-sm table-striped">
+        <colgroup>
+            <col width="30%" />
+            <col width="70%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Study</th>
+                <th>Task</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <td> <a href="{{ task.get_assessment.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
+            <td>
+                <div class="row">
+                    <div class="col-md-auto">
+                        <div>
+                            <b>Status: </b>
+                            <i class="fa fa-circle status-circle s{{ task.status }}"></i>
+                            {{ task.get_status_display|capfirst }}
+                        </div>
+                        <div>
+                            <b>
+                                Task: 
+                            </b>
+                            <span>{{ task.get_type_display|capfirst }}</span>
+                        </div>
+                        <div>
+                            <b>Due date: </b>
+                            <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <button type="button" class="btn btn-light"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    </div>
+
+                </div>
+            </td>
+        </tbody>
+    </table>
+    
+    {% else %}
 
     <h4>{{ task.get_assessment }} <a class="btn btn-sm btn-primary" href="task.get_assessment.get_absolute_url">View</a></h4>
 
@@ -51,11 +99,21 @@
             </td>
         </tbody>
     </table>
+    {% endif %}
     {% endfor %}
 </div>
+    {% else %}
+    <div>
+        <i>There are no tasks available</i>
+    </div>
+    {% endif %}
+    
 
+<!-- risk of bias section -->
 
     <h4>Pending risk of bias/study evaluation reviews</h4>
+
+    {% if rob_task_list %}
     <table style="width: 100%;" class="table table-sm table-striped">
         <thead>
             <tr>
@@ -64,6 +122,9 @@
                 <th style="width: 66%;">Action</th>
             </tr>
         </thead>
+        {% else %}
+        <i>You have no outstanding reviews</i>
+        {% endif %}
         <tbody>
             {% for rob in rob_task_list %}
             <tr>
