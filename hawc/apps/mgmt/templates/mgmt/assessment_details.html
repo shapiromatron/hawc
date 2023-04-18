@@ -52,6 +52,7 @@
       </div>
     </div>
 
+
     <table class="table table-sm">
       <colgroup>
         <col width="20%">
@@ -68,53 +69,60 @@
           <th><span class="popovers" data-title="QA/QC" data-content="Data extracted has been QA/QC." data-original-title="" title="">QA/QC</span></th><th><span class="popovers" data-title="Risk of bias/study evaluation completed" data-content="Risk of bias/study evaluation has been completed for this reference (if enabled for this assessment)." data-original-title="" title="">Risk of bias/study evaluation completed</span></th>
         </tr>
       </thead>
+
       <tbody>
+        
+        {% regroup object_list by study as study_list %}
+
+        {% for study in study_list %}
         <tr class="taskStudyRow">
-          
           <td>
-            <a href="#">Cundell AM 2018</a>
+            <a href="{{ study.get_absolute_url }}">{{ study.study }}</a>
             <br>
             <b>Date created: </b>
-            <span>10/27/2022</span>
+            <span>{{ study.started|date:"SHORT_DATE_FORMAT" }}</span>
           </td>
 
+          {% for task in study.list %}
           <td>
             <div class="row">
               <div class="col-md-auto">
                 <div>
                   <b>Status: </b>
-                  <i class="fa fa-circle status-circle s"></i>Not started
+                  <i class="fa fa-circle status-circle s{{ task.status }}"></i>{{ task.get_status_display|capfirst }}
                 </div>
                 
                 <div>
                   <b>Owner: </b>
-                  <span>Team Member</span>
+                  <span>{{ task.owner }}</span>
                 </div>
-
-                  <div>
-                    <b>Task: </b>
-                    <span>Data preparation</span>
-                  </div>
-
-                  <div>
-                    <b>Due date: </b>
-                    <span>06/15/2023</span>
-                  </div>
+                
+                <div>
+                  <b>Task: </b>
+                  <span>{{ task.get_type_display|capfirst }}</span>
                 </div>
-
-                <div class="col-md">
-                  <button type="button" class="btn btn-light">
-                    <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                  </button>
+                
+                <div>
+                  <b>Due date: </b>
+                  <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
                 </div>
               </div>
+              
+              <div class="col-md">
+                <button type="button" class="btn btn-light">
+                  <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
-          </td>
-        </tr>
-      </tbody>
-
-    </table>
-  </div>
+          </div>
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+    
+  </table>
+</div>
 
 </div>
 
