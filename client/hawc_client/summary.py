@@ -150,8 +150,9 @@ class SummaryClient(BaseClient):
             page = browser.new_page()
             token = self.session._session.headers.get("Authorization")
             if token:
-                page.set_extra_http_headers({"Authorization": f"Token {token}"})
-                page.goto(f"{base_url}/user/api/validate-token/")
+                page.set_extra_http_headers({"Authorization": str(token)})
+                page.goto(f"{base_url}/user/api/validate-token/?login=1")
+                page.set_extra_http_headers({})
 
             if file_type == "docx":
                 _save_to_docx(data, page, dest)
