@@ -10,7 +10,6 @@ from hawc.apps.assessment.constants import JobStatus, JobType
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0019_log_blog"),
     ]

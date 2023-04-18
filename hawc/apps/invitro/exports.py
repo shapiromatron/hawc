@@ -213,7 +213,6 @@ class DataPivotEndpoint(FlatFileExporter):
 
 class DataPivotEndpointGroup(FlatFileExporter):
     def _get_header_row(self):
-
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:

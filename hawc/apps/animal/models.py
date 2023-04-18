@@ -378,7 +378,6 @@ class AnimalGroup(models.Model):
 
 
 class DosingRegime(models.Model):
-
     objects = managers.DosingRegimeManager()
 
     TEXT_CLEANUP_FIELDS = (
@@ -1193,7 +1192,6 @@ class ConfidenceIntervalsMixin:
     def getStdev(self, variance_type=None):
         """Return the stdev of an endpoint-group, given the variance type."""
         if not hasattr(self, "_stdev"):
-
             # don't hit DB unless we need to
             if variance_type is None:
                 variance_type = self.endpoint.variance_type
@@ -1220,7 +1218,6 @@ class ConfidenceIntervalsMixin:
         for i, eg in enumerate(egs):
             mean = low = high = None
             if data_type == constants.DataType.CONTINUOUS:
-
                 if i == 0:
                     n_1 = eg["n"]
                     mu_1 = eg["response"]

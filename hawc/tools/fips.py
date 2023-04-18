@@ -6,7 +6,7 @@ import os
 
 def _non_security_md5(*args, **kwargs):
     kwargs["usedforsecurity"] = False
-    return hashlib.md5(*args, **kwargs)
+    return hashlib.md5(*args, **kwargs)  # noqa: S324
 
 
 def monkey_patch_md5(modules_to_patch):
@@ -35,7 +35,6 @@ def patch_md5():
     if run_once is not None:
         return
     os.environ["HAWC_RUN_ONCE"] = "True"
-    print("FIPS monkeypatch enabled...")
     monkey_patch_md5(
         [
             "django.contrib.staticfiles.storage",

@@ -30,7 +30,6 @@ def remove_exclude(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0025_auto_20200424_1304"),
     ]

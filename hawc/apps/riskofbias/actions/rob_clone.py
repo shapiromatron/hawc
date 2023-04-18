@@ -1,6 +1,6 @@
 import json
 from enum import IntEnum
-from typing import Any, Optional
+from typing import Any
 
 import pydantic
 
@@ -24,7 +24,7 @@ class BulkCopyAuthor(IntEnum):
 class BulkRobCopyData(pydantic.BaseModel):
     src_assessment_id: int
     dst_assessment_id: int
-    dst_author_id: Optional[int]
+    dst_author_id: int | None
     src_dst_study_ids: list[tuple[int, int]]
     src_dst_metric_ids: list[tuple[int, int]]
     copy_mode: BulkCopyMode
@@ -132,7 +132,7 @@ class BulkRobCopyAction(BaseApiAction):
         src_to_dst["study"] = {src: dst for src, dst in self.inputs.src_dst_study_ids}
         src_to_dst["metric"] = {src: dst for src, dst in self.inputs.src_dst_metric_ids}
 
-        src_study_ids, dst_study_ids = map(list, zip(*self.inputs.src_dst_study_ids))
+        src_study_ids, dst_study_ids = map(list, zip(*self.inputs.src_dst_study_ids, strict=True))
 
         # get src RiskOfBias
         filters = dict(study_id__in=src_study_ids, active=True)
@@ -160,7 +160,7 @@ class BulkRobCopyAction(BaseApiAction):
         dst_riskofbiases = RiskOfBias.objects.bulk_create(new_riskofbiases)
 
         src_to_dst["riskofbias"] = {
-            src: dst.pk for src, dst in zip(src_riskofbias_ids, dst_riskofbiases)
+            src: dst.pk for src, dst in zip(src_riskofbias_ids, dst_riskofbiases, strict=True)
         }
 
         # get RiskOfBiasScore
@@ -181,7 +181,9 @@ class BulkRobCopyAction(BaseApiAction):
         dst_score_ids = [obj.pk for obj in dst_scores]
 
         # add to mapping
-        src_to_dst["score"] = {src: dst for src, dst in zip(src_score_ids, dst_score_ids)}
+        src_to_dst["score"] = {
+            src: dst for src, dst in zip(src_score_ids, dst_score_ids, strict=True)
+        }
 
         # log the src to dst mapping
         Log.objects.create(

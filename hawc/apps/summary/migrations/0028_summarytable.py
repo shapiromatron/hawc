@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0024_django31"),
         ("summary", "0027_tagtree_hide_empty_tag_nodes"),

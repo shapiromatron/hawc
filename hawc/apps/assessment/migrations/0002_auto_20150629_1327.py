@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
-
 from django.conf import settings
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0001_initial"),
     ]

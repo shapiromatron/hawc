@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0006_remove_datapivotquery_units"),
     ]

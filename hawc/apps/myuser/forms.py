@@ -48,7 +48,6 @@ def add_disclaimer(helper: BaseFormHelper):
 
 
 class PasswordForm(forms.ModelForm):
-
     password1 = forms.CharField(
         label="Password", widget=forms.PasswordInput, help_text=_PASSWORD_HELP
     )
@@ -297,7 +296,6 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     @property
     def helper(self):
-
         helper = BaseFormHelper(
             self,
             legend_text="HAWC login",
@@ -358,7 +356,6 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
 
 class AdminUserForm(PasswordForm):
-
     project_manager = AutocompleteMultipleChoiceField(
         autocomplete_class=AssessmentAutocomplete, label="Project manager", required=False
     )

@@ -48,7 +48,6 @@ def unadd_patterns(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0034_sort_ordering"),
     ]

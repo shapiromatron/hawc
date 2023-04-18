@@ -2,7 +2,6 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from itertools import chain
-from typing import Optional
 
 import requests
 
@@ -138,7 +137,6 @@ class PubMedFetch(PubMedUtility):
 
 
 class PubMedParser:
-
     ARTICLE = 0
     BOOK = 1
 
@@ -149,7 +147,7 @@ class PubMedParser:
     ABSTRACT_BOOK_SEARCH_STRING = "BookDocument/Abstract/AbstractText"
 
     @classmethod
-    def parse(cls, tree: ET.Element) -> Optional[dict]:
+    def parse(cls, tree: ET.Element) -> dict | None:
         if tree.tag == "PubmedArticle":
             return cls._parse_article(tree)
         elif tree.tag == "PubmedBookArticle":
@@ -247,12 +245,12 @@ class PubMedParser:
                     normalize_author(f"{auth.find('LastName').text} {auth.find('Initials').text}")
                 )
             except Exception:
-                pass
+                logger.error("Error parsing LastName + Initials")
 
             try:
                 names.append(auth.find("CollectiveName").text)
             except Exception:
-                pass
+                logger.error("Error parsing CollectiveName")
 
         return {"authors": names, "authors_short": get_author_short_text(names)}
 
@@ -280,7 +278,7 @@ class PubMedParser:
         return f"{title}({year}). {location}: {publisher}."
 
     @classmethod
-    def _get_year(cls, tree: ET.Element, dtype) -> Optional[int]:
+    def _get_year(cls, tree: ET.Element, dtype) -> int | None:
         if dtype == cls.ARTICLE:
             year = tree.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/Year")
             if year is not None:
@@ -288,7 +286,7 @@ class PubMedParser:
 
             medline_date = tree.find(
                 "MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate"
-            )  # noqa
+            )
             if medline_date is not None:
                 year = re.search(r"(\d+){4}", medline_date.text)
                 if year is not None:
@@ -307,7 +305,7 @@ class PubMedParser:
             return None
 
     @classmethod
-    def _get_doi(cls, tree: ET.Element, search_string) -> Optional[str]:
+    def _get_doi(cls, tree: ET.Element, search_string) -> str | None:
         doi = tree.find(search_string)
         if doi is not None:
             return doi.text.lower()

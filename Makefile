@@ -61,20 +61,20 @@ loc: ## Generate lines of code report
 		--counted loc-files.txt \
 		.
 
-lint: lint-py lint-js  ## Check for javascript/python for linting issues
+lint: lint-py lint-js  ## Check formatting issues
 
-format: format-py format-js  ## Modify javascript/python code
+format: format-py format-js  ## Fix formatting issues where possible
 
-lint-py:  ## Check for python formatting issues via black & flake8
-	@black . --check && flake8 .
+lint-py:  ## Check python formatting issues
+	@black . --check && ruff .
 
-format-py:  ## Modify python code using black & show flake8 issues
-	@black . && isort . && flake8 .
+format-py:  ## Fix python formatting issues where possible
+	@black . && ruff . --fix --show-fixes
 
-lint-js:  ## Check for javascript formatting issues
+lint-js:  ## Check javascript formatting issues
 	@npm --prefix ./frontend run lint
 
-format-js:  ## Modify javascript code if possible using linters/formatters
+format-js:  ## Fix javascript formatting issues where possible
 	@npm --prefix ./frontend run format
 
 test:  ## Run python tests

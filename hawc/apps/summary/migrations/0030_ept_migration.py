@@ -38,7 +38,6 @@ def unchange_ept_settings(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0029_tagtree_size"),
     ]

@@ -71,7 +71,6 @@ class RiskOfBiasScoreOverrideObjectQuerySet(models.QuerySet):
 
 
 class RiskOfBiasManager(BaseManager):
-
     assessment_relation = "study__assessment"
 
     def get_queryset(self):

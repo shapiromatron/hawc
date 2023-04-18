@@ -22,7 +22,6 @@ class TestSummarySerializer:
         return tree
 
     def test_summary_text_swap(self, db_keys):
-
         # setup
         assessment_id = db_keys.assessment_working
         root = SummaryText.get_assessment_root_node(assessment_id)

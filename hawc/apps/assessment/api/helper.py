@@ -1,5 +1,3 @@
-from typing import Optional
-
 from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.request import Request
@@ -30,7 +28,7 @@ def get_assessment_id_param(request: Request) -> int:
     return assessment_id
 
 
-def get_assessment_from_query(request: Request) -> Optional[models.Assessment]:
+def get_assessment_from_query(request: Request) -> models.Assessment | None:
     """Returns assessment or raises exception if does not exist."""
     assessment_id = get_assessment_id_param(request)
     try:

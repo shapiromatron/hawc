@@ -7,7 +7,6 @@ import hawc.apps.common.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("eco", "0002_load_fixtures"),
     ]
