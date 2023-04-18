@@ -8,6 +8,53 @@
           <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
       </div>
   </div>
+
+<div class="mb-3">
+  <div>
+    <div class="container-fluid filterContainer">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Study type filter (optional):</label>
+            <select multiple="" class="form-control" size="4">
+              <option value="bioassay">Animal bioassay</option>
+              <option value="epi">Epidemiology</option>
+              <option value="epi_meta">Epidemiology meta-analysis</option>
+              <option value="in_vitro">In vitro</option>
+              <option value="eco">Ecology</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Sort studies by:</label>
+            <div class="form-check"><input class="form-check-input" type="radio" id="sortBy-short_citation" name="sortBy" checked="">
+              <label class="form-check-label" for="sortBy-short_citation">Short citation</label>
+            </div>
+            <div class="form-check"><input class="form-check-input" type="radio" id="sortBy-created" name="sortBy">
+              <label class="form-check-label" for="sortBy-created">Creation date</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label>Order studies by:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="orderBy-asc" name="orderBy" checked="">
+              <label class="form-check-label" for="orderBy-asc">Ascending</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="orderBy-desc" name="orderBy">
+              <label class="form-check-label" for="orderBy-desc">Descending</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <div id='main' class='mb-3'></div>
 {% endblock %}
 
