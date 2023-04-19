@@ -1,4 +1,5 @@
 import pathlib
+
 import pandas as pd
 from docx import Document
 from docx.shared import Inches

@@ -763,6 +763,19 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    # trying to use pytest tmp_path fixture, but it doesn't work
+    @pytest.mark.skip
+    def test_summary_download_visuals(self, tmp_path):
+        client = HawcClient(self.live_server_url)
+        user = HAWCUser.objects.get(email="pm@hawcproject.org")
+        token = user.get_api_token().key
+        assert client.set_authentication_token(token, login=False) is True
+
+        client.summary.download_visuals(
+            self.db_keys.assessment_working, dest=str(tmp_path), file_type="docx", headless=True
+        )
+        assert tmp_path.joinpath("assessment-1-visuals.docx").exists()
+
     #####################
     # StudyClient tests #
     #####################
