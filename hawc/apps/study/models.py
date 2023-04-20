@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Optional
 
 import pandas as pd
 from django.apps import apps
@@ -226,7 +225,7 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser, identifiers_df: Optional[pd.DataFrame] = None) -> tuple:
+    def flat_complete_data_row(ser, identifiers_df: pd.DataFrame | None = None) -> tuple:
         try:
             ident_row = (
                 identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None

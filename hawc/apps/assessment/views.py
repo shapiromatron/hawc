@@ -92,7 +92,6 @@ class About(TemplateView):
         key = "about-counts"
         counts = cache.get(key)
         if counts is None:
-
             updated = timezone.now()
 
             users = apps.get_model("myuser", "HAWCUser").objects.count()
@@ -714,7 +713,6 @@ class CloseWindow(TemplateView):
 
 
 class UpdateSession(View):
-
     http_method_names = ("post",)
 
     def isTruthy(self, request, field):

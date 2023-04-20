@@ -1,7 +1,6 @@
 import json
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 import pytest
@@ -21,7 +20,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
     def _test_flat_export(
-        self, rewrite_data_files: bool, fn: str, url: str, client: Optional[APIClient] = None
+        self, rewrite_data_files: bool, fn: str, url: str, client: APIClient | None = None
     ):
         if client is None:
             client = APIClient()
@@ -449,7 +448,6 @@ class TestHEROApis:
         cache.clear()
 
     def test_replace_permissions(self, db_keys):
-
         assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
 
         url = reverse("lit:api:assessment-replace-hero", args=(assessment_id,))
@@ -488,7 +486,6 @@ class TestHEROApis:
         ).unique_id == str(1)
 
     def test_bad_replace_requests(self, db_keys):
-
         # test nonexistent assessment
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
         data = {"replace": [[db_keys.reference_linked, 1]]}
@@ -499,7 +496,6 @@ class TestHEROApis:
         assert response.status_code == 404
 
     def test_update_permissions(self, db_keys):
-
         assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
 
         url = reverse(
@@ -546,7 +542,6 @@ class TestHEROApis:
 @pytest.mark.django_db
 class TestReferenceDestroyApi:
     def test_permissions(self, db_keys):
-
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
 
         # reviewers shouldn't be able to destroy
@@ -590,7 +585,6 @@ class TestReferenceDestroyApi:
 @pytest.mark.django_db
 class TestReferenceViewset:
     def test_update_permissions(self, db_keys):
-
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         data = {"title": "TestReferenceUpdateApi test"}
 

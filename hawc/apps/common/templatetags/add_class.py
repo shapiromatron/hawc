@@ -15,7 +15,7 @@ def add_class(value, css_class):
     match = class_re.search(string)
     if match:
         m = re.search(
-            r"^%s$|^%s\s|\s%s\s|\s%s$" % (css_class, css_class, css_class, css_class),
+            rf"^{css_class}$|^{css_class}\s|\s{css_class}\s|\s{css_class}$",
             match.group(1),
         )
         if not m:

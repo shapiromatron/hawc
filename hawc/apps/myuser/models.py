@@ -14,7 +14,6 @@ from . import managers
 
 
 class HAWCUser(AbstractBaseUser, PermissionsMixin):
-
     objects = managers.HAWCMgr()
 
     email = models.EmailField(max_length=254, unique=True, db_index=True)

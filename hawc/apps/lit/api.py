@@ -169,7 +169,6 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         )
         payload = {}
         if len(years) > 0:
-
             df = pd.DataFrame(years, columns=["Year"])
             nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
 
@@ -189,7 +188,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
                 bargap=0.1,
                 plot_bgcolor="white",
                 autosize=True,
-                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
+                margin=dict(l=0, r=0, t=30, b=0),
             )
             payload = fig.to_dict()
 

@@ -337,7 +337,6 @@ class SingleResult(models.Model):
 
     @staticmethod
     def flat_complete_data_row(ser):
-
         study = None
         try:
             study = ser["study"]["id"]

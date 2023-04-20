@@ -14,29 +14,29 @@ djangorestframework==3.13.1
 gunicorn==20.1.0
 
 # tasks
-celery==5.2.3
+celery==5.2.7
   billiard==3.6.4.0
-  kombu==5.2.3
+  kombu==5.2.4
 
 # utilities
 jsonschema==4.4.0
-lxml==4.9.1
-psycopg2-binary==2.9.3
-redis==4.1.4
+lxml==4.9.2
+psycopg2-binary==2.9.5
+redis==4.5.4
 requests==2.27.1
 pydantic==1.9.0
 myst-parser==0.16.1
 bleach[css]==5.0.1
 
 # computational
-numpy==1.22.2
-pandas==1.4.3
+numpy==1.24.1
+pandas==1.5.2
   openpyxl==3.0.10
 plotly==5.6.0
-pyarrow==7.0.0
-scipy==1.8.0
+pyarrow==10.0.1
+scipy==1.10.0
 nltk==3.7
-scikit-learn==1.0.2
+scikit-learn==1.2.2
 bmds==22.1
 
 # exports

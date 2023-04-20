@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from django.conf import settings
 from django.urls import reverse
@@ -63,3 +64,19 @@ class TestAdminDiagnosticViewset:
         # success- throttled (>5/min)
         resp = client.get(url)
         assert resp.status_code == 429
+
+
+@pytest.mark.django_db
+class TestReportsViewset:
+    def test_assessment_values(self):
+        client = APIClient()
+        url = reverse("api:admin_reports-values")
+
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        df = pd.read_json(resp.content.decode())
+        assert df.shape == (3, 33)

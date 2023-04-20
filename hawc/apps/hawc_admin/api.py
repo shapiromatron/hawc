@@ -13,7 +13,6 @@ from .actions import media_metadata_report
 
 
 class DashboardViewset(viewsets.ViewSet):
-
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
@@ -39,7 +38,7 @@ class ReportsViewset(viewsets.ViewSet):
 
     @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
-        """Gets all value data accross all assessments."""
+        """Gets all value data across all assessments."""
         export = ValuesListExport(
             queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
         ).build_export()

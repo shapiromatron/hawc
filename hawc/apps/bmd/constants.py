@@ -1,7 +1,6 @@
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Union
 
 from bmds import constants
 from bmds.bmds3.constants import DistType
@@ -21,7 +20,7 @@ class BmdsVersion(models.TextChoices):
     BMDS330 = "BMDS330", "BMDS 3.3 (2022.10)"
 
 
-@lru_cache()
+@lru_cache
 def bmds2_logic() -> dict:
     return json.loads((Path(__file__).parent / "fixtures" / "logic.json").read_text())["objects"]
 
@@ -85,7 +84,7 @@ class ContinuousInputSettings(BaseModel):
 class BmdInputSettings(BaseModel):
     version: int = Field(default=2, const=True)
     dtype: constants.ModelClass
-    settings: Union[DichotomousInputSettings, ContinuousInputSettings]
+    settings: DichotomousInputSettings | ContinuousInputSettings
 
     def add_models(self, session):
         self.settings.add_models(session)
@@ -126,9 +125,9 @@ def get_input_options(dtype: str) -> dict:
 class SelectedModel(BaseModel):
     version: int = Field(default=2, const=True)
     model_index: int = -1
-    bmdl: Optional[float] = None
-    bmd: Optional[float] = None
-    bmdu: Optional[float] = None
+    bmdl: float | None = None
+    bmd: float | None = None
+    bmdu: float | None = None
     model: str = ""
     bmr: str = ""
     notes: str = ""

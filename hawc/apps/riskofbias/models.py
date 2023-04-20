@@ -446,7 +446,7 @@ class RiskOfBiasScore(models.Model):
             (score.riskofbias.id, score.riskofbias.study_id)
             for score in cls.objects.filter(id__in=ids)
         ]
-        rob_ids, study_ids = list(zip(*id_lists))
+        rob_ids, study_ids = list(zip(*id_lists, strict=True))
         RiskOfBias.delete_caches(rob_ids)
         Study.delete_caches(study_ids)
 

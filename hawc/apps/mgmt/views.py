@@ -92,7 +92,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     template_name = "mgmt/user_assignments.html"
 
     def get_queryset(self):
-        return self.model.objects.owned_by(self.request.user).order_by("-study__assessment_id", "study__short_citation", "type")
+        return self.model.objects.all().owned_by(self.request.user).order_by("-study__assessment_id", "study__short_citation", "type")
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)

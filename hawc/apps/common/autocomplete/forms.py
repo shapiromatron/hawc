@@ -1,5 +1,3 @@
-from typing import Optional, Type
-
 from dal import autocomplete
 from dal_select2.widgets import I18N_PATH
 from django.conf import settings
@@ -22,8 +20,8 @@ class AutocompleteWidgetMixin:
                 f"{settings.STATIC_URL}patched/dal/3.9.4/js/autocomplete_light.js",
                 f"autocomplete_light/select2{extra}.js",
                 f"{settings.STATIC_URL}patched/dal/3.9.4/js/select2text.js",
-            )
-            + i18n_file,
+                *i18n_file,
+            ),
             css={
                 "screen": (
                     f"admin/css/vendor/select2/select2{extra}.css",
@@ -36,9 +34,9 @@ class AutocompleteWidgetMixin:
 
     def __init__(
         self,
-        autocomplete_class: Type[BaseAutocomplete],
-        filters: Optional[dict] = None,
-        autocomplete_function: Optional[str] = None,
+        autocomplete_class: type[BaseAutocomplete],
+        filters: dict | None = None,
+        autocomplete_function: str | None = None,
         *args,
         **kwargs,
     ):
@@ -65,6 +63,18 @@ class AutocompleteWidgetMixin:
     def update_filters(self, filters: dict):
         self.filters.update(filters)
         self.url = self.autocomplete_class.url(**self.filters)
+
+    def filter_choices_to_render(self, selected_choices):
+        """Filter out un-selected choices if choices is a QuerySet.
+
+        patched - see https://github.com/yourlabs/django-autocomplete-light/pull/1321
+        """
+        try:
+            qs = self.choices.queryset.filter(pk__in=[c for c in selected_choices if c])
+        except ValueError:
+            # set queryset to empty set if filters are invalid
+            qs = self.choices.queryset.none()
+        self.choices.queryset = qs
 
 
 class AutocompleteSelectWidget(AutocompleteWidgetMixin, autocomplete.ModelSelect2):
@@ -97,8 +107,8 @@ class AutocompleteTextWidget(AutocompleteWidgetMixin, autocomplete.Select2):
 class AutocompleteFieldMixin:
     def __init__(
         self,
-        autocomplete_class: Type[BaseAutocomplete],
-        filters: Optional[dict] = None,
+        autocomplete_class: type[BaseAutocomplete],
+        filters: dict | None = None,
         *args,
         **kwargs,
     ):

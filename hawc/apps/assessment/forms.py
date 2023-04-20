@@ -36,7 +36,6 @@ from . import autocomplete, models
 
 
 class AssessmentForm(forms.ModelForm):
-
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this assessment; this field is only displayed to assessment team members.",
@@ -279,7 +278,7 @@ class AssessmentValueForm(forms.ModelForm):
 class AssessmentFilterForm(forms.Form):
     search = forms.CharField(required=False)
 
-    DEFAULT_ORDER_BY = "-last_updated"
+    DEFAULT_ORDER_BY = "-year"
     ORDER_BY_CHOICES = [
         ("name", "Name"),
         ("year", "Year, ascending"),
@@ -629,7 +628,6 @@ class DatasetForm(forms.ModelForm):
         revision_excel_worksheet_name = cleaned_data.get("revision_excel_worksheet_name")
 
         if revision_data is not None:
-
             valid_extensions = self.instance.VALID_EXTENSIONS
 
             suffix = Path(revision_data.name).suffix
