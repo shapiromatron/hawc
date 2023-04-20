@@ -92,7 +92,11 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     template_name = "mgmt/user_assignments.html"
 
     def get_queryset(self):
-        return self.model.objects.all().owned_by(self.request.user).order_by("-study__assessment_id", "study__short_citation", "type")
+        return (
+            self.model.objects.all()
+            .owned_by(self.request.user)
+            .order_by("-study__assessment_id", "study__short_citation", "type")
+        )
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
@@ -129,10 +133,17 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
             author=self.request.user, active=True, study__assessment=self.assessment
         )
 
+    def get_review_tasks2(self):
+        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
+        rob_tasks = self.get_rob_queryset(RiskOfBias)
+        self._study_ids = rob_tasks.values_list("study_id", flat=True)
+        return [rob for rob in rob_tasks if rob.is_complete is False]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
+        context["rob_task_list"] = self.get_review_tasks2
         return context
 
 
