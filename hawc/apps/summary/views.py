@@ -11,6 +11,7 @@ from django.views.generic import RedirectView, TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
+from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
@@ -86,8 +87,10 @@ class GetSummaryTableMixin:
             queryset = self.get_queryset()
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
-        obj = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        object = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
+        object = super().get_object(object=object)
+        check_published_status(self.request.user, object.published, self.assessment)
+        return object
 
 
 class SummaryTableList(BaseFilterList):
@@ -248,8 +251,10 @@ class GetVisualizationObjectMixin:
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
-        obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        object = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
+        object = super().get_object(object=object)
+        check_published_status(self.request.user, object.published, self.assessment)
+        return object
 
 
 class VisualizationList(BaseList):
@@ -645,12 +650,13 @@ class GetDataPivotObjectMixin:
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
-        obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        if hasattr(obj, "datapivotquery"):
-            obj = obj.datapivotquery
-        else:
-            obj = obj.datapivotupload
-        return super().get_object(object=obj)
+        object = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
+        object = (
+            object.datapivotquery if hasattr(object, "datapivotquery") else object.datapivotupload
+        )
+        object = super().get_object(object=object)
+        check_published_status(self.request.user, object.published, self.assessment)
+        return object
 
 
 class DataPivotByIdDetail(RedirectView):
