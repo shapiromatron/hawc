@@ -88,7 +88,6 @@ def undo_query_string(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0032_heatmap_axis_sorts"),
     ]

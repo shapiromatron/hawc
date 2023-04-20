@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
@@ -33,7 +31,6 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
 class SimpleStudySerializer(StudySerializer):
     def validate(self, data):
         if "reference_id" in self.initial_data:
-
             ref_id = self.initial_data.get("reference_id")
 
             try:
@@ -86,9 +83,7 @@ class VerboseStudySerializer(StudySerializer):
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
-    def _get_identifier(
-        self, identifiers: list, key: str, to_int: bool
-    ) -> Optional[Union[int, str]]:
+    def _get_identifier(self, identifiers: list, key: str, to_int: bool) -> int | str | None:
         for identifier in identifiers:
             if identifier["database"] == key:
                 value = identifier["unique_id"]
@@ -170,10 +165,7 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
     class Meta:
         model = models.Study
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = (
-            "id",
-            "short_citation",
-        ) + cleanup_fields
+        fields = ("id", "short_citation", *cleanup_fields)
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)

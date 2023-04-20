@@ -91,7 +91,6 @@ def run_fwd(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bmd", "0008_add_bmds330"),
     ]

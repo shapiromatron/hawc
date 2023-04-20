@@ -355,8 +355,8 @@ class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerial
 
     class Meta:
         model = models.Outcome
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study_population.study.short_citation
@@ -367,8 +367,8 @@ class StudyPopulationCleanupFieldsSerializer(DynamicFieldsMixin, serializers.Mod
 
     class Meta:
         model = models.StudyPopulation
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
@@ -379,8 +379,8 @@ class ExposureCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
 
     class Meta:
         model = models.Exposure
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study_population.study.short_citation

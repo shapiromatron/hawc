@@ -81,7 +81,7 @@ def test_flexible_choice_field(db_keys):
     for invalid_input in [99, "bad input"]:
         try:
             numeric_choice.to_internal_value(invalid_input)
-            assert False
+            raise AssertionError()
         except ValidationError:
             # This is correct behavior
             pass
@@ -93,7 +93,7 @@ def test_flexible_choice_field(db_keys):
     # Should throw KeyError if given a bad value to convert
     try:
         numeric_choice.to_representation(2)
-        assert False
+        raise AssertionError()
     except KeyError:
         # This is correct behavior
         pass
@@ -137,7 +137,7 @@ def test_flexible_db_linked_choice_field(db_keys):
     for invalid_input in [99, "bad input"]:
         try:
             single_demo.to_internal_value(invalid_input)
-            assert False
+            raise AssertionError()
         except ValidationError:
             # This is correct behavior
             pass
@@ -156,7 +156,7 @@ def test_flexible_db_linked_choice_field(db_keys):
     # Test bad input on the "many" case
     try:
         many_demo.to_internal_value([first_metric.id, second_metric.id * -1])
-        assert False
+        raise AssertionError()
     except ValidationError:
         # This is correct behavior
         pass

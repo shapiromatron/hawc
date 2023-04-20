@@ -56,7 +56,6 @@ class TableMaker:
 
         # apply caption-style to the first cell in first-row
         if self.firstRowCaption:
-
             cell = tbl.cell(0, 0)
 
             cellPr = cell._tc.get_or_add_tcPr()

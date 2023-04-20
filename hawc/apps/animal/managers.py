@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -52,8 +52,7 @@ class AnimalGroupManager(BaseManager):
             )
         )
         rows = []
-        for (id, species, strain, sex, generation, min_n, max_n, exp_type, duration_text) in qs:
-
+        for id, species, strain, sex, generation, min_n, max_n, exp_type, duration_text in qs:
             gen = self.model.get_generation_short(generation)
             if len(gen) > 0:
                 gen += " "
@@ -105,7 +104,7 @@ class DoseGroupManager(BaseManager):
 
 
 class EndpointQuerySet(QuerySet):
-    def annotate_dose_values(self, dose_units: Optional[DoseUnits] = None) -> QuerySet:
+    def annotate_dose_values(self, dose_units: DoseUnits | None = None) -> QuerySet:
         """Annotate dose unit-specific responses from queryset, if a dose-unit is available.
 
         Args:
@@ -355,7 +354,6 @@ class EndpointManager(BaseManager):
         }
 
         for endpoint in self.assessment_qs(assessment.id).iterator():
-
             # Check system -> organ -> effect -> effect_subtype -> endpoint_name
             parent_id = -1  # last term parent id; -1 is special-case for system
             for term_type_id in types:

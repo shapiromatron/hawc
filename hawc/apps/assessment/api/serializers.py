@@ -49,7 +49,6 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
             and parent.id != instance.get_parent().id
             and parent.id not in instance.get_descendants().values_list("id", flat=True)
         ):
-
             instance.move(parent, pos="last-child")
 
         return instance

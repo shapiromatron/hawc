@@ -1,6 +1,7 @@
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Callable, Iterable, Optional
+from typing import Any
 
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -26,12 +27,12 @@ class Item:
     """
 
     assessment: Assessment
-    object: Optional[Any]
-    parent: Optional[Any]
+    object: Any | None
+    parent: Any | None
 
     def __post_init__(self):
         self.assessment_permissions: AssessmentPermissions = self.assessment.get_permissions()
-        self._permissions: Optional[dict[str, bool]] = None
+        self._permissions: dict[str, bool] | None = None
 
     def to_dict(self, user) -> dict[str, Any]:
         """Dictionary used for response context"""
@@ -77,7 +78,7 @@ def can_edit_assessment(user, item: Item) -> bool:
     return item.permissions(user)["edit_assessment"]
 
 
-def action(permission: Callable, htmx_only: bool = True, methods: Optional[Iterable[str]] = None):
+def action(permission: Callable, htmx_only: bool = True, methods: Iterable[str] | None = None):
     """Decorator for an HtmxViewSet action method
 
     Influenced by django-rest framework's action decorator on viewsets; permissions checking that

@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -322,17 +322,17 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.to_dict(user)
 
-    def user_can_view_object(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
+    def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
+    def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
+    def user_can_edit_assessment(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.project_manager_or_higher(user)
@@ -1092,7 +1092,6 @@ class DatasetRevision(models.Model):
 
 
 class Job(models.Model):
-
     JOB_TO_FUNC = {
         constants.JobType.TEST: jobs.test,
     }

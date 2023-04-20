@@ -53,9 +53,7 @@ class Command(BaseCommand):
             user.last_name = fake.last_name()
             user.email = f"{user.first_name.lower()}.{user.last_name.lower()}@{fake.domain_name()}"
             if user.external_id:
-                user.external_id = (
-                    f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"
-                )
+                user.external_id = f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"  # noqa: S311
             user.password = hash_password
             user.save()
 

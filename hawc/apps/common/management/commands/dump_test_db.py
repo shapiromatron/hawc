@@ -10,7 +10,6 @@ class Command(BaseCommand):
     help = """Dump test database into a fixture."""
 
     def handle(self, *args, **options):
-
         if settings.DATABASES["default"]["NAME"] not in {"hawc-test", "hawc-fixture"}:
             raise CommandError("Must be using a test database to execute.")
 

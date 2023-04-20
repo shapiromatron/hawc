@@ -1,6 +1,5 @@
 import logging
 from io import StringIO
-from typing import Union
 
 import pandas as pd
 from django import forms
@@ -77,7 +76,6 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
 
 class SearchForm(forms.ModelForm):
-
     title_str = "Literature Search"
     help_text = (
         "Create a new literature search. Note that upon creation, "
@@ -143,7 +141,7 @@ class ImportForm(SearchForm):
         if self.instance.id is None:
             self.fields[
                 "search_string"
-            ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
+            ].help_text = "Enter a comma-separated list of database IDs for import."
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
@@ -209,7 +207,6 @@ class ImportForm(SearchForm):
 
 
 class RisImportForm(SearchForm):
-
     RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
     NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
@@ -223,7 +220,7 @@ class RisImportForm(SearchForm):
             self.fields[
                 "import_file"
             ].help_text = """Unicode RIS export file
-                ({0} for EndNote RIS library preparation)""".format(
+                ({} for EndNote RIS library preparation)""".format(
                 addPopupLink(reverse_lazy("lit:ris_export_instructions"), "view instructions")
             )
         else:
@@ -297,7 +294,6 @@ class RisImportForm(SearchForm):
         """
         cleaned_data = super().clean()
         if "import_file" in cleaned_data and not self._errors:
-
             # convert BytesIO file to StringIO file
             with StringIO() as f:
                 f.write(cleaned_data["import_file"].read().decode("utf-8-sig"))
@@ -322,7 +318,6 @@ class SearchModelChoiceField(forms.ModelChoiceField):
 
 
 class SearchSelectorForm(forms.Form):
-
     searches = SearchModelChoiceField(
         queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
     )
@@ -369,8 +364,8 @@ class SearchSelectorForm(forms.Form):
 
 
 def validate_external_id(
-    db_type: int, db_id: Union[str, int]
-) -> tuple[Union[models.Identifiers, None], Union[list, dict, None]]:
+    db_type: int, db_id: str | int
+) -> tuple[models.Identifiers | None, list | dict | None]:
     """
     Validates an external ID.
     If the identifier already exists it is returned as the first part of a tuple.
@@ -409,7 +404,7 @@ def validate_external_id(
         raise ValueError(f"Unknown database type {db_type}.")
 
 
-def create_external_id(db_type: int, content: Union[list, dict]) -> models.Identifiers:
+def create_external_id(db_type: int, content: list | dict) -> models.Identifiers:
     """
     Creates an identifier with the given content.
     This works in tandem with validate_external_id, using the content returned from that method call.
@@ -440,7 +435,6 @@ def create_external_id(db_type: int, content: Union[list, dict]) -> models.Ident
 
 
 class ReferenceForm(forms.ModelForm):
-
     doi_id = forms.CharField(
         max_length=64,
         label="DOI",
@@ -484,7 +478,7 @@ class ReferenceForm(forms.ModelForm):
 
         inputs = {
             "legend_text": "Update reference details",
-            "help_text": "Update reference information which was fetched from database or reference upload.",  # noqa
+            "help_text": "Update reference information which was fetched from database or reference upload.",
             "cancel_url": self.instance.get_absolute_url(),
         }
 
@@ -538,7 +532,6 @@ class ReferenceForm(forms.ModelForm):
 
 
 class TagsCopyForm(forms.Form):
-
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
     confirmation = ConfirmationField()
 
@@ -560,7 +553,6 @@ class TagsCopyForm(forms.Form):
 
 
 class ReferenceExcelUploadForm(forms.Form):
-
     excel_file = forms.FileField(
         required=True,
         help_text='Upload an Excel file with two columns: a "HAWC ID" column for the HAWC reference ID, and "Full text URL" column which contains a full text URL.',

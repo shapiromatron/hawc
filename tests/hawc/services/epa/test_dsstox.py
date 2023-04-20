@@ -16,7 +16,6 @@ class TestDssSubstance:
         assert str(err.value) == "DTXSID123456789 not found in DSSTox lookup"
 
     def test_good_dsstox(self):
-
         # test success from DTXSID
         substance = DssSubstance.create_from_dtxsid("DTXSID7020970")
         assert substance.dtxsid == "DTXSID7020970"
