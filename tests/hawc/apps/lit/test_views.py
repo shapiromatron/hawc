@@ -1,7 +1,14 @@
+from io import BytesIO
+
+import pandas as pd
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
+
+from hawc.apps.lit.models import Reference
+from hawc.apps.study.models import Study
 
 
 @pytest.mark.django_db
@@ -58,3 +65,56 @@ def test_reference_delete(db_keys):
     # delete fails
     resp = c.delete(url)
     assert resp.status_code == 403
+
+
+@pytest.mark.django_db
+class TestRefUploadExcel:
+    def test_success(self):
+        c = Client()
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+
+        # check GET renders
+        url = reverse("lit:ref_upload", args=(1,))
+        with assertTemplateUsed("lit/reference_upload_excel.html"):
+            c.get(url)
+
+        ref = Reference.objects.get(id=1)
+        assert ref.full_text_url == ""
+
+        # check POST works
+        df = pd.DataFrame(
+            data={
+                "HAWC ID": [1],
+                "Full text URL": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5448372/"],
+            }
+        )
+        f = BytesIO()
+        df.to_excel(f, index=False)
+        with assertTemplateUsed("lit/overview.html"):
+            c.post(url, {"excel_file": SimpleUploadedFile("test.xlsx", f.getvalue())}, follow=True)
+
+        ref.refresh_from_db()
+        assert ref.full_text_url.startswith("https://www.ncbi.nlm.nih.gov")
+
+
+@pytest.mark.django_db
+class TestRefListExtract:
+    def test_success(self):
+        c = Client()
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+
+        success = b"Selected references were successfully converted to studies"
+
+        qs = Study.objects.filter(id=11)
+        assert qs.exists() is False
+
+        # check GET renders
+        url = reverse("lit:ref_list_extract", args=(4,))
+        with assertTemplateUsed("lit/reference_extract_list.html"):
+            resp = c.get(url)
+        assert success not in resp.content
+
+        # check POST works
+        resp = c.post(url, {"references": 11, "study_type": "bioassay"}, follow=True)
+        assert success in resp.content
+        assert qs.exists() is True
