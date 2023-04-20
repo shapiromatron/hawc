@@ -77,10 +77,10 @@
         {% for study in study_list %}
         <tr class="taskStudyRow">
           <td>
-            <a href="{{ study.get_absolute_url }}">{{ study.study }}</a>
+            <a href="{{ study.grouper.get_absolute_url }}">{{ study.grouper }}</a>
             <br>
             <b>Date created: </b>
-            <span>{{ study.started|date:"SHORT_DATE_FORMAT" }}</span>
+            <span>{{ study.grouper.started|date:"SHORT_DATE_FORMAT" }}</span>
           </td>
 
           {% for task in study.list %}
@@ -104,7 +104,7 @@
                 
                 <div>
                   <b>Due date: </b>
-                  <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
+                  <span>{{ task.due_date }}</span>
                 </div>
               </div>
               

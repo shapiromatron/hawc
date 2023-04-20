@@ -3,15 +3,21 @@ import logging
 from ..common.models import BaseManager
 from ..study.models import Study
 from . import constants
+from django.db.models import QuerySet
 
 logger = logging.getLogger(__name__)
+
+
+class TaskQuerySet(QuerySet):
+    def owned_by(self, user):
+        return self.filter(owner=user)
 
 
 class TaskManager(BaseManager):
     assessment_relation = "study__assessment"
 
-    def owned_by(self, user):
-        return self.filter(owner=user)
+    def get_queryset(self):
+        return TaskQuerySet(self.model, using=self._db)
 
     def create_assessment_tasks(self, assessment):
         """
