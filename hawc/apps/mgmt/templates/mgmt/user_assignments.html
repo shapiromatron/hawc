@@ -5,9 +5,9 @@
 <div>
     <label><input type="checkbox" name="filter" checked style="margin: 4px;">Hide completed and abandoned tasks</label>
 
-    {% if object_list %}
+    {% if incomplete_task_list %}
 
-    {% regroup object_list by get_assessment as assessment_list %}
+    {% regroup incomplete_task_list by get_assessment as assessment_list %}
 
     {% for assessment in assessment_list %}
 
