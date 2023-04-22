@@ -517,7 +517,7 @@ class SummaryTableCopySelectorForm(CopyForm):
     def get_success_url(self):
         table = self.cleaned_data["selector"]
         return (
-            reverse(self.create_url, args=(self.parent.id, table.table_type))
+            reverse(self.create_url_pattern, args=(self.parent.id, table.table_type))
             + f"?initial={table.id}"
         )
 

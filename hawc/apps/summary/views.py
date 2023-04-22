@@ -183,6 +183,7 @@ class SummaryTableCreate(BaseCreate):
 class SummaryTableCopy(BaseCopyForm):
     copy_model = models.SummaryTable
     form_class = forms.SummaryTableCopySelectorForm
+    template_name = "summary/copy_selector.html"
     model = Assessment
 
     def get_form_kwargs(self):
