@@ -7,10 +7,10 @@ from pytest_django.asserts import assertTemplateUsed
 @pytest.mark.django_db
 def test_study_read_success(db_keys):
     clients = [
-        "admin@hawcproject.org",
-        "pm@hawcproject.org",
-        "team@hawcproject.org",
-        "reviewer@hawcproject.org",
+        ("admin@hawcproject.org", (200, 200, 200, 200)),
+        ("pm@hawcproject.org", (200, 200, 200, 200)),
+        ("team@hawcproject.org", (200, 200, 200, 200)),
+        ("reviewer@hawcproject.org", (200, 403, 200, 200)),
     ]
     views = [
         reverse("study:list", kwargs={"pk": db_keys.assessment_working}),
@@ -19,12 +19,12 @@ def test_study_read_success(db_keys):
         reverse("study:detail", kwargs={"pk": db_keys.study_final_bioassay}),
     ]
 
-    for client in clients:
+    for client, codes in clients:
         c = Client()
         assert c.login(username=client, password="pw") is True
-        for view in views:
+        for view, code in zip(views, codes, strict=True):
             response = c.get(view)
-            assert response.status_code == 200
+            assert response.status_code == code
 
 
 @pytest.mark.django_db
