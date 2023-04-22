@@ -150,7 +150,7 @@ class BaseFormHelper(cf.FormHelper):
 class CopyForm(forms.Form):
     legend_text: str
     help_text: str
-    create_url: str
+    create_url_pattern: str
     selector: forms.ModelChoiceField
 
     def __init__(self, *args, **kwargs):
@@ -159,7 +159,7 @@ class CopyForm(forms.Form):
 
     def get_success_url(self) -> str:
         item = self.cleaned_data["selector"]
-        url = reverse(self.create_url, args=(self.parent.id,))
+        url = reverse(self.create_url_pattern, args=(self.parent.id,))
         return f"{url}?initial={item.id}"
 
     def get_cancel_url(self) -> str:

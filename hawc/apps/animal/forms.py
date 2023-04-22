@@ -121,7 +121,7 @@ class ExperimentForm(ModelForm):
 class ExperimentSelectorForm(CopyForm):
     legend_text = "Copy experiment"
     help_text = "Select an existing experiment as a template to create a new one."
-    create_url = "animal:experiment_new"
+    create_url_pattern = "animal:experiment_new"
     selector = forms.ModelChoiceField(
         queryset=models.Experiment.objects.all(), empty_label=None, label="Select template"
     )
@@ -233,7 +233,7 @@ class AnimalGroupForm(ModelForm):
 class AnimalGroupSelectorForm(CopyForm):
     legend_text = "Copy animal group"
     help_text = "Select an existing animal group as a template to create a new one."
-    create_url = "animal:animal_group_new"
+    create_url_pattern = "animal:animal_group_new"
     selector = forms.ModelChoiceField(
         queryset=models.AnimalGroup.objects.all(), empty_label=None, label="Select template"
     )
@@ -691,7 +691,7 @@ EndpointGroupFormSet = modelformset_factory(
 class EndpointSelectorForm(CopyForm):
     legend_text = "Copy endpoint"
     help_text = "Select an existing endpoint as a template to create a new one."
-    create_url = "animal:endpoint_new"
+    create_url_pattern = "animal:endpoint_new"
     selector = forms.ModelChoiceField(
         queryset=models.Endpoint.objects.all(), empty_label=None, label="Select template"
     )

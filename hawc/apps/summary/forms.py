@@ -502,7 +502,7 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
 class SummaryTableCopySelectorForm(CopyForm):
     legend_text = "Copy summary table"
     help_text = "Select an existing summary table as a template to create a new one."
-    create_url = "summary:tables_create"
+    create_url_pattern = "summary:tables_create"
     selector = forms.ModelChoiceField(
         queryset=models.SummaryTable.objects.all(), empty_label=None, label="Select template"
     )

@@ -316,39 +316,6 @@ class TimeSpentOnPageMixin:
         return response
 
 
-class CopyAsNewSelectorMixin:
-    copy_model: models.Model
-    template_name_suffix = "_copy_selector"
-
-    def get_related_id(self):
-        return self.object.id
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # prevents copy from locked studies
-        if context["obj_perms"]["edit"] is False:
-            raise PermissionDenied
-
-        related_id = self.get_related_id()
-        context["form"] = self.form_class(parent_id=related_id)
-        context["breadcrumbs"].append(
-            Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}")
-        )
-        return context
-
-    def get_template_names(self):
-        if self.template_name is not None:
-            name = self.template_name
-        else:
-            name = "{}/{}{}.html".format(
-                self.copy_model._meta.app_label,
-                self.copy_model._meta.object_name.lower(),
-                self.template_name_suffix,
-            )
-        return [name]
-
-
 class WebappMixin:
     """Mixin to startup a javascript single-page application"""
 
