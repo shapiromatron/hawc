@@ -92,7 +92,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     template_name = "mgmt/user_assignments.html"
 
     def get_queryset(self):
-        return self.model.objects.owned_by(self.request.user)
+        return self.model.objects.all().owned_by(self.request.user)
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
@@ -112,8 +112,8 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         return (
             super()
             .get_queryset()
-            .owned_by(self.request.user)
             .filter(study__assessment=self.assessment)
+            .owned_by(self.request.user)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
 

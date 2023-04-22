@@ -1,9 +1,9 @@
 import logging
 import os
-from typing import Optional
 
 import pandas as pd
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
@@ -36,6 +36,7 @@ class Study(Reference):
         "epi",
         "epi_meta",
         "in_vitro",
+        "eco",
     }
 
     bioassay = models.BooleanField(
@@ -54,6 +55,9 @@ class Study(Reference):
         help_text="Study contains epidemiology meta-analysis/pooled analysis data",
     )
     in_vitro = models.BooleanField(default=False, help_text="Study contains in-vitro data")
+    eco = models.BooleanField(
+        verbose_name="Ecology", default=False, help_text="Study contains ecology data"
+    )
     short_citation = models.CharField(
         max_length=256,
         help_text="How the study should be identified (i.e. Smith et al. (2012), etc.)",
@@ -221,7 +225,7 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser, identifiers_df: Optional[pd.DataFrame] = None) -> tuple:
+    def flat_complete_data_row(ser, identifiers_df: pd.DataFrame | None = None) -> tuple:
         try:
             ident_row = (
                 identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
@@ -352,6 +356,12 @@ class Study(Reference):
     def toggle_editable(self):
         self.editable = not self.editable
         self.save()
+
+    def data_types(self) -> list[bool]:
+        types = [self.bioassay, self.epi, self.epi_meta, self.in_vitro, self.eco]
+        if not settings.HAWC_FEATURES.ENABLE_ECO:
+            types = types[:-1]
+        return types
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):

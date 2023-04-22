@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations, models
 
 from ..managers import ReferenceFilterTagManager
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0001_initial"),
     ]

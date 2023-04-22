@@ -1,152 +1,120 @@
-from copy import deepcopy
-
+from django.db import transaction
 from rest_framework import serializers
 
-from ..common.serializers import validate_jsonschema
-from . import models
+from ..common.serializers import validate_pydantic
+from . import constants, models, tasks
 
 
-class LogicFieldSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.LogicField
-        fields = (
-            "id",
-            "name",
-            "description",
-            "failure_bin",
-            "threshold",
-            "continuous_on",
-            "dichotomous_on",
-            "cancer_dichotomous_on",
-        )
+class SessionBmd2Serializer(serializers.ModelSerializer):
+    model_options = serializers.JSONField(source="get_model_options", read_only=True)
+    bmr_options = serializers.JSONField(source="get_bmr_options", read_only=True)
 
-
-class SelectedModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.SelectedModel
-        fields = ("id", "dose_units", "model", "notes")
-
-
-class ModelSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url", read_only=True)
-    dose_units = serializers.IntegerField(source="session.dose_units_id", read_only=True)
-
-    class Meta:
-        model = models.Model
-        fields = (
-            "id",
-            "url",
-            "dose_units",
-            "model_id",
-            "bmr_id",
-            "name",
-            "overrides",
-            "date_executed",
-            "execution_error",
-            "output",
-            "outfile",
-            "created",
-            "last_updated",
-        )
-
-
-class SessionSerializer(serializers.ModelSerializer):
-    allModelOptions = serializers.JSONField(source="get_model_options", read_only=True)
-    allBmrOptions = serializers.JSONField(source="get_bmr_options", read_only=True)
-    selected_model = SelectedModelSerializer(source="get_selected_model", read_only=True)
-    models = ModelSerializer(many=True)
-    logic = LogicFieldSerializer(source="get_logic", many=True)
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["logic"] = constants.bmds2_logic()
+        return ret
 
     class Meta:
         model = models.Session
         fields = (
             "id",
-            "bmrs",
-            "models",
+            "endpoint",
             "dose_units",
-            "allModelOptions",
-            "allBmrOptions",
-            "selected_model",
-            "logic",
+            "version",
+            "active",
             "is_finished",
+            "date_executed",
+            "created",
+            "last_updated",
+            "inputs",
+            "outputs",
+            "errors",
+            "selected",
+            "model_options",
+            "bmr_options",
         )
 
 
-class SessionUpdateSerializer(serializers.Serializer):
-    bmrs = serializers.JSONField()
-    modelSettings = serializers.JSONField()
-    dose_units = serializers.IntegerField()
+class SessionBmd3Serializer(serializers.ModelSerializer):
+    url_api = serializers.URLField(source="get_api_url")
+    url_execute_status = serializers.URLField(source="get_execute_status_url")
+    input_options = serializers.JSONField(source="get_input_options")
+    endpoint = serializers.JSONField(source="get_endpoint_serialized", read_only=True)
 
-    bmr_schema = schema = {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-                "type": {"type": "string"},
-                "value": {"type": "number"},
-                "confidence_level": {"type": "number"},
-            },
-            "required": ["type", "value", "confidence_level"],
-        },
-        "minItems": 1,
-    }
+    class Meta:
+        model = models.Session
+        fields = (
+            "id",
+            "url_api",
+            "url_execute_status",
+            "input_options",
+            "endpoint",
+            "dose_units",
+            "version",
+            "active",
+            "is_finished",
+            "date_executed",
+            "created",
+            "last_updated",
+            "inputs",
+            "outputs",
+            "errors",
+            "selected",
+        )
 
-    model_schema = {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "overrides": {"type": "object"},
-                "defaults": {"type": "object"},
-            },
-            "required": ["name", "overrides", "defaults"],
-        },
-        "minItems": 1,
-    }
 
-    def validate_bmrs(self, value):
-        return validate_jsonschema(value, self.bmr_schema)
+class SessionBmd3StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Session
+        fields = (
+            "id",
+            "is_finished",
+            "date_executed",
+            "created",
+            "last_updated",
+        )
 
-    def validate_modelSettings(self, value):
-        return validate_jsonschema(value, self.model_schema)
 
-    def save(self):
-        self.instance.bmrs = self.validated_data["bmrs"]
-        self.instance.date_executed = None
-        self.instance.dose_units_id = self.validated_data["dose_units"]
+class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Session
+        fields = (
+            "id",
+            "is_finished",
+            "date_executed",
+            "created",
+            "last_updated",
+            "inputs",
+            "outputs",
+            "errors",
+            "selected",
+        )
+        read_only_fields = ["outputs"]
+        extra_kwargs = {"action": {"write_only": True}}
+
+    def validate_inputs(self, value):
+        validate_pydantic(constants.BmdInputSettings, "inputs", value)
+        return value
+
+    def validate_selected(self, value):
+        validate_pydantic(constants.SelectedModel, "selected", value)
+        return value
+
+    def save_and_execute(self):
+        self.instance.dose_units_id = self.validated_data["inputs"]["settings"]["dose_units_id"]
+        self.instance.inputs = self.validated_data["inputs"]
+        self.instance.reset_execution()
         self.instance.save()
 
-        self.instance.models.all().delete()
-        objects = []
-        for i, bmr in enumerate(self.validated_data["bmrs"]):
-            bmr_overrides = self.instance.get_bmr_overrides(self.instance.get_session(), i)
-            for j, settings in enumerate(self.validated_data["modelSettings"]):
-                overrides = deepcopy(settings["overrides"])
-                overrides.update(bmr_overrides)
-                obj = models.Model(
-                    session=self.instance,
-                    bmr_id=i,
-                    model_id=j,
-                    name=settings["name"],
-                    overrides=overrides,
-                )
-                objects.append(obj)
-        models.Model.objects.bulk_create(objects)
+        # trigger BMD model execution
+        tasks.execute.delay(self.instance.id)
 
+    @transaction.atomic
+    def select(self):
+        # deactivate other session
+        self.instance.deactivate_similar_sessions()
 
-class SelectedModelUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.SelectedModel
-        fields = ("id", "model", "notes")
-
-    def save(self):
-        session = self.context["session"]
-        data = self.validated_data
-        obj, _ = models.SelectedModel.objects.update_or_create(
-            endpoint_id=session.endpoint_id,
-            dose_units_id=session.dose_units_id,
-            defaults={"model": data["model"], "notes": data["notes"]},
-        )
-        self.instance = obj
-        return self.instance
+        # set selected model
+        selected = constants.SelectedModel.parse_obj(self.validated_data["selected"])
+        self.instance.set_selected_model(selected)
+        self.instance.save()

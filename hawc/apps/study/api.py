@@ -1,5 +1,4 @@
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -10,9 +9,9 @@ from ..assessment.api import (
     AssessmentLevelPermissions,
     CleanupFieldsBaseViewSet,
     InAssessmentFilter,
+    get_assessment_from_query,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
-from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
 from ..common.helper import re_digits
 from ..common.views import create_object_log
@@ -88,7 +87,7 @@ class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     )
     def create_from_identifier(self, request):
         # check permissions
-        assessment = get_object_or_404(Assessment, id=request.data.get("assessment_id", -1))
+        assessment = get_assessment_from_query(request)
         if not assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
         # validate and create

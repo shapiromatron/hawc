@@ -46,13 +46,13 @@ class IVAssessmentViewset(viewsets.GenericViewSet):
 
 
 class IVChemical(AssessmentViewset):
-    assessment_filter_args = "assessment"
+    assessment_filter_args = "study__assessment"
     model = models.IVChemical
     serializer_class = serializers.IVChemicalSerializer
 
 
 class IVCellType(AssessmentViewset):
-    assessment_filter_args = "assessment"
+    assessment_filter_args = "study__assessment"
     model = models.IVCellType
     serializer_class = serializers.IVCellTypeSerializer
 

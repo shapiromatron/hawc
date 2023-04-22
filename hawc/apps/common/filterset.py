@@ -1,4 +1,4 @@
-from typing import ForwardRef, Optional
+from typing import ForwardRef
 
 import django_filters as df
 from crispy_forms import layout as cfl
@@ -6,6 +6,7 @@ from django import forms
 from django_filters.utils import get_model_field
 from pydantic import BaseModel, conlist
 
+from ..assessment.models import Assessment
 from . import autocomplete
 from .forms import BaseFormHelper, form_actions_apply_filters
 
@@ -45,8 +46,9 @@ GridRow = ForwardRef("GridRow")
 class GridColumn(BaseModel):
     rows: list[GridRow] = []
 
-    breakpoint: Optional[str]
-    width: Optional[int]
+    breakpoint: str = ""
+    width: int | None
+    extra_css: str = ""
 
     def apply_layout(self, helper, index):
         if self.rows:
@@ -60,9 +62,10 @@ class GridColumn(BaseModel):
 
     @property
     def css_class(self):
-        breakpoint = f"-{self.breakpoint}" if self.breakpoint is not None else ""
+        breakpoint = f"-{self.breakpoint}" if self.breakpoint else ""
         width = f"-{self.width}" if self.width is not None else ""
-        return f"col{breakpoint}{width}"
+        extra = f" {self.extra_css}" if self.extra_css else ""
+        return f"col{breakpoint}{width}{extra}"
 
 
 class GridRow(BaseModel):
@@ -135,7 +138,7 @@ class FilterSet(df.filterset.BaseFilterSet, metaclass=FilterSetMetaclass):
 
 
 class BaseFilterSet(FilterSet):
-    def __init__(self, *args, assessment, **kwargs):
+    def __init__(self, *args, assessment: Assessment | None = None, **kwargs):
         self.assessment = assessment
         super().__init__(*args, **kwargs)
 
@@ -177,7 +180,7 @@ class BaseFilterSet(FilterSet):
                     filters[filter_name] = cls.filter_for_field(field, field_name, lookup_expr)
 
         # Allow Meta.fields to contain declared filters *only* when a list/tuple
-        if isinstance(cls._meta.fields, (list, tuple)):
+        if isinstance(cls._meta.fields, list | tuple):
             undefined = [f for f in undefined if f not in cls.declared_filters]
 
         if undefined:
@@ -215,7 +218,7 @@ class BaseFilterSet(FilterSet):
         return form
 
 
-def dynamic_filterset(_class: BaseFilterSet, **meta_kwargs):
+def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
     default_kwargs = _class._meta.__dict__
     Meta = type("Meta", (object,), {**default_kwargs, **meta_kwargs})
     return type("DynamicFilterset", (_class,), {"Meta": Meta})

@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Callable, Iterable, Optional, Type
+from collections.abc import Callable, Iterable
+from typing import Any
 from urllib.parse import urlparse
 
 import reversion
@@ -79,7 +80,7 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
-def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
+def create_object_log(verb: str, obj, assessment_id: int, user_id: int, log_message: str = ""):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
 
@@ -90,10 +91,12 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
         obj (Any): the object
         assessment_id (int): the object assessment id
         user_id (int): the user id
+        log_message (str): override for custom message
     """
     # Log action
     meta = obj._meta
-    log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
+    if not log_message:
+        log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
         assessment_id=assessment_id,
         user_id=user_id,
@@ -313,10 +316,43 @@ class TimeSpentOnPageMixin:
         return response
 
 
+class CopyAsNewSelectorMixin:
+    copy_model: models.Model
+    template_name_suffix = "_copy_selector"
+
+    def get_related_id(self):
+        return self.object.id
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # prevents copy from locked studies
+        if context["obj_perms"]["edit"] is False:
+            raise PermissionDenied
+
+        related_id = self.get_related_id()
+        context["form"] = self.form_class(parent_id=related_id)
+        context["breadcrumbs"].append(
+            Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}")
+        )
+        return context
+
+    def get_template_names(self):
+        if self.template_name is not None:
+            name = self.template_name
+        else:
+            name = "{}/{}{}.html".format(
+                self.copy_model._meta.app_label,
+                self.copy_model._meta.object_name.lower(),
+                self.template_name_suffix,
+            )
+        return [name]
+
+
 class WebappMixin:
     """Mixin to startup a javascript single-page application"""
 
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
+    get_app_config: Callable[[RequestContext], WebappConfig] | None = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -328,7 +364,7 @@ class WebappMixin:
 # Base HAWC views
 class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None
+    breadcrumb_active_name: str | None = None
     assessment_permission = AssessmentViewPermissions.VIEWER
 
     def get_breadcrumbs(self) -> list[Breadcrumb]:
@@ -437,7 +473,7 @@ class BaseUpdate(
 class BaseCreate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
 ):
-    parent_model: Type[models.Model]
+    parent_model: type[models.Model]
     parent_template_name: str
     crud = "Create"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
@@ -532,7 +568,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     parent_model = None  # required
     parent_template_name = None
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None
+    breadcrumb_active_name: str | None = None
     assessment_permission = AssessmentViewPermissions.VIEWER
 
     def dispatch(self, *args, **kwargs):
@@ -678,8 +714,8 @@ class BaseUpdateWithFormset(BaseUpdate):
         return super().get_context_data(**kwargs)
 
 
-class BaseFilterList(BaseList):
-    filterset_class: Type[BaseFilterSet]
+class FilterSetMixin:
+    filterset_class: type[BaseFilterSet]
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
@@ -691,13 +727,15 @@ class BaseFilterList(BaseList):
             data=self.request.GET,
             queryset=super().get_queryset(),
             request=self.request,
-            assessment=self.assessment,
         )
+
+    def get_filterset_class(self) -> type[BaseFilterSet]:
+        return self.filterset_class
 
     @property
     def filterset(self):
         if not hasattr(self, "_filterset"):
-            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
+            self._filterset = self.get_filterset_class()(**self.get_filterset_kwargs())
         return self._filterset
 
     def get_queryset(self):
@@ -707,6 +745,13 @@ class BaseFilterList(BaseList):
         context = super().get_context_data(**kwargs)
         context.update(form=self.filterset.form)
         return context
+
+
+class BaseFilterList(FilterSetMixin, BaseList):
+    def get_filterset_kwargs(self):
+        kw = super().get_filterset_kwargs()
+        kw.update(assessment=self.assessment)
+        return kw
 
 
 class HeatmapBase(BaseList):

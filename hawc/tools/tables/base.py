@@ -1,5 +1,3 @@
-from typing import Optional
-
 from docx import Document as create_document
 from docx.document import Document
 from docx.enum.section import WD_ORIENT
@@ -45,7 +43,7 @@ class BaseCell(BaseModel):
 
     @classmethod
     def parse_args(cls, *args):
-        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args)})
+        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args, strict=True)})
 
 
 class BaseCellGroup(BaseModel):
@@ -109,8 +107,8 @@ class BaseTable(BaseCellGroup):
 
     def to_docx(
         self,
-        parser: Optional[QuillParser] = None,
-        docx: Optional[Document] = None,
+        parser: QuillParser | None = None,
+        docx: Document | None = None,
         landscape: bool = True,
     ):
         if parser is None:

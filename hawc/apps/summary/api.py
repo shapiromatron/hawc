@@ -28,7 +28,6 @@ class UnpublishedFilter(BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
-
         if not hasattr(view, "assessment"):
             self.instance = get_object_or_404(queryset.model, **view.kwargs)
             view.assessment = self.instance.get_assessment()
@@ -39,7 +38,6 @@ class UnpublishedFilter(BaseFilterBackend):
 
 
 class SummaryAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}

@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 from django.db import migrations
 from django.db.models import QuerySet
@@ -34,7 +34,6 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0041_summarytable_caption"),
     ]

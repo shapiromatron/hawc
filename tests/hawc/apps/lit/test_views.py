@@ -5,6 +5,33 @@ from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 
 @pytest.mark.django_db
+class TestViewPermissions:
+    def test_success(self, db_keys):
+        clients = ["admin@hawcproject.org", "pm@hawcproject.org", "team@hawcproject.org"]
+        views = [
+            reverse("lit:tag-status", args=(3,)),
+            reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)),
+        ]
+        for client in clients:
+            c = Client()
+            assert c.login(username=client, password="pw") is True
+            for view in views:
+                response = c.get(view)
+                assert response.status_code == 200
+
+    def test_failure(self, db_keys):
+        # anonymous user
+        c = Client()
+        views = [
+            (reverse("lit:tag-status", args=(3,)), 403),
+            (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
+        ]
+        for url, status in views:
+            response = c.get(url)
+            assert response.status_code == status
+
+
+@pytest.mark.django_db
 def test_reference_delete(db_keys):
     c = Client()
     assert c.login(username="pm@hawcproject.org", password="pw") is True

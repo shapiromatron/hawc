@@ -2,11 +2,8 @@ import json
 
 from rest_framework import serializers
 
-from ..assessment.serializers import (
-    AssessmentRootedSerializer,
-    DSSToxSerializer,
-    EffectTagsSerializer,
-)
+from ..assessment.api.serializers import AssessmentRootedSerializer
+from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
@@ -153,8 +150,8 @@ class IVEndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.IVEndpoint
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.experiment.study.short_citation
@@ -165,8 +162,8 @@ class IVChemicalCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.IVChemical
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation

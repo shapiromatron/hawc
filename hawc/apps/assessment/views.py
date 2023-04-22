@@ -92,7 +92,6 @@ class About(TemplateView):
         key = "about-counts"
         counts = cache.get(key)
         if counts is None:
-
             updated = timezone.now()
 
             users = apps.get_model("myuser", "HAWCUser").objects.count()
@@ -393,7 +392,9 @@ class AssessmentRead(BaseDetail):
         return (
             super()
             .get_queryset()
-            .prefetch_related("project_manager", "team_members", "reviewers", "datasets", "dtxsids")
+            .prefetch_related(
+                "project_manager", "team_members", "reviewers", "datasets", "dtxsids", "values"
+            )
         )
 
     def get_context_data(self, **kwargs):
@@ -410,6 +411,7 @@ class AssessmentRead(BaseDetail):
             if context["obj_perms"]["edit"]
             else context["object"].datasets.filter(published=True)
         )
+        context["values"] = self.object.values.order_by("value_type")
         return context
 
 
@@ -464,6 +466,62 @@ class AssessmentDownloads(BaseDetail):
     def get_context_data(self, **kwargs):
         kwargs.update(EpiVersion=constants.EpiVersion)
         return super().get_context_data(**kwargs)
+
+
+# Assessment Detail views
+class AssessmentDetailCreate(BaseCreate):
+    success_message = "Assessment Details created."
+    model = models.AssessmentDetail
+    parent_model = models.Assessment
+    parent_template_name = "assessment"
+    form_class = forms.AssessmentDetailForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentDetailUpdate(BaseUpdate):
+    success_message = "Assessment Details updated."
+    model = models.AssessmentDetail
+    parent_model = models.Assessment
+    form_class = forms.AssessmentDetailForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+    def get_cancel_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+# Assessment Value views
+class AssessmentValueCreate(BaseCreate):
+    success_message = "Assessment Value created."
+    model = models.AssessmentValue
+    parent_template_name = "assessment"
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValueForm
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
+class AssessmentValueUpdate(BaseUpdate):
+    success_message = "Assessment Value updated."
+    model = models.AssessmentValue
+    parent_model = models.Assessment
+    form_class = forms.AssessmentValueForm
+
+
+class AssessmentValueDetail(BaseDetail):
+    model = models.AssessmentValue
+
+
+class AssessmentValueDelete(BaseDelete):
+    model = models.AssessmentValue
+    success_message = "Assessment Value deleted."
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
 
 
 # Attachment viewset
@@ -655,7 +713,6 @@ class CloseWindow(TemplateView):
 
 
 class UpdateSession(View):
-
     http_method_names = ("post",)
 
     def isTruthy(self, request, field):

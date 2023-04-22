@@ -408,7 +408,7 @@ class TestSummaryTableViewset:
         assert pub_client.login(username="public@hawcproject.org", password="pw") is True
 
         # team member can view all; non-team-member can only view published
-        for (client, data, code) in [
+        for client, data, code in [
             (team_client, pub, 200),
             (team_client, unpub, 200),
             (pub_client, pub, 200),

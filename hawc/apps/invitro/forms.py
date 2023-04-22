@@ -155,7 +155,6 @@ class IVCellTypeForm(forms.ModelForm):
 
 
 class IVExperimentForm(forms.ModelForm):
-
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = "Update an existing experiment."
 
@@ -255,7 +254,6 @@ class OELWidget(Select):
 
 
 class IVEndpointForm(forms.ModelForm):
-
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = "Update an existing endpoint."
 

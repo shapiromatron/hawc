@@ -7,7 +7,6 @@ from rest_framework import serializers
 from ..assessment.api import user_can_edit_object
 from ..assessment.models import DoseUnits, DSSTox
 from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
-from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
@@ -238,7 +237,6 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-
         errors = forms.EndpointGroupForm.clean_endpoint_group(
             self.context["endpoint_data"].get("data_type", "C"),
             self.context["endpoint_data"].get("variance_type", 0),
@@ -290,24 +288,10 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.get_incidence_summary(ret["data_type"], ret["groups"])
         models.Endpoint.setMaximumPercentControlChange(ret)
 
-        selected_models = instance.bmd_models.all()
-        bmds = []
-        if selected_models.count() > 0:
-            for sm in selected_models:
-                model_data = ModelSerializer().to_representation(sm.model) if sm.model_id else None
-                bmds.append(
-                    {
-                        "dose_units_id": sm.dose_units_id,
-                        "notes": sm.notes,
-                        "model": model_data,
-                        "session_url": model_data["url"]
-                        if model_data
-                        else instance.bmd_sessions.filter(dose_units_id=sm.dose_units_id)
-                        .latest()
-                        .get_absolute_url(),
-                    }
-                )
-        ret["bmds"] = bmds
+        ret["bmds"] = [
+            session.get_selected_model() for session in instance.bmd_sessions.filter(active=True)
+        ]
+
         return ret
 
     def _validate_term_and_text(self, data, term_field: str, text_field: str, term_type_str: str):
@@ -415,8 +399,8 @@ class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.Experiment
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
@@ -427,8 +411,8 @@ class AnimalGroupCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSe
 
     class Meta:
         model = models.AnimalGroup
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.experiment.study.short_citation
@@ -439,8 +423,8 @@ class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
 
     class Meta:
         model = models.Endpoint
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",) + tuple(model.TERM_FIELD_MAPPING.values())
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id", *tuple(model.TERM_FIELD_MAPPING.values()))
 
     def get_study_short_citation(self, obj):
         return obj.animal_group.experiment.study.short_citation
@@ -451,8 +435,8 @@ class DosingRegimeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelS
 
     class Meta:
         model = models.DosingRegime
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.dosed_animals.experiment.study.short_citation

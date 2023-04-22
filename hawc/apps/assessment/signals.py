@@ -19,7 +19,6 @@ def default_configuration(sender, instance, created, **kwargs):
     is created.
     """
     if created:
-
         logger.info("Creating default literature inclusion/exclusion tags")
         apps.get_model("lit", "ReferenceFilterTag").build_default(instance)
         apps.get_model("lit", "LiteratureAssessment").build_default(instance)
@@ -31,7 +30,6 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model("riskofbias", "RiskOfBiasAssessment").build_default(instance)
 
         logger.info("Creating new BMD settings assessment creation")
-        apps.get_model("bmd", "LogicField").build_defaults(instance)
         apps.get_model("bmd", "AssessmentSettings").build_default(instance)
 
         logger.info("Creating default summary text")

@@ -12,7 +12,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import CopyForm, BaseFormHelper, QuillField, check_unique_for_assessment
+from ..common.forms import BaseFormHelper, CopyForm, QuillField, check_unique_for_assessment
 from ..common.validators import validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
@@ -23,7 +23,6 @@ from . import autocomplete, constants, models
 
 
 class PrefilterMixin:
-
     PREFILTER_COMBO_FIELDS = [
         "studies",
         "systems",
@@ -598,10 +597,10 @@ class VisualModelChoiceField(forms.ModelChoiceField):
 
 
 class VisualSelectorForm(forms.Form):
-
     visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
         self.queryset = kwargs.pop("queryset")
@@ -659,7 +658,6 @@ class CrossviewForm(PrefilterMixin, VisualForm):
 
 
 class RoBForm(PrefilterMixin, VisualForm):
-
     prefilter_include = ("bioassay",)
 
     def __init__(self, *args, **kwargs):
@@ -675,7 +673,6 @@ class RoBForm(PrefilterMixin, VisualForm):
 
 
 class TagtreeForm(VisualForm):
-
     root_node = forms.TypedChoiceField(
         coerce=int,
         choices=[],
@@ -804,7 +801,6 @@ class TagtreeForm(VisualForm):
 
 
 class ExternalSiteForm(VisualForm):
-
     external_url = forms.URLField(
         label="External URL",
         help_text="""
@@ -936,7 +932,6 @@ class DataPivotForm(forms.ModelForm):
         self.fields["settings"].widget.attrs["rows"] = 2
 
     def setHelper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -1078,7 +1073,6 @@ class DataPivotModelChoiceField(forms.ModelChoiceField):
 
 
 class DataPivotSelectorForm(forms.Form):
-
     dp = DataPivotModelChoiceField(
         label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None
     )
@@ -1090,6 +1084,7 @@ class DataPivotSelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
         super().__init__(*args, **kwargs)
@@ -1097,7 +1092,6 @@ class DataPivotSelectorForm(forms.Form):
 
     @property
     def helper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
@@ -59,10 +59,10 @@ def form_actions_apply_filters():
 
 
 class BaseFormHelper(cf.FormHelper):
-
     error_text_inline = False
     use_custom_control = True
     include_media = False
+    field_template = "crispy_forms/layout/field.html"
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -116,7 +116,7 @@ class BaseFormHelper(cf.FormHelper):
         field = layout[index]
         layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
 
-    def add_row(self, firstField: str, numFields: int, classes: Union[str, list[str]]):
+    def add_row(self, firstField: str, numFields: int, classes: str | list[str]):
         if isinstance(classes, str):
             classes = [classes] * numFields
         first = self.layout.index(firstField)

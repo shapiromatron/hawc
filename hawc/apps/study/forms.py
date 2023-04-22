@@ -1,5 +1,6 @@
 from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
@@ -11,8 +12,11 @@ from ..lit.models import Reference
 from . import models
 
 
-class BaseStudyForm(forms.ModelForm):
+def eco_enabled() -> bool:
+    return settings.HAWC_FEATURES.ENABLE_ECO
 
+
+class BaseStudyForm(forms.ModelForm):
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
@@ -28,6 +32,7 @@ class BaseStudyForm(forms.ModelForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "eco",
             "coi_reported",
             "coi_details",
             "funding_source",
@@ -46,13 +51,16 @@ class BaseStudyForm(forms.ModelForm):
             self.instance.assessment = parent
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
-
+        if not eco_enabled():
+            self.fields.pop("eco")
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
         self.helper = self.setHelper()
 
-    def setHelper(self, inputs={}):
+    def setHelper(self, inputs: dict | None = None):
+        if inputs is None:
+            inputs = {}
         for fld in ("full_citation", "coi_details", "funding_source", "ask_author"):
             self.fields[fld].widget.attrs["rows"] = 3
         for fld in list(self.fields.keys()):
@@ -67,7 +75,12 @@ class BaseStudyForm(forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 4, ["col-md-3", "col-md-3", "col-md-3", "col-md-3"])
+        if eco_enabled():
+            helper.add_row(
+                "bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"]
+            )
+        else:
+            helper.add_row("bioassay", 4, "col-md-3")
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
@@ -137,6 +150,7 @@ class ReferenceStudyForm(BaseStudyForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "eco",
             "coi_reported",
             "coi_details",
             "funding_source",

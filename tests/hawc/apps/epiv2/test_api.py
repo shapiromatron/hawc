@@ -188,7 +188,7 @@ def generic_test_scenarios(client, url, scenarios):
             assert response.status_code == scenario["expected_code"]
 
         if "expected_keys" in scenario:
-            assert (scenario["expected_keys"]).issubset((response.data.keys()))
+            assert (scenario["expected_keys"]).issubset(response.data.keys())
 
         if "expected_content" in scenario:
             assert str(response.data).lower().find(scenario["expected_content"].lower()) != -1

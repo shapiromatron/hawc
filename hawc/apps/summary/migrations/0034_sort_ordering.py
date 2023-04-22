@@ -45,7 +45,6 @@ def unset_sorts(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0033_filter_query"),
     ]

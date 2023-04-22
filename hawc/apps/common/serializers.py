@@ -1,8 +1,8 @@
 from collections import defaultdict
-from typing import Any, Type, Union
+from typing import Any
 
 import jsonschema
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
 from pydantic import BaseModel
@@ -17,7 +17,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from .helper import get_id_from_choices
 
 
-def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) -> BaseModel:
+def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) -> BaseModel:
     """Validation helper to validate a field to a pydantic model.
 
     Args:
@@ -26,7 +26,7 @@ def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) ->
         data (Any): the data to be validated
 
     Raises:
-        ValidationError: a Django Validation error
+        ValidationError: a DRF Validation error
 
     Returns:
         BaseModel: The pydantic BaseModel
@@ -34,7 +34,7 @@ def validate_pydantic(pydantic_class: Type[BaseModel], field: str, data: Any) ->
     try:
         return pydantic_class.parse_obj(data)
     except PydanticError as err:
-        raise ValidationError({field: err.json()})
+        raise DrfValidationError({field: err.json()})
 
 
 def validate_jsonschema(data: Any, schema: dict) -> Any:
@@ -299,7 +299,7 @@ class GetOrCreateMixin:
 class FlexibleFieldsMixin:
     """
     Allows manipulation of fields on serializer instances.
-    This mixin is primarily meant for serailization and not deserialization.
+    This mixin is primarily meant for serialization and not deserialization.
 
     Constructor kwargs:
         fields (list[str]): allowlist of field names to include in serializer
@@ -509,7 +509,7 @@ class BulkSerializer(serializers.ListSerializer):
 
 class PydanticDrfSerializer(BaseModel):
     @classmethod
-    def from_drf(cls, data: Union[dict, QueryDict], **extras):
+    def from_drf(cls, data: dict | QueryDict, **extras):
         """Generate an instance of a Pydantic model assuming successful validation.
 
         Args:

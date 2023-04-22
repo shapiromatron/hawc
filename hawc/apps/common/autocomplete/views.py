@@ -1,5 +1,3 @@
-from typing import Optional
-
 from dal import autocomplete
 from django.http import HttpResponseForbidden
 
@@ -39,7 +37,7 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     @classmethod
-    def get_base_queryset(cls, filters: Optional[dict] = None):
+    def get_base_queryset(cls, filters: dict | None = None):
         """
         Gets the base queryset to perform searches on
 

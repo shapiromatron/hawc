@@ -1,301 +1,319 @@
 {
-    "help_text": "<p>Study evaluations are performed on an endpoint/outcome-specific basis. For each evaluation domain, core and prompting questions are provided to guide the reviewer in assessing different aspects of study design and conduct related to reporting, risk of bias and study sensitivity. For some domains (see below), additional outcome- or chemical-specific refinements to the criteria used to answer the questions should be developed <em>a priori</em> by reviewers. Each domain receives a judgment of <em>Good</em>, <em>Adequate</em>, <em>Deficient</em>, <em>Not Reported</em> or <em>Critically Deficient</em> accompanied by the rationale and primary study-specific information supporting the judgment.&nbsp;Once all domains are evaluated, a confidence rating of <em>High</em>, <em>Medium</em>, or <em>Low</em> confidence or <em>Uninformative</em> is assigned for each endpoint/outcome from the study.&nbsp;The overall confidence rating should, to the extent possible, reflect interpretations of the potential influence on the results (including the direction and/or magnitude of influence) across all domains.&nbsp;The rationale supporting the overall confidence rating should be documented clearly and consistently, including a brief description of any important strengths and/or limitations that were identified and their potential impact on the overall confidence.</p><p>Domain judgments and overall ratings for all individual endpoints/outcomes can be captured by a single (default) response, or you can create override responses assigned to individual endpoints, outcomes, or results; provide a descriptive label to describe which components the score refers to. Each response must have a single default score; when selecting the default representative rating for the domains and overall rating (i.e., the drop-down selection with the associated color code), it is typically most appropriate to select the judgment that best represents the study overall.</p>",
-    "domains": [
+  "help_text": "<p>Study evaluations are performed on an endpoint/outcome-specific basis. For each evaluation domain, core and prompting questions are provided to guide the reviewer in assessing different aspects of study design and conduct related to reporting, risk of bias and study sensitivity. For some domains (see below), additional outcome- or chemical-specific refinements to the criteria used to answer the questions should be developed <em>a priori</em> by reviewers. Each domain receives a judgment of <em>Good</em>, <em>Adequate</em>, <em>Deficient</em>, <em>Not Reported</em> or <em>Critically Deficient</em> accompanied by the rationale and primary study-specific information supporting the judgment.&nbsp;Once all domains are evaluated, a confidence rating of <em>High</em>, <em>Medium</em>, or <em>Low</em> confidence or <em>Uninformative</em> is assigned for each endpoint/outcome from the study.&nbsp;The overall confidence rating should, to the extent possible, reflect interpretations of the potential influence on the results (including the direction and/or magnitude of influence) across all domains.&nbsp;The rationale supporting the overall confidence rating should be documented clearly and consistently, including a brief description of any important strengths and/or limitations that were identified and their potential impact on the overall confidence.</p><p>Domain judgments and overall ratings for all individual endpoints/outcomes can be captured by a single (default) response, or you can create override responses assigned to individual endpoints, outcomes, or results; provide a descriptive label to describe which components the score refers to. Each response must have a single default score; when selecting the default representative rating for the domains and overall rating (i.e., the drop-down selection with the associated color code), it is typically most appropriate to select the judgment that best represents the study overall.</p><p>Follow <a href=\"https://hawc.epa.gov/assessment/100000039/\" rel=\"noopener noreferrer\" target=\"_blank\"><strong>this link</strong></a> to see attachments that contain example answers to the animal study evaluation domains.</p><p><em>It may be helpful to have these documents open when conducting reviews.</em></p>",
+  "domains": [
+    {
+      "name": "Allocation",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
         {
-            "name": "Allocation",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Allocation",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Were animals assigned to experimental groups using a method that minimizes selection bias?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Did each animal or litter have an equal chance of being assigned to any experimental group (i.e.,&nbsp;random allocation)?</li><li>Is the allocation method described?</li><li>Aside from randomization, were any steps taken to balance variables across experimental groups during allocation?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Experimental groups were randomized, and any specific randomization procedure was described or inferable (e.g.,&nbsp;computer-generated scheme.&nbsp;Note that normalization is not the same as randomization [see response for <em>adequate</em>]).</p><p><strong>Adequate</strong>: Authors report that groups were randomized but do not describe the specific procedure used (e.g.,&nbsp;animals were randomized).&nbsp;Alternatively, authors used a nonrandom method to control for important modifying factors across experimental groups (e.g.,&nbsp;body-weight normalization).</p><p><strong>Not reported</strong> (interpreted as <em>deficient</em>): No indication of randomization of groups or other methods (e.g.,&nbsp;normalization) to control for important modifying factors across experimental groups.</p><p><strong>Deficient:</strong> Bias in the animal allocations was reported or inferable, but is not expected to be severe.</p><p><strong>Critically deficient</strong>: Severe bias in the animal allocations was reported or inferable.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Participant selection",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Participant selection",
-                    "short_name": "Selection",
-                    "description": "<p><strong>Core question: </strong>Is there evidence that selection into or out of the study (or analysis sample) was jointly related to exposure and to outcome?</p><p><strong>Elements to include:</strong></p><ul><li>Study design, location, years&nbsp;</li><li>Sample size&nbsp;(for the relevant result(s) being evaluated)&nbsp;</li><li>Lifestage, sex, and other relevant demographic characteristics&nbsp;</li><li>Brief summary of recruitment/selection procedures&nbsp;</li><li>Inclusion/exclusion criteria (full list not required, but&nbsp;should note whether criteria were provided and&nbsp;any&nbsp;important missing criteria or&nbsp;criteria of concern&nbsp;(e.g., that might result in selection bias)&nbsp;should be noted)&nbsp;</li><li>Participation and follow-up rates if available, but sub-group if relevant (e.g., next of kin)&nbsp;</li><li>Potential&nbsp;or reported differences in population characteristics between those included in the study or analysis compared to those not included</li><li>Information desired but not reported (e.g.,&nbsp;sample frame for&nbsp;recruitment procedures&nbsp;for sub-population and sample, eligibility criteria, discussion of participants vs. non-participants)&nbsp;</li><li>Conclusion about whether you think there was selection bias&nbsp;&nbsp;</li><li>Direction of expected bias (if able to determine)&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: There is minimal concern for selection bias.</li><li>Adequate: The potential for selection bias is difficult to gauge fully given the nature of the data provided, but seems unlikely based on available information.&nbsp;</li><li>Deficient: Considerable concern remains over the possibility of selection bias, due to [LIST]. (Note if primary concern is lack of information rather than clear evidence of bias).</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias [and/or] there is indication that there was selection bias that would render the study results unreliable.</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": true
-                }
-            ]
-        },
-        {
-            "name": "Exposure measurement",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Exposure measurement",
-                    "short_name": "Exposure",
-                    "description": "<p><strong>Core question: </strong>Does the exposure measure reliably distinguish between levels of exposure in a time window considered most relevant for a causal effect with respect to the development of the outcome?</p><p><strong>Elements to include:</strong></p><ul><li>Exposure measure(s)&nbsp;used (e.g., sample type, job exposure matrix)&nbsp;</li><li>Timing&nbsp;and duration&nbsp;of exposure measure&nbsp;(including frequency of collection)&nbsp;</li><li>Analytical&nbsp;method(s)&nbsp;(if applicable), including QA/QC&nbsp;(any concerns should be noted)&nbsp;</li><li>Percent&nbsp;below&nbsp;the limit of detection/quantification, if applicable&nbsp;and available&nbsp;</li><li>Exposure classification (e.g., how categories were defined)&nbsp;</li><li>Conclusion about&nbsp;concern for&nbsp;exposure&nbsp;measurement error and&nbsp;misclassification, including statement about temporality and whether the exposure measurement represents an etiologically relevant period&nbsp;</li><li>Direction&nbsp;of&nbsp;expected bias (if able to determine)&nbsp;and, if possible,&nbsp;extent or magnitude of bias&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Exposure measurement error and misclassification are expected to be minimal. High-quality exposure data were collected and analyzed using appropriate methods during etiologically relevant periods.</li><li>Adequate: Exposure measurement error and misclassification are expected to have limited impact on results for the periods that were examined.</li><li>Deficient: Considerable exposure measurement error and/or misclassification is expected in general [and/or] because etiologically relevant periods were not examined [and/or] there are concerns that reverse causality may explain any observed associations.</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias (including lack of measurements in a relevant time period) [and/or]there is indication that there was exposure measurement error [and/or] misclassification that would render the study results unreliable.</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": true
-                }
-            ]
-        },
-        {
-            "name": "Outcome ascertainment",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Outcome ascertainment",
-                    "short_name": "Outcome",
-                    "description": "<p><strong>Core question: </strong>Does the outcome measure reliably distinguish the presence or absence (or degree of severity) of the outcome?</p><p><strong>Elements to include:</strong></p><ul><li>Outcome measure(s) used&nbsp;&nbsp;</li><li>Validation of outcome measure(s) including in the population it was applied to, if applicable&nbsp;</li><li>Timing&nbsp;of outcome measure&nbsp;(including&nbsp;frequency of collection)&nbsp;&nbsp;</li><li>Outcome measurement&nbsp;QA/QC&nbsp;considerations,&nbsp;if applicable&nbsp;</li><li>Blinding&nbsp;procedures, if relevant&nbsp;</li><li>Outcome/case definitions&nbsp;</li><li>Prevalence&nbsp;of outcome&nbsp;(if&nbsp;relevant to bias&nbsp;and study sensitivity; can be compared to prevalence in&nbsp;the country where the study was conducted to evaluate&nbsp;sensitivity and specificity of&nbsp;the outcome definition)&nbsp;</li><li>Conclusion about concern for outcome misclassification&nbsp;&nbsp;</li><li>Direction of expected bias (if able to determine)&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Outcome measurement error and misclassification are expected to be minimal for this well-characterized measure.</li><li>Adequate: Outcome measurement error and misclassification are expected to have limited impact on results for this measure.</li><li>Deficient: Considerable uncertainty remains over the degree of outcome measurement error and misclassification.</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias [and/or] there is indication that there was outcome measurement error and/or misclassification that would render the study results unreliable.</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": true
-                }
-            ]
-        },
-        {
-            "name": "Confounding",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Confounding",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are variables with the potential to confound or modify results controlled for and consistent across experimental groups?</p><p><em>Note: Consideration of overt toxicity (possibly masking more specific effects) is addressed under endpoint measurement reliability.&nbsp;</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are there difference across the treatment groups, considering both differences related to the exposure (e.g. coexposures, vehicle, diet, palatability) and other aspects of the study design or animal groups (e.g., animal source, husbandry, or health status), that could bias the results?</li><li>If differences are identified, to what extent are they expected, based on a specific scientific understanding, to impact the results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations may need to be refined by assessment teams, as the specific variables of concern can vary by experiment or chemical.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study, noting when the potential for confounding is restricted to specific endpoints/outcomes.</u></p><p><strong>Good</strong>: Outside of the exposure of interest, variables that are likely to confound or modify results appear to be controlled for and consistent across experimental groups.</p><p><strong>Adequate</strong>: Some concern that variables that were likely to confound or modify results were uncontrolled or inconsistent across groups but are expected to have a minimal impact on the results.</p><p><strong>Deficient</strong>: Notable concern that potentially confounding variables were uncontrolled or inconsistent across groups and are expected based on to substantially impact the results.</p><p><strong>Critically deficient</strong>: Confounding variables were presumed to be uncontrolled or inconsistent across groups and are expected to be a primary driver of the results.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                },
-                {
-                    "name": "Confounding",
-                    "short_name": "",
-                    "description": "<p><strong>Core question: </strong>Is confounding of the effect of the exposure likely?</p><p><strong>Elements to include:</strong></p><ul><li>How did the study address confounding?&nbsp;(e.g., inclusion in&nbsp;regression&nbsp;models, stratification, restriction, not relevant to study population)&nbsp;</li><li>How did the study identify confounders? (e.g., DAG,&nbsp;a priori&nbsp;biological considerations, published literature, statistical analyses)&nbsp;</li><li>State&nbsp;whether&nbsp;key confounders were accounted for; if not, describe those&nbsp;not accounted for&nbsp;or inadequately accounted for.&nbsp;</li><li>Reviewer judgment about&nbsp;direction and&nbsp;impact of&nbsp;bias resulting from residual confounding&nbsp;(when&nbsp;possible).&nbsp;Provide&nbsp;evidence&nbsp;on directionality and&nbsp;magnitude of bias&nbsp;from the study if available.&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Overall, there is little evidence of potential bias due to confounding.</li><li>Adequate: Some uncertainty remains over the potential for residual confounding, but it is not expected to fully explain any observed associations.</li><li>Deficient: Considerable uncertainty remains over the potential for residual confounding.</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias&nbsp;[and/or] there is indication that there was bias due to confounding that would render the study results unreliable.</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Observational bias/blinding",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Observational bias/blinding",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study implement measures to reduce observational bias?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Does the study report blinding or other procedures for reducing observational bias?</li><li>If not, did the study use a design or approach for which such procedures can be inferred?</li><li>What is the expected impact of failure to implement (or report implementation) of these procedures on results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams. (Note that it can be useful for teams to identify highly subjective measures of endpoints/outcomes where observational bias may strongly influence results prior to performing evaluations.)</p><p><u>A judgment and rationale for this domain should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.</u></p><p><strong>Good</strong>: Measures to reduce observational bias were described (e.g.,&nbsp;blinding to conceal treatment groups during endpoint evaluation; consensus-based evaluations of histopathology-lesions).</p><p><strong>Adequate</strong>: Methods for reducing observational bias (e.g.,&nbsp;blinding) were not explicitly stated but can be inferred.</p><p><strong>Not reported</strong>: Measures to reduce observational bias were not described.</p><p><strong>(Interpreted as </strong><em>adequate</em>) The potential concern for bias was mitigated based on use of automated/computer driven systems, standard laboratory kits, relatively simple, objective measures (e.g.,&nbsp;body or tissue weight), or screening-level evaluations of histopathology.</p><p><strong>(Interpreted as </strong><em>deficient</em>) The potential impact on the results is major (e.g.,&nbsp;outcome measures are highly subjective).</p><p><strong>Critically deficient</strong>: Strong evidence for observational bias that impacted the results.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Attrition",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Attrition",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study report results for all tested animals?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are all animals accounted for in the results? </li><li>If there is attrition, do authors provide an explanation (e.g.,&nbsp;death or unscheduled sacrifice during the study)?</li><li>If unexplained attrition of animals for outcome assessment is identified, what is the expected impact on the interpretation of the results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Results were reported for all animals.&nbsp;If animal attrition is identified, the authors provide an explanation, and these are not expected to impact the interpretation of the results.</p><p><strong>Adequate</strong>: Results are reported for most animals.&nbsp;Attrition is not explained but this is not expected to significantly impact the interpretation of the results.</p><p><strong>Deficient</strong>: Moderate to high level of animal attrition that is not explained and may significantly impact the interpretation of the results.</p><p><strong>Critically deficient</strong>: Extensive animal attrition that prevents comparisons of results across treatment groups.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Chemical administration and characterization",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Chemical administration and characterization",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study adequately characterize exposure to the chemical of interest and the exposure administration methods?</p><p><em>Note:</em></p><p><em>Consideration of the appropriateness of the route of exposure (not the administration method) is not a risk of bias consideration. Relevance and utility of the routes of exposure are considered in the PECO criteria for study inclusion and during evidence synthesis. </em></p><p><em>Relatedly, consideration of exposure level selection (e.g., were levels sufficiently high to elicit effects) is addressed during evidence synthesis and is not a risk of bias consideration.&nbsp;&nbsp;</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are there concerns [specific to this chemical] regarding the source and purity and/or composition (e.g.,&nbsp;identity and percent distribution of different isomers) of the chemical?</li><li>Was independent analytical verification of the test article (e.g., composition, homogeneity, and purity) performed?</li><li>Were nominal exposure levels verified analytically? Are there concerns about the methods used to administer the chemical (e.g.,&nbsp;inhalation chamber type, gavage volume)?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>It is essential that these considerations are considered, and potentially refined, by assessment teams, as the specific variables of concern can vary by chemical (e.g.,&nbsp;stability may be an issue for one chemical but not another).</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Chemical administration and characterization is complete (i.e.,&nbsp;source and purity are provided or can be obtained from the supplier and test article is analytically verified).&nbsp;There are no notable concerns about the composition, stability, or purity of the administered chemical, or the specific methods of administration.&nbsp;Exposure levels are verified using reliable analytical methods.</p><p><strong>Adequate</strong>: Some uncertainties in the chemical administration and characterization are identified but these are expected to have minimal impact on interpretation of the results (e.g.,&nbsp;purity of the test article is suboptimal but interpreted as unlikely to have a significant impact; analytical verification of exposure levels is not reported or verified with non-preferred methods). </p><p><strong>Deficient</strong>: Uncertainties in the exposure characterization are identified and expected to substantially impact the results (e.g.,&nbsp;source of the test article is not reported, and composition is not independently verified; impurities are substantial or concerning; administration methods are considered likely to introduce confounders, such as use of static inhalation chambers or a gavage volume considered too large for the species or lifestage at exposure).</p><p><strong>Critically deficient</strong>: Uncertainties in the exposure characterization are identified and there is reasonable certainty that the study results are largely attributable to factors other than exposure to the chemical of interest (e.g.,&nbsp;identified impurities are expected to be a primary driver of the results).</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Endpoint measurement",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Endpoint measurement",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are the selected procedures, protocols and animal models adequately described and appropriate for the endpoint(s)/outcome(s) of interest?</p><p><em>Notes:</em></p><p><em>Considerations related to the sensitivity of the animal model and timing of endpoint measurement are evaluated under Sensitivity</em></p><p><em>Considerations related to adjustments/corrections to endpoint measurements (e.g.,&nbsp;organ weight corrected for body weight) are addressed under results presentation.</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Are the evaluation methods and animal model adequately described and appropriate? </li><li>Are there concerns regarding the methodology selected for endpoint evaluation?</li><li>Are there concerns about the specificity of the experimental design?</li><li>Are there serious concerns regarding the sample size or how endpoints were sampled?</li><li>Are appropriate control groups for the study/assay type included?&nbsp;</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>Considerations for this domain are highly variable depending on the endpoint(s)/outcome(s) of interest and typically must be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.</u></p><p>Some considerations include the following:</p><p><strong>Good</strong>:</p><ul><li>Adequate description of methods and animal models.</li><li>Use of generally accepted and reliable endpoint methods. </li><li>Sample sizes are generally considered adequate for the assay or protocol of interest and there are no notable concerns about sampling in the context of the endpoint protocol (e.g., sampling procedures for histological analysis).</li><li>Includes appropriate control groups and any use of nonconcurrent or historical control data (e.g., for evaluation of rare tumors) is justified (e.g., authors or evaluators considered the similarity between current experimental animals and laboratory conditions to historical controls). </li></ul><p>Ratings of <strong>Adequate, Deficient, and</strong> <strong>Critically Deficient</strong> are generally defined as follows:</p><p><strong>Adequate</strong>: Issues are identified that may affect endpoint measurement but are considered unlikely to substantially impact the overall findings or the ability to reliably interpret those findings.</p><p><strong>Deficient</strong>: Concerns are raised that are expected to notably affect endpoint measurement and reduce the reliability of the study findings</p><p><strong>Critically deficient</strong>:<strong> </strong>Severe concerns are raised about endpoint measurement and any findings are likely to be largely explained by these limitations</p><p>The following specific examples of relevant concerns are typically associated with a <strong>Deficient</strong> rating, but <strong>Adequate</strong> or <strong>Critically Deficient</strong> might be applied depending on the expected impact of limitations on the reliability and interpretation of the results:</p><ul><li>Study report lacks important details that are necessary to evaluate the appropriateness of the study design (e.g., description of the assays or protocols; information on the strain, sex, or lifestage of the animals)&nbsp;</li><li>Selection of protocols that are nonpreferred or lack specificity for investigating the endpoint of interest. This includes omission of additional experimental criteria (e.g., inclusion of a positive control or dosing up to levels causing minimal toxicity) when required by specific testing guidelines/protocols.* </li><li>Overt toxicity (e.g., mortality, extreme weight loss) is observed or expected based on findings from similarly designed studies and may mask interpretation of outcome(s) of interest.</li><li>Sample sizes are smaller than is generally considered adequate for the assay or protocol of interest.&nbsp;Inadequate sampling can also be raised within the context of the endpoint protocol (e.g., in a pathology study, bias that is introduced by only sampling a single tissue depth or an inadequate number of slides per animal)**</li><li>Control groups are not included, considered inappropriate, or comparisons to non-concurrent or historical controls are not adequately justified</li></ul><p>*These limitations typically also raise a concern for insensitivity</p><p>**<em> </em>Sample size alone is not a reason to conclude an individual study is critically deficient.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Results presentation",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Results presentation",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are the results presented and compared in a way that is appropriate and transparent?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Does the level of detail allow for an informed interpretation of the results?</li><li>Are the data compared, or presented, in a way that is inappropriate or misleading?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>Considerations for this domain are highly variable depending on the outcomes of interest and typically must be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.</u></p><p>Some considerations include the following:&nbsp;</p><p><strong>Good</strong>:</p><ul><li>No concerns with how the data are presented.</li><li>Results are quantified or otherwise presented in a manner that allows for an independent consideration of the data (assessments do not rely on author interpretations).</li><li>No concerns with completeness of the results reporting.*&nbsp;</li></ul><p>Ratings of <strong>Adequate, Deficient, and</strong> <strong>Critically Deficient</strong> are generally defined as follows:</p><p><strong>Adequate:</strong> Concerns are identified that may affect results presentation but are considered unlikely to substantially impact the overall findings or the ability to reliably interpret those findings.</p><p><strong>Deficient:</strong> Concerns with results presentation are identified and expected to substantially impact results interpretation and reduce the reliability of the study findings.</p><p><strong>Critically deficient:</strong> Severe concerns about results presentation were identified and study findings are likely to be largely explained by these limitations or failure to report any results (qualitative or quantitative) for a prespecified outcome.*</p><p>The following specific examples of relevant concerns are typically associated with a <strong>Deficient</strong> rating but <strong>Adequate</strong> or <strong>Critically Deficient</strong> might be applied depending on expected impact of limitations on the reliability and interpretation of the results:</p><ul><li>Nonpreferred presentation of data (e.g.,&nbsp;developmental toxicity data averaged across pups in a treatment group, when litter responses are more appropriate; presentation of only absolute organ weight data when relative weights are more appropriate).</li><li>Pooling data when responses are known or expected to differ substantially (e.g.,&nbsp;across sexes or ages).</li><li>Incomplete presentation of the data* (e.g.,&nbsp;presentation of mean without variance data; concurrent control data are not presented; dichotomizing or truncating continuous data).</li></ul><p>*Failure to describe <em><u>any</u></em> findings for assessed outcomes (i.e., report lacks any qualitative or quantitative description of the results in tables, figures, or text) results in a critically deficient rating for the outcome(s) of interest for Results Presentation; overall completeness of results reporting at the study level&nbsp;is addressed under Selective Reporting.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Analysis",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Analysis",
-                    "short_name": "",
-                    "description": "<p><strong>Core question: </strong>Does the analysis strategy and presentation convey the necessary familiarity with the data and assumptions?</p><p><strong>Elements to include:</strong></p><ul><li>Analytical&nbsp;approaches&nbsp;and methods used&nbsp;</li><li>Concerns or limitations of analytical approach or methods used, including appropriateness for&nbsp;study design, sample size,&nbsp;exposure and outcome data distributions.&nbsp;&nbsp;</li><li>Note any important information missing (not reporting&nbsp;effect estimates, measures of variability)&nbsp;</li><li>Note whether there is sufficient information to interpret results (e.g., point estimate is the change in outcome in ln units per doubling of exposure)</li><li>Characterization&nbsp;of missing data, imputation methods if applicable&nbsp;</li><li>When applicable,&nbsp;describe&nbsp;analyses that addresses alternative modeling assumptions,&nbsp;robustness of findings (e.g. sensitivity analyses), and variability in risk (e.g. effect measure modification)&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Analyses are appropriate for the data and study design and were very extensive, detailed, clear and thorough.</li><li>Adequate: Analyses are appropriate for the data and study design; however, there is some uncertainty due to some lack of detail [and/or] statistical rigor.</li><li>Deficient: Analyses seemed incomplete, unclearly reported, [and/or] were not the optimal choice for the data and study design.</li><li>Critically deficient: Analyses seemed methodologically inappropriate for the data and study design.</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Sensitivity",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Sensitivity",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are there concerns that sensitivity in the study is not adequate to detect an effect?</p><p><em>Note: Consideration of exposure level selection (e.g., were levels sufficiently high to elicit effects) is addressed during&nbsp;evidence synthesis and is not a study sensitivity consideration.&nbsp;&nbsp;</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><ul><li>Was the exposure period, timing (e.g., lifestage), frequency, and duration sensitive for the outcome(s) of interest?</li><li>Based on knowledge of the health hazard of concern, did the selection of species, strain, and/or sex of the animal model reduce study sensitivity?</li><li>Are there concerns regarding the timing (e.g., lifestage) of the outcome evaluation?</li><li>Are there aspects related to risk of bias domains that raise concerns about insensitivity (e.g., selection of protocols that are known to be insensitive or nonspecific for the outcome(s) of interest)?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations may require customization to the specific exposure and outcomes.&nbsp;Some study design features that affect study sensitivity may have already been included in the other evaluation domains; these should be noted in this domain, along with any features that have not been addressed elsewhere.&nbsp;Some considerations include:</p><p><strong>Good</strong>: </p><ul><li>The experimental design (considering exposure period, timing, frequency, and duration) is appropriate and sensitive for evaluating the the outcome(s) of interest. </li><li>The selected animal model (considering species, strain, sex, and/or lifestage) is known or assumed to be appropriate and sensitive for evaluating the outcome(s) of interest.</li><li>No significant concerns with the ability of the experimental design to detect the specific outcome(s) of interest. (e.g., outcomes evaluated at the appropriate lifestage; study designed to address known endpoint variability that is unrelated to treatment, such as estrous cyclicity or time of day). </li><li>Timing of endpoint measurement in relation to the chemical exposure is appropriate and sensitive (e.g., behavioral testing is not performed during a transient period of test chemical-induced depressant or irritant effects; endpoint testing does not occur only after a prolonged period, such as weeks or months, of nonexposure).</li><li>Potential sources of bias towards the null are not a substantial concern.</li></ul><p><strong>Adequate: </strong></p><p>Same considerations as <em>Good</em>, except:</p><ul><li>The duration and frequency of the exposure was appropriate, and the exposure covered most of the critical window (if known) for the outcome(s) of interest.</li><li>Potential issues are identified that could reduce sensitivity, but they are unlikely to impact the overall findings of the study.</li></ul><p><strong>Deficient</strong>: Concerns were raised about the considerations described for <em>Good</em> or <em>Adequate</em> that are expected to notably decrease the sensitivity of the study to detect a response in the exposed group(s).</p><p><strong>Critically deficient</strong>: Severe concerns were raised about the sensitivity of the study and experimental design such that any observed associations are likely to be explained by bias.&nbsp;The rationale should indicate the specific concern(s).</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                },
-                {
-                    "name": "Sensitivity",
-                    "short_name": "",
-                    "description": "<p><strong>Core question: </strong>Is there a concern that sensitivity of the study is not adequate to detect an effect?</p><p><strong>Elements to include:</strong></p><ul><li>Examples of issues that may be described in the Sensitivity domain evaluation:&nbsp;</li><li>Exposure range/contrast, measures of central tendency&nbsp;</li><li>%&nbsp;below&nbsp;LOD&nbsp;and/or below&nbsp;LOQ&nbsp;</li><li>Sample sizes for main effects and stratified analyses&nbsp;</li><li>Discussion of anticipated or documented statistical power </li><li>Evaluation of precision of main effects and stratified analyses</li><li>Nature of the sample population chosen (i.e. were they considered a sensitive or insensitive group)&nbsp;</li><li>Length of follow-up, relevance of outcome to the timing of exposure&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Study sensitivity was high due to sufficient exposure contrast, large sample size and examination of a relevant and sensitive population.</li><li>Adequate: There is some uncertainty that the study is sensitive enough to detect associations that may be present but no major concerns raised regarding study sensitivity.</li><li>Deficient: Study sensitivity was deficient due to [LIST].</li><li>Critically deficient: The study is unlikely to be able to detect an effect if it exists due [LIST].</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Selective reporting",
-            "description": "",
-            "is_overall_confidence": false,
-            "metrics": [
-                {
-                    "name": "Selective reporting",
-                    "short_name": "",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study report results for all prespecified outcomes?</p><p><em>Note: This domain does not consider the appropriateness of the analysis/results presentation.&nbsp;This aspect of study quality is evaluated in another domain.</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are results presented for all endpoints/outcomes described in the methods (see note)?</li><li>If unexplained results omissions are identified, what is the expected impact on the interpretation of the results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Quantitative or qualitative results were reported for all prespecified outcomes (explicitly stated or inferred), exposure groups and evaluation time points.&nbsp;Data not reported in the primary article is available from supplemental material.&nbsp;If results omissions are identified, the authors provide an explanation, and these are not expected to impact the interpretation of the results.</p><p><strong>Adequate</strong>: Quantitative or qualitative results are reported for most prespecified outcomes (explicitly stated or inferred) and evaluation time points.&nbsp;Omissions and are not explained but are not expected to significantly impact the interpretation of the results.</p><p><strong>Deficient</strong>: Quantitative or qualitative results are missing for many prespecified outcomes (explicitly stated or inferred), omissions are not explained and may significantly impact the interpretation of the results.</p><p><strong>Critically deficient</strong>: Extensive results omission is identified and prevents comparisons of results across treatment groups.</p>",
-                    "responses": 2,
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                },
-                {
-                    "name": "Selective reporting",
-                    "short_name": "",
-                    "description": "<p><strong>Core question: </strong>Is there reason to be concerned about selective reporting?</p><p><strong>Elements to include:</strong></p><ul><li>Describe evidence&nbsp;that&nbsp;(intentionally or&nbsp;unintentionally) results that would change the interpretation of the findings&nbsp;were not reported. If none, state that no concerns were identified&nbsp;(e.g., that the results expected based on the analyses described in methods&nbsp;were reported)</li><li>Example: Multiple tests were done but only&nbsp;statistical&nbsp;significant&nbsp;results were&nbsp;reported&nbsp;</li><li>Example: Protocol indicates that other analyses were planned but not reported&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Adequate: No concerns. OR Some data examined but not shown. Although some data were not reported, selective reporting does not warrant concern here.</li><li>Deficient: Concerns over selective reporting including [LIST].</li></ul>",
-                    "responses": 2,
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "hide_description": false,
-                    "use_short_name": false
-                }
-            ]
-        },
-        {
-            "name": "Overall Study Confidence",
-            "description": "",
-            "is_overall_confidence": true,
-            "metrics": [
-                {
-                    "name": "Overall confidence",
-                    "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Considering the identified strengths and limitations, what is the overall confidence rating for the endpoint(s)/outcome(s) of interest?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Were concerns (i.e.,&nbsp;limitations or uncertainties) related to the risk of bias or sensitivity identified?</li><li>If yes, what is their expected impact on the overall interpretation of the reliability and validity of the study results, including (when possible) interpretations of impacts on the magnitude or direction of the reported effects?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>The overall confidence rating considers the likely impact of the noted concerns (i.e.,&nbsp;limitations or uncertainties) in reporting, bias and sensitivity on the results.</p><p>Reviewers should mark studies that are rated lower than high confidence only due to low sensitivity (i.e.,&nbsp;bias towards the null) for additional consideration during evidence synthesis.&nbsp;If the study is otherwise well conducted and an effect is observed, it may increase the strength of evidence judgment.</p><p><u>A confidence rating and rationale should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.&nbsp;&nbsp;</u></p><ul><li><strong>High confidence:</strong> No notable deficiencies or concerns identified; the potential for bias is unlikely or minimal, and the study used sensitive methodology.&nbsp;<em>High</em> confidence studies generally reflect judgments of good across all or most evaluation domains.</li><li><strong>Medium confidence:</strong> Possible deficiencies or concerns are identified, but the limitations are unlikely to have a significant impact on the study results or their interpretation.&nbsp;Generally, <em>medium</em> confidence studies include <em>adequate</em> or <em>good</em> judgments across most domains, with the impact of any identified limitation not being judged as severe.</li><li><strong>Low confidence:</strong> Deficiencies or concerns are identified, and the potential for bias or inadequate sensitivity is expected to have a significant impact on the study results or their interpretation.&nbsp;Typically, <em>low</em> confidence studies have a <em>deficient</em> evaluation for one or more domains, although some <em>medium</em> confidence studies may have a <em>deficient</em> rating in domain(s) considered to have less influence on the magnitude or direction of effect estimates.</li><li><strong>Uninformative:</strong> Serious flaw(s) are judged to make the study results uninterpretable for use in the assessment.&nbsp;Studies with <em>critically deficient</em> judgments in any evaluation domain are almost always rated <em>uninformative</em>.&nbsp;Studies with multiple <em>deficient </em>judgments across domains may also be considered <em>uninformative.</em>&nbsp;&nbsp;</li></ul>",
-                    "required_animal": true,
-                    "required_epi": false,
-                    "required_invitro": false,
-                    "short_name": "Overall confidence",
-                    "hide_description": false,
-                    "use_short_name": true,
-                    "responses": 3
-                },
-                {
-                    "name": "Overall confidence",
-                    "description": "<p><strong>Elements to include:</strong></p><ul><li>Study confidence&nbsp;rating&nbsp;of&nbsp;high confidence, medium confidence, low confidence, or uninformative&nbsp;&nbsp;</li><li>Summary of the main concerns or strengths&nbsp;from one or more study evaluation domains&nbsp;that drove the&nbsp;study confidence rating.&nbsp;&nbsp;</li><li>Other&nbsp;information or explanation&nbsp;(as needed) to&nbsp;elucidate&nbsp;the rationale&nbsp;behind&nbsp;the&nbsp;overall&nbsp;study confidence rating&nbsp;chosen for the study.&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>High confidence: Well-conducted [study type] study with many strengths including [LIST]. There was minimal concern for bias and sufficient study sensitivity to detect associations if they exist.</li><li>Medium confidence: The study was adequately conducted to determine associations with the health outcome(s) of interest [OPTIONAL: with several strengths including (LIST; e.g., sufficient exposure contrast and statistical power)]. [OPTIONAL: There is some decrease in overall confidence due to (LIST; e.g., uncertainty regarding the potential for exposure misclassification, residual confounding concern, and limited data on loss to follow-up in the cohort)]. Identified limitations are not expected to have substantial impact on results.</li><li>Low confidence: This [study type] study had limitations including [LIST], which have the potential to substantially impact results. (OPTIONAL: However, there were some study strengths such as [LIST] that could be considered in evidence synthesis.)</li><li>Uninformative: Multiple deficient, or at least one critically deficient rating [LIST] in the above domains rendered this study uninformative.</li></ul>",
-                    "required_animal": false,
-                    "required_epi": true,
-                    "required_invitro": false,
-                    "short_name": "Overall confidence",
-                    "hide_description": false,
-                    "use_short_name": true,
-                    "responses": 3
-                }
-            ]
+          "key": "IRIS1",
+          "name": "Allocation",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Were animals assigned to experimental groups using a method that minimizes selection bias?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Did each animal or litter have an equal chance of being assigned to any experimental group (i.e.,&nbsp;random allocation)?</li><li>Is the allocation method described?</li><li>Aside from randomization, were any steps taken to balance variables across experimental groups during allocation?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Experimental groups were randomized, and any specific randomization procedure was described or inferable (e.g.,&nbsp;computer\u2011generated scheme.&nbsp;Note that normalization is not the same as randomization [see response for <em>adequate</em>]).</p><p><strong>Adequate</strong>: Authors report that groups were randomized but do not describe the specific procedure used (e.g.,&nbsp;\u201danimals were randomized\u201d).&nbsp;Alternatively, authors used a nonrandom method to control for important modifying factors across experimental groups (e.g.,&nbsp;body\u2011weight normalization).</p><p><strong>Not reported</strong> (interpreted as <em>deficient</em>): No indication of randomization of groups or other methods (e.g.,&nbsp;normalization) to control for important modifying factors across experimental groups.</p><p><strong>Deficient:</strong> Bias in the animal allocations was reported or inferable, but is not expected to be severe.</p><p><strong>Critically deficient</strong>: Severe bias in the animal allocations was reported or inferable.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
-    ]
+      ]
+    },
+    {
+      "name": "Observational bias/blinding",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS2",
+          "name": "Observational bias/blinding",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study implement measures to reduce observational bias?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Does the study report blinding or other procedures for reducing observational bias?</li><li>If not, did the study use a design or approach for which such procedures can be inferred?</li><li>What is the expected impact of failure to implement (or report implementation) of these procedures on results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams. (Note that it can be useful for teams to identify highly subjective measures of endpoints/outcomes where observational bias may strongly influence results prior to performing evaluations.)</p><p><u>A judgment and rationale for this domain should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.</u></p><p><strong>Good</strong>: Measures to reduce observational bias were described (e.g.,&nbsp;blinding to conceal treatment groups during endpoint evaluation; consensus\u2011based evaluations of histopathology\u2011lesions).</p><p><strong>Adequate</strong>: Methods for reducing observational bias (e.g.,&nbsp;blinding) were not explicitly stated but can be inferred.</p><p><strong>Not reported</strong>: Measures to reduce observational bias were not described.</p><p><strong>(Interpreted as </strong><em>adequate</em>) The potential concern for bias was mitigated based on use of automated/computer driven systems, standard laboratory kits, relatively simple, objective measures (e.g.,&nbsp;body or tissue weight), or screening\u2011level evaluations of histopathology.</p><p><strong>(Interpreted as </strong><em>deficient</em>) The potential impact on the results is major (e.g.,&nbsp;outcome measures are highly subjective).</p><p><strong>Critically deficient</strong>: Strong evidence for observational bias that impacted the results.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Participant selection",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS3",
+          "name": "Participant selection",
+          "short_name": "Selection",
+          "description": "<p><strong>Core question: </strong>Is there evidence that selection into or out of the study (or analysis sample) was jointly related to exposure and to outcome?</p><p><strong>Elements to include:</strong></p><ul><li>Study design, location, years&nbsp;</li><li>Sample size&nbsp;(for the relevant result(s) being evaluated)&nbsp;</li><li>Lifestage, sex, and other relevant demographic characteristics&nbsp;</li><li>Brief summary of recruitment/selection procedures&nbsp;</li><li>Inclusion/exclusion criteria (full list not required, but&nbsp;should note whether criteria were provided and&nbsp;any&nbsp;important missing criteria or&nbsp;criteria of concern&nbsp;(e.g., that might result in selection bias)&nbsp;should be noted)&nbsp;</li><li>Participation and follow-up rates if available, but sub-group if relevant (e.g., next of kin)&nbsp;</li><li>Potential&nbsp;or reported differences in population characteristics between those included in the study or analysis compared to those not included</li><li>Information desired but not reported (e.g.,&nbsp;sample frame for&nbsp;recruitment procedures&nbsp;for sub-population and sample, eligibility criteria, discussion of participants vs. non-participants)&nbsp;</li><li>Conclusion about whether you think there was selection bias&nbsp;&nbsp;</li><li>Direction of expected bias (if able to determine)&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: There is minimal concern for selection bias.</li><li>Adequate: The potential for selection bias is difficult to gauge fully given the nature of the data provided, but seems unlikely based on available information.&nbsp;</li><li>Deficient: Considerable concern remains over the possibility of selection bias, due to [LIST]. (Note if primary concern is lack of information rather than clear evidence of bias).</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias [and/or] there is indication that there was selection bias that would render the study results unreliable.</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": true
+        }
+      ]
+    },
+    {
+      "name": "Exposure measurement",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS4",
+          "name": "Exposure measurement",
+          "short_name": "Exposure",
+          "description": "<p><strong>Core question: </strong>Does the exposure measure reliably distinguish between levels of exposure in a time window considered most relevant for a causal effect with respect to the development of the outcome?</p><p><strong>Elements to include:</strong></p><ul><li>Exposure measure(s)&nbsp;used (e.g., sample type, job exposure matrix)&nbsp;</li><li>Timing&nbsp;and duration&nbsp;of exposure measure&nbsp;(including frequency of collection)&nbsp;</li><li>Analytical&nbsp;method(s)&nbsp;(if applicable), including QA/QC&nbsp;(any concerns should be noted)&nbsp;</li><li>Percent&nbsp;below&nbsp;the limit of detection/quantification, if applicable&nbsp;and available&nbsp;</li><li>Exposure classification (e.g., how categories were defined)&nbsp;</li><li>Conclusion about&nbsp;concern for&nbsp;exposure&nbsp;measurement error and&nbsp;misclassification, including statement about temporality and whether the exposure measurement represents an etiologically relevant period&nbsp;</li><li>Direction&nbsp;of&nbsp;expected bias (if able to determine)&nbsp;and, if possible,&nbsp;extent or magnitude of bias&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Exposure measurement error and misclassification are expected to be minimal. High-quality exposure data were collected and analyzed using appropriate methods during etiologically relevant periods.</li><li>Adequate: Exposure measurement error and misclassification are expected to have limited impact on results for the periods that were examined.</li><li>Deficient: Considerable exposure measurement error and/or misclassification is expected in general [and/or] because etiologically relevant periods were not examined [and/or] there are concerns that reverse causality may explain any observed associations.</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias (including lack of measurements in a relevant time period) [and/or]there is indication that there was exposure measurement error [and/or] misclassification that would render the study results unreliable.</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": true
+        }
+      ]
+    },
+    {
+      "name": "Outcome ascertainment",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS5",
+          "name": "Outcome ascertainment",
+          "short_name": "Outcome",
+          "description": "<p><strong>Core question: </strong>Does the outcome measure reliably distinguish the presence or absence (or degree of severity) of the outcome?</p><p><strong>Elements to include:</strong></p><ul><li>Outcome measure(s) used&nbsp;&nbsp;</li><li>Validation of outcome measure(s) including in the population it was applied to, if applicable&nbsp;</li><li>Timing&nbsp;of outcome measure&nbsp;(including&nbsp;frequency of collection)&nbsp;&nbsp;</li><li>Outcome measurement&nbsp;QA/QC&nbsp;considerations,&nbsp;if applicable&nbsp;</li><li>Blinding&nbsp;procedures, if relevant&nbsp;</li><li>Outcome/case definitions&nbsp;</li><li>Prevalence&nbsp;of outcome&nbsp;(if&nbsp;relevant to bias&nbsp;and study sensitivity; can be compared to prevalence in&nbsp;the country where the study was conducted to evaluate&nbsp;sensitivity and specificity of&nbsp;the outcome definition)&nbsp;</li><li>Conclusion about concern for outcome misclassification&nbsp;&nbsp;</li><li>Direction of expected bias (if able to determine)&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Outcome measurement error and misclassification are expected to be minimal for this well-characterized measure.</li><li>Adequate: Outcome measurement error and misclassification are expected to have limited impact on results for this measure.</li><li>Deficient: Considerable uncertainty remains over the degree of outcome measurement error and misclassification.</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias [and/or] there is indication that there was outcome measurement error and/or misclassification that would render the study results unreliable.</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": true
+        }
+      ]
+    },
+    {
+      "name": "Confounding",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS6",
+          "name": "Confounding",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are variables with the potential to confound or modify results controlled for and consistent across experimental groups?</p><p><em>Note: Consideration of overt toxicity (possibly masking more specific effects) is addressed under endpoint measurement reliability.&nbsp;</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are there differences across the treatment groups, considering both differences related to the exposure (e.g. coexposures, vehicle, diet, palatability) and other aspects of the study design or animal groups (e.g., animal source, husbandry, or health status), that could bias the results?</li><li>If differences are identified, to what extent are they expected, based on a specific scientific understanding, to impact the results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations may need to be refined by assessment teams, as the specific variables of concern can vary by experiment or chemical.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study, noting when the potential for confounding is restricted to specific endpoints/outcomes.</u></p><p><strong>Good</strong>: Outside of the exposure of interest, variables likely to confound or modify results appear to be controlled for and consistent across experimental groups.</p><p><strong>Adequate</strong>: Some concern that variables likely to confound or modify results were uncontrolled or inconsistent across groups but are expected to have a minimal impact on the results.</p><p><strong>Deficient</strong>: Notable concern that potentially confounding variables were uncontrolled or inconsistent across groups and are expected based on to substantially impact the results.</p><p><strong>Critically deficient</strong>: Confounding variables were presumed to be uncontrolled or inconsistent across groups and are expected to be a primary driver of the results.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        },
+        {
+          "key": "IRIS7",
+          "name": "Confounding",
+          "short_name": "",
+          "description": "<p><strong>Core question: </strong>Is confounding of the effect of the exposure likely?</p><p><strong>Elements to include:</strong></p><ul><li>How did the study address confounding?&nbsp;(e.g., inclusion in&nbsp;regression&nbsp;models, stratification, restriction, not relevant to study population)&nbsp;</li><li>How did the study identify confounders? (e.g., DAG,&nbsp;a priori&nbsp;biological considerations, published literature, statistical analyses)&nbsp;</li><li>State&nbsp;whether&nbsp;key confounders were accounted for; if not, describe those&nbsp;not accounted for&nbsp;or inadequately accounted for.&nbsp;</li><li>Reviewer judgment about&nbsp;direction and&nbsp;impact of&nbsp;bias resulting from residual confounding&nbsp;(when&nbsp;possible).&nbsp;Provide&nbsp;evidence&nbsp;on directionality and&nbsp;magnitude of bias&nbsp;from the study if available.&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Overall, there is little evidence of potential bias due to confounding.</li><li>Adequate: Some uncertainty remains over the potential for residual confounding, but it is not expected to fully explain any observed associations.</li><li>Deficient: Considerable uncertainty remains over the potential for residual confounding.</li><li>Critically deficient: There is a lack of critical information needed to inform the potential bias&nbsp;[and/or] there is indication that there was bias due to confounding that would render the study results unreliable.</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Attrition",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS8",
+          "name": "Attrition",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study report results for all tested animals?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are all animals accounted for in the results? </li><li>If there is attrition, do authors provide an explanation (e.g.,&nbsp;death or unscheduled sacrifice during the study)?</li><li>If unexplained attrition of animals for outcome assessment is identified, what is the expected impact on the interpretation of the results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Results were reported for all animals.&nbsp;If animal attrition is identified, the authors provide an explanation, and these are not expected to impact the interpretation of the results.</p><p><strong>Adequate</strong>: Results are reported for most animals.&nbsp;Attrition is not explained but this is not expected to significantly impact the interpretation of the results.</p><p><strong>Deficient</strong>: Moderate to high level of animal attrition that is not explained and may significantly impact the interpretation of the results.</p><p><strong>Critically deficient</strong>: Extensive animal attrition that prevents comparisons of results across treatment groups.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Chemical administration and characterization",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS9",
+          "name": "Chemical administration and characterization",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study adequately characterize exposure to the chemical of interest and the exposure administration methods?</p><p><em>Note:</em></p><p><em>Consideration of the appropriateness of the route of exposure (not the administration method) is not a risk of bias consideration. Relevance and utility of the routes of exposure are considered in the PECO criteria for study inclusion and during evidence synthesis. </em></p><p><em>Relatedly, consideration of exposure level selection (e.g., were levels sufficiently high to elicit effects) is addressed during evidence synthesis and is not a risk of bias consideration.&nbsp;&nbsp;</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are there concerns [specific to this chemical] regarding the source and purity and/or composition (e.g.,&nbsp;identity and percent distribution of different isomers) of the chemical?</li><li>Was independent analytical verification of the test article (e.g., composition, homogeneity, and purity) performed?</li><li>Were nominal exposure levels verified analytically? Are there concerns about the methods used to administer the chemical (e.g.,&nbsp;inhalation chamber type, gavage volume)?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>It is essential that these considerations are considered, and potentially refined, by assessment teams, as the specific variables of concern can vary by chemical (e.g.,&nbsp;stability may be an issue for one chemical but not another).</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Chemical administration and characterization is complete (i.e.,&nbsp;source and purity are provided or can be obtained from the supplier and test article is analytically verified).&nbsp;There are no notable concerns about the composition, stability, or purity of the administered chemical, or the specific methods of administration.&nbsp;Exposure levels are verified using reliable analytical methods.</p><p><strong>Adequate</strong>: Some uncertainties in the chemical administration and characterization are identified but these are expected to have minimal impact on interpretation of the results (e.g.,&nbsp;purity of the test article is suboptimal but interpreted as unlikely to have a significant impact; analytical verification of exposure levels is not reported or verified with non-preferred methods). </p><p><strong>Deficient</strong>: Uncertainties in the exposure characterization are identified and expected to substantially impact the results (e.g.,&nbsp;source of the test article is not reported, and composition is not independently verified; impurities are substantial or concerning; administration methods are considered likely to introduce confounders, such as use of static inhalation chambers or a gavage volume considered too large for the species or lifestage at exposure).</p><p><strong>Critically deficient</strong>: Uncertainties in the exposure characterization are identified and there is reasonable certainty that the study results are largely attributable to factors other than exposure to the chemical of interest (e.g.,&nbsp;identified impurities are expected to be a primary driver of the results).</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Endpoint measurement",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS10",
+          "name": "Endpoint measurement",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are the selected procedures, protocols, and animal models adequately described and appropriate for the endpoint(s)/outcome(s) of interest?</p><p><em>Notes:</em></p><p><em>Considerations related to the sensitivity of the animal model and timing of endpoint measurement are evaluated under Sensitivity</em></p><p><em>Considerations related to adjustments/corrections to endpoint measurements (e.g.,&nbsp;organ weight corrected for body weight) are addressed under results presentation.</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Are the evaluation methods and animal model adequately described and appropriate? </li><li>Are there concerns regarding the methodology selected for endpoint evaluation?</li><li>Are there concerns about the specificity of the experimental design?</li><li>Are there serious concerns regarding the sample size or how endpoints were sampled?</li><li>Are appropriate control groups for the study/assay type included?&nbsp;</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>Considerations for this domain are highly variable depending on the endpoint(s)/outcome(s) of interest and typically must be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.</u></p><p>Some considerations include the following:</p><p><strong>Good</strong>:</p><ul><li>Adequate description of methods and animal models.</li><li>Use of generally accepted and reliable endpoint methods. </li><li>Sample sizes are generally considered adequate for the assay or protocol of interest and there are no notable concerns about sampling in the context of the endpoint protocol (e.g., sampling procedures for histological analysis).</li><li>Includes appropriate control groups and any use of nonconcurrent or historical control data (e.g., for evaluation of rare tumors) is justified (e.g., authors or evaluators considered the similarity between current experimental animals and laboratory conditions to historical controls). </li></ul><p>Ratings of <strong>Adequate, Deficient, and</strong> <strong>Critically Deficient</strong> are generally defined as follows:</p><p><strong>Adequate</strong>: Issues are identified that may affect endpoint measurement but are considered unlikely to substantially impact the overall findings or the ability to reliably interpret those findings.</p><p><strong>Deficient</strong>: Concerns are raised that are expected to notably affect endpoint measurement and reduce the reliability of the study findings</p><p><strong>Critically deficient</strong>:<strong> </strong>Severe concerns are raised about endpoint measurement and any findings are likely to be largely explained by these limitations</p><p>The following specific examples of relevant concerns are typically associated with a <strong>Deficient</strong> rating but <strong>Adequate</strong> or <strong>Critically Deficient</strong> might be applied depending on the expected impact of limitations on the reliability and interpretation of the results:</p><ul><li>Study report lacks important details that are necessary to evaluate the appropriateness of the study design (e.g., description of the assays or protocols; information on the strain, sex, or lifestage of the animals)&nbsp;</li><li>Selection of protocols that are nonpreferred or lack specificity for investigating the endpoint of interest. This includes omission of additional experimental criteria (e.g., inclusion of a positive control or dosing up to levels causing minimal toxicity) when required by specific testing guidelines/protocols.* </li><li>Overt toxicity (e.g., mortality, extreme weight loss) is observed or expected based on findings from similarly designed studies and may mask interpretation of outcome(s) of interest.</li><li>Sample sizes are smaller than is generally considered adequate for the assay or protocol of interest.&nbsp;Inadequate sampling can also be raised within the context of the endpoint protocol (e.g., in a pathology study, bias that is introduced by only sampling a single tissue depth or an inadequate number of slides per animal)**</li><li>Control groups are not included, considered inappropriate, or comparisons to non-concurrent or historical controls are not adequately justified</li></ul><p>*These limitations typically also raise a concern for insensitivity</p><p>**<em> </em>Sample size alone is not a reason to conclude an individual study is critically deficient.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Results presentation",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS11",
+          "name": "Results presentation",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are the results presented and compared in a way that is appropriate and transparent?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Does the level of detail allow for an informed interpretation of the results?</li><li>Are the data compared, or presented, in a way that is inappropriate or misleading?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>Considerations for this domain are highly variable depending on the outcomes of interest and typically must be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.</u></p><p>Some considerations include the following:&nbsp;</p><p><strong>Good</strong>:</p><ul><li>No concerns with how the data are presented.</li><li>Results are quantified or otherwise presented in a manner that allows for an independent consideration of the data (assessments do not rely on author interpretations).</li><li>No concerns with completeness of the results reporting.*&nbsp;</li></ul><p>Ratings of <strong>Adequate, Deficient, and</strong> <strong>Critically Deficient</strong> are generally defined as follows:</p><p><strong>Adequate:</strong> Concerns are identified that could affect results presentation but are considered unlikely to substantially impact the overall findings or the ability to reliably interpret those findings.</p><p><strong>Deficient:</strong> Concerns with results presentation are identified and expected to substantially impact results interpretation and reduce the reliability of the study findings.</p><p><strong>Critically deficient:</strong> Severe concerns about results presentation were identified and study findings are likely to be largely explained by these limitations or failure to report any results (qualitative or quantitative) for a prespecified outcome.*</p><p>The following specific examples of relevant concerns are typically associated with a <strong>Deficient</strong> rating but <strong>Adequate</strong> or <strong>Critically Deficient</strong> might be applied depending on expected impact of limitations on the reliability and interpretation of the results:</p><ul><li>Nonpreferred presentation of data (e.g.,&nbsp;developmental toxicity data averaged across pups in a treatment group, when litter responses are more appropriate; presentation of only absolute organ weight data when relative weights are more appropriate).</li><li>Pooling data when responses are known or expected to differ substantially (e.g.,&nbsp;across sexes or ages).</li><li>Incomplete presentation of the data* (e.g.,&nbsp;presentation of mean without variance data; concurrent control data are not presented; dichotomizing or truncating continuous data).</li></ul><p>*Failure to describe <em><u>any</u></em> findings for assessed outcomes (i.e., report lacks any qualitative or quantitative description of the results in tables, figures, or text) results in a critically deficient rating for the outcome(s) of interest for Results Presentation; overall completeness of results reporting at the study level&nbsp;is addressed under Selective Reporting.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Analysis",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS12",
+          "name": "Analysis",
+          "short_name": "",
+          "description": "<p><strong>Core question: </strong>Does the analysis strategy and presentation convey the necessary familiarity with the data and assumptions?</p><p><strong>Elements to include:</strong></p><ul><li>Analytical&nbsp;approaches&nbsp;and methods used&nbsp;</li><li>Concerns or limitations of analytical approach or methods used, including appropriateness for&nbsp;study design, sample size,&nbsp;exposure and outcome data distributions.&nbsp;&nbsp;</li><li>Note any important information missing (not reporting&nbsp;effect estimates, measures of variability)&nbsp;</li><li>Note whether there is sufficient information to interpret results (e.g., point estimate is the change in outcome in ln units per doubling of exposure)</li><li>Characterization&nbsp;of missing data, imputation methods if applicable&nbsp;</li><li>When applicable,&nbsp;describe&nbsp;analyses that addresses alternative modeling assumptions,&nbsp;robustness of findings (e.g. sensitivity analyses), and variability in risk (e.g. effect measure modification)&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Analyses are appropriate for the data and study design and were very extensive, detailed, clear and thorough.</li><li>Adequate: Analyses are appropriate for the data and study design; however, there is some uncertainty due to some lack of detail [and/or] statistical rigor.</li><li>Deficient: Analyses seemed incomplete, unclearly reported, [and/or] were not the optimal choice for the data and study design.</li><li>Critically deficient: Analyses seemed methodologically inappropriate for the data and study design.</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Selective reporting",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS13",
+          "name": "Selective reporting",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Did the study report results for all prespecified outcomes?</p><p><em>Note: This domain does not consider the appropriateness of the analysis/results presentation.&nbsp;This aspect of study quality is evaluated in another domain.</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each study:</p><ul><li>Are results presented for all endpoints/outcomes described in the methods (see note)?</li><li>If unexplained results omissions are identified, what is the expected impact on the interpretation of the results?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations typically do not need to be refined by assessment teams.</p><p><u>A judgment and rationale for this domain should be given for each cohort or experiment in the study.</u></p><p><strong>Good</strong>: Quantitative or qualitative results were reported for all prespecified outcomes (explicitly stated or inferred), exposure groups and evaluation time points.&nbsp;Data not reported in the primary article are available from supplemental material.&nbsp;If results omissions are identified, the authors provide an explanation, and these are not expected to impact the interpretation of the results.</p><p><strong>Adequate</strong>: Quantitative or qualitative results are reported for most prespecified outcomes (explicitly stated or inferred) and evaluation time points.&nbsp;Omissions are not explained but are not expected to significantly impact the interpretation of the results.</p><p><strong>Deficient</strong>: Quantitative or qualitative results are missing for many prespecified outcomes (explicitly stated or inferred), omissions are not explained and may significantly impact the interpretation of the results.</p><p><strong>Critically deficient</strong>: Extensive results omission is identified and prevents comparisons of results across treatment groups.</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        },
+        {
+          "key": "IRIS14",
+          "name": "Selective reporting",
+          "short_name": "",
+          "description": "<p><strong>Core question: </strong>Is there reason to be concerned about selective reporting?</p><p><strong>Elements to include:</strong></p><ul><li>Describe evidence&nbsp;that&nbsp;(intentionally or&nbsp;unintentionally) results that would change the interpretation of the findings&nbsp;were not reported. If none, state that no concerns were identified&nbsp;(e.g., that the results expected based on the analyses described in methods&nbsp;were reported)</li><li>Example: Multiple tests were done but only&nbsp;statistical&nbsp;significant&nbsp;results were&nbsp;reported&nbsp;</li><li>Example: Protocol indicates that other analyses were planned but not reported&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Adequate: No concerns. OR Some data examined but not shown. Although some data were not reported, selective reporting does not warrant concern here.</li><li>Deficient: Concerns over selective reporting including [LIST].</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Sensitivity",
+      "description": "",
+      "is_overall_confidence": false,
+      "metrics": [
+        {
+          "key": "IRIS15",
+          "name": "Sensitivity",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Are there concerns that sensitivity in the study is not adequate to detect an effect?</p><p><em>Note: Consideration of exposure level selection (e.g., were levels sufficiently high to elicit effects) is addressed during&nbsp;evidence synthesis and is not a study sensitivity consideration.&nbsp;&nbsp;</em></p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><ul><li>Was the exposure period, timing (e.g., lifestage), frequency, and duration sensitive for the outcome(s) of interest?</li><li>Based on knowledge of the health hazard of concern, did the selection of species, strain, and/or sex of the animal model reduce study sensitivity?</li><li>Are there concerns regarding the timing (e.g., lifestage) of the outcome evaluation?</li><li>Are there aspects related to risk of bias domains that raise concerns about insensitivity (e.g., selection of protocols that are known to be insensitive or nonspecific for the outcome(s) of interest)?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>These considerations may require customization to the specific exposure and outcomes.&nbsp;Some study design features that affect study sensitivity may have already been included in the other evaluation domains; these should be noted in this domain, along with any features that have not been addressed elsewhere.&nbsp;Some considerations include:</p><p><strong>Good</strong>: </p><ul><li>The experimental design (considering exposure period, timing, frequency, and duration) is appropriate and sensitive for evaluating the the outcome(s) of interest. </li><li>The selected animal model (considering species, strain, sex, or lifestage) is known or assumed to be appropriate and sensitive for evaluating the outcome(s) of interest.</li><li>No significant concerns with the ability of the experimental design to detect the specific outcome(s) of interest. (e.g., outcomes evaluated at the appropriate lifestage; study designed to address known endpoint variability that is unrelated to treatment, such as estrous cyclicity or time of day). </li><li>Timing of endpoint measurement in relation to the chemical exposure is appropriate and sensitive (e.g., behavioral testing is not performed during a transient period of test chemical-induced depressant or irritant effects; endpoint testing does not occur only after a prolonged period, such as weeks or months, of nonexposure).</li><li>Potential sources of bias towards the null are not a substantial concern.</li></ul><p><strong>Adequate: </strong></p><p>Same considerations as <em>Good</em>, except:</p><ul><li>The duration and frequency of the exposure was appropriate, and the exposure covered most of the critical window (if known) for the outcome(s) of interest.</li><li>Potential issues are identified that could reduce sensitivity, but they are unlikely to impact the overall findings of the study.</li></ul><p><strong>Deficient</strong>: Concerns were raised about the considerations described for <em>Good</em> or <em>Adequate</em> that are expected to notably decrease the sensitivity of the study to detect a response in the exposed group(s).</p><p><strong>Critically deficient</strong>: Severe concerns were raised about the sensitivity of the study and experimental design such that any observed associations are likely to be explained by bias.&nbsp;The rationale should indicate the specific concern(s).</p>",
+          "responses": 2,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        },
+        {
+          "key": "IRIS16",
+          "name": "Sensitivity",
+          "short_name": "",
+          "description": "<p><strong>Core question: </strong>Is there a concern that sensitivity of the study is not adequate to detect an effect?</p><p><strong>Elements to include:</strong></p><ul><li>Examples of issues that may be described in the Sensitivity domain evaluation:&nbsp;</li><li>Exposure range/contrast, measures of central tendency&nbsp;</li><li>%&nbsp;below&nbsp;LOD&nbsp;and/or below&nbsp;LOQ&nbsp;</li><li>Sample sizes for main effects and stratified analyses&nbsp;</li><li>Discussion of anticipated or documented statistical power </li><li>Evaluation of precision of main effects and stratified analyses</li><li>Nature of the sample population chosen (i.e. were they considered a sensitive or insensitive group)&nbsp;</li><li>Length of follow-up, relevance of outcome to the timing of exposure&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>Good: Study sensitivity was high due to sufficient exposure contrast, large sample size and examination of a relevant and sensitive population.</li><li>Adequate: There is some uncertainty that the study is sensitive enough to detect associations that may be present but no major concerns raised regarding study sensitivity.</li><li>Deficient: Study sensitivity was deficient due to [LIST].</li><li>Critically deficient: The study is unlikely to be able to detect an effect if it exists due [LIST].</li></ul>",
+          "responses": 2,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    },
+    {
+      "name": "Overall confidence",
+      "description": "",
+      "is_overall_confidence": true,
+      "metrics": [
+        {
+          "key": "IRIS17",
+          "name": "Overall confidence",
+          "short_name": "",
+          "description": "<p><strong style=\"color: rgb(230, 0, 0);\"><u>CORE QUESTION</u></strong></p><p>Considering the identified strengths and limitations, what is the overall confidence rating for the endpoint(s)/outcome(s) of interest?</p><p><strong style=\"color: rgb(0, 102, 204);\"><u>PROMPTING QUESTIONS</u></strong></p><p>For each endpoint/outcome or grouping of endpoints/outcomes in a study:</p><ul><li>Were concerns (i.e.,&nbsp;limitations or uncertainties) related to the risk of bias or sensitivity identified?</li><li>If yes, what is their expected impact on the overall interpretation of the reliability and validity of the study results, including (when possible) interpretations of impacts on the magnitude or direction of the reported effects?</li></ul><p><strong><u>BASIC CONSIDERATIONS</u></strong></p><p>The overall confidence rating considers the likely impact of the noted concerns (i.e.,&nbsp;limitations or uncertainties) in reporting, bias and sensitivity on the results.</p><p>Reviewers should mark studies that are rated lower than high confidence due only to low sensitivity (i.e.,&nbsp;bias towards the null) for additional consideration during evidence synthesis.&nbsp;If the study is otherwise well conducted and an effect is observed, it may increase the strength of evidence judgment.</p><p><u>A confidence rating and rationale should be given for each endpoint/outcome or group of endpoints/outcomes investigated in the study.&nbsp;&nbsp;</u></p><ul><li><strong>High confidence:</strong> No notable deficiencies or concerns identified; the potential for bias is unlikely or minimal, and the study used sensitive methodology.&nbsp;<em>High</em> confidence studies generally reflect judgments of good across all or most evaluation domains.</li><li><strong>Medium confidence:</strong> Possible deficiencies or concerns are identified, but the limitations are unlikely to have a significant impact on the study results or their interpretation.&nbsp;Generally, <em>medium</em> confidence studies include <em>adequate</em> or <em>good</em> judgments across most domains, with the impact of any identified limitation not being judged as severe.</li><li><strong>Low confidence:</strong> Deficiencies or concerns are identified, and the potential for bias or inadequate sensitivity is expected to have a significant impact on the study results or their interpretation.&nbsp;Typically, <em>low</em> confidence studies have a <em>deficient</em> evaluation for one or more domains, although some <em>medium</em> confidence studies may have a <em>deficient</em> rating in domain(s) considered to have less influence on the magnitude or direction of effect estimates.</li><li><strong>Uninformative:</strong> Serious flaw(s) are judged to make the study results uninterpretable for use in the assessment.&nbsp;Studies with <em>critically deficient</em> judgments in any evaluation domain are almost always rated <em>uninformative</em>.</li></ul>",
+          "responses": 3,
+          "required_animal": true,
+          "required_epi": false,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        },
+        {
+          "key": "IRIS18",
+          "name": "Overall confidence",
+          "short_name": "",
+          "description": "<p><strong>Elements to include:</strong></p><ul><li>Study confidence&nbsp;rating&nbsp;of&nbsp;high confidence, medium confidence, low confidence, or uninformative&nbsp;&nbsp;</li><li>Summary of the main concerns or strengths&nbsp;from one or more study evaluation domains&nbsp;that drove the&nbsp;study confidence rating.&nbsp;&nbsp;</li><li>Other&nbsp;information or explanation&nbsp;(as needed) to&nbsp;elucidate&nbsp;the rationale&nbsp;behind&nbsp;the&nbsp;overall&nbsp;study confidence rating&nbsp;chosen for the study.&nbsp;</li></ul><p><strong>Bottom line statements:</strong></p><ul><li>High confidence: Well-conducted [study type] study with many strengths including [LIST]. There was minimal concern for bias and sufficient study sensitivity to detect associations if they exist.</li><li>Medium confidence: The study was adequately conducted to determine associations with the health outcome(s) of interest [OPTIONAL: with several strengths including (LIST; e.g., sufficient exposure contrast and statistical power)]. [OPTIONAL: There is some decrease in overall confidence due to (LIST; e.g., uncertainty regarding the potential for exposure misclassification, residual confounding concern, and limited data on loss to follow-up in the cohort)]. Identified limitations are not expected to have substantial impact on results.</li><li>Low confidence: This [study type] study had limitations including [LIST], which have the potential to substantially impact results. (OPTIONAL: However, there were some study strengths such as [LIST] that could be considered in evidence synthesis.)</li><li>Uninformative: Multiple deficient, or at least one critically deficient rating [LIST] in the above domains rendered this study uninformative.</li></ul>",
+          "responses": 3,
+          "required_animal": false,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        }
+      ]
+    }
+  ]
 }

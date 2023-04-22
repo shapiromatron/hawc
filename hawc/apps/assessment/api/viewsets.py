@@ -22,6 +22,7 @@ from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
 from ..constants import AssessmentViewSetPermissions
 from .filters import InAssessmentFilter
+from .helper import get_assessment_from_query
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
 
 # all http methods except PUT
@@ -47,8 +48,8 @@ class CleanupFieldsBaseViewSet(
     Serializer should implement DynamicFieldsMixin.
     """
 
-    model: Model = None  # must be added
-    assessment_filter_args: str = ""  # must be added
+    model: type[Model]
+    assessment_filter_args: str
     filter_backends = (CleanupBulkIdFilter,)
     pagination_class = DisabledPagination
     permission_classes = (CleanupFieldsPermissions,)
@@ -145,7 +146,6 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
-    parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
     lookup_value_regex = re_digits
 
@@ -184,11 +184,10 @@ class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAs
 
 class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     """
-    Base viewset used with utils/models/AssessmentRootedTagTree subclasses
+    Base ViewSet used with AssessmentRootedTagTree model.
     """
 
     http_method_names = METHODS_NO_PUT
-
     lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
@@ -203,11 +202,15 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     @transaction.atomic
     def perform_create(self, serializer):
+        # set assessment to serializer; needed to create and check permissions
+        serializer.assessment = get_assessment_from_query(self.request)
+        if not serializer.assessment.user_is_project_manager_or_higher(self.request.user):
+            raise PermissionDenied()
         super().perform_create(serializer)
         create_object_log(
             "Created",
             serializer.instance,
-            serializer.instance.get_assessment().id,
+            serializer.assessment.id,
             self.request.user.id,
         )
 

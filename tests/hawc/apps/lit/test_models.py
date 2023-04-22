@@ -1,6 +1,7 @@
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 
+from hawc.apps.assessment.models import HAWCUser
 from hawc.apps.lit.models import Reference, ReferenceFilterTag, Search
 from hawc.apps.study.models import Study
 
@@ -51,7 +52,7 @@ class TestReference:
         ref = Reference.objects.get(id=3)
         assert ref.has_study is False
         with pytest.raises(ObjectDoesNotExist):
-            ref.study.id
+            _ = ref.study.id
 
     def test_to_dict(self):
         # make sure `to_dict` works
@@ -61,6 +62,32 @@ class TestReference:
 
         data = ref.to_json()
         assert isinstance(data, str)
+
+    def test_update_tags(self):
+        # Test that conflict resolution is working
+        ref = Reference.objects.get(id=9)
+        pm = HAWCUser.objects.get(email="pm@hawcproject.org")
+        tm = HAWCUser.objects.get(email="team@hawcproject.org")
+
+        # User #1 adds user tags, but not applied to reference since we need 2+ people
+        tags = [32]
+        ref.update_tags(pm, tags)
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is True
+        assert ref.tags.count() == 0
+
+        # User #2 adds the same tags, those are now applied to the reference tag
+        ref.update_tags(tm, tags)
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is False
+        assert ref.tags.count() > 0
+
+        # User #2 changes their tags, now there are conflicts again; the reference is unchanged
+        new_tags = [33]
+        ref.update_tags(tm, new_tags)
+        ref.refresh_from_db()
+        assert ref.has_user_tag_conflicts() is True
+        assert list(ref.tags.values_list("id", flat=True)) == tags
 
 
 @pytest.mark.vcr

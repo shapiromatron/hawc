@@ -86,7 +86,7 @@ class Study {
         );
         if (this.data.full_text_url)
             tbl.add_tbody_tr(
-                "Full-text link",
+                "Full text URL",
                 `<a href=${this.data.full_text_url}>${this.data.full_text_url}</a>`
             );
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
@@ -191,6 +191,7 @@ class Study {
             HAWCUtils.booleanCheckbox(this.data.epi),
             HAWCUtils.booleanCheckbox(this.data.epi_meta),
             HAWCUtils.booleanCheckbox(this.data.in_vitro),
+            HAWCUtils.booleanCheckbox(this.data.eco),
         ];
     }
 
@@ -208,6 +209,7 @@ Study.typeNames = {
     epi: "Epidemiology",
     epi_meta: "Epidemiology meta-analysis/pooled analysis",
     in_vitro: "In vitro",
+    eco: "Ecology",
 };
 
 export default Study;

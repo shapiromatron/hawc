@@ -31,7 +31,7 @@
   <div class="well">
 
     {% if queries %}
-      <a href="{% url 'lit:search_tags_edit' assessment.pk object.slug %}" class="btn btn-primary">Tag literature</a>
+      <a href="{% url 'lit:tag' assessment.pk %}?search={{object.pk}}" class="btn btn-primary">Tag literature</a>
       <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-light">Rerun search</a>
     {% else %}
       <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-primary">Run search</a>

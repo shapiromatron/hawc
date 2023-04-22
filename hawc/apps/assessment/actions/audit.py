@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Optional
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
@@ -12,7 +11,7 @@ from ..constants import EpiVersion
 from ..models import Assessment
 
 
-def versions_by_content_type(app_label: str, model: str, qs: Optional[QuerySet] = None) -> QuerySet:
+def versions_by_content_type(app_label: str, model: str, qs: QuerySet | None = None) -> QuerySet:
     if qs is None:
         qs = Version.objects.all()
     ct = ContentType.objects.get(app_label=app_label, model=model)
@@ -20,7 +19,7 @@ def versions_by_content_type(app_label: str, model: str, qs: Optional[QuerySet] 
 
 
 def versions_by_related_field(
-    related_field: str, related_values: list, qs: Optional[QuerySet] = None
+    related_field: str, related_values: list, qs: QuerySet | None = None
 ) -> QuerySet:
     qs = Version.objects.all() if qs is None else qs
     ored_values = "|".join([str(id) for id in related_values])

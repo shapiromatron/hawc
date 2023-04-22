@@ -14,8 +14,8 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import (
-    BaseCreate,
     BaseCopyForm,
+    BaseCreate,
     BaseDelete,
     BaseDetail,
     BaseFilterList,

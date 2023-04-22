@@ -64,10 +64,17 @@ class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
-    name = models.CharField(max_length=256)
-    short_name = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=256, help_text="Complete name of metric.")
+    short_name = models.CharField(
+        max_length=50, blank=True, help_text="Short name, may be used in visualizations."
+    )
+    key = models.CharField(
+        max_length=8,
+        blank=True,
+        help_text="A unique identifier if it is from a standard protocol or procedure; can be used to match metrics across assessments.",
+    )
     description = models.TextField(
-        blank=True, help_text="HTML text describing scoring of this field."
+        blank=True, help_text="Detailed instructions for how to apply this metric."
     )
     responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
     required_animal = models.BooleanField(
@@ -439,7 +446,7 @@ class RiskOfBiasScore(models.Model):
             (score.riskofbias.id, score.riskofbias.study_id)
             for score in cls.objects.filter(id__in=ids)
         ]
-        rob_ids, study_ids = list(zip(*id_lists))
+        rob_ids, study_ids = list(zip(*id_lists, strict=True))
         RiskOfBias.delete_caches(rob_ids)
         Study.delete_caches(study_ids)
 
@@ -510,7 +517,7 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:rob_assignments", args=(self.assessment_id,))
+        return reverse("riskofbias:rob_assignments", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment

@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
-from hawc.apps.assessment.models import Assessment, DoseUnits, Strain
+from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import (
     ComparisonSet,
     Criteria,
@@ -109,7 +109,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # list of endpoints
         response = client.animal.endpoints(2)
         assert isinstance(response, list)
-        assert len(response) == 3
+        assert len(response) == 5
         assert response[0]["name"] == "Water T maze (learning error)"
         assert (
             response[0]["animal_group"]["experiment"]["study"]["short_citation"]
@@ -291,8 +291,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_epi_metadata(self):
         client = HawcClient(self.live_server_url)
-        assessment = Assessment.objects.first()
-        response = client.epi.metadata(assessment.id)
+        response = client.epi.metadata(self.db_keys.assessment_client)
         assert isinstance(response, dict)
 
     def test_epi_create(self):
@@ -607,6 +606,12 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.lit.references(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_lit_reference_user_tags(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.lit.reference_user_tags(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
     def test_lit_reference(self):
         # get request
         client = HawcClient(self.live_server_url)
@@ -729,15 +734,15 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_riskofbias_metrics(self):
         client = HawcClient(self.live_server_url)
         df = client.riskofbias.metrics(self.db_keys.assessment_client)
-        assert isinstance(df, pd.DataFrame) and df.shape == (11, 14)
+        assert isinstance(df, pd.DataFrame) and df.shape == (11, 15)
 
     def test_riskofbias_compare_metrics(self):
         client = HawcClient(self.live_server_url)
         df_src, df_dst = client.riskofbias.compare_metrics(
             self.db_keys.assessment_client, self.db_keys.assessment_final
         )
-        assert isinstance(df_src, pd.DataFrame) and df_src.shape == (11, 18)
-        assert isinstance(df_dst, pd.DataFrame) and df_dst.shape == (2, 16)
+        assert isinstance(df_src, pd.DataFrame) and df_src.shape == (11, 19)
+        assert isinstance(df_dst, pd.DataFrame) and df_dst.shape == (2, 17)
         assert all(
             col in df_src.columns for col in ["matched_key", "matched_score", "matched_text"]
         )
@@ -771,7 +776,7 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_study_list(self):
         client = HawcClient(self.live_server_url)
         df = client.study.studies(self.db_keys.assessment_client)
-        assert isinstance(df, pd.DataFrame) and df.shape == (1, 28)
+        assert isinstance(df, pd.DataFrame) and df.shape == (1, 29)
         assert df.short_citation.values == ["Yoshida R and Ogawa Y 2000"]
 
     def test_study_create_from_identifier(self):

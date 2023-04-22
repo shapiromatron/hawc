@@ -2,6 +2,8 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.db.models import Count, Q
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -14,7 +16,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
-from ..common.helper import WebappConfig, listToUl, tryParseInt
+from ..common.helper import WebappConfig, tryParseInt
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -23,6 +25,7 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
+    create_object_log,
 )
 from . import constants, filterset, forms, models
 
@@ -51,6 +54,13 @@ class LitOverview(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
+        context["overview"]["my_reviews"] = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .filter(user_tags__user=self.request.user)
+            .count()
+            if self.request.user.is_authenticated
+            else 0
+        )
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
         if context["obj_perms"]["edit"]:
             context["need_import_count"] = models.Reference.objects.get_references_ready_for_import(
@@ -59,6 +69,7 @@ class LitOverview(BaseList):
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["config"] = {
             "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+            "references": models.Reference.objects.tag_pairs(self.assessment.references.all()),
             "assessment_id": self.assessment.id,
             "referenceYearHistogramUrl": reverse(
                 "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
@@ -232,107 +243,246 @@ class SearchQuery(BaseUpdate):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
-class TagReferences(BaseDetail):
-    """
-    Abstract base-class to tag references, using various methods to get instance.
-    """
-
-    model = Assessment
-    form_class = forms.TagReferenceForm
+class TagReferences(BaseFilterList):
     template_name = "lit/reference_tag.html"
+    parent_model = Assessment
+    model = models.Reference
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    paginate_by = 100
 
-    def get_ref_qs_filters(self) -> dict:
-        raise NotImplementedError("Subclass requires implementation")
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "CHANGE"),
+            breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
         )
         return context
 
-    def get_app_config(self, context) -> WebappConfig:
-        if hasattr(self, "qs_reference"):
-            refs = self.qs_reference
+    def get_filterset_class(self):
+        conflict_resolution = self.assessment.literature_settings.conflict_resolution
+        if conflict_resolution:
+            return dynamic_filterset(
+                filterset.ReferenceFilterSet,
+                fields=[
+                    "title_abstract",
+                    "needs_tagging",
+                    "partially_tagged",
+                    "search",
+                    "id",
+                    "tags",
+                    "include_descendants",
+                    "anything_tagged",
+                    "order_by",
+                    "my_tags",
+                    "include_mytag_descendants",
+                    "anything_tagged_me",
+                ],
+                grid_layout={
+                    "rows": [
+                        {
+                            "columns": [
+                                {"width": 5, "extra_css": "pl-4"},
+                                {
+                                    "width": 3,
+                                    "extra_css": "px-3 pt-3 d-flex flex-column",
+                                    "rows": [
+                                        {"columns": [{"width": 12}]},
+                                        {"columns": [{"width": 12}]},
+                                    ],
+                                },
+                                {"width": 4, "extra_css": "pr-4"},
+                            ]
+                        },
+                        {
+                            "columns": [
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-4 pt-2"},
+                                                {"width": 7, "extra_css": "pl-4 pb-2"},
+                                                {"width": 5, "extra_css": "pr-4 pb-2"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-4 py-2"},
+                                                {"width": 12, "extra_css": "px-4 pt-2"},
+                                                {"width": 7, "extra_css": "px-4 pb-2"},
+                                                {"width": 5, "extra_css": "px-4 pb-2"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                            ]
+                        },
+                    ]
+                },
+            )
         else:
-            refs = refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
-        refs = refs.prefetch_related("searches", "identifiers", "tags")
+            return dynamic_filterset(
+                filterset.ReferenceFilterSet,
+                fields=[
+                    "title_abstract",
+                    "search",
+                    "id",
+                    "order_by",
+                    "tags",
+                    "include_descendants",
+                    "anything_tagged",
+                ],
+                grid_layout={
+                    "rows": [
+                        {
+                            "columns": [
+                                {"width": 6, "extra_css": "px-3"},
+                                {"width": 6, "extra_css": "px-3"},
+                            ]
+                        },
+                        {
+                            "columns": [
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 12, "extra_css": "px-3"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                                {
+                                    "width": 6,
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 6, "extra_css": "pl-3"},
+                                                {"width": 6, "extra_css": "pr-3"},
+                                            ]
+                                        }
+                                    ],
+                                },
+                            ]
+                        },
+                    ]
+                },
+            )
+
+    def get_app_config(self, context) -> WebappConfig:
+        references = [ref.to_dict() for ref in context["object_list"]]
+        ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
+        for reference in references:
+            reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
             data=dict(
+                conflict_resolution=self.assessment.literature_settings.conflict_resolution,
+                keywords=self.assessment.literature_settings.get_keyword_data(),
+                instructions=self.assessment.literature_settings.screening_instructions,
                 tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-                refs=[ref.to_dict() for ref in refs],
+                refs=references,
                 csrf=get_token(self.request),
             ),
         )
 
 
-class TagBySearch(TagReferences):
-    """
-    Edit tags for a single Search.
-    """
-
-    model = models.Search
-
-    def get_ref_qs_filters(self):
-        return dict(searches=self.object)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
-        context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
-        return context
-
-
-class TagByReference(TagReferences):
-    """
-    Edit tags for on a single reference.
-    """
-
+class ConflictResolution(BaseFilterList):
+    template_name = "lit/conflict_resolution.html"
+    parent_model = Assessment
     model = models.Reference
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    filterset_class = dynamic_filterset(
+        filterset.ReferenceFilterSet,
+        fields=[
+            "id",
+            "title_abstract",
+            "tags",
+            "include_descendants",
+            "anything_tagged",
+            "my_tags",
+            "include_mytag_descendants",
+            "anything_tagged_me",
+        ],
+        grid_layout={
+            "rows": [
+                {
+                    "columns": [
+                        {"width": 6, "extra_css": "px-4 py-2"},
+                        {"width": 6, "extra_css": "px-4 py-2"},
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "width": 6,
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                    ]
+                                }
+                            ],
+                        },
+                        {
+                            "width": 6,
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                    ]
+                                }
+                            ],
+                        },
+                    ]
+                },
+            ]
+        },
+    )
+    paginate_by = 50
 
-    def get_ref_qs_filters(self):
-        return dict(pk=self.object.pk)
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                n_unapplied_reviews=Count("user_tags__user", filter=Q(user_tags__is_resolved=False))
+            )
+            .filter(n_unapplied_reviews__gt=1)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
-        context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
-        return context
-
-
-class TagByTag(TagReferences):
-    """
-    Tag references with a specific tag.
-    """
-
-    model = models.ReferenceFilterTag
-
-    def get_ref_qs_filters(self):
-        return dict(tags=self.object.pk)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb(name=f'Update "{self.object.name}" tags')
-        return context
-
-
-class TagByUntagged(TagReferences):
-    """
-    View to tag all untagged references for an assessment.
-    """
-
-    model = Assessment
-
-    def get_ref_qs_filters(self):
-        return dict(tags=self.object.pk)
-
-    def get_context_data(self, **kwargs):
-        self.qs_reference = self.assessment.references.all().untagged()
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        context.update(
+            tags=tags,
+            breadcrumbs=lit_overview_crumbs(
+                self.request.user, self.assessment, "Resolve Tag Conflicts"
+            ),
+        )
+        models.Reference.annotate_tag_parents(context["object_list"], tags)
         return context
 
 
@@ -434,25 +584,58 @@ class RefFilterList(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
+        fields=[
+            "id",
+            "db_id",
+            "search",
+            "year",
+            "title_abstract",
+            "authors",
+            "journal",
+            "order_by",
+            "paginate_by",
+            "tags",
+            "include_descendants",
+            "anything_tagged",
+        ],
         grid_layout={
             "rows": [
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+                {
+                    "columns": [
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                        {"width": 3, "extra_css": "px-4"},
+                    ]
+                },
                 {
                     "columns": [
                         {
-                            "width": 5,
+                            "width": 6,
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12},
-                                        {"width": 12},
-                                        {"width": 6},
-                                        {"width": 6},
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
                                     ]
                                 }
                             ],
                         },
-                        {"width": 7},
+                        {
+                            "width": 6,
+                            "rows": [
+                                {
+                                    "columns": [
+                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                    ]
+                                }
+                            ],
+                        },
                     ]
                 },
             ]
@@ -493,28 +676,22 @@ class RefUploadExcel(BaseUpdate):
     template_name = "lit/reference_upload_excel.html"
     form_class = forms.ReferenceExcelUploadForm
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    success_message = "Reference full text URLs updated."
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["assessment"] = self.assessment
         return kwargs
 
-    def form_valid(self, form):
-        errors = models.Reference.objects.process_excel(form.cleaned_data["df"], self.assessment.id)
-        if len(errors) > 0:
-            msg = """References updated, but some errors were found
-                (references with errors were not updated): {0}""".format(
-                listToUl(errors)
-            )
-        else:
-            msg = "References updated."
-        self.success_message = msg
-        return super().form_valid(form)
+    def create_log(self, obj):
+        create_object_log(
+            "Reference URLs bulk updated", self.assessment, self.assessment.id, self.request.user.id
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Reference upload"
+            self.request.user, self.assessment, "Update full text URLs"
         )
         return context
 
@@ -576,6 +753,49 @@ class RefDetail(BaseDetail):
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_ref_app_startup(self, context)
+
+
+class ReferenceTagStatus(BaseDetail):
+    template_name = "lit/reference_tag_status.html"
+    model = models.Reference
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("assessment")
+            .prefetch_related("identifiers", "tags", "user_tags__tags", "user_tags__user")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Tag status"
+        )
+        context["breadcrumbs"].insert(3, Breadcrumb.from_object(self.object))
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Reference.annotate_tag_parents([self.object], tags)
+        return context
+
+
+class UserTagList(ConflictResolution):
+    template_name = "lit/reference_user_tags.html"
+
+    def get_queryset(self):
+        return (
+            self.filterset.qs.filter(user_tags__gt=0)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Reference User Tags"
+        )
+        context["header"] = "Reference User Tags"
+        return context
 
 
 class RefEdit(BaseUpdate):
@@ -700,7 +920,7 @@ class LiteratureAssessmentUpdate(BaseUpdate):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("lit:tags_update", args=(self.assessment.id,))
+        return reverse_lazy("lit:overview", args=(self.assessment.id,))
 
 
 class TagsCopy(BaseUpdate):
@@ -727,12 +947,12 @@ class TagsCopy(BaseUpdate):
         kw.pop("instance")
         return kw
 
+    @transaction.atomic
     def form_valid(self, form):
+        url = reverse("lit:tags_update", kwargs={"pk": self.assessment.pk})
+        create_object_log("Bulk tag copy", self.object, self.object.id, self.request.user.id)
         form.copy_tags()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy("lit:tags_update", kwargs={"pk": self.assessment.pk})
+        return HttpResponseRedirect(url)
 
 
 class BulkTagReferences(BaseDetail):

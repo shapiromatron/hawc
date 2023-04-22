@@ -120,10 +120,6 @@ class Endpoint extends Observee {
             .then(data => cb(new Endpoint(data)));
     }
 
-    static getTagURL(assessment, slug) {
-        return `/ani/assessment/${assessment}/endpoints/tags/${slug}/`;
-    }
-
     static displayAsModal(id, opts) {
         Endpoint.get_object(id, d => d.displayAsModal(opts));
     }
@@ -271,7 +267,10 @@ class Endpoint extends Observee {
                 var div = $("<div>");
                 div.append(
                     tags.map(v => {
-                        const url = Endpoint.getTagURL(assessment_id, v.slug);
+                        const url = h.getUrlWithParameters(
+                            `/ani/assessment/${assessment_id}/endpoints/`,
+                            {tags: v.name}
+                        );
                         return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
                     })
                 );

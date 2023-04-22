@@ -191,7 +191,7 @@ class AnimalGroupRead(BaseDetail):
                 "animal_group__strain",
             )
             .prefetch_related(
-                "bmd_models",
+                "bmd_sessions",
                 "effects",
                 "groups",
                 "animal_group__parents",
@@ -449,13 +449,6 @@ class EndpointListV2(BaseList):
         return WebappConfig(
             app="animalStartup", page="startupEndpointListApp", data=dict(data_url=url)
         )
-
-
-class EndpointTags(EndpointFilterList):
-    # List of Endpoints associated with an assessment and tag
-
-    def get_queryset(self):
-        return super().get_queryset().tag_qs(self.assessment.pk, self.kwargs["tag_slug"])
 
 
 class EndpointRead(BaseDetail):
