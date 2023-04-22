@@ -192,7 +192,7 @@ class SummaryTableCopy(BaseCopyForm):
         return kw
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)  # TODO - fix crumbs?
+        context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Copy existing",
