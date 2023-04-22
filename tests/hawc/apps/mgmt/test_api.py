@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
-class TestTaskViewset:
+class TestTaskViewSet:
     def test_permissions(self):
         url = reverse("mgmt:api:task-detail", args=(1,))
 

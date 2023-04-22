@@ -2,13 +2,13 @@ from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
+from ..assessment.api import AssessmentEditViewSet, AssessmentLevelPermissions
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api import DisabledPagination
 from . import models, serializers
 
 
-class TaskViewSet(AssessmentEditViewset):
+class TaskViewSet(AssessmentEditViewSet):
     http_method_names = ["get", "patch", "head", "options", "trace"]
     assessment_filter_args = "study__assessment"
     model = models.Task

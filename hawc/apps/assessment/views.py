@@ -525,7 +525,7 @@ class AssessmentValueDelete(BaseDelete):
 
 
 # Attachment viewset
-class AttachmentViewset(HtmxViewSet):
+class AttachmentViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
