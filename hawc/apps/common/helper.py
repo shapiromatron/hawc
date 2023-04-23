@@ -3,6 +3,7 @@ import logging
 import re
 from collections import defaultdict
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import timedelta
 from math import inf
 from typing import Any, NamedTuple
@@ -273,14 +274,15 @@ class ReportExport(NamedTuple):
     filename: str
 
 
-class FlatExport(NamedTuple):
+@dataclass
+class FlatExport:
     """
     Response class of an exporter method.
     """
 
     df: pd.DataFrame
-    metadata: pd.DataFrame | None
     filename: str
+    metadata: pd.DataFrame | None = None
 
 
 class FlatFileExporter:
