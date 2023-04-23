@@ -279,6 +279,7 @@ class FlatExport(NamedTuple):
     """
 
     df: pd.DataFrame
+    metadata: pd.DataFrame | None
     filename: str
 
 
@@ -288,6 +289,7 @@ class FlatFileExporter:
     """
 
     def __init__(self, queryset: QuerySet, filename: str = "hawc-export", **kwargs):
+        self.metadata = None
         self.queryset = queryset
         self.filename = filename
         self.kwargs = kwargs
@@ -297,6 +299,9 @@ class FlatFileExporter:
 
     def _get_data_rows(self):
         raise NotImplementedError()
+
+    def build_metadata(self) -> pd.DataFrame | None:
+        return None
 
     @staticmethod
     def get_flattened_tags(dict: dict, key: str) -> str:
@@ -309,8 +314,9 @@ class FlatFileExporter:
         return pd.DataFrame(data=data_rows, columns=header_row)
 
     def build_export(self) -> FlatExport:
-        df = self.build_df()
-        return FlatExport(df, self.filename)
+        return FlatExport(
+            df=self.build_df(), metadata=self.build_metadata(), filename=self.filename
+        )
 
 
 class WebappConfig(PydanticModel):

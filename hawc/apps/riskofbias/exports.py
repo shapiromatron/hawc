@@ -1,3 +1,5 @@
+import pandas as pd
+
 from ..common.helper import FlatFileExporter
 from ..study.models import Study
 from ..study.serializers import VerboseStudySerializer
@@ -70,6 +72,9 @@ class RiskOfBiasFlat(FlatFileExporter):
                     rows.append(row3)
 
         return rows
+
+    def build_metadata(self) -> pd.DataFrame | None:
+        return pd.DataFrame([["ABC", "DEF"]], columns=["Foo", "Baz"])
 
 
 class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
