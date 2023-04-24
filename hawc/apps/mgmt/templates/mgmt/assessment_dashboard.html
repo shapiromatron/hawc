@@ -10,48 +10,17 @@
     </div>
   </div>
 
-  {{ plotly_visual.to_html|safe }}
-
+<!-- {{ df }} -->
   <div>
     <h3>All task summary</h3>
-    <div class="barAll js-plotly-plot" style="position: relative; display: inline-block;">
-      <div class="plot-container plotly">
-        <div class="user-select-none svg-container" style="position: relative; width: 500px; height: 200px;"></div>
-      </div>
-    </div>
+    <div>{{ plotly_visual.to_html|safe }}</div>
 
     <h3>Tasks by type</h3>
-
-    <div class="barTask js-plotly-plot" style="position: relative; display: inline-block;">
-      <div class="plot-container plotly">
-        <div class="user-select-none svg-container" style="position: relative; width: 500px; height: 200px;"></div>
-      </div>
-    </div>
-
-    <div class="barTask js-plotly-plot" style="position: relative; display: inline-block;">
-      <div class="plot-container plotly">
-        <div class="user-select-none svg-container" style="position: relative; width: 500px; height: 200px;"></div>
-      </div>
-    </div>
+    <div></div>
     
-    <div class="barTask js-plotly-plot" style="position: relative; display: inline-block;">
-      <div class="plot-container plotly">
-        <div class="user-select-none svg-container" style="position: relative; width: 500px; height: 200px;"></div>
-      </div>
-    </div>
-  
-    <div class="barTask js-plotly-plot" style="position: relative; display: inline-block;">
-      <div class="plot-container plotly">
-        <div class="user-select-none svg-container" style="position: relative; width: 500px; height: 200px;"></div>
-      </div>
-    </div>
 
     <h3>Tasks by user</h3>
-    <div class="barUser js-plotly-plot" style="position: relative; display: inline-block;">
-      <div class="plot-container plotly">
-        <div class="user-select-none svg-container" style="position: relative; width: 500px; height: 200px;"></div>
-      </div>
-    </div>
+    <div></div>
 
 
   </div>

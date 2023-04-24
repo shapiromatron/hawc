@@ -9,9 +9,11 @@ from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
 from ..study.serializers import StudyAssessmentSerializer
+from . import constants
 from . import models
 
 import plotly.express as px
+import pandas as pd
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -170,8 +172,18 @@ class TaskDashboard(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
-        df = px.data.iris()
-        context["plotly_visual"] =  px.scatter(df, x="sepal_width", y="sepal_length")
+
+        df = context['object_list'].values_list('status', flat=True)
+
+        status_count = {
+            name : 0 for name in constants.TaskStatus.labels
+        }
+        
+        for status in df:
+            status_count[constants.TaskStatus(status).label] += 1
+
+        context['plotly_visual'] = px.bar(y=list(status_count.keys()), x=list(status_count.values()), orientation='h')
+
         return context
 
     def get_app_config(self, context) -> WebappConfig:
