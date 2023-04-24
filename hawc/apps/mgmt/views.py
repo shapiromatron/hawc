@@ -11,6 +11,8 @@ from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
 from ..study.serializers import StudyAssessmentSerializer
 from . import models
 
+import plotly.express as px
+
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
     return Breadcrumb(
@@ -100,11 +102,9 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
-    
+
     def get_incomplete_tasks(self):
-        return(
-            self.model.objects.all().owned_by(self.request.user).exclude(status = 30)
-        )
+        return self.model.objects.all().owned_by(self.request.user).exclude(status=30)
 
     def get_review_tasks2(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
@@ -133,6 +133,9 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
             .owned_by(self.request.user)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
+    
+    def get_incomplete_tasks(self):
+        return self.model.objects.all().owned_by(self.request.user).exclude(status=30)
 
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(
@@ -150,6 +153,7 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
         context["rob_task_list"] = self.get_review_tasks2
+        context["incomplete_task_list"] = self.get_incomplete_tasks()
         return context
 
 
@@ -166,6 +170,8 @@ class TaskDashboard(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
+        df = px.data.iris()
+        context["plotly_visual"] =  px.scatter(df, x="sepal_width", y="sepal_length")
         return context
 
     def get_app_config(self, context) -> WebappConfig:
