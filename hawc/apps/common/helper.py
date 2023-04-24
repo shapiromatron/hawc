@@ -289,7 +289,6 @@ class FlatFileExporter:
     """
 
     def __init__(self, queryset: QuerySet, filename: str = "hawc-export", **kwargs):
-        self.metadata = None
         self.queryset = queryset
         self.filename = filename
         self.kwargs = kwargs
