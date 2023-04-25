@@ -1,3 +1,4 @@
+import plotly.express as px
 from django.apps import apps
 from django.middleware.csrf import get_token
 from django.urls import reverse
@@ -9,11 +10,7 @@ from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
 from ..study.serializers import StudyAssessmentSerializer
-from . import constants
-from . import models
-
-import plotly.express as px
-import pandas as pd
+from . import constants, models
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -135,7 +132,7 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
             .owned_by(self.request.user)
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
-    
+
     def get_incomplete_tasks(self):
         return self.model.objects.all().owned_by(self.request.user).exclude(status=30)
 
@@ -173,16 +170,32 @@ class TaskDashboard(BaseList):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
 
-        df = context['object_list'].values_list('status', flat=True)
+        df = context["object_list"].values_list("status", flat=True)
 
-        status_count = {
-            name : 0 for name in constants.TaskStatus.labels
-        }
-        
+        status_count = {name: 0 for name in constants.TaskStatus.labels}
+
         for status in df:
             status_count[constants.TaskStatus(status).label] += 1
 
-        context['plotly_visual'] = px.bar(y=list(status_count.keys()), x=list(status_count.values()), orientation='h')
+        all_task_plot = px.bar(
+            x=list(status_count.values()),
+            y=list(status_count.keys()),
+            orientation="h",
+            title="",
+            width=500,
+            height=200,
+            template="none",
+            color=list(status_count.keys())
+        )
+        all_task_plot.update_layout(
+            xaxis={"title": "Tasks"},
+            yaxis={"title": "", "autorange": "reversed"},
+            margin={"l": 85, "r": 0, "t": 30, "b": 30},
+            showlegend=False,
+            hovermode=False
+        )
+
+        context["plotly_visual"] = all_task_plot
 
         return context
 
