@@ -10,14 +10,17 @@
     you can download each individual visualization when being viewed.
   </p>
   <div class="card-columns">
-    {% if assessment.enable_literature_review and assessment.has_lit_data %}
+    {% if assessment.enable_literature_review %}
     <div class="card my-3">
         <h3 class="card-header">Literature Review</h3>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush mb-0">
                 <li class="list-group-item pb-3">
                     {% url 'lit:api:assessment-reference-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references' button_text="Reference Export" %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references' button_text="Reference Export" enabled=assessment.has_lit_data %}
+                    {% if not assessment.has_lit_data %}
+                    <b class="text-danger">No literature data available.</b>
+                    {% endif %}
                     <p class="text-muted">Get all references in an assessment.</p>
                     <p><small><i class="text-muted" id="references-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
@@ -35,21 +38,27 @@
     {% endif %}
 
 
-    {% if assessment.enable_risk_of_bias and assessment.has_rob_data %}
+    {% if assessment.enable_risk_of_bias %}
     <div class="card my-3">
         <h3 class="card-header">{{assessment.get_rob_name_display}}</h3>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush mb-0">
                 <li class="list-group-item pb-3">
+                    {% if not assessment.has_rob_data %}
+                    <b class="text-danger">No {{assessment.get_rob_name_display}} data available.</b>
+                    {% endif %}
                     {% url 'riskofbias:api:assessment-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-final' button_text=assessment.get_rob_name_display|add:' Export' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-final' button_text=assessment.get_rob_name_display|add:' Export' enabled=assessment.has_rob_data %}
                     <p class="text-muted">Get all final {{assessment.get_rob_name_display}} reports for an assessment.</p>
                     <p><small><i class="text-muted" id="rob-final-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
                 {% if obj_perms.edit %}
                 <li class="list-group-item pb-3">
                     {% url 'riskofbias:api:assessment-full-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-all' button_text='Full '|add:assessment.get_rob_name_display|add:' Export' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-all' button_text='Full '|add:assessment.get_rob_name_display|add:' Export' enabled=assessment.has_rob_data %}
+                    {% if not assessment.has_rob_data %}
+                    <b class="text-danger">No {{assessment.get_rob_name_display}} data available.</b>
+                    {% endif %}
                     <p class="text-muted">Get all {{assessment.get_rob_name_display}} reports for an assessment, including individual reviews.</p>
                     <p><small><i class="text-muted" id="rob-all-fmt-text">Excel Spreadsheet</i><i class="text-muted">. Team members only.</i></small></p>
                 </li>
@@ -61,29 +70,32 @@
 
     {% if assessment.enable_data_extraction %}
 
-    {% if assessment.has_animal_data %}
     <div class="card my-3">
         <h3 class="card-header">Animal Bioassay Data</h3>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush mb-0">
                 <li class="list-group-item pb-3">
                     {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-data' button_text='Full Animal Data Export' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-data' button_text='Full Animal Data Export' enabled=assessment.has_animal_data %}
+                    {% if not assessment.has_animal_data %}
+                    <b class="text-danger">No animal data available.</b>
+                    {% endif %}
                     <p class="text-muted">Retrieve complete animal data.</p>
                     <p><small><i class="text-muted" id="animal-data-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
                 <li class="list-group-item pb-3">
                     {% url 'animal:api:assessment-endpoint-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-summary' button_text='Animal Endpoint Summary' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-summary' button_text='Animal Endpoint Summary' enabled=assessment.has_animal_data %}
+                    {% if not assessment.has_animal_data %}
+                    <b class="text-danger">No animal data available.</b>
+                    {% endif %}
                     <p class="text-muted">Retrieve endpoint animal data.</p>
                     <p><small><i class="text-muted" id="animal-summary-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
             </ul>
         </div>
     </div>
-    {% endif %}
     
-    {% if assessment.has_epi_data %}
     <div class="card my-3">
         <h3 class="card-header">Epidemiology Data</h3>
         <div class="card-body p-0">
@@ -94,8 +106,11 @@
                         {% elif assessment.epi_version == EpiVersion.V2 %}
                         {% url 'epiv2:api:assessment-export' assessment.pk as the_url %}
                         {% endif %}
-                        {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' button_text='Full Epi Export' %}
+                        {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' button_text='Full Epi Export' enabled=assessment.has_epi_data %}
                     </p>
+                    {% if not assessment.has_epi_data %}
+                    <b class="text-danger">No animal data available.</b>
+                    {% endif %}
                     <p class="text-muted">Retrieve epidemiology data.</p>
                     <p><small><i class="text-muted" id="epi-data-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
@@ -103,58 +118,59 @@
         </div>
     </div>
 
-    {% endif %}
-
-    {% if assessment.has_epimeta_data %}
     <div class="card my-3">
         <h3 class="card-header">Epidemiology meta-analysis data</h3>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush mb-0">
                 <li class="list-group-item pb-3">
                     {% url 'meta:api:assessment-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epimeta-data' button_text='Full Epi-Meta Export' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epimeta-data' button_text='Full Epi-Meta Export' enabled=assessment.has_epimeta_data %}
+                    {% if not assessment.has_epimeta_data %}
+                    <b class="text-danger">No epidemiology meta-analysis data available.</b>
+                    {% endif %}
                     <p class="text-muted">Retrieve epidemiology meta-analysis data.</p>
                     <p><small><i class="text-muted" id="epimeta-data-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
             </ul>
         </div>
     </div>
-    {% endif %}
     
-    {% if assessment.has_invitro_data %}
     <div class="card my-3">
         <h3 class="card-header">In-vitro Data</h3>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush mb-0">
                 <li class="list-group-item pb-3">
                     {% url 'invitro:api:assessment-full-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='invitro-data' button_text='Full In-Vitro Export' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='invitro-data' button_text='Full In-Vitro Export' enabled=assessment.has_invitro_data %}
                     <p class="text-muted">Retrieve in-vitro data.</p>
+                    {% if not assessment.has_invitro_data %}
+                    <b class="text-danger">No in-vitro data available.</b>
+                    {% endif %}
                     <p><small><i class="text-muted" id="invitro-data-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
             </ul>
         </div>
     </div>
-    {% endif %}
 
-    {% if assessment.has_eco_data %}
     <div class="card my-3">
         <h3 class="card-header">Ecological Data</h3>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush mb-0">
                 <li class="list-group-item pb-3">
                     {% url 'eco:api:assessment-export' assessment.pk as the_url %}
-                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='eco-data' button_text='Full Eco Export' %}
+                    {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='eco-data' button_text='Full Eco Export' enabled=assessment.has_eco_data %}
+                    {% if not assessment.has_eco_data %}
+                    <b class="text-danger">No ecological data available.</b>
+                    {% endif %}
                     <p class="text-muted">Get full ecological dataset.</p>
                     <p><small><i class="text-muted" id="eco-data-fmt-text">Excel Spreadsheet</i></small></p>
                 </li>
             </ul>
         </div>
     </div>
-    {% endif %}
 
   </div>
-{% endif %}
+  {% endif %}
 {% endblock %}
 {% block extrajs %}
 {% include "assessment/fragments/downloads_select_js.html" with name_list="#references, #references-usertags, #rob-final, #rob-all, #animal-data, #animal-summary, #epi-data, #epimeta-data, #invitro-data, #eco-data" %}
