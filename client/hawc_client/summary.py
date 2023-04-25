@@ -1,3 +1,4 @@
+from io import BytesIO
 import pathlib
 
 import pandas as pd
@@ -56,7 +57,11 @@ class SummaryClient(BaseClient):
         return pd.DataFrame(response_json)
 
     def download_visuals(
-        self, assessment_id: int, dest: str = ".", file_type: str = "docx", headless: bool = True
+        self,
+        assessment_id: int,
+        dest: str | BytesIO = ".",
+        file_type: str = "docx",
+        headless: bool = True,
     ):
         """
         Retrieves all visuals for the given assessment and saves them in the given path.
@@ -69,9 +74,6 @@ class SummaryClient(BaseClient):
                 'png' will save all images separately as pngs in the dest folder. Defaults to 'docx'
             headless (bool): If False, will display the browser while downloading images. Defaults
                 to True.
-
-            Returns:
-                None
         """
 
         def _prepare_download(page: Page, row):
@@ -91,7 +93,7 @@ class SummaryClient(BaseClient):
 
             return download_confirm
 
-        def _save_to_pngs(data: pd.DataFrame, page: Page, dest_path: pathlib.Path):
+        def _save_to_pngs(data: pd.DataFrame, page: Page, dest_path: pathlib.Path | BytesIO):
             for row in data[["slug", "full_url", "visual_type"]].itertuples():
                 try:
                     download_confirm = _prepare_download(page, row)
@@ -106,7 +108,7 @@ class SummaryClient(BaseClient):
                     with open(dest_path.joinpath(f"{row.slug}-error.txt"), "w") as f:
                         f.write(f"There was an error getting the visual named {row.slug}.\n{e}")
 
-        def _save_to_docx(data: pd.DataFrame, page: Page, dest_path: pathlib.Path):
+        def _save_to_docx(data: pd.DataFrame, page: Page, dest_path: pathlib.Path | BytesIO):
             doc = Document()
             for row in data[["slug", "full_url", "visual_type"]].itertuples():
                 # path for tmp image file
