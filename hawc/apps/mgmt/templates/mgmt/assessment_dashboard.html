@@ -10,9 +10,9 @@
     </div>
   </div>
 
+  {% if object_list %}
   {% load bs4 %}
   <div>
-
     <h3>All task summary</h3>
     <div>{% plotly all_tasks_plot %}</div>
 
@@ -29,9 +29,10 @@
       <div>{% plotly plot %}</div>
       {% endfor %}
     </div>
-
   </div>
-  
+  {% else %}
+  <p>No tasks have been assigned.</p>
+  {% endif %}
 
   
 
