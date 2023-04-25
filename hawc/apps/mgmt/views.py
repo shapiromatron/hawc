@@ -8,6 +8,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
+from ..myuser.models import HAWCUser
 from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
 from ..study.serializers import StudyAssessmentSerializer
 from . import constants, models
@@ -156,6 +157,31 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         return context
 
 
+def get_task_plot(qs, title=''):
+        df = qs.values_list("status", flat=True)
+        status_count = {name: 0 for name in constants.TaskStatus.labels}
+        for status in df:
+            status_count[constants.TaskStatus(status).label] += 1
+        task_plot = px.bar(
+            x=list(status_count.values()),
+            y=list(status_count.keys()),
+            orientation="h",
+            title=title,
+            width=500,
+            height=200,
+            template="none",
+            color=list(status_count.keys()),
+            text_auto=True
+        )
+        task_plot.update_layout(
+            xaxis={"title": "Tasks"},
+            yaxis={"title": "", "autorange": "reversed"},
+            margin={"l": 85, "r": 0, "t": 30, "b": 30},
+            showlegend=False,
+            hovermode=False
+        )
+        return task_plot
+
 # Assessment-level task views
 class TaskDashboard(BaseList):
     parent_model = Assessment
@@ -165,38 +191,20 @@ class TaskDashboard(BaseList):
 
     def get_queryset(self):
         return super().get_queryset().filter(study__assessment_id=self.assessment.id)
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
-
-        df = context["object_list"].values_list("status", flat=True)
-
-        status_count = {name: 0 for name in constants.TaskStatus.labels}
-
-        for status in df:
-            status_count[constants.TaskStatus(status).label] += 1
-
-        all_task_plot = px.bar(
-            x=list(status_count.values()),
-            y=list(status_count.keys()),
-            orientation="h",
-            title="",
-            width=500,
-            height=200,
-            template="none",
-            color=list(status_count.keys())
-        )
-        all_task_plot.update_layout(
-            xaxis={"title": "Tasks"},
-            yaxis={"title": "", "autorange": "reversed"},
-            margin={"l": 85, "r": 0, "t": 30, "b": 30},
-            showlegend=False,
-            hovermode=False
-        )
-
-        context["plotly_visual"] = all_task_plot
-
+        context["all_tasks_plot"] = get_task_plot(context['object_list'])
+        context['type_plots'] = []
+        for type in constants.TaskType.choices:
+            context['type_plots'].append(get_task_plot(context['object_list'].filter(type=type[0]), title=type[1]))
+        
+        user_list = set(context['object_list'].values_list('owner', flat=True))
+        user_qs = HAWCUser.objects.filter(id__in=user_list)
+        context['user_plots'] = []
+        for user in user_qs:
+            context['user_plots'].append(get_task_plot(context['object_list'].filter(owner=user), title=user.get_full_name()))
         return context
 
     def get_app_config(self, context) -> WebappConfig:
