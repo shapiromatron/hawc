@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import exceptions, mixins, status, viewsets
@@ -23,9 +21,9 @@ class EhvTermViewset(viewsets.GenericViewSet):
         )
 
     def filter_qs(self, request: Request, type: constants.VocabularyTermType) -> QuerySet:
-        term: Optional[str] = request.query_params.get("term")
-        parent: Optional[int] = tryParseInt(request.query_params.get("parent"))
-        limit: Optional[int] = tryParseInt(request.query_params.get("limit"), 100, 1, 10000)
+        term: str | None = request.query_params.get("term")
+        parent: int | None = tryParseInt(request.query_params.get("parent"))
+        limit: int | None = tryParseInt(request.query_params.get("limit"), 100, 1, 10000)
         qs = self.get_queryset().filter(type=type)
         if term:
             qs = qs.filter(name__icontains=term)

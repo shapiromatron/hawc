@@ -4,7 +4,6 @@ from ..sql import FinalRiskOfBiasScore
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

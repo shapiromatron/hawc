@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pandas as pd
 
 from .client import BaseClient
@@ -89,7 +87,7 @@ class RiskOfBiasClient(BaseClient):
         src_dst_metric_ids: list[tuple[int, int]],
         copy_mode: int,
         author_mode: int,
-        dst_author_id: Optional[int] = None,
+        dst_author_id: int | None = None,
     ):
         """
         Copy final scores from a subset of studies from one assessment as the scores in a

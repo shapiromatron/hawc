@@ -28,11 +28,11 @@ class ListUpdateModelMixin:
 
     def is_valid_bulk_operation(self):
         if self.bulk_header:
-            header_name = "http_{0}".format(self.bulk_header.strip().replace("-", "_")).upper()
+            header_name = "http_{}".format(self.bulk_header.strip().replace("-", "_")).upper()
             return (
                 bool(self.request.META.get(header_name, None)),
                 {
-                    "detail": "Header '{0}' should be provided for bulk operation.".format(
+                    "detail": "Header '{}' should be provided for bulk operation.".format(
                         self.bulk_header
                     )
                 },

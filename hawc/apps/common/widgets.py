@@ -1,5 +1,4 @@
 from random import randint
-from typing import Type
 
 from django.conf import settings
 from django.forms import ValidationError
@@ -25,7 +24,7 @@ class DateCheckboxInput(CheckboxInput):
 class ChoiceOtherWidget(MultiWidget):
     """A widget for using a selected value, or specifying custom"""
 
-    choice_widget: Type[ChoiceWidget]
+    choice_widget: type[ChoiceWidget]
 
     def __init__(self, choices, other_choice: str = "other", attrs=None):
         if attrs is None:
@@ -97,7 +96,7 @@ class ChoiceOtherWidget(MultiWidget):
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
-        ctx["widget"].update(jsid=randint(1, 99999), other_choice=self.other_choice)
+        ctx["widget"].update(jsid=randint(1, 99999), other_choice=self.other_choice)  # noqa: S311
         return ctx
 
 

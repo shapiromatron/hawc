@@ -73,7 +73,6 @@ def topic_model_tsne(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     logger.info(f"Training topic model with {df.shape[0]} references")
 
     df.loc[:, "text"] = df.text.apply(stem_and_tokenize)
-    tfidf_transformer = TfidfTransformer()
     vectorizer = CountVectorizer(analyzer="word", max_features=10000)
     x_counts = vectorizer.fit_transform(df.text)
     tfidf_transformer = TfidfTransformer()
@@ -120,7 +119,7 @@ def tsne_to_scatterplot(data: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         autosize=True,
         plot_bgcolor="white",
-        margin=dict(l=20, r=20, t=20, b=20),  # noqa: E741
+        margin=dict(l=20, r=20, t=20, b=20),
     )
     fig.update_xaxes(showticklabels=False)
     fig.update_yaxes(showticklabels=False)

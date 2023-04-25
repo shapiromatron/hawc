@@ -284,7 +284,6 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
 
     @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_filter(self, request):
-
         params = request.query_params
 
         query = Q(assessment=self.assessment)

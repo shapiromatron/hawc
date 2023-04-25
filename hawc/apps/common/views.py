@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Callable, Iterable, Optional, Type
+from collections.abc import Callable, Iterable
+from typing import Any
 from urllib.parse import urlparse
 
 import reversion
@@ -316,7 +317,6 @@ class TimeSpentOnPageMixin:
 
 
 class CopyAsNewSelectorMixin:
-
     copy_model = None  # required
     template_name_suffix = "_copy_selector"
 
@@ -341,7 +341,7 @@ class CopyAsNewSelectorMixin:
         if self.template_name is not None:
             name = self.template_name
         else:
-            name = "%s/%s%s.html" % (
+            name = "{}/{}{}.html".format(
                 self.copy_model._meta.app_label,
                 self.copy_model._meta.object_name.lower(),
                 self.template_name_suffix,
@@ -352,7 +352,7 @@ class CopyAsNewSelectorMixin:
 class WebappMixin:
     """Mixin to startup a javascript single-page application"""
 
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
+    get_app_config: Callable[[RequestContext], WebappConfig] | None = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -364,7 +364,7 @@ class WebappMixin:
 # Base HAWC views
 class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None
+    breadcrumb_active_name: str | None = None
     assessment_permission = AssessmentViewPermissions.VIEWER
 
     def get_breadcrumbs(self) -> list[Breadcrumb]:
@@ -473,7 +473,7 @@ class BaseUpdate(
 class BaseCreate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
 ):
-    parent_model: Type[models.Model]
+    parent_model: type[models.Model]
     parent_template_name: str
     crud = "Create"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
@@ -542,7 +542,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     parent_model = None  # required
     parent_template_name = None
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None
+    breadcrumb_active_name: str | None = None
     assessment_permission = AssessmentViewPermissions.VIEWER
 
     def dispatch(self, *args, **kwargs):

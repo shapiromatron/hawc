@@ -17,7 +17,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).on('ready', function () {
+    window.addEventListener("DOMContentLoaded", function () {
       new window.app.DynamicFormset($('#ctFormset'), 'form', { oneFormRequired: true });
       $('#ctFormset').insertBefore($('.form-actions'));
     });

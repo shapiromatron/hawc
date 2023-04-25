@@ -21,7 +21,6 @@ def set_default_responses(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("riskofbias", "0023_sort_order"),
     ]

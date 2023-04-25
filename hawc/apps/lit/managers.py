@@ -5,7 +5,6 @@ import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
@@ -518,7 +517,6 @@ class ReferenceQuerySet(models.QuerySet):
 
 
 class ReferenceManager(BaseManager):
-
     assessment_relation = "assessment"
 
     def get_queryset(self):
@@ -692,33 +690,6 @@ class ReferenceManager(BaseManager):
         else:
             return self.none()
 
-    def process_excel(self, df, assessment_id):
-        """
-        Expects a data-frame with two columns - HAWC ID and Full text URL
-        """
-        errors = []
-
-        def fn(d):
-            if d["HAWC ID"] in cw and d["Full text URL"] != cw[d["HAWC ID"]]:
-                try:
-                    validator(d["Full text URL"])
-                    self.filter(id=d["HAWC ID"]).update(full_text_url=d["Full text URL"])
-                except ValidationError:
-                    errors.append(f"HAWC ID {d['HAWC ID']}, invalid URL: {d['Full text URL']}")
-
-        cw = {}
-        validator = URLValidator()
-        existing = (
-            self.get_qs(assessment_id)
-            .filter(id__in=df["HAWC ID"].unique())
-            .values_list("id", "full_text_url")
-        )
-        for obj in existing:
-            cw[obj[0]] = obj[1]
-        df.apply(fn, axis=1)
-
-        return errors
-
     def update_from_ris_identifiers(self, search, identifiers):
         """
         Create or update Reference from list of lists of identifiers.
@@ -726,7 +697,6 @@ class ReferenceManager(BaseManager):
         """
         assessment_id = search.assessment_id
         for idents in identifiers:
-
             # check if existing reference is found
             ref = self.get_qs(assessment_id).filter(identifiers__in=idents).first()
 

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 def update_legacy_values(apps, schema_editor):
-
     Assessment = apps.get_model("assessment", "assessment")
     Assessment.objects.update(
         modify_uncontrolled_vocabulary=False,
@@ -13,7 +12,6 @@ def update_legacy_values(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("vocab", "0001_initial"),
         ("assessment", "0021_endpoint_ordering"),

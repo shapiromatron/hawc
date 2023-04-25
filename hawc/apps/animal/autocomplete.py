@@ -1,5 +1,3 @@
-from typing import Optional
-
 from ..common.autocomplete import BaseAutocomplete, SearchLabelMixin, register
 from . import models
 
@@ -34,5 +32,5 @@ class EndpointAutocomplete(SearchLabelMixin, BaseAutocomplete):
     ]
 
     @classmethod
-    def get_base_queryset(cls, filters: Optional[dict] = None):
+    def get_base_queryset(cls, filters: dict | None = None):
         return super().get_base_queryset(filters).select_related("animal_group__experiment__study")
