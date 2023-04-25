@@ -171,6 +171,7 @@ def get_task_plot(qs, title=''):
             height=200,
             template="none",
             color=list(status_count.keys()),
+            color_discrete_sequence=['#cfcfcf', '#fecc01', '#02cc00', '#581845'],
             text_auto=True
         )
         task_plot.update_layout(
@@ -181,7 +182,6 @@ def get_task_plot(qs, title=''):
             hovermode=False
         )
         return task_plot
-
 # Assessment-level task views
 class TaskDashboard(BaseList):
     parent_model = Assessment
@@ -199,7 +199,6 @@ class TaskDashboard(BaseList):
         context['type_plots'] = []
         for type in constants.TaskType.choices:
             context['type_plots'].append(get_task_plot(context['object_list'].filter(type=type[0]), title=type[1]))
-        
         user_list = set(context['object_list'].values_list('owner', flat=True))
         user_qs = HAWCUser.objects.filter(id__in=user_list)
         context['user_plots'] = []
