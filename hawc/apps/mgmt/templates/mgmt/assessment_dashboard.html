@@ -10,10 +10,10 @@
     </div>
   </div>
 
-<!-- {{ df }} -->
+  {% load bs4 %}
   <div>
     <h3>All task summary</h3>
-    <div>{{ plotly_visual.to_html|safe }}</div>
+    <div>{% plotly plotly_visual %}</div>
 
     <h3>Tasks by type</h3>
     <div></div>
