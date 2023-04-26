@@ -7,6 +7,12 @@ router = SimpleRouter()
 router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
 router.register(r"design", api.Design, basename="design")
 router.register(r"metadata", api.Metadata, basename="metadata")
+router.register(r"chemical", api.Chemical, basename="chemical")
+router.register(r"exposure", api.Exposure, basename="exposure")
+router.register(r"exposurelevel", api.ExposureLevel, basename="exposurelevel")
+router.register(r"outcome", api.Outcome, basename="outcome")
+router.register(r"adjustmentfactor", api.AdjustmentFactor, basename="adjustmentfactor")
+router.register(r"dataextraction", api.DataExtraction, basename="dataextraction")
 
 app_name = "epiv2"
 urlpatterns = [

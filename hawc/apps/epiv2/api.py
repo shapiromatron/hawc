@@ -47,3 +47,45 @@ class Design(EditPermissionsCheckMixin, AssessmentEditViewset):
 class Metadata(viewsets.ViewSet):
     def list(self, request):
         return EpiV2Metadata.handle_request(request)
+
+
+class Chemical(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["design"]
+    assessment_filter_args = "design__study__assessment"
+    model = models.Chemical
+    serializer_class = serializers.ChemicalSerializer
+
+
+class Exposure(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["design"]
+    assessment_filter_args = "design__study__assessment"
+    model = models.Exposure
+    serializer_class = serializers.ExposureSerializer
+
+
+class ExposureLevel(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["design"]
+    assessment_filter_args = "design__study__assessment"
+    model = models.ExposureLevel
+    serializer_class = serializers.ExposureLevelSerializer
+
+
+class Outcome(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["design"]
+    assessment_filter_args = "design__study__assessment"
+    model = models.Outcome
+    serializer_class = serializers.OutcomeSerializer
+
+
+class AdjustmentFactor(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["design"]
+    assessment_filter_args = "design__study__assessment"
+    model = models.AdjustmentFactor
+    serializer_class = serializers.AdjustmentFactorSerializer
+
+
+class DataExtraction(EditPermissionsCheckMixin, AssessmentEditViewset):
+    edit_check_keys = ["design"]
+    assessment_filter_args = "design__study__assessment"
+    model = models.DataExtraction
+    serializer_class = serializers.DataExtractionSerializer

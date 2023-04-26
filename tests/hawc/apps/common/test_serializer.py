@@ -2,6 +2,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from hawc.apps.common.serializers import (
+    ArrayedFlexibleChoiceField,
     FlexibleChoiceField,
     FlexibleDBLinkedChoiceField,
     get_matching_instance,
@@ -171,3 +172,49 @@ def test_flexible_db_linked_choice_field(db_keys):
     assert len(serialized_metrics) == len(result_metrics_list)
     assert serialized_metrics[0]["id"] == first_metric.id
     assert serialized_metrics[1]["id"] == second_metric.id
+
+
+@pytest.mark.django_db
+def test_arrayed_flexible_choice_field(db_keys):
+    """
+    Test the ArrayedFlexibleChoiceField
+
+    Tests ArrayedFlexibleChoiceField with keys, display values (case insensitive and not), and bad inputs.
+    """
+    SAMPLE_NUMERIC_CHOICES = ((0, "example"), (1, "test"))
+
+    SAMPLE_TEXT_CHOICES = (("name", "nom de plume"), ("job", "occupation"))
+
+    numeric_choice = ArrayedFlexibleChoiceField(choices=SAMPLE_NUMERIC_CHOICES)
+    text_choice = ArrayedFlexibleChoiceField(choices=SAMPLE_TEXT_CHOICES)
+
+    # Either the key or a case insensitive version will resolve to the same internal value
+    for valid_input in (["test", 0], ["tEsT", "EXAMPLE"], [1, "example"]):
+        converted = numeric_choice.to_internal_value(valid_input)
+        assert len(converted) == 2 and converted[0] == 1 and converted[1] == 0
+
+    # Works for text or numeric keys
+    for valid_input in (["job", "occupation", "OcCuPaTiOn"],):
+        converted = text_choice.to_internal_value(valid_input)
+        assert len(set(converted)) == 1 and converted[0] == "job"
+
+    for invalid_input in (["example", "bad input"], [1, "another bad input"]):
+        try:
+            numeric_choice.to_internal_value(invalid_input)
+            raise AssertionError()
+        except ValidationError:
+            # This is correct behavior
+            pass
+
+    # Should convert raw values to readable ones
+    assert numeric_choice.to_representation([0])[0] == "example"
+    assert numeric_choice.to_representation([1])[0] == "test"
+    assert text_choice.to_representation(["name"])[0] == "nom de plume"
+
+    # Should throw KeyError if given a bad value to convert
+    try:
+        numeric_choice.to_representation([2])
+        raise AssertionError()
+    except KeyError:
+        # This is correct behavior
+        pass
