@@ -8,7 +8,12 @@ from pydantic import BaseModel, conlist
 
 from ..assessment.models import Assessment
 from . import autocomplete
-from .forms import BaseFormHelper, form_actions_apply_filters
+from .forms import (
+    BaseFormHelper,
+    ExpandableFilterFormHelper,
+    InlineFilterFormHelper,
+    form_actions_apply_filters,
+)
 
 
 def filter_noop(queryset, name, value):
@@ -86,6 +91,45 @@ class GridLayout(BaseModel):
     def apply_layout(self, helper):
         for i, row in enumerate(self.rows):
             row.apply_layout(helper, i)
+
+
+class InlineFilterForm(forms.Form):
+    """Form model used for inline filterset forms."""
+
+    MAIN_FIELD: str  # a text input field
+    APPENDED_FIELDS: list[str]  # 1 or more checkbox or select fields
+
+    helper_class = InlineFilterFormHelper
+
+    def __init__(self, *args, **kwargs):
+        """Grabs grid_layout kwarg and passes it to GridLayout to apply the layout."""
+        layout = kwargs.pop("grid_layout", None)
+        self.grid_layout = GridLayout.parse_obj(layout) if layout else None
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        """Helper method for setting up the form."""
+        helper = self.helper_class(
+            self,
+            main_field=self.MAIN_FIELD,
+            appended_fields=self.APPENDED_FIELDS,
+        )
+        helper.form_method = "GET"
+        return helper
+
+
+class ExpandableFilterForm(InlineFilterForm):
+    """Form model used for expandable inline filterset forms."""
+
+    helper_class = ExpandableFilterFormHelper
+
+    is_expanded = forms.CharField(initial="false", widget=forms.HiddenInput())
+
+    def clean(self):
+        """Remove 'is_expanded' from form data before data is used for filtering."""
+        cleaned_data = super().clean()
+        cleaned_data.pop("is_expanded", None)
 
 
 class FilterForm(forms.Form):
