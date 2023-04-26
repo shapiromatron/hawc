@@ -8,8 +8,8 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..myuser.models import HAWCUser
 from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
+from ..myuser.models import HAWCUser
 from ..study.serializers import StudyAssessmentSerializer
 from . import constants, models
 
@@ -103,9 +103,6 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
 
-    def get_incomplete_tasks(self):
-        return self.model.objects.all().owned_by(self.request.user).exclude(status=30)
-
     def get_review_tasks2(self):
         RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
@@ -116,7 +113,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
         context["rob_task_list"] = self.get_review_tasks2()
-        context["incomplete_task_list"] = self.get_incomplete_tasks()
+        context["incomplete_task_list"] = self.get_queryset().exclude(status=30)
         return context
 
 
@@ -171,7 +168,7 @@ def get_task_plot(qs, title=''):
             height=200,
             template="none",
             color=list(status_count.keys()),
-            color_discrete_sequence=['#cfcfcf', '#fecc01', '#02cc00', '#581845'],
+            color_discrete_sequence=['#cfcfcf', '#fecc01', '#02cc00', '#ff0000'],
             text_auto=True
         )
         task_plot.update_layout(
@@ -191,19 +188,19 @@ class TaskDashboard(BaseList):
 
     def get_queryset(self):
         return super().get_queryset().filter(study__assessment_id=self.assessment.id)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
         context["all_tasks_plot"] = get_task_plot(context['object_list'])
-        context['type_plots'] = []
-        for type in constants.TaskType.choices:
-            context['type_plots'].append(get_task_plot(context['object_list'].filter(type=type[0]), title=type[1]))
+        context['type_plots'] = [
+            get_task_plot(context['object_list'].filter(type=key), title=label) for key,label in constants.TaskType.choices
+        ]
         user_list = set(context['object_list'].values_list('owner', flat=True))
         user_qs = HAWCUser.objects.filter(id__in=user_list)
-        context['user_plots'] = []
-        for user in user_qs:
-            context['user_plots'].append(get_task_plot(context['object_list'].filter(owner=user), title=user.get_full_name()))
+        context['user_plots'] = [
+            get_task_plot(context['object_list'].filter(owner=user), title=user.get_full_name()) for user in user_qs
+        ]
         return context
 
     def get_app_config(self, context) -> WebappConfig:
