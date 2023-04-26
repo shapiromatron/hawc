@@ -3,8 +3,13 @@ from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
-from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
+from ..common.filterset import BaseFilterSet, ExpandableFilterForm, PaginationFilter, filter_noop
 from . import models
+
+
+class ReferenceFilterForm(ExpandableFilterForm):
+    MAIN_FIELD = "title_abstract"
+    APPENDED_FIELDS = ["partially_tagged", "needs_tagging", "order_by"]
 
 
 class ReferenceFilterSet(BaseFilterSet):
@@ -17,7 +22,11 @@ class ReferenceFilterSet(BaseFilterSet):
     )
     year = df.NumberFilter(label="Year", help_text="Year of publication")
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
-    title_abstract = df.CharFilter(method="filter_title_abstract", label="Title/Abstract")
+    title_abstract = df.CharFilter(
+        method="filter_title_abstract",
+        label="Title/Abstract",
+        help_text="Filter by Title/Abstract text",
+    )
     authors = df.CharFilter(method="filter_authors", label="Authors")
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
@@ -65,6 +74,7 @@ class ReferenceFilterSet(BaseFilterSet):
         help_text="All references that you have tagged",
     )
     order_by = df.OrderingFilter(
+        empty_label="Default Order",
         fields=(
             ("authors", "authors"),
             ("year", "year"),
@@ -87,6 +97,7 @@ class ReferenceFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Reference
+        form = ReferenceFilterForm
         fields = [
             "id",
             "db_id",
@@ -209,6 +220,8 @@ class ReferenceFilterSet(BaseFilterSet):
         ]:
             if field in form.fields:
                 form.fields[field].hover_help = True
+            elif field in form.APPENDED_FIELDS:
+                form.APPENDED_FIELDS.remove(field)
         if "tags" in form.fields:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
             form.fields["tags"].queryset = tags

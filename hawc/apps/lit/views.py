@@ -280,31 +280,24 @@ class TagReferences(BaseFilterList):
                 fields=[
                     "title_abstract",
                     "needs_tagging",
-                    "partially_tagged",
+                    "order_by",
                     "search",
+                    "partially_tagged",
                     "id",
                     "tags",
                     "include_descendants",
                     "anything_tagged",
-                    "order_by",
                     "my_tags",
                     "include_mytag_descendants",
                     "anything_tagged_me",
                 ],
                 grid_layout={
                     "rows": [
+                        {"columns": [{"width": 12}]},
                         {
                             "columns": [
-                                {"width": 5, "extra_css": "pl-4"},
-                                {
-                                    "width": 3,
-                                    "extra_css": "px-3 pt-3 d-flex flex-column",
-                                    "rows": [
-                                        {"columns": [{"width": 12}]},
-                                        {"columns": [{"width": 12}]},
-                                    ],
-                                },
-                                {"width": 4, "extra_css": "pr-4"},
+                                {"width": 6, "extra_css": "px-4"},
+                                {"width": 6, "extra_css": "px-4"},
                             ]
                         },
                         {
@@ -315,7 +308,6 @@ class TagReferences(BaseFilterList):
                                         {
                                             "columns": [
                                                 {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 12, "extra_css": "px-4 pt-2"},
                                                 {"width": 7, "extra_css": "pl-4 pb-2"},
                                                 {"width": 5, "extra_css": "pr-4 pb-2"},
                                             ]
@@ -328,7 +320,6 @@ class TagReferences(BaseFilterList):
                                         {
                                             "columns": [
                                                 {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 12, "extra_css": "px-4 pt-2"},
                                                 {"width": 7, "extra_css": "px-4 pb-2"},
                                                 {"width": 5, "extra_css": "px-4 pb-2"},
                                             ]
@@ -337,6 +328,7 @@ class TagReferences(BaseFilterList):
                                 },
                             ]
                         },
+                        {"columns": [{"width": 12}]},
                     ]
                 },
             )
@@ -354,12 +346,7 @@ class TagReferences(BaseFilterList):
                 ],
                 grid_layout={
                     "rows": [
-                        {
-                            "columns": [
-                                {"width": 6, "extra_css": "px-3"},
-                                {"width": 6, "extra_css": "px-3"},
-                            ]
-                        },
+                        {"columns": [{"width": 12}]},
                         {
                             "columns": [
                                 {
