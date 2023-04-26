@@ -110,10 +110,13 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         return [rob for rob in rob_tasks if rob.is_complete is False]
 
     def get_context_data(self, **kwargs):
+        show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
         context["rob_task_list"] = self.get_review_tasks2()
-        context["incomplete_task_list"] = self.get_queryset().exclude(status=30)
+        if not show_completed:
+            context["object_list"] = context["object_list"].exclude(status__in=[30, 40])
+        context["show_completed"] = show_completed
         return context
 
 
@@ -154,31 +157,33 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         return context
 
 
-def get_task_plot(qs, title=''):
-        df = qs.values_list("status", flat=True)
-        status_count = {name: 0 for name in constants.TaskStatus.labels}
-        for status in df:
-            status_count[constants.TaskStatus(status).label] += 1
-        task_plot = px.bar(
-            x=list(status_count.values()),
-            y=list(status_count.keys()),
-            orientation="h",
-            title=title,
-            width=500,
-            height=200,
-            template="none",
-            color=list(status_count.keys()),
-            color_discrete_sequence=['#cfcfcf', '#fecc01', '#02cc00', '#ff0000'],
-            text_auto=True
-        )
-        task_plot.update_layout(
-            xaxis={"title": "Tasks"},
-            yaxis={"title": "", "autorange": "reversed"},
-            margin={"l": 85, "r": 0, "t": 30, "b": 30},
-            showlegend=False,
-            hovermode=False
-        )
-        return task_plot
+def get_task_plot(qs, title=""):
+    df = qs.values_list("status", flat=True)
+    status_count = {name: 0 for name in constants.TaskStatus.labels}
+    for status in df:
+        status_count[constants.TaskStatus(status).label] += 1
+    task_plot = px.bar(
+        x=list(status_count.values()),
+        y=list(status_count.keys()),
+        orientation="h",
+        title=title,
+        width=500,
+        height=200,
+        template="none",
+        color=list(status_count.keys()),
+        color_discrete_sequence=["#cfcfcf", "#fecc01", "#02cc00", "#ff0000"],
+        text_auto=True,
+    )
+    task_plot.update_layout(
+        xaxis={"title": "Tasks"},
+        yaxis={"title": "", "autorange": "reversed"},
+        margin={"l": 85, "r": 0, "t": 30, "b": 30},
+        showlegend=False,
+        hovermode=False,
+    )
+    return task_plot
+
+
 # Assessment-level task views
 class TaskDashboard(BaseList):
     parent_model = Assessment
@@ -192,14 +197,16 @@ class TaskDashboard(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
-        context["all_tasks_plot"] = get_task_plot(context['object_list'])
-        context['type_plots'] = [
-            get_task_plot(context['object_list'].filter(type=key), title=label) for key,label in constants.TaskType.choices
+        context["all_tasks_plot"] = get_task_plot(context["object_list"])
+        context["type_plots"] = [
+            get_task_plot(context["object_list"].filter(type=key), title=label)
+            for key, label in constants.TaskType.choices
         ]
-        user_list = set(context['object_list'].values_list('owner', flat=True))
+        user_list = set(context["object_list"].values_list("owner", flat=True))
         user_qs = HAWCUser.objects.filter(id__in=user_list)
-        context['user_plots'] = [
-            get_task_plot(context['object_list'].filter(owner=user), title=user.get_full_name()) for user in user_qs
+        context["user_plots"] = [
+            get_task_plot(context["object_list"].filter(owner=user), title=user.get_full_name())
+            for user in user_qs
         ]
         return context
 

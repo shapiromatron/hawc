@@ -1,68 +1,18 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-{% load static %}
 <h2>My assigned tasks</h2>
-<label><input id="show-complete-checkbox" type="checkbox" name="filter" checked style="margin: 4px;">Hide completed and abandoned tasks</label>
 
+{% if show_completed %}
+<a href=".?completed=off">Off</a>
+{% else %}
+<a href=".?completed=on">On</a>
+{% endif %}
+<label><input id="show-complete-checkbox" type="checkbox" name="filter" checked style="margin: 4px;">Hide completed and
+    abandoned tasks</label>
 <div id="incomplete-tasks">
-    {% if incomplete_task_list %}
+    {% if object_list %}
 
-    {% regroup incomplete_task_list by get_assessment as assessment_list %}
-
-    {% for assessment in assessment_list %}
-
-
-    <h4>{{ assessment.grouper }} <a class="btn btn-sm btn-primary"
-            href="{{ assessment.grouper.get_absolute_url }}">View</a></h4>
-
-    <table style="width: 100%;" class="table table-sm table-striped">
-        <colgroup>
-            <col width="30%" />
-            <col width="70%" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Study</th>
-                <th>Task</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in assessment.list %}
-            <tr>
-                <td> <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
-                <td>
-                    <div class="row">
-                        <div class="col-md-auto">
-                            <div>
-                                <b>Status: </b>
-                                <i class="fa fa-circle status-circle s{{ task.status }}"></i>
-                                {{ task.get_status_display|capfirst }}
-                            </div>
-                            <div>
-                                <b>
-                                    Task:
-                                </b>
-                                <span>{{ task.get_type_display|capfirst }}</span>
-                            </div>
-                            <div>
-                                <b>Due date: </b>
-                                <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md">
-                            <button type="button" class="btn btn-light"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endfor %}
-</div>
-
-<div id="all-tasks">
     {% regroup object_list by get_assessment as assessment_list %}
 
     {% for assessment in assessment_list %}
@@ -106,7 +56,8 @@
                             </div>
                         </div>
                         <div class="col-md">
-                            <button type="button" class="btn btn-light"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-light"><i title="Edit this task"
+                                    class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                         </div>
                     </div>
                 </td>
@@ -162,15 +113,4 @@
 
 {% block extrajs %}
 {{ config|json_script:"config" }}
-    <script src="{% static 'hawc\static\vendor\jquery\3.6.3\jquery.min.js' %}"></script>
-    <script type="text/javascript">
-        $( document ).ready(function() {
-            $("#all-tasks").hide()
-            $("#show-complete-checkbox").click(function() {
-                $("#all-tasks").toggle()
-                $("#incomplete-tasks").toggle()
-            })
-
-        })
-    </script>
 {% endblock extrajs %}

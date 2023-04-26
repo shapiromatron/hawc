@@ -31,7 +31,8 @@
                             <div class="col-md-auto">
                                 <div>
                                     <b>Status: </b>
-                                    <i class="fa fa-circle status-circle s{{ task.status }}"></i>{{ task.get_status_display|capfirst }}
+                                    <i class="fa fa-circle status-circle s{{ task.status }}"></i>{{
+                                    task.get_status_display|capfirst }}
                                 </div>
                                 <div>
                                     <b>Task: </b>
@@ -100,5 +101,5 @@
 
 {% block extrajs %}
 {{ config|json_script:"config" }}
-<!-- show_complete button script will go here -->
+</script>
 {% endblock extrajs %}
