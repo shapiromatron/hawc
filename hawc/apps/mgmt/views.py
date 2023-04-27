@@ -145,9 +145,6 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
             .select_related("owner", "study", "study__reference_ptr", "study__assessment")
         )
 
-    def get_incomplete_tasks(self):
-        return self.model.objects.all().owned_by(self.request.user).exclude(status=30)
-
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(
             author=self.request.user, active=True, study__assessment=self.assessment
@@ -160,11 +157,14 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         return [rob for rob in rob_tasks if rob.is_complete is False]
 
     def get_context_data(self, **kwargs):
+        show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
         context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB.value)
-        context["incomplete_task_list"] = self.get_incomplete_tasks()
+        if not show_completed:
+            context["object_list"] = context["object_list"].exclude(status__in=[30, 40])
+        context["show_completed"] = show_completed
         return context
 
 
