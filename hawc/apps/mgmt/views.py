@@ -1,3 +1,5 @@
+from collections import Counter
+
 import plotly.express as px
 from django.apps import apps
 from django.http import HttpRequest
@@ -105,6 +107,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         return (
             self.model.objects.all()
             .owned_by(self.request.user)
+            .select_related("study__assessment")
             .order_by("-study__assessment_id", "study__short_citation", "type")
         )
 
@@ -121,7 +124,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
-        context["rob_task_list"] = self.get_review_tasks2()
+        context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB)
         if not show_completed:
             context["object_list"] = context["object_list"].exclude(status__in=[30, 40])
         context["show_completed"] = show_completed
@@ -160,16 +163,14 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
-        context["rob_task_list"] = self.get_review_tasks2
+        context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB.value)
         context["incomplete_task_list"] = self.get_incomplete_tasks()
         return context
 
 
-def get_task_plot(qs, title=""):
-    df = qs.values_list("status", flat=True)
-    status_count = {name: 0 for name in constants.TaskStatus.labels}
-    for status in df:
-        status_count[constants.TaskStatus(status).label] += 1
+def get_task_plot(tasks: list[models.Task], title: str = ""):
+    counts = Counter(el.status for el in tasks)
+    status_count = {label: counts.get(value, 0) for value, label in constants.TaskStatus.choices}
     task_plot = px.bar(
         x=list(status_count.values()),
         y=list(status_count.keys()),
@@ -200,20 +201,30 @@ class TaskDashboard(BaseList):
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
-        return super().get_queryset().filter(study__assessment_id=self.assessment.id)
+        return (
+            super()
+            .get_queryset()
+            .filter(study__assessment_id=self.assessment.id)
+            .select_related("owner")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
-        context["all_tasks_plot"] = get_task_plot(context["object_list"])
+        user_qs = HAWCUser.objects.filter(
+            id__in=context["object_list"].values_list("owner", flat=True).distinct()
+        ).order_by("last_name", "id")
+        qs = list(context["object_list"])
+        context["all_tasks_plot"] = get_task_plot(qs)
         context["type_plots"] = [
-            get_task_plot(context["object_list"].filter(type=key), title=label)
+            get_task_plot(filter(lambda el: el.type == key, qs), title=label)
             for key, label in constants.TaskType.choices
         ]
-        user_list = set(context["object_list"].values_list("owner", flat=True))
-        user_qs = HAWCUser.objects.filter(id__in=user_list)
         context["user_plots"] = [
-            get_task_plot(context["object_list"].filter(owner=user), title=user.get_full_name())
+            get_task_plot(
+                filter(lambda el: el.owner and el.owner.id == user.id, qs),
+                title=user.get_full_name(),
+            )
             for user in user_qs
         ]
         return context
@@ -224,8 +235,19 @@ class TaskDashboard(BaseList):
         )
 
 
-class TaskDetail(TaskDashboard):
+class TaskDetail(BaseList):
+    parent_model = Assessment
+    model = models.Task
     template_name = "mgmt/assessment_details.html"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(study__assessment_id=self.assessment.id)
+            .select_related("study", "owner")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

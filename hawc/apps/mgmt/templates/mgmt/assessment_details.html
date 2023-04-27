@@ -84,7 +84,7 @@
           </td>
 
           {% for task in study.list %}
-          {% include "mgmt/fragments/task_cell.html" with object=task %}
+          {% include "mgmt/fragments/task_cell.html" with object=task show_owner=True %}
         {% endfor %}
       </tr>
       {% endfor %}
