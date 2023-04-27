@@ -4,12 +4,11 @@
 <h2>My assigned tasks</h2>
 
 {% if show_completed %}
-<a href=".?completed=off">Off</a>
+<a class="btn btn-light" style="margin-bottom: 15px;" role="button" href=".?completed=off">Hide completed and abandoned tasks</a>
 {% else %}
-<a href=".?completed=on">On</a>
+<a class="btn btn-light" style="margin-bottom: 15px;" role="button" href=".?completed=on">Show completed and abandoned tasks</a>
 {% endif %}
-<label><input id="show-complete-checkbox" type="checkbox" name="filter" checked style="margin: 4px;">Hide completed and
-    abandoned tasks</label>
+
 <div id="incomplete-tasks">
     {% if object_list %}
 
