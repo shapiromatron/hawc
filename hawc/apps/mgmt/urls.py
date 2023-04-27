@@ -27,4 +27,17 @@ urlpatterns = [
         views.TaskDetail.as_view(),
         name="assessment_tasks",
     ),
+    # task htmx ViewSet
+    path(
+        "task/<int:pk>/",
+        views.TaskViewSet.as_view(),
+        {"action": "read"},
+        name="task-detail",
+    ),
+    path(
+        "taskv/<int:pk>/update/",
+        views.TaskViewSet.as_view(),
+        {"action": "update"},
+        name="task-update",
+    ),
 ]

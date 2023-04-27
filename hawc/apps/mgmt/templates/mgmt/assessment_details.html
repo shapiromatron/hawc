@@ -84,38 +84,7 @@
           </td>
 
           {% for task in study.list %}
-          <td>
-            <div class="row">
-              <div class="col-md-auto">
-                <div>
-                  <b>Status: </b>
-                  <i class="fa fa-circle status-circle s{{ task.status }}"></i>{{ task.get_status_display|capfirst }}
-                </div>
-
-                <div>
-                  <b>Owner: </b>
-                  <span>{{ task.owner }}</span>
-                </div>
-
-                <div>
-                  <b>Task: </b>
-                  <span>{{ task.get_type_display|capfirst }}</span>
-                </div>
-
-                <div>
-                  <b>Due date: </b>
-                  <span>{{ task.due_date|date:"SHORT_DATE_FORMAT" }}</span>
-                </div>
-              </div>
-
-              <div class="col-md">
-                <button type="button" class="btn btn-light">
-                  <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </td>
+          {% include "mgmt/fragments/task_cell.html" with object=task %}
         {% endfor %}
       </tr>
       {% endfor %}

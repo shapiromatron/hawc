@@ -1,6 +1,8 @@
 import plotly.express as px
 from django.apps import apps
+from django.http import HttpRequest
 from django.middleware.csrf import get_token
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
 
@@ -8,10 +10,16 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import BaseList, LoginRequiredMixin, WebappMixin
+from ..common.htmx import HtmxViewSet, action, can_edit
+from ..common.views import (
+    BaseList,
+    LoginRequiredMixin,
+    WebappMixin,
+)
 from ..myuser.models import HAWCUser
+from ..study.models import Study
 from ..study.serializers import StudyAssessmentSerializer
-from . import constants, models
+from . import constants, forms, models
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -239,3 +247,26 @@ class TaskDetail(TaskDashboard):
                 userAutocompleteUrl=reverse("autocomplete", args=("myuser-userautocomplete",)),
             ),
         )
+
+
+class TaskViewSet(HtmxViewSet):
+    actions = {"read", "update"}
+    parent_model = Study
+    model = models.Task
+    form_fragment = "mgmt/fragments/task_form.html"
+    detail_fragment = "mgmt/fragments/task_cell.html"
+
+    @action(permission=can_edit)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = forms.TaskForm(data=data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
