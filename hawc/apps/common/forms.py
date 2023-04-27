@@ -195,10 +195,13 @@ class InlineFilterFormHelper(BaseFormHelper):
 
     def build_inline_layout(self):
         """Build the custom inline layout, including the grid layout."""
-        self.layout = cfl.Layout(*list(self.form.fields.keys()))
-        self.add_filter_field(self.main_field, self.appended_fields)
-        if self.form.grid_layout:
-            self.form.grid_layout.apply_layout(self)
+        if self.main_field:
+            self.layout = cfl.Layout(*list(self.form.fields.keys()))
+            self.add_filter_field(self.main_field, self.appended_fields)
+            if self.form.grid_layout:
+                self.form.grid_layout.apply_layout(self)
+        else:
+            self.build_default_layout()
         return self.layout
 
     def add_filter_field(

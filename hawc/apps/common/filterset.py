@@ -96,15 +96,14 @@ class GridLayout(BaseModel):
 class InlineFilterForm(forms.Form):
     """Form model used for inline filterset forms."""
 
-    MAIN_FIELD: str  # a text input field
-    APPENDED_FIELDS: list[str]  # 1 or more checkbox or select fields
-
     helper_class = InlineFilterFormHelper
 
     def __init__(self, *args, **kwargs):
         """Grabs grid_layout kwarg and passes it to GridLayout to apply the layout."""
         layout = kwargs.pop("grid_layout", None)
         self.grid_layout = GridLayout.parse_obj(layout) if layout else None
+        self.main_field = kwargs.pop("main_field", None)
+        self.appended_fields = kwargs.pop("appended_fields", [])
         super().__init__(*args, **kwargs)
 
     @property
@@ -112,8 +111,8 @@ class InlineFilterForm(forms.Form):
         """Helper method for setting up the form."""
         helper = self.helper_class(
             self,
-            main_field=self.MAIN_FIELD,
-            appended_fields=self.APPENDED_FIELDS,
+            main_field=self.main_field,
+            appended_fields=self.appended_fields,
         )
         helper.form_method = "GET"
         return helper
@@ -161,6 +160,8 @@ class FilterSetOptions:
         self.grid_layout = getattr(options, "grid_layout", None)
 
         self.form = getattr(options, "form", FilterForm)
+        self.appended_fields = getattr(options, "appended_fields", [])
+        self.main_field = getattr(options, "main_field", None)
 
 
 class FilterSetMetaclass(df.filterset.FilterSetMetaclass):
@@ -256,9 +257,20 @@ class BaseFilterSet(FilterSet):
         """
         Form = self.get_form_class()
         if self.is_bound:
-            form = Form(self.data, prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
+            form = Form(
+                self.data,
+                prefix=self.form_prefix,
+                grid_layout=self._meta.grid_layout,
+                main_field=self._meta.main_field,
+                appended_fields=self._meta.appended_fields,
+            )
         else:
-            form = Form(prefix=self.form_prefix, grid_layout=self._meta.grid_layout)
+            form = Form(
+                prefix=self.form_prefix,
+                grid_layout=self._meta.grid_layout,
+                main_field=self._meta.main_field,
+                appended_fields=self._meta.appended_fields,
+            )
         return form
 
 
