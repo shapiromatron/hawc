@@ -7,11 +7,6 @@ from ..common.filterset import BaseFilterSet, ExpandableFilterForm, PaginationFi
 from . import models
 
 
-class ReferenceFilterForm(ExpandableFilterForm):
-    MAIN_FIELD = "title_abstract"
-    APPENDED_FIELDS = ["partially_tagged", "needs_tagging", "order_by"]
-
-
 class ReferenceFilterSet(BaseFilterSet):
     id = df.NumberFilter(label="HAWC ID", help_text="HAWC reference ID.")
     db_id = df.CharFilter(
@@ -93,11 +88,11 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.Reference
-        form = ReferenceFilterForm
+        form = ExpandableFilterForm
         fields = [
             "id",
             "db_id",
@@ -220,8 +215,6 @@ class ReferenceFilterSet(BaseFilterSet):
         ]:
             if field in form.fields:
                 form.fields[field].hover_help = True
-            elif field in form.APPENDED_FIELDS:
-                form.APPENDED_FIELDS.remove(field)
         if "tags" in form.fields:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
             form.fields["tags"].queryset = tags

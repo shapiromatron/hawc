@@ -277,6 +277,8 @@ class TagReferences(BaseFilterList):
         if conflict_resolution:
             return dynamic_filterset(
                 filterset.ReferenceFilterSet,
+                main_field="title_abstract",
+                appended_fields=["partially_tagged", "needs_tagging", "order_by"],
                 fields=[
                     "title_abstract",
                     "needs_tagging",
@@ -404,6 +406,7 @@ class ConflictResolution(BaseFilterList):
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
+        main_field="title_abstract",
         fields=[
             "id",
             "title_abstract",
@@ -418,8 +421,12 @@ class ConflictResolution(BaseFilterList):
             "rows": [
                 {
                     "columns": [
-                        {"width": 6, "extra_css": "px-4 py-2"},
-                        {"width": 6, "extra_css": "px-4 py-2"},
+                        {"width": 12},
+                    ]
+                },
+                {
+                    "columns": [
+                        {"width": 12, "extra_css": "px-4"},
                     ]
                 },
                 {
@@ -578,6 +585,8 @@ class RefFilterList(BaseFilterList):
     model = models.Reference
     filterset_class = dynamic_filterset(
         filterset.ReferenceFilterSet,
+        main_field="title_abstract",
+        appended_fields=["order_by", "paginate_by"],
         fields=[
             "id",
             "db_id",
@@ -594,14 +603,7 @@ class RefFilterList(BaseFilterList):
         ],
         grid_layout={
             "rows": [
-                {
-                    "columns": [
-                        {"width": 3, "extra_css": "px-4"},
-                        {"width": 3, "extra_css": "px-4"},
-                        {"width": 3, "extra_css": "px-4"},
-                        {"width": 3, "extra_css": "px-4"},
-                    ]
-                },
+                {"columns": [{"width": 12}]},
                 {
                     "columns": [
                         {
@@ -609,13 +611,14 @@ class RefFilterList(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
+                                        {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},
                                     ]
-                                }
+                                },
                             ],
                         },
                         {
