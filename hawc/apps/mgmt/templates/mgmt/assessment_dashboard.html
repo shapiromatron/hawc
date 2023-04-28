@@ -19,14 +19,14 @@
   <h3>Tasks by type</h3>
   <div class="d-flex row">
     {% for plot in type_plots %}
-    <div style="margin-bottom: 10px;">{% plotly plot %}</div>
+    <div class="mb-3">{% plotly plot %}</div>
     {% endfor %}
   </div>
 
   <h3>Tasks by user</h3>
   <div class="d-flex row">
     {% for plot in user_plots %}
-    <div style="margin-bottom: 10px;">{% plotly plot %}</div>
+    <div class="mb-3">{% plotly plot %}</div>
     {% endfor %}
   </div>
 </div>
