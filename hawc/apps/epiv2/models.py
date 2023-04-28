@@ -142,7 +142,7 @@ class Design(models.Model):
             self.participant_n,
             self.years_enrolled,
             self.years_followup,
-            "|".join(self.countries.values_list("name", flat=True)),
+            "|".join(el.name for el in self.countries.all()),
             self.region,
             self.criteria,
             self.susceptibility,

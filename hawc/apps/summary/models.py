@@ -22,6 +22,7 @@ from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
+from ..assessment.constants import EpiVersion
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
@@ -37,6 +38,8 @@ from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epimeta.models import MetaResult
+from ..epiv2.exports import EpiFlatComplete
+from ..epiv2.models import DataExtraction
 from ..invitro import exports as ivexports
 from ..invitro.models import IVEndpoint
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
@@ -740,9 +743,14 @@ class DataPivotQuery(DataPivot):
                 filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
         elif self.evidence_type == constants.StudyType.EPI:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["study_population__study__published"] = True
+            if self.assessment.epi_version == EpiVersion.V1:
+                filters["assessment_id"] = self.assessment_id
+                if self.published_only:
+                    filters["study_population__study__published"] = True
+            else:
+                filters["design__study__assessment_id"] = self.assessment_id
+                if self.published_only:
+                    filters["design__study__published"] = True
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             filters["protocol__study__assessment_id"] = self.assessment_id
@@ -762,13 +770,18 @@ class DataPivotQuery(DataPivot):
             qs = Endpoint.objects.filter(**filters)
 
         elif self.evidence_type == constants.StudyType.EPI:
-            qs = Outcome.objects.filter(**filters)
+            if self.assessment.epi_version == EpiVersion.V1:
+                qs = Outcome.objects.filter(**filters)
+            else:
+                qs = DataExtraction.objects.filter(**filters)
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             qs = MetaResult.objects.filter(**filters)
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
+        else:
+            raise ValueError("Invalid data type")
 
         return qs.order_by("id")
 
@@ -788,11 +801,18 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == constants.StudyType.EPI:
-            exporter = OutcomeDataPivot(
-                qs,
-                assessment=self.assessment,
-                filename=f"{self.assessment}-epi",
-            )
+            if self.assessment.epi_version == EpiVersion.V1:
+                exporter = OutcomeDataPivot(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-epi",
+                )
+            else:
+                exporter = EpiFlatComplete(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-epi",
+                )
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             exporter = MetaResultFlatDataPivot(
