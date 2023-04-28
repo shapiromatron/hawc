@@ -20,6 +20,6 @@
 <div class='visualization'>
   <h2>{{object.title}}</h2>
   {% plotly object.get_plotly_from_json %}
-  <p>{{object.caption}}</p>
+  <p>{{object.caption|safe}}</p>
 </div>
 {% endblock %}
