@@ -5,7 +5,6 @@ from django.db.models import QuerySet
 from ..common.models import BaseManager
 from ..study.models import Study
 from . import constants
-from django.db.models import QuerySet
 
 logger = logging.getLogger(__name__)
 

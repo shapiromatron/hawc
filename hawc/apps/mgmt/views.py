@@ -3,7 +3,6 @@ from collections import Counter
 import plotly.express as px
 from django.apps import apps
 from django.http import HttpRequest
-from django.middleware.csrf import get_token
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
@@ -72,6 +71,7 @@ class RobTaskMixin:
         study_ser = StudyAssessmentSerializer(study_qs, many=True)
         # must cast to list to circumvent error when included in pydantic model
         return list(study_ser.data)
+
 
 class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     model = models.Task
@@ -229,6 +229,7 @@ class TaskDetail(BaseList):
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
         return context
+
 
 class TaskViewSet(HtmxViewSet):
     actions = {"read", "update"}
