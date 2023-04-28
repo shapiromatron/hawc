@@ -98,8 +98,8 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
+        # TODO query below does not allow calling get_edit_url in user_assignments.html and user_assessment_assignments.hmtl()
         context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB)
-        # query does not allow calling get_edit_url()
         if not show_completed:
             context["object_list"] = context["object_list"].exclude(status__in=[30, 40])
         context["show_completed"] = show_completed
