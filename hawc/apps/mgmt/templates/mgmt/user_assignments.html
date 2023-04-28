@@ -18,10 +18,8 @@
 
     {% for assessment in assessment_list %}
 
-
     <h4>{{ assessment.grouper }} <a class="btn btn-sm btn-primary"
             href="{{ assessment.grouper.get_absolute_url }}">View</a></h4>
-
     <table style="width: 100%;" class="table table-sm table-striped">
         <colgroup>
             <col width="30%" />
@@ -44,7 +42,6 @@
     </table>
     {% endfor %}
 </div>
-
 {% else %}
 <div>
     <i>There are no tasks available</i>
@@ -64,7 +61,6 @@
             <th style="width: 66%;">Action</th>
         </tr>
     </thead>
-
     <tbody>
         {% for rob in rob_task_list %}
         <tr>
@@ -85,6 +81,4 @@
 {% else %}
 <i>You have no outstanding reviews</i>
 {% endif %}
-
-<div id='main'></div>
 {% endblock %}

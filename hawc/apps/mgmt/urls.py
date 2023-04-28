@@ -1,14 +1,13 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from . import api, views
+from . import views
 
 router = SimpleRouter()
-router.register(r"task", api.TaskViewSet, basename="task")
+# router.register(r"task", api.TaskViewSet, basename="task")
 
 app_name = "mgmt"
 urlpatterns = [
-    path("api/", include((router.urls, "api"))),
     # user task-list
     path("my-assignments/", views.UserAssignments.as_view(), name="user_assignments"),
     path(

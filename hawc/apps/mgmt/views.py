@@ -73,32 +73,6 @@ class RobTaskMixin:
         # must cast to list to circumvent error when included in pydantic model
         return list(study_ser.data)
 
-    def get_app_config(self, context) -> WebappConfig:
-        assessment_id = self.assessment.id if hasattr(self, "assessment") else None
-        task_url = (
-            reverse("mgmt:api:task-assessment-assignments")
-            if assessment_id
-            else reverse("mgmt:api:task-assignments")
-        )
-        return WebappConfig(
-            app="mgmtStartup",
-            page="TaskAssignments",
-            data={
-                "assessment_id": assessment_id,
-                "csrf": get_token(self.request),
-                "user": self.request.user.id,
-                "rob_tasks": self.get_review_tasks(),
-                "rob_studies": self.get_review_studies(),
-                "tasks": {
-                    "submit_url": reverse("mgmt:api:task-list"),
-                    "url": task_url,
-                    "list": self.model.get_qs_json(context["object_list"], json_encode=False),
-                },
-                "autocomplete": {"url": reverse("autocomplete", args=("myuser-userautocomplete",))},
-            },
-        )
-
-
 class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_assignments.html"
@@ -255,22 +229,6 @@ class TaskDetail(BaseList):
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
         return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        a_id = self.assessment.id
-        return WebappConfig(
-            app="mgmtStartup",
-            page="TaskTable",
-            data=dict(
-                assessment_id=a_id,
-                csrf=get_token(self.request),
-                tasksListUrl=reverse("mgmt:api:task-list") + f"?assessment_id={a_id}",
-                taskUpdateBaseUrl=reverse("mgmt:api:task-list"),
-                studyListUrl=reverse("study:api:study-list") + f"?assessment_id={a_id}",
-                userAutocompleteUrl=reverse("autocomplete", args=("myuser-userautocomplete",)),
-            ),
-        )
-
 
 class TaskViewSet(HtmxViewSet):
     actions = {"read", "update"}

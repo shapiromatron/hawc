@@ -275,23 +275,23 @@ div.smart-tag.active {
 }
 
 /* mgmt/task-assignment status  */
-.status-circle {
+.mgmt-circle {
     padding: 0 5px;
 }
 
-.status-circle.s10 {
+.mgmt-circle.s10 {
     color: #CFCFCF;
 }
 
-.status-circle.s20 {
+.mgmt-circle.s20 {
     color: #FFCC00;
 }
 
-.status-circle.s30 {
+.mgmt-circle.s30 {
     color: #00CC00;
 }
 
-.status-circle.s40 {
+.mgmt-circle.s40 {
     color: #CC3333;
 }
 

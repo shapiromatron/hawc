@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<!-- filter by study type not wired up  -->
+<!-- filter by study type section not wired up  -->
 <div class="mb-3">
   <div>
     <div class="container-fluid filterContainer">
@@ -93,19 +93,13 @@
             <b>Date created: </b>
             <span>{{ study.grouper.created|date:"SHORT_DATE_FORMAT" }}</span>
           </td>
-
           {% for task in study.list %}
           {% include "mgmt/fragments/task_cell.html" with object=task show_owner=True %}
           {% endfor %}
         </tr>
         {% endfor %}
       </tbody>
-
     </table>
   </div>
-
 </div>
-
-
-<div id='main' class='mb-3'></div>
 {% endblock %}
