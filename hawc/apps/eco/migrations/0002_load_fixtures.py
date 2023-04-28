@@ -18,7 +18,6 @@ def unload_fixture(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("eco", "0001_initial"),
     ]

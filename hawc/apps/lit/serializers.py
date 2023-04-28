@@ -15,11 +15,11 @@ from pydantic import Field, root_validator, validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
-from ..assessment.serializers import AssessmentRootedSerializer
+from ..assessment.api.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
-from . import constants, exports, forms, models, tasks
+from . import constants, forms, models, tasks
 
 logger = logging.getLogger(__name__)
 
@@ -44,10 +44,8 @@ class SearchSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
-
         user = self.context["request"].user
         if not data["assessment"].user_can_edit_object(user):
-            # TODO - move authentication check outside validation?
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
 
         # set slug value based on title; assert it's unique
@@ -102,15 +100,12 @@ class SearchSerializer(serializers.ModelSerializer):
 
 
 class IdentifiersSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["database"] = instance.get_database_display()
-        ret["url"] = instance.get_url()
-        return ret
+    database = serializers.CharField(source="get_database_display")
+    url = serializers.CharField(source="get_url")
 
     class Meta:
         model = models.Identifiers
-        fields = "__all__"
+        fields = ["id", "unique_id", "database", "url"]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):
@@ -138,7 +133,7 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
     class Meta:
         model = models.Reference
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        fields = (*cleanup_fields, "id")
 
 
 class ReferenceTreeSerializer(serializers.Serializer):
@@ -321,7 +316,6 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-
         # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
@@ -348,8 +342,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
     )
 
     def validate_replace(self, replace: list) -> list:
-
-        self.ref_ids, self.hero_ids = zip(*replace)
+        self.ref_ids, self.hero_ids = zip(*replace, strict=True)
         assessment = self.context["assessment"]
         references = models.Reference.objects.filter(id__in=self.ref_ids)
 
@@ -399,7 +392,6 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         return replace
 
     def execute(self) -> ResultBase:
-
         # import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
 
@@ -414,23 +406,6 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         # run chained tasks
         return chain(t1, t2, t3)()
-
-
-class ReferenceTagExportSerializer(serializers.Serializer):
-    nested = serializers.ChoiceField(choices=[("t", "true"), ("f", "false")], default="t")
-    exporter = serializers.ChoiceField(
-        choices=[("base", "base"), ("table-builder", "table builder")], default="base"
-    )
-    _exporters = {
-        "base": exports.ReferenceFlatComplete,
-        "table-builder": exports.TableBuilderFormat,
-    }
-
-    def get_exporter(self):
-        return self._exporters[self.validated_data["exporter"]]
-
-    def include_descendants(self):
-        return self.validated_data["nested"] == "t"
 
 
 class FilterReferences(PydanticDrfSerializer):

@@ -1,5 +1,7 @@
 import logging
 
+from django.db.models import QuerySet
+
 from ..common.models import BaseManager
 from ..study.models import Study
 from . import constants
@@ -7,11 +9,16 @@ from . import constants
 logger = logging.getLogger(__name__)
 
 
+class TaskQuerySet(QuerySet):
+    def owned_by(self, user):
+        return self.filter(owner=user)
+
+
 class TaskManager(BaseManager):
     assessment_relation = "study__assessment"
 
-    def owned_by(self, user):
-        return self.filter(owner=user)
+    def get_queryset(self):
+        return TaskQuerySet(self.model, using=self._db)
 
     def create_assessment_tasks(self, assessment):
         """
@@ -61,7 +68,6 @@ class TaskManager(BaseManager):
 
         # create extraction tasks
         if assessment.enable_data_extraction:
-
             task = task_by_type(existing_tasks, constants.TaskType.EXTRACTION)
             if task is None:
                 new_tasks.append(self.model(study=study, type=constants.TaskType.EXTRACTION))

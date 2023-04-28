@@ -12,7 +12,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, check_unique_for_assessment
+from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from ..common.validators import validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
@@ -23,7 +23,6 @@ from . import autocomplete, constants, models
 
 
 class PrefilterMixin:
-
     PREFILTER_COMBO_FIELDS = [
         "studies",
         "systems",
@@ -448,6 +447,7 @@ class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
         exclude = ("assessment", "table_type")
+        field_classes = {"caption": QuillField}
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
@@ -458,10 +458,11 @@ class SummaryTableForm(forms.ModelForm):
         # TODO - we shouldn't have to do this; and 400 errors are not rendering
         # instead, switch to htmx or use a REST API
         if self.initial:
-            self.instance.content = self.initial["content"]
             self.instance.title = self.initial["title"]
-            self.instance.published = self.initial["published"]
             self.instance.slug = self.initial["slug"]
+            self.instance.content = self.initial["content"]
+            self.instance.published = self.initial["published"]
+            self.instance.caption = self.initial["caption"]
 
     def clean_slug(self):
         return check_unique_for_assessment(self, "slug")
@@ -499,12 +500,12 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
 
 
 class SummaryTableCopySelectorForm(forms.Form):
-
     table = SummaryTableModelChoiceField(
         label="Summary table", queryset=models.Visual.objects.all()
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
         self.queryset = kwargs.pop("queryset")
@@ -610,10 +611,10 @@ class VisualModelChoiceField(forms.ModelChoiceField):
 
 
 class VisualSelectorForm(forms.Form):
-
     visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.cancel_url = kwargs.pop("cancel_url")
         self.assessment_id = kwargs.pop("assessment_id")
         self.queryset = kwargs.pop("queryset")
@@ -671,7 +672,6 @@ class CrossviewForm(PrefilterMixin, VisualForm):
 
 
 class RoBForm(PrefilterMixin, VisualForm):
-
     prefilter_include = ("bioassay",)
 
     def __init__(self, *args, **kwargs):
@@ -687,7 +687,6 @@ class RoBForm(PrefilterMixin, VisualForm):
 
 
 class TagtreeForm(VisualForm):
-
     root_node = forms.TypedChoiceField(
         coerce=int,
         choices=[],
@@ -816,7 +815,6 @@ class TagtreeForm(VisualForm):
 
 
 class ExternalSiteForm(VisualForm):
-
     external_url = forms.URLField(
         label="External URL",
         help_text="""
@@ -948,7 +946,6 @@ class DataPivotForm(forms.ModelForm):
         self.fields["settings"].widget.attrs["rows"] = 2
 
     def setHelper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -1090,7 +1087,6 @@ class DataPivotModelChoiceField(forms.ModelChoiceField):
 
 
 class DataPivotSelectorForm(forms.Form):
-
     dp = DataPivotModelChoiceField(
         label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None
     )
@@ -1102,6 +1098,7 @@ class DataPivotSelectorForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         user = kwargs.pop("user")
         self.cancel_url = kwargs.pop("cancel_url")
         super().__init__(*args, **kwargs)
@@ -1109,7 +1106,6 @@ class DataPivotSelectorForm(forms.Form):
 
     @property
     def helper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

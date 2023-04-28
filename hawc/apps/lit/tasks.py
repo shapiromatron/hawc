@@ -87,7 +87,7 @@ def replace_hero_ids(replace: list[list[int]]):
     Identifiers = apps.get_model("lit", "identifiers")
 
     # build map of HERO ID -> Identifier.id
-    ref_ids, new_hero_ids = zip(*replace)
+    ref_ids, new_hero_ids = zip(*replace, strict=True)
     identifier_map: dict[int, int] = {
         int(ident.unique_id): ident.id
         for ident in Identifiers.objects.filter(

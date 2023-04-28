@@ -43,7 +43,7 @@ class BaseCell(BaseModel):
 
     @classmethod
     def parse_args(cls, *args):
-        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args)})
+        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args, strict=True)})
 
 
 class BaseCellGroup(BaseModel):
@@ -105,13 +105,19 @@ class BaseTable(BaseCellGroup):
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
 
-    def to_docx(self, parser: QuillParser = None, docx: Document = None, landscape: bool = True):
+    def to_docx(
+        self,
+        parser: QuillParser | None = None,
+        docx: Document | None = None,
+        landscape: bool = True,
+    ):
         if parser is None:
             parser = QuillParser()
         if docx is None:
             docx = create_document()
         if landscape:
             to_landscape(docx)
+
         table = docx.add_table(rows=self.rows, cols=self.columns)
         table_cells = table._cells
         table.style = "Table Grid"
@@ -132,6 +138,7 @@ class BaseTable(BaseCellGroup):
             for i, width in enumerate(self.column_widths[:columns]):
                 for table_cell in table_cells[i::columns]:
                     table_cell.width = Inches(width)
+
         return docx
 
     @classmethod

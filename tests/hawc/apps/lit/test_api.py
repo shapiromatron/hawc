@@ -19,10 +19,13 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
-    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
+    def _test_flat_export(
+        self, rewrite_data_files: bool, fn: str, url: str, client: APIClient | None = None
+    ):
+        if client is None:
+            client = APIClient()
+            assert client.login(username="reviewer@hawcproject.org", password="pw") is True
 
-        client = APIClient()
-        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -48,32 +51,59 @@ class TestLiteratureAssessmentViewset:
             reverse(
                 "lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)
             ),
-            reverse("lit:api:assessment-references-download", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
-        # topic model permissions
-        url = reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,))
-        assert anon_client.get(url).status_code == 403
-        assert rev_client.get(url).status_code == 200
-
-        tagtree_url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
-        # only reviewers and up can GET
-        assert anon_client.get(tagtree_url).status_code == 403
-        assert rev_client.get(tagtree_url).status_code == 200
+        # user-tag data
+        for url in [
+            reverse("lit:api:assessment-user-tag-export", args=(db_keys.assessment_final,)),
+        ]:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 403
+            assert pm_client.get(url).status_code == 200
 
         # only admins and up can POST
-        assert anon_client.post(tagtree_url).status_code == 403
-        assert rev_client.post(tagtree_url).status_code == 403
-        assert pm_client.post(tagtree_url, None).status_code != 403
+        url = reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,))
+        assert anon_client.post(url).status_code == 403
+        assert rev_client.post(url).status_code == 403
+        assert pm_client.post(url, None).status_code == 400  # validation; not permission error
 
-    def test_references_download(self, rewrite_data_files: bool, db_keys):
-        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
-        fn = "api-lit-assessment-references-export.json"
+    def test_export(self, rewrite_data_files: bool, db_keys):
+        url = reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-reference-export.json"
         self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_references_export_format(self, db_keys):
+        url = reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_final,))
+        c = APIClient()
+        assert c.login(email="team@hawcproject.org", password="pw") is True
+
+        # base report; reference metadata plus columns for each tag
+        resp = c.get(url, {"tag": 12}).json()
+        assert len(resp) == 2
+        assert len(resp[0]) > 20
+        assert resp[0]["Inclusion"] is True
+
+        # table builder format
+        resp = c.get(url, {"tag": 12, "export_format": "table-builder"}).json()
+        assert len(resp) == 2
+        assert len(resp[0]) == 5
+        assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
+
+    def test_export_user_tags(self, rewrite_data_files: bool, db_keys):
+        pm_client = APIClient()
+        assert pm_client.login(username="pm@hawcproject.org", password="pw") is True
+        url = reverse(
+            "lit:api:assessment-user-tag-export", args=(db_keys.assessment_conflict_resolution,)
+        )
+        fn = "api-lit-assessment-reference-export-user-tags.json"
+        self._test_flat_export(rewrite_data_files, fn, url, pm_client)
 
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
@@ -263,31 +293,6 @@ class TestLiteratureAssessmentViewset:
         assert resp.status_code == 400 and resp.json() == {"file": "Unable to parse excel file"}
 
 
-@pytest.mark.django_db
-class TestReferenceFilterTagViewset:
-    def test_references(self):
-        url = reverse("lit:api:tags-references", args=(12,))
-        c = APIClient()
-        assert c.login(email="pm@hawcproject.org", password="pw") is True
-
-        # base report; reference metadata plus columns for each tag
-        resp = c.get(url).json()
-        assert len(resp) == 2
-        assert len(resp[0]) > 20
-        assert resp[0]["Inclusion"] is True
-
-        # table builder format
-        resp = c.get(url, {"exporter": "table-builder"}).json()
-        assert len(resp) == 2
-        assert len(resp[0]) == 5
-        assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
-
-        # invalid exporter format
-        resp = c.get(url, {"exporter": "not-a-format"})
-        assert resp.status_code == 400
-        assert resp.json() == {"exporter": ['"not-a-format" is not a valid choice.']}
-
-
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestSearchViewset:
@@ -443,7 +448,6 @@ class TestHEROApis:
         cache.clear()
 
     def test_replace_permissions(self, db_keys):
-
         assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
 
         url = reverse("lit:api:assessment-replace-hero", args=(assessment_id,))
@@ -482,7 +486,6 @@ class TestHEROApis:
         ).unique_id == str(1)
 
     def test_bad_replace_requests(self, db_keys):
-
         # test nonexistent assessment
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
         data = {"replace": [[db_keys.reference_linked, 1]]}
@@ -493,7 +496,6 @@ class TestHEROApis:
         assert response.status_code == 404
 
     def test_update_permissions(self, db_keys):
-
         assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
 
         url = reverse(
@@ -540,7 +542,6 @@ class TestHEROApis:
 @pytest.mark.django_db
 class TestReferenceDestroyApi:
     def test_permissions(self, db_keys):
-
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
 
         # reviewers shouldn't be able to destroy
@@ -584,7 +585,6 @@ class TestReferenceDestroyApi:
 @pytest.mark.django_db
 class TestReferenceViewset:
     def test_update_permissions(self, db_keys):
-
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         data = {"title": "TestReferenceUpdateApi test"}
 

@@ -1,4 +1,6 @@
+import json
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
@@ -7,6 +9,8 @@ from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Log
 from hawc.apps.epiv2 import models
+
+DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
@@ -184,7 +188,7 @@ def generic_test_scenarios(client, url, scenarios):
             assert response.status_code == scenario["expected_code"]
 
         if "expected_keys" in scenario:
-            assert (scenario["expected_keys"]).issubset((response.data.keys()))
+            assert (scenario["expected_keys"]).issubset(response.data.keys())
 
         if "expected_content" in scenario:
             assert str(response.data).lower().find(scenario["expected_content"].lower()) != -1
@@ -219,3 +223,28 @@ def generic_perm_tester(url, data):
 
 def generic_get_any(model_class):
     return model_class.objects.all().first()
+
+
+@pytest.mark.django_db
+class TestMetadataApi:
+    def test_permissions(self):
+        url = reverse("epiv2:api:metadata-list")
+        # public should have access to this metadata
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+    def test_metadata(self, rewrite_data_files: bool):
+        fn = "api-epiv2-metadata.json"
+        url = reverse("epiv2:api:metadata-list") + "?format=json"
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        path = Path(DATA_ROOT / fn)
+        data = resp.json()
+
+        if rewrite_data_files:
+            path.write_text(json.dumps(data, indent=2, sort_keys=True))
+
+        assert data == json.loads(path.read_text())

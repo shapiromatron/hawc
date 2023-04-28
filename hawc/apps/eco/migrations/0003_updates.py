@@ -7,7 +7,6 @@ import hawc.apps.common.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("eco", "0002_load_fixtures"),
     ]
@@ -344,6 +343,7 @@ class Migration(migrations.Migration):
             field=hawc.apps.common.models.NumericTextField(
                 blank=True,
                 default="",
+                verbose_name="Statistical significance value",
                 help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
                 max_length=16,
             ),

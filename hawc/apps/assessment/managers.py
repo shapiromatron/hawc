@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from typing import Any, NamedTuple, Union
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
@@ -171,10 +171,10 @@ class AssessmentValueManager(BaseManager):
             "system": "system",
             "value_type": "value_type",
             "value": "value",
-            "value_unit__name": "value_unit",
+            "value_unit": "value_unit",
             "basis": "basis",
             "pod_value": "pod_value",
-            "pod_unit__name": "pod_unit",
+            "pod_unit": "pod_unit",
             "species_studied": "species_studied",
             "duration": "duration",
             "study_id": "study_id",
@@ -253,9 +253,7 @@ class EventPair:
 class LogManager(BaseManager):
     assessment_relation = "assessment"
 
-    def get_object_audit(
-        self, content_type: Union[ContentType, int], object_id: int
-    ) -> list[Event]:
+    def get_object_audit(self, content_type: ContentType | int, object_id: int) -> list[Event]:
         """
         Combines information from HAWC's internal logs and reversion logs for a more complete audit.
         Matching is attempted between these two log types to account for same operations.

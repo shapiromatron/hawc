@@ -1,19 +1,4 @@
 [tool.black]
 line-length = 100
-target-version = ['py36', 'py37', 'py38']
+target-version = ['py39']
 include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | build
-  | venv
-)/
-'''
-
-[tool.isort]
-atomic = true
-include_trailing_comma = true
-known_first_party = ["hawc_client"]
-line_length = 100
-multi_line_output = 3

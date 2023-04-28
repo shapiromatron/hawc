@@ -4,9 +4,10 @@ import json
 from django.db import transaction
 from rest_framework import serializers
 
+from ..assessment.api import user_can_edit_object
 from ..assessment.models import DoseUnits, DSSTox
 from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
-from ..common.api import DynamicFieldsMixin, user_can_edit_object
+from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
@@ -29,6 +30,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Validate parent object
         self.study = get_matching_instance(Study, self.initial_data, "study_id")
+        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
         # add additional checks from forms.ExperimentForm
         form = forms.ExperimentForm(data=data, parent=self.study)
@@ -235,7 +237,6 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-
         errors = forms.EndpointGroupForm.clean_endpoint_group(
             self.context["endpoint_data"].get("data_type", "C"),
             self.context["endpoint_data"].get("variance_type", 0),
@@ -398,8 +399,8 @@ class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.Experiment
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
@@ -410,8 +411,8 @@ class AnimalGroupCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSe
 
     class Meta:
         model = models.AnimalGroup
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.experiment.study.short_citation
@@ -422,8 +423,8 @@ class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
 
     class Meta:
         model = models.Endpoint
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",) + tuple(model.TERM_FIELD_MAPPING.values())
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id", *tuple(model.TERM_FIELD_MAPPING.values()))
 
     def get_study_short_citation(self, obj):
         return obj.animal_group.experiment.study.short_citation
@@ -434,8 +435,8 @@ class DosingRegimeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelS
 
     class Meta:
         model = models.DosingRegime
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.dosed_animals.experiment.study.short_citation

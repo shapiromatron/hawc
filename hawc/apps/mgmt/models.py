@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class Task(models.Model):
-
     objects = managers.TaskManager()
 
     owner = models.ForeignKey(

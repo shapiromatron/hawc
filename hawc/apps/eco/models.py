@@ -1,6 +1,7 @@
+import pandas as pd
 import reversion
 from django.db import models
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.urls import reverse, reverse_lazy
 from django.utils.text import format_lazy
 from treebeard.mp_tree import MP_Node
@@ -44,6 +45,24 @@ class NestedTerm(MP_Node):
             path += f"{node.name} > "
         path += f"{self.name}"
         return path
+
+    @classmethod
+    def as_dataframe(cls) -> pd.DataFrame:
+        max_depth = NestedTerm.objects.aggregate(value=Max("depth"))["value"]
+        rows = []
+        nesting = [None] * max_depth
+        for term in NestedTerm.objects.all():
+            depth = term.depth
+            nesting[depth - 1] = term.name
+            nesting[depth:] = [None] * (max_depth - depth)
+            rows.append([term.id, depth, *nesting])
+
+        df = pd.DataFrame(
+            data=rows,
+            columns=["ID", "Depth", *[f"Level {i+1}" for i in range(len(nesting))]],
+        ).fillna("-")
+
+        return df
 
 
 class Vocab(models.Model):
@@ -203,7 +222,7 @@ class Cause(models.Model):
         verbose_name="Level (numeric)",
         blank=True,
         null=True,
-        help_text="Units associated with the treatment/exposure/dose level, if applicable",
+        help_text="Specific numeric value of treatment/exposure/dose level, if applicable",
     )
     level_units = models.CharField(
         verbose_name="Level units",
@@ -238,7 +257,7 @@ class Cause(models.Model):
         verbose_name="Exposure metric (numeric)",
         blank=True,
         null=True,
-        help_text="Specific exposure metric reported, if applicable",
+        help_text="Specific numeric value of exposure metric reported, if applicable",
     )
     exposure_units = models.CharField(
         verbose_name="Exposure metric units",
@@ -373,6 +392,34 @@ class Result(models.Model):
         blank=True,
         help_text="Describe the relationship in 1-2 sentences",
     )
+    statistical_sig_type = models.ForeignKey(
+        Vocab,
+        verbose_name="Statistical significance",
+        limit_choices_to={"category": VocabCategories.STATISTICAL},
+        on_delete=models.CASCADE,
+        related_name="result_by_sig",
+        help_text="Statistical significance measure reported",
+    )
+    statistical_sig_value = NumericTextField(
+        max_length=16,
+        blank=True,
+        default="",
+        verbose_name="Statistical significance value",
+        help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
+    )
+    modifying_factors = models.CharField(
+        verbose_name="Modifying factors",
+        blank=True,
+        max_length=256,
+        default="",
+        help_text="A comma-separated list of modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
+    )
+    modifying_factors_comment = models.TextField(
+        verbose_name="Modifying factors comment",
+        max_length=256,
+        blank=True,
+        help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
+    )
     measure_type = models.ForeignKey(
         Vocab,
         verbose_name="Response measure type",
@@ -410,6 +457,8 @@ class Result(models.Model):
         on_delete=models.CASCADE,
         related_name="result_by_variability",
         help_text="Type of variability reported for the numeric response measure",
+        null=True,
+        blank=True,
     )
     low_variability = models.FloatField(
         verbose_name="Lower response measure",
@@ -423,33 +472,6 @@ class Result(models.Model):
         help_text="Upper numerical bound of the response variability",
         null=True,
     )
-    modifying_factors = models.CharField(
-        verbose_name="Modifying factors",
-        blank=True,
-        max_length=256,
-        default="",
-        help_text="A comma-separated list of modifying factors, confounding variables, model co-variates, etc. that were analyzed and tested for the potential to influence the relationship between cause and effect",
-    )
-    modifying_factors_comment = models.TextField(
-        verbose_name="Modifying factors comment",
-        max_length=256,
-        blank=True,
-        help_text="Describe how the important modifying factor(s) affect the relationship in 1-2 sentences. Consider factors associated with the study that have an important influence on the relationship between cause and effect. For example, statistical significance of a co-variate in a model can indicate importance.",
-    )
-    statistical_sig_type = models.ForeignKey(
-        Vocab,
-        verbose_name="Statistical significance",
-        limit_choices_to={"category": VocabCategories.STATISTICAL},
-        on_delete=models.CASCADE,
-        related_name="result_by_sig",
-        help_text="Statistical significance measure reported",
-    )
-    statistical_sig_value = NumericTextField(
-        max_length=16,
-        blank=True,
-        default="",
-        help_text="Numerical value of the statistical significance. Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >.",
-    )
     comments = models.TextField(
         blank=True,
         help_text="Additional information not previously described",
@@ -460,8 +482,7 @@ class Result(models.Model):
     class Meta:
         verbose_name = "Result"
         verbose_name_plural = "Results"
-        unique_together = (("effect", "sort_order"),)
-        ordering = ("effect", "sort_order")
+        ordering = ("design", "cause", "effect", "sort_order")
 
     def __str__(self):
         return f"{self.cause} | {self.effect}"
@@ -487,6 +508,32 @@ class Result(models.Model):
                 category=VocabCategories.STATISTICAL, value="Not applicable"
             ),
         }
+
+    @classmethod
+    def complete_df(cls, assessment_id: int) -> pd.DataFrame:
+        study_df = Study.objects.filter(assessment_id=assessment_id).flat_df().add_prefix("study-")
+        design_df = (
+            Design.objects.filter(study__assessment_id=assessment_id)
+            .flat_df()
+            .add_prefix("design-")
+        )
+        cause_df = (
+            Cause.objects.filter(study__assessment_id=assessment_id).flat_df().add_prefix("cause-")
+        )
+        effect_df = (
+            Effect.objects.filter(study__assessment_id=assessment_id)
+            .flat_df()
+            .add_prefix("effect-")
+        )
+        result_df = (
+            cls.objects.filter(design__study__assessment_id=assessment_id)
+            .flat_df()
+            .add_prefix("result-")
+        )
+        tmp1 = pd.merge(effect_df, result_df, left_on="effect-id", right_on="result-effect_id")
+        tmp2 = pd.merge(cause_df, tmp1, left_on="cause-id", right_on="result-cause_id")
+        tmp3 = pd.merge(design_df, tmp2, left_on="design-id", right_on="result-design_id")
+        return pd.merge(study_df, tmp3, left_on="study-id", right_on="design-study_id")
 
 
 reversion.register(Design)

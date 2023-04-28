@@ -1,6 +1,6 @@
 import re
+from collections.abc import Callable, Sequence
 from functools import partial
-from typing import Callable, Optional, Sequence
 from urllib import parse
 
 import bleach
@@ -78,7 +78,7 @@ def clean_html(html: str) -> str:
     )
 
 
-def validate_html_tags(html: str, field: Optional[str] = None) -> str:
+def validate_html_tags(html: str, field: str | None = None) -> str:
     """Html contains a subset of acceptable tags.
 
     Args:
@@ -214,8 +214,8 @@ class FlatJSON:
 
         if not isinstance(value, dict):
             raise ValidationError(cls.ERROR_MSG)
-        for key, value in value.items():
-            if not isinstance(key, str) or isinstance(value, (list, dict)):
+        for key, val in value.items():
+            if not isinstance(key, str) or isinstance(val, list | dict):
                 valid = False
                 break
         if valid is False and raise_exception:

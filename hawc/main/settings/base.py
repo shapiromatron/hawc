@@ -20,7 +20,7 @@ DEBUG = False
 
 # Basic setup
 WSGI_APPLICATION = "hawc.main.wsgi.application"
-SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
+SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"  # noqa: S105
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
@@ -32,7 +32,7 @@ ADMINS: list[tuple[str, str]] = []
 _admin_names = os.getenv("DJANGO_ADMIN_NAMES", "")
 _admin_emails = os.getenv("DJANGO_ADMIN_EMAILS", "")
 if len(_admin_names) > 0 and len(_admin_emails) > 0:
-    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
+    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|"), strict=True))
 MANAGERS = ADMINS
 
 # add randomness to admin url
@@ -193,6 +193,8 @@ SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
+TURNSTYLE_SITE = os.environ.get("TURNSTYLE_SITE", "")
+TURNSTYLE_KEY = os.environ.get("TURNSTYLE_KEY", "")
 INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
 
 # Server URL settings

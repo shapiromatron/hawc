@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0018_dsstox"),
         ("epi", "0015_multiple_countries"),

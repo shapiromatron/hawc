@@ -122,11 +122,6 @@ urlpatterns = [
         name="endpoint_list_v2",
     ),
     path(
-        "assessment/<int:pk>/endpoints/tags/<slug:tag_slug>/",
-        views.EndpointTags.as_view(),
-        name="assessment_endpoint_taglist",
-    ),
-    path(
         "animal-group/<int:pk>/endpoint/create/",
         views.EndpointCreate.as_view(),
         name="endpoint_new",

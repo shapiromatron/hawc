@@ -12,7 +12,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy.stats import t
 
-from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
+from ..assessment.models import BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..study.models import Study
 from . import constants, managers
@@ -48,13 +48,6 @@ class Criteria(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def copy_across_assessments(self, cw):
-        new_obj, _ = self._meta.model.objects.get_or_create(
-            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
-            description=self.description,
-        )
-        cw[self.COPY_NAME][self.id] = new_obj.id
-
 
 class Country(models.Model):
     objects = managers.CountryManager()
@@ -87,13 +80,6 @@ class AdjustmentFactor(models.Model):
     def __str__(self):
         return self.description
 
-    def copy_across_assessments(self, cw):
-        new_obj, _ = self._meta.model.objects.get_or_create(
-            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
-            description=self.description,
-        )
-        cw[self.COPY_NAME][self.id] = new_obj.id
-
 
 class Ethnicity(models.Model):
     objects = managers.EthnicityManger()
@@ -120,20 +106,12 @@ class StudyPopulationCriteria(models.Model):
 
     COPY_NAME = "spcriterias"
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.criteria_id = cw[Criteria.COPY_NAME][self.criteria_id]
-        self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
 
 class StudyPopulation(models.Model):
     objects = managers.StudyPopulationManager()
 
     CRITERIA_HELP_TEXTS = {
-        "inclusion_criteria": "What criteria were used to determine an individual’s eligibility? Ex. at least 18 years old; born in the country of study; singleton pregnancy",
+        "inclusion_criteria": "What criteria were used to determine an individual`s eligibility? Ex. at least 18 years old; born in the country of study; singleton pregnancy",
         "exclusion_criteria": "What criteria were used to exclude an individual from participation?  Ex. pre-existing medical conditions, pregnancy, use of medication",
         "confounding_criteria": OPTIONAL_NOTE,
     }
@@ -171,7 +149,7 @@ class StudyPopulation(models.Model):
     age_profile = models.CharField(
         max_length=128,
         blank=True,
-        help_text="State study population’s age category, with quantitative information (mean, median, SE, range) in parentheses where available. "
+        help_text="State study population`s age category, with quantitative information (mean, median, SE, range) in parentheses where available. "
         + "Ex. Pregnancy (mean 31 years; SD 4 years); Newborn; Adulthood "
         + formatHelpTextNotes(
             'Use age categories "Fetal" (in utero), "Newborn" (at birth), "Neonatal" (0-4 weeks), '
@@ -223,7 +201,7 @@ class StudyPopulation(models.Model):
         help_text="Copy-paste text describing study population selection <br/>"
         + 'Ex. "Data and biospecimens were obtained from the Maternal Infant Research on Environmental Chemicals (MIREC) Study, '
         + "a trans-Canada cohort study of 2,001 pregnant women. Study participants were recruited from 10 Canadian cities between "
-        + "2008 and 2011. Briefly, women were eligible for inclusion if the fetus was at <14 weeks’ gestation at the time of recruitment "
+        + "2008 and 2011. Briefly, women were eligible for inclusion if the fetus was at <14 weeks` gestation at the time of recruitment "
         + "and they were ≥18 years of age, able to communicate in French or English, and planning on delivering at a local hospital. "
         + "Women with known fetal or chromosomal anomalies in the current pregnancy and women with a history of medical complications "
         + "(including renal disease, epilepsy, hepatitis, heart disease, pulmonary disease, cancer, hematological disorders, threatened "
@@ -317,26 +295,6 @@ class StudyPopulation(models.Model):
     def can_create_sets(self):
         return self.design not in self.OUTCOME_GROUP_DESIGNS
 
-    def copy_across_assessments(self, cw):
-        countries = list(self.countries.all().order_by("id"))
-        children = list(
-            itertools.chain(
-                self.criteria.all().order_by("id"),
-                self.spcriteria.all().order_by("id"),
-                self.exposures.all().order_by("id"),
-                self.comparison_sets.all().order_by("id"),
-                self.outcomes.all().order_by("id"),
-            )
-        )
-        old_id = self.id
-        self.id = None
-        self.study_id = cw[Study.COPY_NAME][self.study_id]
-        self.save()
-        self.countries.set(countries)
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.study
 
@@ -383,7 +341,7 @@ class Outcome(BaseEndpoint):
         max_length=32,
         blank=True,
         verbose_name="Age at outcome measurement",
-        help_text="State study population’s age category at outcome measurement, with quantitative information "
+        help_text="State study population`s age category at outcome measurement, with quantitative information "
         + "(mean, median, SE, range) in parentheses where available.<br/>"
         + "Ex. Pregnancy (mean 31 years;  SD 4 years); Newborn; Adulthood "
         + formatHelpTextNotes(
@@ -467,38 +425,6 @@ class Outcome(BaseEndpoint):
             ser["last_updated"],
         )
 
-    def copy_across_assessments(self, cw):
-        effects = list(self.effects.all().order_by("id"))
-        children = list(
-            itertools.chain(
-                self.comparison_sets.all().order_by("id"),
-                self.results.all().order_by("id"),
-            )
-        )
-
-        old_id = self.id
-        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-
-        # copy base endpoint
-        base = self.baseendpoint_ptr
-        base.id = None
-        base.assessment_id = new_assessment_id
-        base.save()
-
-        # copy outcome
-        self.id = None
-        self.baseendpoint_ptr = base
-        self.assessment_id = new_assessment_id
-        self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
-        self.effects.set(effects)
-
-        # copy other children
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.study_population.get_study()
 
@@ -519,7 +445,7 @@ class ComparisonSet(models.Model):
         + "characteristics of exposed group.</b> Each group is a collection of people, and all groups in this collection "
         + "are comparable to one another. You may create a comparison set which contains two groups: cases and controls. "
         + "Alternatively, for cohort-based studies, you may create a comparison set with four different groups, one for "
-        + "each quartile of exposure based on exposure measurements. Ex. PFNA (Ln) (Tertiles) – newborn boys"
+        + "each quartile of exposure based on exposure measurements. Ex. PFNA (Ln) (Tertiles) - newborn boys"
         + formatHelpTextNotes(
             "Common identifying characteristics: cases, controls, newborns, boys, girls, men, women, pregnant women"
         ),
@@ -591,21 +517,6 @@ class ComparisonSet(models.Model):
             ser["created"],
             ser["last_updated"],
         )
-
-    def copy_across_assessments(self, cw):
-        children = list(self.groups.all().order_by("id"))
-        old_id = self.id
-        self.id = None
-        if self.study_population_id:
-            self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        if self.outcome_id:
-            self.outcome_id = cw[Outcome.COPY_NAME][self.outcome_id]
-        if self.exposure_id:
-            self.exposure_id = cw[Exposure.COPY_NAME][self.exposure_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
     def get_study(self):
         if self.study_population:
@@ -727,19 +638,6 @@ class Group(models.Model):
             ser["created"],
             ser["last_updated"],
         )
-
-    def copy_across_assessments(self, cw):
-        children = list(self.descriptions.all().order_by("id"))
-        ethnicities = list(self.ethnicities.all().order_by("id"))
-
-        old_id = self.id
-        self.id = None
-        self.comparison_set_id = cw[ComparisonSet.COPY_NAME][self.comparison_set_id]
-        self.save()
-        self.ethnicities.set(ethnicities)
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
 
 class Exposure(models.Model):
@@ -944,18 +842,6 @@ class Exposure(models.Model):
             ser.get("last_updated"),
         )
 
-    def copy_across_assessments(self, cw):
-        children = list(self.central_tendencies.all().order_by("id"))
-        old_id = self.id
-
-        self.id = None
-        self.study_population_id = cw[StudyPopulation.COPY_NAME][self.study_population_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
-
     def get_study(self):
         return self.study_population.get_study()
 
@@ -1017,7 +903,7 @@ class CentralTendency(models.Model):
         verbose_name_plural = "Central Tendencies"
 
     def __str__(self):
-        return "{CT id=%s, exposure=%s}" % (self.id, self.exposure)
+        return f"{{CT id={self.id}, exposure={self.exposure}}}"
 
     @staticmethod
     def flat_complete_header_row():
@@ -1054,14 +940,6 @@ class CentralTendency(models.Model):
             ser.get("lower_bound_interval"),
             ser.get("upper_bound_interval"),
         )
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-
-        self.id = None
-        self.exposure_id = cw[self.exposure.COPY_NAME][self.exposure_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 class GroupNumericalDescriptions(models.Model):
@@ -1106,12 +984,8 @@ class GroupNumericalDescriptions(models.Model):
     def get_assessment(self):
         return self.group.get_assessment()
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.group_id = cw[Group.COPY_NAME][self.group_id]
-        self.save()
-        cw[GroupNumericalDescriptions.COPY_NAME][old_id] = self.id
+    def get_absolute_url(self):
+        return self.group.get_absolute_url()
 
 
 class ResultMetric(models.Model):
@@ -1155,14 +1029,6 @@ class ResultAdjustmentFactor(models.Model):
 
     COPY_NAME = "rfactors"
 
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.adjustment_factor_id = cw[AdjustmentFactor.COPY_NAME][self.adjustment_factor_id]
-        self.result_id = cw[Result.COPY_NAME][self.result_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-
 
 class Result(models.Model):
     objects = managers.ResultManager()
@@ -1170,7 +1036,7 @@ class Result(models.Model):
     name = models.CharField(
         max_length=256,
         help_text="Name the result, following the format <b>Effect Exposure (If log-transformed) (continuous, quartiles, tertiles, etc.) "
-        + "– subgroup</b>. Ex. Hyperthyroidism PFHxS (ln) (continuous) – women"
+        + "- subgroup</b>. Ex. Hyperthyroidism PFHxS (ln) (continuous) - women"
         + HAWC_VIS_NOTE,
     )
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, related_name="results")
@@ -1349,27 +1215,6 @@ class Result(models.Model):
             ser["created"],
             ser["last_updated"],
         )
-
-    def copy_across_assessments(self, cw):
-        children = list(
-            itertools.chain(
-                self.adjustment_factors.all().order_by("id"),
-                self.resfactors.all().order_by("id"),
-                self.results.all().order_by("id"),
-            )
-        )
-        resulttags = list(self.resulttags.all().order_by("id"))
-
-        old_id = self.id
-        self.id = None
-        self.outcome_id = cw[Outcome.COPY_NAME][self.outcome_id]
-        self.comparison_set_id = cw[ComparisonSet.COPY_NAME][self.comparison_set_id]
-        self.save()
-        self.resulttags.set(resulttags)
-        cw[self.COPY_NAME][old_id] = self.id
-
-        for child in children:
-            child.copy_across_assessments(cw)
 
     def get_study(self):
         return self.outcome.get_study()
@@ -1736,7 +1581,6 @@ class GroupResult(models.Model):
         n_1, mu_1, sd_1 = get_control_group(rgs)
 
         for i, rg in enumerate(rgs):
-
             mean = low = high = None
 
             if estimate_type in ["median", "mean"] and variance_type in [
@@ -1744,7 +1588,6 @@ class GroupResult(models.Model):
                 "SE",
                 "SEM",
             ]:
-
                 n_2 = rg["n"]
                 mu_2 = rg["estimate"]
                 sd_2 = rg.get("stdev")
@@ -1765,14 +1608,6 @@ class GroupResult(models.Model):
                         high = rng[1]
 
             rg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.result_id = cw[Result.COPY_NAME][self.result_id]
-        self.group_id = cw[Group.COPY_NAME][self.group_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
     def get_assessment(self):
         return self.result.get_assessment()

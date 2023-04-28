@@ -126,6 +126,7 @@ class ReferenceTreeMain extends Component {
                         selectedTag={store.selectedTag}
                         untaggedHandleClick={store.handleUntaggedReferenceClick}
                         untaggedCount={store.config.untaggedReferenceCount}
+                        untaggedReferencesSelected={store.untaggedReferencesSelected}
                     />
                 </div>
             </div>

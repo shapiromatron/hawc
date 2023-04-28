@@ -47,7 +47,7 @@
         },
     };
 
-    $(document).on('ready', function(){
+    window.addEventListener("DOMContentLoaded", function(){
         new window.app.DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
         $('#egFormset').insertBefore($('#eForm .form-actions'));
         $('#egBenchmarkFormset').insertBefore($('#eForm .form-actions'));

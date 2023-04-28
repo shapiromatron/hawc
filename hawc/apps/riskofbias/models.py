@@ -59,25 +59,22 @@ class RiskOfBiasDomain(models.Model):
     def get_absolute_url(self):
         return reverse("riskofbias:arob_detail", args=(self.assessment_id,))
 
-    def copy_across_assessments(self, cw):
-        children = list(self.metrics.all().order_by("id"))
-        old_id = self.id
-        self.id = None
-        self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
-
 
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
     domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
-    name = models.CharField(max_length=256)
-    short_name = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=256, help_text="Complete name of metric.")
+    short_name = models.CharField(
+        max_length=50, blank=True, help_text="Short name, may be used in visualizations."
+    )
+    key = models.CharField(
+        max_length=8,
+        blank=True,
+        help_text="A unique identifier if it is from a standard protocol or procedure; can be used to match metrics across assessments.",
+    )
     description = models.TextField(
-        blank=True, help_text="HTML text describing scoring of this field."
+        blank=True, help_text="Detailed instructions for how to apply this metric."
     )
     responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
     required_animal = models.BooleanField(
@@ -141,13 +138,6 @@ class RiskOfBiasMetric(models.Model):
             score=constants.RESPONSES_VALUES_DEFAULT[self.responses],
             is_default=is_default,
         )
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        self.domain_id = cw[RiskOfBiasDomain.COPY_NAME][self.domain_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
     @transaction.atomic
     def sync_score_existence(self):
@@ -299,16 +289,6 @@ class RiskOfBias(models.Model):
                 ser["author"]["full_name"],
             ]
         return row
-
-    def copy_across_assessments(self, cw):
-        children = list(self.scores.all().order_by("id"))
-        old_id = self.id
-        self.id = None
-        self.study_id = cw[Study.COPY_NAME][self.study_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
-        for child in children:
-            child.copy_across_assessments(cw)
 
     def get_override_options(self) -> dict:
         """Get risk of bias override options and overrides
@@ -466,18 +446,9 @@ class RiskOfBiasScore(models.Model):
             (score.riskofbias.id, score.riskofbias.study_id)
             for score in cls.objects.filter(id__in=ids)
         ]
-        rob_ids, study_ids = list(zip(*id_lists))
+        rob_ids, study_ids = list(zip(*id_lists, strict=True))
         RiskOfBias.delete_caches(rob_ids)
         Study.delete_caches(study_ids)
-
-    def copy_across_assessments(self, cw):
-        # TODO - add overrides
-        old_id = self.id
-        self.id = None
-        self.riskofbias_id = cw[RiskOfBias.COPY_NAME][self.riskofbias_id]
-        self.metric_id = cw[RiskOfBiasMetric.COPY_NAME][self.metric_id]
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 class RiskOfBiasScoreOverrideObject(models.Model):
@@ -546,7 +517,7 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:rob_assignments", args=(self.assessment_id,))
+        return reverse("riskofbias:rob_assignments", args=(self.id,))
 
     def get_assessment(self):
         return self.assessment
@@ -565,14 +536,6 @@ class RiskOfBiasAssessment(models.Model):
                 <p>The following questions are required for this assessment:</p>"""
             ),
         )
-
-    def copy_across_assessments(self, cw):
-        old_id = self.id
-        self.id = None
-        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-        self.assessment_id = new_assessment_id
-        self.save()
-        cw[self.COPY_NAME][old_id] = self.id
 
 
 reversion.register(RiskOfBiasDomain)

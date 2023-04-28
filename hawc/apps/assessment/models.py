@@ -276,6 +276,10 @@ class Assessment(models.Model):
         default=constants.EpiVersion.V2,
         help_text="Data extraction schema used for epidemiology studies",
     )
+    admin_notes = models.TextField(
+        blank=True,
+        help_text="Additional information about this assessment; only visible to HAWC admins",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -318,28 +322,32 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.to_dict(user)
 
-    def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_edit_assessment(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
-        return perms.can_edit_assessment(user)
+        return perms.project_manager_or_higher(user)
 
-    def user_is_part_of_team(self, user) -> bool:
+    def user_is_reviewer_or_higher(self, user) -> bool:
         perms = self.get_permissions()
-        return perms.part_of_team(user)
+        return perms.reviewer_or_higher(user)
 
     def user_is_team_member_or_higher(self, user) -> bool:
         perms = self.get_permissions()
         return perms.team_member_or_higher(user)
+
+    def user_is_project_manager_or_higher(self, user) -> bool:
+        perms = self.get_permissions()
+        return perms.project_manager_or_higher(user)
 
     def get_vocabulary_display(self) -> str:
         # override default method
@@ -422,8 +430,8 @@ class Assessment(models.Model):
             HAWCUser.objects.filter(
                 models.Q(assessment_pms=self.id) | models.Q(assessment_teams=self.id)
             )
-            .order_by("id")
-            .distinct("id")
+            .order_by("last_name", "id")
+            .distinct("id", "last_name")
         )
 
     def get_communications(self) -> str:
@@ -431,6 +439,52 @@ class Assessment(models.Model):
 
     def set_communications(self, text: str):
         Communication.set_message(self, text)
+
+    def _has_data(self, app: str, model: str, filter: str = "study__assessment") -> bool:
+        """Check if associated model has any data for this assessment in HAWC
+
+        Args:
+            app (str): the application name
+            model (str): the model name
+            filter (str): the filter to apply to check for status
+
+        Returns:
+            bool: True if data exists, False otherwise
+        """
+        return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
+
+    @property
+    def has_lit_data(self) -> bool:
+        return self._has_data("lit", "Reference", filter="assessment")
+
+    @property
+    def has_rob_data(self) -> bool:
+        return self._has_data("riskofbias", "RiskOfBias")
+
+    @property
+    def has_animal_data(self) -> bool:
+        return self._has_data("animal", "Experiment")
+
+    @property
+    def has_epi_data(self) -> bool:
+        if self.epi_version == constants.EpiVersion.V1:
+            return self._has_data("epi", "StudyPopulation")
+        elif self.epi_version == constants.EpiVersion.V2:
+            return self._has_data("epiv2", "Design")
+        else:
+            raise ValueError("Unknown epi version")
+
+    @property
+    def has_epimeta_data(self) -> bool:
+        return self._has_data("epimeta", "MetaProtocol")
+
+    @property
+    def has_invitro_data(self) -> bool:
+        return self._has_data("invitro", "IVExperiment")
+
+    @property
+    def has_eco_data(self) -> bool:
+        return self._has_data("eco", "Design")
 
 
 class AssessmentDetail(models.Model):
@@ -1038,7 +1092,6 @@ class DatasetRevision(models.Model):
 
 
 class Job(models.Model):
-
     JOB_TO_FUNC = {
         constants.JobType.TEST: jobs.test,
     }

@@ -4,6 +4,7 @@ from django.apps import apps
 
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
+from ..study.models import Study
 
 
 def getDose(ser, tag):
@@ -36,6 +37,9 @@ class DataPivotEndpoint(FlatFileExporter):
 
         header = [
             "study id",
+            "study hero_id",
+            "study pubmed_id",
+            "study doi",
             "study name",
             "study identifier",
             "study published",
@@ -107,6 +111,8 @@ class DataPivotEndpoint(FlatFileExporter):
     def _get_data_rows(self):
         rows = []
 
+        identifiers_df = Study.identifiers_df(self.queryset, "experiment__study_id")
+
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
 
@@ -129,14 +135,17 @@ class DataPivotEndpoint(FlatFileExporter):
             bm_types = [bm["benchmark"] for bm in ser["benchmarks"]]
             bm_values = [bm["value"] for bm in ser["benchmarks"]]
 
+            study_id = ser["experiment"]["study"]["id"]
             row = [
-                ser["experiment"]["study"]["id"],
+                study_id,
+                identifiers_df["hero_id"].get(study_id),
+                identifiers_df["pubmed_id"].get(study_id),
+                identifiers_df["doi"].get(study_id),
                 ser["experiment"]["study"]["short_citation"],
                 ser["experiment"]["study"]["study_identifier"],
                 ser["experiment"]["study"]["published"],
             ]
 
-            study_id = ser["experiment"]["study"]["id"]
             study_robs = [
                 self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
             ]
@@ -204,7 +213,6 @@ class DataPivotEndpoint(FlatFileExporter):
 
 class DataPivotEndpointGroup(FlatFileExporter):
     def _get_header_row(self):
-
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:

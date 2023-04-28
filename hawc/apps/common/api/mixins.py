@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import DataError
-from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import status
 from rest_framework.exceptions import ValidationError as DrfValidationError
@@ -29,11 +28,11 @@ class ListUpdateModelMixin:
 
     def is_valid_bulk_operation(self):
         if self.bulk_header:
-            header_name = "http_{0}".format(self.bulk_header.strip().replace("-", "_")).upper()
+            header_name = "http_{}".format(self.bulk_header.strip().replace("-", "_")).upper()
             return (
                 bool(self.request.META.get(header_name, None)),
                 {
-                    "detail": "Header '{0}' should be provided for bulk operation.".format(
+                    "detail": "Header '{}' should be provided for bulk operation.".format(
                         self.bulk_header
                     )
                 },
@@ -107,16 +106,6 @@ class DynamicFieldsMixin:
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:
                     self.fields.pop(field_name)
-
-
-class LegacyAssessmentAdapterMixin:
-    """
-    A mixin that allows API viewsets to interact with legacy methods.
-    """
-
-    def set_legacy_attr(self, pk):
-        self.parent = get_object_or_404(self.parent_model, pk=pk)
-        self.assessment = self.parent.get_assessment()
 
 
 class ReadWriteSerializerMixin:

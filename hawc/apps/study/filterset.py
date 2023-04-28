@@ -18,7 +18,7 @@ class StudyFilterSet(BaseFilterSet):
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
-        choices=constants.StudyTypeChoices.choices,
+        choices=constants.StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
         empty_label="<All>",
@@ -65,7 +65,7 @@ class StudyFilterSet(BaseFilterSet):
         return queryset.filter(**{value: True})
 
     def filter_assigned_user(self, queryset, name, value):
-        return queryset.filter(riskofbiases__author=value, riskofbiases__active=True)
+        return queryset.filter(riskofbiases__author=value, riskofbiases__active=True).distinct()
 
     def create_form(self):
         form = super().create_form()

@@ -1638,8 +1638,6 @@
   fields:
     unique_id: 10.1016/j.jep.2021.114077
     database: 4
-    unique_id: '27245597'
-    database: 1
     content: ''
     url: ''
 - model: lit.referencefiltertag
@@ -7004,6 +7002,7 @@
     domain: 3
     name: Was administered dose or exposure level adequately randomized?
     short_name: ''
+    key: demo-a
     description: Randomization requires that each human subject or animal had an equal
       chance of being assigned to any study group including controls (e.g., use of
       random number table or computer generated randomization).
@@ -7022,6 +7021,7 @@
     domain: 3
     name: Was allocation to study groups adequately concealed?
     short_name: ''
+    key: demo-b
     description: 'Allocation concealment requires that research personnel do not know
       which administered dose or exposure level is assigned at the start of a study.
       Human studies also require that allocation be concealed from human subjects
@@ -9012,6 +9012,7 @@
     assessment: 1
     title: 'Generic #1'
     slug: Generic-1
+    caption: <p>Example table caption</p>
     content:
       cells:
       - row: 0
@@ -9139,6 +9140,7 @@
     assessment: 1
     title: 'Evidence profile #1'
     slug: Evidence-Profile-1
+    caption: <p>Example table caption</p>
     content:
       animal:
         rows:
@@ -9253,6 +9255,7 @@
     assessment: 1
     title: 'Study evaluation #1'
     slug: Study-Evaluation-1
+    caption: <p>Example table caption</p>
     content:
       rows:
       - id: 1

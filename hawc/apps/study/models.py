@@ -1,18 +1,18 @@
-import collections
-import itertools
 import logging
 import os
 
+import pandas as pd
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from django.db import models, transaction
+from django.db import models
 from django.http import Http404
 from django.urls import reverse
 from reversion import revisions as reversion
 
-from ..assessment.models import Assessment, Communication
+from ..assessment.models import Communication
 from ..common.helper import SerializerHelper, cleanHTML
-from ..lit.models import Reference, Search
+from ..lit.models import Reference
 from . import constants, managers
 
 logger = logging.getLogger(__name__)
@@ -147,97 +147,9 @@ class Study(Reference):
         return study
 
     @classmethod
-    @transaction.atomic
-    def copy_across_assessment(cls, studies, assessment, cw=None, copy_rob=False):
-
-        # copy selected studies from one assessment to another.
-        if cw is None:
-            cw = collections.defaultdict(dict)
-
-        # assert all studies come from a single assessment
-        source_assessment = (
-            Assessment.objects.filter(references__in=studies)
-            .distinct()
-            .values_list("id", flat=True)
-        )
-        if len(source_assessment) != 1:
-            raise ValueError("Studies must come from the same assessment")
-        source_assessment = source_assessment[0]
-        cw[Assessment.COPY_NAME][source_assessment] = assessment.id
-
-        # copy studies; flag if any epi-meta studies exist
-        any_epi_meta = False
-        for study in studies:
-            logger.info(f"Copying study {study.id} to assessment {assessment.id}")
-
-            # get child-types and copy
-            children = []
-
-            if copy_rob:
-                children.extend(list(study.riskofbiases.all().order_by("id")))
-
-            if study.bioassay:
-                children.extend(list(study.experiments.all().order_by("id")))
-
-            if study.epi:
-                children.extend(list(study.study_populations.all().order_by("id")))
-
-            if study.in_vitro:
-                children.extend(
-                    itertools.chain(
-                        study.ivchemicals.all().order_by("id"),
-                        study.ivcelltypes.all().order_by("id"),
-                        study.ivexperiments.all().order_by("id"),
-                    )
-                )
-
-            if study.epi_meta:
-                any_epi_meta = True
-                children.extend(list(study.meta_protocols.all().order_by("id")))
-
-            # copy study and references
-            study._copy_across_assessment(cw)
-
-            for child in children:
-                child.copy_across_assessments(cw)
-
-        # Copy epimeta.SingleResult after copying studies because to ensure
-        # Study clones have already been created.
-        if any_epi_meta:
-            logger.info("Copying epi results")
-            SingleResult = apps.get_model("epimeta", "SingleResult")
-            results = SingleResult.objects.filter(
-                meta_result__protocol__study__in=studies
-            ).order_by("id")
-            for result in results:
-                result.copy_across_assessments(cw)
-
-        return cw
-
-    def _copy_across_assessment(self, cw):
-        # copy reference and identifiers
-        # (except RIS which is assessment-specific)
-        ref = self.reference_ptr
-        idents = ref.identifiers.filter(database__in=[0, 1, 2]).values_list("id", flat=True)
-        ref.id = None
-        ref.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-        ref.save()
-        ref.identifiers.add(*idents)
-
-        # associate reference w/ manually added search else it'll be designated an
-        # orphan reference which could potentially be deleted by users.
-        manual_search = Search.objects.get_manually_added(ref.assessment_id)
-        manual_search.references.add(ref)
-
-        # copy study
-        old_id = self.id
-        self.id = None
-        self.reference_ptr = ref
-        self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
-        self.save()
-
-        # save self to crosswalk
-        cw[self.COPY_NAME][old_id] = self.id
+    def metadata(cls) -> dict:
+        # return schema metadata for choice fields
+        return dict(coi_reported=dict(constants.CoiReported.choices))
 
     def __str__(self):
         return self.short_citation
@@ -291,6 +203,9 @@ class Study(Reference):
     def flat_complete_header_row():
         return (
             "study-id",
+            "study-hero_id",
+            "study-pubmed_id",
+            "study-doi",
             "study-url",
             "study-short_citation",
             "study-full_citation",
@@ -310,9 +225,19 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser):
+    def flat_complete_data_row(ser, identifiers_df: pd.DataFrame | None = None) -> tuple:
+        try:
+            ident_row = (
+                identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
+            )
+        except KeyError:
+            ident_row = None
         return (
             ser["id"],
+            # IDs can come from identifiers data frame if exists, else check study serializer
+            ident_row.hero_id if ident_row is not None else ser.get("hero_id", None),
+            ident_row.pubmed_id if ident_row is not None else ser.get("pubmed_id", None),
+            ident_row.doi if ident_row is not None else ser.get("doi", None),
             ser["url"],
             ser["short_citation"],
             ser["full_citation"],
@@ -330,6 +255,22 @@ class Study(Reference):
             ser["editable"],
             ser["published"],
         )
+
+    @classmethod
+    def identifiers_df(cls, qs: models.QuerySet, relation: str) -> pd.DataFrame:
+        """Returns a data frame with reference identifiers for each study in the QuerySet
+
+        Args:
+            qs (models.QuerySet): A QuerySet of an model with a relation to the study
+            relation (str): The relation string to the `Study.study_id` for this QuerySet
+
+        Returns:
+            pd.DataFrame: A data frame an index of study/reference id, and columns for identifiers
+        """
+        study_ids = qs.values_list(relation, flat=True)
+        studies = cls.objects.filter(id__in=study_ids)
+        identifiers_df = Reference.objects.identifiers_dataframe(studies)
+        return identifiers_df.set_index("reference_id")
 
     @classmethod
     def delete_caches(cls, ids):
@@ -415,6 +356,12 @@ class Study(Reference):
     def toggle_editable(self):
         self.editable = not self.editable
         self.save()
+
+    def data_types(self) -> list[bool]:
+        types = [self.bioassay, self.epi, self.epi_meta, self.in_vitro, self.eco]
+        if not settings.HAWC_FEATURES.ENABLE_ECO:
+            types = types[:-1]
+        return types
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):

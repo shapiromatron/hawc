@@ -1,12 +1,10 @@
-from typing import Optional
-
 from django.urls import reverse
 from pydantic import BaseModel
 
 
 class Breadcrumb(BaseModel):
     name: str
-    url: Optional[str] = None
+    url: str | None = None
 
     @classmethod
     def build_root(cls, user) -> "Breadcrumb":
@@ -43,7 +41,7 @@ class Breadcrumb(BaseModel):
         crumbs = []
         while True:
             crumbs.append(cls.from_object(obj))
-            parent_key = getattr(obj, "BREADCRUMB_PARENT")
+            parent_key = obj.BREADCRUMB_PARENT
             if parent_key is None:
                 break
             obj = getattr(obj, parent_key)
@@ -53,7 +51,7 @@ class Breadcrumb(BaseModel):
 
     @classmethod
     def build_crumbs(
-        cls, user, name: str, extras: Optional[list["Breadcrumb"]] = None
+        cls, user, name: str, extras: list["Breadcrumb"] | None = None
     ) -> list["Breadcrumb"]:
         """
         Build crumbs where there is not an assessment root.

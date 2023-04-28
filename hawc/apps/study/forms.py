@@ -1,5 +1,6 @@
 from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
@@ -11,8 +12,11 @@ from ..lit.models import Reference
 from . import models
 
 
-class BaseStudyForm(forms.ModelForm):
+def eco_enabled() -> bool:
+    return settings.HAWC_FEATURES.ENABLE_ECO
 
+
+class BaseStudyForm(forms.ModelForm):
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
@@ -47,13 +51,16 @@ class BaseStudyForm(forms.ModelForm):
             self.instance.assessment = parent
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
-
+        if not eco_enabled():
+            self.fields.pop("eco")
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
         self.helper = self.setHelper()
 
-    def setHelper(self, inputs={}):
+    def setHelper(self, inputs: dict | None = None):
+        if inputs is None:
+            inputs = {}
         for fld in ("full_citation", "coi_details", "funding_source", "ask_author"):
             self.fields[fld].widget.attrs["rows"] = 3
         for fld in list(self.fields.keys()):
@@ -68,7 +75,12 @@ class BaseStudyForm(forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"])
+        if eco_enabled():
+            helper.add_row(
+                "bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"]
+            )
+        else:
+            helper.add_row("bioassay", 4, "col-md-3")
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
@@ -242,46 +254,3 @@ class AttachmentForm(forms.ModelForm):
             cancel_url=self.instance.study.get_absolute_url(),
             submit_text="Create attachment",
         )
-
-
-class StudiesCopy(forms.Form):
-    HELP_TEXT = """
-    Clone multiple studies and move from one assessment to  another assessment.
-    Clones are complete and include most nested data.  Cloned studies do not
-    include risk of bias/study evaluation information.
-    """
-
-    studies = forms.ModelMultipleChoiceField(
-        queryset=models.Study.objects.all(), help_text="Select studies to copy."
-    )
-    assessment = forms.ModelChoiceField(
-        queryset=Assessment.objects.all(),
-        help_text="Select assessment you wish to copy these studies to.",
-    )
-
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
-        assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["assessment"].queryset = self.fields[
-            "assessment"
-        ].queryset.model.objects.get_editable_assessments(user, assessment.id)
-        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(
-            assessment_id=assessment.id
-        )
-        self.helper = self.setHelper(assessment)
-
-    def setHelper(self, assessment):
-        self.fields["studies"].widget.attrs["size"] = 15
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Copy studies across assessments",
-            "help_text": self.HELP_TEXT,
-            "cancel_url": reverse("study:list", args=[assessment.id]),
-        }
-
-        helper = BaseFormHelper(self, **inputs)
-
-        return helper

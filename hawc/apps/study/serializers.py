@@ -25,12 +25,12 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Study
         fields = "__all__"
+        read_only_fields = ("identifiers", "searches")
 
 
 class SimpleStudySerializer(StudySerializer):
     def validate(self, data):
         if "reference_id" in self.initial_data:
-
             ref_id = self.initial_data.get("reference_id")
 
             try:
@@ -82,6 +82,19 @@ class VerboseStudySerializer(StudySerializer):
     rob_settings = AssessmentRiskOfBiasSerializer(source="assessment")
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
+
+    def _get_identifier(self, identifiers: list, key: str, to_int: bool) -> int | str | None:
+        for identifier in identifiers:
+            if identifier["database"] == key:
+                value = identifier["unique_id"]
+                return int(value) if to_int else value
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["hero_id"] = self._get_identifier(ret["identifiers"], "HERO", True)
+        ret["pubmed_id"] = self._get_identifier(ret["identifiers"], "PubMed", True)
+        ret["doi"] = self._get_identifier(ret["identifiers"], "DOI", False)
+        return ret
 
     def get_riskofbiases(self, study):
         return FinalRiskOfBiasSerializer(study.get_final_qs(), many=True).data
@@ -152,10 +165,7 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
     class Meta:
         model = models.Study
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = (
-            "id",
-            "short_citation",
-        ) + cleanup_fields
+        fields = ("id", "short_citation", *cleanup_fields)
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
