@@ -1,45 +1,41 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">Management dashboard</h2>
-  <div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'mgmt:assessment_tasks' assessment.pk %}">Task list</a>
-        <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
-    </div>
+<h2 class="d-inline-block">Management dashboard</h2>
+<div class="dropdown btn-group float-right">
+  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+  <div class="dropdown-menu dropdown-menu-right">
+    <a class="dropdown-item" href="{% url 'mgmt:assessment_tasks' assessment.pk %}">Task list</a>
+    <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
+  </div>
+</div>
+
+{% if object_list %}
+{% load bs4 %}
+<div>
+  <h3>All task summary</h3>
+  <div>{% plotly all_tasks_plot %}</div>
+
+  <h3>Tasks by type</h3>
+  <div class="d-flex row">
+    {% for plot in type_plots %}
+    <div style="margin-bottom: 10px;">{% plotly plot %}</div>
+    {% endfor %}
   </div>
 
-  {% if object_list %}
-  {% load bs4 %}
-  <div>
-    <h3>All task summary</h3>
-    <div>{% plotly all_tasks_plot %}</div>
-
-    <h3>Tasks by type</h3>
-    <div class="d-flex row">
-      {% for plot in type_plots %}
-      <div style="margin-bottom: 10px;">{% plotly plot %}</div>
-      {% endfor %}
-    </div>
-
-    <h3>Tasks by user</h3>
-    <div class="d-flex row">
-      {% for plot in user_plots %}
-      <div style="margin-bottom: 10px;">{% plotly plot %}</div>
-      {% endfor %}
-    </div>
+  <h3>Tasks by user</h3>
+  <div class="d-flex row">
+    {% for plot in user_plots %}
+    <div style="margin-bottom: 10px;">{% plotly plot %}</div>
+    {% endfor %}
   </div>
-  {% else %}
-  <p>No tasks have been assigned.</p>
-  {% endif %}
+</div>
+{% else %}
+<p>No tasks have been assigned.</p>
+{% endif %}
 
 
 
 
-  <div id='main'></div>
+<div id='main'></div>
 {% endblock %}
-
-{% block extrajs %}
-  {{ config|json_script:"config" }}
-{% endblock extrajs %}
