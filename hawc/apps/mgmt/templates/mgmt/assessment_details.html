@@ -65,7 +65,7 @@
       </colgroup>
       <thead>
         <tr>
-          <th><span class="popovers" data-title="Study" data-content="Selected study object" data-original-title=""
+          <th><span class="popovers"  data-title="Study" data-content="Selected study object" data-original-title=""
               title="">Study</span></th>
           <th><span class="popovers" data-title="Data preparation"
               data-content="Content which should be extracted from reference is clarified and saved to the Study instance for data-extractors."
@@ -102,4 +102,10 @@
     </table>
   </div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(".popovers").popover();
+  </script>
 {% endblock %}
