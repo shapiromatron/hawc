@@ -9,103 +9,53 @@
   </div>
 </div>
 
-<!-- TODO filter by study type section not wired up  -->
-<div class="mb-3">
-  <div>
-    <div class="container-fluid filterContainer">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>Study type filter (optional):</label>
-            <select multiple="" class="form-control" size="4">
-              <option value="bioassay">Animal bioassay</option>
-              <option value="epi">Epidemiology</option>
-              <option value="epi_meta">Epidemiology meta-analysis</option>
-              <option value="in_vitro">In vitro</option>
-              <option value="eco">Ecology</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>Sort studies by:</label>
-            <div class="form-check"><input class="form-check-input" type="radio" id="sortBy-short_citation"
-                name="sortBy" checked="">
-              <label class="form-check-label" for="sortBy-short_citation">Short citation</label>
-            </div>
-            <div class="form-check"><input class="form-check-input" type="radio" id="sortBy-created" name="sortBy">
-              <label class="form-check-label" for="sortBy-created">Creation date</label>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>Order studies by:</label>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" id="orderBy-asc" name="orderBy" checked="">
-              <label class="form-check-label" for="orderBy-asc">Ascending</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" id="orderBy-desc" name="orderBy">
-              <label class="form-check-label" for="orderBy-desc">Descending</label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+{% include 'common/filter_list.html' with plural_object_name='studies' %}
 
+{% if object_list %}
+<table class="table table-sm">
+  <colgroup>
+    <col width="20%">
+    <col width="20%">
+    <col width="20%">
+    <col width="20%">
+    <col width="20%">
+  </colgroup>
+  <thead>
+    <tr>
+      <th><span class="popovers" data-title="Study" data-content="Selected study.">Study</span></th>
+      <th><span class="popovers" data-title="Data preparation" data-content="Content which should be extracted from study is documented for data extractors.">Data preparation</span></th>
+      <th><span class="popovers" data-title="Data extraction" data-content="Data is extracted from study.">Data extraction</span></th>
+      <th><span class="popovers" data-title="QA/QC" data-content="Data extracted has been QA/QC.">QA/QC</span></th>
+      <th><span class="popovers" data-title="Risk of bias/study evaluation" data-content="Risk of bias/study evaluation has been completed (if enabled).">Risk of bias/study evaluation</span></th>
+    </tr>
+  </thead>
+  <tbody>
 
-    <table class="table table-sm">
-      <colgroup>
-        <col width="20%">
-        <col width="20%">
-        <col width="20%">
-        <col width="20%">
-        <col width="20%">
-      </colgroup>
-      <thead>
-        <tr>
-          <th><span class="popovers"  data-title="Study" data-content="Selected study object" data-original-title=""
-              title="">Study</span></th>
-          <th><span class="popovers" data-title="Data preparation"
-              data-content="Content which should be extracted from reference is clarified and saved to the Study instance for data-extractors."
-              data-original-title="" title="">Data preparation</span></th>
-          <th><span class="popovers" data-title="Data extraction"
-              data-content="Data is extracted from reference into HAWC. This can be animal bioassay, epidemiological, epidemiological meta-analyses, or in-vitro data."
-              data-original-title="" title="">Data extraction</span></th>
-          <th><span class="popovers" data-title="QA/QC" data-content="Data extracted has been QA/QC."
-              data-original-title="" title="">QA/QC</span></th>
-          <th><span class="popovers" data-title="Risk of bias/study evaluation completed"
-              data-content="Risk of bias/study evaluation has been completed for this reference (if enabled for this assessment)."
-              data-original-title="" title="">Risk of bias/study evaluation completed</span></th>
-        </tr>
-      </thead>
+    {% regroup object_list by study as study_list %}
 
-      <tbody>
-
-        {% regroup object_list by study as study_list %}
-
-        {% for study in study_list %}
-        <tr class="taskStudyRow">
-          <td>
-            <a href="{{ study.grouper.get_absolute_url }}">{{ study.grouper }}</a>
-            <br>
-            <b>Date created: </b>
-            <span>{{ study.grouper.created|date:"SHORT_DATE_FORMAT" }}</span>
-          </td>
-          {% for task in study.list %}
-          {% include "mgmt/fragments/task_cell.html" with object=task show_owner=True %}
-          {% endfor %}
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+    {% for study in study_list %}
+    <tr class="taskStudyRow">
+      <td>
+        <a href="{{ study.grouper.get_absolute_url }}">{{ study.grouper }}</a>
+        <br>
+        <b>Date created: </b>
+        <span>{{ study.grouper.created|date:"SHORT_DATE_FORMAT" }}</span>
+      </td>
+      {% for task in study.list %}
+      {% include "mgmt/fragments/task_cell.html" with object=task %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No tasks available.</p>
+{% endif %}
+{% include "includes/paginator.html" with plural_object_name="tasks" %}
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(".popovers").popover();
+    $(".popovers").popover({"trigger":"hover"});
   </script>
 {% endblock %}

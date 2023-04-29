@@ -5,10 +5,10 @@
         <b>Status: </b>
         <i class="fa fa-circle mgmt-circle s{{ object.status }}"></i>{{ object.get_status_display|capfirst }}
       </div>
-      {% if show_owner %}<div>
+      <div>
         <b>Owner: </b>
         <span>{{ object.owner }}</span>
-      </div>{% endif %}
+      </div>
       <div>
         <b>Task: </b>
         <span>{{ object.get_type_display|capfirst }}</span>

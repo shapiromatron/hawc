@@ -19,8 +19,8 @@ urlpatterns = [
     ),
     path(
         "assessment/<int:pk>/details/",
-        views.TaskDetail.as_view(),
-        name="assessment_tasks",
+        views.TaskList.as_view(),
+        name="task-list",
     ),
     # task htmx ViewSet
     path(

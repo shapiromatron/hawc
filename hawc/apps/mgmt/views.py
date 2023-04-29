@@ -13,6 +13,7 @@ from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit
 from ..common.views import (
+    BaseFilterList,
     BaseList,
     LoginRequiredMixin,
     WebappMixin,
@@ -20,7 +21,7 @@ from ..common.views import (
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from ..study.serializers import StudyAssessmentSerializer
-from . import constants, forms, models
+from . import constants, filterset, forms, models
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -210,11 +211,13 @@ class TaskDashboard(BaseList):
         )
 
 
-class TaskDetail(BaseList):
+class TaskList(BaseFilterList):
     parent_model = Assessment
     model = models.Task
+    filterset_class = filterset.TaskFilterSet
     template_name = "mgmt/assessment_details.html"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    paginate_by = 100
 
     def get_queryset(self):
         return (
