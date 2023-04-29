@@ -102,7 +102,7 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
         # TODO query below does not allow calling get_edit_url in user_assignments.html and user_assessment_assignments.hmtl()
         context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB)
         if not show_completed:
-            context["object_list"] = context["object_list"].exclude(status__in=[30, 40])
+            context["object_list"] = context["object_list"].exclude_completed_and_abandonded()
         context["show_completed"] = show_completed
         return context
 
@@ -139,7 +139,7 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
         context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB.value)
         if not show_completed:
-            context["object_list"] = context["object_list"].exclude(status__in=[30, 40])
+            context["object_list"] = context["object_list"].exclude_completed_and_abandonded()
         context["show_completed"] = show_completed
         return context
 
