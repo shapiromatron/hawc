@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
 <h2 class="d-inline-block">Management dashboard</h2>
 <div class="dropdown btn-group float-right">
@@ -11,7 +13,6 @@
 </div>
 
 {% if object_list %}
-{% load bs4 %}
 <div>
   <h3>All task summary</h3>
   <div>{% plotly all_tasks_plot %}</div>

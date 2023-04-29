@@ -1,7 +1,7 @@
 from collections import Counter
 
 import plotly.express as px
-from django.apps import apps
+from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.urls import reverse
@@ -12,21 +12,32 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit
-from ..common.views import (
-    BaseFilterList,
-    BaseList,
-    LoginRequiredMixin,
-    WebappMixin,
-)
+from ..common.views import BaseFilterList, BaseList, LoginRequiredMixin
 from ..myuser.models import HAWCUser
+from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
-from ..study.serializers import StudyAssessmentSerializer
 from . import constants, filterset, forms, models
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
     return Breadcrumb(
         name="Management dashboard", url=reverse("mgmt:assessment_dashboard", args=(assessment.id,))
+    )
+
+
+def studies_with_active_user_reviews(user, task_qs: QuerySet[models.Task]) -> QuerySet[Study]:
+    """Given a list of tasks, return studies that have an incomplete RiskOfBias
+    review by the current user. Reviews may be complete or incomplete; we just
+    check by the status of the mgmt.Task.
+    """
+    active_rob_tasks = task_qs.exclude_completed_and_abandonded().filter(
+        type=constants.TaskType.ROB
+    )
+    own_reviews = RiskOfBias.objects.filter(author=user, active=True)
+    return (
+        Study.objects.filter(id__in=active_rob_tasks.values_list("study_id", flat=True))
+        .prefetch_related(Prefetch("riskofbiases", own_reviews, to_attr="own_reviews"))
+        .select_related("assessment")
     )
 
 
@@ -50,31 +61,7 @@ class EnsureExtractionStartedMixin:
         return super().get_success_url()
 
 
-# User-level task views
-class RobTaskMixin:
-    """
-    Add risk of bias tasks for a user to task views.
-    """
-
-    def get_rob_queryset(self, RiskOfBias):
-        raise NotImplementedError("Abstract method; requires implementation")
-
-    def get_review_tasks(self):
-        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
-        rob_tasks = self.get_rob_queryset(RiskOfBias)
-        self._study_ids = rob_tasks.values_list("study_id", flat=True)
-        filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
-        return RiskOfBias.get_qs_json(filtered_tasks, json_encode=False)
-
-    def get_review_studies(self):
-        Study = apps.get_model("study", "Study")
-        study_qs = Study.objects.filter(id__in=self._study_ids).select_related("assessment")
-        study_ser = StudyAssessmentSerializer(study_qs, many=True)
-        # must cast to list to circumvent error when included in pydantic model
-        return list(study_ser.data)
-
-
-class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
+class UserAssignments(LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_assignments.html"
 
@@ -86,28 +73,20 @@ class UserAssignments(RobTaskMixin, WebappMixin, LoginRequiredMixin, ListView):
             .order_by("-study__assessment_id", "study__short_citation", "type")
         )
 
-    def get_rob_queryset(self, RiskOfBias):
-        return RiskOfBias.objects.filter(author=self.request.user, active=True)
-
-    def get_review_tasks2(self):
-        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
-        rob_tasks = self.get_rob_queryset(RiskOfBias)
-        self._study_ids = rob_tasks.values_list("study_id", flat=True)
-        return [rob for rob in rob_tasks if rob.is_complete is False]
-
     def get_context_data(self, **kwargs):
         show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
-        # TODO query below does not allow calling get_edit_url in user_assignments.html and user_assessment_assignments.hmtl()
-        context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB)
         if not show_completed:
             context["object_list"] = context["object_list"].exclude_completed_and_abandonded()
         context["show_completed"] = show_completed
+        context["studies_with_rob"] = studies_with_active_user_reviews(
+            self.request.user, context["object_list"]
+        )
         return context
 
 
-class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
+class UserAssessmentAssignments(BaseList):
     parent_model = Assessment
     model = models.Task
     template_name = "mgmt/user_assessment_assignments.html"
@@ -126,20 +105,16 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
             author=self.request.user, active=True, study__assessment=self.assessment
         )
 
-    def get_review_tasks2(self):
-        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
-        rob_tasks = self.get_rob_queryset(RiskOfBias)
-        self._study_ids = rob_tasks.values_list("study_id", flat=True)
-        return [rob for rob in rob_tasks if rob.is_complete is False]
-
     def get_context_data(self, **kwargs):
         show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
-        context["rob_task_list"] = context["object_list"].filter(type=constants.TaskType.ROB.value)
         if not show_completed:
             context["object_list"] = context["object_list"].exclude_completed_and_abandonded()
+        context["studies_with_rob"] = studies_with_active_user_reviews(
+            self.request.user, context["object_list"]
+        )
         context["show_completed"] = show_completed
         return context
 
@@ -169,7 +144,6 @@ def get_task_plot(tasks: list[models.Task], title: str = ""):
     return task_plot
 
 
-# Assessment-level task views
 class TaskDashboard(BaseList):
     parent_model = Assessment
     model = models.Task

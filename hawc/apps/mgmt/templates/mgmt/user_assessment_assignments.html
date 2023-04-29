@@ -3,76 +3,72 @@
     <h2>My assigned tasks</h2>
 
     {% if show_completed %}
-    <a class="btn btn-light mb-4" role="button" href=".?completed=off">Hide completed and
+    <a class="btn btn-light mb-4" role="button" href="?completed=off">Hide completed and
         abandoned tasks</a>
     {% else %}
-    <a class="btn btn-light mb-4" role="button" href=".?completed=on">Show completed and
+    <a class="btn btn-light mb-4" role="button" href="?completed=on">Show completed and
         abandoned tasks</a>
     {% endif %}
 
     {% if object_list %}
-    <div>
-        <table class="table table-sm table-striped">
-            <colgroup>
-                <col width="30%" />
-                <col width="70%" />
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Study</th>
-                    <th>Task</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in object_list %}
-                <tr>
-                    <td>
-                        <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a>
-                    </td>
-                    {% include "mgmt/fragments/task_cell.html" with object=task %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <table class="table table-sm table-striped">
+        <colgroup>
+            <col width="30%" />
+            <col width="70%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Study</th>
+                <th>Reviews</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in object_list %}
+            <tr>
+                <td>
+                    <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a>
+                </td>
+                {% include "mgmt/fragments/task_cell.html" with object=task %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
-    <div>
-        <i>There are no tasks available</i>
-    </div>
+    <p><i>There are no tasks available</i></p>
     {% endif %}
 
-    <!-- risk of bias section  -->
-    <div>
-        <h4>Pending risk of bias/study evaluation reviews</h4>
-        {% if rob_task_list %}
-        <table class="table table-sm table-striped">
-            <colgroup>
-                <col width="33%" />
-                <col width="66%" />
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Study</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in rob_task_list %}
-                <tr>
-                    <td>
-                        <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a>
-                    </td>
-                    <td>
-                        <a class="btn btn-light" href="{{task.get_edit_url}}"><i class="fa fa-edit"></i> Edit review</a>
-                        <!-- TODO get_edit_url does not work with current query  -->
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <i>You have no outstanding reviews</i>
-        {% endif %}
-    </div>
+    <h4>Pending study evaluations</h4>
+    {% if studies_with_rob %}
+    <table class="table table-sm table-striped">
+        <colgroup>
+            <col width="33%" />
+            <col width="66%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Study</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for study in studies_with_rob %}
+            <tr>
+                <td>
+                    <a href="{{ study.get_absolute_url }}">{{ study.short_citation }}</a>
+                </td>
+                <td>
+                    {% for review in study.own_reviews %}
+                    <a class="btn btn-light" href="{{review.get_edit_url}}"><i class="fa fa-edit"></i>&nbsp;Update {% if review.final %}final {% endif %}review</a>
+                    {% empty %}
+                    <span><i>None available</i></span>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p><i>You have no outstanding reviews</i></p>
+    {% endif %}
 </div>
 {% endblock %}

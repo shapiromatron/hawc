@@ -48,31 +48,31 @@
 </div>
 {% endif %}
 
-<!-- risk of bias section -->
-
-<h4>Pending risk of bias/study evaluation reviews</h4>
-
-{% if rob_task_list %}
-<table style="width: 100%;" class="table table-sm table-striped">
+<h4>Pending study evaluations</h4>
+{% if studies_with_rob %}
+<table class="table table-sm table-striped">
     <thead>
         <tr>
             <th style="width: 33%;">Assessment</th>
             <th style="width: 33%;">Study</th>
-            <th style="width: 66%;">Action</th>
+            <th style="width: 66%;">Reviews</th>
         </tr>
     </thead>
     <tbody>
-        {% for rob in rob_task_list %}
+        {% for study in studies_with_rob %}
         <tr>
             <td>
-                <a href="{{ rob.get_assessment.get_absolute_url }}">{{ rob.get_assessment }}</a>
+                <a href="{{ study.assessment.get_absolute_url }}">{{ study.assessment.get_assessment }}</a>
             </td>
             <td>
-                <a href="{{ rob.study.get_absolute_url }}">{{ rob.study.short_citation }}</a>
+                <a href="{{ study.get_absolute_url }}">{{ study.short_citation }}</a>
             </td>
             <td>
-                <a class="btn btn-light" href="{{ rob.get_edit_url }}"><i class="fa fa-edit"></i> Edit Review</a>
-                <!-- TODO get_edit_url does not work with current query  -->
+                {% for review in study.own_reviews %}
+                    <a class="btn btn-light" href="{{review.get_edit_url}}"><i class="fa fa-edit"></i>&nbsp;Update  {% if review.final %}final {% endif %}review</a>
+                    {% empty %}
+                    <span><i>None available</i></span>
+                    {% endfor %}
             </td>
         </tr>
         {% endfor %}
