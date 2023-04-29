@@ -4,51 +4,39 @@
 <h2>My assigned tasks</h2>
 
 {% if show_completed %}
-<a class="btn btn-light mb-4" role="button" href=".?completed=off">Hide completed and abandoned
-    tasks</a>
+<a class="btn btn-light mb-4" role="button" href="?completed=off">Hide completed and abandoned tasks</a>
 {% else %}
-<a class="btn btn-light mb-4" role="button" href=".?completed=on">Show completed and abandoned
-    tasks</a>
+<a class="btn btn-light mb-4" role="button" href="?completed=on">Show completed and abandoned tasks</a>
 {% endif %}
 
-<div id="incomplete-tasks">
-    {% if object_list %}
+{% regroup object_list by get_assessment as assessment_list %}
+{% for assessment in assessment_list %}
+<h3>{{ assessment.grouper }} <a class="btn btn-sm btn-primary" href="{{ assessment.grouper.get_absolute_url }}">View</a></h3>
+<table style="width: 100%;" class="table table-sm table-striped">
+    <colgroup>
+        <col width="30%" />
+        <col width="70%" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Study</th>
+            <th>Task</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in assessment.list %}
+        <tr>
+            <td> <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
+            {% include "mgmt/fragments/task_cell.html" with object=task %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% empty %}
+<p><i>There are no tasks available</i></p>
+{% endfor %}
 
-    {% regroup object_list by get_assessment as assessment_list %}
-
-    {% for assessment in assessment_list %}
-
-    <h4>{{ assessment.grouper }} <a class="btn btn-sm btn-primary"
-            href="{{ assessment.grouper.get_absolute_url }}">View</a></h4>
-    <table style="width: 100%;" class="table table-sm table-striped">
-        <colgroup>
-            <col width="30%" />
-            <col width="70%" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Study</th>
-                <th>Task</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in assessment.list %}
-            <tr>
-                <td> <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a></td>
-                {% include "mgmt/fragments/task_cell.html" with object=task %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endfor %}
-</div>
-{% else %}
-<div>
-    <i>There are no tasks available</i>
-</div>
-{% endif %}
-
-<h4>Pending study evaluations</h4>
+<h3>Pending study evaluations</h3>
 {% if studies_with_rob %}
 <table class="table table-sm table-striped">
     <thead>
