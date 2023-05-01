@@ -5,7 +5,7 @@ from . import views
 app_name = "mgmt"
 urlpatterns = [
     # user task-list
-    path("tasks/", views.UserTask.as_view(), name="user-task-list"),
+    path("tasks/", views.UserTaskList.as_view(), name="user-task-list"),
     path(
         "assessment/<int:pk>/tasks/",
         views.UserAssessmentTaskList.as_view(),
@@ -14,12 +14,12 @@ urlpatterns = [
     # assessment-level views
     path(
         "assessment/<int:pk>/",
-        views.TaskDashboard.as_view(),
+        views.AssessmentTaskDashboard.as_view(),
         name="assessment_dashboard",
     ),
     path(
         "assessment/<int:pk>/details/",
-        views.TaskList.as_view(),
+        views.AssessmentTaskList.as_view(),
         name="task-list",
     ),
     # task htmx ViewSet

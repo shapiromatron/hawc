@@ -1,6 +1,3 @@
-from collections import Counter
-
-import plotly.express as px
 from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest
 from django.shortcuts import render
@@ -61,7 +58,7 @@ class EnsureExtractionStartedMixin:
         return super().get_success_url()
 
 
-class UserTask(LoginRequiredMixin, FilterSetMixin, ListView):
+class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
     filterset_class = filterset.UserTaskFilterSet
     model = models.Task
     template_name = "mgmt/user_task_list.html"
@@ -117,32 +114,7 @@ class UserAssessmentTaskList(BaseFilterList):
         return context
 
 
-def get_task_plot(tasks: list[models.Task], title: str = ""):
-    counts = Counter(el.status for el in tasks)
-    status_count = {label: counts.get(value, 0) for value, label in constants.TaskStatus.choices}
-    task_plot = px.bar(
-        x=list(status_count.values()),
-        y=list(status_count.keys()),
-        orientation="h",
-        title=title,
-        width=500,
-        height=200,
-        template="none",
-        color=list(status_count.keys()),
-        color_discrete_sequence=["#cfcfcf", "#fecc01", "#02cc00", "#ff0000"],
-        text_auto=True,
-    )
-    task_plot.update_layout(
-        xaxis={"title": "Tasks"},
-        yaxis={"title": "", "autorange": "reversed"},
-        margin={"l": 85, "r": 0, "t": 30, "b": 30},
-        showlegend=False,
-        hovermode=False,
-    )
-    return task_plot
-
-
-class TaskDashboard(BaseList):
+class AssessmentTaskDashboard(BaseList):
     parent_model = Assessment
     model = models.Task
     template_name = "mgmt/assessment_dashboard.html"
@@ -163,13 +135,13 @@ class TaskDashboard(BaseList):
             id__in=context["object_list"].values_list("owner", flat=True).distinct()
         ).order_by("last_name", "id")
         qs = list(context["object_list"])
-        context["all_tasks_plot"] = get_task_plot(qs)
+        context["all_tasks_plot"] = models.Task.barchart(qs)
         context["type_plots"] = [
-            get_task_plot(filter(lambda el: el.type == key, qs), title=label)
+            models.Task.barchart(filter(lambda el: el.type == key, qs), title=label)
             for key, label in constants.TaskType.choices
         ]
         context["user_plots"] = [
-            get_task_plot(
+            models.Task.barchart(
                 filter(lambda el: el.owner and el.owner.id == user.id, qs),
                 title=user.get_full_name(),
             )
@@ -183,7 +155,7 @@ class TaskDashboard(BaseList):
         )
 
 
-class TaskList(BaseFilterList):
+class AssessmentTaskList(BaseFilterList):
     parent_model = Assessment
     model = models.Task
     filterset_class = filterset.TaskFilterSet

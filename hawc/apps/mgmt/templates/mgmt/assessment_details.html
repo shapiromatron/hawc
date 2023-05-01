@@ -1,5 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
 <h2 class="d-inline-block">Task assignments</h2>
 <div class="btn-group float-right">
@@ -13,13 +15,7 @@
 
 {% if object_list %}
 <table class="table table-sm">
-  <colgroup>
-    <col width="20%">
-    <col width="20%">
-    <col width="20%">
-    <col width="20%">
-    <col width="20%">
-  </colgroup>
+  {% bs4_colgroup "20,20,20,20,20" %}
   <thead>
     <tr>
       <th><span class="popovers" data-title="Study" data-content="Selected study.">Study</span></th>
@@ -30,9 +26,7 @@
     </tr>
   </thead>
   <tbody>
-
     {% regroup object_list by study as study_list %}
-
     {% for study in study_list %}
     <tr class="taskStudyRow">
       <td>
@@ -48,10 +42,10 @@
     {% endfor %}
   </tbody>
 </table>
+{% include "includes/paginator.html" with plural_object_name="tasks" %}
 {% else %}
 <p>No tasks available.</p>
 {% endif %}
-{% include "includes/paginator.html" with plural_object_name="tasks" %}
 {% endblock %}
 
 {% block extrajs %}
