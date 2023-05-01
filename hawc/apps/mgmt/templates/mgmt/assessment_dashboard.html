@@ -15,17 +15,17 @@
 {% if object_list %}
 <div>
   <h3>All task summary</h3>
-  <div>{% plotly all_tasks_plot %}</div>
+  <div class="bar-all">{% plotly all_tasks_plot %}</div>
 
   <h3>Tasks by type</h3>
-  <div class="d-flex row">
+  <div class="bar-task d-flex row">
     {% for plot in type_plots %}
     <div class="mb-3">{% plotly plot %}</div>
     {% endfor %}
   </div>
 
   <h3>Tasks by user</h3>
-  <div class="d-flex row">
+  <div class="bar-user d-flex row">
     {% for plot in user_plots %}
     <div class="mb-3">{% plotly plot %}</div>
     {% endfor %}

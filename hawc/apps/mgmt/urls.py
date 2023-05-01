@@ -15,7 +15,7 @@ urlpatterns = [
     path(
         "assessment/<int:pk>/",
         views.AssessmentTaskDashboard.as_view(),
-        name="assessment_dashboard",
+        name="task-dashboard",
     ),
     path(
         "assessment/<int:pk>/details/",

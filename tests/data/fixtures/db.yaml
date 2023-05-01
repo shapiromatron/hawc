@@ -1273,7 +1273,7 @@
   pk: 1
   fields:
     content_type: 1
-    template: <h1>Welcome to HAWC</h1>
+    template: <h1>Welcome to HAWC</h1><p><a class="btn btn-light" href="{% url 'user:login' %}">Login</a></p>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: assessment.content
@@ -10225,10 +10225,11 @@
 - model: mgmt.task
   pk: 2
   fields:
-    owner: null
+    owner:
+    - team@hawcproject.org
     study: 1
     type: 20
-    status: 10
+    status: 20
     open: false
     due_date: null
     started: null

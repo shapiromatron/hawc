@@ -18,7 +18,7 @@ from . import constants, filterset, forms, models
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
     return Breadcrumb(
-        name="Management dashboard", url=reverse("mgmt:assessment_dashboard", args=(assessment.id,))
+        name="Management dashboard", url=reverse("mgmt:task-dashboard", args=(assessment.id,))
     )
 
 
@@ -90,6 +90,7 @@ class UserAssessmentTaskList(BaseFilterList):
     model = models.Task
     parent_model = Assessment
     template_name = "mgmt/user_assessment_task_list.html"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         return (
