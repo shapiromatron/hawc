@@ -12,6 +12,12 @@ from django.utils.safestring import mark_safe
 register = template.Library()
 
 
+@register.filter
+def get(dictionary: dict, key: str):
+    """Get a key from a dictionary or dictionary-like object."""
+    return dictionary.get(key)
+
+
 @register.simple_tag
 def audit_url(object):
     ct = ContentType.objects.get_for_model(object.__class__)

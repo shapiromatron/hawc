@@ -1,4 +1,5 @@
 import django_filters as df
+from django.forms.widgets import CheckboxInput
 from django_filters.constants import EMPTY_VALUES
 
 from ..common.filterset import BaseFilterSet
@@ -14,6 +15,46 @@ class TaskOrderingFilter(df.OrderingFilter):
 
         ordering = [self.get_ordering_value(param) for param in value] + ["study_id", "type"]
         return qs.order_by(*ordering)
+
+
+class UserTaskFilterSet(BaseFilterSet):
+    assessment_name = df.CharFilter(
+        lookup_expr="icontains", field_name="study__assessment__name", label="Assessment name"
+    )
+    study_name = df.CharFilter(
+        lookup_expr="icontains", field_name="study__short_citation", label="Study name"
+    )
+    show_completed = df.BooleanFilter(
+        method="filter_show_completed",
+        label="Show completed and abandoned",
+        initial=False,
+        widget=CheckboxInput(),
+    )
+
+    class Meta:
+        model = models.Task
+        fields = ["assessment_name", "study_name", "type", "show_completed"]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+            ]
+        }
+
+    def filter_show_completed(self, queryset, name, value):
+        if value is True:
+            return queryset
+        return queryset.exclude_completed_and_abandonded()
+
+
+class AssessmentUserTaskFilterSet(UserTaskFilterSet):
+    class Meta(UserTaskFilterSet.Meta):
+        model = models.Task
+        fields = ["study_name", "type", "show_completed"]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
+            ]
+        }
 
 
 class TaskFilterSet(BaseFilterSet):

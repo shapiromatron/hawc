@@ -5,11 +5,11 @@
 <div class="btn-group float-right">
   <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
   <div class="dropdown-menu dropdown-menu-right">
-    <a class="dropdown-item" href="{% url 'mgmt:user_assessment_assignments' assessment.pk %}">My assigned tasks</a>
+    <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
   </div>
 </div>
 
-{% include 'common/filter_list.html' with plural_object_name='studies' %}
+{% include 'common/filter_list.html' with plural_object_name='tasks' %}
 
 {% if object_list %}
 <table class="table table-sm">

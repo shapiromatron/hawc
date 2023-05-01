@@ -5,11 +5,11 @@ from . import views
 app_name = "mgmt"
 urlpatterns = [
     # user task-list
-    path("my-assignments/", views.UserAssignments.as_view(), name="user_assignments"),
+    path("tasks/", views.UserTask.as_view(), name="user-task-list"),
     path(
-        "my-assignments/<int:pk>/",
-        views.UserAssessmentAssignments.as_view(),
-        name="user_assessment_assignments",
+        "assessment/<int:pk>/tasks/",
+        views.UserAssessmentTaskList.as_view(),
+        name="user-assessment-task-list",
     ),
     # assessment-level views
     path(

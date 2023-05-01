@@ -12,7 +12,7 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit
-from ..common.views import BaseFilterList, BaseList, LoginRequiredMixin
+from ..common.views import BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
 from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
@@ -61,61 +61,59 @@ class EnsureExtractionStartedMixin:
         return super().get_success_url()
 
 
-class UserAssignments(LoginRequiredMixin, ListView):
+class UserTask(LoginRequiredMixin, FilterSetMixin, ListView):
+    filterset_class = filterset.UserTaskFilterSet
     model = models.Task
-    template_name = "mgmt/user_assignments.html"
+    template_name = "mgmt/user_task_list.html"
 
     def get_queryset(self):
         return (
-            self.model.objects.all()
+            super()
+            .get_queryset()
             .owned_by(self.request.user)
             .select_related("study__assessment")
             .order_by("-study__assessment_id", "study__short_citation", "type")
         )
 
     def get_context_data(self, **kwargs):
-        show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
-        if not show_completed:
-            context["object_list"] = context["object_list"].exclude_completed_and_abandonded()
-        context["show_completed"] = show_completed
-        context["studies_with_rob"] = studies_with_active_user_reviews(
-            self.request.user, context["object_list"]
-        )
+        context["studies"] = {
+            study.id: study
+            for study in studies_with_active_user_reviews(
+                self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
+            )
+        }
+        context["TaskType"] = constants.TaskType
         return context
 
 
-class UserAssessmentAssignments(BaseList):
-    parent_model = Assessment
+class UserAssessmentTaskList(BaseFilterList):
+    filterset_class = filterset.AssessmentUserTaskFilterSet
     model = models.Task
-    template_name = "mgmt/user_assessment_assignments.html"
+    parent_model = Assessment
+    template_name = "mgmt/user_assessment_task_list.html"
 
     def get_queryset(self):
         return (
             super()
             .get_queryset()
-            .filter(study__assessment=self.assessment)
             .owned_by(self.request.user)
-            .select_related("owner", "study", "study__reference_ptr", "study__assessment")
-        )
-
-    def get_rob_queryset(self, RiskOfBias):
-        return RiskOfBias.objects.filter(
-            author=self.request.user, active=True, study__assessment=self.assessment
+            .select_related("study__assessment")
+            .filter(study__assessment=self.assessment)
+            .order_by("study__short_citation", "type")
         )
 
     def get_context_data(self, **kwargs):
-        show_completed = self.request.GET.get("completed", "off") == "on"
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
-        if not show_completed:
-            context["object_list"] = context["object_list"].exclude_completed_and_abandonded()
-        context["studies_with_rob"] = studies_with_active_user_reviews(
-            self.request.user, context["object_list"]
-        )
-        context["show_completed"] = show_completed
+        context["studies"] = {
+            study.id: study
+            for study in studies_with_active_user_reviews(
+                self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
+            )
+        }
         return context
 
 

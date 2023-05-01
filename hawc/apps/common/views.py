@@ -693,7 +693,12 @@ class FilterSetMixin:
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
-        value = self.filterset.form.cleaned_data.get("paginate_by")
+        form = self.filterset.form
+        value = (
+            form.cleaned_data.get("paginate_by")
+            if hasattr(form, "cleaned_data")
+            else self.paginate_by
+        )
         return tryParseInt(value, default=self.paginate_by, min_value=10, max_value=500)
 
     def get_filterset_kwargs(self):
