@@ -135,7 +135,8 @@ class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         grid_layout = kwargs.pop("grid_layout", None)
         self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
-
+        self.main_field = kwargs.pop("main_field", None)  # unused
+        self.appended_fields = kwargs.pop("appended_fields", [])  # unused
         super().__init__(*args, **kwargs)
 
     @property
