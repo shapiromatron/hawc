@@ -346,6 +346,8 @@ class TagReferences(BaseFilterList):
                     "include_descendants",
                     "anything_tagged",
                 ],
+                main_field="title_abstract",
+                appended_fields=["order_by"],
                 grid_layout={
                     "rows": [
                         {"columns": [{"width": 12}]},

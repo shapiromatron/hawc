@@ -201,7 +201,7 @@ class InlineFilterFormHelper(BaseFormHelper):
             if self.form.grid_layout:
                 self.form.grid_layout.apply_layout(self)
         else:
-            self.build_default_layout()
+            self.build_default_layout(self.form)
         return self.layout
 
     def add_filter_field(
