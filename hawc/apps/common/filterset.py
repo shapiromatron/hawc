@@ -135,8 +135,6 @@ class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         grid_layout = kwargs.pop("grid_layout", None)
         self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
-        self.main_field = kwargs.pop("main_field", None)  # unused
-        self.appended_fields = kwargs.pop("appended_fields", [])  # unused
         super().__init__(*args, **kwargs)
 
     @property
@@ -257,22 +255,17 @@ class BaseFilterSet(FilterSet):
             forms.Form: a django.Form instance
         """
         Form = self.get_form_class()
-        if self.is_bound:
-            form = Form(
-                self.data,
-                prefix=self.form_prefix,
-                grid_layout=self._meta.grid_layout,
-                main_field=self._meta.main_field,
-                appended_fields=self._meta.appended_fields,
+        attrs = {
+            "data": self.data if self.is_bound else {},
+            "prefix": self.form_prefix,
+            "grid_layout": self._meta.grid_layout,
+        }
+        if self._meta.form == ExpandableFilterForm or self._meta.form == InlineFilterForm:
+            attrs.update(
+                {"main_field": self._meta.main_field, "appended_fields": self._meta.appended_fields}
             )
-        else:
-            form = Form(
-                prefix=self.form_prefix,
-                grid_layout=self._meta.grid_layout,
-                main_field=self._meta.main_field,
-                appended_fields=self._meta.appended_fields,
-            )
-        return form
+
+        return Form(**attrs)
 
 
 def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
