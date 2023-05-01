@@ -593,9 +593,7 @@ class RefFilterList(BaseFilterList):
             "id",
             "db_id",
             "search",
-            "year",
             "title_abstract",
-            "authors",
             "journal",
             "order_by",
             "paginate_by",
@@ -613,8 +611,6 @@ class RefFilterList(BaseFilterList):
                             "rows": [
                                 {
                                     "columns": [
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},
                                         {"width": 6, "extra_css": "px-4"},

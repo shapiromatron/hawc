@@ -15,14 +15,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="External identifier",
         help_text="Pubmed ID, DOI, HERO ID, etc.",
     )
-    year = df.NumberFilter(label="Year", help_text="Year of publication")
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
     title_abstract = df.CharFilter(
         method="filter_title_abstract",
         label="Title/Abstract",
-        help_text="Filter by Title/Abstract text",
+        help_text="Filter by Title/Abstract text, authors, or publication year",
     )
-    authors = df.CharFilter(method="filter_authors", label="Authors")
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
@@ -122,7 +120,13 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.filter(query)
 
     def filter_title_abstract(self, queryset, name, value):
-        query = Q(title__icontains=value) | Q(abstract__icontains=value)
+        query = (
+            Q(title__icontains=value)
+            | Q(abstract__icontains=value)
+            | Q(authors_short__unaccent__icontains=value)
+            | Q(authors__unaccent__icontains=value)
+            | Q(year__icontains=value)
+        )
         return queryset.filter(query)
 
     def filter_tags(self, queryset, name, value):
