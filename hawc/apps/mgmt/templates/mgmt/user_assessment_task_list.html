@@ -1,5 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
 {% load hawc %}
 
 {% block content %}
@@ -9,16 +10,8 @@
 
 {% if object_list %}
 <table class="table table-sm table-striped">
-    <colgroup>
-        <col width="30%" />
-        <col width="70%" />
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Study</th>
-            <th>Reviews</th>
-        </tr>
-    </thead>
+    {% bs4_colgroup "30,70" %}
+    {% bs4_thead "Study,Task" %}
     <tbody>
         {% for task in object_list %}
         <tr>
