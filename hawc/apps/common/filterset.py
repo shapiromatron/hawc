@@ -255,17 +255,17 @@ class BaseFilterSet(FilterSet):
             forms.Form: a django.Form instance
         """
         Form = self.get_form_class()
-        attrs = {
+        attributes = {
             "data": self.data if self.is_bound else {},
             "prefix": self.form_prefix,
             "grid_layout": self._meta.grid_layout,
         }
         if self._meta.form == ExpandableFilterForm or self._meta.form == InlineFilterForm:
-            attrs.update(
+            attributes.update(
                 {"main_field": self._meta.main_field, "appended_fields": self._meta.appended_fields}
             )
 
-        return Form(**attrs)
+        return Form(**attributes)
 
 
 def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
