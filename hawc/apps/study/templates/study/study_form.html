@@ -4,7 +4,7 @@
 
 {% block content %}
 {% if not from_identifier %}
-<div class="alert alert-primary" role="alert">We highly recommend importing a study from PubMed or HERO on our <a
+<div class="alert alert-primary" role="alert">We highly recommend importing a study from PubMed or HERO from our <a
         href="{% url 'study:create_from_identifier' assessment.pk %}" class="alert-link">Create Study From Identifier</a> or
     <a href="{% url 'lit:import_new' assessment.pk %}" class="alert-link">New Literature Import</a> page.</div>
 {% endif %}
