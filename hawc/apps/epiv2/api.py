@@ -21,7 +21,7 @@ class EpiAssessmentViewset(BaseAssessmentViewset):
     )
     def export(self, request, pk):
         """
-        Retrieve epidemiology data for assessment.
+        Retrieve epidemiology complete export.
         """
         assessment: Assessment = self.get_object()
         published_only = not assessment.user_can_edit_object(request.user)
@@ -31,6 +31,26 @@ class EpiAssessmentViewset(BaseAssessmentViewset):
             .complete()
         )
         exporter = exports.EpiFlatComplete(qs, filename=f"{assessment}-epi")
+        return Response(exporter.build_export())
+
+    @action(
+        detail=True,
+        url_path="study-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def study_export(self, request, pk):
+        """
+        Retrieve epidemiology at the study level for assessment.
+        """
+        assessment: Assessment = self.get_object()
+        published_only = not assessment.user_can_edit_object(request.user)
+        qs = (
+            models.DataExtraction.objects.get_qs(assessment)
+            .published_only(published_only)
+            .complete()
+        )
+        exporter = exports.EpiStudyComplete(qs, filename=f"{assessment}-epi-study")
         return Response(exporter.build_export())
 
 

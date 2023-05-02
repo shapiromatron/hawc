@@ -345,80 +345,108 @@ class Visual(models.Model):
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
-        return HeatmapDatasets(
-            datasets=[
-                HeatmapDataset(
-                    type="Literature",
-                    name="Literature summary",
-                    url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay study design",
-                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay study design (including unpublished HAWC data)",
-                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint summary",
-                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint summary (including unpublished HAWC data)",
-                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint with doses",
-                    url=reverse(
-                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
-                    ),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint with doses (including unpublished HAWC data)",
-                    url=reverse(
-                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
-                    )
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology study design",
-                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology study design (including unpublished HAWC data)",
-                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology result summary",
-                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology result summary (including unpublished HAWC data)",
-                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                *(
+        datasets = [
+            HeatmapDataset(
+                type="Literature",
+                name="Literature summary",
+                url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
+            )
+        ]
+        if assessment.has_animal_data:
+            datasets.extend(
+                [
                     HeatmapDataset(
-                        type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url()
-                    )
-                    for ds in assessment.datasets.all()
-                ),
-            ]
-        )
+                        type="Bioassay",
+                        name="Bioassay study design",
+                        url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,)),
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay study design (including unpublished HAWC data)",
+                        url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,))
+                        + "?unpublished=true",
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint summary",
+                        url=reverse(
+                            "animal:api:assessment-endpoint-heatmap", args=(assessment.id,)
+                        ),
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint summary (including unpublished HAWC data)",
+                        url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
+                        + "?unpublished=true",
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint with doses",
+                        url=reverse(
+                            "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                        ),
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint with doses (including unpublished HAWC data)",
+                        url=reverse(
+                            "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                        )
+                        + "?unpublished=true",
+                    ),
+                ]
+            )
+        if assessment.has_epi_data:
+            if assessment.epi_version == EpiVersion.V1:
+                datasets.extend(
+                    [
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology study design",
+                            url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology study design (including unpublished HAWC data)",
+                            url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology result summary",
+                            url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology result summary (including unpublished HAWC data)",
+                            url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                    ]
+                )
+            elif assessment.epi_version == EpiVersion.V2:
+                datasets.extend(
+                    [
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology evidence map",
+                            url=reverse("epiv2:api:assessment-study-export", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology data extractions",
+                            url=reverse("epiv2:api:assessment-export", args=(assessment.id,)),
+                        ),
+                    ]
+                )
+            else:
+                raise ValueError("Unknown epi data type")
+        additional_datasets = [
+            HeatmapDataset(type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url())
+            for ds in assessment.datasets.all()
+        ]
+        datasets.extend(additional_datasets)
+        return HeatmapDatasets(datasets=datasets)
 
     @staticmethod
     def get_dose_units():
