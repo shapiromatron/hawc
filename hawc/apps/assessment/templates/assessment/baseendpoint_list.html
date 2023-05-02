@@ -97,6 +97,15 @@
     </table>
     {% endif %}
 
+    {% if assessment.epi_version == 2 %}
+    <h3 class="betatester">Epiv2 data</h3>
+    <ul>
+        <li><a href="{% url 'epiv2:outcome' assessment.id %}">Endpoint list</a></li>
+        <li><a href="{% url 'epiv2:heatmap-study-design' assessment.id %}">Study design heatmap</a></li>
+        <li><a href="{% url 'epiv2:heatmap-result' assessment.id %}">Study results heatmap</a></li>
+    </ul>
+    {% endif %}
+
     {% if user.is_beta_tester  %}
     <h3 class="betatester">Critical effects by dose</h3>
     <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}">WIP</a></p>
