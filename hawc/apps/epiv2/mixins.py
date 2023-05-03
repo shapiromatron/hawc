@@ -1,4 +1,4 @@
-from rest_framework import exceptions, serializers
+from rest_framework import serializers
 
 from django.db import models
 
@@ -27,7 +27,7 @@ class SameDesignSerializerMixin:
             design_id = self.initial_data.get("design")
             try:
                 design = Design.objects.get(id=design_id)
-            except:
+            except Design.DoesNotExist:
                 design = None
         elif self.instance is not None:
             # load from the previously saved state
