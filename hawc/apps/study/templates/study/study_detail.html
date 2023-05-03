@@ -98,6 +98,8 @@
       <div id="rob_plot" class="mb-3"></div>
     {% endif %}
 
+    {% if perms.study %}
+
     {% if study.bioassay %}
       <h3>Available animal bioassay experiments</h3>
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
@@ -129,6 +131,8 @@
     {% if study.eco %}
       <h3>Available ecology designs</h3>
       {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
+    {% endif %}
+
     {% endif %}
 
   {% endif %}
