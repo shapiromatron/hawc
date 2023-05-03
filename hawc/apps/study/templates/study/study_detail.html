@@ -98,14 +98,12 @@
       <div id="rob_plot" class="mb-3"></div>
     {% endif %}
 
-    {% if obj_perms.edit %}
-
-    {% if study.bioassay %}
+    {% if study.bioassay and obj_perms.edit %}
       <h3>Available animal bioassay experiments</h3>
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% endif %}
 
-    {% if study.in_vitro %}
+    {% if study.in_vitro and obj_perms.edit %}
       <h3>Available <i>in vitro</i> experiments</h3>
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
       <h3>Chemicals used in <i>in vitro</i> experiments</h3>
@@ -114,7 +112,7 @@
       {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
     {% endif %}
 
-    {% if study.epi %}
+    {% if study.epi and obj_perms.edit %}
       <h3>Available epidemiological study populations</h3>
       {% if assessment.epi_version == 1 %}
         {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
@@ -123,16 +121,14 @@
       {% endif %}
     {% endif %}
 
-    {% if study.epi_meta %}
+    {% if study.epi_meta and obj_perms.edit %}
       <h3>Available epidemiological meta-analyses</h3>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}
 
-    {% if study.eco %}
+    {% if study.eco and obj_perms.edit %}
       <h3>Available ecology designs</h3>
       {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
-    {% endif %}
-
     {% endif %}
 
   {% endif %}
