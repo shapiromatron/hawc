@@ -5,14 +5,14 @@ from . import api, views
 
 router = SimpleRouter()
 router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
-router.register(r"design", api.Design, basename="design")
-router.register(r"metadata", api.Metadata, basename="metadata")
-router.register(r"chemical", api.Chemical, basename="chemical")
-router.register(r"exposure", api.Exposure, basename="exposure")
-router.register(r"exposurelevel", api.ExposureLevel, basename="exposurelevel")
-router.register(r"outcome", api.Outcome, basename="outcome")
-router.register(r"adjustmentfactor", api.AdjustmentFactor, basename="adjustmentfactor")
-router.register(r"dataextraction", api.DataExtraction, basename="dataextraction")
+router.register(r"design", api.DesignViewset, basename="design")
+router.register(r"metadata", api.MetadataViewset, basename="metadata")
+router.register(r"chemical", api.ChemicalViewset, basename="chemical")
+router.register(r"exposure", api.ExposureViewset, basename="exposure")
+router.register(r"exposure-level", api.ExposureLevelViewset, basename="exposure-level")
+router.register(r"outcome", api.OutcomeViewset, basename="outcome")
+router.register(r"adjustment-factor", api.AdjustmentFactorViewset, basename="adjustment-factor")
+router.register(r"data-extraction", api.DataExtractionViewset, basename="data-extraction")
 
 app_name = "epiv2"
 urlpatterns = [

@@ -602,11 +602,11 @@ class TestExposureLevelApi:
         return data
 
     def test_permissions(self, db_keys):
-        url = reverse("epiv2:api:exposurelevel-list")
+        url = reverse("epiv2:api:exposure-level-list")
         generic_perm_tester(url, self.get_upload_data())
 
     def test_bad_requests(self, db_keys):
-        url = reverse("epiv2:api:exposurelevel-list")
+        url = reverse("epiv2:api:exposure-level-list")
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
@@ -664,7 +664,7 @@ class TestExposureLevelApi:
         generic_test_scenarios(client, url, scenarios)
 
     def test_valid_requests(self, db_keys):
-        url = reverse("epiv2:api:exposurelevel-list")
+        url = reverse("epiv2:api:exposure-level-list")
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
@@ -911,11 +911,11 @@ class TestAdjustmentFactorApi:
         return data
 
     def test_permissions(self, db_keys):
-        url = reverse("epiv2:api:adjustmentfactor-list")
+        url = reverse("epiv2:api:adjustment-factor-list")
         generic_perm_tester(url, self.get_upload_data())
 
     def test_bad_requests(self, db_keys):
-        url = reverse("epiv2:api:adjustmentfactor-list")
+        url = reverse("epiv2:api:adjustment-factor-list")
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
@@ -932,7 +932,7 @@ class TestAdjustmentFactorApi:
         generic_test_scenarios(client, url, scenarios)
 
     def test_valid_requests(self, db_keys):
-        url = reverse("epiv2:api:adjustmentfactor-list")
+        url = reverse("epiv2:api:adjustment-factor-list")
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
@@ -1043,11 +1043,11 @@ class TestDataExtractionApi:
         return data
 
     def test_permissions(self, db_keys):
-        url = reverse("epiv2:api:dataextraction-list")
+        url = reverse("epiv2:api:data-extraction-list")
         generic_perm_tester(url, self.get_upload_data())
 
     def test_bad_requests(self, db_keys):
-        url = reverse("epiv2:api:dataextraction-list")
+        url = reverse("epiv2:api:data-extraction-list")
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
@@ -1122,7 +1122,7 @@ class TestDataExtractionApi:
         generic_test_scenarios(client, url, scenarios)
 
     def test_valid_requests(self, db_keys):
-        url = reverse("epiv2:api:dataextraction-list")
+        url = reverse("epiv2:api:data-extraction-list")
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 

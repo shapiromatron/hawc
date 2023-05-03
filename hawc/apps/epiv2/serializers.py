@@ -39,14 +39,9 @@ class ExposureSerializer(serializers.ModelSerializer):
         exclude = ["created", "last_updated"]
 
 
-class ExposureLevelSerializer(mixins.BelongsToSameDesignMixin, serializers.ModelSerializer):
+class ExposureLevelSerializer(mixins.SameDesignSerializerMixin, serializers.ModelSerializer):
     variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     ci_type = FlexibleChoiceField(choices=constants.ConfidenceIntervalType.choices)
-
-    belongs_to_same_design_fields = [
-        ("chemical_id", models.Chemical),
-        ("exposure_measurement_id", models.Exposure),
-    ]
 
     chemical_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
@@ -64,6 +59,11 @@ class ExposureLevelSerializer(mixins.BelongsToSameDesignMixin, serializers.Model
         allow_null=False,
     )
     exposure_measurement = ExposureSerializer(read_only=True)
+
+    same_design_fields = [
+        ("chemical_id", models.Chemical),
+        ("exposure_measurement_id", models.Exposure),
+    ]
 
     class Meta:
         model = models.ExposureLevel
@@ -84,16 +84,10 @@ class AdjustmentFactorSerializer(serializers.ModelSerializer):
         exclude = ["created", "last_updated"]
 
 
-class DataExtractionSerializer(mixins.BelongsToSameDesignMixin, serializers.ModelSerializer):
+class DataExtractionSerializer(mixins.SameDesignSerializerMixin, serializers.ModelSerializer):
     ci_type = FlexibleChoiceField(choices=constants.ConfidenceIntervalType.choices)
     variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     significant = FlexibleChoiceField(choices=constants.Significant.choices)
-
-    belongs_to_same_design_fields = [
-        ("outcome_id", models.Outcome),
-        ("exposure_level_id", models.ExposureLevel),
-        ("factors_id", models.AdjustmentFactor),
-    ]
 
     outcome_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
@@ -121,6 +115,12 @@ class DataExtractionSerializer(mixins.BelongsToSameDesignMixin, serializers.Mode
         allow_null=True,
     )
     factors = AdjustmentFactorSerializer(read_only=True)
+
+    same_design_fields = [
+        ("outcome_id", models.Outcome),
+        ("exposure_level_id", models.ExposureLevel),
+        ("factors_id", models.AdjustmentFactor),
+    ]
 
     class Meta:
         model = models.DataExtraction

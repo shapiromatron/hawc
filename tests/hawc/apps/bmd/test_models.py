@@ -6,11 +6,14 @@ from hawc.apps.animal.models import Endpoint
 from hawc.apps.bmd.constants import SelectedModel
 from hawc.apps.bmd.models import Session
 
-SKIP_BMDS_TESTS = os.environ.get("SKIP_BMDS_TESTS", "0") == "1"
+SKIP_BMDS_TESTS = bool(os.environ.get("SKIP_BMDS_TESTS", "False") == "True")
 
 
 @pytest.mark.django_db
-@pytest.mark.skipif(SKIP_BMDS_TESTS is True, reason="skippyjon")
+@pytest.mark.skipif(
+    SKIP_BMDS_TESTS is True,
+    reason="disable BMDS testing via environment variable if e.g. BMDS dll missing requirements",
+)
 class TestBmdSession:
     def test_dichotomous(self):
         # create new session w/ inputs
