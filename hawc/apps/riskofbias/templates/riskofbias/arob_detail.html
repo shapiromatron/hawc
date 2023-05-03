@@ -42,6 +42,7 @@
 <div class="tab-content px-3" id="nav-tabContent">
   <div class="tab-pane fade show active" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
     <h3>Requirements by Study Type</h3>
+    {% if metrics %}
     <table class="table table-sm table-striped">
       {% bs4_colgroup '25,30,15,15,15' %}
       {% bs4_thead 'Domain,Metric,Bioassay,Epidemiology,In Vitro' %}
@@ -55,6 +56,9 @@
         </tr>
       {% endfor %}</tbody>
     </table>
+    {% else %}
+    <div class="alert alert-info" role="alert">No evaluations available for this asssessment.</div>
+    {% endif %}
   </div>
   <div class="tab-pane fade" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
   {% include "riskofbias/component/domain_list.html" with qs=bioassay_metrics %}
