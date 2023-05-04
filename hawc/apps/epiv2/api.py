@@ -10,7 +10,7 @@ from . import exports, models, serializers
 from .actions.model_metadata import EpiV2Metadata
 
 
-class EpiAssessmentViewset(BaseAssessmentViewset):
+class EpiAssessmentViewSet(BaseAssessmentViewset):
     model = Assessment
 
     @action(
@@ -34,7 +34,7 @@ class EpiAssessmentViewset(BaseAssessmentViewset):
         return Response(exporter.build_export())
 
 
-class DesignViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.Design
@@ -44,47 +44,47 @@ class DesignViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
         return self.model.objects.all()
 
 
-class MetadataViewset(viewsets.ViewSet):
+class MetadataViewSet(viewsets.ViewSet):
     def list(self, request):
         return EpiV2Metadata.handle_request(request)
 
 
-class ChemicalViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ChemicalViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.Chemical
     serializer_class = serializers.ChemicalSerializer
 
 
-class ExposureViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ExposureViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.Exposure
     serializer_class = serializers.ExposureSerializer
 
 
-class ExposureLevelViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ExposureLevelViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.ExposureLevel
     serializer_class = serializers.ExposureLevelSerializer
 
 
-class OutcomeViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class OutcomeViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
-class AdjustmentFactorViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class AdjustmentFactorViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.AdjustmentFactor
     serializer_class = serializers.AdjustmentFactorSerializer
 
 
-class DataExtractionViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class DataExtractionViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.DataExtraction

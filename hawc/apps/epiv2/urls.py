@@ -4,15 +4,15 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
-router.register(r"design", api.DesignViewset, basename="design")
-router.register(r"metadata", api.MetadataViewset, basename="metadata")
-router.register(r"chemical", api.ChemicalViewset, basename="chemical")
-router.register(r"exposure", api.ExposureViewset, basename="exposure")
-router.register(r"exposure-level", api.ExposureLevelViewset, basename="exposure-level")
-router.register(r"outcome", api.OutcomeViewset, basename="outcome")
-router.register(r"adjustment-factor", api.AdjustmentFactorViewset, basename="adjustment-factor")
-router.register(r"data-extraction", api.DataExtractionViewset, basename="data-extraction")
+router.register("assessment", api.EpiAssessmentViewSet, basename="assessment")
+router.register("design", api.DesignViewSet, basename="design")
+router.register("metadata", api.MetadataViewSet, basename="metadata")
+router.register("chemical", api.ChemicalViewSet, basename="chemical")
+router.register("exposure", api.ExposureViewSet, basename="exposure")
+router.register("exposure-level", api.ExposureLevelViewSet, basename="exposure-level")
+router.register("outcome", api.OutcomeViewSet, basename="outcome")
+router.register("adjustment-factor", api.AdjustmentFactorViewSet, basename="adjustment-factor")
+router.register("data-extraction", api.DataExtractionViewSet, basename="data-extraction")
 
 app_name = "epiv2"
 urlpatterns = [

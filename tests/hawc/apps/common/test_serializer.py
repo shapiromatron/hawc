@@ -2,7 +2,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from hawc.apps.common.serializers import (
-    ArrayedFlexibleChoiceField,
+    FlexibleChoiceArrayField,
     FlexibleChoiceField,
     FlexibleDBLinkedChoiceField,
     get_matching_instance,
@@ -177,16 +177,16 @@ def test_flexible_db_linked_choice_field(db_keys):
 @pytest.mark.django_db
 def test_arrayed_flexible_choice_field(db_keys):
     """
-    Test the ArrayedFlexibleChoiceField
+    Test the FlexibleChoiceArrayField
 
-    Tests ArrayedFlexibleChoiceField with keys, display values (case insensitive and not), and bad inputs.
+    Tests FlexibleChoiceArrayField with keys, display values (case insensitive and not), and bad inputs.
     """
     SAMPLE_NUMERIC_CHOICES = ((0, "example"), (1, "test"))
 
     SAMPLE_TEXT_CHOICES = (("name", "nom de plume"), ("job", "occupation"))
 
-    numeric_choice = ArrayedFlexibleChoiceField(choices=SAMPLE_NUMERIC_CHOICES)
-    text_choice = ArrayedFlexibleChoiceField(choices=SAMPLE_TEXT_CHOICES)
+    numeric_choice = FlexibleChoiceArrayField(choices=SAMPLE_NUMERIC_CHOICES)
+    text_choice = FlexibleChoiceArrayField(choices=SAMPLE_TEXT_CHOICES)
 
     # Either the key or a case insensitive version will resolve to the same internal value
     for valid_input in (["test", 0], ["tEsT", "EXAMPLE"], [1, "example"]):

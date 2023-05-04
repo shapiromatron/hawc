@@ -163,7 +163,7 @@ class FlexibleChoiceField(serializers.ChoiceField):
         self.fail("invalid_choice", input=data)
 
 
-class ArrayedFlexibleChoiceField(serializers.ChoiceField):
+class FlexibleChoiceArrayField(serializers.ChoiceField):
     """
     like FlexibleChoiceField; accepts either the raw choice value OR a case-insensitive
     display value when supplying data, intended for choice fields wrapped in an ArrayField

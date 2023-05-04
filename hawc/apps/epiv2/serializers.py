@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from ..assessment.models import DSSTox
 from ..assessment.serializers import DSSToxSerializer
-from ..common.serializers import ArrayedFlexibleChoiceField, FlexibleChoiceField, IdLookupMixin
+from ..common.serializers import FlexibleChoiceArrayField, FlexibleChoiceField, IdLookupMixin
 from ..epi.serializers import StudyPopulationCountrySerializer
 from ..study.models import Study
 from ..study.serializers import StudySerializer
@@ -138,7 +138,7 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     study = StudySerializer(read_only=True)
 
     study_design = FlexibleChoiceField(choices=constants.StudyDesign.choices)
-    age_profile = ArrayedFlexibleChoiceField(choices=constants.AgeProfile.choices)
+    age_profile = FlexibleChoiceArrayField(choices=constants.AgeProfile.choices)
     source = FlexibleChoiceField(choices=constants.Source.choices)
     sex = FlexibleChoiceField(choices=constants.Sex.choices)
     countries = StudyPopulationCountrySerializer(many=True)

@@ -1,6 +1,5 @@
-from rest_framework import serializers
-
 from django.db import models
+from rest_framework import serializers
 
 from .models import Design
 
@@ -16,7 +15,7 @@ class SameDesignSerializerMixin:
     relationship is not uncommon.
     """
 
-    _fields_to_check: list[tuple[str, type[models.Model]]]
+    same_design_fields: list[tuple[str, type[models.Model]]]
 
     def _get_contextual_design(self):
         # figure out what design we're concerned with...
@@ -43,12 +42,10 @@ class SameDesignSerializerMixin:
     def validate(self, data):
         validated_data = super().validate(data)
 
-        self._fields_to_check = self.same_design_fields
-
         # first off - were any of the parameters we're concerned with in the payload? If not, there's
         # no need to perform any custom validation.
         perform_custom_validation = any(
-            [field_name in self.initial_data for field_name, _ in self._fields_to_check]
+            [field_name in self.initial_data for field_name, _ in self.same_design_fields]
         )
 
         if perform_custom_validation is False:
@@ -56,20 +53,17 @@ class SameDesignSerializerMixin:
         else:
             design = self._get_contextual_design()
 
-            invalid_fields = []
-            for param_name, model_klass in self._fields_to_check:
+            invalid_fields = {}
+            for param_name, model_klass in self.same_design_fields:
                 if param_name in self.initial_data:
                     candidate_id = self.initial_data.get(param_name)
                     candidate_obj = model_klass.objects.get(id=candidate_id)
 
                     if candidate_obj.design.id != design.id:
-                        invalid_fields.append(
-                            (
-                                param_name,
-                                f"object with id={candidate_id} does not belong to the correct design.",
-                            )
-                        )
+                        invalid_fields[
+                            param_name
+                        ] = f"object with id={candidate_id} does not belong to the correct design."
             if invalid_fields:
-                raise serializers.ValidationError({x[0]: x[1] for x in invalid_fields})
+                raise serializers.ValidationError(invalid_fields)
 
             return validated_data
