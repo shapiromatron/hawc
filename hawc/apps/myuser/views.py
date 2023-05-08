@@ -10,7 +10,7 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetDoneView,
     PasswordResetView,
-    SuccessURLAllowedHostsMixin,
+    RedirectURLMixin,
 )
 from django.core.mail import mail_admins
 from django.http import Http404, HttpResponseRedirect
@@ -199,7 +199,7 @@ class PasswordChanged(MessageMixin, RedirectView):
         return reverse_lazy("user:login")
 
 
-class ExternalAuth(SuccessURLAllowedHostsMixin, View):
+class ExternalAuth(RedirectURLMixin, View):
     def get_user_metadata(self, request) -> dict:
         """
         Retrieve user metadata from request to use for authentication.
