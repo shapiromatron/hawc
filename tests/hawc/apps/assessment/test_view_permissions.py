@@ -43,11 +43,11 @@ class TestCreatePermissions:
         # without authentication
         url = reverse("assessment:new")
         c = Client()
-        with assertTemplateUsed("registration/login.html"):
-            c.get(url, follow=True)
+        resp = c.get(url, follow=True)
+        assertTemplateUsed(resp, "registration/login.html")
 
-        with assertTemplateUsed("registration/login.html"):
-            c.post(url, _successful_post, follow=True)
+        resp = c.post(url, _successful_post, follow=True)
+        assertTemplateUsed(resp, "registration/login.html")
 
 
 @pytest.mark.django_db
@@ -205,9 +205,10 @@ class TestLogViewPermissions:
         assert response.status_code == 403
 
         assert c.login(email="team@hawcproject.org", password="pw") is True
-        with assertTemplateUsed("assessment/assessment_log_list.html"):
-            response = c.get(url)
-            assert response.status_code == 200
+
+        response = c.get(url)
+        assertTemplateUsed(response, "assessment/assessment_log_list.html")
+        assert response.status_code == 200
 
     def test_log_object_list(self):
         log = Log.objects.get(id=3)
