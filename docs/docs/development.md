@@ -93,7 +93,8 @@ source ./venv/bin/activate
 # update python/js packages; sync app state with database
 make sync-dev
 
-# run development webserver
+# run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 
@@ -126,7 +127,8 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 :: update python/js packages; sync app state with database
 make sync-dev
 
-:: run development webserver
+:: run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 
@@ -391,7 +393,6 @@ py.test -sv tests/integration/test_login.py --pdb
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
-- [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 
 When using the recommended settings below, your python and javascript code should automatically format whenever you save to fix most, but not all requirements. In addition, you should have pretty good autocompletion. Python type annotations are enabled with warnings, but not enforced; this may change as we continue to annotate the existing codebase. You can add these settings to your overall VSCode settings.json file, or create a [workspace](https://code.visualstudio.com/docs/editor/workspaces) for HAWC and add it to the workspace settings.json file.
 
