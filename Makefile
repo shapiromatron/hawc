@@ -69,7 +69,7 @@ lint-py:  ## Check python formatting issues
 	@black . --check && ruff .
 
 format-py:  ## Fix python formatting issues where possible
-	@black . && ruff . --fix
+	@black . && ruff . --fix --show-fixes
 
 lint-js:  ## Check javascript formatting issues
 	@npm --prefix ./frontend run lint

@@ -387,6 +387,8 @@ py.test -sv tests/integration/test_login.py --pdb
 [Visual Studio Code]( https://code.visualstudio.com/) is the recommended editor for this project. Recommended extensions include:
 
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- [Black formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
+- [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
@@ -398,6 +400,9 @@ When using the recommended settings below, your python and javascript code shoul
     "[dockerfile]": {
         "editor.formatOnSave": false
     },
+    "[css]": {
+        "editor.formatOnSave": false,
+    },
     "[javascript]": {
         "editor.formatOnSave": false,
     },
@@ -406,16 +411,17 @@ When using the recommended settings below, your python and javascript code shoul
         "editor.quickSuggestions": false
     },
     "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
-        "editor.formatOnPaste": false,
         "editor.codeActionsOnSave": {
             "source.fixAll": true
-        }
+        },
     },
     "editor.codeActionsOnSave": {
+        "source.fixAll": false,
         "source.fixAll.eslint": true
     },
-    "editor.formatOnPaste": true,
+    "editor.formatOnPaste": false,
     "editor.formatOnSave": false,
     "editor.rulers": [100, 120],
     "editor.tabSize": 4,
@@ -431,7 +437,6 @@ When using the recommended settings below, your python and javascript code shoul
         "reportUnknownMemberType": "information",
     },
     "python.analysis.typeCheckingMode": "basic",
-    "python.formatting.provider": "black",
     "python.languageServer": "Pylance",
     "python.linting.flake8Enabled": false,
     "search.exclude": {
