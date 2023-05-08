@@ -53,7 +53,7 @@ class MicrosoftOfficeLinkMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        agent = request.META.get("HTTP_USER_AGENT", "")
+        agent = request.headers.get("user-agent", "")
         if re.findall(self.OFFICE_AGENTS, agent) and not re.findall(self.OUTLOOK_AGENTS, agent):
             return HttpResponse(self.RESPONSE_TEXT)
         response = self.get_response(request)
