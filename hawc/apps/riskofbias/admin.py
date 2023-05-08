@@ -82,10 +82,9 @@ class RiskOfBiasAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.num_scores().num_override_scores()
 
+    @admin.display(description="# scores")
     def num_scores(self, obj):
         return obj.num_scores
-
-    num_scores.short_description = "# scores"
 
     def num_override_scores(self, obj):
         return obj.num_override_scores

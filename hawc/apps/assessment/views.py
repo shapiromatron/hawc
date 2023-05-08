@@ -719,7 +719,7 @@ class UpdateSession(View):
         return request.POST.get(field, "true") == "true"
 
     def post(self, request, *args, **kwargs):
-        if not request.is_ajax():
+        if request.method != "POST":
             return HttpResponseNotAllowed(["POST"])
         response = {}
         if request.POST.get("refresh"):

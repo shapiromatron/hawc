@@ -1,14 +1,13 @@
 import logging
 import math
 
-import django
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
-from django.db import IntegrityError, connection, models, transaction
+from django.db import IntegrityError, connection, models, router, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
 from treebeard.mp_tree import MP_Node
@@ -104,17 +103,12 @@ class NonUniqueTagBase(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk and not self.slug:
             self.slug = self.slugify(self.name)
-            if django.VERSION >= (1, 2):
-                from django.db import router
-
-                using = kwargs.get("using") or router.db_for_write(type(self), instance=self)
-                # Make sure we write to the same db for all attempted writes,
-                # with a multi-master setup, theoretically we could try to
-                # write and rollback on different DBs
-                kwargs["using"] = using
-                trans_kwargs = {"using": using}
-            else:
-                trans_kwargs = {}
+            using = kwargs.get("using") or router.db_for_write(type(self), instance=self)
+            # Make sure we write to the same db for all attempted writes,
+            # with a multi-master setup, theoretically we could try to
+            # write and rollback on different DBs
+            kwargs["using"] = using
+            trans_kwargs = {"using": using}
             i = 0
             while True:
                 i += 1
