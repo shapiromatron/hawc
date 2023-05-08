@@ -1,6 +1,7 @@
 import pytest
 from django.conf import settings
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 from django.test.client import Client
 from django.urls import reverse
@@ -26,16 +27,14 @@ class UserCreationTests(TestCase):
                 "license_v2_accepted": "",
             },
         )
-        self.assertFormError(response, "form", "email", "Enter a valid email address.")
+        self.assertFormError(response.context["form"], "email", "Enter a valid email address.")
         self.assertFormError(
-            response,
-            "form",
+            response.context["form"],
             "license_v2_accepted",
             _accept_license_error,
         )
         self.assertFormError(
-            response,
-            "form",
+            response.context["form"],
             "password1",
             "Password must be at least eight characters in length, at least one special character, and at least one digit.",
         )
@@ -55,7 +54,7 @@ class UserCreationTests(TestCase):
                 "license_v2_accepted": "t",
             },
         )
-        self.assertFormError(response, "form", "password2", "Passwords don't match")
+        self.assertFormError(response.context["form"], "password2", "Passwords don't match")
 
     def test_duplicate_email(self):
         # confirm that you can't create two accounts with the same email
@@ -76,7 +75,9 @@ class UserCreationTests(TestCase):
 
         c2 = Client()
         response = c2.post(reverse(view), form_dict)
-        self.assertFormError(response, "form", "email", "HAWC user with this email already exists.")
+        self.assertFormError(
+            response.context["form"], "email", "HAWC user with this email already exists."
+        )
 
     def test_long_email_success(self):
         # confirm you can use a long email address, 200+characters
@@ -154,7 +155,7 @@ class ExternalAuthSetup(ExternalAuth):
 
 class ExternalAuthTests(TestCase):
     request_factory = RequestFactory()
-    middleware = SessionMiddleware()
+    middleware = SessionMiddleware(get_response=lambda: HttpResponse())
 
     def _login(self, email, external_id):
         headers = {
