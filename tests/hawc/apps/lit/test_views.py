@@ -26,7 +26,7 @@ class TestViewPermissions:
             (reverse("lit:tag-status", args=(3,)), 403),
             (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
         ]
-        for (url, status) in views:
+        for url, status in views:
             response = c.get(url)
             assert response.status_code == status
 
@@ -44,8 +44,12 @@ def test_reference_delete(db_keys):
         resp = c.get(url)
     assert resp.status_code == 200
 
-    # delete works
+    # delete verb not used
     resp = c.delete(url)
+    assert resp.status_code == 405
+
+    # delete works
+    resp = c.post(url)
     assert resp.status_code == 302
     assert resp.url == reverse("lit:overview", args=(1,))
 
@@ -56,5 +60,5 @@ def test_reference_delete(db_keys):
     assert resp.status_code == 200
 
     # delete fails
-    resp = c.delete(url)
+    resp = c.post(url)
     assert resp.status_code == 403

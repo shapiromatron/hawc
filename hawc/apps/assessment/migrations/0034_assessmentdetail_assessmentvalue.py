@@ -5,7 +5,6 @@ import hawc.apps.common.validators
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("study", "0011_auto_20190416_2035"),
         ("assessment", "0033_assessment_admin_notes"),

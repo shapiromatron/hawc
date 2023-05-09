@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -322,17 +322,17 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.to_dict(user)
 
-    def user_can_view_object(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
+    def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
+    def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: Optional[AssessmentPermissions] = None) -> bool:
+    def user_can_edit_assessment(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.project_manager_or_higher(user)
@@ -455,7 +455,7 @@ class Assessment(models.Model):
 
     @property
     def has_lit_data(self) -> bool:
-        return self._has_data("lit", "Reference")
+        return self._has_data("lit", "Reference", filter="assessment")
 
     @property
     def has_rob_data(self) -> bool:
@@ -983,7 +983,7 @@ class Dataset(models.Model):
     def get_new_version_value(self) -> int:
         try:
             return self.get_latest_revision().version + 1
-        except models.ObjectDoesNotExist:
+        except (ValueError, models.ObjectDoesNotExist):
             return 1
 
     def get_latest_df(self) -> pd.DataFrame:
@@ -1091,7 +1091,6 @@ class DatasetRevision(models.Model):
 
 
 class Job(models.Model):
-
     JOB_TO_FUNC = {
         constants.JobType.TEST: jobs.test,
     }

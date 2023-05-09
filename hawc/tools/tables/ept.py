@@ -48,7 +48,6 @@ class SummaryJudgementChoices(IntEnum):
 
 
 class SummaryJudgementCell(BaseCell):
-
     judgement: SummaryJudgementChoices
     custom_judgement_icon: str = ""
     custom_judgement_label: str = ""

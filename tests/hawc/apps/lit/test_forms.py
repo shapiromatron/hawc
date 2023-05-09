@@ -60,7 +60,7 @@ class TestLiteratureAssessmentForm:
 @pytest.mark.django_db
 class TestImportForm:
     """
-    This test-suite mirrors `tests/apps/lit/test_lit_serializers.TestSearchViewset`
+    This test-suite mirrors `tests/apps/lit/test_lit_serializers.TestSearchViewSet`
     """
 
     def test_success(self, db_keys):

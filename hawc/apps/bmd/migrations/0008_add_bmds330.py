@@ -26,7 +26,6 @@ def update_backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bmd", "0007_selected_units"),
     ]

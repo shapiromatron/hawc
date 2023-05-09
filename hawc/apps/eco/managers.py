@@ -73,7 +73,7 @@ class CauseQuerySet(QuerySet):
             "created",
             "last_updated",
         ]
-        return pd.DataFrame(data=self.values_list(*names), columns=names,).rename(
+        return pd.DataFrame(data=self.values_list(*names), columns=names).rename(
             columns={
                 "term__name": "term",
                 "biological_organization": "biological_organization",
@@ -103,7 +103,7 @@ class EffectQuerySet(QuerySet):
             "created",
             "last_updated",
         ]
-        return pd.DataFrame(data=self.values_list(*names), columns=names,).rename(
+        return pd.DataFrame(data=self.values_list(*names), columns=names).rename(
             columns={
                 "term__name": "term",
                 "biological_organization": "biological_organization",
@@ -144,7 +144,7 @@ class ResultQuerySet(QuerySet):
             "created",
             "last_updated",
         ]
-        return pd.DataFrame(data=self.values_list(*names), columns=names,).rename(
+        return pd.DataFrame(data=self.values_list(*names), columns=names).rename(
             columns={
                 "measure_type__value": "measure_type",
                 "variability__value": "variability",

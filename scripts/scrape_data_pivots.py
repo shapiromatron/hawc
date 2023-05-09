@@ -35,7 +35,6 @@ def cli():
 
 @cli.command()
 def get_pivot_objects():
-
     os.environ["DJANGO_SETTINGS_MODULE"] = "main.settings.dev"
     django.setup()
 
@@ -52,7 +51,7 @@ def get_pivot_objects():
 @cli.command()
 @click.argument("base_url")
 def webscrape(base_url: str):
-    df = pd.read_pickle(FN)
+    df = pd.read_pickle(FN)  # noqa: S301
 
     max_sleep = 60 * 10  # 10 min
 

@@ -1,8 +1,12 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+from textwrap import dedent
+from uuid import uuid4
+
 from django import template
 from django.utils.safestring import mark_safe
+from plotly.graph_objs._figure import Figure
 
 register = template.Library()
 
@@ -58,3 +62,31 @@ class AlertWrapperNode(template.Node):
 
     def render(self, context):
         return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
+
+
+_plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
+
+
+@register.simple_tag()
+def plotly(fig: Figure | None, **kw) -> str:
+    """Render a plotly figure
+
+    fig (Figure): the plotly figure to render
+    event: (Literal["dom", "htmx"]): the event that should trigger loading plotly. Defaults to
+        "dom" when dom is fully loaded. If set to "htmx", will render after htmx settles.
+    resizable: (bool, default False). If true, the figure can be resized by the user.
+    """
+    if fig is None:
+        return ""
+    id = uuid4()
+    config = fig.to_json()
+    event = _plotly_events[kw.get("event", "dom")]
+    resizable = str(bool(kw.get("resizable", False))).lower()
+    func = f'()=>{{window.app.renderPlotlyFigure(document.getElementById("{id}"), {config}, {resizable});}}'
+    return mark_safe(
+        dedent(
+            f"""
+    <div id="{id}"><span class="text-muted">Loading...</span></div>
+    <script>document.addEventListener("{event}", {func}, false);</script>"""
+        )
+    )

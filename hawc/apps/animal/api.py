@@ -9,9 +9,9 @@ from rest_framework.response import Response
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
-    AssessmentViewset,
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
-    DoseUnitsViewset,
+    DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
@@ -23,7 +23,7 @@ from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
 
 
-class AnimalAssessmentViewset(viewsets.GenericViewSet):
+class AnimalAssessmentViewSet(viewsets.GenericViewSet):
     model = models.Assessment
     queryset = models.Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
@@ -189,7 +189,7 @@ class AnimalAssessmentViewset(viewsets.GenericViewSet):
         return Response(export)
 
 
-class Experiment(mixins.CreateModelMixin, AssessmentViewset):
+class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
@@ -214,7 +214,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
         )
 
 
-class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
+class AnimalGroup(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
@@ -257,7 +257,7 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
+class Endpoint(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
@@ -284,7 +284,6 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
 
     @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_filter(self, request):
-
         params = request.query_params
 
         query = Q(assessment=self.assessment)
@@ -340,7 +339,7 @@ class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
     assessment_filter_args = "dosed_animals__experiment__study__assessment"
 
 
-class DoseUnits(DoseUnitsViewset):
+class DoseUnits(DoseUnitsViewSet):
     pass
 
 

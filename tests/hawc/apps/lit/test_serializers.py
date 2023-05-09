@@ -88,7 +88,7 @@ def test_BulkReferenceTagSerializer(db_keys):
     assert serializer.is_valid() is True
     serializer.bulk_create_tags()
     resp = ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
-        index=False, line_terminator="\n"
+        index=False, lineterminator="\n"
     )
     assert resp == "reference_id,tag_id\n1,4\n"
 
@@ -100,7 +100,7 @@ def test_BulkReferenceTagSerializer(db_keys):
 
     reference.refresh_from_db()
     resp = ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
-        index=False, line_terminator="\n"
+        index=False, lineterminator="\n"
     )
     assert resp == "reference_id,tag_id\n1,3\n"
 
@@ -111,7 +111,7 @@ def test_BulkReferenceTagSerializer(db_keys):
     assert serializer.is_valid() is True
     serializer.bulk_create_tags()
     resp = ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
-        index=False, line_terminator="\n"
+        index=False, lineterminator="\n"
     )
     assert resp == csv
 

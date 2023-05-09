@@ -49,7 +49,6 @@ def undo_heatmap_axis(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0031_heatmap_filters"),
     ]

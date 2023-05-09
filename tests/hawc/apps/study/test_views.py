@@ -93,13 +93,13 @@ def test_study_crud_success(db_keys):
             assert response.status_code == 200
 
         # delete
-        with assertTemplateUsed("study/study_confirm_delete.html"):
-            response = c.get(reverse("study:delete", args=(pk,)))
-            assert response.status_code == 200
+        response = c.get(reverse("study:delete", args=(pk,)))
+        assertTemplateUsed(response, "study/study_confirm_delete.html")
+        assert response.status_code == 200
 
-        with assertTemplateUsed("study/study_list.html"):
-            response = c.post(reverse("study:delete", args=(pk,)), follow=True)
-            assert response.status_code == 200
+        response = c.post(reverse("study:delete", args=(pk,)), follow=True)
+        assertTemplateUsed(response, "study/study_list.html")
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db
@@ -123,9 +123,9 @@ def test_uf_crud_failure(db_keys):
 
         for view in views:
             response = c.get(view)
-            response.status_code == 403
+            assert response.status_code == 403
             response = c.post(view)
-            response.status_code in [403, 405]
+            assert response.status_code in [403, 405]
 
     # next check that all people (except sudo) cannot edit a final study
     users = ["pm@hawcproject.org", "team@hawcproject.org", "reviewer@hawcproject.org", None]

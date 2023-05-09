@@ -4,7 +4,7 @@ import logging
 
 from hawc.constants import AuthProvider
 
-from .dev import *  # noqa
+from .dev import *
 
 DEBUG = True
 

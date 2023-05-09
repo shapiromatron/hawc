@@ -36,7 +36,6 @@ def rollback_changes(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("riskofbias", "0021_riskofbiasscore_bias_direction"),
     ]

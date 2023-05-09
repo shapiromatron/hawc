@@ -92,7 +92,6 @@ class About(TemplateView):
         key = "about-counts"
         counts = cache.get(key)
         if counts is None:
-
             updated = timezone.now()
 
             users = apps.get_model("myuser", "HAWCUser").objects.count()
@@ -386,7 +385,7 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
         return context
 
 
-class AssessmentRead(BaseDetail):
+class AssessmentDetail(BaseDetail):
     model = models.Assessment
 
     def get_queryset(self):
@@ -532,7 +531,7 @@ class AssessmentValueDelete(BaseDelete):
 
 
 # Attachment viewset
-class AttachmentViewset(HtmxViewSet):
+class AttachmentViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
@@ -596,7 +595,7 @@ class DatasetCreate(BaseCreate):
     form_class = forms.DatasetForm
 
 
-class DatasetRead(BaseDetail):
+class DatasetDetail(BaseDetail):
     model = models.Dataset
 
     def get_object(self, **kwargs):
@@ -720,14 +719,13 @@ class CloseWindow(TemplateView):
 
 
 class UpdateSession(View):
-
     http_method_names = ("post",)
 
     def isTruthy(self, request, field):
         return request.POST.get(field, "true") == "true"
 
     def post(self, request, *args, **kwargs):
-        if not request.is_ajax():
+        if request.method != "POST":
             return HttpResponseNotAllowed(["POST"])
         response = {}
         if request.POST.get("refresh"):

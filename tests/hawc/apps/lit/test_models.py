@@ -52,7 +52,7 @@ class TestReference:
         ref = Reference.objects.get(id=3)
         assert ref.has_study is False
         with pytest.raises(ObjectDoesNotExist):
-            ref.study.id
+            _ = ref.study.id
 
     def test_to_dict(self):
         # make sure `to_dict` works

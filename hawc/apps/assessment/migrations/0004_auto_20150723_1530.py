@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0003_remove_assessment_enable_reference_values"),
         ("animal", "0009_auto_20150723_1523"),

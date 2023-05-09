@@ -274,6 +274,27 @@ div.smart-tag.active {
     margin-bottom: 0 !important;  /* same as .mb-0  */
 }
 
+/* mgmt/task-assignment status  */
+.mgmt-circle {
+    padding: 0 5px;
+}
+
+.mgmt-circle.s10 {
+    color: #CFCFCF;
+}
+
+.mgmt-circle.s20 {
+    color: #FFCC00;
+}
+
+.mgmt-circle.s30 {
+    color: #00CC00;
+}
+
+.mgmt-circle.s40 {
+    color: #CC3333;
+}
+
 /* LITERATURE MODULE */
 .lit-review-box {
     border-radius: 5px;
@@ -714,6 +735,11 @@ table.bordered td {
 .betatester {
     background-color: #ec744c;
     border-color: #ec744c;
+}
+.unstyled-action-button {
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 /* table column text alignment */

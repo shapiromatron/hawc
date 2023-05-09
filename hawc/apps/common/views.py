@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Callable, Iterable, Optional, Type
+from collections.abc import Callable, Iterable
+from typing import Any
 from urllib.parse import urlparse
 
 import reversion
@@ -56,7 +57,7 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     Returns:
         str: A valid URL, with query params dropped
     """
-    url = request.META.get("HTTP_REFERER")
+    url = request.headers.get("referer")
     this_host = request.get_host()
 
     if default.startswith("https"):
@@ -79,7 +80,7 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
-def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
+def create_object_log(verb: str, obj, assessment_id: int, user_id: int, log_message: str = ""):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
 
@@ -90,10 +91,12 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int):
         obj (Any): the object
         assessment_id (int): the object assessment id
         user_id (int): the user id
+        log_message (str): override for custom message
     """
     # Log action
     meta = obj._meta
-    log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
+    if not log_message:
+        log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
         assessment_id=assessment_id,
         user_id=user_id,
@@ -148,10 +151,6 @@ class MessageMixin:
         logger.debug("MessagingMixin called")
         if self.success_message is not None:
             messages.success(self.request, self.success_message, extra_tags="alert alert-success")
-
-    def delete(self, request, *args, **kwargs):
-        self.send_message()
-        return super().delete(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.send_message()
@@ -314,7 +313,6 @@ class TimeSpentOnPageMixin:
 
 
 class CopyAsNewSelectorMixin:
-
     copy_model = None  # required
     template_name_suffix = "_copy_selector"
 
@@ -339,7 +337,7 @@ class CopyAsNewSelectorMixin:
         if self.template_name is not None:
             name = self.template_name
         else:
-            name = "%s/%s%s.html" % (
+            name = "{}/{}{}.html".format(
                 self.copy_model._meta.app_label,
                 self.copy_model._meta.object_name.lower(),
                 self.template_name_suffix,
@@ -350,7 +348,7 @@ class CopyAsNewSelectorMixin:
 class WebappMixin:
     """Mixin to startup a javascript single-page application"""
 
-    get_app_config: Optional[Callable[[RequestContext], WebappConfig]] = None
+    get_app_config: Callable[[RequestContext], WebappConfig] | None = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -362,7 +360,7 @@ class WebappMixin:
 # Base HAWC views
 class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None
+    breadcrumb_active_name: str | None = None
     assessment_permission = AssessmentViewPermissions.VIEWER
 
     def get_breadcrumbs(self) -> list[Breadcrumb]:
@@ -386,10 +384,14 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
 class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    # remove `delete` from method names
+    # delete method CBV different than post; we only need to implement POST
+    # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L220
+    # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L250
+    http_method_names = ["get", "post", "put", "patch", "head", "options", "trace"]
 
     @transaction.atomic
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
+    def form_valid(self, form):
         self.check_delete()
         success_url = self.get_success_url()
         self.create_log(self.object)
@@ -471,7 +473,7 @@ class BaseUpdate(
 class BaseCreate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView
 ):
-    parent_model: Type[models.Model]
+    parent_model: type[models.Model]
     parent_template_name: str
     crud = "Create"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
@@ -540,7 +542,7 @@ class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
     parent_model = None  # required
     parent_template_name = None
     crud = "Read"
-    breadcrumb_active_name: Optional[str] = None
+    breadcrumb_active_name: str | None = None
     assessment_permission = AssessmentViewPermissions.VIEWER
 
     def dispatch(self, *args, **kwargs):
@@ -691,7 +693,12 @@ class FilterSetMixin:
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
-        value = self.filterset.form.cleaned_data.get("paginate_by")
+        form = self.filterset.form
+        value = (
+            form.cleaned_data.get("paginate_by")
+            if hasattr(form, "cleaned_data")
+            else self.paginate_by
+        )
         return tryParseInt(value, default=self.paginate_by, min_value=10, max_value=500)
 
     def get_filterset_kwargs(self):
