@@ -40,6 +40,10 @@ class AssessmentForm(forms.ModelForm):
     class Meta:
         exclude = (
             "creator",
+            "noel_name",
+            "rob_name",
+            "vocabulary",
+            "modify_uncontrolled_vocabulary",
             "enable_literature_review",
             "enable_project_management",
             "enable_data_extraction",
@@ -115,7 +119,6 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("project_manager", 3, "col-md-4")
         helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
@@ -338,6 +341,9 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_risk_of_bias",
             "enable_bmd",
             "enable_summary_text",
+            "noel_name",
+            "rob_name",
+            "vocabulary",
             "epi_version",
         )
         model = models.Assessment
@@ -352,7 +358,7 @@ class AssessmentModulesForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(
             self,
-            legend_text="Update enabled modules",
+            legend_text="Update modules",
             help_text="""
                 HAWC is composed of multiple modules, each designed
                 to capture data and decisions related to specific components of a
@@ -363,6 +369,10 @@ class AssessmentModulesForm(forms.ModelForm):
                 """,
             cancel_url=self.instance.get_absolute_url(),
         )
+        helper.add_row("enable_literature_review", 3, "col-lg-4")
+        helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
+        helper.add_row("noel_name", 3, "col-lg-4")
+        helper.add_row("epi_version", 1, "col-lg-4")
         return helper
 
 

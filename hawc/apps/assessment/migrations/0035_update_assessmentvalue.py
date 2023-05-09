@@ -22,7 +22,6 @@ def get_species_name(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0034_assessmentdetail_assessmentvalue"),
     ]
@@ -37,7 +36,7 @@ class Migration(migrations.Migration):
             name="adaf",
             field=models.BooleanField(
                 default=False,
-                help_text="When checked, the Age-Dependent Adjustment Factor (ADAF) note will appear next to the value",
+                help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
                 verbose_name="Apply ADAF?",
             ),
         ),
@@ -58,9 +57,19 @@ class Migration(migrations.Migration):
                 blank=True,
                 default="",
                 help_text="Provide information about the animal(s) studied, including species and strain information",
-                verbose_name="Species and strain studied",
+                verbose_name="Species and strain",
             ),
             preserve_default=False,
         ),
         migrations.RunPython(get_species_name, migrations.RunPython.noop),
+        migrations.AlterField(
+            model_name="assessmentdetail",
+            name="report_id",
+            field=models.CharField(
+                blank=True,
+                help_text="A external report number or identifier (e.g., a DOI, publication number)",
+                max_length=128,
+                verbose_name="Report identifier",
+            ),
+        ),
     ]

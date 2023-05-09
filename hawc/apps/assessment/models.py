@@ -145,11 +145,10 @@ class Assessment(models.Model):
         """,
     )
     assessment_objective = models.TextField(
-        help_text="Describe the assessment objective(s), research questions, "
-        "or clarification on the purpose of the assessment.",
+        help_text="Describe the assessment objective(s), research questions, and purpose of this HAWC assessment. If a related peer-reviewed paper or journal article is available describing this work, please add a citation and hyperlink.",
     )
     authors = models.TextField(
-        verbose_name="Assessment authors",
+        verbose_name="Assessment authors/organization",
         help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
     )
     creator = models.ForeignKey(
@@ -274,7 +273,8 @@ class Assessment(models.Model):
     epi_version = models.PositiveSmallIntegerField(
         choices=constants.EpiVersion.choices,
         default=constants.EpiVersion.V2,
-        help_text="Data extraction schema used for epidemiology studies",
+        verbose_name="Epidemiology schema version",
+        help_text="Data extraction schema version used for epidemiology studies",
     )
     admin_notes = models.TextField(
         blank=True,
@@ -525,10 +525,10 @@ class AssessmentDetail(models.Model):
         validators=[validate_hyperlink],
     )
     report_id = models.CharField(
-        max_length=16,
+        max_length=128,
         blank=True,
         verbose_name="Report identifier",
-        help_text="A external report number or identifier, if any",
+        help_text="A external report number or identifier (e.g., a DOI, publication number)",
     )
     report_url = models.URLField(
         blank=True,
@@ -540,8 +540,8 @@ class AssessmentDetail(models.Model):
         default=dict,
         validators=[FlatJSON.validate],
         blank=True,
-        verbose_name="Additional attributes",
-        help_text="Any additional custom attributes; " + FlatJSON.HELP_TEXT,
+        verbose_name="Additional fields",
+        help_text="Any additional custom fields; " + FlatJSON.HELP_TEXT,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -660,8 +660,8 @@ class AssessmentValue(models.Model):
         default=dict,
         blank=True,
         validators=[FlatJSON.validate],
-        verbose_name="Additional attributes",
-        help_text="Any additional custom attributes; " + FlatJSON.HELP_TEXT,
+        verbose_name="Additional fields",
+        help_text="Any additional custom fields; " + FlatJSON.HELP_TEXT,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
