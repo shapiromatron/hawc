@@ -1,9 +1,13 @@
 import json
 import logging
+from collections import Counter
+from typing import Self
 
+import plotly.express as px
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from plotly.graph_objs._figure import Figure
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..study.models import Study
@@ -89,3 +93,30 @@ class Task(models.Model):
             logger.info(f'Stopping "{self.get_type_display()}" task {self.id}')
             self.status = constants.TaskStatus.COMPLETED
             self.save()
+
+    @classmethod
+    def barchart(cls, tasks: list[Self], title: str = "") -> Figure:
+        counts = Counter(el.status for el in tasks)
+        status_count = {
+            label: counts.get(value, 0) for value, label in constants.TaskStatus.choices
+        }
+        plot = px.bar(
+            x=list(status_count.values()),
+            y=list(status_count.keys()),
+            orientation="h",
+            title=title,
+            width=500,
+            height=200,
+            template="none",
+            color=list(status_count.keys()),
+            color_discrete_sequence=["#CFCFCF", "#FFCC00", "#00CC00", "#CC3333"],
+            text_auto=True,
+        )
+        plot.update_layout(
+            xaxis={"title": "Tasks"},
+            yaxis={"title": "", "autorange": "reversed"},
+            margin={"l": 85, "r": 0, "t": 30, "b": 30},
+            showlegend=False,
+            hovermode=False,
+        )
+        return plot
