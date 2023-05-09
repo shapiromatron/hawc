@@ -412,6 +412,7 @@ class AssessmentDetail(BaseDetail):
             else context["object"].datasets.filter(published=True)
         )
         context["values"] = self.object.values.order_by("value_type")
+        context["adaf_footnote"] = constants.ADAF_FOOTNOTE
         return context
 
 
@@ -514,6 +515,11 @@ class AssessmentValueUpdate(BaseUpdate):
 
 class AssessmentValueDetail(BaseDetail):
     model = models.AssessmentValue
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        return context
 
 
 class AssessmentValueDelete(BaseDelete):
