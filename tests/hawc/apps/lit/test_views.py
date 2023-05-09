@@ -79,8 +79,8 @@ class TestRefUploadExcel:
 
         # check GET renders
         url = reverse("lit:ref_upload", args=(1,))
-        with assertTemplateUsed("lit/reference_upload_excel.html"):
-            c.get(url)
+        resp = c.get(url)
+        assertTemplateUsed(resp, "lit/reference_upload_excel.html")
 
         ref = Reference.objects.get(id=1)
         assert ref.full_text_url == ""
@@ -94,8 +94,10 @@ class TestRefUploadExcel:
         )
         f = BytesIO()
         df.to_excel(f, index=False)
-        with assertTemplateUsed("lit/overview.html"):
-            c.post(url, {"excel_file": SimpleUploadedFile("test.xlsx", f.getvalue())}, follow=True)
+        resp = c.post(
+            url, {"excel_file": SimpleUploadedFile("test.xlsx", f.getvalue())}, follow=True
+        )
+        assertTemplateUsed(resp, "lit/overview.html")
 
         ref.refresh_from_db()
         assert ref.full_text_url.startswith("https://www.ncbi.nlm.nih.gov")
