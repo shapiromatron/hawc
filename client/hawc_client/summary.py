@@ -1,5 +1,5 @@
-from io import BytesIO
 import pathlib
+from io import BytesIO
 
 import pandas as pd
 from docx import Document
