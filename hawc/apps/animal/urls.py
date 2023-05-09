@@ -60,7 +60,7 @@ urlpatterns = [
     ),
     path(
         "experiment/<int:pk>/",
-        views.ExperimentRead.as_view(),
+        views.ExperimentDetail.as_view(),
         name="experiment_detail",
     ),
     path(
@@ -86,7 +86,7 @@ urlpatterns = [
     ),
     path(
         "animal-group/<int:pk>/",
-        views.AnimalGroupRead.as_view(),
+        views.AnimalGroupDetail.as_view(),
         name="animal_group_detail",
     ),
     path(
@@ -126,7 +126,7 @@ urlpatterns = [
         views.EndpointCreate.as_view(),
         name="endpoint_new",
     ),
-    path("endpoint/<int:pk>/", views.EndpointRead.as_view(), name="endpoint_detail"),
+    path("endpoint/<int:pk>/", views.EndpointDetail.as_view(), name="endpoint_detail"),
     path(
         "endpoint/<int:pk>/update/",
         views.EndpointUpdate.as_view(),

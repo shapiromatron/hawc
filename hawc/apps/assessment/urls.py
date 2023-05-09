@@ -17,7 +17,7 @@ urlpatterns = [
     path("all/", views.AssessmentFullList.as_view(), name="full_list"),
     path("public/", views.AssessmentPublicList.as_view(), name="public_list"),
     path("new/", views.AssessmentCreate.as_view(), name="new"),
-    path("<int:pk>/", views.AssessmentRead.as_view(), name="detail"),
+    path("<int:pk>/", views.AssessmentDetail.as_view(), name="detail"),
     path("<int:pk>/update/", views.AssessmentUpdate.as_view(), name="update"),
     path(
         "<int:pk>/enabled-modules/update/",
@@ -90,7 +90,7 @@ urlpatterns = [
     ),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),
-    path("dataset/<int:pk>/", views.DatasetRead.as_view(), name="dataset_detail"),
+    path("dataset/<int:pk>/", views.DatasetDetail.as_view(), name="dataset_detail"),
     path("dataset/<int:pk>/update/", views.DatasetUpdate.as_view(), name="dataset_update"),
     path("dataset/<int:pk>/delete/", views.DatasetDelete.as_view(), name="dataset_delete"),
     # species

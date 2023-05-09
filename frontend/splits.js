@@ -34,9 +34,6 @@ const startup = (name, cb) => {
         case "litStartup":
             import("./lit/index.js").then(app => cb(app.default));
             break;
-        case "mgmtStartup":
-            import("./mgmt/index.js").then(app => cb(app.default));
-            break;
         case "nestedTagEditorStartup":
             import("./shared/nestedTagEditor/index.js").then(app => cb(app.default));
             break;

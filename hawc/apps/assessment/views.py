@@ -385,7 +385,7 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
         return context
 
 
-class AssessmentRead(BaseDetail):
+class AssessmentDetail(BaseDetail):
     model = models.Assessment
 
     def get_queryset(self):
@@ -589,7 +589,7 @@ class DatasetCreate(BaseCreate):
     form_class = forms.DatasetForm
 
 
-class DatasetRead(BaseDetail):
+class DatasetDetail(BaseDetail):
     model = models.Dataset
 
     def get_object(self, **kwargs):
