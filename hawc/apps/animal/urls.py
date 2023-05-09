@@ -4,7 +4,7 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.AnimalAssessmentViewset, basename="assessment")
+router.register(r"assessment", api.AnimalAssessmentViewSet, basename="assessment")
 router.register(r"endpoint", api.Endpoint, basename="endpoint")
 router.register(r"experiment", api.Experiment, basename="experiment")
 router.register(r"animal-group", api.AnimalGroup, basename="animal_group")

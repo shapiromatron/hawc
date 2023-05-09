@@ -6,9 +6,9 @@ from . import api, views
 
 router = SimpleRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
-router.register(r"strain", api.StrainViewset, basename="strain")
+router.register(r"dataset", api.DatasetViewSet, basename="dataset")
+router.register(r"dsstox", api.DssToxViewSet, basename="dsstox")
+router.register(r"strain", api.StrainViewSet, basename="strain")
 
 
 app_name = "assessment"
@@ -66,25 +66,25 @@ urlpatterns = [
     # attachment objects
     path(
         "attachment/<int:pk>/create/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "create"},
         name="attachment-create",
     ),
     path(
         "attachment/<int:pk>/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "read"},
         name="attachment-detail",
     ),
     path(
         "attachment/<int:pk>/update/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "update"},
         name="attachment-update",
     ),
     path(
         "attachment/<int:pk>/delete/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "delete"},
         name="attachment-delete",
     ),
