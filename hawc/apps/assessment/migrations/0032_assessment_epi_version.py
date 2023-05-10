@@ -25,7 +25,8 @@ class Migration(migrations.Migration):
             field=models.PositiveSmallIntegerField(
                 choices=[(1, "v1"), (2, "v2")],
                 default=2,
-                help_text="Data extraction schema used for epidemiology studies",
+                verbose_name="Epidemiology schema version",
+                help_text="Data extraction schema version used for epidemiology studies",
             ),
         ),
         migrations.RunPython(set_epi_version, RunPython.noop),

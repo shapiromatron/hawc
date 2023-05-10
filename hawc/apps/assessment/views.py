@@ -385,7 +385,7 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
         return context
 
 
-class AssessmentRead(BaseDetail):
+class AssessmentDetail(BaseDetail):
     model = models.Assessment
 
     def get_queryset(self):
@@ -412,6 +412,7 @@ class AssessmentRead(BaseDetail):
             else context["object"].datasets.filter(published=True)
         )
         context["values"] = self.object.values.order_by("value_type")
+        context["adaf_footnote"] = constants.ADAF_FOOTNOTE
         return context
 
 
@@ -515,6 +516,11 @@ class AssessmentValueUpdate(BaseUpdate):
 class AssessmentValueDetail(BaseDetail):
     model = models.AssessmentValue
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        return context
+
 
 class AssessmentValueDelete(BaseDelete):
     model = models.AssessmentValue
@@ -525,7 +531,7 @@ class AssessmentValueDelete(BaseDelete):
 
 
 # Attachment viewset
-class AttachmentViewset(HtmxViewSet):
+class AttachmentViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
@@ -589,7 +595,7 @@ class DatasetCreate(BaseCreate):
     form_class = forms.DatasetForm
 
 
-class DatasetRead(BaseDetail):
+class DatasetDetail(BaseDetail):
     model = models.Dataset
 
     def get_object(self, **kwargs):
