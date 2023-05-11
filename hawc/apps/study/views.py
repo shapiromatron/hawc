@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
+from ..assessment.views import check_published_status
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
@@ -95,6 +96,7 @@ class StudyDetail(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        check_published_status(self.request.user, self.object.published, self.assessment)
         attachments_viewable = self.assessment.user_is_reviewer_or_higher(self.request.user)
         context["config"] = {
             "studyContent": self.object.get_json(json_encode=False),
