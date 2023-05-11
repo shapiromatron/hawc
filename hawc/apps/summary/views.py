@@ -87,10 +87,10 @@ class GetSummaryTableMixin:
             queryset = self.get_queryset()
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
-        object = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
-        object = super().get_object(object=object)
-        check_published_status(self.request.user, object.published, self.assessment)
-        return object
+        obj = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class SummaryTableList(BaseFilterList):
@@ -251,10 +251,10 @@ class GetVisualizationObjectMixin:
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
-        object = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
-        object = super().get_object(object=object)
-        check_published_status(self.request.user, object.published, self.assessment)
-        return object
+        obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class VisualizationList(BaseList):
@@ -650,13 +650,13 @@ class GetDataPivotObjectMixin:
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
-        object = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        object = (
-            object.datapivotquery if hasattr(object, "datapivotquery") else object.datapivotupload
+        obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
+        obj = (
+            obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
         )
-        object = super().get_object(object=object)
-        check_published_status(self.request.user, object.published, self.assessment)
-        return object
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class DataPivotByIdDetail(RedirectView):
