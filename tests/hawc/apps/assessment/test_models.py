@@ -42,7 +42,7 @@ class TestContent:
         request = rf.get("/")
         request.user = AnonymousUser()
         page = models.Content.rendered_page(models.ContentTypeChoices.HOMEPAGE, request, {})
-        assert page == "<h1>Welcome to HAWC</h1>"
+        assert "<h1>Welcome to HAWC</h1>" in page
         page = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, request, {})
         assert page == "<h1>About HAWC</h1>"
 

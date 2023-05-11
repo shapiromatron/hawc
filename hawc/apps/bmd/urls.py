@@ -12,7 +12,7 @@ urlpatterns = [
     # BMD assessment-level settings
     path(
         "assessment/<int:pk>/settings/",
-        views.AssessSettingsRead.as_view(),
+        views.AssessmentSettingsDetail.as_view(),
         name="assess_settings_detail",
     ),
     path(

@@ -91,7 +91,7 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
         return reverse_lazy("study:update", args=(self.object.id,))
 
 
-class StudyRead(BaseDetail):
+class StudyDetail(BaseDetail):
     model = models.Study
 
     def get_context_data(self, **kwargs):
@@ -132,7 +132,7 @@ class StudyDelete(BaseDelete):
         return reverse_lazy("study:list", kwargs={"pk": self.assessment.pk})
 
 
-class StudyRoBRedirect(StudyRead):
+class StudyRoBRedirect(StudyDetail):
     # permanent redirect of RoB results; link is required to work based on
     # older OHAT reports which use this legacy URL route.
 
@@ -165,7 +165,7 @@ class AttachmentDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
-class AttachmentRead(BaseDetail):
+class AttachmentDetail(BaseDetail):
     model = models.Attachment
 
     def get(self, request, *args, **kwargs):

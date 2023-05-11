@@ -9,7 +9,7 @@ from ..test_utils import check_details_of_last_log_entry
 
 
 @pytest.mark.django_db
-class TestStudyViewset:
+class TestStudyViewSet:
     def test_detail(self, db_keys):
         client = Client()
         assert client.login(username="team@hawcproject.org", password="pw") is True
