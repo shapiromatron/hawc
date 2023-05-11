@@ -720,7 +720,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: true
+    enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
     noel_name: 0
@@ -759,7 +762,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: true
+    enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: ''
     noel_name: 0
@@ -796,7 +802,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: false
+    enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
     noel_name: 0
@@ -833,7 +842,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: true
+    enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
     noel_name: 0

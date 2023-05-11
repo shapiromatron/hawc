@@ -227,11 +227,23 @@ class Assessment(models.Model):
         "available in the HAWC database, using the US EPA's Benchmark "
         "Dose Modeling Software (BMDS).",
     )
+    enable_summary_tables = models.BooleanField(
+        default=True,
+        help_text="Create summary tables of data and/or study evaluations extracted in HAWC, or build custom user defined tables. Show the summary tables link on the assessment sidebar.",
+    )
+    enable_visuals = models.BooleanField(
+        default=True,
+        help_text="Create visualizations of data and/or study evaluations extracted in HAWC, or using data uploaded from a tabular dataset. Show the visuals link on the assessment sidebar.",
+    )
     enable_summary_text = models.BooleanField(
         default=True,
         help_text="Create custom-text to describe methodology and results of the "
         "assessment; insert tables, figures, and visualizations to using "
         '"smart-tags" which link to other data in HAWC.',
+    )
+    enable_downloads = models.BooleanField(
+        default=True,
+        help_text="Show the downloads link on the assessment sidebar.",
     )
     conflicts_of_interest = models.TextField(
         blank=True,
