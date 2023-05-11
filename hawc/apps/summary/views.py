@@ -651,9 +651,7 @@ class GetDataPivotObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        obj = (
-            obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
-        )
+        obj = obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
         obj = super().get_object(object=obj)
         check_published_status(self.request.user, obj.published, self.assessment)
         return obj
