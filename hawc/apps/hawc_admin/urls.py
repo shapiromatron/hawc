@@ -25,7 +25,6 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
     if settings.INCLUDE_ADMIN:
         router.register(r"dashboard", api.DashboardViewSet, basename="admin_dashboard")
         router.register(r"reports", api.ReportsViewSet, basename="admin_reports")
-        router.register(r"by-chemical", api.ChemicalsViewSet, basename="admin_chemical")
         open_api_patterns.append(path(f"{admin_url}/api/", include(router.urls)))
         admin.autodiscover()
 

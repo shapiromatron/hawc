@@ -80,3 +80,4 @@ class TestReportsViewSet:
         assert resp.status_code == 200
         df = pd.read_json(resp.content.decode())
         assert df.shape == (3, 33)
+

@@ -28,6 +28,13 @@ from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, u
 # all http methods except PUT
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
+class GlobalChemicalsViewSet(viewsets.ViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+
+    @action(detail=False)
+    def chemicals(self, request):
+        return Response({"response": True})
+
 
 class CleanupFieldsBaseViewSet(
     ListUpdateModelMixin,
