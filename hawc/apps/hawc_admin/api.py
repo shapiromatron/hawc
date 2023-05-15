@@ -43,3 +43,16 @@ class ReportsViewSet(viewsets.ViewSet):
             queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
         ).build_export()
         return Response(export, status=status.HTTP_200_OK)
+
+class ChemicalsViewSet(viewsets.ViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+
+    @action(detail=False)
+    def chemicals(self, request):
+        return Response({"response": True})
+
+    @action(detail=False)
+    def references(self, request):
+        return Response({"response": True})
+
+
