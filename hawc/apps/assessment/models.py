@@ -610,7 +610,7 @@ class AssessmentValue(models.Model):
     )
     basis = models.TextField(
         blank=True,
-        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
+        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Smith et al. 2023)",
     )
     pod_type = models.CharField(
         verbose_name="POD Type",
