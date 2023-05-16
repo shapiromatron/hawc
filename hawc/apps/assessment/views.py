@@ -1020,3 +1020,21 @@ class PublishedItemsChecklist(HtmxViewSet):
             "summarytables": summarytables,
             "attachments": attachments,
         }
+
+
+def check_published_status(user, published: bool, assessment: models.Assessment):
+    """Raise permission denied if item is not published.
+
+    Only team-members and higher can view; reviewers should not be able to review
+    since they should only see what would be made public.
+
+    Args:
+        user: the requesting user
+        published (bool): is item published
+        assessment (Assessment): an assessment
+
+    Raises:
+        PermissionDenied: if a user is not team-member or higher
+    """
+    if not published and not assessment.user_is_team_member_or_higher(user):
+        raise PermissionDenied()

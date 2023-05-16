@@ -392,7 +392,7 @@ class TestBulkReferenceStudyExtractForm:
             ).count()
             == 0
         )
-        form.bulk_create_studies()
+        form.save()
         assert (
             Study.objects.filter(
                 bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""
