@@ -18,7 +18,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestLiteratureAssessmentViewset:
+class TestLiteratureAssessmentViewSet:
     def _test_flat_export(
         self, rewrite_data_files: bool, fn: str, url: str, client: APIClient | None = None
     ):
@@ -295,7 +295,7 @@ class TestLiteratureAssessmentViewset:
 
 @pytest.mark.vcr
 @pytest.mark.django_db
-class TestSearchViewset:
+class TestSearchViewSet:
     def test_success(self, db_keys):
         url = reverse("lit:api:search-list")
         c = APIClient()
@@ -583,7 +583,7 @@ class TestReferenceDestroyApi:
 
 
 @pytest.mark.django_db
-class TestReferenceViewset:
+class TestReferenceViewSet:
     def test_update_permissions(self, db_keys):
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         data = {"title": "TestReferenceUpdateApi test"}

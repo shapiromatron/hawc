@@ -9,7 +9,7 @@ def has_redis():
 
 
 @pytest.mark.django_db
-class TestDatasetViewset:
+class TestDatasetViewSet:
     def test_permissions(self, db_keys):
         client = APIClient()
 
@@ -94,7 +94,7 @@ class TestDatasetViewset:
 
 
 @pytest.mark.django_db
-class TestDssToxViewset:
+class TestDssToxViewSet:
     def test_expected_response(self):
         dtxsid = "DTXSID6026296"
         client = APIClient()

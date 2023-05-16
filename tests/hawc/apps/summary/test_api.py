@@ -198,7 +198,7 @@ class TestDataPivot:
 
 
 @pytest.mark.django_db
-class TestSummaryAssessmentViewset:
+class TestSummaryAssessmentViewSet:
     def test_heatmap_datasets(self, db_keys):
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
@@ -283,7 +283,7 @@ class TestSummaryAssessmentViewset:
 
 
 @pytest.mark.django_db
-class TestSummaryTextViewset:
+class TestSummaryTextViewSet:
     def test_current_schema_host(self):
         # undocumented API in django; test to ensure it exists
         factory = RequestFactory()
@@ -346,7 +346,7 @@ class TestSummaryTextViewset:
 
 
 @pytest.mark.django_db
-class TestSummaryTableViewset:
+class TestSummaryTableViewSet:
     def _test_data_file(self, rewrite_data_files: bool, fn_key: str, data):
         fn = Path(DATA_ROOT / f"api-summary-table-{fn_key}-data.json")
         data_str = json.dumps(data, indent=2, sort_keys=True)

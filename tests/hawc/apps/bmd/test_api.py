@@ -14,7 +14,7 @@ def toggle_assessment_lock(assessment_id: int, editable: bool):
 
 
 @pytest.mark.django_db
-class TestSessionViewset:
+class TestSessionViewSet:
     def test_bmds2_detail(self):
         # bmds 270
         session = Session.objects.filter(version="BMDS270", active=True).first()

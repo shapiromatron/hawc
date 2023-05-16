@@ -14,7 +14,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestEpiAssessmentViewset:
+class TestEpiAssessmentViewSet:
     def test_export(self):
         url = reverse("epiv2:api:assessment-export", args=(1,))
 
