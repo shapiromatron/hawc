@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
-    AssessmentRootedTagTreeViewset,
+    AssessmentRootedTagTreeViewSet,
     CleanupFieldsBaseViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
@@ -29,7 +29,7 @@ from ..common.views import create_object_log
 from . import exports, filterset, models, serializers
 
 
-class LiteratureAssessmentViewset(viewsets.GenericViewSet):
+class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
@@ -169,7 +169,6 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         )
         payload = {}
         if len(years) > 0:
-
             df = pd.DataFrame(years, columns=["Year"])
             nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
 
@@ -189,7 +188,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
                 bargap=0.1,
                 plot_bgcolor="white",
                 autosize=True,
-                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
+                margin=dict(l=0, r=0, t=30, b=0),
             )
             payload = fig.to_dict()
 
@@ -377,7 +376,7 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         return Response(export)
 
 
-class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
@@ -388,18 +387,18 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
         return self.model.objects.all()
 
 
-class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
+class ReferenceFilterTagViewSet(AssessmentRootedTagTreeViewSet):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
 
-class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
+class ReferenceCleanupViewSet(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"
 
 
-class ReferenceViewset(
+class ReferenceViewSet(
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,

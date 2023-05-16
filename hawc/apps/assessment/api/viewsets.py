@@ -35,7 +35,7 @@ class CleanupFieldsBaseViewSet(
     viewsets.GenericViewSet,
 ):
     """
-    Base Viewset for bulk updating text fields.
+    Base ViewSet for bulk updating text fields.
 
     Implements three routes:
 
@@ -80,9 +80,9 @@ class CleanupFieldsBaseViewSet(
 
 class EditPermissionsCheckMixin:
     """
-    API Viewset mixin which provides permission checking during create/update/destroy operations.
+    API ViewSet mixin which provides permission checking during create/update/destroy operations.
 
-    Fires "user_can_edit_object" checks during requests to create/update/destroy. Viewsets mixing
+    Fires "user_can_edit_object" checks during requests to create/update/destroy. ViewSets mixing
     this in can define a variable "edit_check_keys", which is a list of serializer attribute
     keys that should be used as the source for the checks.
     """
@@ -130,7 +130,7 @@ class EditPermissionsCheckMixin:
         super().perform_destroy(instance)
 
 
-class BaseAssessmentViewset(viewsets.GenericViewSet):
+class BaseAssessmentViewSet(viewsets.GenericViewSet):
     action_perms = {}
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
@@ -141,12 +141,11 @@ class BaseAssessmentViewset(viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class AssessmentEditViewset(viewsets.ModelViewSet):
+class AssessmentEditViewSet(viewsets.ModelViewSet):
     http_method_names = METHODS_NO_PUT
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
-    parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
     lookup_value_regex = re_digits
 
@@ -179,11 +178,11 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
         super().perform_destroy(instance)
 
 
-class AssessmentViewset(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewset):
+class AssessmentViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, BaseAssessmentViewSet):
     pass
 
 
-class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
+class AssessmentRootedTagTreeViewSet(viewsets.ModelViewSet):
     """
     Base ViewSet used with AssessmentRootedTagTree model.
     """
@@ -243,7 +242,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         return Response({"status": True})
 
 
-class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+class DoseUnitsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.DoseUnits
     serializer_class = serializers.DoseUnitsSerializer
     pagination_class = DisabledPagination
@@ -253,7 +252,7 @@ class DoseUnitsViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class Assessment(AssessmentViewset):
+class Assessment(AssessmentViewSet):
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
@@ -435,7 +434,7 @@ class Assessment(AssessmentViewset):
         return Response(export)
 
 
-class DatasetViewset(AssessmentViewset):
+class DatasetViewSet(AssessmentViewSet):
     model = models.Dataset
     serializer_class = serializers.DatasetSerializer
     assessment_filter_args = "assessment_id"
@@ -480,7 +479,7 @@ class DatasetViewset(AssessmentViewset):
         return Response(export)
 
 
-class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+class DssToxViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = (permissions.AllowAny,)
     lookup_value_regex = RE_DTXSID
     model = models.DSSTox
@@ -490,7 +489,7 @@ class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
         return self.model.objects.all()
 
 
-class StrainViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+class StrainViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.Strain
     queryset = models.Strain.objects.all()
     serializer_class = serializers.StrainSerializer

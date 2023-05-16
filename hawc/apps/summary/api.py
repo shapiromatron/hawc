@@ -7,9 +7,9 @@ from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
-    AssessmentViewset,
+    AssessmentViewSet,
     EditPermissionsCheckMixin,
     InAssessmentFilter,
 )
@@ -28,7 +28,6 @@ class UnpublishedFilter(BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
-
         if not hasattr(view, "assessment"):
             self.instance = get_object_or_404(queryset.model, **view.kwargs)
             view.assessment = self.instance.get_assessment()
@@ -38,8 +37,7 @@ class UnpublishedFilter(BaseFilterBackend):
         return queryset
 
 
-class SummaryAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
+class SummaryAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
@@ -61,7 +59,7 @@ class SummaryAssessmentViewset(viewsets.GenericViewSet):
         return Response(datasets)
 
 
-class DataPivotViewset(AssessmentViewset):
+class DataPivotViewSet(AssessmentViewSet):
     """
     For list view, return simplified data-pivot view.
 
@@ -93,7 +91,7 @@ class DataPivotViewset(AssessmentViewset):
         return Response(export)
 
 
-class VisualViewset(AssessmentViewset):
+class VisualViewSet(AssessmentViewSet):
     """
     For list view, return all Visual objects for an assessment, but using the
     simplified collection view.
@@ -116,7 +114,7 @@ class VisualViewset(AssessmentViewset):
         return super().get_queryset().select_related("assessment")
 
 
-class SummaryTextViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.SummaryText
@@ -128,7 +126,7 @@ class SummaryTextViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
         return self.model.objects.all()
 
 
-class SummaryTableViewset(AssessmentEditViewset):
+class SummaryTableViewSet(AssessmentEditViewSet):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
     filter_backends = (InAssessmentFilter, UnpublishedFilter)

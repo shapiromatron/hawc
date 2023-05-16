@@ -12,13 +12,13 @@ EPA = dict(
         StudyPopulation=dict(
             design=(
                 "Choose the most specific description of study design. See “Epidemiology Terms Appendix“ for additional guidance: "
-                "<a target='_new' href='https://hawcprd.epa.gov/assessment/100000039/'>https://hawcprd.epa.gov/assessment/100000039/</a>. "
+                "<a target='_new' href='https://hawc.epa.gov/assessment/100000039/'>https://hawc.epa.gov/assessment/100000039/</a>. "
                 "<span class='important-note'>This field is commonly used in HAWC visualizations</span>"
             ),
         ),
         Outcome=dict(
             name=(
-                "Follow “Recommended Terminology for Outcomes/Endpoints“: <a target='_new' href='https://hawcprd.epa.gov/assessment/100000039/'>https://hawcprd.epa.gov/assessment/100000039/</a>. "
+                "Follow “Recommended Terminology for Outcomes/Endpoints“: <a target='_new' href='https://hawc.epa.gov/assessment/100000039/'>https://hawc.epa.gov/assessment/100000039/</a>. "
                 "Use title style (capitalize all words). Ex. Hyperthyroidism <span class='important-note'>This field is commonly used in HAWC visualizations</span>"
             ),
             effects=(
@@ -28,17 +28,17 @@ EPA = dict(
             ),
             system=(
                 "Enter biological system affected, following “Recommended Terminology for Outcomes/Endpoints“: "
-                "<a target='_new' href='https://hawcprd.epa.gov/assessment/100000039/'>https://hawcprd.epa.gov/assessment/100000039/</a>. "
+                "<a target='_new' href='https://hawc.epa.gov/assessment/100000039/'>https://hawc.epa.gov/assessment/100000039/</a>. "
                 "Use title style (capitalize all words). Ex. Endocrine"
             ),
             effect=(
                 "Enter effect, following “Recommended Terminology for Outcomes/Endpoints“: "
-                "<a target='_new' href='https://hawcprd.epa.gov/assessment/100000039/'>https://hawcprd.epa.gov/assessment/100000039/</a>. "
+                "<a target='_new' href='https://hawc.epa.gov/assessment/100000039/'>https://hawc.epa.gov/assessment/100000039/</a>. "
                 "Use title style (capitalize all words). Ex. Thyroid Hormones "
             ),
             effect_subtype=(
                 "Enter effect subtype, following “Recommended Terminology for Outcomes/Endpoints“: "
-                "<a target='_new' href='https://hawcprd.epa.gov/assessment/100000039/'>https://hawcprd.epa.gov/assessment/100000039/</a>."
+                "<a target='_new' href='https://hawc.epa.gov/assessment/100000039/'>https://hawc.epa.gov/assessment/100000039/</a>."
                 "Use title style (capitalize all words). Ex. Absolute "
                 "<i>This field is not mandatory; often no effect subtype is necessary</i>"
             ),

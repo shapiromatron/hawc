@@ -12,6 +12,7 @@ from django.views.generic import RedirectView, TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
+from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
@@ -88,7 +89,9 @@ class GetSummaryTableMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class SummaryTableList(BaseFilterList):
@@ -250,7 +253,9 @@ class GetVisualizationObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class VisualizationList(BaseList):
@@ -665,11 +670,10 @@ class GetDataPivotObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        if hasattr(obj, "datapivotquery"):
-            obj = obj.datapivotquery
-        else:
-            obj = obj.datapivotupload
-        return super().get_object(object=obj)
+        obj = obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class DataPivotByIdDetail(RedirectView):

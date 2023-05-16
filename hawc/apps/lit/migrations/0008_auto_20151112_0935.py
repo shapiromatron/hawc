@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations
 
 from ...common.models import CustomURLField
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0007_auto_20151103_0925"),
     ]

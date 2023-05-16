@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("invitro", "0009_ivchemical_dtxsid"),
     ]

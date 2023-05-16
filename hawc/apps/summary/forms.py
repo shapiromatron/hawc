@@ -24,7 +24,6 @@ from . import autocomplete, constants, models
 
 
 class PrefilterMixin:
-
     PREFILTER_COMBO_FIELDS = [
         "studies",
         "systems",
@@ -502,7 +501,6 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
 
 
 class SummaryTableCopySelectorForm(forms.Form):
-
     table = SummaryTableModelChoiceField(
         label="Summary table", queryset=models.Visual.objects.all()
     )
@@ -615,7 +613,6 @@ class VisualModelChoiceField(forms.ModelChoiceField):
 
 
 class VisualSelectorForm(forms.Form):
-
     visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
 
     def __init__(self, *args, **kwargs):
@@ -677,7 +674,6 @@ class CrossviewForm(PrefilterMixin, VisualForm):
 
 
 class RoBForm(PrefilterMixin, VisualForm):
-
     prefilter_include = ("bioassay",)
 
     def __init__(self, *args, **kwargs):
@@ -693,7 +689,6 @@ class RoBForm(PrefilterMixin, VisualForm):
 
 
 class TagtreeForm(VisualForm):
-
     root_node = forms.TypedChoiceField(
         coerce=int,
         choices=[],
@@ -822,7 +817,6 @@ class TagtreeForm(VisualForm):
 
 
 class ExternalSiteForm(VisualForm):
-
     external_url = forms.URLField(
         label="External URL",
         help_text="""
@@ -988,7 +982,6 @@ class DataPivotForm(forms.ModelForm):
         self.fields["settings"].widget.attrs["rows"] = 2
 
     def setHelper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -1130,7 +1123,6 @@ class DataPivotModelChoiceField(forms.ModelChoiceField):
 
 
 class DataPivotSelectorForm(forms.Form):
-
     dp = DataPivotModelChoiceField(
         label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None
     )
@@ -1150,7 +1142,6 @@ class DataPivotSelectorForm(forms.Form):
 
     @property
     def helper(self):
-
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

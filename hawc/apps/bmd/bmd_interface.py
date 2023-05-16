@@ -16,7 +16,7 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
     grps = ds["groups"]
 
     # only get doses where data are reported
-    doses = [d for d, grp in zip(doses, grps) if grp["isReported"]]
+    doses = [d for d, grp in zip(doses, grps, strict=True) if grp["isReported"]]
 
     if endpoint.data_type == DataType.CONTINUOUS:
         Cls = bmds.ContinuousDataset

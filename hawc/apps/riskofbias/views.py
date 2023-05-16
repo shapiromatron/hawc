@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Iterable
+from collections.abc import Iterable
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied

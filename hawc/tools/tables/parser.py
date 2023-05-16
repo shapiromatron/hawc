@@ -52,7 +52,6 @@ def color_background(cell, color: str):
 
 
 class QuillParser(HTMLParser):
-
     # Inline tags
     _inline_tags = ["strong", "em", "u", "a"]
     # Inline tags to their font attribute

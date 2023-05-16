@@ -118,7 +118,6 @@ def unset_public_on(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("assessment", "0029_communication"),
@@ -130,7 +129,7 @@ class Migration(migrations.Migration):
             name="authors",
             field=models.TextField(
                 default="",
-                verbose_name="Assessment authors",
+                verbose_name="Assessment authors/organization",
                 help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
             ),
             preserve_default=False,
@@ -150,7 +149,7 @@ class Migration(migrations.Migration):
             model_name="assessment",
             name="assessment_objective",
             field=models.TextField(
-                help_text="Describe the assessment objective(s), research questions, or clarification on the purpose of the assessment."
+                help_text="Describe the assessment objective(s), research questions, and purpose of this HAWC assessment. If a related peer-reviewed paper or journal article is available describing this work, please add a citation and hyperlink.",
             ),
         ),
         migrations.AddField(

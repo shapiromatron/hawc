@@ -16,7 +16,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.filterset import dynamic_filterset
-from ..common.helper import WebappConfig, listToUl, tryParseInt
+from ..common.helper import WebappConfig, tryParseInt
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -683,28 +683,22 @@ class RefUploadExcel(BaseUpdate):
     template_name = "lit/reference_upload_excel.html"
     form_class = forms.ReferenceExcelUploadForm
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    success_message = "Reference full text URLs updated."
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["assessment"] = self.assessment
         return kwargs
 
-    def form_valid(self, form):
-        errors = models.Reference.objects.process_excel(form.cleaned_data["df"], self.assessment.id)
-        if len(errors) > 0:
-            msg = """References updated, but some errors were found
-                (references with errors were not updated): {0}""".format(
-                listToUl(errors)
-            )
-        else:
-            msg = "References updated."
-        self.success_message = msg
-        return super().form_valid(form)
+    def create_log(self, obj):
+        create_object_log(
+            "Reference URLs bulk updated", self.assessment, self.assessment.id, self.request.user.id
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Reference upload"
+            self.request.user, self.assessment, "Update full text URLs"
         )
         return context
 
@@ -728,6 +722,14 @@ class RefListExtract(BaseUpdate):
         )
         return kwargs
 
+    def create_log(self, obj):
+        create_object_log(
+            "Reference converted to study",
+            self.assessment,
+            self.assessment.id,
+            self.request.user.id,
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
@@ -738,10 +740,6 @@ class RefListExtract(BaseUpdate):
 
     def get_success_url(self):
         return reverse_lazy("lit:ref_list_extract", args=[self.assessment.pk])
-
-    def form_valid(self, form):
-        form.bulk_create_studies()
-        return super().form_valid(form)
 
 
 def _get_ref_app_startup(view, context) -> WebappConfig:

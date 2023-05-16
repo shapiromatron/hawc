@@ -56,7 +56,6 @@ class TooManyPubMedResults(Exception):
 
 
 class LiteratureAssessment(models.Model):
-
     DEFAULT_EXTRACTION_TAG = "Inclusion"
     TOPIC_MODEL_MIN_REFERENCES = 50
 
@@ -218,7 +217,7 @@ class LiteratureAssessment(models.Model):
     def get_topic_tsne_data(self) -> dict:
         if not self.has_topic_model:
             raise ValueError("No data available.")
-        data = pickle.load(self.topic_tsne_data.file.file)
+        data = pickle.load(self.topic_tsne_data.file.file)  # noqa: S301
         data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
         data["topics"] = pd.read_parquet(BytesIO(data["topics"]), engine="pyarrow")
         return data
@@ -613,8 +612,7 @@ class PubMedQuery(models.Model):
 
         if search.id_count > settings.PUBMED_MAX_QUERY_SIZE:
             raise TooManyPubMedResults(
-                "Too many PubMed references found: {0}; reduce query scope to "
-                "fewer than {1}".format(search.id_count, settings.PUBMED_MAX_QUERY_SIZE)
+                f"Too many PubMed references found: {search.id_count}; reduce query scope to fewer than {settings.PUBMED_MAX_QUERY_SIZE}"
             )
 
         search.get_ids()
@@ -693,7 +691,7 @@ class Identifiers(models.Model):
 
     class Meta:
         unique_together = (("database", "unique_id"),)
-        index_together = (("database", "unique_id"),)
+        indexes = (models.Index(fields=("database", "unique_id")),)
         verbose_name_plural = "identifiers"
 
     def __str__(self):
@@ -1121,12 +1119,12 @@ class Reference(models.Model):
         year = content.get("year")
 
         # set all of the fields on this reference
-        setattr(self, "title", title)
-        setattr(self, "journal", journal)
-        setattr(self, "abstract", abstract)
-        setattr(self, "authors_short", authors_short)
-        setattr(self, "authors", authors)
-        setattr(self, "year", year)
+        self.title = title
+        self.journal = journal
+        self.abstract = abstract
+        self.authors_short = authors_short
+        self.authors = authors
+        self.year = year
 
         if save:
             self.save()

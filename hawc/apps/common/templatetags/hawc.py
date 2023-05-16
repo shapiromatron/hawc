@@ -1,7 +1,7 @@
 """
 HAWC helper methods
 """
-from typing import Any, Optional
+from typing import Any
 
 from django import template
 from django.contrib.contenttypes.models import ContentType
@@ -10,6 +10,12 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 register = template.Library()
+
+
+@register.filter
+def get(dictionary: dict, key: str):
+    """Get a key from a dictionary or dictionary-like object."""
+    return dictionary.get(key)
 
 
 @register.simple_tag
@@ -35,5 +41,5 @@ def optional_table_list_row(name: str, qs: QuerySet) -> str:
 
 
 @register.simple_tag
-def url_or_span(text: str, url: Optional[str] = None):
+def url_or_span(text: str, url: str | None = None):
     return mark_safe(f'<a href="{url}">{text}</a>') if url else text

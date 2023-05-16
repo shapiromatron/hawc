@@ -9,7 +9,7 @@ healthcheck_url = (
 )
 
 router = SimpleRouter()
-router.register(healthcheck_url, healthcheck.HealthcheckViewset, basename="healthcheck")
+router.register(healthcheck_url, healthcheck.HealthcheckViewSet, basename="healthcheck")
 
 app_name = "common"
 urlpatterns = [

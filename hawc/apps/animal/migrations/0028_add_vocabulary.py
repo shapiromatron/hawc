@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("vocab", "0001_initial"),
         ("animal", "0027_endpoint_ordering"),

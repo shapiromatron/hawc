@@ -12,7 +12,7 @@
 {% block extrajs %}
 <script type="text/javascript">
     $(document).ready(function () {
-        var eval_type = $('#id_evaluation_type'),
+        const eval_type = $('#id_evaluation_type'),
             showRelevantFields = function(){
                 selected_eval_type = eval_type.find(':selected').text();
                 if (selected_eval_type == "Cancer") {
@@ -26,7 +26,6 @@
                     $('#div_id_tumor_type').hide();
                     $('#div_id_extrapolation_method').hide();
                     $('#div_id_adaf').hide();
-                    $('#div_id_non_adaf_value').hide();
                 }
                 if (selected_eval_type == "Cancer and Noncancer") {
                     $('#div_id_uncertainty').show();
@@ -36,17 +35,6 @@
                 }
             };
         eval_type.on('change', showRelevantFields).trigger('change');
-
-        var adaf = $('#id_adaf'),
-            showAdafValue = function(){
-                if (adaf.is(':checked')) {
-                    $('#div_id_non_adaf_value').show();
-                }
-                else {
-                    $('#div_id_non_adaf_value').hide();
-                }
-            };
-        adaf.on('change', showAdafValue).trigger('change');
     });
 </script>
 {% endblock extrajs %}

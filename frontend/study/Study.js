@@ -86,7 +86,7 @@ class Study {
         );
         if (this.data.full_text_url)
             tbl.add_tbody_tr(
-                "Full-text link",
+                "Full text URL",
                 `<a href=${this.data.full_text_url}>${this.data.full_text_url}</a>`
             );
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
@@ -128,7 +128,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li>
+                `<li class="pb-2">
                     <a target="_blank" href="${v.url}">${v.filename}</a>
                     <a class="btn btn-sm btn-danger float-right" title="Delete" href="${v.url_delete}">
                         <i class="fa fa-trash"></i>

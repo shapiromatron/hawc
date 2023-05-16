@@ -15,9 +15,8 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestAssessmentViewset:
+class TestAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
-
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
@@ -98,7 +97,6 @@ class TestAssessmentViewset:
         self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
-
         # published
         fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
         url = (
@@ -190,13 +188,13 @@ class TestExperimentCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "type"}.issubset((response.data.keys()))
+        assert {"name", "type"}.issubset(response.data.keys())
 
         # payload needs to include name and type
         data = {"study_id": db_keys.study_working}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "type"}.issubset((response.data.keys()))
+        assert {"name", "type"}.issubset(response.data.keys())
 
         # payload needs study id
         data = {
@@ -307,13 +305,13 @@ class TestAnimalGroupCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "species", "strain", "sex"}.issubset((response.data.keys()))
+        assert {"name", "species", "strain", "sex"}.issubset(response.data.keys())
 
         # payload needs to include name, species, strain, and sex
         data = {"experiment_id": 1}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "species", "strain", "sex"}.issubset((response.data.keys()))
+        assert {"name", "species", "strain", "sex"}.issubset(response.data.keys())
 
         # payload needs experiment id
         data = {"name": "Animal group name", "species": 1, "strain": 1, "sex": "M"}
@@ -490,13 +488,13 @@ class TestEndpointCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name"}.issubset((response.data.keys()))
+        assert {"name"}.issubset(response.data.keys())
 
         # payload needs to include name
         data = {"animal_group_id": 1}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name"}.issubset((response.data.keys()))
+        assert {"name"}.issubset(response.data.keys())
 
         # payload needs animal group id
         data = {"name": "Endpoint name"}

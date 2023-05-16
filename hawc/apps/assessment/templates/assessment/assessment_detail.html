@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load hawc %}
+{% load bs4 %}
 {% load hastext %}
 
 {% block content %}
@@ -15,7 +16,7 @@
           <span class="dropdown-header">Assessment Editing</span>
           {% if obj_perms.edit_assessment %}
           <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
-          <a class="dropdown-item" href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a>
+          <a class="dropdown-item" href="{% url 'assessment:modules_update' object.pk %}">Update modules</a>
           {% if feature_flags.ENABLE_ASSESSMENT_VALUES %}
           <a class="dropdown-item" href="{{ object.get_details_form_url }}">Update additional details</a>
           {% endif %}
@@ -72,10 +73,7 @@
   {% endif %}
 
   <table id="assessment_table" class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 70%;">
-    </colgroup>
+    {% bs4_colgroup '25,75' %}
     <tbody>
 
       <tr>
@@ -109,14 +107,14 @@
 
       {% if object.assessment_objective %}
       <tr>
-        <th>Assessment objective</th>
+        <th>Objective</th>
         <td>{{object.assessment_objective|safe}}</td>
       </tr>
       {% endif %}
 
       {% if object.authors %}
       <tr>
-        <th>Assessment authors</th>
+        <th>Authors</th>
         <td>{{object.authors|safe}}</td>
       </tr>
       {% endif %}
@@ -151,12 +149,7 @@
   {% if obj_perms.edit %}
   <h3>Assessment details for team members*</h3>
   <table id="assessment_table" class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 19%;">
-      <col style="width: 27%;">
-      <col style="width: 27%;">
-      <col style="width: 27%;">
-    </colgroup>
+    {% bs4_colgroup '25,25,25,25' %}
     <tbody>
       <tr>
         <th>Assessment team</th>
@@ -254,7 +247,7 @@
 {% block extrajs %}
 {% if crud == "Read" and object.dtxsids.first %}
 <script type="text/javascript">
-  $(document).on('ready', function () {
+  window.addEventListener("DOMContentLoaded", function () {
     const dtxsids = {{dtxsids|safe}},
       el = document.getElementById('dtxsid-app');
     window.app.startup("assessmentStartup", function(app){
@@ -272,4 +265,5 @@
     }
   });
 </script>
+{% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

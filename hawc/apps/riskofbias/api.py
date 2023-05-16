@@ -1,7 +1,6 @@
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -10,13 +9,13 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
-    AssessmentViewset,
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
-    get_assessment_id_param,
+    get_assessment_from_query,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
@@ -34,7 +33,7 @@ from .actions.rob_clone import BulkRobCopyAction
 logger = logging.getLogger(__name__)
 
 
-class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
+class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
@@ -153,7 +152,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RiskOfBias(AssessmentEditViewset):
+class RiskOfBias(AssessmentEditViewSet):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
@@ -234,7 +233,7 @@ class RiskOfBias(AssessmentEditViewset):
         return Response(serializer.data)
 
 
-class AssessmentMetricViewset(AssessmentViewset):
+class AssessmentMetricViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
@@ -244,7 +243,7 @@ class AssessmentMetricViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentMetricScoreViewset(AssessmentViewset):
+class AssessmentMetricScoreViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
@@ -254,16 +253,15 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(AssessmentEditViewset):
+class AssessmentScoreViewSet(AssessmentEditViewSet):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
     list_actions = ["list", "v2"]
 
-    def get_assessment(self, request, *args, **kwargs):
-        assessment_id = get_assessment_id_param(request)
-        return get_object_or_404(self.parent_model, pk=assessment_id)
+    def get_assessment(self, request, *args, **kwargs):  # TODO - remove - is this used?
+        return get_assessment_from_query(request)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("overridden_objects__content_object")
@@ -283,7 +281,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         super().perform_destroy(instance)
 
 
-class ScoreCleanupViewset(CleanupFieldsBaseViewSet):
+class ScoreCleanupViewSet(CleanupFieldsBaseViewSet):
     model = models.RiskOfBiasScore
     serializer_class = serializers.RiskOfBiasScoreCleanupSerializer
     assessment_filter_args = "metric__domain__assessment"

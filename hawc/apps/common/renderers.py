@@ -62,7 +62,6 @@ class PandasBaseRenderer(BaseRenderer):
     """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-
         # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
         method = renderer_context["request"].method if "request" in renderer_context else None
@@ -102,7 +101,7 @@ class PandasCsvRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return export.df.to_csv(index=False, line_terminator="\n")
+        return export.df.to_csv(index=False, lineterminator="\n")
 
 
 class PandasTsvRenderer(PandasBaseRenderer):
@@ -115,7 +114,7 @@ class PandasTsvRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return export.df.to_csv(index=False, sep="\t", line_terminator="\n")
+        return export.df.to_csv(index=False, sep="\t", lineterminator="\n")
 
 
 class PandasJsonRenderer(PandasBaseRenderer):

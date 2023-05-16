@@ -12,8 +12,7 @@ from ..common.renderers import PandasRenderers
 from .actions import media_metadata_report
 
 
-class DashboardViewset(viewsets.ViewSet):
-
+class DashboardViewSet(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
@@ -25,7 +24,7 @@ class DashboardViewset(viewsets.ViewSet):
         return Response(export)
 
 
-class DiagnosticViewset(viewsets.ViewSet):
+class DiagnosticViewSet(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
     @action(detail=False, throttle_classes=(FivePerMinuteThrottle,))
@@ -34,12 +33,12 @@ class DiagnosticViewset(viewsets.ViewSet):
         return Response({"identity": throttle.get_ident(request)})
 
 
-class ReportsViewset(viewsets.ViewSet):
+class ReportsViewSet(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
     @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
-        """Gets all value data accross all assessments."""
+        """Gets all value data across all assessments."""
         export = ValuesListExport(
             queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
         ).build_export()

@@ -439,7 +439,6 @@ class Visual(models.Model):
             qs = Endpoint.objects.filter(**filters)
 
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-
             if request:
                 dose_id = tryParseInt(request.POST.get("dose_units"), -1)
                 Prefilter.setFiltersFromForm(filters, request.POST, self.visual_type)
@@ -732,7 +731,7 @@ class DataPivotQuery(DataPivot):
         if count > self.MAXIMUM_QUERYSET_COUNT:
             err = """
                 Current settings returned too many results
-                ({0} returned; a maximum of {1} are allowed);
+                ({} returned; a maximum of {} are allowed);
                 make your filtering settings more restrictive
                 (check units and/or prefilters).
             """.format(
@@ -744,7 +743,6 @@ class DataPivotQuery(DataPivot):
         filters = {}
 
         if self.evidence_type == constants.StudyType.BIOASSAY:
-
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["animal_group__experiment__study__published"] = True
@@ -752,19 +750,16 @@ class DataPivotQuery(DataPivot):
                 filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
         elif self.evidence_type == constants.StudyType.EPI:
-
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["study_population__study__published"] = True
 
         elif self.evidence_type == constants.StudyType.EPI_META:
-
             filters["protocol__study__assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["protocol__study__published"] = True
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
-
             filters["assessment_id"] = self.assessment_id
             if self.published_only:
                 filters["experiment__study__published"] = True
@@ -789,7 +784,6 @@ class DataPivotQuery(DataPivot):
 
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == constants.StudyType.BIOASSAY:
-
             # select export class
             if self.export_style == constants.ExportStyle.EXPORT_GROUP:
                 ExportClass = EndpointGroupFlatDataPivot
@@ -818,7 +812,6 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
-
             # select export class
             if self.export_style == constants.ExportStyle.EXPORT_GROUP:
                 Exporter = ivexports.DataPivotEndpointGroup

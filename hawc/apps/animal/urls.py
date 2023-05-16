@@ -4,7 +4,7 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.AnimalAssessmentViewset, basename="assessment")
+router.register(r"assessment", api.AnimalAssessmentViewSet, basename="assessment")
 router.register(r"endpoint", api.Endpoint, basename="endpoint")
 router.register(r"experiment", api.Experiment, basename="experiment")
 router.register(r"animal-group", api.AnimalGroup, basename="animal_group")
@@ -60,7 +60,7 @@ urlpatterns = [
     ),
     path(
         "experiment/<int:pk>/",
-        views.ExperimentRead.as_view(),
+        views.ExperimentDetail.as_view(),
         name="experiment_detail",
     ),
     path(
@@ -86,7 +86,7 @@ urlpatterns = [
     ),
     path(
         "animal-group/<int:pk>/",
-        views.AnimalGroupRead.as_view(),
+        views.AnimalGroupDetail.as_view(),
         name="animal_group_detail",
     ),
     path(
@@ -122,16 +122,11 @@ urlpatterns = [
         name="endpoint_list_v2",
     ),
     path(
-        "assessment/<int:pk>/endpoints/tags/<slug:tag_slug>/",
-        views.EndpointTags.as_view(),
-        name="assessment_endpoint_taglist",
-    ),
-    path(
         "animal-group/<int:pk>/endpoint/create/",
         views.EndpointCreate.as_view(),
         name="endpoint_new",
     ),
-    path("endpoint/<int:pk>/", views.EndpointRead.as_view(), name="endpoint_detail"),
+    path("endpoint/<int:pk>/", views.EndpointDetail.as_view(), name="endpoint_detail"),
     path(
         "endpoint/<int:pk>/update/",
         views.EndpointUpdate.as_view(),

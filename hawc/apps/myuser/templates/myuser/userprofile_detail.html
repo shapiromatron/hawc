@@ -1,6 +1,6 @@
 {% extends "crumbless.html" %}
 
-{% load optional_table_row %}
+{% load hawc %}
 
 {% block content %}
 <h2 class="d-inline-block">User Profile</h2>
@@ -8,7 +8,9 @@
   <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
   <div class="dropdown-menu dropdown-menu-right">
     <a class="dropdown-item" href="{% url 'user:profile_update' %}">Update profile</a>
+    {% if user.has_usable_password %}
     <a class="dropdown-item" href="{% url 'user:change_password' %}">Change password</a>
+    {% endif %}
   </div>
 </div>
 <table class="table table-sm table-striped table-hover table-bordered">
