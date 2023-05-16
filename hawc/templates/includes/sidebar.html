@@ -17,7 +17,7 @@
 
             {% if assessment.enable_project_management and user.is_authenticated %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a>
+                <a class="{{a_class}}" href="{% url 'mgmt:task-dashboard' assessment.pk %}">Management dashboard</a>
             </li>
             {% endif %}
 

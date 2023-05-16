@@ -93,7 +93,8 @@ source ./venv/bin/activate
 # update python/js packages; sync app state with database
 make sync-dev
 
-# run development webserver
+# run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 
@@ -126,7 +127,8 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 :: update python/js packages; sync app state with database
 make sync-dev
 
-:: run development webserver
+:: run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 

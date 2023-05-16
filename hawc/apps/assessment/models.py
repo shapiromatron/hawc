@@ -145,11 +145,10 @@ class Assessment(models.Model):
         """,
     )
     assessment_objective = models.TextField(
-        help_text="Describe the assessment objective(s), research questions, "
-        "or clarification on the purpose of the assessment.",
+        help_text="Describe the assessment objective(s), research questions, and purpose of this HAWC assessment. If a related peer-reviewed paper or journal article is available describing this work, please add a citation and hyperlink.",
     )
     authors = models.TextField(
-        verbose_name="Assessment authors",
+        verbose_name="Assessment authors/organization",
         help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
     )
     creator = models.ForeignKey(
@@ -274,7 +273,8 @@ class Assessment(models.Model):
     epi_version = models.PositiveSmallIntegerField(
         choices=constants.EpiVersion.choices,
         default=constants.EpiVersion.V2,
-        help_text="Data extraction schema used for epidemiology studies",
+        verbose_name="Epidemiology schema version",
+        help_text="Data extraction schema version used for epidemiology studies",
     )
     admin_notes = models.TextField(
         blank=True,
@@ -525,10 +525,10 @@ class AssessmentDetail(models.Model):
         validators=[validate_hyperlink],
     )
     report_id = models.CharField(
-        max_length=16,
+        max_length=128,
         blank=True,
         verbose_name="Report identifier",
-        help_text="A external report number or identifier, if any",
+        help_text="A external report number or identifier (e.g., a DOI, publication number)",
     )
     report_url = models.URLField(
         blank=True,
@@ -540,8 +540,8 @@ class AssessmentDetail(models.Model):
         default=dict,
         validators=[FlatJSON.validate],
         blank=True,
-        verbose_name="Additional attributes",
-        help_text="Any additional custom attributes; " + FlatJSON.HELP_TEXT,
+        verbose_name="Additional fields",
+        help_text="Any additional custom fields; " + FlatJSON.HELP_TEXT,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -580,15 +580,21 @@ class AssessmentValue(models.Model):
         help_text="The derived value",
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
+    adaf = models.BooleanField(
+        verbose_name="Apply ADAF?",
+        default=False,
+        help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
+    )
     confidence = models.CharField(
         max_length=64,
         blank=True,
-        help_text="Overall confidence for the value.",
+        help_text="Confidence in the toxicity value",
     )
     duration = models.CharField(
         max_length=128,
         blank=True,
-        help_text="Duration of value",
+        verbose_name="Value duration",
+        help_text="Duration associated with the value (e.g., Chronic, Subchronic)",
     )
     basis = models.TextField(
         blank=True,
@@ -619,8 +625,10 @@ class AssessmentValue(models.Model):
         verbose_name="Uncertainty factor",
         help_text="Composite uncertainty factor applied to POD to derive the final value",
     )
-    species_studied = models.ForeignKey(
-        "assessment.Species", on_delete=models.SET_NULL, blank=True, null=True
+    species_studied = models.TextField(
+        blank=True,
+        verbose_name="Species and strain",
+        help_text="Provide information about the animal(s) studied, including species and strain information",
     )
     study = models.ForeignKey(
         "study.Study",
@@ -645,24 +653,15 @@ class AssessmentValue(models.Model):
         blank=True,
         help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
     )
-    adaf = models.BooleanField(
-        verbose_name="ADAF applied?",
-        default=False,
-        help_text="Has an Age Dependent Adjustment Factor (ADAF) been applied?",
+    comments = models.TextField(
+        blank=True, help_text="General comments related to the derivation of this value"
     )
-    non_adaf_value = models.FloatField(
-        verbose_name="Non-ADAF adjusted value",
-        blank=True,
-        null=True,
-        help_text="Value without ADAF adjustment (units the same as Value above)",
-    )
-    comments = models.TextField(blank=True)
     extra = models.JSONField(
         default=dict,
         blank=True,
         validators=[FlatJSON.validate],
-        verbose_name="Additional attributes",
-        help_text="Any additional custom attributes; " + FlatJSON.HELP_TEXT,
+        verbose_name="Additional fields",
+        help_text="Any additional custom fields; " + FlatJSON.HELP_TEXT,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -984,7 +983,7 @@ class Dataset(models.Model):
     def get_new_version_value(self) -> int:
         try:
             return self.get_latest_revision().version + 1
-        except models.ObjectDoesNotExist:
+        except (ValueError, models.ObjectDoesNotExist):
             return 1
 
     def get_latest_df(self) -> pd.DataFrame:
