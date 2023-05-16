@@ -240,3 +240,16 @@ class TestStudyViewSet:
             .identifiers.filter(database=1, unique_id=str(10357793))
             .exists()
         )
+
+@pytest.mark.django_db
+class TestGlobalReferencesViewSet:
+    def test_study_values(self):
+        client = APIClient()
+        url = reverse("study:api:reference-references")
+
+        response = client.get(url)
+        assert response.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 200

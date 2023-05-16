@@ -107,11 +107,11 @@ class TestDssToxViewSet:
 class TestGlobalChemicalsViewSet:
     def test_assessment_values(self):
         client = APIClient()
-        chemicals_url = reverse("assessment:api:chemical-chemicals")
+        url = reverse("assessment:api:chemical-chemicals")
 
-        response = client.get(chemicals_url)
+        response = client.get(url)
         assert response.status_code == 403
 
         assert client.login(username="admin@hawcproject.org", password="pw") is True
-        response = client.get(chemicals_url)
+        response = client.get(url)
         assert response.status_code == 200
