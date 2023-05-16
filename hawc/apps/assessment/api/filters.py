@@ -1,5 +1,7 @@
+import django_filters as df
 from rest_framework import filters
 
+from ..models import Dataset
 from .helper import get_assessment_from_query
 
 
@@ -23,3 +25,11 @@ class InAssessmentFilter(filters.BaseFilterBackend):
 
         filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)
+
+class AssessmentChemicalFilterSet(df.FilterSet):
+    assessment__dtxsids = df.CharFilter(lookup_expr="icontains")
+    published = df.BooleanFilter()
+
+    class Meta:
+        model = Dataset
+        fields = ['assessment__dtxsids', 'published']
