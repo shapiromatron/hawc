@@ -1,4 +1,5 @@
-<div class="alert alert-info">
+{% load bs4 %}
+{% alert info %}
     <p><b>No {{assessment.get_rob_name_display|lower}} exists for this assessment.</b></p>
     {% if obj_perms.edit_assessment %}
     <p>As a project manager, you have the following options:</p>
@@ -9,3 +10,4 @@
     </ul>
     {% endif %}
   </div>
+{% endalert %}

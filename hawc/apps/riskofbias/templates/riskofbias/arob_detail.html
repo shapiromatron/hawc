@@ -28,9 +28,6 @@
 {{assessment.rob_settings.help_text|safe}}
 
 
-{% if no_data %}
-{% include 'riskofbias/_arob_none_alert.html' %}
-{% else %}
 <nav class="my-3">
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
     <button class="nav-link active" id="nav-contact-tab" data-toggle="tab" data-target="#nav-overview" type="button" role="tab" aria-controls="nav-overview" aria-selected="false">Overview</button>
@@ -41,8 +38,8 @@
 </nav>
 <div class="tab-content px-3" id="nav-tabContent">
   <div class="tab-pane fade show active" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
-    <h3>Requirements by Study Type</h3>
     {% if metrics %}
+    <h3>Requirements by Study Type</h3>
     <table class="table table-sm table-striped">
       {% bs4_colgroup '25,30,15,15,15' %}
       {% bs4_thead 'Domain,Metric,Bioassay,Epidemiology,In Vitro' %}
@@ -57,7 +54,7 @@
       {% endfor %}</tbody>
     </table>
     {% else %}
-    <div class="alert alert-info" role="alert">No evaluations available for this asssessment.</div>
+    {% alert info %}No evaluation domains available.{% endalert %}
     {% endif %}
   </div>
   <div class="tab-pane fade" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
@@ -70,5 +67,4 @@
   {% include "riskofbias/component/domain_list.html" with qs=invitro_metrics %}
   </div>
 </div>
-{% endif %}
 {% endblock %}
