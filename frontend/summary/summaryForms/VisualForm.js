@@ -22,9 +22,9 @@ class VisualForm {
             case 4:
             case 5:
             case 6:
+            case 7:
                 Cls = null;
                 break;
-            case 7:
             default:
                 throw `Error - unknown visualization-type: ${visual_type}`;
         }

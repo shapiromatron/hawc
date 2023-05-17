@@ -410,7 +410,7 @@ class VisualizationCreate(BaseCreate):
                 visual_type == constants.VisualType.PLOTLY_JSON
                 and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
             ):
-                return "403.html"
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -523,7 +523,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
                 visual_type == constants.VisualType.PLOTLY_JSON
                 and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
             ):
-                return "403.html"
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()

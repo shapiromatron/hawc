@@ -926,11 +926,10 @@ class ExploreHeatmapForm(VisualForm):
 class PlotlyJsonForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["settings"].label = "JSON for Plotly visual"
-        self.fields["settings"].help_text = (
-            "Create a Plotly visual in another tool, such as a Jupyter Notebook, and use the "
-            "to_json function to convert the figure to a JSON. Copy and paste that JSON here."
-        )
+        self.fields["settings"].label = "Plotly JSON"
+        self.fields[
+            "settings"
+        ].help_text = """Create a <a href="https://plotly.com/">Plotly</a> visual using Python or R, and then export the visual to JSON (<a href="https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613">R</a> or <a href="https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html">Python</a>)."""
         self.helper = self.setHelper()
 
     class Meta:
@@ -944,15 +943,11 @@ class PlotlyJsonForm(VisualForm):
         )
 
     def clean_settings(self):
-        settings: str = self.cleaned_data["settings"]
-        settings = settings.strip("'\"")
+        settings: str = self.cleaned_data.get("settings", "").strip()
         try:
             pio.from_json(settings)
-        except ValueError as e:
-            msg = str(e)
-            if len(msg) > 200:  # cut off very long error messages
-                msg = msg[:200] + "..."
-            raise forms.ValidationError(msg)
+        except ValueError as err:
+            raise forms.ValidationError(err)
         return settings
 
 

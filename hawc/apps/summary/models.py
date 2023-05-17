@@ -11,6 +11,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from docx import Document as create_document
+from plotly.graph_objs._figure import Figure
 from plotly.io import from_json
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
@@ -554,14 +555,13 @@ class Visual(models.Model):
         rob_name = self.assessment.get_rob_name_display().lower()
         return value.replace("risk of bias", rob_name)
 
-    def get_plotly_from_json(self):
+    def get_plotly_from_json(self) -> Figure:
         if self.visual_type == constants.VisualType.PLOTLY_JSON:
-            try:
-                fig = from_json(self.settings)
-                return fig
-            except ValueError as e:
-                return e
-        raise ValueError("Incorrect visual type to get a custom Plotly visual.")
+            raise ValueError("Incorrect visual type")
+        try:
+            return from_json(self.settings)
+        except ValueError as err:
+            raise ValueError(err)
 
 
 class DataPivot(models.Model):
