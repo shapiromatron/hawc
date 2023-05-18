@@ -21,19 +21,23 @@ from ...common.views import bulk_create_object_log, create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
 from ..constants import AssessmentViewSetPermissions
-from .filters import InAssessmentFilter
+from .filters import GlobalChemicalsFilterSet, InAssessmentFilter
 from .helper import get_assessment_from_query
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
+from .serializers import GlobalChemicalsSerializer
 
 # all http methods except PUT
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 class GlobalChemicalsViewSet(viewsets.ViewSet):
-    permission_classes = (permissions.IsAdminUser,)
-
     @action(detail=False)
     def chemicals(self, request):
-        return Response({"response": True})
+        queryset = models.Assessment.objects.all().prefetch_related('dtxsids')
+        filterset = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
+        serializer = GlobalChemicalsSerializer(filterset.qs, many=True)
+        return Response(serializer.data)
+
+
 
 
 class CleanupFieldsBaseViewSet(
