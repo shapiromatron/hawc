@@ -36,7 +36,6 @@ class GlobalChemicalsFilterSet(df.FilterSet):
         return queryset.filter(query).distinct()
 
     def filter_published(self, queryset, name, value):
-        print(name, value)
         if value is True:
             return queryset.filter(public_on__isnull=False)
         else:

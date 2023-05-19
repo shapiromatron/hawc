@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
 
+from ..animal.models import Experiment
 from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.api import DynamicFieldsMixin
@@ -169,3 +170,8 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
+
+class GlobalReferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Experiment
+        fields = fields = ['study', 'dtxsid', 'cas', 'chemical']

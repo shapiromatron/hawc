@@ -1,7 +1,9 @@
 import django_filters as df
 from django.db.models import Q
 
+from ..animal.models import Experiment
 from ..common.filterset import BaseFilterSet
+from ..epi.models import Exposure
 from ..myuser.models import HAWCUser
 from . import constants, models
 
@@ -85,3 +87,34 @@ class StudyFilterSet(BaseFilterSet):
             for column in columns:
                 column.width = 4
         return form
+
+class GlobalReferencesFilterSet(df.FilterSet):
+    query = df.CharFilter(method='filter_animal_level_data', label='Query')
+    published = df.BooleanFilter(method='filter_published')
+
+    def filter_animal_level_data(self, queryset, name, value):
+        query = Q(chemical__icontains=value) | Q(cas=value) | Q(dtxsid__dtxsid=value) | Q(dtxsid__content__preferredName__icontains=value) | Q(dtxsid__content__casrn=value)
+        return queryset.filter(query).values_list('id', 'study__assessment__name').distinct()
+
+    def filter_published(self, queryset, name, value):
+        if value is True:
+            return queryset.filter(study__published=True)
+        else:
+            return queryset.filter(study__published=False)
+
+    class Meta:
+        model = Experiment
+        fields = ['chemical', 'dtxsid__dtxsid', 'cas', 'type', 'study__published']
+
+class GlobalEpiFilterSet(df.FilterSet):
+    query = df.CharFilter(method='filter_epi_level_data')
+    published = df.BooleanFilter(method='filter_published')
+
+    def filter_epi_level_data(self, queryset, name, value):
+        query = Q(name__icontains=value) | Q(dtxsid__dtxsid=value) | Q(dtxsid__content__preferredName__icontains=value)
+        # no cas data ?
+        return queryset.filter(query).values_list('id', 'study_population__study___assessment__name').distinct()
+
+    class Meta:
+        model = Exposure
+        fields = ['name', 'dtxsid__dtxsid', 'study_population__study__published']
