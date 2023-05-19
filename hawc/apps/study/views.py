@@ -75,6 +75,11 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
     model = models.Study
     form_class = forms.ReferenceStudyForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["manual_entry_warning"] = True
+        return context
+
     def post_object_save(self, form):
         search = apps.get_model("lit", "Search").objects.get_manually_added(self.assessment)
         self.object.searches.add(search)
@@ -89,6 +94,11 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
 
     def get_success_url(self):
         return reverse_lazy("study:update", args=(self.object.id,))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["manual_entry_warning"] = False
+        return context
 
 
 class StudyDetail(BaseDetail):
