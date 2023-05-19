@@ -50,7 +50,7 @@ class DesignDelete(BaseDelete):
 
 
 # Design viewset
-class DesignViewset(HtmxViewSet):
+class DesignViewSet(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
     model = models.Design
@@ -73,7 +73,7 @@ class DesignViewset(HtmxViewSet):
         return render(request, template, context)
 
 
-class DesignChildViewset(HtmxViewSet):
+class DesignChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = None  # required
@@ -129,42 +129,42 @@ class DesignChildViewset(HtmxViewSet):
 
 
 # Chemical viewset
-class ChemicalViewset(DesignChildViewset):
+class ChemicalViewSet(DesignChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm
     detail_fragment = "epiv2/fragments/chemical_row.html"
 
 
 # Exposure viewset
-class ExposureViewset(DesignChildViewset):
+class ExposureViewSet(DesignChildViewSet):
     model = models.Exposure
     form_class = forms.ExposureForm
     detail_fragment = "epiv2/fragments/exposure_row.html"
 
 
 # Chemical viewset
-class ExposureLevelViewset(DesignChildViewset):
+class ExposureLevelViewSet(DesignChildViewSet):
     model = models.ExposureLevel
     form_class = forms.ExposureLevelForm
     detail_fragment = "epiv2/fragments/exposurelevel_row.html"
 
 
 # Outcome viewset
-class OutcomeViewset(DesignChildViewset):
+class OutcomeViewSet(DesignChildViewSet):
     model = models.Outcome
     form_class = forms.OutcomeForm
     detail_fragment = "epiv2/fragments/outcome_row.html"
 
 
 # Adjustment factor viewset
-class AdjustmentFactorViewset(DesignChildViewset):
+class AdjustmentFactorViewSet(DesignChildViewSet):
     model = models.AdjustmentFactor
     form_class = forms.AdjustmentFactorForm
     detail_fragment = "epiv2/fragments/adjustment_factor_row.html"
 
 
 # Data extraction viewset
-class DataExtractionViewset(DesignChildViewset):
+class DataExtractionViewSet(DesignChildViewSet):
     model = models.DataExtraction
     form_class = forms.DataExtractionForm
     detail_fragment = "epiv2/fragments/data_extraction_row.html"

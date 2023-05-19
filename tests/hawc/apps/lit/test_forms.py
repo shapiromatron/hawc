@@ -60,7 +60,7 @@ class TestLiteratureAssessmentForm:
 @pytest.mark.django_db
 class TestImportForm:
     """
-    This test-suite mirrors `tests/apps/lit/test_lit_serializers.TestSearchViewset`
+    This test-suite mirrors `tests/apps/lit/test_lit_serializers.TestSearchViewSet`
     """
 
     def test_success(self, db_keys):
@@ -392,7 +392,7 @@ class TestBulkReferenceStudyExtractForm:
             ).count()
             == 0
         )
-        form.bulk_create_studies()
+        form.save()
         assert (
             Study.objects.filter(
                 bioassay=True, epi=True, epi_meta=True, in_vitro=True, title=""

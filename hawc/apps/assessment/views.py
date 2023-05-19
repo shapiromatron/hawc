@@ -385,7 +385,7 @@ class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, 
         return context
 
 
-class AssessmentRead(BaseDetail):
+class AssessmentDetail(BaseDetail):
     model = models.Assessment
 
     def get_queryset(self):
@@ -412,6 +412,7 @@ class AssessmentRead(BaseDetail):
             else context["object"].datasets.filter(published=True)
         )
         context["values"] = self.object.values.order_by("value_type")
+        context["adaf_footnote"] = constants.ADAF_FOOTNOTE
         return context
 
 
@@ -515,6 +516,11 @@ class AssessmentValueUpdate(BaseUpdate):
 class AssessmentValueDetail(BaseDetail):
     model = models.AssessmentValue
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        return context
+
 
 class AssessmentValueDelete(BaseDelete):
     model = models.AssessmentValue
@@ -525,7 +531,7 @@ class AssessmentValueDelete(BaseDelete):
 
 
 # Attachment viewset
-class AttachmentViewset(HtmxViewSet):
+class AttachmentViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
     model = models.Attachment
@@ -589,7 +595,7 @@ class DatasetCreate(BaseCreate):
     form_class = forms.DatasetForm
 
 
-class DatasetRead(BaseDetail):
+class DatasetDetail(BaseDetail):
     model = models.Dataset
 
     def get_object(self, **kwargs):
@@ -719,7 +725,7 @@ class UpdateSession(View):
         return request.POST.get(field, "true") == "true"
 
     def post(self, request, *args, **kwargs):
-        if not request.is_ajax():
+        if request.method != "POST":
             return HttpResponseNotAllowed(["POST"])
         response = {}
         if request.POST.get("refresh"):
@@ -1014,3 +1020,21 @@ class PublishedItemsChecklist(HtmxViewSet):
             "summarytables": summarytables,
             "attachments": attachments,
         }
+
+
+def check_published_status(user, published: bool, assessment: models.Assessment):
+    """Raise permission denied if item is not published.
+
+    Only team-members and higher can view; reviewers should not be able to review
+    since they should only see what would be made public.
+
+    Args:
+        user: the requesting user
+        published (bool): is item published
+        assessment (Assessment): an assessment
+
+    Raises:
+        PermissionDenied: if a user is not team-member or higher
+    """
+    if not published and not assessment.user_is_team_member_or_higher(user):
+        raise PermissionDenied()

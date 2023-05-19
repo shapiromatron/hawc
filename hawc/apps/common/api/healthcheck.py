@@ -6,7 +6,7 @@ from ..diagnostics import worker_healthcheck
 from ..renderers import SvgRenderer
 
 
-class HealthcheckViewset(viewsets.ViewSet):
+class HealthcheckViewSet(viewsets.ViewSet):
     @action(detail=False)
     def web(self, request):
         return Response({"healthy": True})

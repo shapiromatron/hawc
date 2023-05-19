@@ -882,7 +882,7 @@
     pod_value: 28.8
     pod_unit: mg/kg/day
     uncertainty: 30
-    species_studied: 1
+    species_studied: rat
     study: 7
     tumor_type: ''
     extrapolation_method: ''
@@ -908,7 +908,7 @@
     pod_value: 111.0
     pod_unit: mg/kg/day
     uncertainty: 30
-    species_studied: 1
+    species_studied: rat
     study: 7
     tumor_type: ''
     extrapolation_method: ''
@@ -938,12 +938,13 @@
     pod_value: null
     pod_unit: ''
     uncertainty: null
-    species_studied: 1
+    species_studied: rat
     study: 7
     tumor_type: Hepatocellular adenomas and carcinomas
     extrapolation_method: Linear extrapolation from the POD ((BMCL10(HED)) associated
       with 10% extra cancer risk.
     evidence: Suggestive evidence of carcinogenic potential (Inhalation route)
+    adaf: true
     comments: ''
     extra:
       key: value
@@ -1273,7 +1274,7 @@
   pk: 1
   fields:
     content_type: 1
-    template: <h1>Welcome to HAWC</h1>
+    template: <h1>Welcome to HAWC</h1><p><a class="btn btn-light" href="{% url 'user:login' %}">Login</a></p>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: assessment.content
@@ -10225,10 +10226,11 @@
 - model: mgmt.task
   pk: 2
   fields:
-    owner: null
+    owner:
+    - team@hawcproject.org
     study: 1
     type: 20
-    status: 10
+    status: 20
     open: false
     due_date: null
     started: null

@@ -9,7 +9,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestAssessmentViewset:
+class TestAssessmentViewSet:
     def test_permissions(self, db_keys):
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True

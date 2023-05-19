@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewset, BaseAssessmentViewset, EditPermissionsCheckMixin
+from ..assessment.api import AssessmentEditViewSet, BaseAssessmentViewSet, EditPermissionsCheckMixin
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.renderers import PandasRenderers
@@ -10,7 +10,7 @@ from . import exports, models, serializers
 from .actions.model_metadata import EpiV2Metadata
 
 
-class EpiAssessmentViewSet(BaseAssessmentViewset):
+class EpiAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
 
     @action(
@@ -34,7 +34,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewset):
         return Response(exporter.build_export())
 
 
-class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.Design
