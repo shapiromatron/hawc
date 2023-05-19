@@ -4,9 +4,15 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.EpiAssessmentViewSet, basename="assessment")
-router.register(r"design", api.Design, basename="design")
-router.register(r"metadata", api.Metadata, basename="metadata")
+router.register("assessment", api.EpiAssessmentViewSet, basename="assessment")
+router.register("design", api.DesignViewSet, basename="design")
+router.register("metadata", api.MetadataViewSet, basename="metadata")
+router.register("chemical", api.ChemicalViewSet, basename="chemical")
+router.register("exposure", api.ExposureViewSet, basename="exposure")
+router.register("exposure-level", api.ExposureLevelViewSet, basename="exposure-level")
+router.register("outcome", api.OutcomeViewSet, basename="outcome")
+router.register("adjustment-factor", api.AdjustmentFactorViewSet, basename="adjustment-factor")
+router.register("data-extraction", api.DataExtractionViewSet, basename="data-extraction")
 
 app_name = "epiv2"
 urlpatterns = [
