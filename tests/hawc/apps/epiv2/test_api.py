@@ -33,7 +33,7 @@ class TestEpiAssessmentViewSet:
 
 
 @pytest.mark.django_db
-class TestDesignApi:
+class TestDesignViewSet:
     def test_permissions(self, db_keys):
         url = reverse("epiv2:api:design-list")
         data = {
@@ -222,8 +222,6 @@ def generic_test_scenarios(client, url, scenarios):
 
 def generic_test_scenario(client, url, scenario):
     method = scenario.get("method", "POST")
-    if "data" in scenario:
-        pass
     if method.upper() == "POST":
         response = client.post(url, scenario["data"], format="json")
     elif method.upper() == "PATCH":
@@ -231,7 +229,7 @@ def generic_test_scenario(client, url, scenario):
     elif method.upper() == "DELETE":
         response = client.delete(url)
     else:
-        return
+        raise ValueError("Unknown method")
 
     if "expected_code" in scenario:
         assert response.status_code == scenario["expected_code"]
@@ -277,7 +275,7 @@ def generic_get_any(model_class):
 
 
 @pytest.mark.django_db
-class TestMetadataApi:
+class TestMetadataViewSet:
     def test_permissions(self):
         url = reverse("epiv2:api:metadata-list")
         # public should have access to this metadata
@@ -302,7 +300,7 @@ class TestMetadataApi:
 
 
 @pytest.mark.django_db
-class TestChemicalApi:
+class TestChemicalViewSet:
     def get_upload_data(self, overrides=None):
         design = generic_get_any(models.Design)
 
@@ -427,7 +425,7 @@ class TestChemicalApi:
 
 
 @pytest.mark.django_db
-class TestExposureApi:
+class TestExposureViewSet:
     def get_upload_data(self, overrides=None):
         design = generic_get_any(models.Design)
 
@@ -569,7 +567,7 @@ class TestExposureApi:
 
 
 @pytest.mark.django_db
-class TestExposureLevelApi:
+class TestExposureLevelViewSet:
     def get_upload_data(self, overrides=None):
         design = generic_get_any(models.Design)
         chemical = models.Chemical.objects.filter(design=design.id).first()
@@ -763,7 +761,7 @@ class TestExposureLevelApi:
 
 
 @pytest.mark.django_db
-class TestOutcomeApi:
+class TestOutcomeViewSet:
     def get_upload_data(self, overrides=None):
         design = generic_get_any(models.Design)
 
@@ -894,7 +892,7 @@ class TestOutcomeApi:
 
 
 @pytest.mark.django_db
-class TestAdjustmentFactorApi:
+class TestAdjustmentFactorViewSet:
     def get_upload_data(self, overrides=None):
         design = generic_get_any(models.Design)
 
@@ -1001,7 +999,7 @@ class TestAdjustmentFactorApi:
 
 
 @pytest.mark.django_db
-class TestDataExtractionApi:
+class TestDataExtractionViewSet:
     def get_upload_data(self, overrides=None):
         design = generic_get_any(models.Design)
         outcome = models.Outcome.objects.filter(design=design.id).first()

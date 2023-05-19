@@ -150,9 +150,11 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
     data_extractions = DataExtractionSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
-    nested_models = [
-        "countries",
-    ]
+    nested_models = ["countries"]
+
+    class Meta:
+        model = models.Design
+        exclude = ["created", "last_updated"]
 
     @transaction.atomic
     def create(self, validated_data):
@@ -192,7 +194,3 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
             instance.countries.set(countries)
 
         return instance
-
-    class Meta:
-        model = models.Design
-        exclude = ["created", "last_updated"]

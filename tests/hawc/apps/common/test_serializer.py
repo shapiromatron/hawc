@@ -58,7 +58,7 @@ def test_get_matching_instances(db_keys):
 
 
 @pytest.mark.django_db
-def test_flexible_choice_field(db_keys):
+def test_FlexibleChoiceField(db_keys):
     """
     Test the FlexibleChoiceField
 
@@ -101,7 +101,7 @@ def test_flexible_choice_field(db_keys):
 
 
 @pytest.mark.django_db
-def test_flexible_db_linked_choice_field(db_keys):
+def test_FlexibleDBLinkedChoiceField(db_keys):
     """
     Test the FlexibleDBLinkedChoiceField
 
@@ -174,47 +174,38 @@ def test_flexible_db_linked_choice_field(db_keys):
     assert serialized_metrics[1]["id"] == second_metric.id
 
 
-@pytest.mark.django_db
-def test_arrayed_flexible_choice_field(db_keys):
-    """
-    Test the FlexibleChoiceArrayField
-
-    Tests FlexibleChoiceArrayField with keys, display values (case insensitive and not), and bad inputs.
-    """
+class TestFlexibleChoiceArrayField:
     SAMPLE_NUMERIC_CHOICES = ((0, "example"), (1, "test"))
-
     SAMPLE_TEXT_CHOICES = (("name", "nom de plume"), ("job", "occupation"))
 
-    numeric_choice = FlexibleChoiceArrayField(choices=SAMPLE_NUMERIC_CHOICES)
-    text_choice = FlexibleChoiceArrayField(choices=SAMPLE_TEXT_CHOICES)
+    def test_to_internal_value(self):
+        numeric_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_NUMERIC_CHOICES)
+        text_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_TEXT_CHOICES)
 
-    # Either the key or a case insensitive version will resolve to the same internal value
-    for valid_input in (["test", 0], ["tEsT", "EXAMPLE"], [1, "example"]):
-        converted = numeric_choice.to_internal_value(valid_input)
-        assert len(converted) == 2 and converted[0] == 1 and converted[1] == 0
+        # Either the key or a case insensitive version will resolve to the same internal value
+        for valid_input in (["test", 0], ["tEsT", "EXAMPLE"], [1, "example"]):
+            converted = numeric_choice.to_internal_value(valid_input)
+            assert len(converted) == 2 and converted[0] == 1 and converted[1] == 0
 
-    # Works for text or numeric keys
-    for valid_input in (["job", "occupation", "OcCuPaTiOn"],):
-        converted = text_choice.to_internal_value(valid_input)
-        assert len(set(converted)) == 1 and converted[0] == "job"
+        # Works for text or numeric keys
+        for valid_input in (["job", "occupation", "OcCuPaTiOn"],):
+            converted = text_choice.to_internal_value(valid_input)
+            assert len(set(converted)) == 1 and converted[0] == "job"
 
-    for invalid_input in (["example", "bad input"], [1, "another bad input"]):
-        try:
-            numeric_choice.to_internal_value(invalid_input)
-            raise AssertionError()
-        except ValidationError:
-            # This is correct behavior
-            pass
+        # properly raise validation error for bad data
+        for invalid_input in (["example", "bad input"], [1, "another bad input"]):
+            with pytest.raises(ValidationError):
+                numeric_choice.to_internal_value(invalid_input)
 
-    # Should convert raw values to readable ones
-    assert numeric_choice.to_representation([0])[0] == "example"
-    assert numeric_choice.to_representation([1])[0] == "test"
-    assert text_choice.to_representation(["name"])[0] == "nom de plume"
+    def test_to_representation(self):
+        numeric_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_NUMERIC_CHOICES)
+        text_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_TEXT_CHOICES)
 
-    # Should throw KeyError if given a bad value to convert
-    try:
-        numeric_choice.to_representation([2])
-        raise AssertionError()
-    except KeyError:
-        # This is correct behavior
-        pass
+        # Should convert raw values to readable ones
+        assert numeric_choice.to_representation([0])[0] == "example"
+        assert numeric_choice.to_representation([1])[0] == "test"
+        assert text_choice.to_representation(["name"])[0] == "nom de plume"
+
+        # Should throw KeyError if given a bad value to convert
+        with pytest.raises(KeyError):
+            numeric_choice.to_representation([2])
