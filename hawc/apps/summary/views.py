@@ -353,7 +353,7 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         return context
 
     def get_template_names(self):
-        if self.object.visual_type == constants.VisualType.PLOTLY_JSON:
+        if self.object.visual_type == constants.VisualType.PLOTLY:
             return "summary/visual_detail_plotly.html"
         else:
             return super().get_template_names()
@@ -404,10 +404,10 @@ class VisualizationCreate(BaseCreate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
-            constants.VisualType.PLOTLY_JSON,
+            constants.VisualType.PLOTLY,
         }:
             if (
-                visual_type == constants.VisualType.PLOTLY_JSON
+                visual_type == constants.VisualType.PLOTLY
                 and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
             ):
                 raise PermissionDenied()
@@ -517,10 +517,10 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
-            constants.VisualType.PLOTLY_JSON,
+            constants.VisualType.PLOTLY,
         }:
             if (
-                visual_type == constants.VisualType.PLOTLY_JSON
+                visual_type == constants.VisualType.PLOTLY
                 and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
             ):
                 raise PermissionDenied()

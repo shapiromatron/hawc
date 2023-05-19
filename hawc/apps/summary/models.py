@@ -556,7 +556,7 @@ class Visual(models.Model):
         return value.replace("risk of bias", rob_name)
 
     def get_plotly_from_json(self) -> Figure:
-        if self.visual_type == constants.VisualType.PLOTLY_JSON:
+        if self.visual_type != constants.VisualType.PLOTLY:
             raise ValueError("Incorrect visual type")
         try:
             return from_json(self.settings)
