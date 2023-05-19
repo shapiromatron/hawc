@@ -49,42 +49,42 @@ class MetadataViewSet(viewsets.ViewSet):
         return EpiV2Metadata.handle_request(request)
 
 
-class ChemicalViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ChemicalViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.Chemical
     serializer_class = serializers.ChemicalSerializer
 
 
-class ExposureViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ExposureViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.Exposure
     serializer_class = serializers.ExposureSerializer
 
 
-class ExposureLevelViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ExposureLevelViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.ExposureLevel
     serializer_class = serializers.ExposureLevelSerializer
 
 
-class OutcomeViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class OutcomeViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
-class AdjustmentFactorViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class AdjustmentFactorViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.AdjustmentFactor
     serializer_class = serializers.AdjustmentFactorSerializer
 
 
-class DataExtractionViewSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class DataExtractionViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["design"]
     assessment_filter_args = "design__study__assessment"
     model = models.DataExtraction
