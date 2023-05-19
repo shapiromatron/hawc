@@ -73,7 +73,7 @@ class ARoBDetail(BaseList):
         )
         context.update(
             metrics=metrics,
-            no_data=metrics == len(metrics) == 0,
+            no_data=len(metrics) == 0,
             bioassay_metrics=grouped(filter(lambda d: d.required_animal is True, metrics)),
             epi_metrics=grouped(filter(lambda d: d.required_epi is True, metrics)),
             invitro_metrics=grouped(filter(lambda d: d.required_invitro is True, metrics)),
