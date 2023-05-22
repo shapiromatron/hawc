@@ -3,6 +3,7 @@ import re
 from typing import NamedTuple
 
 import requests
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -29,16 +30,15 @@ class DssSubstance(NamedTuple):
         """
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
-
         response = requests.get(
-            f"https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id={dtxsid}"
+            f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}", headers={'x-api-key': settings.CCTE_API_KEY, 'Content-Type': 'application/json'}
         )
         response_dict = response.json()
-        if response_dict == [] or response_dict["dsstoxSubstanceId"] != dtxsid:
+        if response_dict == [] or response_dict["dtxsid"] != dtxsid:
             raise ValueError(f"{dtxsid} not found in DSSTox lookup")
 
-        response_dict["dtxsid"] = response_dict.pop("dsstoxSubstanceId")
-        response_dict.pop("presenceInLists")
+        response_dict["dtxsid"] = response_dict.pop("dtxsid")
+        # response_dict.pop("presenceInLists")
         obj = cls(dtxsid=response_dict["dtxsid"], content=response_dict)
 
         return obj
