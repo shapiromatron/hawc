@@ -1,15 +1,15 @@
 <script type="text/javascript">
-    $(document).ready(function(){
-      $('{{name_list}}').on('change', function () {
-          var format = $(this).val();
-          var url = $(`#${this.id}-url`).attr("href");
-          if (format && url) { 
-            var format_idx = url.indexOf("format=");
-            $(`#${this.id}-url`).attr("href", url.substr(0, (format_idx+7)).concat(format));
-            var help_text = format == "xlsx" ? "Excel Spreadsheet" : `${format} file`;
-            $(`#${this.id}-fmt-text`).text(help_text)
-          }
-          return false;
-      });
-    });
- </script>
+$(document).ready(function(){
+  $('{{name_list}}').on('change', function () {
+    var format = $(this).val(),
+        url = $(`#${this.id}-url`).attr("href");
+    if (format && url) {
+      var format_idx = url.indexOf("format="),
+          help_text = format === "xlsx" ? "Excel Spreadsheet" : `${format.toUpperCase()} file`;
+      $(`#${this.id}-url`).attr("href", url.substr(0, (format_idx + 7)).concat(format));
+      $(`#${this.id}-fmt-text`).text(help_text)
+    }
+    return false;
+  });
+});
+</script>
