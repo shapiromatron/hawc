@@ -33,7 +33,7 @@ class EpiMetaAssessmentViewSet(viewsets.GenericViewSet):
     )
     def export(self, request, pk):
         """
-        Retrieve epidemiology metadata for assessment.
+        Retrieve epidemiology meta-analysis data for an assessment.
         """
         self.get_object()
         exporter = exports.MetaResultFlatComplete(

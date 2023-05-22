@@ -265,7 +265,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
     )
     def user_tag_export(self, request, pk):
         """
-        Get all references in an assessment.
+        Get all references in an assessment, including all user tag data.
         """
         assessment = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
