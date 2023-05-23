@@ -38,7 +38,6 @@ class DssSubstance(NamedTuple):
             raise ValueError(f"{dtxsid} not found in DSSTox lookup")
 
         response_dict["dtxsid"] = response_dict.pop("dtxsid")
-        # response_dict.pop("presenceInLists")
         obj = cls(dtxsid=response_dict["dtxsid"], content=response_dict)
 
         return obj
