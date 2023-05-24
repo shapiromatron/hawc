@@ -31,7 +31,8 @@ class DssSubstance(NamedTuple):
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
         response = requests.get(
-            f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}", headers={'x-api-key': settings.CCTE_API_KEY, 'Content-Type': 'application/json'}
+            f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}",
+            headers={"x-api-key": settings.CCTE_API_KEY, "Content-Type": "application/json"},
         )
         response_dict = response.json()
         if response_dict == [] or response_dict["dtxsid"] != dtxsid:
