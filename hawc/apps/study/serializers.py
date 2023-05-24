@@ -171,7 +171,8 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
 
+
 class GlobalReferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experiment
-        fields = fields = ['study', 'dtxsid', 'cas', 'chemical']
+        fields = fields = ["study", "dtxsid", "cas", "chemical"]

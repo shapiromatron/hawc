@@ -103,6 +103,7 @@ class TestDssToxViewSet:
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
 
+
 @pytest.mark.django_db
 class TestGlobalChemicalsViewSet:
     def test_assessment_values(self):

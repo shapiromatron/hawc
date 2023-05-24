@@ -55,13 +55,8 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
 
         return instance
 
-class GlobalChemicalsSerializer(serializers.ModelSerializer):
 
+class GlobalChemicalsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Assessment
-        fields = [
-            'name',
-            'dtxsids',
-            'cas',
-            'public_on'
-        ]
+        fields = ["name", "dtxsids", "cas", "public_on"]

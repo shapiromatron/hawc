@@ -43,5 +43,3 @@ class ReportsViewSet(viewsets.ViewSet):
             queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
         ).build_export()
         return Response(export, status=status.HTTP_200_OK)
-
-

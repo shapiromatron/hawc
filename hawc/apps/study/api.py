@@ -105,10 +105,15 @@ class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.StudyCleanupFieldsSerializer
     assessment_filter_args = "assessment"
 
+
 class GlobalReferencesViewSet(viewsets.ViewSet):
     @action(detail=False)
     def animals(self, request):
-        study_ids = Experiment.objects.filter().values_list('study__id', flat=True).prefetch_related('dtxsid')
+        study_ids = (
+            Experiment.objects.filter()
+            .values_list("study__id", flat=True)
+            .prefetch_related("dtxsid")
+        )
         study_queryset = models.Study.objects.filter(id__in=study_ids)
         fs = filterset.GlobalReferencesFilterSet(request.GET, queryset=study_queryset)
         serializer = serializers.GlobalReferencesSerializer(fs.qs, many=True)
@@ -116,15 +121,14 @@ class GlobalReferencesViewSet(viewsets.ViewSet):
 
     @action(detail=False)
     def epi(self, request):
-        study_ids = Exposure.objects.filter().values_list('study_population__id', flat=True)
+        study_ids = Exposure.objects.filter().values_list("study_population__id", flat=True)
         study_queryset = models.Study.objects.filter(id__in=study_ids)
         serializer = serializers.GlobalReferencesSerializer(study_queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def epiv2(self, request):
-        study_ids = Chemical.objects.filter().values_list('design__study__id', flat=True)
+        study_ids = Chemical.objects.filter().values_list("design__study__id", flat=True)
         study_queryset = models.Study.objects.filter(id__in=study_ids)
         serializer = serializers.GlobalReferencesSerializer(study_queryset, many=True)
         return Response(serializer.data)
-

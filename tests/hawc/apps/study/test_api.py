@@ -241,6 +241,7 @@ class TestStudyViewSet:
             .exists()
         )
 
+
 @pytest.mark.django_db
 class TestGlobalReferencesViewSet:
     def test_study_values(self):
