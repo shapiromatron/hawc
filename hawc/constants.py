@@ -19,6 +19,7 @@ class FeatureFlags(BaseModel):
     ENABLE_ECO: bool = False
     ENABLE_ASSESSMENT_VALUES: bool = False
     ENABLE_BMDS_33 = False
+    ENABLE_PLOTLY_VISUAL: bool = False
 
     @classmethod
     def from_env(cls, variable) -> "FeatureFlags":

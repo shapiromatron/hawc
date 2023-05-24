@@ -120,6 +120,10 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("svg.d3")).to_be_visible()
         assert page.locator("svg.d3 >> g >> circle").count() > 5
 
+        page.goto(self.live_server_url + "/summary/visual/assessment/2/plotly/")
+        expect(page.locator("h2:has-text('plotly')")).to_be_visible()
+        expect(page.locator(".plotly")).to_be_visible()
+
     def test_tables(self):
         """
         Tests to ensure all visual types are displayed.
