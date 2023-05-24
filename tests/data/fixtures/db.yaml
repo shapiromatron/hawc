@@ -9465,6 +9465,23 @@
     endpoints: []
     studies: []
 - model: summary.visual
+  pk: 9
+  fields:
+    title: plotly
+    slug: plotly
+    assessment: 2
+    visual_type: 7
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}'
+    caption: ''
+    published: true
+    sort_order: short_citation
+    created: 2023-05-19 14:25:27.528283+00:00
+    last_updated: 2023-05-19 14:25:27.528283+00:00
+    endpoints: []
+    studies: []
+- model: summary.visual
   pk: 10
   fields:
     title: bioassay-aggregation
