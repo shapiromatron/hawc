@@ -5,8 +5,8 @@ from . import api, views
 
 router = SimpleRouter()
 router.register(r"study", api.Study, basename="study")
+router.register(r"search", api.StudySearchViewSet, basename="search")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
-router.register(r"by-chemical", api.GlobalReferencesViewSet, basename="reference")
 
 app_name = "study"
 urlpatterns = [

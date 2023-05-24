@@ -1,6 +1,6 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -106,7 +106,13 @@ class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     assessment_filter_args = "assessment"
 
 
-class GlobalReferencesViewSet(viewsets.ViewSet):
+class StudySearchViewSet(viewsets.ViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+
+    @action(detail=False)
+    def chemical(self, request):
+        return Response({"status": "ok!"})
+
     @action(detail=False)
     def animals(self, request):
         study_ids = (

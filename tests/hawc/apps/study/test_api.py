@@ -243,10 +243,10 @@ class TestStudyViewSet:
 
 
 @pytest.mark.django_db
-class TestGlobalReferencesViewSet:
-    def test_study_values(self):
+class TestStudySearchViewSet:
+    def test_chemical(self):
         client = APIClient()
-        url = reverse("study:api:reference-references")
+        url = reverse("study:api:search-chemical")
 
         response = client.get(url)
         assert response.status_code == 403

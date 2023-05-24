@@ -30,9 +30,11 @@ from .serializers import GlobalChemicalsSerializer
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 
-class GlobalChemicalsViewSet(viewsets.ViewSet):
+class AssessmentSearchViewSet(viewsets.ViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+
     @action(detail=False)
-    def chemicals(self, request):
+    def chemical(self, request):
         queryset = models.Assessment.objects.all().prefetch_related("dtxsids")
         filterset = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
         serializer = GlobalChemicalsSerializer(filterset.qs, many=True)
