@@ -38,20 +38,22 @@ class AssessmentForm(forms.ModelForm):
     )
 
     class Meta:
-        exclude = (
-            "creator",
-            "noel_name",
-            "rob_name",
-            "vocabulary",
-            "modify_uncontrolled_vocabulary",
-            "enable_literature_review",
-            "enable_project_management",
-            "enable_data_extraction",
-            "enable_risk_of_bias",
-            "enable_bmd",
-            "enable_summary_text",
-            "epi_version",
-            "admin_notes",
+        fields = (
+            "name",
+            "year",
+            "version",
+            "cas",
+            "dtxsids",
+            "assessment_objective",
+            "authors",
+            "project_manager",
+            "team_members",
+            "reviewers",
+            "editable",
+            "public_on",
+            "hide_from_public_page",
+            "conflicts_of_interest",
+            "funding_source",
         )
         model = models.Assessment
         widgets = {
@@ -340,7 +342,10 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_project_management",
             "enable_risk_of_bias",
             "enable_bmd",
+            "enable_summary_tables",
+            "enable_visuals",
             "enable_summary_text",
+            "enable_downloads",
             "noel_name",
             "rob_name",
             "vocabulary",
@@ -371,6 +376,7 @@ class AssessmentModulesForm(forms.ModelForm):
         )
         helper.add_row("enable_literature_review", 3, "col-lg-4")
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
+        helper.add_row("enable_visuals", 3, "col-lg-4")
         helper.add_row("noel_name", 3, "col-lg-4")
         helper.add_row("epi_version", 1, "col-lg-4")
         return helper
