@@ -85,6 +85,9 @@ tfoot > tr > td {
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
 }
+p {
+    margin-bottom: 0rem !important;
+}
 
 /* BOOTSTRAP 4 OVERRIDES */
 body {
@@ -103,6 +106,9 @@ small.form-text {
 mark,.mark {
     padding: 0;
     background-color: yellow;
+}
+.card-header {
+    font-size: 1.15rem;
 }
 /* END BOOTSTRAP 4 OVERRIDES */
 

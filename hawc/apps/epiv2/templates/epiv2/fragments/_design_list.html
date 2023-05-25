@@ -1,9 +1,0 @@
-<ul>
-    {% if object_list %}
-    {% for object in object_list %}
-    <li><a href="{{ object.get_absolute_url }}">{{object}}</a></li>
-    {% endfor %}
-    {% else %}
-    <li><i>No study populations are available.</i></li>
-    {% endif %}
-</ul>

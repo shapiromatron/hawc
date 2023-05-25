@@ -128,7 +128,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li>
+                `<li class="pb-2">
                     <a target="_blank" href="${v.url}">${v.filename}</a>
                     <a class="btn btn-sm btn-danger float-right" title="Delete" href="${v.url_delete}">
                         <i class="fa fa-trash"></i>

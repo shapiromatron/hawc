@@ -720,7 +720,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: true
+    enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
     noel_name: 0
@@ -759,7 +762,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: true
+    enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: ''
     noel_name: 0
@@ -796,7 +802,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: false
+    enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
     noel_name: 0
@@ -833,7 +842,10 @@
     enable_data_extraction: true
     enable_risk_of_bias: true
     enable_bmd: true
+    enable_summary_tables: true
+    enable_visuals: true
     enable_summary_text: true
+    enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
     noel_name: 0
@@ -9450,6 +9462,23 @@
     sort_order: short_citation
     created: 2020-11-25 14:25:27.528283+00:00
     last_updated: 2020-11-25 14:29:33.991892+00:00
+    endpoints: []
+    studies: []
+- model: summary.visual
+  pk: 9
+  fields:
+    title: plotly
+    slug: plotly
+    assessment: 2
+    visual_type: 7
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}'
+    caption: ''
+    published: true
+    sort_order: short_citation
+    created: 2023-05-19 14:25:27.528283+00:00
+    last_updated: 2023-05-19 14:25:27.528283+00:00
     endpoints: []
     studies: []
 - model: summary.visual
