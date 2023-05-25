@@ -149,39 +149,6 @@ class FilterForm(forms.Form):
         return helper
 
 
-class FilterSetOptions:
-    def __init__(self, options=None):
-        self.model = getattr(options, "model", None)
-        self.fields = getattr(options, "fields", None)
-        self.exclude = getattr(options, "exclude", None)
-
-        self.filter_overrides = getattr(options, "filter_overrides", {})
-        self.field_kwargs = getattr(options, "field_kwargs", {})
-        self.grid_layout = getattr(options, "grid_layout", None)
-
-        self.form = getattr(options, "form", FilterForm)
-        self.appended_fields = getattr(options, "appended_fields", [])
-        self.main_field = getattr(options, "main_field", None)
-
-
-class FilterSetMetaclass(df.filterset.FilterSetMetaclass):
-    def __new__(cls, name, bases, attrs):
-        attrs["declared_filters"] = cls.get_declared_filters(bases, attrs)
-
-        new_class = type.__new__(cls, name, bases, attrs)
-        new_class._meta = FilterSetOptions(getattr(new_class, "Meta", None))
-        new_class.base_filters = new_class.get_filters()
-
-        for filter_name, field_kwargs in new_class._meta.field_kwargs.items():
-            new_class.base_filters[filter_name].extra.update(field_kwargs)
-
-        return new_class
-
-
-class FilterSet(df.filterset.BaseFilterSet, metaclass=FilterSetMetaclass):
-    pass
-
-
 class BaseFilterSet(df.FilterSet):
     def __init__(self, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs):
         self.assessment = assessment
@@ -211,9 +178,3 @@ class BaseFilterSet(df.FilterSet):
                 if field not in form.dynamic_fields and field != "is_expanded":
                     form.fields.pop(field)
         return form
-
-
-def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
-    default_kwargs = _class._meta.__dict__
-    Meta = type("Meta", (object,), {**default_kwargs, **meta_kwargs})
-    return type("DynamicFilterset", (_class,), {"Meta": Meta})
