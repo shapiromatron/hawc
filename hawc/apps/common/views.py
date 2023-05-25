@@ -706,10 +706,10 @@ class FilterSetMixin:
             data=self.request.GET,
             queryset=self.get_base_queryset(),
             request=self.request,
-            form_kwargs=self.get_form_options(),
+            form_kwargs=self.get_filterset_form_kwargs(),
         )
 
-    def get_form_options(self):
+    def get_filterset_form_kwargs(self):
         return {}
 
     @property

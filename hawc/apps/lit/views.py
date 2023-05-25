@@ -273,13 +273,13 @@ class TagReferences(BaseFilterList):
         )
         return context
 
-    def get_form_options(self):
+    def get_filterset_form_kwargs(self):
         conflict_resolution = self.assessment.literature_settings.conflict_resolution
         if conflict_resolution:
             return dict(
                 main_field="title_abstract",
                 appended_fields=["partially_tagged", "needs_tagging", "order_by"],
-                fields=[
+                dynamic_fields=[
                     "title_abstract",
                     "needs_tagging",
                     "order_by",
@@ -335,7 +335,7 @@ class TagReferences(BaseFilterList):
             )
         else:
             return dict(
-                fields=[
+                dynamic_fields=[
                     "title_abstract",
                     "search",
                     "id",
@@ -407,10 +407,10 @@ class ConflictResolution(BaseFilterList):
 
     filterset_class = filterset.ReferenceFilterSet
 
-    def get_form_options(self):
+    def get_filterset_form_kwargs(self):
         return dict(
             main_field="title_abstract",
-            fields=[
+            dynamic_fields=[
                 "id",
                 "title_abstract",
                 "tags",
@@ -589,11 +589,11 @@ class RefFilterList(BaseFilterList):
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
 
-    def get_form_options(self):
+    def get_filterset_form_kwargs(self):
         return dict(
             main_field="title_abstract",
             appended_fields=["order_by", "paginate_by"],
-            fields=[
+            dynamic_fields=[
                 "id",
                 "db_id",
                 "search",

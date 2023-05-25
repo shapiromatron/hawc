@@ -103,7 +103,7 @@ class InlineFilterForm(forms.Form):
         self.grid_layout = GridLayout.parse_obj(layout) if layout else None
         self.main_field = kwargs.pop("main_field", None)
         self.appended_fields = kwargs.pop("appended_fields", [])
-        self.dynamic_fields = kwargs.pop("fields", [])
+        self.dynamic_fields = kwargs.pop("dynamic_fields", [])
         super().__init__(*args, **kwargs)
 
     @property
@@ -135,7 +135,7 @@ class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         grid_layout = kwargs.pop("grid_layout", None)
         self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
-        self.dynamic_fields = kwargs.pop("fields", None)
+        self.dynamic_fields = kwargs.pop("dynamic_fields", None)
         super().__init__(*args, **kwargs)
 
     @property
@@ -187,6 +187,8 @@ class BaseFilterSet(df.FilterSet):
         self.assessment = assessment
         super().__init__(*args, **kwargs)
         self.form_kwargs = form_kwargs or {}
+        if "grid_layout" not in form_kwargs and hasattr(self.Meta, "grid_layout"):
+            self.form_kwargs.update(grid_layout=self.Meta.grid_layout)
 
     @property
     def perms(self):
@@ -195,20 +197,19 @@ class BaseFilterSet(df.FilterSet):
     @property
     def form(self):
         if not hasattr(self, "_form"):
-            form = self.get_form_class()
-            if self.is_bound:
-                _form = form(self.data, prefix=self.form_prefix, **self.form_kwargs)
-            else:
-                _form = form(prefix=self.form_prefix, **self.form_kwargs)
-            if _form.dynamic_fields:
-                for field in list(_form.fields.keys()):
-                    if field not in _form.dynamic_fields and field != "is_expanded":
-                        _form.fields.pop(field)
-            self._form = self.customize_form(_form)
+            self._form = self.create_form()
         return self._form
 
-    def customize_form(self, form):
-        """Customize an initialized form."""
+    def create_form(self):
+        form_class = self.get_form_class()
+        if self.is_bound:
+            form = form_class(self.data, prefix=self.form_prefix, **self.form_kwargs)
+        else:
+            form = form_class(prefix=self.form_prefix, **self.form_kwargs)
+        if form.dynamic_fields:
+            for field in list(form.fields.keys()):
+                if field not in form.dynamic_fields and field != "is_expanded":
+                    form.fields.pop(field)
         return form
 
 
