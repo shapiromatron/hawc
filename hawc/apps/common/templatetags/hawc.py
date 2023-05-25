@@ -9,6 +9,8 @@ from django.db.models import QuerySet
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from ..helper import new_window_a
+
 register = template.Library()
 
 
@@ -43,3 +45,8 @@ def optional_table_list_row(name: str, qs: QuerySet) -> str:
 @register.simple_tag
 def url_or_span(text: str, url: str | None = None):
     return mark_safe(f'<a href="{url}">{text}</a>') if url else text
+
+
+@register.simple_tag
+def external_url(href: str, text: str) -> str:
+    return mark_safe(new_window_a(href, text))

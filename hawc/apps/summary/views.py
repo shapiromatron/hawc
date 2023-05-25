@@ -2,6 +2,7 @@ import itertools
 import json
 import re
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
@@ -351,6 +352,12 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         )
         return context
 
+    def get_template_names(self):
+        if self.object.visual_type == constants.VisualType.PLOTLY:
+            return "summary/visual_detail_plotly.html"
+        else:
+            return super().get_template_names()
+
 
 class VisualizationCreateSelector(BaseDetail):
     model = Assessment
@@ -397,7 +404,13 @@ class VisualizationCreate(BaseCreate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -504,7 +517,13 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()

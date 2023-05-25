@@ -5,6 +5,7 @@ import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticError
 from rest_framework import serializers
@@ -160,6 +161,59 @@ class FlexibleChoiceField(serializers.ChoiceField):
                 return key
 
         self.fail("invalid_choice", input=data)
+
+
+class FlexibleChoiceArrayField(serializers.ChoiceField):
+    """
+    like FlexibleChoiceField; accepts either the raw choice value OR a case-insensitive
+    display value when supplying data, intended for choice fields wrapped in an ArrayField
+    """
+
+    # dupe invalid_choice in ChoiceField, and create a new one that we'll use
+    default_error_messages = {
+        "invalid_choice": _('"{input}" is not a valid choice.'),
+        "full_custom": _("{input}"),
+    }
+
+    def to_representation(self, obj):
+        if len(obj) == 0 and self.allow_blank:
+            return obj
+        return [self._choices[x] for x in obj]
+
+    def to_internal_value(self, data):
+        if (data is None or len(data) == 0) and self.allow_blank:
+            return []
+        else:
+            converted_values = []
+            invalid_values = []
+            for x in data:
+                element_handled = False
+                # Look for an exact match of either key or val
+                for key, val in self._choices.items():
+                    if key == x or val == x:
+                        converted_values.append(key)
+                        element_handled = True
+                        break
+
+                if not element_handled:
+                    # No exact match; if a string was passed in let's try case-insensitive value match
+                    if type(x) is str:
+                        key = get_id_from_choices(self._choices.items(), x)
+                        if key is not None:
+                            converted_values.append(key)
+                            element_handled = True
+
+                if not element_handled:
+                    invalid_values.append(x)
+
+            if len(invalid_values) == 0:
+                return converted_values
+            else:
+                invalid_summary = ", ".join([f"'{x}'" for x in invalid_values])
+                self.fail(
+                    "full_custom",
+                    input=f"input {data} contained invalid value(s): {invalid_summary}.",
+                )
 
 
 class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
