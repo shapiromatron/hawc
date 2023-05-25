@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 (
                     "confidence",
                     models.CharField(
-                        blank=True, help_text="Overall confidence for the value.", max_length=64
+                        blank=True, help_text="Confidence in the toxicity value", max_length=64
                     ),
                 ),
                 (
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                     "basis",
                     models.TextField(
                         blank=True,
-                        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
+                        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Smith et al. 2023)",
                     ),
                 ),
                 (
@@ -163,15 +163,21 @@ class Migration(migrations.Migration):
                         verbose_name="Non-ADAF adjusted value",
                     ),
                 ),
-                ("comments", models.TextField(blank=True)),
+                (
+                    "comments",
+                    models.TextField(
+                        blank=True,
+                        help_text="General comments related to the derivation of this value",
+                    ),
+                ),
                 (
                     "extra",
                     models.JSONField(
                         blank=True,
                         default=dict,
-                        help_text='Any additional custom attributes; A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"My Custom Field Name": "The Custom Value", "Extra ID": 12345}</code>.',
+                        help_text='Any additional custom fields; A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"Player": "Michael Jordan", "Number": 23}</code>.',
                         validators=[hawc.apps.common.validators.FlatJSON.validate],
-                        verbose_name="Additional attributes",
+                        verbose_name="Additional fields",
                     ),
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),
@@ -289,8 +295,8 @@ class Migration(migrations.Migration):
                     "report_id",
                     models.CharField(
                         blank=True,
-                        help_text="A external report number or identifier, if any",
-                        max_length=16,
+                        help_text="A external report number or identifier (e.g., a DOI, publication number)",
+                        max_length=64,
                         verbose_name="Report identifier",
                     ),
                 ),
@@ -308,9 +314,9 @@ class Migration(migrations.Migration):
                     models.JSONField(
                         blank=True,
                         default=dict,
-                        help_text='Any additional custom attributes; A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"My Custom Field Name": "The Custom Value", "Extra ID": 12345}</code>.',
+                        help_text='Any additional custom fields; A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"Player": "Michael Jordan", "Number": 23}</code>.',
                         validators=[hawc.apps.common.validators.FlatJSON.validate],
-                        verbose_name="Additional attributes",
+                        verbose_name="Additional fields",
                     ),
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),

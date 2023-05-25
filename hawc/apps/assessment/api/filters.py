@@ -19,7 +19,7 @@ class InAssessmentFilter(filters.BaseFilterBackend):
             view.assessment = get_assessment_from_query(request)
 
         if not view.assessment_filter_args:
-            raise ValueError("Viewset requires the `assessment_filter_args` argument")
+            raise ValueError("ViewSet requires the `assessment_filter_args` argument")
 
         filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)

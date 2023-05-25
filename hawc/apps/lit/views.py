@@ -710,6 +710,14 @@ class RefListExtract(BaseUpdate):
         )
         return kwargs
 
+    def create_log(self, obj):
+        create_object_log(
+            "Reference converted to study",
+            self.assessment,
+            self.assessment.id,
+            self.request.user.id,
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
@@ -720,10 +728,6 @@ class RefListExtract(BaseUpdate):
 
     def get_success_url(self):
         return reverse_lazy("lit:ref_list_extract", args=[self.assessment.pk])
-
-    def form_valid(self, form):
-        form.bulk_create_studies()
-        return super().form_valid(form)
 
 
 def _get_ref_app_startup(view, context) -> WebappConfig:

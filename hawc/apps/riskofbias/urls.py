@@ -4,13 +4,13 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.RiskOfBiasAssessmentViewset, basename="assessment")
+router.register(r"assessment", api.RiskOfBiasAssessmentViewSet, basename="assessment")
 router.register(r"domain", api.RiskOfBiasDomain, basename="domain")
 router.register(r"review", api.RiskOfBias, basename="review")
-router.register(r"metrics", api.AssessmentMetricViewset, basename="metrics")
-router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, basename="metric_scores")
-router.register(r"scores", api.AssessmentScoreViewset, basename="scores")
-router.register(r"score-cleanup", api.ScoreCleanupViewset, basename="score-cleanup")
+router.register(r"metrics", api.AssessmentMetricViewSet, basename="metrics")
+router.register(r"metrics/scores", api.AssessmentMetricScoreViewSet, basename="metric_scores")
+router.register(r"scores", api.AssessmentScoreViewSet, basename="scores")
+router.register(r"score-cleanup", api.ScoreCleanupViewSet, basename="score-cleanup")
 
 app_name = "riskofbias"
 urlpatterns = [
