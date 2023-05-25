@@ -8,6 +8,7 @@ from ..common.filterset import (
     AutocompleteModelChoiceFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
+    FilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -166,6 +167,7 @@ class EndpointFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Endpoint
+        form = FilterForm
         fields = [
             "studies",
             "chemical",
