@@ -15,7 +15,6 @@ from django.views.generic import TemplateView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, tryParseInt
 from ..common.views import (
     BaseCreate,
@@ -257,6 +256,8 @@ class TagReferences(BaseFilterList):
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
     paginate_by = 100
 
+    filterset_class = filterset.ReferenceFilterSet
+
     def get_queryset(self):
         return (
             super()
@@ -272,11 +273,10 @@ class TagReferences(BaseFilterList):
         )
         return context
 
-    def get_filterset_class(self):
+    def get_form_options(self):
         conflict_resolution = self.assessment.literature_settings.conflict_resolution
         if conflict_resolution:
-            return dynamic_filterset(
-                filterset.ReferenceFilterSet,
+            return dict(
                 main_field="title_abstract",
                 appended_fields=["partially_tagged", "needs_tagging", "order_by"],
                 fields=[
@@ -330,13 +330,11 @@ class TagReferences(BaseFilterList):
                                 },
                             ]
                         },
-                        {"columns": [{"width": 12}]},
                     ]
                 },
             )
         else:
-            return dynamic_filterset(
-                filterset.ReferenceFilterSet,
+            return dict(
                 fields=[
                     "title_abstract",
                     "search",
@@ -406,62 +404,66 @@ class ConflictResolution(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-    filterset_class = dynamic_filterset(
-        filterset.ReferenceFilterSet,
-        main_field="title_abstract",
-        fields=[
-            "id",
-            "title_abstract",
-            "tags",
-            "include_descendants",
-            "anything_tagged",
-            "my_tags",
-            "include_mytag_descendants",
-            "anything_tagged_me",
-        ],
-        grid_layout={
-            "rows": [
-                {
-                    "columns": [
-                        {"width": 12},
-                    ]
-                },
-                {
-                    "columns": [
-                        {"width": 12, "extra_css": "px-4"},
-                    ]
-                },
-                {
-                    "columns": [
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                    ]
-                },
-            ]
-        },
-    )
+
+    filterset_class = filterset.ReferenceFilterSet
+
+    def get_form_options(self):
+        return dict(
+            main_field="title_abstract",
+            fields=[
+                "id",
+                "title_abstract",
+                "tags",
+                "include_descendants",
+                "anything_tagged",
+                "my_tags",
+                "include_mytag_descendants",
+                "anything_tagged_me",
+            ],
+            grid_layout={
+                "rows": [
+                    {
+                        "columns": [
+                            {"width": 12},
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {"width": 12, "extra_css": "px-4"},
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    }
+                                ],
+                            },
+                        ]
+                    },
+                ]
+            },
+        )
+
     paginate_by = 50
 
     def get_queryset(self):
@@ -585,57 +587,60 @@ class RefFilterList(BaseFilterList):
     breadcrumb_active_name = "Reference search"
     parent_model = Assessment
     model = models.Reference
-    filterset_class = dynamic_filterset(
-        filterset.ReferenceFilterSet,
-        main_field="title_abstract",
-        appended_fields=["order_by", "paginate_by"],
-        fields=[
-            "id",
-            "db_id",
-            "search",
-            "title_abstract",
-            "journal",
-            "order_by",
-            "paginate_by",
-            "tags",
-            "include_descendants",
-            "anything_tagged",
-        ],
-        grid_layout={
-            "rows": [
-                {"columns": [{"width": 12}]},
-                {
-                    "columns": [
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                },
-                            ],
-                        },
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                    ]
-                },
-            ]
-        },
-    )
+    filterset_class = filterset.ReferenceFilterSet
+
+    def get_form_options(self):
+        return dict(
+            main_field="title_abstract",
+            appended_fields=["order_by", "paginate_by"],
+            fields=[
+                "id",
+                "db_id",
+                "search",
+                "title_abstract",
+                "journal",
+                "order_by",
+                "paginate_by",
+                "tags",
+                "include_descendants",
+                "anything_tagged",
+            ],
+            grid_layout={
+                "rows": [
+                    {"columns": [{"width": 12}]},
+                    {
+                        "columns": [
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    },
+                                ],
+                            },
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    }
+                                ],
+                            },
+                        ]
+                    },
+                ]
+            },
+        )
+
     paginate_by = 50
 
     def get_queryset(self):

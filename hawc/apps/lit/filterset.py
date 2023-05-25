@@ -205,8 +205,8 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset = queryset.filter(user_tag_count__lt=2, tags__isnull=True)
         return queryset.distinct()
 
-    def create_form(self):
-        form = super().create_form()
+    def customize_form(self, form):
+        form = super().customize_form(form)
         for field in [
             "partially_tagged",
             "tags",

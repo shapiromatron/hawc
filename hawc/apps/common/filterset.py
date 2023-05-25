@@ -3,7 +3,6 @@ from typing import ForwardRef
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
-from django_filters.utils import get_model_field
 from pydantic import BaseModel, conlist
 
 from ..assessment.models import Assessment
@@ -104,6 +103,7 @@ class InlineFilterForm(forms.Form):
         self.grid_layout = GridLayout.parse_obj(layout) if layout else None
         self.main_field = kwargs.pop("main_field", None)
         self.appended_fields = kwargs.pop("appended_fields", [])
+        self.dynamic_fields = kwargs.pop("fields", [])
         super().__init__(*args, **kwargs)
 
     @property
@@ -135,6 +135,7 @@ class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         grid_layout = kwargs.pop("grid_layout", None)
         self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
+        self.dynamic_fields = kwargs.pop("fields", None)
         super().__init__(*args, **kwargs)
 
     @property
@@ -181,62 +182,11 @@ class FilterSet(df.filterset.BaseFilterSet, metaclass=FilterSetMetaclass):
     pass
 
 
-class BaseFilterSet(FilterSet):
-    def __init__(self, *args, assessment: Assessment | None = None, **kwargs):
+class BaseFilterSet(df.FilterSet):
+    def __init__(self, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs):
         self.assessment = assessment
         super().__init__(*args, **kwargs)
-
-    @classmethod
-    def get_filters(cls):
-        """
-        Get all filters for the filterset. This is the combination of declared and
-        generated filters.
-
-        Overridden from django-filter's BaseFilterSet; we do not include declared filters by default
-        near the end of the method.
-        """
-
-        # No model specified - skip filter generation
-        if not cls._meta.model:
-            return cls.declared_filters.copy()
-
-        # Determine the filters that should be included on the filterset.
-        filters = {}
-        fields = cls.get_fields()
-        undefined = []
-
-        for field_name, lookups in fields.items():
-            field = get_model_field(cls._meta.model, field_name)
-
-            # warn if the field doesn't exist.
-            if field is None:
-                undefined.append(field_name)
-
-            for lookup_expr in lookups:
-                filter_name = cls.get_filter_name(field_name, lookup_expr)
-
-                # If the filter is explicitly declared on the class, skip generation
-                if filter_name in cls.declared_filters:
-                    filters[filter_name] = cls.declared_filters[filter_name]
-                    continue
-
-                if field is not None:
-                    filters[filter_name] = cls.filter_for_field(field, field_name, lookup_expr)
-
-        # Allow Meta.fields to contain declared filters *only* when a list/tuple
-        if isinstance(cls._meta.fields, list | tuple):
-            undefined = [f for f in undefined if f not in cls.declared_filters]
-
-        if undefined:
-            raise TypeError(
-                "'Meta.fields' must not contain non-model field names: %s" % ", ".join(undefined)
-            )
-
-        # Add in declared filters. This is necessary since we don't enforce adding
-        # declared filters to the 'Meta.fields' option
-        ### We actually do want to enforce Meta.fields; this allows dynamically specifying fields
-        # filters.update(cls.declared_filters)
-        return filters
+        self.form_kwargs = form_kwargs or {}
 
     @property
     def perms(self):
@@ -245,27 +195,21 @@ class BaseFilterSet(FilterSet):
     @property
     def form(self):
         if not hasattr(self, "_form"):
-            self._form = self.create_form()
+            form = self.get_form_class()
+            if self.is_bound:
+                _form = form(self.data, prefix=self.form_prefix, **self.form_kwargs)
+            else:
+                _form = form(prefix=self.form_prefix, **self.form_kwargs)
+            if _form.dynamic_fields:
+                for field in list(_form.fields.keys()):
+                    if field not in _form.dynamic_fields and field != "is_expanded":
+                        _form.fields.pop(field)
+            self._form = self.customize_form(_form)
         return self._form
 
-    def create_form(self) -> forms.Form:
-        """Create the form used for the filterset.
-
-        Returns:
-            forms.Form: a django.Form instance
-        """
-        Form = self.get_form_class()
-        attributes = {
-            "data": self.data if self.is_bound else {},
-            "prefix": self.form_prefix,
-            "grid_layout": self._meta.grid_layout,
-        }
-        if self._meta.form == ExpandableFilterForm or self._meta.form == InlineFilterForm:
-            attributes.update(
-                {"main_field": self._meta.main_field, "appended_fields": self._meta.appended_fields}
-            )
-
-        return Form(**attributes)
+    def customize_form(self, form):
+        """Customize an initialized form."""
+        return form
 
 
 def dynamic_filterset(_class: type[BaseFilterSet], **meta_kwargs):
