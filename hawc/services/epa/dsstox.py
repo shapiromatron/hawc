@@ -35,7 +35,7 @@ class DssSubstance(NamedTuple):
             headers={"x-api-key": settings.CCTE_API_KEY, "Content-Type": "application/json"},
         )
         response_dict = response.json()
-        if response_dict.get('dtxsid') != dtxsid:
+        if response_dict.get("dtxsid") != dtxsid:
             raise ValueError(f"{dtxsid} not found in DSSTox lookup")
 
         response_dict["dtxsid"] = response_dict.pop("dtxsid")
