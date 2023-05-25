@@ -30,6 +30,8 @@ class DssSubstance(NamedTuple):
         """
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
+        if settings.CCTE_API_KEY is None and settings.IS_TESTING is False:
+            raise ValueError("Missing API key")
         response = requests.get(
             f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}",
             headers={"x-api-key": settings.CCTE_API_KEY, "Content-Type": "application/json"},
