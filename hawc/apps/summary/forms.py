@@ -2,6 +2,7 @@ import json
 from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
+import plotly.io as pio
 from django import forms
 from django.urls import reverse
 from openpyxl import load_workbook
@@ -13,7 +14,8 @@ from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
 from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
-from ..common.validators import validate_json_pydantic
+from ..common.helper import new_window_a
+from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -560,6 +562,7 @@ class VisualForm(forms.ModelForm):
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.EXPLORE_HEATMAP,
+            constants.VisualType.PLOTLY,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -921,6 +924,49 @@ class ExploreHeatmapForm(VisualForm):
         )
 
 
+class PlotlyVisualForm(VisualForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["settings"].label = "JSON configuration"
+        self.fields[
+            "settings"
+        ].help_text = f"""Create a {new_window_a("https://plotly.com/", "Plotly")} visual using Python or R, and then export the visual and display to JSON ({new_window_a("https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" ,"R")} or {new_window_a("https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html", "Python")})."""
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "settings",
+            "caption",
+            "published",
+        )
+
+    def clean_settings(self):
+        # we remove <extra> tag; by default it's included in plotly visuals but it doesn't pass
+        # our html validation checks
+        settings: str = (
+            self.cleaned_data.get("settings", "")
+            .strip()
+            .replace("<extra>", "")
+            .replace("</extra>", "")
+        )
+        try:
+            json.loads(settings)
+        except ValueError as err:
+            raise forms.ValidationError("Invalid JSON format") from err
+        if len(json.loads(settings)) == 0:
+            raise forms.ValidationError("Settings cannot be empty")
+        validate_html_tags(settings)
+        validate_hyperlinks(settings)
+        try:
+            pio.from_json(settings)
+        except ValueError as err:
+            raise forms.ValidationError("Invalid Plotly figure") from err
+        return settings
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -931,6 +977,7 @@ def get_visual_form(visual_type):
             constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
             constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
+            constants.VisualType.PLOTLY: PlotlyVisualForm,
         }[visual_type]
     except Exception:
         raise ValueError()

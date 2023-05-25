@@ -2,6 +2,7 @@ import itertools
 import json
 import re
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
@@ -11,6 +12,7 @@ from django.views.generic import RedirectView, TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
+from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
@@ -87,7 +89,9 @@ class GetSummaryTableMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class SummaryTableList(BaseFilterList):
@@ -249,7 +253,9 @@ class GetVisualizationObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class VisualizationList(BaseList):
@@ -346,6 +352,12 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         )
         return context
 
+    def get_template_names(self):
+        if self.object.visual_type == constants.VisualType.PLOTLY:
+            return "summary/visual_detail_plotly.html"
+        else:
+            return super().get_template_names()
+
 
 class VisualizationCreateSelector(BaseDetail):
     model = Assessment
@@ -392,7 +404,13 @@ class VisualizationCreate(BaseCreate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -499,7 +517,13 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         if visual_type in {
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -646,11 +670,10 @@ class GetDataPivotObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        if hasattr(obj, "datapivotquery"):
-            obj = obj.datapivotquery
-        else:
-            obj = obj.datapivotupload
-        return super().get_object(object=obj)
+        obj = obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class DataPivotByIdDetail(RedirectView):

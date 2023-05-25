@@ -9,9 +9,9 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
-    AssessmentViewset,
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
@@ -33,7 +33,7 @@ from .actions.rob_clone import BulkRobCopyAction
 logger = logging.getLogger(__name__)
 
 
-class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
+class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
@@ -48,6 +48,9 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
         renderer_classes=PandasRenderers,
     )
     def export(self, request, pk):
+        """
+        Get all final risk of bias/study evaluations for an assessment.
+        """
         self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
@@ -65,6 +68,9 @@ class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):
+        """
+        Get all risk of bias/study evaluations for an assessment, including individual reviews.
+        """
         self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
@@ -152,7 +158,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RiskOfBias(AssessmentEditViewset):
+class RiskOfBias(AssessmentEditViewSet):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
@@ -233,7 +239,7 @@ class RiskOfBias(AssessmentEditViewset):
         return Response(serializer.data)
 
 
-class AssessmentMetricViewset(AssessmentViewset):
+class AssessmentMetricViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
@@ -243,7 +249,7 @@ class AssessmentMetricViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentMetricScoreViewset(AssessmentViewset):
+class AssessmentMetricScoreViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
@@ -253,7 +259,7 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(AssessmentEditViewset):
+class AssessmentScoreViewSet(AssessmentEditViewSet):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
@@ -281,7 +287,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         super().perform_destroy(instance)
 
 
-class ScoreCleanupViewset(CleanupFieldsBaseViewSet):
+class ScoreCleanupViewSet(CleanupFieldsBaseViewSet):
     model = models.RiskOfBiasScore
     serializer_class = serializers.RiskOfBiasScoreCleanupSerializer
     assessment_filter_args = "metric__domain__assessment"

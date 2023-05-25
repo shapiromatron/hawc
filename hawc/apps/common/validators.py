@@ -118,7 +118,7 @@ def validate_hyperlink(value: str, raise_exception: bool = True) -> bool:
     return valid
 
 
-def validate_hyperlinks(html: str, field: str = None) -> str:
+def validate_hyperlinks(html: str, field: str | None = None) -> str:
     """
     Validate that our hyperlinks are on the allowlist of acceptable link locations.
 
@@ -193,7 +193,7 @@ class NumericTextValidator(RegexValidator):
 class FlatJSON:
     """A JSON based-field where all key and values are strings."""
 
-    HELP_TEXT = """A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"My Custom Field Name": "The Custom Value", "Extra ID": 12345}</code>."""
+    HELP_TEXT = """A <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON">JSON</a> object where keys are strings and values are strings or numbers. For example, <code>{"Player": "Michael Jordan", "Number": 23}</code>."""
     ERROR_MSG = "Flat JSON object required; arrays and nested objects are not valid."
 
     @classmethod
