@@ -154,7 +154,7 @@ class BaseFilterSet(df.FilterSet):
         self.assessment = assessment
         super().__init__(*args, **kwargs)
         self.form_kwargs = form_kwargs or {}
-        if "grid_layout" not in form_kwargs and hasattr(self.Meta, "grid_layout"):
+        if "grid_layout" not in self.form_kwargs and hasattr(self.Meta, "grid_layout"):
             self.form_kwargs.update(grid_layout=self.Meta.grid_layout)
 
     @property
