@@ -98,36 +98,29 @@
       <div id="rob_plot" class="mb-3"></div>
     {% endif %}
 
-    {% if study.bioassay and obj_perms.edit %}
-      <h3>Available animal bioassay experiments</h3>
+    {% if study.bioassay %}
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% endif %}
 
-    {% if study.in_vitro and obj_perms.edit %}
-      <h3>Available <i>in vitro</i> experiments</h3>
-      {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-      <h3>Chemicals used in <i>in vitro</i> experiments</h3>
-      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
-      <h3>Cell types used in <i>in vitro</i> experiments</h3>
-      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
-    {% endif %}
-
-    {% if study.epi and obj_perms.edit %}
-      <h3>Available epidemiological study populations</h3>
+    {% if study.epi %}
       {% if assessment.epi_version == 1 %}
         {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
       {% elif assessment.epi_version == 2 %}
-        {% include "epiv2/fragments/_design_list.html" with object_list=object.designs.all %}
+        {% include "epi/_studypopulation_list.html" with object_list=object.designs.all %}
       {% endif %}
     {% endif %}
 
-    {% if study.epi_meta and obj_perms.edit %}
-      <h3>Available epidemiological meta-analyses</h3>
+    {% if study.epi_meta %}
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}
 
-    {% if study.eco and obj_perms.edit %}
-      <h3>Available ecology designs</h3>
+    {% if study.in_vitro %}
+      {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
+      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
+      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
+    {% endif %}
+
+    {% if study.eco %}
       {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
     {% endif %}
 
