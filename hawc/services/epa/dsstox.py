@@ -37,8 +37,6 @@ class DssSubstance(NamedTuple):
         response_dict = response.json()
         if response_dict.get("dtxsid") != dtxsid:
             raise ValueError(f"{dtxsid} not found in DSSTox lookup")
-
-        response_dict["dtxsid"] = response_dict.pop("dtxsid")
         obj = cls(dtxsid=response_dict["dtxsid"], content=response_dict)
 
         return obj
