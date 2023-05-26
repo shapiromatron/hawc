@@ -142,7 +142,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
             if not assessment.user_can_view_object(request.user):
                 raise exceptions.PermissionDenied()
         if self.request.method == "POST":
-            if not assessment.user_can_edit_object(request.user):
+            if not assessment.user_is_team_member_or_higher(request.user):
                 raise exceptions.PermissionDenied()
             serializer = serializers.BulkReferenceTagSerializer(
                 data=request.data, context={"assessment": assessment}
