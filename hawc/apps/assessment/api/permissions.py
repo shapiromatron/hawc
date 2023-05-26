@@ -53,8 +53,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     Action permissions can be set on a viewset using the class property action_perms
     or passed directly into an action decorator with the action_perms kwarg.
-    action_perms can be a dict mapping action name to the coinciding AssessmentViewsetPermission,
-    or it can just be an AssessmentViewsetPermission if no mapping is necessary.
+    action_perms can be a dict mapping action name to the coinciding AssessmentViewSetPermission,
+    or it can just be an AssessmentViewSetPermission if no mapping is necessary.
 
     Note: This permission class does NOT handle the create action, since there is no way to tell
     if the object being created has assessment permissions at this level. Permissions for this
