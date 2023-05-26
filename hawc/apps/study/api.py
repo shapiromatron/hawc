@@ -5,7 +5,6 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from ..animal.models import Experiment
 from ..assessment.api import (
     AssessmentLevelPermissions,
     CleanupFieldsBaseViewSet,
@@ -16,8 +15,6 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api import DisabledPagination
 from ..common.helper import re_digits
 from ..common.views import create_object_log
-from ..epi.models import Exposure
-from ..epiv2.models import Chemical
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import filterset, models, serializers
 
@@ -106,35 +103,27 @@ class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     assessment_filter_args = "assessment"
 
 
-class StudySearchViewSet(viewsets.ViewSet):
+class StudySearchViewSet(viewsets.GenericViewSet):
+    """Global search of all studies, across assessments."""
+
     permission_classes = (permissions.IsAdminUser,)
+    serializer_class = serializers.GlobalStudySerializer
+    model = models.Study
+
+    def get_queryset(self):
+        return self.model.objects.all()
 
     @action(detail=False)
     def chemical(self, request):
+        """Search by chemical"""
+        fs = filterset.StudyByChemicalFilterSet(request.GET, queryset=self.get_queryset())
+        qs = fs.qs.order_by("assessment_id", "id")
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response(qs)
+
+    @action(detail=False)
+    def reference(self, request):
         return Response({"status": "ok!"})
-
-    @action(detail=False)
-    def animals(self, request):
-        study_ids = (
-            Experiment.objects.filter()
-            .values_list("study__id", flat=True)
-            .prefetch_related("dtxsid")
-        )
-        study_queryset = models.Study.objects.filter(id__in=study_ids)
-        fs = filterset.GlobalReferencesFilterSet(request.GET, queryset=study_queryset)
-        serializer = serializers.GlobalReferencesSerializer(fs.qs, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False)
-    def epi(self, request):
-        study_ids = Exposure.objects.filter().values_list("study_population__id", flat=True)
-        study_queryset = models.Study.objects.filter(id__in=study_ids)
-        serializer = serializers.GlobalReferencesSerializer(study_queryset, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False)
-    def epiv2(self, request):
-        study_ids = Chemical.objects.filter().values_list("design__study__id", flat=True)
-        study_queryset = models.Study.objects.filter(id__in=study_ids)
-        serializer = serializers.GlobalReferencesSerializer(study_queryset, many=True)
-        return Response(serializer.data)

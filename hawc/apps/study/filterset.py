@@ -1,9 +1,7 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..animal.models import Experiment
 from ..common.filterset import BaseFilterSet
-from ..epi.models import Exposure
 from ..myuser.models import HAWCUser
 from . import constants, models
 
@@ -89,48 +87,45 @@ class StudyFilterSet(BaseFilterSet):
         return form
 
 
-class GlobalReferencesFilterSet(df.FilterSet):
-    query = df.CharFilter(method="filter_animal_level_data", label="Query")
+class StudyByChemicalFilterSet(df.FilterSet):
+    query = df.CharFilter(method="filter_chemical", label="Query", required=True)
     published = df.BooleanFilter(method="filter_published")
 
-    def filter_animal_level_data(self, queryset, name, value):
-        query = (
-            Q(chemical__icontains=value)
-            | Q(cas=value)
-            | Q(dtxsid__dtxsid=value)
-            | Q(dtxsid__content__preferredName__icontains=value)
-            | Q(dtxsid__content__casrn=value)
+    def filter_chemical(self, queryset, name, value):
+        # bioassay
+        qs1 = queryset.all().filter(
+            Q(experiments__chemical__icontains=value)
+            | Q(experiments__cas=value)
+            | Q(experiments__dtxsid__dtxsid=value)
+            | Q(experiments__dtxsid__content__preferredName__icontains=value)
+            | Q(experiments__dtxsid__content__casrn=value)
+        ).annotate()
+        # epi
+        qs2 = queryset.all().filter(
+            Q(study_populations__exposures__name__icontains=value)
+            | Q(study_populations__exposures__dtxsid__dtxsid=value)
+            | Q(study_populations__exposures__dtxsid__content__preferredName__icontains=value)
+            | Q(study_populations__exposures__dtxsid__content__casrn=value)
         )
-        return queryset.filter(query).values_list("id", "study__assessment__name").distinct()
+        # epiv2
+        qs3 = queryset.all().filter(
+            Q(designs__chemicals__name__icontains=value)
+            | Q(designs__chemicals__dsstox__dtxsid=value)
+            | Q(designs__chemicals__dsstox__content__preferredName__icontains=value)
+            | Q(designs__chemicals__dsstox__content__casrn=value)
+        )
+        # in vitro
+        qs4 = queryset.all().filter(
+            Q(ivchemicals__name=value)
+            | Q(ivchemicals__cas=value)
+            | Q(ivchemicals__dtxsid__dtxsid=value)
+            | Q(ivchemicals__dtxsid__content__preferredName__icontains=value)
+            | Q(ivchemicals__dtxsid__content__casrn=value)
+        )
+        return qs1.union(qs2, qs3, qs4)
 
     def filter_published(self, queryset, name, value):
         if value is True:
             return queryset.filter(study__published=True)
         else:
             return queryset.filter(study__published=False)
-
-    class Meta:
-        model = Experiment
-        fields = ["chemical", "dtxsid__dtxsid", "cas", "type", "study__published"]
-
-
-class GlobalEpiFilterSet(df.FilterSet):
-    query = df.CharFilter(method="filter_epi_level_data")
-    published = df.BooleanFilter(method="filter_published")
-
-    def filter_epi_level_data(self, queryset, name, value):
-        query = (
-            Q(name__icontains=value)
-            | Q(dtxsid__dtxsid=value)
-            | Q(dtxsid__content__preferredName__icontains=value)
-        )
-        # no cas data ?
-        return (
-            queryset.filter(query)
-            .values_list("id", "study_population__study___assessment__name")
-            .distinct()
-        )
-
-    class Meta:
-        model = Exposure
-        fields = ["name", "dtxsid__dtxsid", "study_population__study__published"]

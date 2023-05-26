@@ -31,6 +31,8 @@ METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
 
 class AssessmentSearchViewSet(viewsets.ViewSet):
+    """Global search of all assessments, across assessments."""
+
     permission_classes = (permissions.IsAdminUser,)
 
     @action(detail=False)
