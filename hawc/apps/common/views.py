@@ -706,15 +706,16 @@ class FilterSetMixin:
             data=self.request.GET,
             queryset=super().get_queryset(),
             request=self.request,
+            form_kwargs=self.get_filterset_form_kwargs(),
         )
 
-    def get_filterset_class(self) -> type[BaseFilterSet]:
-        return self.filterset_class
+    def get_filterset_form_kwargs(self):
+        return {}
 
     @property
     def filterset(self):
         if not hasattr(self, "_filterset"):
-            self._filterset = self.get_filterset_class()(**self.get_filterset_kwargs())
+            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
         return self._filterset
 
     def get_queryset(self):

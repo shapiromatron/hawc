@@ -1,7 +1,7 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..common.filterset import BaseFilterSet
+from ..common.filterset import BaseFilterSet, FilterForm
 from ..myuser.models import HAWCUser
 from . import constants, models
 
@@ -39,6 +39,7 @@ class StudyFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Study
+        form = FilterForm
         fields = ["citation", "identifier", "data_type", "published", "assigned_user"]
         grid_layout = {
             "rows": [

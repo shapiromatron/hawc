@@ -1,7 +1,7 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..common.filterset import BaseFilterSet
+from ..common.filterset import BaseFilterSet, FilterForm
 from . import constants, models
 
 
@@ -23,6 +23,7 @@ class VisualFilterSet(BaseFilterSet):
     class Meta:
         model = models.Visual
         fields = ["title", "type", "published"]
+        form = FilterForm
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
@@ -114,6 +115,7 @@ class SummaryTableFilterSet(BaseFilterSet):
     class Meta:
         model = models.SummaryTable
         fields = ["title", "type", "published"]
+        form = FilterForm
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
