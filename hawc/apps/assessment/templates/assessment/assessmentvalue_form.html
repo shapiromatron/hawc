@@ -3,7 +3,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="d-flex justify-content-end">
+<div class="d-flex justify-content-between">
+    <h3>Assessment Value for {{ assessment }}</h3>
     {% include "common/scientific_pulldown.html" %}
 </div>
 {% crispy form %}
