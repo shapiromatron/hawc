@@ -569,6 +569,21 @@ div.smart-tag.active {
     cursor: pointer;
 }
 
+/* custom inline filterset forms */
+.form-sm-field {
+    font-size: 0.88rem;
+    height: auto;
+    width: auto;
+    border-radius: 0;
+    line-height: 1.7;
+}
+
+#ff-expand-form {
+    border-radius: 0 0 10px 10px;
+    box-shadow: rgb(127 142 153 / 31%) 0px 8px 15px;
+    background-color: #eaf6ff;
+}
+
 /* BMD APPLICATION STYLES */
 
 /* BMD output table */
