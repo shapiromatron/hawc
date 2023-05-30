@@ -181,6 +181,7 @@ class AssessmentDetailForm(forms.ModelForm):
 
 class AssessmentValueForm(forms.ModelForm):
     CREATE_LEGEND = "Create Assessment values"
+    UPDATE_LEGEND = "Update Assessment Value"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
@@ -255,6 +256,7 @@ class AssessmentValueForm(forms.ModelForm):
             helper = BaseFormHelper(
                 self,
                 help_text=self.UPDATE_HELP_TEXT,
+                legend_text=self.UPDATE_LEGEND,
                 cancel_url=self.instance.get_absolute_url(),
             )
 
