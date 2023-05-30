@@ -253,10 +253,9 @@ class TagReferences(BaseFilterList):
     template_name = "lit/reference_tag.html"
     parent_model = Assessment
     model = models.Reference
+    filterset_class = filterset.ReferenceFilterSet
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
     paginate_by = 100
-
-    filterset_class = filterset.ReferenceFilterSet
 
     def get_queryset(self):
         return (
@@ -277,10 +276,10 @@ class TagReferences(BaseFilterList):
         conflict_resolution = self.assessment.literature_settings.conflict_resolution
         if conflict_resolution:
             return dict(
-                main_field="title_abstract",
+                main_field="ref_search",
                 appended_fields=["partially_tagged", "needs_tagging", "order_by"],
                 dynamic_fields=[
-                    "title_abstract",
+                    "ref_search",
                     "needs_tagging",
                     "order_by",
                     "search",
@@ -336,7 +335,7 @@ class TagReferences(BaseFilterList):
         else:
             return dict(
                 dynamic_fields=[
-                    "title_abstract",
+                    "ref_search",
                     "search",
                     "id",
                     "order_by",
@@ -344,7 +343,7 @@ class TagReferences(BaseFilterList):
                     "include_descendants",
                     "anything_tagged",
                 ],
-                main_field="title_abstract",
+                main_field="ref_search",
                 appended_fields=["order_by"],
                 grid_layout={
                     "rows": [
@@ -403,16 +402,15 @@ class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
     parent_model = Assessment
     model = models.Reference
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-
     filterset_class = filterset.ReferenceFilterSet
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_filterset_form_kwargs(self):
         return dict(
-            main_field="title_abstract",
+            main_field="ref_search",
             dynamic_fields=[
                 "id",
-                "title_abstract",
+                "ref_search",
                 "tags",
                 "include_descendants",
                 "anything_tagged",
@@ -591,13 +589,13 @@ class RefFilterList(BaseFilterList):
 
     def get_filterset_form_kwargs(self):
         return dict(
-            main_field="title_abstract",
+            main_field="ref_search",
             appended_fields=["order_by", "paginate_by"],
             dynamic_fields=[
                 "id",
                 "db_id",
                 "search",
-                "title_abstract",
+                "ref_search",
                 "journal",
                 "order_by",
                 "paginate_by",

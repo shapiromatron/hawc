@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-{% include 'common/inline_filter_form.html' %}
+  {% include 'common/inline_filter_form.html' %}
   <div id="main"></div>
   {% include "includes/paginator.html" with plural_object_name="references" %}
 {% endblock %}

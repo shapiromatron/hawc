@@ -32,7 +32,7 @@ class TestLiterature(PlaywrightTestCase):
         # /lit/assessment/:id/references/search/
         page.goto(self.live_server_url + "/lit/assessment/2/references/search/")
         page.locator("#ff-expand-form-toggle").click()
-        page.locator("input[name=title_abstract]").fill("Kawana")
+        page.locator("input[name=ref_search]").fill("Kawana")
         page.locator("text=Apply filters").click()
         expect(page.locator("text=References (1 found)")).to_be_visible()
 
