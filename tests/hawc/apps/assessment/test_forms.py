@@ -179,9 +179,9 @@ class TestAssessmentValueForm:
         "value_unit": "mg/kg/day",
         "basis": "",
         "pod_type": "NOAEL",
-        "pod_value": 50.0,
+        "pod_value": 100.0,
         "pod_unit": "mg/kg/day",
-        "uncertainty": 30,
+        "uncertainty": 10,
         "confidence": "Medium High",
         "species_studied": "",
         "duration": "1 week",
@@ -217,6 +217,13 @@ class TestAssessmentValueForm:
         form = AssessmentValueForm(data=data, parent=assessment)
         assert form.is_valid() is False
         assert form.errors["uncertainty"] == ["Required for Noncancer evaluation types."]
+
+        # pod/uncertainty != value
+        data = valid_data.copy()
+        data.update(uncertainty=100)
+        form = AssessmentValueForm(data=data, parent=assessment)
+        assert form.is_valid() is False
+        assert form.errors["value"] == ["POD / uncertainty is not equal to value."]
 
     def test_extra(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
