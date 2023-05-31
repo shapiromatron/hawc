@@ -163,13 +163,13 @@ class EndpointFilterSet(BaseFilterSet):
             ("effect subtype", "effect subtype"),
             ("chemical", "chemical"),
         ),
-        empty_label="Default Order"
+        empty_label="Default Order",
     )
     paginate_by = PaginationFilter(empty_label="Default Pagination")
     search = df.CharFilter(
-            method="filter_search",
-            label="Study/Chemical name/Endpoint",
-            help_text="Filter by endpoint name",
+        method="filter_search",
+        label="Study/Chemical name/Endpoint",
+        help_text="Filter by endpoint name",
     )
 
     class Meta:
@@ -194,7 +194,7 @@ class EndpointFilterSet(BaseFilterSet):
             "dose_units",
             "tags",
             "order_by",
-            "paginate_by"
+            "paginate_by",
         ]
         grid_layout = {
             "rows": [
@@ -214,9 +214,7 @@ class EndpointFilterSet(BaseFilterSet):
         return queryset
 
     def filter_search(self, queryset, name, value):
-        query = (
-            Q(name__icontains=value)
-        )
+        query = Q(name__icontains=value)
         return queryset.filter(query)
 
     def create_form(self):
