@@ -98,7 +98,9 @@ class LiteratureAssessment(models.Model):
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
          Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas.""",
+         commas. Keywords can be whole word matches or partial matches. To have a partial match,
+         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not
+         rats, as well as phos, phosphate, and phosphorous.""",
     )
     name_list_2 = models.CharField(
         max_length=64,
@@ -116,7 +118,9 @@ class LiteratureAssessment(models.Model):
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
          Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas.""",
+         commas. Keywords can be whole word matches or partial matches. To have a partial match,
+         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not
+         rats, as well as phos, phosphate, and phosphorous.""",
     )
     name_list_3 = models.CharField(
         max_length=64,
@@ -134,7 +138,9 @@ class LiteratureAssessment(models.Model):
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
          Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas.""",
+         commas. Keywords can be whole word matches or partial matches. To have a partial match,
+         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not
+         rats, as well as phos, phosphate, and phosphorous.""",
     )
     topic_tsne_data = models.FileField(
         blank=True,

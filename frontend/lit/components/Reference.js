@@ -12,8 +12,7 @@ const markKeywords = (text, allSettings) => {
         const all_tokens = allSettings.set1.keywords
                 .concat(allSettings.set2.keywords)
                 .concat(allSettings.set3.keywords),
-            all_re = new RegExp(all_tokens.join("|"), "gim");
-
+            all_re = new RegExp(all_tokens.join("|").replace(/\*/g, ".*?"), "gim");
         if (all_tokens.length === 0) {
             return text;
         }
@@ -27,7 +26,7 @@ const markKeywords = (text, allSettings) => {
         if (settings.keywords.length === 0) {
             return text;
         }
-        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
+        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|").replace(/\*/g, ".*?")})</mark>`, "gim");
         return text.replace(
             re,
             (match, token) =>
