@@ -26,7 +26,7 @@ const markKeywords = (text, allSettings) => {
         if (settings.keywords.length === 0) {
             return text;
         }
-        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|").replace(/\*/g, ".*?")})</mark>`, "gim");
+        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
         return text.replace(
             re,
             (match, token) =>
