@@ -86,7 +86,7 @@ class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
 
 
 class UserAssessmentTaskList(BaseFilterList):
-    filterset_class = filterset.AssessmentUserTaskFilterSet
+    filterset_class = filterset.UserTaskFilterSet
     model = models.Task
     parent_model = Assessment
     template_name = "mgmt/user_assessment_task_list.html"
@@ -100,6 +100,16 @@ class UserAssessmentTaskList(BaseFilterList):
             .select_related("study__assessment")
             .filter(study__assessment=self.assessment)
             .order_by("study__short_citation", "type")
+        )
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            dynamic_fields=["study_name", "type", "show_completed"],
+            grid_layout={
+                "rows": [
+                    {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
+                ]
+            },
         )
 
     def get_context_data(self, **kwargs):

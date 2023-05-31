@@ -4,6 +4,7 @@ from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
+    FilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -70,6 +71,7 @@ class MetaResultFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.MetaResult
+        form = FilterForm
         fields = [
             "studies",
             "label",
