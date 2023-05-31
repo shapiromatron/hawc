@@ -409,6 +409,12 @@ class EndpointFilterList(BaseFilterList):
     model = models.Endpoint
     filterset_class = filterset.EndpointFilterSet
 
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="search",
+            appended_fields=["order_by", "paginate_by"]
+        )
+
     def get_queryset(self):
         qs = super().get_queryset()
         form = self.filterset.form
