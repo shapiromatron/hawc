@@ -180,7 +180,7 @@ class AssessmentDetailForm(forms.ModelForm):
 
 
 class AssessmentValueForm(forms.ModelForm):
-    CREATE_LEGEND = "Create Assessment values"
+    CREATE_LEGEND = "Create Assessment Value"
     UPDATE_LEGEND = "Update Assessment Value"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
