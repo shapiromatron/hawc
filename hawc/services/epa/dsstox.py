@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import NamedTuple
+from typing import NamedTuple, Self
 
 import requests
 from django.conf import settings
@@ -16,7 +16,7 @@ class DssSubstance(NamedTuple):
     content: dict
 
     @classmethod
-    def create_from_dtxsid(cls, dtxsid: str) -> "DssSubstance":
+    def create_from_dtxsid(cls, dtxsid: str) -> Self:
         """Fetch a DssTox instance from the actor webservices using a DTXSID.
 
         Args:
@@ -39,6 +39,4 @@ class DssSubstance(NamedTuple):
         response_dict = response.json()
         if response_dict.get("dtxsid") != dtxsid:
             raise ValueError(f"{dtxsid} not found in DSSTox lookup")
-        obj = cls(dtxsid=response_dict["dtxsid"], content=response_dict)
-
-        return obj
+        return cls(dtxsid=response_dict["dtxsid"], content=response_dict)

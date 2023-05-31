@@ -91,10 +91,11 @@ class DSSTox(models.Model):
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
     def get_img_url(self) -> str:
-        if settings.CCTE_API_KEY is not None:
-            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}?x-api-key={settings.CCTE_API_KEY}"
+        # TODO - always use api-ccte.epa.gov when API key is no longer required
+        if not settings.CCTE_API_KEY:
+            return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
         else:
-            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}"
+            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}?x-api-key={settings.CCTE_API_KEY}"
 
 
 class Assessment(models.Model):
