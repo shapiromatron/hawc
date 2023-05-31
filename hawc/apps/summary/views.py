@@ -258,10 +258,12 @@ class GetVisualizationObjectMixin:
         return obj
 
 
-class VisualizationList(BaseList):
+class VisualizationList(BaseFilterList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
+
+    filterset_class = filterset.VisualFilterSet
 
     @property
     def visual_fs(self):

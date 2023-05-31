@@ -3,7 +3,7 @@ from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
-from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
+from ..common.filterset import BaseFilterSet, ExpandableFilterForm, PaginationFilter, filter_noop
 from . import models
 
 
@@ -15,10 +15,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="External identifier",
         help_text="Pubmed ID, DOI, HERO ID, etc.",
     )
-    year = df.NumberFilter(label="Year", help_text="Year of publication")
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
-    title_abstract = df.CharFilter(method="filter_title_abstract", label="Title/Abstract")
-    authors = df.CharFilter(method="filter_authors", label="Authors")
+    ref_search = df.CharFilter(
+        method="filter_search",
+        label="Title/Author/Year",
+        help_text="Filter by title, abstract, authors, or year",
+    )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
@@ -65,6 +67,7 @@ class ReferenceFilterSet(BaseFilterSet):
         help_text="All references that you have tagged",
     )
     order_by = df.OrderingFilter(
+        empty_label="Default Order",
         fields=(
             ("authors", "authors"),
             ("year", "year"),
@@ -83,16 +86,17 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.Reference
+        form = ExpandableFilterForm
         fields = [
             "id",
             "db_id",
             "year",
             "journal",
-            "title_abstract",
+            "ref_search",
             "authors",
             "search",
             "tags",
@@ -115,8 +119,14 @@ class ReferenceFilterSet(BaseFilterSet):
         query = Q(authors_short__unaccent__icontains=value) | Q(authors__unaccent__icontains=value)
         return queryset.filter(query)
 
-    def filter_title_abstract(self, queryset, name, value):
-        query = Q(title__icontains=value) | Q(abstract__icontains=value)
+    def filter_search(self, queryset, name, value):
+        query = (
+            Q(title__icontains=value)
+            | Q(abstract__icontains=value)
+            | Q(authors_short__unaccent__icontains=value)
+            | Q(authors__unaccent__icontains=value)
+            | Q(year__icontains=value)
+        )
         return queryset.filter(query)
 
     def filter_tags(self, queryset, name, value):
