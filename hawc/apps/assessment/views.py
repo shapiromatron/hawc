@@ -306,12 +306,11 @@ class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        query = (
-            Q(project_manager__id__exact=self.request.user.pk)
-            | Q(team_members__id__exact=self.request.user.pk)
-            | Q(reviewers__id__exact=self.request.user.pk)
-        )
-        return qs.filter(query)
+        id_list = self.request.user.assessment_pms.union(
+            self.request.user.assessment_reviewers.all(),
+            self.request.user.assessment_teams.all(),
+        ).values_list("id", flat=True)
+        return qs.filter(id__in=id_list)
 
     def get(self, request, *args, **kwargs):
         if settings.ACCEPT_LICENSE_REQUIRED and not self.request.user.license_v2_accepted:

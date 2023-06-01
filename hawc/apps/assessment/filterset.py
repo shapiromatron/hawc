@@ -55,7 +55,7 @@ class AssessmentFilterset(BaseFilterSet):
             | Q(values__extra__icontains=value)
             | Q(values__system__icontains=value)
         )
-        return queryset.filter(query)
+        return queryset.filter(query).distinct()
 
     def filter_role(self, queryset, name, value):
         queryset = queryset.filter(**{f"{value}__id__exact": self.request.user.pk})

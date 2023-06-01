@@ -1,9 +1,8 @@
 {% if object_list %}
 <table id="mainTbl" class="table table-sm table-striped">
     <colgroup>
-        <col width="56%" />
+        <col width="66%" />
         <col width="6%" />
-        <col width="10%" />
         <col width="8%" />
         <col width="10%" />
         <col width="10%" />
@@ -12,7 +11,6 @@
         <tr>
             <th>Name</th>
             <th>Year</th>
-            <th>DTXSIDs</th>
             <th>CAS RN</th>
             <th>Date Created</th>
             <th>Date Updated</th>
@@ -28,15 +26,6 @@
                 {% endif %}
             </td>
             <td>{{object.year}}</td>
-            <td>
-                {% for dtx in object.dtxsids.all %}
-                {% if forloop.counter <= 3 %}
-                    {{dtx.dtxsid}}
-                {% elif forloop.last %}
-                  <i class="text-muted small">View full list on assessment page</i>
-                {% endif %}
-                {% endfor %}
-            </td>
             <td>
                 {% if 'NOCAS' not in object.cas %}
                     {{object.cas}}
