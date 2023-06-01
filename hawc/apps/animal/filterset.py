@@ -176,6 +176,7 @@ class EndpointFilterSet(BaseFilterSet):
         model = models.Endpoint
         form = ExpandableFilterForm
         fields = [
+            "search",
             "studies",
             "chemical",
             "cas",
