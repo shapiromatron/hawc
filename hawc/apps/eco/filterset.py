@@ -1,10 +1,8 @@
-
 from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import models
 
 
 class NestedTermFilterSet(BaseFilterSet):
-
     class Meta:
         model = models.NestedTerm
         form = InlineFilterForm

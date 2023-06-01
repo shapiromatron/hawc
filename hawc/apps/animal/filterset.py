@@ -163,13 +163,11 @@ class EndpointFilterSet(BaseFilterSet):
             ("effect subtype", "effect subtype"),
             ("chemical", "chemical"),
         ),
-        empty_label="Default Order"
+        empty_label="Default Order",
     )
     paginate_by = PaginationFilter(empty_label="Default Pagination")
     search = df.CharFilter(
-        method="filter_search",
-        label="Endpoint name",
-        help_text="Filter by endpoint name"
+        method="filter_search", label="Endpoint name", help_text="Filter by endpoint name"
     )
 
     class Meta:
@@ -202,7 +200,7 @@ class EndpointFilterSet(BaseFilterSet):
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

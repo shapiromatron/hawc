@@ -1,12 +1,13 @@
 import django_filters as df
 from django import forms
+from django.db.models import Q
 
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -14,6 +15,11 @@ from . import autocomplete, constants, models
 
 
 class OutcomeFilterSet(BaseFilterSet):
+    search = df.CharFilter(
+        method="filter_search",
+        label="name",
+        help_text="Filter by outcome",
+    )
     studies = AutocompleteModelMultipleChoiceFilter(
         field_name="study_population__study",
         autocomplete_class=StudyAutocomplete,
@@ -132,13 +138,16 @@ class OutcomeFilterSet(BaseFilterSet):
             ("effect", "effect"),
             ("diagnostic", "diagnostic"),
         ),
+        empty_label="Default Order",
+        help_text="How results will be ordered",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.Outcome
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
+            "search",
             "studies",
             "name",
             "study_population",
@@ -157,12 +166,17 @@ class OutcomeFilterSet(BaseFilterSet):
         ]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}]},
             ]
         }
+
+    def filter_search(self, queryset, name, value):
+        query = Q(name__icontains=value)
+        return queryset.filter(query)
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)

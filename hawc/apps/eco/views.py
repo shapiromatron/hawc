@@ -88,11 +88,12 @@ class NestedTermList(FilterSetMixin, ListView):
 
     def get_filterset_form_kwargs(self):
         return dict(
-        main_field = "name__contains",
-        grid_layout = {
-            "rows": [{"columns": [{"width": 12}]}],
-        }
+            main_field="name__contains",
+            grid_layout={
+                "rows": [{"columns": [{"width": 12}]}],
+            },
         )
+
 
 # ViewSets
 class DesignViewSet(HtmxViewSet):
