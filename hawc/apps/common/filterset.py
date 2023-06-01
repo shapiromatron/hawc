@@ -151,9 +151,17 @@ class FilterForm(forms.Form):
 
 
 class BaseFilterSet(df.FilterSet):
-    def __init__(self, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs):
+    def __init__(
+        self, data, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs
+    ):
         self.assessment = assessment
-        super().__init__(*args, **kwargs)
+        if data is not None:
+            data = data.copy()
+            for name, f in self.base_filters.items():
+                initial = f.extra.get("initial")
+                if not data.get(name) and initial:
+                    data[name] = initial
+        super().__init__(data, *args, **kwargs)
         self.form_kwargs = form_kwargs or {}
         if "grid_layout" not in self.form_kwargs and hasattr(self.Meta, "grid_layout"):
             self.form_kwargs.update(grid_layout=self.Meta.grid_layout)

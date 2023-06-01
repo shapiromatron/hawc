@@ -13,11 +13,7 @@
   {% if desc %}
   <p>{{desc}}</p>
   {% endif %}
-  <div class="card mb-2">
-    <div class="card-body pb-1">
-      {% crispy form %}
-    </div>
-  </div>
+  {% include "common/inline_filter_form.html" %}
   {% include "assessment/_assessment_list_tbl.html" %}
   {% include "includes/paginator.html" with plural_object_name="assessments" %}
 </div>
