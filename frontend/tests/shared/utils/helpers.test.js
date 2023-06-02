@@ -1,5 +1,5 @@
 import {addOuterTag} from "shared/utils/_helpers";
-import {helper} from "shared/utils/helpers";
+import helper from "shared/utils/helpers";
 
 import assert from "../../helpers";
 
