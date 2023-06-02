@@ -1,11 +1,12 @@
 import django_filters as df
+from django.db.models import Q
 
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -13,6 +14,9 @@ from . import autocomplete, models
 
 
 class EndpointFilterSet(BaseFilterSet):
+    search = df.CharFilter(
+        method="filter_search", label="Endpoint name", help_text="Filter by endpoint name"
+    )
     studies = AutocompleteModelMultipleChoiceFilter(
         field_name="experiment__study",
         autocomplete_class=StudyAutocomplete,
@@ -109,13 +113,15 @@ class EndpointFilterSet(BaseFilterSet):
             ("dose units", "dose units"),
             ("response units", "response units"),
         ),
+        empty_label="Default Order",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.IVEndpoint
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
+            "search",
             "studies",
             "name",
             "chemical",
@@ -130,9 +136,10 @@ class EndpointFilterSet(BaseFilterSet):
         ]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}]},
             ]
         }
 
@@ -142,6 +149,10 @@ class EndpointFilterSet(BaseFilterSet):
         if not self.perms["edit"]:
             queryset = queryset.filter(experiment__study__published=True)
         return queryset
+
+    def filter_search(self, queryset, name, value):
+        query = Q(name__icontains=value)
+        return queryset.filter(query)
 
     def create_form(self):
         form = super().create_form()

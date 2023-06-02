@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2><i>In vitro</i> endpoints ({{page_obj.paginator.count}} found)</h2>
-{% include 'common/filter_list.html' with plural_object_name='endpoints' %}
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '10,13,12,20,16,13,8,8' %}
     {% bs4_thead 'Study,Experiment,Chemical,Endpoint,Effect Category,Effects,Dose Units,Response Units' %}
