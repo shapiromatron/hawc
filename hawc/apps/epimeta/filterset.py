@@ -70,9 +70,9 @@ class MetaResultFilterSet(BaseFilterSet):
             ("health outcome", "health outcome"),
             ("estimate", "estimate"),
         ),
-        empty_label = ("Default Order")
+        empty_label=("Default Order"),
     )
-    paginate_by = PaginationFilter(empty_label = "Default Pagination")
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.MetaResult
