@@ -8,40 +8,6 @@ import {getReferenceTagListUrl} from "shared/utils/urls";
 
 import ReferenceButton from "./ReferenceButton";
 
-const markKeywords = (text, allSettings) => {
-        const all_tokens = allSettings.set1.keywords
-                .concat(allSettings.set2.keywords)
-                .concat(allSettings.set3.keywords),
-            all_re = new RegExp(
-                "\\b".concat(all_tokens.join("\\b|\\b").replace(/\*/g, ".*?")).concat("\\b"),
-                "gim"
-            );
-        if (all_tokens.length === 0) {
-            return text;
-        }
-        text = text.replace(all_re, match => `<mark>${match}</mark>`);
-        text = markText(text, allSettings.set1);
-        text = markText(text, allSettings.set2);
-        text = markText(text, allSettings.set3);
-        return text;
-    },
-    markText = (text, settings) => {
-        if (settings.keywords.length === 0) {
-            return text;
-        }
-        const re = new RegExp(
-            `<mark>(?<token>\\b${settings.keywords
-                .join("\\b|\\b")
-                .replace(/\*/g, ".*?")}\\b)</mark>`,
-            "gim"
-        );
-        return text.replace(
-            re,
-            (match, token) =>
-                `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
-        );
-    };
-
 class Reference extends Component {
     renderIdentifiers(data) {
         const nodes = [];
@@ -151,7 +117,7 @@ class Reference extends Component {
                         <p
                             className="ref_title py-1"
                             dangerouslySetInnerHTML={{
-                                __html: markKeywords(data.title, keywordDict),
+                                __html: h.markKeywords(data.title, keywordDict),
                             }}
                         />
                     ) : (
@@ -165,7 +131,7 @@ class Reference extends Component {
                         style={data.abstract.length > 1500 ? {height: "45vh"} : null}
                         dangerouslySetInnerHTML={
                             keywordDict
-                                ? {__html: markKeywords(data.abstract, keywordDict)}
+                                ? {__html: h.markKeywords(data.abstract, keywordDict)}
                                 : {__html: data.abstract}
                         }
                     />
