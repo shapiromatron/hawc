@@ -1,5 +1,4 @@
-import {addOuterTag} from "shared/utils/_helpers";
-import helper from "shared/utils/helpers";
+import {addOuterTag, markKeywords} from "shared/utils/_helpers";
 
 import assert from "../../helpers";
 
@@ -38,21 +37,21 @@ describe("shared/utils/helpers", function() {
                 },
             };
             assert.equal(
-                helper.markKeywords("burrito", settings),
+                markKeywords("burrito", settings),
                 '<mark class="hawc-mk" title="Positive" style="border-bottom: 1px solid #228833; box-shadow: inset 0 -4px 0 #228833;">burrito</mark>'
             );
-            assert.equal(helper.markKeywords("burritos", settings), "burritos");
-            assert.equal(helper.markKeywords("burito", settings), "burito");
+            assert.equal(markKeywords("burritos", settings), "burritos");
+            assert.equal(markKeywords("burito", settings), "burito");
             assert.equal(
-                helper.markKeywords("chil", settings),
+                markKeywords("chil", settings),
                 '<mark class="hawc-mk" title="Positive" style="border-bottom: 1px solid #228833; box-shadow: inset 0 -4px 0 #228833;">chil</mark>'
             );
             assert.equal(
-                helper.markKeywords("child", settings),
+                markKeywords("child", settings),
                 '<mark class="hawc-mk" title="Positive" style="border-bottom: 1px solid #228833; box-shadow: inset 0 -4px 0 #228833;">child</mark>'
             );
             assert.equal(
-                helper.markKeywords("each", settings),
+                markKeywords("each", settings),
                 '<mark class="hawc-mk" title="Negative" style="border-bottom: 1px solid #ee6677; box-shadow: inset 0 -4px 0 #ee6677;">each</mark>'
             );
         });

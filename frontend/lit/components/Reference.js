@@ -2,6 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
+import {markKeywords} from "shared/utils/_helpers";
 import h from "shared/utils/helpers";
 import Hero from "shared/utils/Hero";
 import {getReferenceTagListUrl} from "shared/utils/urls";
@@ -117,7 +118,7 @@ class Reference extends Component {
                         <p
                             className="ref_title py-1"
                             dangerouslySetInnerHTML={{
-                                __html: h.markKeywords(data.title, keywordDict),
+                                __html: markKeywords(data.title, keywordDict),
                             }}
                         />
                     ) : (
@@ -131,7 +132,7 @@ class Reference extends Component {
                         style={data.abstract.length > 1500 ? {height: "45vh"} : null}
                         dangerouslySetInnerHTML={
                             keywordDict
-                                ? {__html: h.markKeywords(data.abstract, keywordDict)}
+                                ? {__html: markKeywords(data.abstract, keywordDict)}
                                 : {__html: data.abstract}
                         }
                     />
