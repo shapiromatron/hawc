@@ -57,6 +57,18 @@ def form_actions_apply_filters():
     ]
 
 
+def form_actions_big_apply_filters():
+    """Create big, centered Submit and Cancel buttons for filter forms."""
+    return cfl.HTML(
+        """
+        <div class="d-flex justify-content-center">
+            <input type="submit" name="save" value="Apply Filters" class="btn btn-primary mx-2 py-2" id="submit-id-save" style="width: 15%;">
+            <a role="button" class="btn btn-light mx-2 py-2" href="." style="width: 10%;">Cancel</a>
+        </div>
+        """
+    )
+
+
 class BaseFormHelper(cf.FormHelper):
     error_text_inline = False
     use_custom_control = True
@@ -144,6 +156,151 @@ class BaseFormHelper(cf.FormHelper):
             "<div class='alert alert-info'><b>Note:</b> If coming from an extraction form, you may need to refresh the extraction form to use the item which was recently created.</div>"
         )
         self.layout.insert(len(self.layout) - 1, note)
+
+
+class InlineFilterFormHelper(BaseFormHelper):
+    """Helper class for creating an inline filtering form with a primary field."""
+
+    def __init__(
+        self,
+        form,
+        main_field: str,
+        appended_fields: list[str],
+        legend_text: str | None = None,
+        help_text: str | None = None,
+        **kwargs,
+    ):
+        """Inline form field helper, with primary search and appended fields.
+
+        This form will have a single search bar with a primary search, inline
+        appended fields, and inline cancel/search buttons.
+
+        Args:
+            form: form
+            main_field: A text input field
+            appended_fields: 1 or more checkbox or select fields (to right of main)
+            legend_text: Legend text to show on the form
+            help_text: help text to show on the form
+            **kwargs: Extra arguments
+        """
+        self.attrs = {}
+        self.kwargs = kwargs
+        self.inputs = []
+        self.form = form
+        self.main_field = main_field
+        self.appended_fields = appended_fields
+        self.legend_text = legend_text
+        self.help_text = help_text
+        self.build_inline_layout()
+
+    def build_inline_layout(self):
+        """Build the custom inline layout, including the grid layout."""
+        if self.main_field:
+            self.layout = cfl.Layout(*list(self.form.fields.keys()))
+            self.add_filter_field(self.main_field, self.appended_fields)
+            if self.form.grid_layout:
+                self.form.grid_layout.apply_layout(self)
+        else:
+            self.build_default_layout(self.form)
+        return self.layout
+
+    def add_filter_field(
+        self,
+        main_field: str,
+        appended_fields: list[str],
+        expandable: bool = False,
+    ):
+        """Add the primary filter field (noncollapsed field(s)) to start of layout."""
+        layout, index = self.get_layout_item(main_field)
+        field = layout.pop(index)
+        for app_field in appended_fields:
+            layout, index = self.get_layout_item(app_field)
+            layout.pop(index)
+        layout.insert(
+            0,
+            FilterFormField(
+                fields=field,
+                appended_fields=appended_fields,
+                expandable=expandable,
+            ),
+        )
+
+
+class ExpandableFilterFormHelper(InlineFilterFormHelper):
+    """Helper class for an inline filtering form with collapsible advanced fields."""
+
+    collapse_field_name: str = "is_expanded"
+
+    def __init__(self, *args, **kwargs):
+        """Collapsable form field helper, primary search and advanced.
+
+        This form will have a single search bar with a primary search, and the
+        ability to expand the bar for additional "advanced" search fields.
+
+        Args:
+            args: Arguments passed to InlineFilterFormHelper
+            kwargs: Keyword arguments passed to InlineFilterFormHelper
+        """
+        super().__init__(*args, **kwargs)
+        self.build_collapsed_layout()
+
+    def build_collapsed_layout(self):
+        """Build the custom collapsed layout including the grid layout."""
+        if self.collapse_field_name not in self.form.fields:
+            raise ValueError(f"Field `{self.collapse_field_name}` is required for this form")
+        self.layout = cfl.Layout(*list(self.form.fields.keys()))
+        layout, collapsed_idx = self.get_layout_item(self.collapse_field_name)
+        collapsed_field = layout.pop(collapsed_idx)
+        self.add_filter_field(self.main_field, self.appended_fields, expandable=True)
+        self.layout.append(form_actions_big_apply_filters())
+        form_index = 1
+        if self.legend_text:
+            self.layout.insert(0, cfl.HTML(f"<legend>{self.legend_text}</legend>"))
+            form_index += 1
+        if self.help_text:
+            self.layout.insert(
+                1,
+                cfl.HTML(f'<p class="form-text text-muted">{self.help_text}</p>'),
+            )
+            form_index += 1
+        if self.form.grid_layout:
+            self.form.grid_layout.apply_layout(self)
+        self[form_index:].wrap_together(cfl.Div, css_class="p-4")
+        is_expanded = self.form.data.get(self.collapse_field_name, "false") == "true"
+        self[form_index:].wrap_together(
+            cfl.Div,
+            id="ff-expand-form",
+            css_class="collapse show" if is_expanded else "collapse",
+        )
+        self.layout.append(collapsed_field)
+        return self.layout
+
+
+class FilterFormField(cfl.Field):
+    """Custom crispy form field that includes appended_fields in the context."""
+
+    template = "common/crispy_layout_filter_field.html"
+
+    def __init__(
+        self,
+        fields,
+        appended_fields: list[str],
+        expandable: bool = False,
+        **kwargs,
+    ):
+        """Set the given field values on the field model."""
+        self.fields = fields
+        self.appended_fields = appended_fields
+        self.expandable = expandable
+        super().__init__(fields, **kwargs)
+
+    def render(self, form, form_style, context, template_pack, extra_context=None, **kwargs):
+        """Render the main_field and appended_fields in the template and return it."""
+        if extra_context is None:
+            extra_context = {}
+        extra_context["appended_fields"] = [form[field] for field in self.appended_fields]
+        extra_context["expandable"] = self.expandable
+        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
 
 
 class CopyAsNewSelectorForm(forms.Form):

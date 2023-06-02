@@ -296,6 +296,9 @@ GTM_ID = os.getenv("GTM_ID")
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
 
+# CCTE API key
+CCTE_API_KEY = os.getenv("CCTE_API_KEY")
+
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
