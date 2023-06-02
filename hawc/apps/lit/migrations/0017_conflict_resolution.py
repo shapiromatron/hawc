@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
             name="keyword_list_1",
             field=models.TextField(
                 blank=True,
-                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
+                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas. Keywords can be whole word matches or partial matches. To have a partial match,\n         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not\n         rats, as well as phos, phosphate, and phosphorous.',
             ),
         ),
         migrations.AddField(
@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
             name="keyword_list_2",
             field=models.TextField(
                 blank=True,
-                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
+                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas. Keywords can be whole word matches or partial matches. To have a partial match,\n         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not\n         rats, as well as phos, phosphate, and phosphorous.',
             ),
         ),
         migrations.AddField(
@@ -154,7 +154,7 @@ class Migration(migrations.Migration):
             name="keyword_list_3",
             field=models.TextField(
                 blank=True,
-                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas.',
+                help_text='Keywords to highlight in titles and abstracts on the reference tagging page.\n         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include\n         commas. Keywords can be whole word matches or partial matches. To have a partial match,\n         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not\n         rats, as well as phos, phosphate, and phosphorous.',
             ),
         ),
         migrations.CreateModel(
