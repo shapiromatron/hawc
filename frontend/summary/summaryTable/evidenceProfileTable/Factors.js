@@ -17,7 +17,7 @@ const increaseFactors = [
     ],
     decreaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},
-        { key: -60, label: "All or most studies are low confidence", displayLabel: true},
+        {key: -60, label: "All or most studies are low confidence", displayLabel: true},
         {key: -20, label: "Unexplained inconsistency", displayLabel: true},
         {key: -30, label: "Imprecision", displayLabel: true},
         {key: -80, label: "Concerns about biological significance", displayLabel: true},
