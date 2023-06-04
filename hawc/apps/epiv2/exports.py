@@ -38,6 +38,10 @@ class EpiFlatComplete(FlatFileExporter):
             row.extend(obj.exposure_level.flat_complete_data_row())
             row.extend(obj.outcome.flat_complete_data_row())
             row.extend(obj.flat_complete_data_row())
-            row.extend(obj.factors.flat_complete_data_row() if obj.factors else [None] * 4)
+            row.extend(
+                obj.factors.flat_complete_data_row()
+                if obj.factors
+                else [None] * len(models.AdjustmentFactor.flat_complete_header_row())
+            )
             rows.append(row)
         return rows
