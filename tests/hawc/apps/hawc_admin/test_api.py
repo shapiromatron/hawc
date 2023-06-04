@@ -16,7 +16,7 @@ def media_file():
 
 
 @pytest.mark.django_db
-class TestAdminDashboardViewset:
+class TestAdminDashboardViewSet:
     def test_permissions(self):
         client = APIClient()
 
@@ -44,7 +44,7 @@ class TestAdminDashboardViewset:
 
 
 @pytest.mark.django_db
-class TestAdminDiagnosticViewset:
+class TestAdminDiagnosticViewSet:
     def test_throttle(self):
         client = APIClient()
 
@@ -67,7 +67,7 @@ class TestAdminDiagnosticViewset:
 
 
 @pytest.mark.django_db
-class TestReportsViewset:
+class TestReportsViewSet:
     def test_assessment_values(self):
         client = APIClient()
         url = reverse("api:admin_reports-values")

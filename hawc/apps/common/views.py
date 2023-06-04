@@ -57,7 +57,7 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     Returns:
         str: A valid URL, with query params dropped
     """
-    url = request.META.get("HTTP_REFERER")
+    url = request.headers.get("referer")
     this_host = request.get_host()
 
     if default.startswith("https"):
@@ -151,10 +151,6 @@ class MessageMixin:
         logger.debug("MessagingMixin called")
         if self.success_message is not None:
             messages.success(self.request, self.success_message, extra_tags="alert alert-success")
-
-    def delete(self, request, *args, **kwargs):
-        self.send_message()
-        return super().delete(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.send_message()
@@ -388,10 +384,14 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
 class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    # remove `delete` from method names
+    # delete method CBV different than post; we only need to implement POST
+    # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L220
+    # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L250
+    http_method_names = ["get", "post", "put", "patch", "head", "options", "trace"]
 
     @transaction.atomic
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
+    def form_valid(self, form):
         self.check_delete()
         success_url = self.get_success_url()
         self.create_log(self.object)
@@ -693,7 +693,12 @@ class FilterSetMixin:
     paginate_by = 25
 
     def get_paginate_by(self, qs) -> int:
-        value = self.filterset.form.cleaned_data.get("paginate_by")
+        form = self.filterset.form
+        value = (
+            form.cleaned_data.get("paginate_by")
+            if hasattr(form, "cleaned_data")
+            else self.paginate_by
+        )
         return tryParseInt(value, default=self.paginate_by, min_value=10, max_value=500)
 
     def get_filterset_kwargs(self):
@@ -701,15 +706,16 @@ class FilterSetMixin:
             data=self.request.GET,
             queryset=super().get_queryset(),
             request=self.request,
+            form_kwargs=self.get_filterset_form_kwargs(),
         )
 
-    def get_filterset_class(self) -> type[BaseFilterSet]:
-        return self.filterset_class
+    def get_filterset_form_kwargs(self):
+        return {}
 
     @property
     def filterset(self):
         if not hasattr(self, "_filterset"):
-            self._filterset = self.get_filterset_class()(**self.get_filterset_kwargs())
+            self._filterset = self.filterset_class(**self.get_filterset_kwargs())
         return self._filterset
 
     def get_queryset(self):

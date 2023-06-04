@@ -31,10 +31,10 @@ class Migration(migrations.Migration):
                     "type",
                     models.PositiveSmallIntegerField(
                         choices=[
-                            (10, "preparation"),
-                            (20, "extraction"),
-                            (30, "qa/qc"),
-                            (40, "rob completed"),
+                            (10, "Preparation"),
+                            (20, "Data Extraction"),
+                            (30, "QA/QC"),
+                            (40, "Study Evaluation"),
                         ]
                     ),
                 ),

@@ -25,7 +25,6 @@ LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_I18N = False
-USE_L10N = True
 USE_TZ = True
 
 ADMINS: list[tuple[str, str]] = []
@@ -188,6 +187,7 @@ AUTHENTICATION_BACKENDS = [
     "hawc.apps.common.auth.TokenBackend",
 ]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
+CSRF_TRUSTED_ORIGINS = os.getenv("HAWC_CSRF_TRUSTED_ORIGINS", "https://").split("|")
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
 SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
@@ -295,6 +295,9 @@ GTM_ID = os.getenv("GTM_ID")
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
+
+# CCTE API key
+CCTE_API_KEY = os.getenv("CCTE_API_KEY")
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

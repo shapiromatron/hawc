@@ -21,10 +21,10 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
 
     # always include API for diagnostics
     router = SimpleRouter()
-    router.register(r"diagnostic", api.DiagnosticViewset, basename="diagnostic")
+    router.register(r"diagnostic", api.DiagnosticViewSet, basename="diagnostic")
     if settings.INCLUDE_ADMIN:
-        router.register(r"dashboard", api.DashboardViewset, basename="admin_dashboard")
-        router.register(r"reports", api.ReportsViewset, basename="admin_reports")
+        router.register(r"dashboard", api.DashboardViewSet, basename="admin_dashboard")
+        router.register(r"reports", api.ReportsViewSet, basename="admin_reports")
         open_api_patterns.append(path(f"{admin_url}/api/", include(router.urls)))
         admin.autodiscover()
 
