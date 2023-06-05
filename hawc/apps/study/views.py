@@ -24,6 +24,12 @@ class StudyFilterList(BaseFilterList):
     def get_queryset(self):
         return super().get_queryset().distinct().prefetch_related("identifiers")
 
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field = "search",
+            appended_fields = ["data_type", "published", "assigned_user"]
+        )
+
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
     # Create Study from an existing lit.Reference.
