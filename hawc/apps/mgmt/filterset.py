@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.forms.widgets import CheckboxInput
 from django_filters.constants import EMPTY_VALUES
 
-from ..common.filterset import BaseFilterSet, ExpandableFilterForm, InlineFilterForm
+from ..common.filterset import BaseFilterSet, InlineFilterForm
 from ..myuser.models import HAWCUser
 from ..study.constants import StudyTypeChoices
 from . import constants, models
@@ -66,14 +66,14 @@ class TaskFilterSet(BaseFilterSet):
         choices=StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="<All>",
+        empty_label="<All Data Types>",
     )
     owner = df.ModelChoiceFilter(
         method="filter_owner",
         label="Assigned user",
         queryset=HAWCUser.objects.none(),
         help_text="Includes all tasks for a study where a user has at least one assignment",
-        empty_label="<All>",
+        empty_label="<All Users>",
     )
     order_by = TaskOrderingFilter(
         label="Ordering",
@@ -87,12 +87,11 @@ class TaskFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Task
-        form = ExpandableFilterForm
+        form = InlineFilterForm
         fields = ["search", "data_type", "owner", "order_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
-                {"columns": [{"width": 3}, {"width": 3}]},
             ]
         }
 

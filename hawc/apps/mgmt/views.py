@@ -192,7 +192,7 @@ class AssessmentTaskList(BaseFilterList):
         return context
 
     def get_filterset_form_kwargs(self):
-        return dict(main_field="search", appended_fields=["order_by"])
+        return dict(main_field="search", appended_fields=["order_by", "data_type", "owner"])
 
 
 class TaskViewSet(HtmxViewSet):
