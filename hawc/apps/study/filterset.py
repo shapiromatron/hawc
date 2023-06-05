@@ -8,7 +8,9 @@ from . import constants, models
 
 class StudyFilterSet(BaseFilterSet):
     search = df.CharFilter(
-        method="filter_search", label="Citation/Identifier", help_text="Filter by citation (authors, year, title, etc) or datatbase identifier (PubMed ID, DOI, HERO ID, etc.)"
+        method="filter_search",
+        label="Citation/Identifier",
+        help_text="Filter by citation (authors, year, title, etc) or datatbase identifier (PubMed ID, DOI, HERO ID, etc.)",
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
