@@ -11,7 +11,7 @@ export const markKeywords = function(text, allSettings) {
             .concat(allSettings.set2.keywords)
             .concat(allSettings.set3.keywords),
         all_re = new RegExp(
-            "\\b".concat(all_tokens.join("\\b|\\b").replace(/\*/g, ".*?")).concat("\\b"),
+            "\\b".concat(all_tokens.join("\\b|\\b").replace(/\*/g, "[\\S]*?")).concat("\\b"),
             "gim"
         );
     if (all_tokens.length === 0) {
@@ -29,7 +29,9 @@ export const markText = function(text, settings) {
         return text;
     }
     const re = new RegExp(
-        `<mark>(?<token>\\b${settings.keywords.join("\\b|\\b").replace(/\*/g, ".*?")}\\b)</mark>`,
+        `<mark>(?<token>\\b${settings.keywords
+            .join("\\b|\\b")
+            .replace(/\*/g, "[\\S]*?")}\\b)</mark>`,
         "gim"
     );
     return text.replace(

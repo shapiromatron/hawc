@@ -28,7 +28,7 @@ describe("shared/utils/helpers", function() {
                 set2: {
                     name: "Negative",
                     color: "#ee6677",
-                    keywords: ["ea*"],
+                    keywords: ["ea*", "*bat*"],
                 },
                 set3: {
                     name: "Additional",
@@ -51,8 +51,12 @@ describe("shared/utils/helpers", function() {
                 '<mark class="hawc-mk" title="Positive" style="border-bottom: 1px solid #228833; box-shadow: inset 0 -4px 0 #228833;">child</mark>'
             );
             assert.equal(
-                markKeywords("each", settings),
-                '<mark class="hawc-mk" title="Negative" style="border-bottom: 1px solid #ee6677; box-shadow: inset 0 -4px 0 #ee6677;">each</mark>'
+                markKeywords("of each one", settings),
+                'of <mark class="hawc-mk" title="Negative" style="border-bottom: 1px solid #ee6677; box-shadow: inset 0 -4px 0 #ee6677;">each</mark> one'
+            );
+            assert.equal(
+                markKeywords("wow thebatman is here", settings),
+                'wow <mark class="hawc-mk" title="Negative" style="border-bottom: 1px solid #ee6677; box-shadow: inset 0 -4px 0 #ee6677;">thebatman</mark> is here'
             );
         });
     });
