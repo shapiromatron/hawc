@@ -1,7 +1,10 @@
 import json
 import math
 from collections.abc import Generator
+from contextlib import contextmanager
 
+from playwright.sync_api import sync_playwright
+from playwright.sync_api._generated import Browser, Page
 from requests import Response, Session
 from tqdm import tqdm
 
@@ -18,6 +21,7 @@ class HawcSession:
     def __init__(self, root_url: str = "https://hawcproject.org"):
         self.root_url = root_url
         self._session = Session()
+        self.web_browser: None | Browser = None
 
     def _handle_hawc_response(self, response: Response) -> None:
         """
@@ -163,3 +167,17 @@ class HawcSession:
                 response_json = self.get(response_json["next"]).json()
                 progress_bar.update(1)
                 yield response_json["results"]
+
+    @contextmanager
+    def create_ui_browser(self) -> Generator[Browser, None, None]:
+        with sync_playwright() as p:
+            self.web_browser = p.chromium.launch(headless=True)
+            yield self.web_browser
+
+    def create_ui_page(self) -> Page:
+        if self.web_browser is None:
+            raise ValueError("Must create a browser instance")
+        page = self.web_browser.new_page()
+        if token := self._session.headers.get("Authorization"):
+            page.set_extra_http_headers({"Authorization": str(token)})
+        return page

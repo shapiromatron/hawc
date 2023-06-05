@@ -1,3 +1,5 @@
+from io import BytesIO
+
 import pandas as pd
 import pytest
 from django.core.cache import cache
@@ -763,16 +765,20 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
-    # trying to use pytest tmp_path fixture, but it doesn't work
-    @pytest.mark.skip
-    def test_summary_download_visuals(self, tmp_path):
+    def test_summary_download_visual(self, tmp_path):
+        # TODO - rewrite
+        client = HawcClient(self.live_server_url)
+        with client.session.create_ui_browser():
+            client.summary.download_data_pivot(878)
+
+        # replace this
         client = HawcClient(self.live_server_url)
         user = HAWCUser.objects.get(email="pm@hawcproject.org")
         token = user.get_api_token().key
         assert client.set_authentication_token(token, login=False) is True
-
+        f = BytesIO()
         client.summary.download_visuals(
-            self.db_keys.assessment_working, dest=str(tmp_path), file_type="docx", headless=True
+            self.db_keys.assessment_working, dest=f, file_type="docx", headless=True
         )
         assert tmp_path.joinpath("assessment-1-visuals.docx").exists()
 
