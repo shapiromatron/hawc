@@ -100,6 +100,12 @@ class SummaryTableList(BaseFilterList):
     filterset_class = filterset.SummaryTableFilterSet
     breadcrumb_active_name = "Summary tables"
 
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field = "search",
+            appended_fields = ["type", "published"]
+        )
+
 
 class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
     model = models.SummaryTable
@@ -293,6 +299,7 @@ class VisualizationList(BaseFilterList):
             )
         return self._data_pivot_fs
 
+    #TODO Can we remove form?
     @property
     def form(self):
         if not hasattr(self, "_form"):
@@ -327,12 +334,18 @@ class VisualizationList(BaseFilterList):
             items = list(itertools.chain(self.visual_fs.qs, self.data_pivot_fs.qs))
         return sorted(items, key=lambda d: d.title.lower())
 
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field = "search",
+            appended_fields = ["type", "published"]
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["objects"] = self.get_item_list()
         context["n_objects"] = len(context["objects"])
-        context["form"] = self.form
         return context
+
 
 
 class VisualizationByIdDetail(RedirectView):

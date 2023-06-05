@@ -1,32 +1,36 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..common.filterset import BaseFilterSet, FilterForm
+from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import constants, models
 
 
 class VisualFilterSet(BaseFilterSet):
-    title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title text")
+    #TODO search bar not loading
+    search = df.CharFilter(
+        method="filter_search", label="Title", help_text="Filter by title text"
+    )
+    # title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title text")
     type = df.ChoiceFilter(
         field_name="visual_type",
         label="Visualization type",
         help_text="Type of visualization to display",
-        empty_label="<All>",
+        empty_label="<All types>",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC visualization",
-        empty_label="<All>",
+        empty_label="<All visuals>",
     )
 
     class Meta:
         model = models.Visual
-        fields = ["title", "type", "published"]
-        form = FilterForm
+        fields = ["search", "type", "published"]
+        form = InlineFilterForm
         grid_layout = {
             "rows": [
-                {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 12}]},
             ]
         }
 
@@ -35,6 +39,10 @@ class VisualFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
+        return queryset.filter(query)
+
+    def filter_search(self, queryset, name, value):
+        query = Q(title__icontains=value)
         return queryset.filter(query)
 
     def get_type_choices(self):
@@ -98,27 +106,29 @@ class DataPivotFilterSet(VisualFilterSet):
 
 
 class SummaryTableFilterSet(BaseFilterSet):
-    title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title")
+    search = df.CharFilter(
+        method="filter_search", label="Title", help_text="Filter by title"
+    )
     type = df.ChoiceFilter(
         field_name="table_type",
         label="Table type",
         help_text="Type of summary table to display",
-        empty_label="<All>",
+        empty_label="Type",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC summary tables",
-        empty_label="<All>",
+        empty_label="<All tables>",
     )
 
     class Meta:
         model = models.SummaryTable
-        fields = ["title", "type", "published"]
-        form = FilterForm
+        fields = ["search", "type", "published"]
+        form = InlineFilterForm
         grid_layout = {
             "rows": [
-                {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 12}]},
             ]
         }
 
@@ -127,6 +137,10 @@ class SummaryTableFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
+        return queryset.filter(query)
+
+    def filter_search(self, queryset, name, value):
+        query = Q(title__icontains=value)
         return queryset.filter(query)
 
     def create_form(self):
