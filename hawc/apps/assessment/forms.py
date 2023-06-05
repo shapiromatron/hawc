@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+import numpy as np
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -16,11 +17,7 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import (
-    AutocompleteSelectMultipleWidget,
-    AutocompleteSelectWidget,
-    AutocompleteTextWidget,
-)
+from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -42,16 +39,22 @@ class AssessmentForm(forms.ModelForm):
     )
 
     class Meta:
-        exclude = (
-            "creator",
-            "enable_literature_review",
-            "enable_project_management",
-            "enable_data_extraction",
-            "enable_risk_of_bias",
-            "enable_bmd",
-            "enable_summary_text",
-            "epi_version",
-            "admin_notes",
+        fields = (
+            "name",
+            "year",
+            "version",
+            "cas",
+            "dtxsids",
+            "assessment_objective",
+            "authors",
+            "project_manager",
+            "team_members",
+            "reviewers",
+            "editable",
+            "public_on",
+            "hide_from_public_page",
+            "conflicts_of_interest",
+            "funding_source",
         )
         model = models.Assessment
         widgets = {
@@ -119,16 +122,14 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("project_manager", 3, "col-md-4")
         helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
 
 
 class AssessmentDetailForm(forms.ModelForm):
-    CREATE_LEGEND = "Add additional Assessment details"
-    CREATE_HELP_TEXT = ""
-    UPDATE_HELP_TEXT = "Update additional details for this Assessment."
+    LEGEND = "Additional Assessment Details"
+    HELP_TEXT = "Add additional details for this assessment."
 
     assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
@@ -158,20 +159,14 @@ class AssessmentDetailForm(forms.ModelForm):
     @property
     def helper(self):
         self.fields["extra"].widget.attrs["rows"] = 3
-        if self.instance.id:
-            helper = BaseFormHelper(
-                self,
-                help_text=self.UPDATE_HELP_TEXT,
-                cancel_url=self.instance.get_absolute_url(),
-            )
-        else:
-            helper = BaseFormHelper(
-                self,
-                legend_text=self.CREATE_LEGEND,
-                help_text=self.CREATE_HELP_TEXT,
-                cancel_url=self.instance.assessment.get_absolute_url(),
-            )
-
+        cancel_url = (
+            self.instance.get_absolute_url()
+            if self.instance.id
+            else self.instance.assessment.get_absolute_url()
+        )
+        helper = BaseFormHelper(
+            self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
+        )
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
         helper.add_row("report_id", 3, "col-md-4")
@@ -179,7 +174,8 @@ class AssessmentDetailForm(forms.ModelForm):
 
 
 class AssessmentValueForm(forms.ModelForm):
-    CREATE_LEGEND = "Create Assessment values"
+    CREATE_LEGEND = "Create Assessment Value"
+    UPDATE_LEGEND = "Update Assessment Value"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
@@ -189,6 +185,9 @@ class AssessmentValueForm(forms.ModelForm):
         widgets = {
             "system": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="system"
+            ),
+            "species_studied": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="species_studied"
             ),
             "duration": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="duration"
@@ -208,9 +207,6 @@ class AssessmentValueForm(forms.ModelForm):
             ),
             "pod_unit": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_unit"
-            ),
-            "species_studied": AutocompleteSelectWidget(
-                autocomplete_class=autocomplete.SpeciesAutocomplete
             ),
             "pod_type": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_type"
@@ -244,6 +240,18 @@ class AssessmentValueForm(forms.ModelForm):
             if not cleaned_data.get("uncertainty"):
                 msg = "Required for Noncancer evaluation types."
                 self.add_error("uncertainty", msg)
+        if (
+            cleaned_data.get("value")
+            and cleaned_data.get("pod_value")
+            and cleaned_data.get("uncertainty")
+        ):
+            if not np.isclose(
+                cleaned_data["value"],
+                cleaned_data["pod_value"] / cleaned_data["uncertainty"],
+                rtol=0.01,
+            ):
+                msg = "POD / uncertainty is not equal to value."
+                self.add_error("value", msg)
 
     @property
     def helper(self):
@@ -254,6 +262,7 @@ class AssessmentValueForm(forms.ModelForm):
             helper = BaseFormHelper(
                 self,
                 help_text=self.UPDATE_HELP_TEXT,
+                legend_text=self.UPDATE_LEGEND,
                 cancel_url=self.instance.get_absolute_url(),
             )
 
@@ -265,11 +274,11 @@ class AssessmentValueForm(forms.ModelForm):
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
         helper.add_row("evaluation_type", 2, "col-md-6")
-        helper.add_row("value_type", 3, "col-md-4")
+        helper.add_row("value_type", 4, "col-md-3")
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
         helper.add_row("species_studied", 3, "col-md-4")
-        helper.add_row("tumor_type", 4, "col-md-3")
+        helper.add_row("tumor_type", 2, "col-md-6")
         helper.add_row("comments", 2, "col-md-6")
 
         return helper
@@ -341,7 +350,13 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_project_management",
             "enable_risk_of_bias",
             "enable_bmd",
+            "enable_summary_tables",
+            "enable_visuals",
             "enable_summary_text",
+            "enable_downloads",
+            "noel_name",
+            "rob_name",
+            "vocabulary",
             "epi_version",
         )
         model = models.Assessment
@@ -356,7 +371,7 @@ class AssessmentModulesForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(
             self,
-            legend_text="Update enabled modules",
+            legend_text="Update modules",
             help_text="""
                 HAWC is composed of multiple modules, each designed
                 to capture data and decisions related to specific components of a
@@ -367,6 +382,11 @@ class AssessmentModulesForm(forms.ModelForm):
                 """,
             cancel_url=self.instance.get_absolute_url(),
         )
+        helper.add_row("enable_literature_review", 3, "col-lg-4")
+        helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
+        helper.add_row("enable_visuals", 3, "col-lg-4")
+        helper.add_row("noel_name", 3, "col-lg-4")
+        helper.add_row("epi_version", 1, "col-lg-4")
         return helper
 
 

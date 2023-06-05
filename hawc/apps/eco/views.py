@@ -87,8 +87,8 @@ class NestedTermList(FilterSetMixin, ListView):
         return qs
 
 
-# Viewsets
-class DesignViewset(HtmxViewSet):
+# ViewSets
+class DesignViewSet(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
     model = models.Design
@@ -111,7 +111,7 @@ class DesignViewset(HtmxViewSet):
         return render(request, template, context)
 
 
-class DesignChildViewset(HtmxViewSet):
+class DesignChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = None  # required
@@ -166,19 +166,19 @@ class DesignChildViewset(HtmxViewSet):
         return context
 
 
-class CauseViewset(DesignChildViewset):
+class CauseViewSet(DesignChildViewSet):
     model = models.Cause
     form_class = forms.CauseForm
     detail_fragment = "eco/fragments/cause_row.html"
 
 
-class EffectViewset(DesignChildViewset):
+class EffectViewSet(DesignChildViewSet):
     model = models.Effect
     form_class = forms.EffectForm
     detail_fragment = "eco/fragments/effect_row.html"
 
 
-class ResultViewset(DesignChildViewset):
+class ResultViewSet(DesignChildViewSet):
     model = models.Result
     form_class = forms.ResultForm
     parent_model = models.Design

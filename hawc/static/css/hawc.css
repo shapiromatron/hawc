@@ -85,6 +85,9 @@ tfoot > tr > td {
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
 }
+p {
+    margin-bottom: 0rem !important;
+}
 
 /* BOOTSTRAP 4 OVERRIDES */
 body {
@@ -103,6 +106,9 @@ small.form-text {
 mark,.mark {
     padding: 0;
     background-color: yellow;
+}
+.card-header {
+    font-size: 1.15rem;
 }
 /* END BOOTSTRAP 4 OVERRIDES */
 
@@ -272,6 +278,27 @@ div.smart-tag.active {
 .summaryTable ul {
     padding-left: 1rem !important;  /* same as .pl-3  */
     margin-bottom: 0 !important;  /* same as .mb-0  */
+}
+
+/* mgmt/task-assignment status  */
+.mgmt-circle {
+    padding: 0 5px;
+}
+
+.mgmt-circle.s10 {
+    color: #CFCFCF;
+}
+
+.mgmt-circle.s20 {
+    color: #FFCC00;
+}
+
+.mgmt-circle.s30 {
+    color: #00CC00;
+}
+
+.mgmt-circle.s40 {
+    color: #CC3333;
 }
 
 /* LITERATURE MODULE */
@@ -540,6 +567,21 @@ div.smart-tag.active {
 .previewModalIcon {
     display: none;
     cursor: pointer;
+}
+
+/* custom inline filterset forms */
+.form-sm-field {
+    font-size: 0.88rem;
+    height: auto;
+    width: auto;
+    border-radius: 0;
+    line-height: 1.7;
+}
+
+#ff-expand-form {
+    border-radius: 0 0 10px 10px;
+    box-shadow: rgb(127 142 153 / 31%) 0px 8px 15px;
+    background-color: #eaf6ff;
 }
 
 /* BMD APPLICATION STYLES */

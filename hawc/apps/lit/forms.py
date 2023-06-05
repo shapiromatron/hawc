@@ -651,13 +651,14 @@ class BulkReferenceStudyExtractForm(forms.Form):
         return data
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance", None)
         self.assessment = kwargs.pop("assessment")
         self.reference_qs = kwargs.pop("reference_qs")
         super().__init__(*args, **kwargs)
         self.fields["references"].queryset = self.reference_qs
 
     @transaction.atomic
-    def bulk_create_studies(self):
+    def save(self):
         references = self.cleaned_data["references"]
         study_type = self.cleaned_data["study_type"]
         for reference in references:

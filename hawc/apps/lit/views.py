@@ -15,7 +15,6 @@ from django.views.generic import TemplateView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.filterset import dynamic_filterset
 from ..common.helper import WebappConfig, tryParseInt
 from ..common.views import (
     BaseCreate,
@@ -254,6 +253,7 @@ class TagReferences(BaseFilterList):
     template_name = "lit/reference_tag.html"
     parent_model = Assessment
     model = models.Reference
+    filterset_class = filterset.ReferenceFilterSet
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
     paginate_by = 100
 
@@ -272,39 +272,33 @@ class TagReferences(BaseFilterList):
         )
         return context
 
-    def get_filterset_class(self):
+    def get_filterset_form_kwargs(self):
         conflict_resolution = self.assessment.literature_settings.conflict_resolution
         if conflict_resolution:
-            return dynamic_filterset(
-                filterset.ReferenceFilterSet,
-                fields=[
-                    "title_abstract",
+            return dict(
+                main_field="ref_search",
+                appended_fields=["partially_tagged", "needs_tagging", "order_by"],
+                dynamic_fields=[
+                    "ref_search",
                     "needs_tagging",
-                    "partially_tagged",
+                    "order_by",
                     "search",
+                    "partially_tagged",
                     "id",
                     "tags",
                     "include_descendants",
                     "anything_tagged",
-                    "order_by",
                     "my_tags",
                     "include_mytag_descendants",
                     "anything_tagged_me",
                 ],
                 grid_layout={
                     "rows": [
+                        {"columns": [{"width": 12}]},
                         {
                             "columns": [
-                                {"width": 5, "extra_css": "pl-4"},
-                                {
-                                    "width": 3,
-                                    "extra_css": "px-3 pt-3 d-flex flex-column",
-                                    "rows": [
-                                        {"columns": [{"width": 12}]},
-                                        {"columns": [{"width": 12}]},
-                                    ],
-                                },
-                                {"width": 4, "extra_css": "pr-4"},
+                                {"width": 6, "extra_css": "px-4"},
+                                {"width": 6, "extra_css": "px-4"},
                             ]
                         },
                         {
@@ -315,7 +309,6 @@ class TagReferences(BaseFilterList):
                                         {
                                             "columns": [
                                                 {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 12, "extra_css": "px-4 pt-2"},
                                                 {"width": 7, "extra_css": "pl-4 pb-2"},
                                                 {"width": 5, "extra_css": "pr-4 pb-2"},
                                             ]
@@ -328,7 +321,6 @@ class TagReferences(BaseFilterList):
                                         {
                                             "columns": [
                                                 {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 12, "extra_css": "px-4 pt-2"},
                                                 {"width": 7, "extra_css": "px-4 pb-2"},
                                                 {"width": 5, "extra_css": "px-4 pb-2"},
                                             ]
@@ -341,10 +333,9 @@ class TagReferences(BaseFilterList):
                 },
             )
         else:
-            return dynamic_filterset(
-                filterset.ReferenceFilterSet,
-                fields=[
-                    "title_abstract",
+            return dict(
+                dynamic_fields=[
+                    "ref_search",
                     "search",
                     "id",
                     "order_by",
@@ -352,14 +343,11 @@ class TagReferences(BaseFilterList):
                     "include_descendants",
                     "anything_tagged",
                 ],
+                main_field="ref_search",
+                appended_fields=["order_by"],
                 grid_layout={
                     "rows": [
-                        {
-                            "columns": [
-                                {"width": 6, "extra_css": "px-3"},
-                                {"width": 6, "extra_css": "px-3"},
-                            ]
-                        },
+                        {"columns": [{"width": 12}]},
                         {
                             "columns": [
                                 {
@@ -414,58 +402,66 @@ class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
     parent_model = Assessment
     model = models.Reference
+    filterset_class = filterset.ReferenceFilterSet
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-    filterset_class = dynamic_filterset(
-        filterset.ReferenceFilterSet,
-        fields=[
-            "id",
-            "title_abstract",
-            "tags",
-            "include_descendants",
-            "anything_tagged",
-            "my_tags",
-            "include_mytag_descendants",
-            "anything_tagged_me",
-        ],
-        grid_layout={
-            "rows": [
-                {
-                    "columns": [
-                        {"width": 6, "extra_css": "px-4 py-2"},
-                        {"width": 6, "extra_css": "px-4 py-2"},
-                    ]
-                },
-                {
-                    "columns": [
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                    ]
-                },
-            ]
-        },
-    )
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="ref_search",
+            dynamic_fields=[
+                "id",
+                "ref_search",
+                "tags",
+                "include_descendants",
+                "anything_tagged",
+                "my_tags",
+                "include_mytag_descendants",
+                "anything_tagged_me",
+            ],
+            grid_layout={
+                "rows": [
+                    {
+                        "columns": [
+                            {"width": 12},
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {"width": 12, "extra_css": "px-4"},
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    }
+                                ],
+                            },
+                        ]
+                    },
+                ]
+            },
+        )
+
     paginate_by = 50
 
     def get_queryset(self):
@@ -589,65 +585,60 @@ class RefFilterList(BaseFilterList):
     breadcrumb_active_name = "Reference search"
     parent_model = Assessment
     model = models.Reference
-    filterset_class = dynamic_filterset(
-        filterset.ReferenceFilterSet,
-        fields=[
-            "id",
-            "db_id",
-            "search",
-            "year",
-            "title_abstract",
-            "authors",
-            "journal",
-            "order_by",
-            "paginate_by",
-            "tags",
-            "include_descendants",
-            "anything_tagged",
-        ],
-        grid_layout={
-            "rows": [
-                {
-                    "columns": [
-                        {"width": 3, "extra_css": "px-4"},
-                        {"width": 3, "extra_css": "px-4"},
-                        {"width": 3, "extra_css": "px-4"},
-                        {"width": 3, "extra_css": "px-4"},
-                    ]
-                },
-                {
-                    "columns": [
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                        {
-                            "width": 6,
-                            "rows": [
-                                {
-                                    "columns": [
-                                        {"width": 12, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                        {"width": 6, "extra_css": "px-4"},
-                                    ]
-                                }
-                            ],
-                        },
-                    ]
-                },
-            ]
-        },
-    )
+    filterset_class = filterset.ReferenceFilterSet
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="ref_search",
+            appended_fields=["order_by", "paginate_by"],
+            dynamic_fields=[
+                "id",
+                "db_id",
+                "search",
+                "ref_search",
+                "journal",
+                "order_by",
+                "paginate_by",
+                "tags",
+                "include_descendants",
+                "anything_tagged",
+            ],
+            grid_layout={
+                "rows": [
+                    {"columns": [{"width": 12}]},
+                    {
+                        "columns": [
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    },
+                                ],
+                            },
+                            {
+                                "width": 6,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6, "extra_css": "px-4"},
+                                        ]
+                                    }
+                                ],
+                            },
+                        ]
+                    },
+                ]
+            },
+        )
+
     paginate_by = 50
 
     def get_queryset(self):
@@ -722,6 +713,14 @@ class RefListExtract(BaseUpdate):
         )
         return kwargs
 
+    def create_log(self, obj):
+        create_object_log(
+            "Reference converted to study",
+            self.assessment,
+            self.assessment.id,
+            self.request.user.id,
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
@@ -732,10 +731,6 @@ class RefListExtract(BaseUpdate):
 
     def get_success_url(self):
         return reverse_lazy("lit:ref_list_extract", args=[self.assessment.pk])
-
-    def form_valid(self, form):
-        form.bulk_create_studies()
-        return super().form_valid(form)
 
 
 def _get_ref_app_startup(view, context) -> WebappConfig:

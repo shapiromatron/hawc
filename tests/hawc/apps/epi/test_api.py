@@ -16,7 +16,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestEpiAssessmentViewset:
+class TestEpiAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True

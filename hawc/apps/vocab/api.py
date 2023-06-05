@@ -11,7 +11,7 @@ from ..common.renderers import PandasRenderers
 from . import constants, models, serializers
 
 
-class EhvTermViewset(viewsets.GenericViewSet):
+class EhvTermViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
 
@@ -91,7 +91,7 @@ class EhvTermViewset(viewsets.GenericViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.TermSerializer
     queryset = models.Term.objects.all()
 

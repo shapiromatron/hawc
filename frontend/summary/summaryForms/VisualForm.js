@@ -22,6 +22,7 @@ class VisualForm {
             case 4:
             case 5:
             case 6:
+            case 7:
                 Cls = null;
                 break;
             default:
