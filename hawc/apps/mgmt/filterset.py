@@ -66,14 +66,14 @@ class TaskFilterSet(BaseFilterSet):
         choices=StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="<All Data Types>",
+        empty_label="All Study Data Types",
     )
     owner = df.ModelChoiceFilter(
         method="filter_owner",
         label="Assigned user",
         queryset=HAWCUser.objects.none(),
         help_text="Includes all tasks for a study where a user has at least one assignment",
-        empty_label="<All Users>",
+        empty_label="All Users",
     )
     order_by = TaskOrderingFilter(
         label="Ordering",

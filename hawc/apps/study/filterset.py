@@ -17,20 +17,20 @@ class StudyFilterSet(BaseFilterSet):
         choices=constants.StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="<All Types>",
+        empty_label="All Study Data Types",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC extraction",
-        empty_label="<All Studies>",
+        empty_label="Published and Unpublished",
     )
     assigned_user = df.ModelChoiceFilter(
         method="filter_assigned_user",
         queryset=HAWCUser.objects.all(),
         label="Assigned user",
         help_text="A user with active study evaluation assignments",
-        empty_label="<All Users>",
+        empty_label="All Users",
     )
 
     class Meta:
