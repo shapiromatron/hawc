@@ -84,7 +84,7 @@ def set_db_keys(request):
 @pytest.fixture(scope="session")
 def vcr_config():
     return {
-        "filter_headers": [("authorization", "<omitted>")],
+        "filter_headers": [("authorization", "<omitted>"), ("x-api-key", "<omitted>")],
         "filter_post_data_parameters": [("api_key", "<omitted>")],
         "ignore_localhost": True,
     }

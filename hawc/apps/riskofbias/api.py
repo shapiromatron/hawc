@@ -48,6 +48,9 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         renderer_classes=PandasRenderers,
     )
     def export(self, request, pk):
+        """
+        Get all final risk of bias/study evaluations for an assessment.
+        """
         self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
@@ -65,6 +68,9 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):
+        """
+        Get all risk of bias/study evaluations for an assessment, including individual reviews.
+        """
         self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(

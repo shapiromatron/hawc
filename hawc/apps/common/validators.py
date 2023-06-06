@@ -118,7 +118,7 @@ def validate_hyperlink(value: str, raise_exception: bool = True) -> bool:
     return valid
 
 
-def validate_hyperlinks(html: str, field: str = None) -> str:
+def validate_hyperlinks(html: str, field: str | None = None) -> str:
     """
     Validate that our hyperlinks are on the allowlist of acceptable link locations.
 

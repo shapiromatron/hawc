@@ -91,7 +91,11 @@ class DSSTox(models.Model):
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
     def get_img_url(self) -> str:
-        return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
+        # TODO - always use api-ccte.epa.gov when API key is no longer required
+        if not settings.CCTE_API_KEY:
+            return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
+        else:
+            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}?x-api-key={settings.CCTE_API_KEY}"
 
 
 class Assessment(models.Model):
@@ -227,11 +231,23 @@ class Assessment(models.Model):
         "available in the HAWC database, using the US EPA's Benchmark "
         "Dose Modeling Software (BMDS).",
     )
+    enable_summary_tables = models.BooleanField(
+        default=True,
+        help_text="Create summary tables of data and/or study evaluations extracted in HAWC, or build custom user defined tables. Show the summary tables link on the assessment sidebar.",
+    )
+    enable_visuals = models.BooleanField(
+        default=True,
+        help_text="Create visualizations of data and/or study evaluations extracted in HAWC, or using data uploaded from a tabular dataset. Show the visuals link on the assessment sidebar.",
+    )
     enable_summary_text = models.BooleanField(
         default=True,
         help_text="Create custom-text to describe methodology and results of the "
         "assessment; insert tables, figures, and visualizations to using "
         '"smart-tags" which link to other data in HAWC.',
+    )
+    enable_downloads = models.BooleanField(
+        default=True,
+        help_text="Show the downloads link on the assessment sidebar.",
     )
     conflicts_of_interest = models.TextField(
         blank=True,
@@ -598,7 +614,7 @@ class AssessmentValue(models.Model):
     )
     basis = models.TextField(
         blank=True,
-        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Shams et al, 2022)",
+        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Smith et al. 2023)",
     )
     pod_type = models.CharField(
         verbose_name="POD Type",
