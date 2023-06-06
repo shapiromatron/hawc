@@ -280,6 +280,7 @@ class FlatExport(NamedTuple):
 
     df: pd.DataFrame
     filename: str
+    metadata: pd.DataFrame | None = None
 
 
 class FlatFileExporter:
@@ -298,6 +299,9 @@ class FlatFileExporter:
     def _get_data_rows(self):
         raise NotImplementedError()
 
+    def build_metadata(self) -> pd.DataFrame | None:
+        return None
+
     @staticmethod
     def get_flattened_tags(dict: dict, key: str) -> str:
         values = [tag.get("name", "") for tag in dict.get(key, [])]
@@ -309,8 +313,9 @@ class FlatFileExporter:
         return pd.DataFrame(data=data_rows, columns=header_row)
 
     def build_export(self) -> FlatExport:
-        df = self.build_df()
-        return FlatExport(df, self.filename)
+        return FlatExport(
+            df=self.build_df(), filename=self.filename, metadata=self.build_metadata()
+        )
 
 
 class WebappConfig(PydanticModel):
