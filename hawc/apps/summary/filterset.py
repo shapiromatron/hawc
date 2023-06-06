@@ -6,9 +6,7 @@ from . import constants, models
 
 
 class VisualFilterSet(BaseFilterSet):
-    # TODO search bar not loading
     search = df.CharFilter(method="filter_search", label="Title", help_text="Filter by title text")
-    # title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title text")
     type = df.ChoiceFilter(
         field_name="visual_type",
         label="Visualization type",
