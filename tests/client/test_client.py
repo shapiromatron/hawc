@@ -765,22 +765,27 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
-    def test_summary_download_visual(self, tmp_path):
-        # TODO - rewrite
+    def test_summary_download_visual(self):
         client = HawcClient(self.live_server_url)
         with client.session.create_ui_browser():
-            client.summary.download_data_pivot(878)
+            result = client.summary.download_visual(3)
+        assert isinstance(result, BytesIO)
 
-        # replace this
+    def test_summary_download_data_pivot(self):
         client = HawcClient(self.live_server_url)
-        user = HAWCUser.objects.get(email="pm@hawcproject.org")
-        token = user.get_api_token().key
-        assert client.set_authentication_token(token, login=False) is True
-        f = BytesIO()
-        client.summary.download_visuals(
-            self.db_keys.assessment_working, dest=f, file_type="docx", headless=True
-        )
-        assert tmp_path.joinpath("assessment-1-visuals.docx").exists()
+        with client.session.create_ui_browser():
+            result = client.summary.download_data_pivot(1)
+        assert isinstance(result, BytesIO)
+
+    def test_download_all_visuals(self):
+        client = HawcClient(self.live_server_url)
+        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
+        client.set_authentication_token(token, login=False)
+        with client.session.create_ui_browser():
+            results = client.summary.download_all_visuals(self.db_keys.assessment_working)
+        assert len(results) == 2
+        for result in results:
+            assert isinstance(result["png"], BytesIO)
 
     #####################
     # StudyClient tests #
