@@ -87,8 +87,8 @@ manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-animal.png 
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-bmd.png bmd
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epi.png epi
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epiv2.png epiv2
-manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-eco.png eco
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epimeta.png epimeta
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-eco.png eco
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-invitro.png invitro
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-vocab.png vocab
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-summary.png summary
