@@ -7,6 +7,8 @@ from django.conf import settings
 from django.utils.text import slugify
 from matplotlib.axes import Axes
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
 from openpyxl.utils.exceptions import IllegalCharacterError
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer, BrowsableAPIRenderer
@@ -183,10 +185,30 @@ class PandasXlsxRenderer(PandasBaseRenderer):
             f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
         ) as writer:
             try:
-                df.to_excel(writer, index=False)
+                df.to_excel(writer, sheet_name="data", index=False, freeze_panes=(1, 0))
             except IllegalCharacterError:
                 self._clean_df(df)
-                df.to_excel(writer, index=False)
+                df.to_excel(writer, sheet_name="data", index=False, freeze_panes=(1, 0))
+
+            if isinstance(export.metadata, pd.DataFrame):
+                export.metadata.to_excel(
+                    writer, sheet_name="metadata", index=False, freeze_panes=(1, 0)
+                )
+
+            # enable filters
+            for ws in writer.book.worksheets:
+                # enable filters
+                ws.auto_filter.ref = ws.dimensions
+                # fill header
+                for row in ws.iter_rows(min_row=1, max_row=1):
+                    for cell in row:
+                        cell.fill = PatternFill("solid", fgColor="1F497D")
+                        cell.font = Font(color="FFFFFF")
+                        cell.alignment = Alignment(horizontal="left")
+                # resize columns
+                for idx in range(1, len(df.columns) + 1):
+                    ws.column_dimensions[get_column_letter(idx)].width = 10
+
         return f.getvalue()
 
 
