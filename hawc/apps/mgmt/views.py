@@ -107,10 +107,11 @@ class UserAssessmentTaskList(BaseFilterList):
 
     def get_filterset_form_kwargs(self):
         return dict(
-            dynamic_fields=["study_name", "type", "show_completed"],
+            main_field="search",
+            appended_fields=["type", "show_completed"],
             grid_layout={
                 "rows": [
-                    {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
+                    {"columns": [{"width": 12}]},
                 ]
             },
         )

@@ -66,7 +66,7 @@ class TaskFilterSet(BaseFilterSet):
         choices=StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="All Study Data Types",
+        empty_label="All study data types",
     )
     owner = df.ModelChoiceFilter(
         method="filter_owner",
