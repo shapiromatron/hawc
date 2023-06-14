@@ -6,6 +6,7 @@
 
 {% block content %}
     <h2>{{object}}&nbsp;{% if object.final %}[final]{% else %}[individual review]{% endif %}</h2>
+    {{assessment.rob_settings.help_text|safe}}
     {% if object.final and not object.study_reviews_complete %}
         <h4 class="alert alert-danger">All other {{assessment.get_rob_name_display|lower}} reviews for
             {{object.study}} must be complete in order to complete the final review.
