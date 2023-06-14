@@ -31,9 +31,7 @@ def remove_selected_metrics(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ("summary", "0007_auto_20160121_1507"),
-    ]
+    dependencies = [("summary", "0007_auto_20160121_1507"), ("riskofbias", "0001_initial")]
 
     operations = [
         migrations.RunPython(add_selected_metrics, reverse_code=remove_selected_metrics),
