@@ -107,7 +107,7 @@ class UserAssessmentTaskList(BaseFilterList):
 
     def get_filterset_form_kwargs(self):
         return dict(
-            main_field="search",
+            main_field="study_assessment_name",
             appended_fields=["type", "show_completed"],
             grid_layout={
                 "rows": [
@@ -193,7 +193,7 @@ class AssessmentTaskList(BaseFilterList):
         return context
 
     def get_filterset_form_kwargs(self):
-        return dict(main_field="search", appended_fields=["order_by", "data_type", "owner"])
+        return dict(main_field="study_name", appended_fields=["order_by", "data_type", "owner"])
 
 
 class TaskViewSet(HtmxViewSet):

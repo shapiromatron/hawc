@@ -15,11 +15,6 @@ from . import autocomplete, constants, models
 
 
 class OutcomeFilterSet(BaseFilterSet):
-    search = df.CharFilter(
-        method="filter_search",
-        label="name",
-        help_text="Filter by outcome",
-    )
     studies = AutocompleteModelMultipleChoiceFilter(
         field_name="study_population__study",
         autocomplete_class=StudyAutocomplete,
@@ -32,7 +27,7 @@ class OutcomeFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
         ),
-        help_text="ex: blood, glucose",
+        help_text="Filter by epi endpoint name (ex: blood, glucose)",
     )
     study_population = df.CharFilter(
         field_name="study_population__name",
@@ -147,7 +142,6 @@ class OutcomeFilterSet(BaseFilterSet):
         model = models.Outcome
         form = ExpandableFilterForm
         fields = [
-            "search",
             "studies",
             "name",
             "study_population",
@@ -155,12 +149,12 @@ class OutcomeFilterSet(BaseFilterSet):
             "age_profile",
             "source",
             "country",
-            "design",
             "system",
+            "design",
             "effect",
             "effect_subtype",
-            "diagnostic",
             "metric_units",
+            "diagnostic",
             "order_by",
             "paginate_by",
         ]
@@ -170,7 +164,6 @@ class OutcomeFilterSet(BaseFilterSet):
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}]},
             ]
         }
 

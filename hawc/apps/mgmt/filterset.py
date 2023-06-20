@@ -19,7 +19,7 @@ class TaskOrderingFilter(df.OrderingFilter):
 
 
 class UserTaskFilterSet(BaseFilterSet):
-    search = df.CharFilter(
+    study_assessment_name = df.CharFilter(
         method="filter_search",
         label="Assessment/Study",
         help_text="Filter by assessment or study name",
@@ -40,7 +40,7 @@ class UserTaskFilterSet(BaseFilterSet):
     class Meta:
         model = models.Task
         form = InlineFilterForm
-        fields = ["search", "type", "show_completed"]
+        fields = ["study_assessment_name", "type", "show_completed"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
@@ -60,7 +60,12 @@ class UserTaskFilterSet(BaseFilterSet):
 
 
 class TaskFilterSet(BaseFilterSet):
-    search = df.CharFilter(method="filter_search", label="Study name", help_text="Filter by study")
+    study_name = df.CharFilter(
+        lookup_expr="icontains",
+        field_name="study__short_citation",
+        label="Study name",
+        help_text="Filter by study",
+    )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
         choices=StudyTypeChoices.filtered_choices(),
@@ -88,7 +93,7 @@ class TaskFilterSet(BaseFilterSet):
     class Meta:
         model = models.Task
         form = InlineFilterForm
-        fields = ["search", "data_type", "owner", "order_by"]
+        fields = ["study_name", "data_type", "owner", "order_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},

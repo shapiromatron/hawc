@@ -7,36 +7,36 @@ from . import constants, models
 
 
 class StudyFilterSet(BaseFilterSet):
-    search = df.CharFilter(
+    citation_or_id = df.CharFilter(
         method="filter_search",
         label="Citation/Identifier",
-        help_text="Filter by citation (authors, year, title, etc) or datatbase identifier (PubMed ID, DOI, HERO ID, etc.)",
+        help_text="Filter by citation (authors, year, title, etc) or identifier (PubMed ID, DOI, HERO ID, etc.)",
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
         choices=constants.StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="All Study Data Types",
+        empty_label="All study data types",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC extraction",
-        empty_label="Published and Unpublished",
+        empty_label="Published and unpublished",
     )
     assigned_user = df.ModelChoiceFilter(
         method="filter_assigned_user",
         queryset=HAWCUser.objects.all(),
         label="Assigned user",
         help_text="A user with active study evaluation assignments",
-        empty_label="All Users",
+        empty_label="All users",
     )
 
     class Meta:
         model = models.Study
         form = InlineFilterForm
-        fields = ["search", "data_type", "published", "assigned_user"]
+        fields = ["citation_or_id", "data_type", "published", "assigned_user"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
@@ -67,3 +67,11 @@ class StudyFilterSet(BaseFilterSet):
 
     def filter_assigned_user(self, queryset, name, value):
         return queryset.filter(riskofbiases__author=value, riskofbiases__active=True).distinct()
+
+    # def create_form(self):
+    #     form = super().create_form()
+    #     form.fields["assigned_user"].queryset = self.assessment.pms_and_team_users()
+    #     if not self.include_rob_authors:
+    #         form.fields.pop("assigned_user")
+    #     if not self.perms["edit"]:
+    #         form.fields.pop("published")

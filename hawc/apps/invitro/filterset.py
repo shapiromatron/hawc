@@ -1,5 +1,4 @@
 import django_filters as df
-from django.db.models import Q
 
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import AutocompleteTextWidget
@@ -14,9 +13,6 @@ from . import autocomplete, models
 
 
 class EndpointFilterSet(BaseFilterSet):
-    search = df.CharFilter(
-        method="filter_search", label="Endpoint name", help_text="Filter by endpoint name"
-    )
     studies = AutocompleteModelMultipleChoiceFilter(
         field_name="experiment__study",
         autocomplete_class=StudyAutocomplete,
@@ -29,7 +25,7 @@ class EndpointFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
         ),
-        help_text="ex: B cells",
+        help_text="Filter by in vitro endpoint name (ex: B cells)",
     )
     chemical = df.CharFilter(
         field_name="chemical__name",
@@ -121,7 +117,6 @@ class EndpointFilterSet(BaseFilterSet):
         model = models.IVEndpoint
         form = ExpandableFilterForm
         fields = [
-            "search",
             "studies",
             "name",
             "chemical",
@@ -139,7 +134,6 @@ class EndpointFilterSet(BaseFilterSet):
                 {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}]},
             ]
         }
 
@@ -149,10 +143,6 @@ class EndpointFilterSet(BaseFilterSet):
         if not self.perms["edit"]:
             queryset = queryset.filter(experiment__study__published=True)
         return queryset
-
-    def filter_search(self, queryset, name, value):
-        query = Q(name__icontains=value)
-        return queryset.filter(query)
 
     def create_form(self):
         form = super().create_form()

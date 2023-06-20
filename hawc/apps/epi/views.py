@@ -174,7 +174,7 @@ class OutcomeFilterList(BaseFilterList):
         return super().get_queryset().select_related("study_population__study")
 
     def get_filterset_form_kwargs(self):
-        return dict(main_field="search", appended_fields=["order_by", "paginate_by"])
+        return dict(main_field="name", appended_fields=["order_by", "paginate_by"])
 
 
 class OutcomeCreate(BaseCreate):

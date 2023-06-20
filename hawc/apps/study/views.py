@@ -26,7 +26,7 @@ class StudyFilterList(BaseFilterList):
 
     def get_filterset_form_kwargs(self):
         return dict(
-            main_field="search", appended_fields=["data_type", "published", "assigned_user"]
+            main_field="citation_or_id", appended_fields=["data_type", "published", "assigned_user"]
         )
 
 

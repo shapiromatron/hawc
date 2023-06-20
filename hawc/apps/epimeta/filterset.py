@@ -1,5 +1,4 @@
 import django_filters as df
-from django.db.models import Q
 
 from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
@@ -13,9 +12,6 @@ from . import autocomplete, models
 
 
 class MetaResultFilterSet(BaseFilterSet):
-    search = df.CharFilter(
-        method="filter_search", label="Health outcomes", help_text="Filter by health outcome"
-    )
     studies = AutocompleteModelMultipleChoiceFilter(
         field_name="protocol__study",
         autocomplete_class=StudyAutocomplete,
@@ -28,7 +24,7 @@ class MetaResultFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
         ),
-        help_text="ex: ALL, folic acid, any time",
+        help_text="Filter by meta result label (ex: ALL, folic acid, any time)",
     )
     protocol = df.CharFilter(
         field_name="protocol__name",
@@ -78,7 +74,6 @@ class MetaResultFilterSet(BaseFilterSet):
         model = models.MetaResult
         form = ExpandableFilterForm
         fields = [
-            "search",
             "studies",
             "label",
             "protocol",
@@ -91,7 +86,6 @@ class MetaResultFilterSet(BaseFilterSet):
             "rows": [
                 {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}]},
             ]
         }
 
@@ -101,10 +95,6 @@ class MetaResultFilterSet(BaseFilterSet):
         if not self.perms["edit"]:
             queryset = queryset.filter(protocol__study__published=True)
         return queryset
-
-    def filter_search(self, queryset, name, value):
-        query = Q(health_outcome__icontains=value)
-        return queryset.filter(query)
 
     def create_form(self):
         form = super().create_form()

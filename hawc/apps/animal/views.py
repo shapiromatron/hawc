@@ -416,7 +416,7 @@ class EndpointFilterList(BaseFilterList):
         return qs.select_related("animal_group__experiment__study").annotate_dose_values(dose_units)
 
     def get_filterset_form_kwargs(self):
-        return dict(main_field="search", appended_fields=["order_by", "paginate_by"])
+        return dict(main_field="name", appended_fields=["order_by", "paginate_by"])
 
     def get_context_data(self, **kwargs):
         oel_names = self.assessment.get_noel_names()
