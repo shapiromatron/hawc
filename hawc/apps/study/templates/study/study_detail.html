@@ -66,7 +66,7 @@
     </div>
   {% endif %}
 
-  {% if not object.get_study_type and obj_perms.edit and object.editable %}
+  {% if not object.get_study_type and object.editable %}
     <p class="alert alert-warning mb-3" role="alert">There are no metrics associated with this study. If you expected to evaluate this study, you may need to modify its study type (e.g., bioassay, epi, in vitro, etc).</p>
   {% endif %}
 
