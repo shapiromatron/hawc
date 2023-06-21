@@ -216,11 +216,11 @@ class RobAssignmentList(BaseFilterList):
     filterset_class = StudyFilterSet
 
     def get_filterset_form_kwargs(self):
-            return dict(
-                main_field="citation_or_id",
-                appended_fields=["data_type", "assigned_user", "published"],
-                dynamic_fields=["citation_or_id", "data_type", "assigned_user", "published"],
-            )
+        return dict(
+            main_field="citation_or_id",
+            appended_fields=["data_type", "assigned_user", "published"],
+            dynamic_fields=["citation_or_id", "data_type", "assigned_user", "published"],
+        )
 
     def get_queryset(self):
         if not self.assessment.user_can_edit_object(self.request.user):
@@ -259,11 +259,11 @@ class RobAssignmentUpdate(BaseFilterList):
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_filterset_form_kwargs(self):
-            return dict(
-                main_field="citation_or_id",
-                appended_fields=["data_type", "assigned_user", "published"],
-                dynamic_fields=["citation_or_id", "data_type", "assigned_user", "published"]
-            )
+        return dict(
+            main_field="citation_or_id",
+            appended_fields=["data_type", "assigned_user", "published"],
+            dynamic_fields=["citation_or_id", "data_type", "assigned_user", "published"],
+        )
 
     def get_queryset(self):
         if not self.assessment.user_can_edit_assessment(self.request.user):

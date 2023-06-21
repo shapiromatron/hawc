@@ -27,13 +27,15 @@ class StudyFilterList(BaseFilterList):
     def get_filterset_form_kwargs(self):
         if self.assessment.user_permissions(self.request.user)["edit"]:
             return dict(
-                main_field="citation_or_id", appended_fields=["data_type", "published"], dynamic_fields=["citation_or_id", "data_type", "published"]
+                main_field="citation_or_id",
+                appended_fields=["data_type", "published"],
+                dynamic_fields=["citation_or_id", "data_type", "published"],
             )
         else:
             return dict(
                 main_field="citation_or_id",
                 appended_fields=["data_type"],
-                dynamic_fields=["citation_or_id", "data_type"]
+                dynamic_fields=["citation_or_id", "data_type"],
             )
 
 
