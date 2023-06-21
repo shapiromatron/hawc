@@ -85,7 +85,7 @@ class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
         return context
 
     def get_filterset_form_kwargs(self):
-        return dict(main_field="search", appended_fields=["type", "show_completed"])
+        return dict(main_field="study_assessment_name", appended_fields=["type", "show_completed"])
 
 
 class UserAssessmentTaskList(BaseFilterList):

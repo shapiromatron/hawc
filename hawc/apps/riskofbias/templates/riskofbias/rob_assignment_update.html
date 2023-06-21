@@ -12,6 +12,7 @@
     <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
     {% include 'common/inline_filter_form.html' %}
     <div id="main"></div>
+    {% include "includes/paginator.html" with plural_object_name="assignments" %}
 {% endblock %}
 
 {% block extrajs %}
