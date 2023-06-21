@@ -25,9 +25,16 @@ class StudyFilterList(BaseFilterList):
         return super().get_queryset().distinct().prefetch_related("identifiers")
 
     def get_filterset_form_kwargs(self):
-        return dict(
-            main_field="citation_or_id", appended_fields=["data_type", "published", "assigned_user"]
-        )
+        if self.assessment.user_permissions(self.request.user)["edit"]:
+            return dict(
+                main_field="citation_or_id", appended_fields=["data_type", "published"], dynamic_fields=["citation_or_id", "data_type", "published"]
+            )
+        else:
+            return dict(
+                main_field="citation_or_id",
+                appended_fields=["data_type"],
+                dynamic_fields=["citation_or_id", "data_type"]
+            )
 
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
