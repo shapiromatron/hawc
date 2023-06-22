@@ -8,7 +8,7 @@ from ..common.filterset import (
     AutocompleteModelChoiceFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -90,7 +90,7 @@ class EndpointFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.EndpointAutocomplete, field="name"
         ),
-        help_text="ex: heart weight",
+        help_text="Filter by animal endpoint name (ex: heart weight)",
     )
     system = df.CharFilter(
         lookup_expr="icontains",
@@ -162,12 +162,13 @@ class EndpointFilterSet(BaseFilterSet):
             ("effect subtype", "effect subtype"),
             ("chemical", "chemical"),
         ),
+        empty_label="Default Order",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.Endpoint
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "chemical",
@@ -190,11 +191,11 @@ class EndpointFilterSet(BaseFilterSet):
         ]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

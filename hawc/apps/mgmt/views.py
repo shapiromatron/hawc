@@ -84,6 +84,9 @@ class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
         context["TaskType"] = constants.TaskType
         return context
 
+    def get_filterset_form_kwargs(self):
+        return dict(main_field="study_assessment_name", appended_fields=["type", "show_completed"])
+
 
 class UserAssessmentTaskList(BaseFilterList):
     filterset_class = filterset.UserTaskFilterSet
@@ -104,10 +107,11 @@ class UserAssessmentTaskList(BaseFilterList):
 
     def get_filterset_form_kwargs(self):
         return dict(
-            dynamic_fields=["study_name", "type", "show_completed"],
+            main_field="study_assessment_name",
+            appended_fields=["type", "show_completed"],
             grid_layout={
                 "rows": [
-                    {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
+                    {"columns": [{"width": 12}]},
                 ]
             },
         )
@@ -187,6 +191,9 @@ class AssessmentTaskList(BaseFilterList):
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
         return context
+
+    def get_filterset_form_kwargs(self):
+        return dict(main_field="study_name", appended_fields=["order_by", "data_type", "owner"])
 
 
 class TaskViewSet(HtmxViewSet):

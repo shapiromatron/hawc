@@ -5,7 +5,7 @@ from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -25,7 +25,7 @@ class EndpointFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
         ),
-        help_text="ex: B cells",
+        help_text="Filter by in vitro endpoint name (ex: B cells)",
     )
     chemical = df.CharFilter(
         field_name="chemical__name",
@@ -109,12 +109,13 @@ class EndpointFilterSet(BaseFilterSet):
             ("dose units", "dose units"),
             ("response units", "response units"),
         ),
+        empty_label="Default Order",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.IVEndpoint
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "name",
@@ -130,9 +131,9 @@ class EndpointFilterSet(BaseFilterSet):
         ]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

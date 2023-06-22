@@ -1,11 +1,11 @@
-from ..common.filterset import BaseFilterSet, FilterForm
+from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import models
 
 
 class NestedTermFilterSet(BaseFilterSet):
     class Meta:
         model = models.NestedTerm
-        form = FilterForm
+        form = InlineFilterForm
         fields = {
             "name": ["contains"],
         }

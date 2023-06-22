@@ -225,3 +225,6 @@ class EndpointFilterList(BaseFilterList):
             .select_related("experiment__study", "experiment__dose_units", "chemical")
             .prefetch_related("effects")
         )
+
+    def get_filterset_form_kwargs(self):
+        return dict(main_field="name", appended_fields=["order_by", "paginate_by"])

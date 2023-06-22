@@ -8,10 +8,8 @@ from pydantic import BaseModel, conlist
 from ..assessment.models import Assessment
 from . import autocomplete
 from .forms import (
-    BaseFormHelper,
     ExpandableFilterFormHelper,
     InlineFilterFormHelper,
-    form_actions_apply_filters,
 )
 
 
@@ -129,25 +127,6 @@ class ExpandableFilterForm(InlineFilterForm):
         """Remove 'is_expanded' from form data before data is used for filtering."""
         cleaned_data = super().clean()
         cleaned_data.pop("is_expanded", None)
-
-
-class FilterForm(forms.Form):
-    # TODO: remove once all filtersets are converted to Inline or Expandable forms
-    def __init__(self, *args, **kwargs):
-        grid_layout = kwargs.pop("grid_layout", None)
-        self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
-        self.dynamic_fields = kwargs.pop("dynamic_fields", None)
-        super().__init__(*args, **kwargs)
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-
-        if self.grid_layout:
-            self.grid_layout.apply_layout(helper)
-
-        return helper
 
 
 class BaseFilterSet(df.FilterSet):

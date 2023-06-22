@@ -4,7 +4,7 @@ from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -24,7 +24,7 @@ class MetaResultFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
         ),
-        help_text="ex: ALL, folic acid, any time",
+        help_text="Filter by meta result label (ex: ALL, folic acid, any time)",
     )
     protocol = df.CharFilter(
         field_name="protocol__name",
@@ -66,12 +66,13 @@ class MetaResultFilterSet(BaseFilterSet):
             ("health outcome", "health outcome"),
             ("estimate", "estimate"),
         ),
+        empty_label=("Default Order"),
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.MetaResult
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "label",
@@ -83,8 +84,8 @@ class MetaResultFilterSet(BaseFilterSet):
         ]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

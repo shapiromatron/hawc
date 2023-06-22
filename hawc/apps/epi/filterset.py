@@ -1,12 +1,13 @@
 import django_filters as df
 from django import forms
+from django.db.models import Q
 
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -26,7 +27,7 @@ class OutcomeFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
         ),
-        help_text="ex: blood, glucose",
+        help_text="Filter by epi endpoint name (ex: blood, glucose)",
     )
     study_population = df.CharFilter(
         field_name="study_population__name",
@@ -132,12 +133,14 @@ class OutcomeFilterSet(BaseFilterSet):
             ("effect", "effect"),
             ("diagnostic", "diagnostic"),
         ),
+        empty_label="Default Order",
+        help_text="How results will be ordered",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label="Default Pagination")
 
     class Meta:
         model = models.Outcome
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "name",
@@ -146,23 +149,27 @@ class OutcomeFilterSet(BaseFilterSet):
             "age_profile",
             "source",
             "country",
-            "design",
             "system",
+            "design",
             "effect",
             "effect_subtype",
-            "diagnostic",
             "metric_units",
+            "diagnostic",
             "order_by",
             "paginate_by",
         ]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
+
+    def filter_search(self, queryset, name, value):
+        query = Q(name__icontains=value)
+        return queryset.filter(query)
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
