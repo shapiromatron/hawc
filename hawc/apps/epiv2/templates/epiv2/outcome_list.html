@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Outcomes ({{page_obj.paginator.count}} found)</h2>
-{% include 'common/filter_list.html' with plural_object_name='endpoints' %}
+{% include 'common/inline_filter_form.html' %}
 <table class="table table-sm table-striped">
     {% bs4_colgroup '33,34,33' %}
     {% bs4_thead 'Study,Design,Outcome' %}
