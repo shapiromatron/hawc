@@ -4,9 +4,28 @@ from django.views.generic import ListView
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.models import include_related
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate, FilterSetMixin
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseUpdate,
+    FilterSetMixin,
+    HeatmapBase,
+)
 from ..study.models import Study
 from . import filterset, forms, models
+
+
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "ecology-study-design"
+    heatmap_data_url = "eco:api:assessment-study-export"
+    heatmap_view_title = "Ecology study design"
+
+
+class HeatmapResult(HeatmapBase):
+    heatmap_data_class = "ecology-result-summary"
+    heatmap_data_url = "eco:api:assessment-export"
+    heatmap_view_title = "Ecology data extraction"
 
 
 # Design

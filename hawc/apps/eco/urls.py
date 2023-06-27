@@ -10,6 +10,17 @@ router.register("assessment", api.AssessmentViewSet, basename="assessment")
 app_name = "eco"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
+    # Heatmap views
+    path(
+        "assessment/<int:pk>/heatmap-study-design/",
+        views.HeatmapStudyDesign.as_view(),
+        name="heatmap-study-design",
+    ),
+    path(
+        "assessment/<int:pk>/heatmap-result/",
+        views.HeatmapResult.as_view(),
+        name="heatmap-result",
+    ),
     path("terms/", views.NestedTermList.as_view(), name="term_list"),
     path(
         "study/<int:pk>/design/create/",

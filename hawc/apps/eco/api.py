@@ -10,7 +10,7 @@ from ..assessment.models import Assessment
 from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models
+from . import exports, models
 
 
 class TermViewSet(GenericViewSet):
@@ -50,3 +50,19 @@ class AssessmentViewSet(GenericViewSet):
         df = models.Result.complete_df(instance.id)
         export = FlatExport(df=df, filename=f"ecological-export-{self.assessment.id}")
         return Response(export)
+
+    @action(
+        detail=True,
+        url_path="study-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def study_export(self, request, pk):
+        """
+        Retrieve epidemiology at the study level for assessment.
+        """
+        assessment: Assessment = self.get_object()
+        published_only = not assessment.user_can_edit_object(request.user)
+        qs = models.Result.objects.get_qs(assessment).published_only(published_only).complete()
+        exporter = exports.EcoStudyComplete(qs, filename=f"{assessment}-eco-study")
+        return Response(exporter.build_export())

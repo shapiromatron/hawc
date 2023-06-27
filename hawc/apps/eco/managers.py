@@ -119,6 +119,28 @@ class EffectManager(BaseManager):
 
 
 class ResultQuerySet(QuerySet):
+    def published_only(self, published_only: bool):
+        return self.filter(design__study__published=True) if published_only else self
+
+    def complete(self):
+        return self.select_related(
+            "design__study",
+            "design__study_setting",
+            "cause__term",
+            "cause__biological_organization",
+            "effect__term",
+            "effect__biological_organization",
+            "statistical_sig_type",
+            "measure_type",
+            "variability",
+        ).prefetch_related(
+            "design__countries",
+            "design__states",
+            "design__ecoregions",
+            "design__habitats",
+            "design__climates",
+        )
+
     def flat_df(self) -> pd.DataFrame:
         names = [
             "id",
@@ -154,7 +176,7 @@ class ResultQuerySet(QuerySet):
 
 
 class ResultManager(BaseManager):
-    assessment_relation = "design__study_assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ResultQuerySet(self.model, using=self._db)
