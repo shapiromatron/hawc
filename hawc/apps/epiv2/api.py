@@ -5,7 +5,10 @@ from rest_framework.response import Response
 from ..assessment.api import AssessmentEditViewSet, BaseAssessmentViewSet, EditPermissionsCheckMixin
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
+from ..common.api.utils import get_published_only
+from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
+from ..study.models import Study
 from . import exports, models, serializers
 from .actions.model_metadata import EpiV2Metadata
 
@@ -24,7 +27,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         Retrieve epidemiology complete export.
         """
         assessment: Assessment = self.get_object()
-        published_only = not assessment.user_can_edit_object(request.user)
+        published_only = get_published_only(assessment, request)
         qs = (
             models.DataExtraction.objects.get_qs(assessment)
             .published_only(published_only)
@@ -44,14 +47,16 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         Retrieve epidemiology at the study level for assessment.
         """
         assessment: Assessment = self.get_object()
-        published_only = not assessment.user_can_edit_object(request.user)
+        published_only = get_published_only(assessment, request)
         qs = (
-            models.DataExtraction.objects.get_qs(assessment)
+            Study.objects.assessment_qs(assessment.id)
+            .filter(epi=True)
             .published_only(published_only)
-            .complete()
         )
-        exporter = exports.EpiStudyComplete(qs, filename=f"{assessment}-epi-study")
-        return Response(exporter.build_export())
+
+        df = models.Design.objects.study_df(qs)
+        export = FlatExport(df=df, filename=f"epi-study-{assessment.id}")
+        return Response(export)
 
 
 class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
@@ -109,3 +114,27 @@ class DataExtractionViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     assessment_filter_args = "design__study__assessment"
     model = models.DataExtraction
     serializer_class = serializers.DataExtractionSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return self.model.objects.all().select_related(
+            "outcome", "exposure_level__exposure_measurement", "exposure_level__chemical", "factors"
+        )
+
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
+    def modal(self, request, pk):
+        instance = self.get_object()
+        qs = (
+            models.DataExtraction.objects.filter(outcome_id=instance.outcome_id)
+            .select_related(
+                "outcome",
+                "exposure_level__exposure_measurement",
+                "exposure_level__chemical",
+                "factors",
+            )
+            .order_by("id")
+        )
+        serializer = serializers.DataExtractionSerializer(qs, many=True)
+        return Response(serializer.data)

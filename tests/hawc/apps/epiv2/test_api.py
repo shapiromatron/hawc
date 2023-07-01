@@ -27,7 +27,7 @@ class TestEpiAssessmentViewSet:
         # pm can get valid response
         client = APIClient()
         assert client.login(username="pm@hawcproject.org", password="pw") is True
-        response = client.get(url, format="json")
+        response = client.get(url +"?unpublished=true", format="json")
         assert response.status_code == 200
         assert len(response.json()) == 12
 

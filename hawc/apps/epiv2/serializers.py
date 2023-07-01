@@ -194,3 +194,7 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
             instance.countries.set(countries)
 
         return instance
+
+
+class DataExtractionModalSerializer(serializers.Serializer):
+    pass

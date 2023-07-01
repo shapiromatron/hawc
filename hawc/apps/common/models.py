@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
-from django.db.models import Q, QuerySet, URLField
+from django.db.models import Case, Choices, Q, QuerySet, URLField, Value, When
 from django.template.defaultfilters import slugify as default_slugify
 from treebeard.mp_tree import MP_Node
 
@@ -516,6 +516,62 @@ def include_related(
         filters |= Q(path__regex=f"^({items}).+")
 
     return queryset | queryset.model.objects.filter(filters)
+
+
+def to_sql_display(qs: QuerySet, name: str, Choice: type[Choices]) -> QuerySet:
+    """Update a queryset to return display-based values for a choice field.
+
+    Values are saved to the `{name}_display` based value.
+
+    Args:
+        qs (QuerySet): the QuerySet to modify
+        name (str): the field name
+        Choice (type[Choices]): a choice field
+
+    Returns:
+        QuerySet: the annotated queryset
+    """
+    return qs.annotate(
+        **{
+            name
+            + "_display": Case(
+                *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices)
+            ),
+            "default": Value("?"),
+        }
+    )
+
+
+def to_display(series: pd.Series, Choice: type[Choices]) -> pd.Series:
+    """Return a new series of display values from django choices
+
+    Args:
+        series (pd.Series): the series with db values
+        Choice (type[Choices]): a Choices instance
+
+    Returns:
+        pd.Series: a series of display values
+    """
+    return series.map({k: v for k, v in Choice.choices}).fillna("?")
+
+
+def to_display_array(series: pd.Series, Choice: type[Choices], delimiter: str = "|") -> pd.Series:
+    """Return a new series of delimited display values from django choices
+
+    Args:
+        series (pd.Series): the series with db values
+        Choice (type[Choices]): a Choices instance
+        delimiter (str, optional): delimiter to use. Defaults to "|".
+
+    Returns:
+        pd.Series: a series of delimited display values
+    """
+    mapping = {k: v for k, v in Choice.choices}
+    return (
+        series.str.split(pat=delimiter)
+        .apply(lambda items: [mapping.get(item, "?") for item in items])
+        .str.join(delimiter)
+    )
 
 
 class NumericTextField(models.CharField):

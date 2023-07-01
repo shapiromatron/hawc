@@ -3,51 +3,72 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.db import models
 from django.db.models import Q, QuerySet
 
-from ..common.models import BaseManager
+from ..common.models import BaseManager, to_sql_display
 from ..lit.constants import ReferenceDatabase
+from . import constants
 
 
 class StudyQuerySet(QuerySet):
     def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "pmid",
-            "hero",
-            "doi",
-            "short_citation",
-            "full_citation",
-            "coi_reported",
-            "coi_details",
-            "funding_source",
-            "study_identifier",
-            "contact_author",
-            "ask_author",
-            "published",
-            "summary",
-        ]
-        return pd.DataFrame(
-            data=self.annotate(
-                pmid=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
-                    delimiter="|",
-                    distinct=True,
-                ),
-                hero=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.HERO),
-                    delimiter="|",
-                    distinct=True,
-                ),
-                doi=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.DOI),
-                    delimiter="|",
-                    distinct=True,
-                ),
-            ).values_list(*names),
-            columns=names,
+        qs = self.annotate(
+            pmid=StringAgg(
+                "identifiers__unique_id",
+                filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
+                delimiter="|",
+                distinct=True,
+            ),
+            hero=StringAgg(
+                "identifiers__unique_id",
+                filter=Q(identifiers__database=ReferenceDatabase.HERO),
+                delimiter="|",
+                distinct=True,
+            ),
+            doi=StringAgg(
+                "identifiers__unique_id",
+                filter=Q(identifiers__database=ReferenceDatabase.DOI),
+                delimiter="|",
+                distinct=True,
+            ),
         )
+        qs = to_sql_display(qs, "coi_reported", constants.CoiReported)
+        return pd.DataFrame(
+            data=qs.values_list(
+                "id",
+                "pmid",
+                "hero",
+                "doi",
+                "short_citation",
+                "full_citation",
+                "coi_reported_display",
+                "coi_details",
+                "funding_source",
+                "study_identifier",
+                "contact_author",
+                "ask_author",
+                "published",
+                "summary",
+            ),
+            columns=[
+                "id",
+                "PMID",
+                "HERO ID",
+                "DOI",
+                "short_citation",
+                "full_citation",
+                "coi_reported",
+                "coi_details",
+                "funding_source",
+                "study_identifier",
+                "contact_author",
+                "ask_author",
+                "published",
+                "summary",
+            ],
+        )
+
+    def published_only(self, published_only: bool):
+        """If True, return only published studies. If False, all studies"""
+        return self.filter(published=True) if published_only else self
 
 
 class StudyManager(BaseManager):

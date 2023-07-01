@@ -8,6 +8,7 @@ import Result from "epi/Result";
 import StudyPopulation from "epi/StudyPopulation";
 import MetaProtocol from "epimeta/MetaProtocol";
 import MetaResult from "epimeta/MetaResult";
+import {DataExtraction} from "epiv2/models";
 import IVCellType from "invitro/IVCellType";
 import IVChemical from "invitro/IVChemical";
 import IVEndpoint from "invitro/IVEndpoint";
@@ -101,6 +102,13 @@ _.extend(DataPivotExtension, {
             hasModal: true,
         },
         {
+            _dpe_name: "study", // todo - fix this breaks other data types
+            _dpe_key: "study-id",
+            _dpe_cls: Study,
+            _dpe_option_txt: "Show study",
+            hasModal: true,
+        },
+        {
             _dpe_name: "experiment",
             _dpe_key: "experiment id",
             _dpe_cls: Experiment,
@@ -167,6 +175,13 @@ _.extend(DataPivotExtension, {
             _dpe_key: "result id",
             _dpe_cls: Result,
             _dpe_option_txt: "Show epi result",
+            hasModal: true,
+        },
+        {
+            _dpe_name: "epiv2_data_extraction",
+            _dpe_key: "data_extraction-pk",
+            _dpe_cls: DataExtraction,
+            _dpe_option_txt: "Show data extraction",
             hasModal: true,
         },
         {

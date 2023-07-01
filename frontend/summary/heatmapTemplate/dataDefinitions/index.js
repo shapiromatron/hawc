@@ -8,8 +8,8 @@ const OPTIONS = {
     "bioassay-endpoint-doses-summary": BEDSettings,
     "epidemiology-study-design": ESDSettings,
     "epidemiology-result-summary": ERSettings,
-    "epidemiology-v2-study-design": ERv2Settings,
-    "epidemiology-v2-result-summary": ESDv2Settings,
+    "epidemiology-v2-study-design": ESDv2Settings,
+    "epidemiology-v2-result-summary": ERv2Settings,
 };
 
 export default OPTIONS;
