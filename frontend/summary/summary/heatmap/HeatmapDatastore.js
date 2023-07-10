@@ -121,7 +121,9 @@ class HeatmapDatastore {
         let state = {};
         _.each(this.intersection, (items, column) => {
             state[column] = {};
-            _.each(items, (value, key) => {state[column][key] = false});
+            _.each(items, (value, key) => {
+                state[column][key] = false;
+            });
         });
         return state;
     }
@@ -228,11 +230,13 @@ class HeatmapDatastore {
     }
 
     @computed get filterWidgetState() {
-        return _.mapValues(this._filterWidgetState,(items,column)=>{
-            return _.every(items,v=>!v) ? _.mapValues(items,()=>true) :_.mapValues(items,(visible,item)=>{
-                return visible;
-            });
-        })
+        return _.mapValues(this._filterWidgetState, (items, column) => {
+            return _.every(items, v => !v)
+                ? _.mapValues(items, () => true)
+                : _.mapValues(items, (visible, item) => {
+                      return visible;
+                  });
+        });
     }
 
     @computed get settingsHash() {

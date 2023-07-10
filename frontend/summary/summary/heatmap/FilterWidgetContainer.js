@@ -44,10 +44,16 @@ class FilterWidget extends Component {
                         overflowY: "auto",
                         flex: 1,
                     }}>
-                    {items
-                        .map((item, index) =>
-                            this.renderItem(widget, item, index, _itemState, itemState, filterWidgetExtension)
-                        )}
+                    {items.map((item, index) =>
+                        this.renderItem(
+                            widget,
+                            item,
+                            index,
+                            _itemState,
+                            itemState,
+                            filterWidgetExtension
+                        )
+                    )}
                 </div>
             </div>
         );
@@ -59,35 +65,41 @@ class FilterWidget extends Component {
             itemRows = [...this.props.store.intersection[widget.column][item]],
             numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length;
         return (
-            <div key={index} className="my-1" style={{display:"flex",border: _itemState[item]?`1px solid ${colorScale(maxValue)}`:undefined}}>
-                <label className="m-0 font-weight-normal" role="button" style={{flex:"1 1 auto"}}>
+            <div
+                key={index}
+                className="my-1"
+                style={{
+                    display: "flex",
+                    border: _itemState[item] ? `1px solid ${colorScale(maxValue)}` : undefined,
+                }}>
+                <label className="m-0 font-weight-normal" role="button" style={{flex: "1 1 auto"}}>
                     <input
                         className="hidden"
                         checked={_itemState[item]}
                         type="checkbox"
                         onChange={e => toggleItemSelection(widget.column, item, e.target.checked)}
                     />
-                    <div style={{display:"flex"}}>
+                    <div style={{display: "flex"}}>
                         <div
                             className="mr-1"
                             style={{
-                                flex:"0 0 2.5em",
-                                display:"inline-flex",
-                                justifyContent:"center",
-                                alignItems:"center",
+                                flex: "0 0 2.5em",
+                                display: "inline-flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                                 backgroundColor: colorScale(numItems),
                                 color: h.getTextContrastColor(colorScale(numItems)),
                                 height: "1.5em",
                             }}>
                             <span>{numItems}</span>
                         </div>
-                        <div style={{flex:"1 1 auto",}}>{item == "" ? h.nullString : item}</div>
+                        <div style={{flex: "1 1 auto"}}>{item == "" ? h.nullString : item}</div>
                     </div>
                 </label>
-                <span style={{flex:"0 0 min-content"}}>
+                <span style={{flex: "0 0 min-content"}}>
                     {filterWidgetExtension && filterWidgetExtension.hasModal
-                            ? this.renderButton(widget, item)
-                            : null}
+                        ? this.renderButton(widget, item)
+                        : null}
                 </span>
             </div>
         );
