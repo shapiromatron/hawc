@@ -10,7 +10,7 @@ class UserAutocomplete(BaseAutocompleteAuthenticated):
     search_fields = ["first_name", "last_name", "email"]
 
     @classmethod
-    def get_base_queryset(cls, filters: dict = None):
+    def get_base_queryset(cls, filters: dict | None = None):
         qs = super().get_base_queryset(filters)
         # if assessment id is provided, return team member or higher
         if (assessment_id := filters.get("assessment_id")) is not None:
