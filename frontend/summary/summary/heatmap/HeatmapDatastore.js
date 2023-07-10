@@ -22,7 +22,7 @@ class HeatmapDatastore {
     @observable dataset = null;
     @observable settings = null;
     @observable selectedTableData = [];
-    @observable filterWidgetState = null;
+    @observable _filterWidgetState = null;
     @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
@@ -44,7 +44,7 @@ class HeatmapDatastore {
         this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.dpe = new DataPivotExtension();
-        this.filterWidgetState = this.setFilterWidgetState();
+        this._filterWidgetState = this.setFilterWidgetState();
         this.extensions = this.setDataExtensions();
         this.setColorScale();
     }
@@ -121,7 +121,7 @@ class HeatmapDatastore {
         let state = {};
         _.each(this.intersection, (items, column) => {
             state[column] = {};
-            _.each(items, (value, key) => (state[column][key] = true));
+            _.each(items, (value, key) => {state[column][key] = false});
         });
         return state;
     }
@@ -225,6 +225,14 @@ class HeatmapDatastore {
             .scaleLinear()
             .domain([0, this.maxValue])
             .range(this.settings.color_range);
+    }
+
+    @computed get filterWidgetState() {
+        return _.mapValues(this._filterWidgetState,(items,column)=>{
+            return _.every(items,v=>!v) ? _.mapValues(items,()=>true) :_.mapValues(items,(visible,item)=>{
+                return visible;
+            });
+        })
     }
 
     @computed get settingsHash() {
@@ -435,22 +443,8 @@ class HeatmapDatastore {
         if (!value) this.tableDataFilters.add(d);
     }
 
-    @action.bound selectAllFilterWidget(column) {
-        const keys = _.keys(toJS(this.filterWidgetState[column]));
-        keys.forEach(item => {
-            this.filterWidgetState[column][item] = true;
-        });
-    }
-
-    @action.bound selectNoneFilterWidget(column) {
-        const keys = _.keys(toJS(this.filterWidgetState[column]));
-        keys.forEach(item => {
-            this.filterWidgetState[column][item] = false;
-        });
-    }
-
     @action.bound toggleItemSelection(column, item, visible) {
-        this.filterWidgetState[column][item] = visible;
+        this._filterWidgetState[column][item] = visible;
     }
 
     @action.bound showModalOnRow(extension, row) {
