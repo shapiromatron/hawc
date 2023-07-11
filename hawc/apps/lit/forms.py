@@ -145,6 +145,7 @@ class ImportForm(SearchForm):
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
+            self.fields.pop("source")
 
     @property
     def helper(self):
