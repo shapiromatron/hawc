@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load hastext %}
+{% load bs4 %}
 
 {% block content %}
   <h2 class="d-inline-block">{{object}}</h2>
@@ -66,8 +67,10 @@
     </div>
   {% endif %}
 
-  {% if not object.get_study_type and object.editable %}
-    <p class="alert alert-warning mb-3" role="alert">There are no metrics associated with this study. If you expected to evaluate this study, you may need to modify its study type (e.g., bioassay, epi, <i>in vitro</i>, etc).</p>
+  {% if not object.get_study_types and obj_perms.edit %}
+    {% alert warning %}
+    This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
+    {% endalert %}
   {% endif %}
 
   <div id="study_details"></div>
