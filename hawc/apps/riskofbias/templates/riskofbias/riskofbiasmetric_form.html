@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
+{% load riskofbias %}
 
 {% block content %}
   {% crispy form %}
@@ -12,6 +13,12 @@
     <div id="detail-1" >
       <p><b>Available judgments:</b></p>
       <ul>
+        {% score_option 17 %}
+        {% score_option 16 %}
+        {% score_option 15 %}
+        {% score_option 14 %}
+        {% score_option 12 %}
+        {% score_option 10 %}
         <li>Definitely low risk of bias (++)</li>
         <li>Probably low risk of bias (+)</li>
         <li>Probably high risk of bias (-)</li>
