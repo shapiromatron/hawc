@@ -35,8 +35,8 @@ from ..common.helper import (
 )
 from ..common.models import get_model_copy_name
 from ..common.validators import validate_html_tags, validate_hyperlinks
-from ..eco.models import Result
 from ..eco.exports import EcoFlatComplete
+from ..eco.models import Result
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot

@@ -1,13 +1,15 @@
-from . import models
-
 from hawc.apps.common.helper import FlatFileExporter
 from hawc.apps.study.models import Study
 
+from . import models
+
+
 class EcoFlatComplete(FlatFileExporter):
     """
-    Returns a complete export of all data required to rebuild the the
-    epidemiological meta-result study type from scratch.
+    Returns a complete export of all data required to rebuild the
+    ecology study type from scratch.
     """
+
     def _get_header_row(self):
         header = []
         header.extend(Study.flat_complete_header_row())
