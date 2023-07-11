@@ -23,7 +23,7 @@ jsonschema==4.4.0
 lxml==4.9.2
 psycopg2-binary==2.9.6
 redis==4.6.0
-requests==2.31.0
+requests==2.27.1
 pydantic==1.9.0
 myst-parser==0.16.1
 bleach[css]==6.0.0
