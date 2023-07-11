@@ -152,7 +152,10 @@ class ImportForm(SearchForm):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing literature search",
+                "help_text": """
+                    Update an existing literature import. After a literature import
+                    has been created, you can no longer edit the source or IDs to import.
+                """,
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
