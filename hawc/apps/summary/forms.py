@@ -1071,7 +1071,7 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
-    prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
+    prefilter_include = ("study", "bioassay", "epi", "invitro", "eco", "effect_tags")
 
     class Meta:
         model = models.DataPivotQuery
@@ -1095,6 +1095,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (constants.StudyType.EPI, "Epidemiology"),
             (constants.StudyType.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
             (constants.StudyType.IN_VITRO, "In vitro"),
+            (constants.StudyType.ECO, "Ecology"),
         )
         self.fields["preferred_units"].required = False
         self.js_units_choices = json.dumps(
