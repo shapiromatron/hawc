@@ -18,7 +18,7 @@ faker==13.3.0
 coverage==7.2.7
 pytest==7.4.0
 pytest-django==4.5.2
-vcrpy==4.4.0
+vcrpy==5.0.0
 pytest-vcr==1.0.2
 playwright==1.35.0
 pytest-playwright==0.3.3
