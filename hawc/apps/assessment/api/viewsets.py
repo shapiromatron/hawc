@@ -456,7 +456,7 @@ class DatasetViewSet(AssessmentViewSet):
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
-    def data(self, request, pk: int = None):
+    def data(self, request, pk: int | None = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
         if not revision.data_exists():

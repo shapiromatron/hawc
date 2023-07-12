@@ -1068,7 +1068,7 @@ class DatasetRevision(models.Model):
             return False
 
     @classmethod
-    def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
+    def try_read_df(cls, data, suffix: str, worksheet_name: str | None = None) -> pd.DataFrame:
         """
         Try to load and return a pandas dataframe.
 

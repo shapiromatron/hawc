@@ -25,6 +25,7 @@ class EpiFlatComplete(FlatFileExporter):
     def _get_data_rows(self):
         rows = []
         identifiers_df = Study.identifiers_df(self.queryset, "design__study_id")
+        n_col_factors = len(models.AdjustmentFactor.flat_complete_header_row())
         for obj in self.queryset:
             row = []
             row.extend(
@@ -38,6 +39,8 @@ class EpiFlatComplete(FlatFileExporter):
             row.extend(obj.exposure_level.flat_complete_data_row())
             row.extend(obj.outcome.flat_complete_data_row())
             row.extend(obj.flat_complete_data_row())
-            row.extend(obj.factors.flat_complete_data_row() if obj.factors else [None] * 4)
+            row.extend(
+                obj.factors.flat_complete_data_row() if obj.factors else [None] * n_col_factors
+            )
             rows.append(row)
         return rows
