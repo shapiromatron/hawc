@@ -16,7 +16,6 @@ class FilterWidget extends Component {
             {rows} = this.props.store.getTableData,
             maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
             _itemState = this.props.store._filterWidgetState[widget.column],
-            itemState = this.props.store.filterWidgetState[widget.column],
             allItems = _.keys(this.props.store.intersection[widget.column]),
             items = _.sortedUniq(
                 (_.some(_.values(_itemState))
@@ -60,13 +59,7 @@ class FilterWidget extends Component {
                         flex: 1,
                     }}>
                     {items.map((item, index) =>
-                        this.renderItem(
-                            widget,
-                            item,
-                            index,
-                            _itemState,
-                            filterWidgetExtension
-                        )
+                        this.renderItem(widget, item, index, _itemState, filterWidgetExtension)
                     )}
                 </div>
             </div>
