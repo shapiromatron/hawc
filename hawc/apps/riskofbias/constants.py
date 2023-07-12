@@ -56,7 +56,7 @@ SCORE_CHOICES: tuple[tuple[int, str], ...] = (
     (51, "Major concerns"),
     (52, "Some concerns"),
     (53, "Minor concerns"),
-    (54, "Critial concerns"),
+    (54, "Critical concerns"),
     (55, "Major concerns"),
     (56, "Some concerns"),
     (57, "Minor concerns"),
