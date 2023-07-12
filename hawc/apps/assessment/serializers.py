@@ -6,7 +6,10 @@ from plotly.subplots import make_subplots
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
-from . import models
+from ..common.serializers import FlexibleChoiceField
+from ..study.models import Study
+from ..study.serializers import StudySerializer
+from . import constants, models
 
 
 class DSSToxSerializer(serializers.ModelSerializer):
@@ -38,6 +41,49 @@ class AssessmentMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Assessment
         fields = ("id", "url", "enable_risk_of_bias", "name")
+
+
+class AssessmentDetailSerializer(serializers.ModelSerializer):
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="assessment",
+        queryset=models.Assessment.objects.all(),
+        required=True,
+        allow_null=False,
+    )
+    assessment = AssessmentMiniSerializer(read_only=True)
+    project_status = FlexibleChoiceField(choices=constants.Status.choices)
+    peer_review_status = FlexibleChoiceField(choices=constants.PeerReviewType.choices)
+
+    class Meta:
+        model = models.AssessmentDetail
+        exclude = ("created", "last_updated")
+
+
+class AssessmentValueSerializer(serializers.ModelSerializer):
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="assessment",
+        queryset=models.Assessment.objects.all(),
+        required=True,
+        allow_null=False,
+    )
+    assessment = AssessmentMiniSerializer(read_only=True)
+    study_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="study",
+        queryset=Study.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    study = StudySerializer(read_only=True)
+    evaluation_type = FlexibleChoiceField(choices=constants.EvaluationType.choices)
+    value_type = FlexibleChoiceField(choices=constants.ValueType.choices)
+    uncertainty = FlexibleChoiceField(choices=constants.UncertaintyChoices.choices)
+
+    class Meta:
+        model = models.AssessmentValue
+        exclude = ("created", "last_updated")
 
 
 class EffectTagsSerializer(serializers.ModelSerializer):
