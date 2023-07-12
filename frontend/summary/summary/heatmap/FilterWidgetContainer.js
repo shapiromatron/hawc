@@ -13,10 +13,25 @@ class FilterWidget extends Component {
     render() {
         const {widget, numWidgets} = this.props,
             {colorScale, maxValue} = this.props.store,
+            {rows} = this.props.store.getTableData,
             maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
-            items = _.sortedUniq(_.keys(this.props.store.intersection[widget.column]).sort()),
             _itemState = this.props.store._filterWidgetState[widget.column],
             itemState = this.props.store.filterWidgetState[widget.column],
+            allItems = _.keys(this.props.store.intersection[widget.column]),
+            items = _.sortedUniq(
+                (_.some(_.values(_itemState))
+                    ? allItems
+                    : allItems.filter(item => {
+                          let itemRows = [...this.props.store.intersection[widget.column][item]];
+                          for (let itemRow of itemRows) {
+                              if (rows.includes(itemRow)) {
+                                  return true;
+                              }
+                          }
+                          return false;
+                      })
+                ).sort()
+            ),
             filterWidgetExtension = this.props.store.extensions.filterWidgets[widget.column],
             widgetTitle = widget.header ? widget.header : h.titleCase(widget.column);
 
@@ -59,7 +74,7 @@ class FilterWidget extends Component {
         );
     }
 
-    renderItem(widget, item, index, _itemState, itemState, filterWidgetExtension) {
+    renderItem(widget, item, index, _itemState, filterWidgetExtension) {
         const {toggleItemSelection, colorScale, maxValue} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
