@@ -65,7 +65,6 @@ class FilterWidget extends Component {
                             item,
                             index,
                             _itemState,
-                            itemState,
                             filterWidgetExtension
                         )
                     )}
