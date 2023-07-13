@@ -102,3 +102,17 @@ class TestDssToxViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
+
+
+@pytest.mark.django_db
+class TestAssessmentDetailsAndValues:
+    def test_permissions(self, db_keys):
+        client = APIClient()
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        # only project manager can create Assessment Values or Details
+        for url, code in [
+            (reverse("assessment:api:value"), 200),
+            (reverse("assessment:api:details"), 200),
+        ]:
+            resp = client.get(url)
+            assert resp.status_code == code

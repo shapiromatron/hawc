@@ -8,7 +8,6 @@ from rest_framework.exceptions import ParseError
 
 from ..common.serializers import FlexibleChoiceField
 from ..study.models import Study
-from ..study.serializers import StudySerializer
 from . import constants, models
 
 
@@ -76,7 +75,7 @@ class AssessmentValueSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
-    study = StudySerializer(read_only=True)
+    # study = StudySerializer(read_only=True)
     evaluation_type = FlexibleChoiceField(choices=constants.EvaluationType.choices)
     value_type = FlexibleChoiceField(choices=constants.ValueType.choices)
     uncertainty = FlexibleChoiceField(choices=constants.UncertaintyChoices.choices)
