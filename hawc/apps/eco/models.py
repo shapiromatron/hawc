@@ -362,7 +362,7 @@ class Cause(models.Model):
         return (
             self.pk,
             self.name,
-            self.term.label(),
+            self.term.name,
             self.biological_organization.value if self.biological_organization else "",
             self.species,
             self.level,
@@ -469,7 +469,7 @@ class Effect(models.Model):
         return (
             self.pk,
             self.name,
-            self.term.label(),
+            self.term.name,
             self.biological_organization.value if self.biological_organization else "",
             self.species,
             self.units,

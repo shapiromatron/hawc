@@ -1,6 +1,7 @@
 import AnimalGroup from "animal/AnimalGroup";
 import Endpoint from "animal/Endpoint";
 import Experiment from "animal/Experiment";
+import EcoDesign from "eco/EcoDesign";
 import ComparisonSet from "epi/ComparisonSet";
 import Exposure from "epi/Exposure";
 import Outcome from "epi/Outcome";
@@ -99,6 +100,20 @@ _.extend(DataPivotExtension, {
             _dpe_cls: Study,
             _dpe_option_txt: "Show study",
             hasModal: true,
+        },
+        {
+            _dpe_name: "study-id",
+            _dpe_key: "study-id",
+            _dpe_cls: Study,
+            _dpe_option_txt: "Show study",
+            hasModal: true,
+        },
+        {
+            _dpe_name: "eco-design",
+            _dpe_key: "design-id",
+            _dpe_cls: EcoDesign,
+            _dpe_option_txt: "Show ecology design",
+            hasModal: false,
         },
         {
             _dpe_name: "experiment",
