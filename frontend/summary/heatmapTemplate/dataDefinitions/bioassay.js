@@ -393,6 +393,7 @@ const BED = {
         effect: defineProps("effect", "Effect", "effect"),
         effectSubtype: defineProps("effectSubtype", "Effect subtype", "effect subtype"),
         endpointName: defineProps("endpointName", "Endpoint name", "endpoint name"),
+        diagnostic: defineProps("diagnostic", "Diagnostic", "diagnostic"),
         observationTime: defineProps("observationTime", "Observation time", "observation time"),
         doseUnitsId: defineProps("doseUnitsId", "Dose units ID", "dose units id"),
         doseUnitsName: defineProps("doseUnitsName", "Dose units name", "dose units name"),
@@ -418,6 +419,7 @@ const BED = {
                 "Study design & system"
             ),
             endpointName: defineAxis(BED.endpointName),
+            diagnostic: defineAxis(BED.diagnostic),
         },
         FILTER_OPTIONS: {
             doseUnitsName: defineFilter(BED.doseUnitsName),
@@ -432,6 +434,7 @@ const BED = {
             effect: defineFilter(BED.effect, {on_click_event: "endpoint_complete"}),
             effectSubtype: defineFilter(BED.effectSubtype, {on_click_event: "endpoint_complete"}),
             endpointName: defineFilter(BED.endpointName),
+            diagnostic: defineFilter(BED.diagnostic),
             observationTime: defineFilter(BED.observationTime),
         },
         TABLE_FIELDS: {
@@ -450,6 +453,7 @@ const BED = {
             effect: defineTable(BED.effect),
             effectSubtype: defineTable(BED.effectSubtype),
             endpointName: defineTable(BED.endpointName, {on_click_event: "endpoint_complete"}),
+            diagnostic: defineTable(BED.diagnostic),
             observationTime: defineTable(BED.observationTime),
             doses: defineTable(BED.doses),
             doseUnitsName: defineTable(BED.doseUnitsName),
