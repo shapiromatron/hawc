@@ -67,25 +67,6 @@ Client tutorials for common operations are below:
 * Added ``client.riskofbias.metrics`` to return a dataframe of metrics for an assessment
 * Added ``client.riskofbias.reviews`` to return a list of reviews for an assessment
 
-### Distributing HAWC clients
-
-The Python HAWC client can be packaged for easy distribution.
-
-```bash
-# install dependencies
-pip install twine wheel
-
-# change to client path
-cd client
-
-# build packages; these can be distributed directly
-make build
-
-# or can be uploaded to pypi
-make upload-testpypi
-make upload-pypi
-```
-
 ## R HAWC client
 
 An R client is also available. To install and use:
