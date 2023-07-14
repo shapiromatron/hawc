@@ -1319,9 +1319,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390879+00:00
     last_updated: 2020-04-11 20:53:19.390902+00:00
 - model: lit.literatureassessment
@@ -1340,9 +1337,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
     last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.literatureassessment
@@ -1361,9 +1355,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
     last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.literatureassessment
@@ -1382,9 +1373,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2022-10-27 21:02:29.769131+00:00
     last_updated: 2022-10-27 21:02:29.769146+00:00
 - model: lit.search
