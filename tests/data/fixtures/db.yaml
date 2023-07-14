@@ -125,10 +125,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: blog
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: content
 - model: contenttypes.contenttype
   fields:
@@ -1264,24 +1260,6 @@
     - assessment
     object_id: 1
     created: 2021-09-17 18:47:19.786686+00:00
-- model: assessment.blog
-  pk: 1
-  fields:
-    subject: Unpublished Blog
-    content: Content
-    rendered_content: '<p>Content</p>'
-    published: false
-    created: 2020-08-20 03:01:09.747019+00:00
-    last_updated: 2020-08-20 03:01:09.747019+00:00
-- model: assessment.blog
-  pk: 2
-  fields:
-    subject: Published Blog
-    content: Content
-    rendered_content: '<p>Content</p>'
-    published: true
-    created: 2020-08-20 03:01:26.973291+00:00
-    last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: assessment.content
   pk: 1
   fields:
