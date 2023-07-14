@@ -6,6 +6,7 @@ from typing import NamedTuple
 import pytest
 from django.core.management import call_command
 from django.db import connections
+from rest_framework.test import APIClient
 
 CI = os.environ.get("CI") == "true"
 
@@ -107,3 +108,15 @@ def rewrite_data_files():
     A test exists in CI to ensure that this flag is set to False on commit.
     """
     return False
+
+
+@pytest.fixture()
+def api_client_anon(db):
+    return APIClient()
+
+
+@pytest.fixture()
+def api_client_pm(db):
+    client = APIClient()
+    client.login(username="pm@hawcproject.org", password="pw")
+    return client
