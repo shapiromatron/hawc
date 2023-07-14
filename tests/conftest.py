@@ -118,5 +118,5 @@ def api_client_anon(db):
 @pytest.fixture()
 def api_client_pm(db):
     client = APIClient()
-    client.login(username="pm@hawcproject.org", password="pw")
+    client.login(username="pm@hawcproject.org", password="pw")  # noqa: S106
     return client
