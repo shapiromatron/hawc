@@ -1,5 +1,5 @@
 [project]
-name = "hawc_client"
+name = "hawc-client"
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
 dynamic = ["version", "description"]
