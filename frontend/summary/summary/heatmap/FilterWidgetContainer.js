@@ -129,9 +129,10 @@ class FilterWidget extends Component {
         if (modalRows.length == 0) {
             return (
                 <button
+                    style="padding-right: 0.67rem;"
                     className="btn btn-sm float-right py-0 disabled"
                     title="No additional information">
-                    <i className="fa fa-eye-slash"></i>
+                    <i className="fa fa-minus-square-o"></i>
                 </button>
             );
         }
@@ -146,7 +147,7 @@ class FilterWidget extends Component {
                         showModalOnRow(extension, modalRows[0]);
                     }}
                     title="View additional information">
-                    <i className="fa fa-eye"></i>
+                    <i className="fa fa-external-link"></i>
                 </button>
             );
         }
@@ -155,7 +156,7 @@ class FilterWidget extends Component {
         else {
             return (
                 <button className="btn btn-sm float-right py-0 disabled" title="Too many results">
-                    <i className="fa fa-eye"></i>
+                    <i className="fa fa-external-link"></i>
                 </button>
             );
         }
