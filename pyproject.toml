@@ -12,6 +12,7 @@ keywords = [
   "toxicology",
 ]
 classifiers = [
+  "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3.11",
 ]
 requires-python = ">=3.11"
@@ -48,6 +49,7 @@ omit = [
 [tool.flit.sdist]
 include = [
   "hawc/static/bundles/**/*",
+  "hawc/gitcommit.json",
   "hawc/webpack-stats.json",
 ]
 exclude = [
