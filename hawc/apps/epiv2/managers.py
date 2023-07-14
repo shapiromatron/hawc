@@ -10,7 +10,7 @@ from django.db.models import (
     Value,
 )
 
-from ..common.models import BaseManager, to_display_array, to_sql_display
+from ..common.models import BaseManager, sql_display, to_display_array
 from . import constants, models
 
 
@@ -111,56 +111,59 @@ class DesignManager(BaseManager):
         Returns:
             pd.DataFrame: _description_
         """
-        study_df = study_qs.flat_df()
-        qs = to_sql_display(study_qs, "designs__source", constants.Source)
-        qs = to_sql_display(qs, "designs__study_design", constants.StudyDesign)
-        qs = to_sql_display(qs, "designs__outcomes__system", constants.HealthOutcomeSystem)
-        qs = qs.annotate(
-            study_design=StringAgg(
-                "designs__study_design_display", delimiter="|", distinct=True, default=""
-            ),
-            countries=StringAgg(
-                "designs__countries__name", delimiter="|", distinct=True, default=""
-            ),
-            design_source=StringAgg(
-                "designs__source_display", delimiter="|", distinct=True, default=""
-            ),
-            age_profile=Func(
-                F("designs__age_profile"),
-                Value("|"),
-                Value(""),
-                function="array_to_string",
-                output_field=CharField(max_length=256),
-            ),
-            chemical_name=StringAgg(
-                "designs__chemicals__name", delimiter="|", distinct=True, default=""
-            ),
-            exposure_name=StringAgg(
-                "designs__exposures__name", delimiter="|", distinct=True, default=""
-            ),
-            outcome_systems=StringAgg(
-                "designs__outcomes__system_display", delimiter="|", distinct=True, default=""
-            ),
-            outcome_effects=StringAgg(
-                "designs__outcomes__effect", delimiter="|", distinct=True, default=""
-            ),
-            outcome_endpoints=StringAgg(
-                "designs__outcomes__endpoint", delimiter="|", distinct=True, default=""
-            ),
-        ).values_list(
-            "id",
-            "study_design",
-            "countries",
-            "design_source",
-            "age_profile",
-            "chemical_name",
-            "exposure_name",
-            "outcome_systems",
-            "outcome_effects",
-            "outcome_endpoints",
-        )
+        df1 = study_qs.flat_df()
         df2 = pd.DataFrame(
-            data=qs,
+            data=study_qs.annotate(
+                designs__source_display=sql_display("designs__source", constants.Source),
+                designs__study_design_display=sql_display(
+                    "designs__study_design", constants.StudyDesign
+                ),
+                designs__outcomes__system_display=sql_display(
+                    "designs__outcomes__system", constants.HealthOutcomeSystem
+                ),
+                countries=StringAgg(
+                    "designs__countries__name", delimiter="|", distinct=True, default=""
+                ),
+                age_profile=Func(
+                    F("designs__age_profile"),
+                    Value("|"),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                ),
+                chemical_name=StringAgg(
+                    "designs__chemicals__name", delimiter="|", distinct=True, default=""
+                ),
+                exposure_name=StringAgg(
+                    "designs__exposures__name", delimiter="|", distinct=True, default=""
+                ),
+                design_source=StringAgg(
+                    "designs__source_display", delimiter="|", distinct=True, default=""
+                ),
+                study_design=StringAgg(
+                    "designs__study_design_display", delimiter="|", distinct=True, default=""
+                ),
+                outcome_system=StringAgg(
+                    "designs__outcomes__system_display", delimiter="|", distinct=True, default=""
+                ),
+                outcome_effect=StringAgg(
+                    "designs__outcomes__effect", delimiter="|", distinct=True, default=""
+                ),
+                outcome_endpoint=StringAgg(
+                    "designs__outcomes__endpoint", delimiter="|", distinct=True, default=""
+                ),
+            ).values_list(
+                "id",
+                "study_design",
+                "countries",
+                "design_source",
+                "age_profile",
+                "chemical_name",
+                "exposure_name",
+                "outcome_system",
+                "outcome_effect",
+                "outcome_endpoint",
+            ),
             columns=[
                 "study_id",
                 "study_design",
@@ -169,13 +172,13 @@ class DesignManager(BaseManager):
                 "age_profile",
                 "chemical_name",
                 "exposure_name",
-                "outcome_systems",
-                "outcome_effects",
-                "outcome_endpoints",
+                "outcome_system",
+                "outcome_effect",
+                "outcome_endpoint",
             ],
         )
         df3 = (
-            study_df.merge(df2, how="right", left_on="id", right_on="study_id")
+            df1.merge(df2, how="right", left_on="id", right_on="study_id")
             .drop(columns=["study_id"])
             .dropna()
         )

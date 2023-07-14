@@ -3,39 +3,38 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.db import models
 from django.db.models import Q, QuerySet
 
-from ..common.models import BaseManager, to_sql_display
+from ..common.models import BaseManager, sql_display
 from ..lit.constants import ReferenceDatabase
 from . import constants
 
 
 class StudyQuerySet(QuerySet):
     def flat_df(self) -> pd.DataFrame:
-        qs = self.annotate(
-            pmid=StringAgg(
-                "identifiers__unique_id",
-                filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
-                delimiter="|",
-                distinct=True,
-                default="",
-            ),
-            hero=StringAgg(
-                "identifiers__unique_id",
-                filter=Q(identifiers__database=ReferenceDatabase.HERO),
-                delimiter="|",
-                distinct=True,
-                default="",
-            ),
-            doi=StringAgg(
-                "identifiers__unique_id",
-                filter=Q(identifiers__database=ReferenceDatabase.DOI),
-                delimiter="|",
-                distinct=True,
-                default="",
-            ),
-        )
-        qs = to_sql_display(qs, "coi_reported", constants.CoiReported)
         return pd.DataFrame(
-            data=qs.values_list(
+            data=self.annotate(
+                pmid=StringAgg(
+                    "identifiers__unique_id",
+                    filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
+                    delimiter="|",
+                    distinct=True,
+                    default="",
+                ),
+                hero=StringAgg(
+                    "identifiers__unique_id",
+                    filter=Q(identifiers__database=ReferenceDatabase.HERO),
+                    delimiter="|",
+                    distinct=True,
+                    default="",
+                ),
+                doi=StringAgg(
+                    "identifiers__unique_id",
+                    filter=Q(identifiers__database=ReferenceDatabase.DOI),
+                    delimiter="|",
+                    distinct=True,
+                    default="",
+                ),
+                coi_reported_display=sql_display("coi_reported", constants.CoiReported),
+            ).values_list(
                 "id",
                 "pmid",
                 "hero",

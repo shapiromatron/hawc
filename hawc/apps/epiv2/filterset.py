@@ -7,7 +7,7 @@ from ..common.filterset import (
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
-from . import models
+from . import constants, models
 
 
 class OutcomeFilterSet(BaseFilterSet):
@@ -22,6 +22,11 @@ class OutcomeFilterSet(BaseFilterSet):
         autocomplete_class=StudyAutocomplete,
         label="Study reference",
         help_text="ex: Smith et al. 2010",
+    )
+    sex = df.MultipleChoiceFilter(
+        field_name="design__study_design",
+        label="Study Design",
+        choices=constants.StudyDesign.choices,
     )
     order_by = df.OrderingFilter(
         fields=(
@@ -49,7 +54,7 @@ class OutcomeFilterSet(BaseFilterSet):
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
-                {"columns": [{"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}]},
             ]
         }
 

@@ -518,27 +518,19 @@ def include_related(
     return queryset | queryset.model.objects.filter(filters)
 
 
-def to_sql_display(qs: QuerySet, name: str, Choice: type[Choices]) -> QuerySet:
-    """Update a queryset to return display-based values for a choice field.
-
-    Values are saved to the `{name}_display` based value.
+def sql_display(name: str, Choice: type[Choices]) -> Case:
+    """Create a annotation to return the display name via SQL
 
     Args:
-        qs (QuerySet): the QuerySet to modify
         name (str): the field name
         Choice (type[Choices]): a choice field
 
     Returns:
-        QuerySet: the annotated queryset
+        Case: the case statement for use in an annotation
     """
-    return qs.annotate(
-        **{
-            name
-            + "_display": Case(
-                *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices)
-            ),
-            "default": Value("?"),
-        }
+    return Case(
+        *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
+        default=Value("?"),
     )
 
 
