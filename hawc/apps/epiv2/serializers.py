@@ -207,5 +207,3 @@ class DesignCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
-
-

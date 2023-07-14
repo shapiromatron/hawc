@@ -378,14 +378,6 @@ class Assessment(AssessmentViewSet):
             "Study",
         )
 
-        # lit
-        add_item(
-            apps.get_model("lit", "Reference").objects.get_qs(instance.id).count(),
-            "references",
-            reverse("lit:api:reference-cleanup-list"),
-            "Study",
-        )
-
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
     @action(
