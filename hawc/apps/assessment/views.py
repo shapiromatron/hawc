@@ -42,7 +42,6 @@ from ..common.views import (
     LoginRequiredMixin,
     MessageMixin,
     TimeSpentOnPageMixin,
-    beta_tester_required,
     create_object_log,
     get_referrer,
 )
