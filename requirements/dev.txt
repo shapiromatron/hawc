@@ -2,8 +2,7 @@
 -r docs.txt
 
 # build
-build==0.10.0
-twine==4.0.2
+flit==3.9.0
 
 # lint and formatting tools
 black==23.3.0

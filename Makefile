@@ -33,9 +33,7 @@ sync-dev:  ## Sync dev environment after code checkout
 build:  ## build hawc package
 	npm --prefix ./frontend run build
 	manage set_git_commit
-	rm -rf build/ dist/
-	python -m build --wheel
-	twine check dist/*.whl
+	flit build
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \
