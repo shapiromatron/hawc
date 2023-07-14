@@ -352,27 +352,6 @@ EcRSettings.DASHBOARDS = [
         ],
     },
     {
-        id: "cause & effect vs. reference",
-        label: "cause & effect vs. reference",
-        upperColor: COLORS.blue,
-        x_axis: EcRSettings.AXIS_OPTIONS.causeEffect.id,
-        y_axis: EcRSettings.AXIS_OPTIONS.studyCitation.id,
-        filters: [
-            EcRSettings.FILTER_OPTIONS.designClimates.id,
-            EcRSettings.FILTER_OPTIONS.designCountries.id,
-            EcRSettings.FILTER_OPTIONS.designStates.id,
-        ],
-        table_fields: [
-            EcRSettings.TABLE_FIELDS.studyCitation.id,
-            EcRSettings.TABLE_FIELDS.designName.id,
-            EcRSettings.TABLE_FIELDS.designClimates.id,
-            EcRSettings.TABLE_FIELDS.designEcoregions.id,
-            EcRSettings.TABLE_FIELDS.designCountries.id,
-            EcRSettings.TABLE_FIELDS.designStates.id,
-            EcRSettings.TABLE_FIELDS.resultDerivedValue.id,
-        ],
-    },
-    {
         id: "effect vs cause",
         label: "effect vs cause",
         upperColor: COLORS.blue,
