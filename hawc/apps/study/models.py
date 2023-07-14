@@ -192,7 +192,7 @@ class Study(Reference):
             )
         )
 
-    def get_study_type(self):
+    def get_study_types(self) -> list[str]:
         types = []
         for field in self.STUDY_TYPE_FIELDS:
             if getattr(self, field):

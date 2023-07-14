@@ -15,14 +15,13 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 clean: ## Remove old artifacts
-	rm -rf dist build *.egg-info
+	rm -rf *.egg-info build dist
 
 build: clean  ## Build python distribution
-	python -m build --wheel
-	twine check dist/*.whl
+	flit build
 
 upload-testpypi:  ## Upload packages to testpypi
-	twine upload -r testpypi dist/*
+	flit publish --repository testpypi
 
 upload-pypi:  ## Upload packages to pypi
-	twine upload -r pypi dist/*
+	flit publish
