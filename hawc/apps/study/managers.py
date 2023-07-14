@@ -16,18 +16,21 @@ class StudyQuerySet(QuerySet):
                 filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
                 delimiter="|",
                 distinct=True,
+                default="",
             ),
             hero=StringAgg(
                 "identifiers__unique_id",
                 filter=Q(identifiers__database=ReferenceDatabase.HERO),
                 delimiter="|",
                 distinct=True,
+                default="",
             ),
             doi=StringAgg(
                 "identifiers__unique_id",
                 filter=Q(identifiers__database=ReferenceDatabase.DOI),
                 delimiter="|",
                 distinct=True,
+                default="",
             ),
         )
         qs = to_sql_display(qs, "coi_reported", constants.CoiReported)

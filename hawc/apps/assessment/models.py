@@ -1068,7 +1068,7 @@ class DatasetRevision(models.Model):
             return False
 
     @classmethod
-    def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
+    def try_read_df(cls, data, suffix: str, worksheet_name: str | None = None) -> pd.DataFrame:
         """
         Try to load and return a pandas dataframe.
 
@@ -1256,21 +1256,6 @@ class Log(models.Model):
         )
 
 
-class Blog(models.Model):
-    subject = models.CharField(max_length=128)
-    content = models.TextField()
-    rendered_content = models.TextField(editable=False)
-    published = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("-created",)
-
-    def __str__(self) -> str:
-        return self.subject
-
-
 class ContentTypeChoices(models.IntegerChoices):
     HOMEPAGE = 1
     ABOUT = 2
@@ -1337,5 +1322,4 @@ reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
 reversion.register(Communication)
-reversion.register(Blog)
 reversion.register(Content)
