@@ -283,141 +283,101 @@ class Assessment(AssessmentViewSet):
         ).first()
 
         items = []
-        app_url = reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
+        reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
+
+        def add_item(count, title, url_route, modal_key):
+            items.append(
+                {
+                    "count": count,
+                    "title": title,
+                    "url_cleanup_list": url_route,
+                    "modal_key": modal_key,
+                }
+            )
 
         # animal
-        items.append(
-            {
-                "count": instance.endpoint_count,
-                "title": "animal bioassay endpoints",
-                "type": "ani",
-                "url": f"{app_url}ani/",
-                "url_cleanup_list": reverse("animal:api:endpoint-cleanup-list"),
-                "modal_key": "Endpoint",
-            }
+        add_item(
+            instance.endpoint_count,
+            "animal bioassay endpoints",
+            reverse("animal:api:endpoint-cleanup-list"),
+            "Endpoint",
         )
 
-        count = apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "animal bioassay experiments",
-                "type": "experiment",
-                "url": f"{app_url}experiment/",
-                "url_cleanup_list": reverse("animal:api:experiment-cleanup-list"),
-                "modal_key": "Experiment",
-            }
+        add_item(
+            apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count(),
+            "animal bioassay experiments",
+            reverse("animal:api:experiment-cleanup-list"),
+            "Experiment",
         )
 
-        count = apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "animal bioassay animal groups",
-                "type": "animal-groups",
-                "url": f"{app_url}animal-groups/",
-                "url_cleanup_list": reverse("animal:api:animal_group-cleanup-list"),
-                "modal_key": "AnimalGroup",
-            }
+        add_item(
+            apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count(),
+            "animal bioassay animal groups",
+            reverse("animal:api:animal_group-cleanup-list"),
+            "AnimalGroup",
         )
 
-        count = apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "animal bioassay dosing regimes",
-                "type": "dosing-regime",
-                "url": f"{app_url}dosing-regime/",
-                "url_cleanup_list": reverse("animal:api:dosingregime-cleanup-list"),
-                "modal_key": "AnimalGroup",
-            }
+        add_item(
+            apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count(),
+            "animal bioassay dosing regimes",
+            reverse("animal:api:dosingregime-cleanup-list"),
+            "AnimalGroup",
         )
 
         # epi
-        items.append(
-            {
-                "count": instance.outcome_count,
-                "title": "epidemiological outcomes assessed",
-                "type": "epi",
-                "url": f"{app_url}epi/",
-                "url_cleanup_list": reverse("epi:api:outcome-cleanup-list"),
-                "modal_key": "Outcome",
-            }
+        add_item(
+            instance.outcome_count,
+            "epidemiological outcomes assessed",
+            reverse("epi:api:outcome-cleanup-list"),
+            "Outcome",
         )
 
-        count = apps.get_model("epi", "StudyPopulation").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "epi study populations",
-                "type": "study-populations",
-                "url": f"{app_url}study-populations/",
-                "url_cleanup_list": reverse("epi:api:studypopulation-cleanup-list"),
-                "modal_key": "StudyPopulation",
-            }
+        add_item(
+            apps.get_model("epi", "StudyPopulation").objects.get_qs(instance.id).count(),
+            "epi study populations",
+            reverse("epi:api:studypopulation-cleanup-list"),
+            "StudyPopulation",
         )
 
-        count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "epi exposures",
-                "type": "exposures",
-                "url": f"{app_url}exposures/",
-                "url_cleanup_list": reverse("epi:api:exposure-cleanup-list"),
-                "modal_key": "Exposure",
-            }
+        add_item(
+            apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count(),
+            "epi exposures",
+            reverse("epi:api:exposure-cleanup-list"),
+            "Exposure",
         )
 
         # in vitro
-        items.append(
-            {
-                "count": instance.ivendpoint_count,
-                "title": "in vitro endpoints",
-                "type": "in-vitro",
-                "url": f"{app_url}in-vitro/",
-                "url_cleanup_list": reverse("invitro:api:ivendpoint-cleanup-list"),
-                "modal_key": "IVEndpoint",
-            }
+        add_item(
+            instance.ivendpoint_count,
+            "in vitro endpoints",
+            reverse("invitro:api:ivendpoint-cleanup-list"),
+            "IVEndpoint",
         )
 
-        count = apps.get_model("invitro", "ivchemical").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "in vitro chemicals",
-                "type": "in-vitro-chemical",
-                "url": f"{app_url}in-vitro-chemical/",
-                "url_cleanup_list": reverse("invitro:api:ivchemical-cleanup-list"),
-                "modal_key": "IVChemical",
-            }
+        add_item(
+            apps.get_model("invitro", "ivchemical").objects.get_qs(instance.id).count(),
+            "in vitro chemicals",
+            reverse("invitro:api:ivchemical-cleanup-list"),
+            "IVChemical",
         )
 
         # study
-        count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "studies",
-                "type": "study",
-                "url": f"{app_url}study/",
-                "url_cleanup_list": reverse("study:api:study-cleanup-list"),
-                "modal_key": "Study",
-            }
+        add_item(
+            apps.get_model("study", "Study").objects.get_qs(instance.id).count(),
+            "studies",
+            reverse("study:api:study-cleanup-list"),
+            "Study",
         )
 
         # lit
-        count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
-        items.append(
-            {
-                "count": count,
-                "title": "references",
-                "type": "reference",
-                "url": f"{app_url}reference/",
-                "url_cleanup_list": reverse("lit:api:reference-cleanup-list"),
-                "modal_key": "Study",
-            }
+        add_item(
+            apps.get_model("lit", "Reference").objects.get_qs(instance.id).count(),
+            "references",
+            reverse("lit:api:reference-cleanup-list"),
+            "Study",
         )
+
+        #  TODO - add epiv2
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 

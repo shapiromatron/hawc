@@ -90,7 +90,7 @@ class App extends Component {
                         .filter(d => d.count > 0)
                         .map(d => {
                             return (
-                                <li key={d.type}>
+                                <li key={d.title}>
                                     <a href="#" onClick={() => store.selectModel(d)}>
                                         {d.count}&nbsp;{d.title}
                                     </a>
