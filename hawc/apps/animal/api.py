@@ -320,11 +320,17 @@ class ExperimentCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Experiment
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class AnimalGroupCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.AnimalGroupCleanupFieldsSerializer
     model = models.AnimalGroup
     assessment_filter_args = "experiment__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("experiment__study")
 
 
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
@@ -332,11 +338,17 @@ class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Endpoint
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("animal_group__experiment__study")
+
 
 class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.DosingRegimeCleanupFieldsSerializer
     model = models.DosingRegime
     assessment_filter_args = "dosed_animals__experiment__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("dosed_animals__experiment__study")
 
 
 class DoseUnits(DoseUnitsViewSet):
