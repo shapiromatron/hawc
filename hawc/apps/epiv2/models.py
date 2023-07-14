@@ -75,6 +75,16 @@ class Design(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
+    TEXT_CLEANUP_FIELDS = (
+        "summary",
+        "study_name",
+        "age_description",
+        "race",
+        "years_enrolled",
+        "years_followup",
+        "region",
+    )
+
     class Meta:
         verbose_name = "Study Population"
         verbose_name_plural = "Study Populations"

@@ -2,7 +2,12 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewSet, BaseAssessmentViewSet, EditPermissionsCheckMixin
+from ..assessment.api import (
+    AssessmentEditViewSet,
+    BaseAssessmentViewSet,
+    CleanupFieldsBaseViewSet,
+    EditPermissionsCheckMixin,
+)
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.renderers import PandasRenderers
@@ -89,3 +94,10 @@ class DataExtractionViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     assessment_filter_args = "design__study__assessment"
     model = models.DataExtraction
     serializer_class = serializers.DataExtractionSerializer
+
+
+# Cleanup ViewSets
+class DesignCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DesignCleanupSerializer
+    model = models.Design
+    assessment_filter_args = "study__assessment"

@@ -13,6 +13,7 @@ router.register("exposure-level", api.ExposureLevelViewSet, basename="exposure-l
 router.register("outcome", api.OutcomeViewSet, basename="outcome")
 router.register("adjustment-factor", api.AdjustmentFactorViewSet, basename="adjustment-factor")
 router.register("data-extraction", api.DataExtractionViewSet, basename="data-extraction")
+router.register("design-cleanup", api.DesignCleanupViewSet, basename="design-cleanup")
 
 app_name = "epiv2"
 urlpatterns = [

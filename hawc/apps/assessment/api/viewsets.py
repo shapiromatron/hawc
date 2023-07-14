@@ -75,7 +75,8 @@ class CleanupFieldsBaseViewSet(
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
         bulk_create_object_log("Updated", queryset, self.request.user.id)
-        queryset.model.delete_caches(ids)
+        if hasattr(queryset.model, "delete_caches"):
+            queryset.model.delete_caches(ids)
 
 
 class EditPermissionsCheckMixin:
@@ -346,6 +347,14 @@ class Assessment(AssessmentViewSet):
             "Exposure",
         )
 
+        # epiv2
+        add_item(
+            apps.get_model("epiv2", "Design").objects.get_qs(instance.id).count(),
+            "epi study populations",
+            reverse("epiv2:api:design-cleanup-list"),
+            None,
+        )
+
         # in vitro
         add_item(
             instance.ivendpoint_count,
@@ -376,8 +385,6 @@ class Assessment(AssessmentViewSet):
             reverse("lit:api:reference-cleanup-list"),
             "Study",
         )
-
-        #  TODO - add epiv2
 
         return Response({"name": instance.name, "id": instance.id, "items": items})
 
