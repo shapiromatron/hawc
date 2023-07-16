@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import (
     Http404,
     HttpRequest,
@@ -298,8 +298,21 @@ class AssessmentList(LoginRequiredMixin, ListView):
             return HttpResponseRedirect(reverse("user:accept-license"))
         return super().get(request, *args, **kwargs)
 
+    def get_queryset(self):
+        user = self.request.user
+        return (
+            super()
+            .get_queryset()
+            .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))
+            .prefetch_related("project_manager", "team_members", "reviewers")
+            .distinct()
+            .order_by("-year", "-id")
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        for assessment in context["object_list"]:
+            assessment.role_cached = assessment.role(self.request.user)
         context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         return context
 
