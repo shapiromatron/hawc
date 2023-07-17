@@ -208,6 +208,7 @@ class DesignCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
 
+
 class ChemicalCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()
 
@@ -218,6 +219,7 @@ class ChemicalCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer)
 
     def get_study_short_citation(self, obj):
         return obj.design.study.short_citation
+
 
 class ExposureCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()
@@ -230,6 +232,7 @@ class ExposureCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer)
     def get_study_short_citation(self, obj):
         return obj.design.study.short_citation
 
+
 class ExposureLevelCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()
 
@@ -240,6 +243,7 @@ class ExposureLevelCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerial
 
     def get_study_short_citation(self, obj):
         return obj.design.study.short_citation
+
 
 class OutcomeCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()
@@ -252,6 +256,7 @@ class OutcomeCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_study_short_citation(self, obj):
         return obj.design.study.short_citation
 
+
 class AdjustmentFactorCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()
 
@@ -262,6 +267,7 @@ class AdjustmentFactorCleanupSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     def get_study_short_citation(self, obj):
         return obj.design.study.short_citation
+
 
 class DataExtractionCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()
