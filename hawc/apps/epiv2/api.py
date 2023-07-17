@@ -104,3 +104,11 @@ class DesignCleanupViewSet(CleanupFieldsBaseViewSet):
 
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset().select_related("study")
+
+class ChemicalCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ChemicalCleanupSerializer
+    model = models.Chemical
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")

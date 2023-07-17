@@ -355,6 +355,13 @@ class Assessment(AssessmentViewSet):
             None,
         )
 
+        add_item(
+            apps.get_model("epiv2", "Chemical").objects.get_qs(instance.id).count(),
+            "epi chemicals",
+            reverse("epiv2:api:chemical-cleanup-list"),
+            None,
+        )
+
         # in vitro
         add_item(
             instance.ivendpoint_count,

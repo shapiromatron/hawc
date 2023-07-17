@@ -14,6 +14,7 @@ router.register("outcome", api.OutcomeViewSet, basename="outcome")
 router.register("adjustment-factor", api.AdjustmentFactorViewSet, basename="adjustment-factor")
 router.register("data-extraction", api.DataExtractionViewSet, basename="data-extraction")
 router.register("design-cleanup", api.DesignCleanupViewSet, basename="design-cleanup")
+router.register("chemical-cleanup", api.ChemicalCleanupViewSet, basename="chemical-cleanup")
 
 app_name = "epiv2"
 urlpatterns = [

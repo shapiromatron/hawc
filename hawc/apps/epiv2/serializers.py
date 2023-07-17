@@ -207,3 +207,14 @@ class DesignCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
+
+class ChemicalCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Chemical
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation

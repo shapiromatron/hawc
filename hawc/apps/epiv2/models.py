@@ -180,6 +180,10 @@ class Chemical(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+    )
+
     class Meta:
         ordering = ("id",)
 
