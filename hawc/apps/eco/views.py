@@ -2,12 +2,14 @@ from django.http import HttpRequest
 from django.shortcuts import render
 from django.views.generic import ListView
 
+from ..assessment.models import Assessment
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.models import include_related
 from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseUpdate,
     FilterSetMixin,
     HeatmapBase,
@@ -22,7 +24,7 @@ class HeatmapStudyDesign(HeatmapBase):
     heatmap_view_title = "Ecology study design"
 
 
-class HeatmapResult(HeatmapBase):
+class HeatmapResults(HeatmapBase):
     heatmap_data_class = "ecology-result-summary"
     heatmap_data_url = "eco:api:assessment-export"
     heatmap_view_title = "Ecology data extraction"
@@ -202,3 +204,12 @@ class ResultViewSet(DesignChildViewSet):
     form_class = forms.ResultForm
     parent_model = models.Design
     detail_fragment = "eco/fragments/result_row.html"
+
+
+class ResultFilterList(BaseFilterList):
+    parent_model = Assessment
+    model = models.Result
+    filterset_class = filterset.ResultFilterSet
+
+    def get_filterset_form_kwargs(self):
+        return dict(main_field="search", appended_fields=["order_by", "paginate_by"])

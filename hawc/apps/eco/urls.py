@@ -14,12 +14,12 @@ urlpatterns = [
     path(
         "assessment/<int:pk>/heatmap-study-design/",
         views.HeatmapStudyDesign.as_view(),
-        name="heatmap-study-design",
+        name="heatmap_study_design",
     ),
     path(
-        "assessment/<int:pk>/heatmap-result/",
-        views.HeatmapResult.as_view(),
-        name="heatmap-result",
+        "assessment/<int:pk>/heatmap-results/",
+        views.HeatmapResults.as_view(),
+        name="heatmap_results",
     ),
     path("terms/", views.NestedTermList.as_view(), name="term_list"),
     path(
@@ -146,5 +146,10 @@ urlpatterns = [
         views.ResultViewSet.as_view(),
         {"action": "delete"},
         name="result-delete",
+    ),
+    path(
+        "assessment/<int:pk>/results/",
+        views.ResultFilterList.as_view(),
+        name="result_list",
     ),
 ]
