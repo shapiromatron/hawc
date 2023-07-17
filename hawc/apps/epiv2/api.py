@@ -112,3 +112,43 @@ class ChemicalCleanupViewSet(CleanupFieldsBaseViewSet):
 
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset().select_related("design__study")
+
+class ExposureCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ExposureCleanupSerializer
+    model = models.Exposure
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+class ExposureLevelCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ExposureLevelCleanupSerializer
+    model = models.ExposureLevel
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+class OutcomeCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.OutcomeCleanupSerializer
+    model = models.Outcome
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+class AdjustmentFactorCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.AdjustmentFactorCleanupSerializer
+    model = models.AdjustmentFactor
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+class DataExtractionCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DataExtractionCleanupSerializer
+    model = models.DataExtraction
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")

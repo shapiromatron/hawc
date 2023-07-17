@@ -362,6 +362,41 @@ class Assessment(AssessmentViewSet):
             None,
         )
 
+        add_item(
+            apps.get_model("epiv2", "Exposure").objects.get_qs(instance.id).count(),
+            "epi exposures",
+            reverse("epiv2:api:exposure-cleanup-list"),
+            None,
+        )
+
+        add_item(
+            apps.get_model("epiv2", "ExposureLevel").objects.get_qs(instance.id).count(),
+            "epi exposure levels",
+            reverse("epiv2:api:exposure-level-cleanup-list"),
+            None,
+        )
+
+        add_item(
+            apps.get_model("epiv2", "Outcome").objects.get_qs(instance.id).count(),
+            "epi outcomes",
+            reverse("epiv2:api:outcome-cleanup-list"),
+            None,
+        )
+
+        add_item(
+            apps.get_model("epiv2", "AdjustmentFactor").objects.get_qs(instance.id).count(),
+            "epi adjustment factors",
+            reverse("epiv2:api:adjustment-factor-cleanup-list"),
+            None,
+        )
+
+        add_item(
+            apps.get_model("epiv2", "DataExtraction").objects.get_qs(instance.id).count(),
+            "epi data extractions",
+            reverse("epiv2:api:data-extraction-cleanup-list"),
+            None,
+        )
+
         # in vitro
         add_item(
             instance.ivendpoint_count,

@@ -262,6 +262,12 @@ class Exposure(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "measurement_type",
+        "measurement_timing",
+    )
+
     class Meta:
         ordering = ("id",)
 
@@ -385,6 +391,14 @@ class ExposureLevel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "sub_population",
+        "units",
+        "negligible_exposure",
+        "data_location",
+    )
+
     class Meta:
         ordering = ("id",)
 
@@ -486,6 +500,12 @@ class Outcome(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "effect",
+        "effect_detail",
+        "endpoint",
+    )
+
     class Meta:
         ordering = ("id",)
 
@@ -545,6 +565,11 @@ class AdjustmentFactor(models.Model):
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "description",
+    )
 
     class Meta:
         ordering = ("id",)
@@ -679,6 +704,19 @@ class DataExtraction(models.Model):
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "sub_population",
+        "outcome_measurement_timing",
+        "effect_estimate_type",
+        "units",
+        "p_value",
+        "group",
+        "exposure_transform",
+        "outcome_transform",
+        "confidence",
+        "data_location",
+    )
 
     class Meta:
         verbose_name = "Quantitative data extraction"
