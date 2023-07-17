@@ -22,7 +22,7 @@
         {% endif %}
 
         {% if eco_results > 0 %}
-        <li><a href="{% url 'eco:result_list' assessment.id %}">Ecology results</a></li>
+        <li><a href="{% url 'eco:result_list' assessment.id %}">{{eco_results}} ecology results</a></li>
         {% endif %}
 
         {% if meta_results > 0 %}

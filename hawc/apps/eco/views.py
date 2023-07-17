@@ -211,5 +211,8 @@ class ResultFilterList(BaseFilterList):
     model = models.Result
     filterset_class = filterset.ResultFilterSet
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("design__study", "cause__term", "effect__term")
+
     def get_filterset_form_kwargs(self):
         return dict(main_field="search", appended_fields=["order_by", "paginate_by"])

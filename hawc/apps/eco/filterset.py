@@ -52,6 +52,13 @@ class ResultFilterSet(BaseFilterSet):
             ]
         }
 
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        queryset = queryset.filter(design__study__assessment=self.assessment)
+        if not self.perms["edit"]:
+            queryset = queryset.filter(design__study__published=True)
+        return queryset
+
     def filter_search(self, queryset, name, value):
         query = (
             Q(name__icontains=value)
