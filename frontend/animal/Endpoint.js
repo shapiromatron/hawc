@@ -286,7 +286,7 @@ class Endpoint extends Observee {
             .add_tbody_tr("Organ", this.data.organ)
             .add_tbody_tr("Effect", this.data.effect)
             .add_tbody_tr("Effect subtype", this.data.effect_subtype)
-            .add_tbody_tr("Diagnostic description", this.data.diagnostic)
+            .add_tbody_tr("Diagnostic (as reported)", this.data.diagnostic)
             .add_tbody_tr("Observation time", this.data.observation_time_text)
             .add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment))
             .add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported))

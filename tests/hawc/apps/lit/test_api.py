@@ -53,7 +53,6 @@ class TestLiteratureAssessmentViewSet:
             ),
             reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
-            reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,)),
         ]
         for url in urls:

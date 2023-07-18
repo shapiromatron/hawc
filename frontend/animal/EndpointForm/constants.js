@@ -41,7 +41,7 @@ const termUrlLookup = {
         endpoint_name_popup: `An observable or measurable biological change used as an index of a
         potential health effect of an exposure. Endpoint may also be referred to as effect, outcome,
         or event. Search for the best match based on the author reported term. Use the
-        field "Endpoint Name in Study" to capture as reported by study authors. If no existing
+        field "Diagnostic (as reported)" to capture as reported by study authors. If no existing
         term matches, deselect use EHV for endpoint and enter the name as reported. Do not
         include units. If an endpoint is a repeated measure, indicate the time in parentheses,
         [e.g., running wheel activity (6 wk)], using the abbreviated format: seconds = sec,

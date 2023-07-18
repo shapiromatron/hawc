@@ -11,9 +11,9 @@ class TableMaker:
     def __init__(
         self,
         colWidths: list[float],
-        styles: dict = None,
+        styles: dict | None = None,
         numHeaders: int = 1,
-        tblStyle: str = None,
+        tblStyle: str | None = None,
         firstRowCaption: bool = True,
     ):
         """

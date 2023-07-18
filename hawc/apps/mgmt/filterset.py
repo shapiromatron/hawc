@@ -2,7 +2,7 @@ import django_filters as df
 from django.forms.widgets import CheckboxInput
 from django_filters.constants import EMPTY_VALUES
 
-from ..common.filterset import BaseFilterSet
+from ..common.filterset import BaseFilterSet, FilterForm
 from ..myuser.models import HAWCUser
 from ..study.constants import StudyTypeChoices
 from . import models
@@ -33,6 +33,7 @@ class UserTaskFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Task
+        form = FilterForm
         fields = ["assessment_name", "study_name", "type", "show_completed"]
         grid_layout = {
             "rows": [
@@ -44,17 +45,6 @@ class UserTaskFilterSet(BaseFilterSet):
         if value is True:
             return queryset
         return queryset.exclude_completed_and_abandonded()
-
-
-class AssessmentUserTaskFilterSet(UserTaskFilterSet):
-    class Meta(UserTaskFilterSet.Meta):
-        model = models.Task
-        fields = ["study_name", "type", "show_completed"]
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
-            ]
-        }
 
 
 class TaskFilterSet(BaseFilterSet):
@@ -84,6 +74,7 @@ class TaskFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Task
+        form = FilterForm
         fields = ["study_name", "data_type", "owner", "order_by"]
         grid_layout = {
             "rows": [

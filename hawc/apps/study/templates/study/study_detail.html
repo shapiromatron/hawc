@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load hastext %}
+{% load bs4 %}
 
 {% block content %}
   <h2 class="d-inline-block">{{object}}</h2>
@@ -66,6 +67,12 @@
     </div>
   {% endif %}
 
+  {% if not object.get_study_types and obj_perms.edit %}
+    {% alert warning %}
+    This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
+    {% endalert %}
+  {% endif %}
+
   <div id="study_details"></div>
 
   {% if obj_perms.edit and internal_communications|hastext %}
@@ -99,35 +106,28 @@
     {% endif %}
 
     {% if study.bioassay %}
-      <h3>Available animal bioassay experiments</h3>
       {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
     {% endif %}
 
-    {% if study.in_vitro %}
-      <h3>Available <i>in vitro</i> experiments</h3>
-      {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-      <h3>Chemicals used in <i>in vitro</i> experiments</h3>
-      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
-      <h3>Cell types used in <i>in vitro</i> experiments</h3>
-      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
-    {% endif %}
-
     {% if study.epi %}
-      <h3>Available epidemiological study populations</h3>
       {% if assessment.epi_version == 1 %}
         {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
       {% elif assessment.epi_version == 2 %}
-        {% include "epiv2/fragments/_design_list.html" with object_list=object.designs.all %}
+        {% include "epi/_studypopulation_list.html" with object_list=object.designs.all %}
       {% endif %}
     {% endif %}
 
     {% if study.epi_meta %}
-      <h3>Available epidemiological meta-analyses</h3>
       {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
     {% endif %}
 
+    {% if study.in_vitro %}
+      {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
+      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
+      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
+    {% endif %}
+
     {% if study.eco %}
-      <h3>Available ecology designs</h3>
       {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
     {% endif %}
 

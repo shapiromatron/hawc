@@ -8,7 +8,6 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
-from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -127,11 +126,6 @@ INSTALLED_APPS = (
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
 )
-
-# TODO - remove with django==4.1
-if HAWC_FEATURES.FIPS_MODE is True:
-    fips.patch_md5()
-
 # DB settings
 DATABASES = {
     "default": {
@@ -295,6 +289,9 @@ GTM_ID = os.getenv("GTM_ID")
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
+
+# CCTE API key
+CCTE_API_KEY = os.getenv("CCTE_API_KEY")
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+import numpy as np
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -127,9 +128,8 @@ class AssessmentForm(forms.ModelForm):
 
 
 class AssessmentDetailForm(forms.ModelForm):
-    CREATE_LEGEND = "Add additional Assessment details"
-    CREATE_HELP_TEXT = ""
-    UPDATE_HELP_TEXT = "Update additional details for this Assessment."
+    LEGEND = "Additional Assessment Details"
+    HELP_TEXT = "Add additional details for this assessment."
 
     assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
@@ -159,20 +159,14 @@ class AssessmentDetailForm(forms.ModelForm):
     @property
     def helper(self):
         self.fields["extra"].widget.attrs["rows"] = 3
-        if self.instance.id:
-            helper = BaseFormHelper(
-                self,
-                help_text=self.UPDATE_HELP_TEXT,
-                cancel_url=self.instance.get_absolute_url(),
-            )
-        else:
-            helper = BaseFormHelper(
-                self,
-                legend_text=self.CREATE_LEGEND,
-                help_text=self.CREATE_HELP_TEXT,
-                cancel_url=self.instance.assessment.get_absolute_url(),
-            )
-
+        cancel_url = (
+            self.instance.get_absolute_url()
+            if self.instance.id
+            else self.instance.assessment.get_absolute_url()
+        )
+        helper = BaseFormHelper(
+            self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
+        )
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
         helper.add_row("report_id", 3, "col-md-4")
@@ -180,7 +174,8 @@ class AssessmentDetailForm(forms.ModelForm):
 
 
 class AssessmentValueForm(forms.ModelForm):
-    CREATE_LEGEND = "Create Assessment values"
+    CREATE_LEGEND = "Create Assessment Value"
+    UPDATE_LEGEND = "Update Assessment Value"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
@@ -245,6 +240,18 @@ class AssessmentValueForm(forms.ModelForm):
             if not cleaned_data.get("uncertainty"):
                 msg = "Required for Noncancer evaluation types."
                 self.add_error("uncertainty", msg)
+        if (
+            cleaned_data.get("value")
+            and cleaned_data.get("pod_value")
+            and cleaned_data.get("uncertainty")
+        ):
+            if not np.isclose(
+                cleaned_data["value"],
+                cleaned_data["pod_value"] / cleaned_data["uncertainty"],
+                rtol=0.01,
+            ):
+                msg = "POD / uncertainty is not equal to value."
+                self.add_error("value", msg)
 
     @property
     def helper(self):
@@ -255,6 +262,7 @@ class AssessmentValueForm(forms.ModelForm):
             helper = BaseFormHelper(
                 self,
                 help_text=self.UPDATE_HELP_TEXT,
+                legend_text=self.UPDATE_LEGEND,
                 cancel_url=self.instance.get_absolute_url(),
             )
 

@@ -237,6 +237,7 @@ def test_heatmap_df(db_keys):
         "effect",
         "effect subtype",
         "endpoint name",
+        "diagnostic",
         "observation time",
     ]
     assert df.columns.tolist() == expected_columns
