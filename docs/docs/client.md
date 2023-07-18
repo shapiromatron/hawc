@@ -67,42 +67,6 @@ Client tutorials for common operations are below:
 * Added ``client.riskofbias.metrics`` to return a dataframe of metrics for an assessment
 * Added ``client.riskofbias.reviews`` to return a list of reviews for an assessment
 
-### Distributing HAWC clients
-
-The Python HAWC client can be packaged for easy distribution.
-
-```bash
-# install dependencies
-pip install twine wheel
-
-# change to client path
-cd client
-
-# build packages; these can be distributed directly
-make build
-
-# or can be uploaded to pypi
-make upload-testpypi
-make upload-pypi
-```
-
-## R HAWC client
-
-An R client is also available. To install and use:
-
-```R
-devtools::install_github('shapiromatron/hawc', subdir='client/r/rhawc')
-library(rhawc)
-
-client <- HawcClient("https://hawcproject.org")
-client$authenticate("me@me.com", getPass::getPass())
-
-# get all references for an assessment
-client$lit_references(assessment_id=123)
-```
-
-Please note that the Python client is considered the reference implementation for a HAWC client and will include the latest features; the R client may be a little behind. A high-level notebook we use for testing is available to see how the R client works: [R tutorial](https://github.com/shapiromatron/hawc/blob/master/scripts/client/r-client.ipynb). For more detailed trainings, see the Python notebook tutorials above.
-
 ## API access
 
 Authenticated users can access HAWC REST APIs; below is an example script for use:
