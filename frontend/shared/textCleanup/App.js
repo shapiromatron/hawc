@@ -88,7 +88,7 @@ class App extends Component {
                 </p>
                 <b>To begin, select a data-type to cleanup</b>
                 <ul>
-                {Object.entries(groupedItems)
+                    {Object.entries(groupedItems)
                         .filter(([app, items]) => items.some(item => item.count > 0))
                         .map(([app, items]) => {
                             return (
@@ -100,7 +100,9 @@ class App extends Component {
                                             .map(d => {
                                                 return (
                                                     <li className="list-group-item" key={d.title}>
-                                                        <a href="#" onClick={() => store.selectModel(d)}>
+                                                        <a
+                                                            href="#"
+                                                            onClick={() => store.selectModel(d)}>
                                                             {d.title}
                                                         </a>
                                                         <span className="badge badge-primary badge-pill ml-2">
