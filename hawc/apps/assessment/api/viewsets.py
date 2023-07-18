@@ -286,9 +286,10 @@ class Assessment(AssessmentViewSet):
         items = []
         reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
 
-        def add_item(count, title, url_route, modal_key):
+        def add_item(app, count, title, url_route, modal_key):
             items.append(
                 {
+                    "app": app,
                     "count": count,
                     "title": title,
                     "url_cleanup_list": url_route,
@@ -298,6 +299,7 @@ class Assessment(AssessmentViewSet):
 
         # animal
         add_item(
+            "Bioassay",
             instance.endpoint_count,
             "animal bioassay endpoints",
             reverse("animal:api:endpoint-cleanup-list"),
@@ -305,6 +307,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Bioassay",
             apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count(),
             "animal bioassay experiments",
             reverse("animal:api:experiment-cleanup-list"),
@@ -312,6 +315,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Bioassay",
             apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count(),
             "animal bioassay animal groups",
             reverse("animal:api:animal_group-cleanup-list"),
@@ -319,6 +323,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Bioassay",
             apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count(),
             "animal bioassay dosing regimes",
             reverse("animal:api:dosingregime-cleanup-list"),
@@ -327,6 +332,7 @@ class Assessment(AssessmentViewSet):
 
         # epi
         add_item(
+            "Epi",
             instance.outcome_count,
             "epidemiological outcomes assessed",
             reverse("epi:api:outcome-cleanup-list"),
@@ -334,6 +340,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epi", "StudyPopulation").objects.get_qs(instance.id).count(),
             "epi study populations",
             reverse("epi:api:studypopulation-cleanup-list"),
@@ -341,6 +348,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count(),
             "epi exposures",
             reverse("epi:api:exposure-cleanup-list"),
@@ -349,6 +357,7 @@ class Assessment(AssessmentViewSet):
 
         # epiv2
         add_item(
+            "Epi",
             apps.get_model("epiv2", "Design").objects.get_qs(instance.id).count(),
             "epi study populations",
             reverse("epiv2:api:design-cleanup-list"),
@@ -356,6 +365,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epiv2", "Chemical").objects.get_qs(instance.id).count(),
             "epi chemicals",
             reverse("epiv2:api:chemical-cleanup-list"),
@@ -363,6 +373,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epiv2", "Exposure").objects.get_qs(instance.id).count(),
             "epi exposures",
             reverse("epiv2:api:exposure-cleanup-list"),
@@ -370,6 +381,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epiv2", "ExposureLevel").objects.get_qs(instance.id).count(),
             "epi exposure levels",
             reverse("epiv2:api:exposure-level-cleanup-list"),
@@ -377,13 +389,15 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epiv2", "Outcome").objects.get_qs(instance.id).count(),
-            "epi outcomes",
+            "epidemiological outcomes assessed",
             reverse("epiv2:api:outcome-cleanup-list"),
             None,
         )
 
         add_item(
+            "Epi",
             apps.get_model("epiv2", "AdjustmentFactor").objects.get_qs(instance.id).count(),
             "epi adjustment factors",
             reverse("epiv2:api:adjustment-factor-cleanup-list"),
@@ -391,6 +405,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "Epi",
             apps.get_model("epiv2", "DataExtraction").objects.get_qs(instance.id).count(),
             "epi data extractions",
             reverse("epiv2:api:data-extraction-cleanup-list"),
@@ -399,6 +414,7 @@ class Assessment(AssessmentViewSet):
 
         # in vitro
         add_item(
+            "In Vitro",
             instance.ivendpoint_count,
             "in vitro endpoints",
             reverse("invitro:api:ivendpoint-cleanup-list"),
@@ -406,6 +422,7 @@ class Assessment(AssessmentViewSet):
         )
 
         add_item(
+            "In Vitro",
             apps.get_model("invitro", "ivchemical").objects.get_qs(instance.id).count(),
             "in vitro chemicals",
             reverse("invitro:api:ivchemical-cleanup-list"),
@@ -414,6 +431,7 @@ class Assessment(AssessmentViewSet):
 
         # study
         add_item(
+            "Study",
             apps.get_model("study", "Study").objects.get_qs(instance.id).count(),
             "studies",
             reverse("study:api:study-cleanup-list"),

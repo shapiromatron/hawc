@@ -1,5 +1,6 @@
 import "./App.css";
 
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -77,6 +78,7 @@ class App extends Component {
     }
     renderAssessmentMetadata() {
         const {store} = this.props;
+        const groupedItems = _.groupBy(store.assessmentMetadata.items, "app");
         return (
             <div>
                 <h2>Cleanup {store.assessmentMetadata.name}</h2>
@@ -86,15 +88,28 @@ class App extends Component {
                 </p>
                 <b>To begin, select a data-type to cleanup</b>
                 <ul>
-                    {store.assessmentMetadata.items
-                        .filter(d => d.count > 0)
-                        .map(d => {
+                    {Object.entries(groupedItems)
+                        .filter(([app, items]) => items.some(item => item.count > 0))
+                        .map(([app, items]) => {
                             return (
-                                <li key={d.title}>
-                                    <a href="#" onClick={() => store.selectModel(d)}>
-                                        {d.count}&nbsp;{d.title}
-                                    </a>
-                                </li>
+                                <div key={app}>
+                                    <h4 className="mt-2">{app}:</h4>
+                                    <ul>
+                                        {items
+                                            .filter(item => item.count > 0)
+                                            .map(d => {
+                                                return (
+                                                    <li key={d.title}>
+                                                        <a
+                                                            href="#"
+                                                            onClick={() => store.selectModel(d)}>
+                                                            {d.count}&nbsp;{d.title}
+                                                        </a>
+                                                    </li>
+                                                );
+                                            })}
+                                    </ul>
+                                </div>
                             );
                         })}
                 </ul>
