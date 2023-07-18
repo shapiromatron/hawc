@@ -89,10 +89,10 @@ class LiteratureAssessment(models.Model):
     keyword_list_1 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
-         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas. Keywords can be whole word matches or partial matches. To have a partial match,
-         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not
-         rats, as well as phos, phosphate, and phosphorous.""",
+        Keywords are pipe-separated (&nbsp;|&nbsp;) to allow for highlighting chemicals which may
+        include commas. Keywords can be whole word matches or partial matches. For inexact matches,
+        use an asterisk (&nbsp;*&nbsp;) wildcard. For example, rat|phos*, it should match rat, but
+        not rats, as well as phos, phosphate, and phosphorous.""",
     )
     name_list_2 = models.CharField(
         max_length=64,
@@ -109,10 +109,10 @@ class LiteratureAssessment(models.Model):
     keyword_list_2 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
-         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas. Keywords can be whole word matches or partial matches. To have a partial match,
-         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not
-         rats, as well as phos, phosphate, and phosphorous.""",
+        Keywords are pipe-separated (&nbsp;|&nbsp;) to allow for highlighting chemicals which may
+        include commas. Keywords can be whole word matches or partial matches. For inexact matches,
+        use an asterisk (&nbsp;*&nbsp;) wildcard. For example, rat|phos*, it should match rat, but
+        not rats, as well as phos, phosphate, and phosphorous.""",
     )
     name_list_3 = models.CharField(
         max_length=64,
@@ -129,10 +129,10 @@ class LiteratureAssessment(models.Model):
     keyword_list_3 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
-         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas. Keywords can be whole word matches or partial matches. To have a partial match,
-         add "*" to the end of the keyword. For example rat|phos*, it should match rat, but not
-         rats, as well as phos, phosphate, and phosphorous.""",
+        Keywords are pipe-separated (&nbsp;|&nbsp;) to allow for highlighting chemicals which may
+        include commas. Keywords can be whole word matches or partial matches. For inexact matches,
+        use an asterisk (&nbsp;*&nbsp;) wildcard. For example, rat|phos*, it should match rat, but
+        not rats, as well as phos, phosphate, and phosphorous.""",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
