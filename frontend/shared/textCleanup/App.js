@@ -88,23 +88,24 @@ class App extends Component {
                 </p>
                 <b>To begin, select a data-type to cleanup</b>
                 <ul>
-                    {Object.entries(groupedItems)
+                {Object.entries(groupedItems)
                         .filter(([app, items]) => items.some(item => item.count > 0))
                         .map(([app, items]) => {
                             return (
                                 <div key={app}>
-                                    <h4 className="mt-2">{app}:</h4>
-                                    <ul>
+                                    <h4 className="mt-3">{app}:</h4>
+                                    <ul className="list-group">
                                         {items
                                             .filter(item => item.count > 0)
                                             .map(d => {
                                                 return (
-                                                    <li key={d.title}>
-                                                        <a
-                                                            href="#"
-                                                            onClick={() => store.selectModel(d)}>
-                                                            {d.count}&nbsp;{d.title}
+                                                    <li className="list-group-item" key={d.title}>
+                                                        <a href="#" onClick={() => store.selectModel(d)}>
+                                                            {d.title}
                                                         </a>
+                                                        <span className="badge badge-primary badge-pill ml-2">
+                                                            {d.count}
+                                                        </span>
                                                     </li>
                                                 );
                                             })}
