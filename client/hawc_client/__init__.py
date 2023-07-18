@@ -1,3 +1,4 @@
+"""A client for the Health Assessment Workspace Collaborative (HAWC)."""
 from .animal import AnimalClient
 from .assessment import AssessmentClient
 from .client import BaseClient

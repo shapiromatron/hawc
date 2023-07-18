@@ -65,11 +65,6 @@ urlpatterns = [
         name="ref_visual",
     ),
     path(
-        "assessment/<int:pk>/references/topic-model/",
-        views.RefTopicModel.as_view(),
-        name="topic_model",
-    ),
-    path(
         "assessment/<int:pk>/references/search/",
         views.RefFilterList.as_view(),
         name="ref_search",

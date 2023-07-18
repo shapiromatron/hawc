@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
             field=models.TextField(
                 blank=True,
                 help_text="List the endpoint/adverse outcome name as used in the study. This will help during QA/QC of the extraction to the original study in cases where the endpoint/adverse outcome name is adjusted for consistency across studies or assessments.",
-                verbose_name="Endpoint Name in Study",
+                verbose_name="Diagnostic (as reported)",
             ),
         ),
         migrations.AlterField(

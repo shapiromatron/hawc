@@ -1,5 +1,0 @@
-recursive-include hawc *css *.js *.json *.jsonl *.html *.py *.tsv *.txt
-recursive-include hawc/refml/nltk_data *
-recursive-include hawc/static *
-recursive-include hawc/templates *
-global-exclude .DS_Store .gitkeep __pycache__

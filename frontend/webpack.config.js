@@ -37,13 +37,14 @@ module.exports = {
     output: {
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].js",
-        path: path.resolve("../hawc/static/bundles"),
+        path: path.resolve(__dirname, "../hawc/static/bundles"),
         publicPath: "/static/bundles/",
     },
 
     plugins: [
         new BundleTracker({
-            filename: "../hawc/webpack-stats.json",
+            path: path.resolve(__dirname, "../hawc"),
+            filename: "webpack-stats.json",
         }),
     ],
 
