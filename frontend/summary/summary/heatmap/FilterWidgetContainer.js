@@ -128,11 +128,8 @@ class FilterWidget extends Component {
         // If there are no results disable button
         if (modalRows.length == 0) {
             return (
-                <button
-                    style="padding-right: 0.67rem;"
-                    className="btn btn-sm float-right py-0 disabled"
-                    title="No additional information">
-                    <i className="fa fa-minus-square-o"></i>
+                <button className="btn btn-sm disabled" title="No additional information">
+                    <i className="fa fa-minus-square-o fa-fw"></i>
                 </button>
             );
         }
@@ -141,13 +138,13 @@ class FilterWidget extends Component {
         else if (modalRows.length == 1) {
             return (
                 <button
-                    className="btn btn-sm float-right py-0"
+                    className="btn btn-sm"
                     onClick={e => {
                         e.stopPropagation();
                         showModalOnRow(extension, modalRows[0]);
                     }}
                     title="View additional information">
-                    <i className="fa fa-external-link"></i>
+                    <i className="fa fa-external-link fa-fw"></i>
                 </button>
             );
         }
@@ -155,8 +152,8 @@ class FilterWidget extends Component {
         // If there are too many results disable button
         else {
             return (
-                <button className="btn btn-sm float-right py-0 disabled" title="Too many results">
-                    <i className="fa fa-external-link"></i>
+                <button className="btn btn-sm disabled" title="Too many results">
+                    <i className="fa fa-external-link fa-fw"></i>
                 </button>
             );
         }
