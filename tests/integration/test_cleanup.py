@@ -14,7 +14,7 @@ class TestCleanup(PlaywrightTestCase):
         )
         expect(page.locator("text=Cleanup Chemical Z")).to_be_visible()
 
-        page.locator("text=1 animal bioassay endpoints").click()
+        page.locator("text=animal bioassay endpoints").click()
         expect(page.locator("text=Cleanup Animal Bioassay Endpoints")).to_be_visible()
         page.locator("text=system").click()
 

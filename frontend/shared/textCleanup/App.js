@@ -63,9 +63,9 @@ class App extends Component {
             <div>
                 <h3>Cleanup {h.titleCase(store.selectedModel.title)}</h3>
                 {store.modelCleanupFields ? (
-                    <ul>
+                    <ul className="list-group">
                         {store.modelCleanupFields.map(field => (
-                            <li key={field}>
+                            <li className="list-group-item" key={field}>
                                 <a href="#" onClick={() => store.selectField(field)}>
                                     {field}
                                 </a>
