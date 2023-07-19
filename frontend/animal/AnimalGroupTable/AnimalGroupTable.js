@@ -24,7 +24,7 @@ const nRow = (endpoint, index) => {
             <tr key={`e-${id}`} className="previewModalParent">
                 <td>
                     <i
-                        className="float-right fa fa-fixed fa-eye previewModalIcon"
+                        className="float-right fa fa-fixed fa-external-link previewModalIcon"
                         onClick={() => endpoint.displayAsModal({complete: true})}></i>
                     <a href={url}>{name}</a>
                 </td>
