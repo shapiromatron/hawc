@@ -43,7 +43,6 @@ from ..common.views import (
     LoginRequiredMixin,
     MessageMixin,
     TimeSpentOnPageMixin,
-    beta_tester_required,
     create_object_log,
     get_referrer,
 )
@@ -800,20 +799,6 @@ class CleanStudyRoB(BaseDetail):
                 host=f"//{self.request.get_host()}",
             ),
         )
-
-
-# blog
-@method_decorator(beta_tester_required, name="dispatch")
-class BlogList(ListView):
-    model = models.Blog
-
-    def get_queryset(self):
-        return self.model.objects.filter(published=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Blog")
-        return context
 
 
 # log

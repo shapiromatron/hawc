@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
@@ -193,31 +192,6 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
             payload = fig.to_dict()
 
         return Response(payload)
-
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        url_path="topic-model",
-    )
-    def topic_model(self, request, pk):
-        assessment = self.get_object()
-        if assessment.literature_settings.has_topic_model:
-            data = assessment.literature_settings.get_topic_tsne_fig_dict()
-        else:
-            data = {"status": "No topic model available"}
-        return Response(data)
-
-    @action(
-        detail=True,
-        methods=("post",),
-        url_path="topic-model-request-refresh",
-        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
-    )
-    def topic_model_request_refresh(self, request, pk):
-        assessment = self.get_object()
-        assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
-        assessment.literature_settings.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,
