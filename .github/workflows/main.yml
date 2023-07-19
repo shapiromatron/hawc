@@ -43,6 +43,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: loc
+      if: github.ref == 'refs/heads/coverage'
       run: |
         sudo apt-get install -y cloc
         make loc
@@ -78,7 +79,18 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
           export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
         fi
-        py.test --vcr-record=none
+        if [ "$GITHUB_REF_NAME" == "coverage" ]; then
+          coverage run -m pytest --vcr-record=none
+          coverage html -d coverage_report
+        else
+          py.test --vcr-record=none
+        fi
+    - name: upload-coverage-report
+      uses: actions/upload-artifact@v3
+      if: github.ref == 'refs/heads/coverage'
+      with:
+        name: my-artifact
+        path: coverage_report/
 
   frontend:
     name: frontend
