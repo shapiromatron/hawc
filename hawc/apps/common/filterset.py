@@ -24,11 +24,11 @@ class PaginationFilter(df.ChoiceFilter):
         default_kwargs = dict(
             label="Items per page",
             choices=(
-                (25, "25"),
-                (50, "50"),
-                (100, "100"),
-                (250, "250"),
-                (500, "500"),
+                (25, "25 per page"),
+                (50, "50 per page"),
+                (100, "100 per page"),
+                (250, "250 per page"),
+                (500, "500 per page"),
             ),
             method=filter_noop,
         )
@@ -152,7 +152,7 @@ class FilterForm(forms.Form):
 
 class BaseFilterSet(df.FilterSet):
     def __init__(
-        self, data, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs
+        self, data=None, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs
     ):
         self.assessment = assessment
         if data is not None:
@@ -165,6 +165,10 @@ class BaseFilterSet(df.FilterSet):
         self.form_kwargs = form_kwargs or {}
         if "grid_layout" not in self.form_kwargs and hasattr(self.Meta, "grid_layout"):
             self.form_kwargs.update(grid_layout=self.Meta.grid_layout)
+        if "main_field" not in self.form_kwargs and hasattr(self.Meta, "main_field"):
+            self.form_kwargs.update(main_field=self.Meta.main_field)
+            if hasattr(self.Meta, "appended_fields"):
+                self.form_kwargs.update(appended_fields=self.Meta.appended_fields)
 
     @property
     def perms(self):
