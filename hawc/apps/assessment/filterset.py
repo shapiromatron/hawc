@@ -9,13 +9,13 @@ class AssessmentFilterset(BaseFilterSet):
     search = df.CharFilter(
         method="filter_search",
         label="Assessment Name/Year/Authors",
-        help_text="Filter by assessment name, year, authors, values, or project type",
+        help_text="Filter by assessment name, year, or project type",
     )
     role = df.ChoiceFilter(
         empty_label="Filter by role",
         method="filter_role",
         choices=[
-            ("project_manager", "Manager"),
+            ("project_manager", "Project Manager"),
             ("team_members", "Team Member"),
             ("reviewers", "Reviewer"),
         ],
@@ -36,11 +36,7 @@ class AssessmentFilterset(BaseFilterSet):
     class Meta:
         model = models.Assessment
         form = InlineFilterForm
-        fields = [
-            "search",
-            "role",
-            "order_by",
-        ]
+        fields = ("search", "role", "order_by")
 
     def filter_search(self, queryset, name, value):
         query = (
