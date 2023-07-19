@@ -6,8 +6,8 @@ from . import api, views
 
 router = SimpleRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"details", api.AssessmentDetailsViewSet, basename="assessment-details")
-router.register(r"value", api.AssessmentValuesViewSet, basename="assessment-value")
+router.register(r"details", api.AssessmentDetailsViewSet, basename="details")
+router.register(r"value", api.AssessmentValuesViewSet, basename="value")
 router.register(r"dataset", api.DatasetViewSet, basename="dataset")
 router.register(r"dsstox", api.DssToxViewSet, basename="dsstox")
 router.register(r"strain", api.StrainViewSet, basename="strain")

@@ -3,6 +3,8 @@ from django.conf import settings
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from hawc.apps.assessment import constants
+
 
 def has_redis():
     return "RedisCache" in settings.CACHES["default"]["BACKEND"]
@@ -106,13 +108,51 @@ class TestDssToxViewSet:
 
 @pytest.mark.django_db
 class TestAssessmentDetailsAndValues:
-    def test_permissions(self, db_keys):
+    def test_success(self, db_keys):
         client = APIClient()
         assert client.login(username="pm@hawcproject.org", password="pw") is True
+        details_data = {
+            "assessment_id": db_keys.assessment_working,
+            "project_status": constants.Status.SCOPING,
+            "peer_review_status": constants.PeerReviewType.NONE,
+        }
+        value_data = {
+            "assessment_id": db_keys.assessment_working,
+            "evaluation_type": constants.EvaluationType.CANCER,
+            "value_type": constants.ValueType.OTHER,
+            "uncertainty": constants.UncertaintyChoices.ONE,
+            "system": "Hepatic",
+            "value": 10,
+            "value_unit": "mg",
+        }
         # only project manager can create Assessment Values or Details
-        for url, code in [
-            (reverse("assessment:api:value"), 200),
-            (reverse("assessment:api:details"), 200),
+        for url, code, data in [
+            (reverse("assessment:api:value-list"), 201, value_data),
+            (reverse("assessment:api:details-list"), 201, details_data),
         ]:
-            resp = client.get(url)
+            resp = client.post(url, data, format="json")
+            assert resp.status_code == code
+
+    def test_bad_request(self, db_keys):
+        client = APIClient()
+        details_data = {
+            "assessment_id": db_keys.assessment_working,
+            "project_status": constants.Status.SCOPING,
+            "peer_review_status": constants.PeerReviewType.NONE,
+        }
+        value_data = {
+            "assessment_id": db_keys.assessment_working,
+            "evaluation_type": constants.EvaluationType.CANCER,
+            "value_type": constants.ValueType.OTHER,
+            "uncertainty": constants.UncertaintyChoices.ONE,
+            "system": "Hepatic",
+            "value": 10,
+            "value_unit": "mg",
+        }
+        # Anon not allowed to use the api
+        for url, code, data in [
+            (reverse("assessment:api:value-list"), 403, value_data),
+            (reverse("assessment:api:details-list"), 403, details_data),
+        ]:
+            resp = client.post(url, data, format="json")
             assert resp.status_code == code

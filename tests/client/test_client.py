@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
 from hawc.apps.animal.models import Experiment
+from hawc.apps.assessment import constants
 from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import (
     ComparisonSet,
@@ -274,6 +275,32 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.assessment.public()
         assert isinstance(response, list)
+
+    def test_assessment_values(self):
+        value_data = {
+            "assessment_id": 3,
+            "evaluation_type": constants.EvaluationType.CANCER,
+            "value_type": constants.ValueType.OTHER,
+            "uncertainty": constants.UncertaintyChoices.ONE,
+            "system": "Hepatic",
+            "value": 10,
+            "value_unit": "mg",
+        }
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.assessment.create_value(value_data)
+        assert isinstance(response, dict)
+
+    def test_assessment_details(self):
+        details_data = {
+            "assessment_id": 3,
+            "project_status": constants.Status.SCOPING,
+            "peer_review_status": constants.PeerReviewType.NONE,
+        }
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.assessment.create_details(details_data)
+        assert isinstance(response, dict)
 
     ###################
     # EpiClient tests #
