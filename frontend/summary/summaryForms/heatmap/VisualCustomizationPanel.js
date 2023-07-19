@@ -98,15 +98,15 @@ class VisualCustomizationPanel extends Component {
 
                 <div className="card">
                     <div className="card-body">
-                        <h4 className="card-title">Columns</h4>
-                        <AxisLabelTable settingsKey={"x_fields"} />
+                        <h4 className="card-title">Rows</h4>
+                        <AxisLabelTable settingsKey={"y_fields"} />
                     </div>
                 </div>
 
                 <div className="card">
                     <div className="card-body">
-                        <h4 className="card-title">Rows</h4>
-                        <AxisLabelTable settingsKey={"y_fields"} />
+                        <h4 className="card-title">Columns</h4>
+                        <AxisLabelTable settingsKey={"x_fields"} />
                     </div>
                 </div>
             </div>
