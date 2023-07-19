@@ -13,26 +13,25 @@ class FilterWidget extends Component {
     render() {
         const {widget, numWidgets} = this.props,
             {colorScale, maxValue} = this.props.store,
-            maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
-            {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
             {rows} = this.props.store.getTableData,
+            maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
+            _itemState = this.props.store._filterWidgetState[widget.column],
             allItems = _.keys(this.props.store.intersection[widget.column]),
-            availableItems = allItems.filter(item => {
-                let itemRows = [...this.props.store.intersection[widget.column][item]];
-                for (let itemRow of itemRows) {
-                    if (rows.includes(itemRow)) {
-                        return true;
-                    }
-                }
-                return false;
-            }),
-            itemStore = this.props.store.filterWidgetState[widget.column],
-            hiddenItems = _.chain(itemStore)
-                .keys()
-                .filter(d => itemStore[d] === false)
-                .value(),
+            items = _.sortedUniq(
+                (_.some(_.values(_itemState))
+                    ? allItems
+                    : allItems.filter(item => {
+                          let itemRows = [...this.props.store.intersection[widget.column][item]];
+                          for (let itemRow of itemRows) {
+                              if (rows.includes(itemRow)) {
+                                  return true;
+                              }
+                          }
+                          return false;
+                      })
+                ).sort()
+            ),
             filterWidgetExtension = this.props.store.extensions.filterWidgets[widget.column],
-            items = _.sortedUniq([...availableItems, ...hiddenItems].sort()),
             widgetTitle = widget.header ? widget.header : h.titleCase(widget.column);
 
         return (
@@ -46,26 +45,12 @@ class FilterWidget extends Component {
                     flexDirection: "column",
                 }}>
                 <div
-                    className="mb-1 p-1 pl-3"
+                    className="p-1 pl-3"
                     style={{
                         backgroundColor: colorScale(maxValue),
                         color: h.getTextContrastColor(colorScale(maxValue)),
                         flex: 0,
                     }}>
-                    <div className="btn-group float-right">
-                        <button
-                            className="btn btn-sm text-white"
-                            onClick={() => selectAllFilterWidget(widget.column)}
-                            title="Select all items">
-                            <i className="fa fa-lg fa-check-circle"></i>
-                        </button>
-                        <button
-                            className="btn btn-sm text-white"
-                            onClick={() => selectNoneFilterWidget(widget.column)}
-                            title="De-select all items">
-                            <i className="fa fa-lg fa-times-circle"></i>
-                        </button>
-                    </div>
                     <h4 className="m-0">{widgetTitle}</h4>
                 </div>
                 <div
@@ -73,47 +58,59 @@ class FilterWidget extends Component {
                         overflowY: "auto",
                         flex: 1,
                     }}>
-                    {items
-                        .sort()
-                        .map((item, index) =>
-                            this.renderItem(widget, item, index, itemStore, filterWidgetExtension)
-                        )}
+                    {items.map((item, index) =>
+                        this.renderItem(widget, item, index, _itemState, filterWidgetExtension)
+                    )}
                 </div>
             </div>
         );
     }
 
-    renderItem(widget, item, index, itemStore, filterWidgetExtension) {
-        const {toggleItemSelection, colorScale} = this.props.store,
+    renderItem(widget, item, index, _itemState, filterWidgetExtension) {
+        const {toggleItemSelection, colorScale, maxValue} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
-            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length;
+            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length,
+            isSelected = _itemState[item];
         return (
-            <div key={index}>
-                <label className="form-check font-weight-normal" role="button">
+            <div
+                key={index}
+                className="my-1"
+                style={{
+                    display: "flex",
+                    outline: isSelected ? `2px solid ${colorScale(maxValue)}` : undefined,
+                    outlineOffset: isSelected ? "-2px" : undefined,
+                    backgroundColor: isSelected ? colorScale(maxValue * 0.1) : undefined,
+                }}>
+                <label className="m-0 font-weight-normal" role="button" style={{flex: "1 1 auto"}}>
                     <input
-                        checked={itemStore[item]}
+                        className="hidden"
+                        checked={isSelected}
                         type="checkbox"
                         onChange={e => toggleItemSelection(widget.column, item, e.target.checked)}
                     />
-                    <div
-                        className="mx-1"
-                        style={{
-                            backgroundColor: colorScale(numItems),
-                            color: h.getTextContrastColor(colorScale(numItems)),
-                            display: "inline-flex",
-                            height: "1.5em",
-                            width: "2.5em",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}>
-                        <span>{numItems}</span>
+                    <div style={{display: "flex"}}>
+                        <div
+                            className="mr-1"
+                            style={{
+                                flex: "0 0 2.5em",
+                                display: "inline-flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: colorScale(numItems),
+                                color: h.getTextContrastColor(colorScale(numItems)),
+                                height: "1.5em",
+                            }}>
+                            <span>{numItems}</span>
+                        </div>
+                        <div style={{flex: "1 1 auto"}}>{item == "" ? h.nullString : item}</div>
                     </div>
-                    <span>{item == "" ? h.nullString : item}</span>
+                </label>
+                <span style={{flex: "0 0 min-content"}}>
                     {filterWidgetExtension && filterWidgetExtension.hasModal
                         ? this.renderButton(widget, item)
                         : null}
-                </label>
+                </span>
             </div>
         );
     }
@@ -130,41 +127,26 @@ class FilterWidget extends Component {
                 .uniqBy(row_key)
                 .sortBy(row_key)
                 .value();
-
-        // If there are no results disable button
-        if (modalRows.length == 0) {
+        // only show button if there's a single item
+        if (modalRows.length === 1) {
             return (
                 <button
-                    className="btn btn-sm float-right py-0 disabled"
-                    title="No additional information">
-                    <i className="fa fa-eye-slash"></i>
-                </button>
-            );
-        }
-
-        // If there is one result link it to the button
-        else if (modalRows.length == 1) {
-            return (
-                <button
-                    className="btn btn-sm float-right py-0"
+                    className="btn btn-sm"
                     onClick={e => {
                         e.stopPropagation();
                         showModalOnRow(extension, modalRows[0]);
                     }}
                     title="View additional information">
-                    <i className="fa fa-eye"></i>
+                    <i className="fa fa-fw fa-external-link"></i>
                 </button>
             );
         }
-
-        // If there are too many results disable button
-        else {
-            return (
-                <button className="btn btn-sm float-right py-0 disabled" title="Too many results">
-                    <i className="fa fa-eye"></i>
-                </button>
-            );
-        }
+        // show disabled button just to preserve layout
+        return (
+            <button className="btn btn-sm disabled" title="Disabled">
+                <i className="fa fa-fw"></i>
+            </button>
+        );
     }
 }
 FilterWidget.propTypes = {
