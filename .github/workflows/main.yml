@@ -35,21 +35,6 @@ jobs:
       with:
         python-version: '3.11'
         architecture: 'x64'
-    - name: loc
-      if: ${{github.ref_name == 'coverage'}}
-      run: |
-        echo $GITHUB_REF_NAME
-        if [ "$GITHUB_REF_NAME" == "coverage" ]; then
-          echo "yes"
-          #coverage run -m pytest --vcr-record=none
-          #coverage html -d coverage_report
-        else
-          echo "no"
-          #py.test --vcr-record=none
-        fi
-        #sudo apt-get install -y cloc
-        #make loc
-        exit 1
     - name: try to restore pip cache
       uses: actions/cache@v3
       with:
@@ -57,21 +42,6 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: loc
-      if: github.ref_name == 'coverage'
-      run: |
-        echo $GITHUB_REF_NAME
-        if [ "$GITHUB_REF_NAME" == "coverage" ]; then
-          echo "yes"
-          #coverage run -m pytest --vcr-record=none
-          #coverage html -d coverage_report
-        else
-          echo "no"
-          #py.test --vcr-record=none
-        fi
-        #sudo apt-get install -y cloc
-        #make loc
-        exit 1
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
@@ -104,15 +74,14 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
           export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
         fi
-        if [ "$GITHUB_REF_NAME" == "coverage" ]; then
-          coverage run -m pytest --vcr-record=none
-          coverage html -d coverage_report
-        else
-          py.test --vcr-record=none
-        fi
+        coverage run -m pytest --vcr-record=none
+        coverage html -d coverage_report
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        make loc
     - name: upload-coverage-report
       uses: actions/upload-artifact@v3
-      if: github.ref == 'refs/heads/coverage'
       with:
         name: my-artifact
         path: coverage_report/
