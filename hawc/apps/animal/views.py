@@ -412,7 +412,9 @@ class EndpointFilterList(BaseFilterList):
     def get_queryset(self):
         qs = super().get_queryset()
         form = self.filterset.form
-        dose_units = form.cleaned_data["dose_units"] or form.fields["dose_units"].queryset.first()
+        dose_units = (
+            form.cleaned_data.get("dose_units") or form.fields["dose_units"].queryset.first()
+        )
         return qs.select_related("animal_group__experiment__study").annotate_dose_values(dose_units)
 
     def get_context_data(self, **kwargs):
