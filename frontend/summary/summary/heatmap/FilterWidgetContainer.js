@@ -127,18 +127,8 @@ class FilterWidget extends Component {
                 .uniqBy(row_key)
                 .sortBy(row_key)
                 .value();
-
-        // If there are no results disable button
-        if (modalRows.length == 0) {
-            return (
-                <button className="btn btn-sm disabled" title="No additional information">
-                    <i className="fa fa-minus-square-o fa-fw"></i>
-                </button>
-            );
-        }
-
-        // If there is one result link it to the button
-        else if (modalRows.length == 1) {
+        // only show button if there's a single item
+        if (modalRows.length === 1) {
             return (
                 <button
                     className="btn btn-sm"
@@ -147,19 +137,16 @@ class FilterWidget extends Component {
                         showModalOnRow(extension, modalRows[0]);
                     }}
                     title="View additional information">
-                    <i className="fa fa-external-link fa-fw"></i>
+                    <i className="fa fa-fw fa-external-link"></i>
                 </button>
             );
         }
-
-        // If there are too many results disable button
-        else {
-            return (
-                <button className="btn btn-sm disabled" title="Too many results">
-                    <i className="fa fa-external-link fa-fw"></i>
-                </button>
-            );
-        }
+        // show disabled button just to preserve layout
+        return (
+            <button className="btn btn-sm disabled" title="Disabled">
+                <i className="fa fa-fw"></i>
+            </button>
+        );
     }
 }
 FilterWidget.propTypes = {

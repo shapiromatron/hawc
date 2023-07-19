@@ -233,9 +233,7 @@ class HeatmapDatastore {
         return _.mapValues(this._filterWidgetState, (items, column) => {
             return _.every(items, v => !v)
                 ? _.mapValues(items, () => true)
-                : _.mapValues(items, (visible, item) => {
-                      return visible;
-                  });
+                : _.mapValues(items, (visible, item) => visible);
         });
     }
 
