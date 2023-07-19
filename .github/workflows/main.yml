@@ -43,10 +43,20 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: loc
-      if: github.ref == 'refs/heads/coverage'
+      if: github.ref_name == 'coverage'
       run: |
-        sudo apt-get install -y cloc
-        make loc
+        echo $GITHUB_REF_NAME
+        if [ "$GITHUB_REF_NAME" == "coverage" ]; then
+          echo "yes"
+          #coverage run -m pytest --vcr-record=none
+          #coverage html -d coverage_report
+        else
+          echo "no"
+          #py.test --vcr-record=none
+        fi
+        #sudo apt-get install -y cloc
+        #make loc
+        exit 1
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
