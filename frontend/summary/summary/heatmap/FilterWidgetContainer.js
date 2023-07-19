@@ -70,19 +70,22 @@ class FilterWidget extends Component {
         const {toggleItemSelection, colorScale, maxValue} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
-            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length;
+            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length,
+            isSelected = _itemState[item];
         return (
             <div
                 key={index}
                 className="my-1"
                 style={{
                     display: "flex",
-                    border: _itemState[item] ? `1px solid ${colorScale(maxValue)}` : undefined,
+                    outline: isSelected ? `2px solid ${colorScale(maxValue)}` : undefined,
+                    outlineOffset: isSelected ? "-2px" : undefined,
+                    backgroundColor: isSelected ? colorScale(maxValue * 0.1) : undefined,
                 }}>
                 <label className="m-0 font-weight-normal" role="button" style={{flex: "1 1 auto"}}>
                     <input
                         className="hidden"
-                        checked={_itemState[item]}
+                        checked={isSelected}
                         type="checkbox"
                         onChange={e => toggleItemSelection(widget.column, item, e.target.checked)}
                     />

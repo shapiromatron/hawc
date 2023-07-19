@@ -14,7 +14,7 @@ const pillItems = function(text, delimiter) {
         .toString()
         .split(delimiter)
         .map((item, i) => (
-            <span key={i} className="badge badge-secondary" style={{marginRight: 3}}>
+            <span key={i} className="badge badge-secondary mr-1">
                 {item}
             </span>
         ));
