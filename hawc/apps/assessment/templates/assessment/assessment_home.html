@@ -23,10 +23,10 @@
 {% endblock content_outer %}
 
 {% block extrajs %}
-{% include "includes/hero_access.html" %}
-<script type="text/javascript">
-  $(document).ready(function(){
-    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
-  });
-</script>
+  {% include "includes/hero_access.html" %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+    });
+  </script>
 {% endblock extrajs %}
