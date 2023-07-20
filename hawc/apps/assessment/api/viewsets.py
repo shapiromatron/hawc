@@ -260,7 +260,7 @@ class Assessment(AssessmentViewSet):
 
     @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
-        queryset = self.model.objects.get_public_assessments()
+        queryset = self.model.objects.all().public()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 

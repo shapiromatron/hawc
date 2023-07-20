@@ -12,13 +12,11 @@ from ..common.models import BaseManager
 from . import constants
 
 
-class AssessmentManager(BaseManager):
-    assessment_relation = "id"
+class AssessmentQuerySet(QuerySet):
+    def public(self):
+        return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by("-year")
 
-    def get_public_assessments(self):
-        return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by("name")
-
-    def get_viewable_assessments(self, user, exclusion_id=None, public=False):
+    def user_can_view(self, user, exclusion_id=None, public=False):
         """
         Return queryset of all assessments which that user is able to view,
         optionally excluding assessment exclusion_id,
@@ -33,18 +31,6 @@ class AssessmentManager(BaseManager):
             filters |= Q(public_on__isnull=False) & Q(hide_from_public_page=False)
         return self.filter(filters).exclude(id=exclusion_id).distinct()
 
-    def get_editable_assessments(self, user, exclusion_id=None):
-        """
-        Return queryset of all assessments which that user is able to edit,
-        optionally excluding assessment exclusion_id,
-        not including public assessments
-        """
-        return (
-            self.filter(Q(project_manager=user) | Q(team_members=user))
-            .exclude(id=exclusion_id)
-            .distinct()
-        )
-
     def recent_public(self, n: int = 5) -> QuerySet:
         """Get recent public, published assessments
 
@@ -57,6 +43,13 @@ class AssessmentManager(BaseManager):
         return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by(
             "-public_on"
         )[:n]
+
+
+class AssessmentManager(BaseManager):
+    assessment_relation = "id"
+
+    def get_queryset(self):
+        return AssessmentQuerySet(self.model, using=self._db)
 
 
 class AttachmentManager(BaseManager):

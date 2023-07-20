@@ -22,12 +22,14 @@
                         {% endif %}
                     </div>
                 {% elif field|is_select and use_custom_control %}
-                    {{field.widget}}
-                    {% if field.errors %}
-                        {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
-                    {% else %}
-                        {% crispy_field field 'class' 'custom-select form-sm-field' %}
-                    {% endif %}
+                    <div title="{{field.help_text}}">
+                        {{field.widget}}
+                        {% if field.errors %}
+                            {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
+                        {% else %}
+                            {% crispy_field field 'class' 'custom-select form-sm-field' %}
+                        {% endif %}
+                    </div>
                 {% endif %}
             {% endfor %}
             <a role="button" class="btn btn-light d-flex flex-wrap align-content-center px-3" href="." title="Reset form"><span aria-hidden="true">&times;</span></a>
