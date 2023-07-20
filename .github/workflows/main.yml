@@ -76,16 +76,14 @@ jobs:
         fi
         coverage run -m pytest --vcr-record=none
         coverage html -d coverage_report
-        echo '# Python coverage report\n\n```text\n' >> $GITHUB_STEP_SUMMARY
-        coverage report >> $GITHUB_STEP_SUMMARY
-        echo '\n```\n\n' >> $GITHUB_STEP_SUMMARY
+        echo "# Python coverage report\\n\\n" >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        echo "\\n\\n" >> $GITHUB_STEP_SUMMARY
     - name: loc
       run: |
         sudo apt-get install -y cloc
-        echo '# Lines of code report'
-        echo '# Lines of code report\n\n```text\n' >> $GITHUB_STEP_SUMMARY
+        echo "# Lines of code report\\n\\n" >> $GITHUB_STEP_SUMMARY
         make loc >> $GITHUB_STEP_SUMMARY
-        echo '\n```\n\n' >> $GITHUB_STEP_SUMMARY
     - name: upload-coverage-report
       uses: actions/upload-artifact@v3
       with:
