@@ -67,7 +67,8 @@ class AlertWrapperNode(template.Node):
 @register.simple_tag(name="actions")
 def bs4_actions():
     return mark_safe(
-        '<div class="dropdown btn-group ml-auto align-self-start"><a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a><div class="dropdown-menu dropdown-menu-right">')
+        '<div class="dropdown btn-group ml-auto align-self-start"><a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a><div class="dropdown-menu dropdown-menu-right">'
+    )
 
 
 @register.simple_tag(name="endactions")
