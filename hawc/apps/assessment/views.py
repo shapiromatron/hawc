@@ -39,6 +39,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     CloseIfSuccessMixin,
+    FilterSetMixin,
     LoginRequiredMixin,
     MessageMixin,
     TimeSpentOnPageMixin,
@@ -46,7 +47,7 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
-from . import constants, forms, models, serializers
+from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +73,7 @@ class Home(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["recent_assessments"] = models.Assessment.objects.recent_public()
+        context["recent_assessments"] = models.Assessment.objects.all().recent_public()
         context["page"] = models.Content.rendered_page(
             models.ContentTypeChoices.HOMEPAGE, self.request, context
         )
@@ -289,9 +290,26 @@ class Error401(TemplateView):
 
 
 # Assessment Object
-class AssessmentList(LoginRequiredMixin, ListView):
+class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
     model = models.Assessment
     template_name = "assessment/assessment_home.html"
+    filterset_class = filterset.AssessmentFilterset
+    paginate_by = 50
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="search",
+            appended_fields=["role", "order_by"],
+            dynamic_fields=["search", "role", "order_by"],
+        )
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        id_list = self.request.user.assessment_pms.union(
+            self.request.user.assessment_reviewers.all(),
+            self.request.user.assessment_teams.all(),
+        ).values_list("id", flat=True)
+        return qs.filter(id__in=id_list)
 
     def get(self, request, *args, **kwargs):
         if settings.ACCEPT_LICENSE_REQUIRED and not self.request.user.license_v2_accepted:
@@ -305,57 +323,55 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class AssessmentFullList(ListView):
+class AssessmentFullList(FilterSetMixin, ListView):
     model = models.Assessment
-    form_class = forms.AssessmentFilterForm
+    filterset_class = filterset.AssessmentFilterset
     paginate_by = 50
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial)
-        return self.form.get_queryset(qs)
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="search",
+            appended_fields=["order_by"],
+            dynamic_fields=["search", "order_by"],
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context["breadcrumbs"] = Breadcrumb.build_crumbs(
-                self.request.user, "Public assessments"
-            )
-        else:
-            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
-        context["form"] = self.form
+        context.update(
+            breadcrumbs=Breadcrumb.build_crumbs(self.request.user, "All assessments"),
+            title="All assessments",
+            description="""View all assessments in HAWC. Only staff members can view this page.""",
+        )
         return context
 
 
-class AssessmentPublicList(ListView):
+class AssessmentPublicList(FilterSetMixin, ListView):
     model = models.Assessment
-    form_class = forms.AssessmentFilterForm
+    filterset_class = filterset.AssessmentFilterset
     paginate_by = 50
 
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="search",
+            appended_fields=["order_by"],
+            dynamic_fields=["search", "order_by"],
+        )
+
     def get_queryset(self):
-        qs = self.model.objects.get_public_assessments()
-        initial = self.request.GET if len(self.request.GET) > 0 else None  # bound vs unbound
-        self.form = self.form_class(data=initial)
-        return self.form.get_queryset(qs)
+        return super().get_queryset().public()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context["breadcrumbs"] = Breadcrumb.build_crumbs(
-                self.request.user, "Public assessments"
-            )
-        else:
-            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
-        context[
-            "desc"
-        ] = """
-            Publicly available assessments are below. Each assessment was conducted by an independent
-            team; details on the objectives and methodology applied are described in each assessment.
-            Data can also be downloaded for each individual assessment.
-        """
-        context["form"] = self.form
-        context["is_public_list"] = True
+        context.update(
+            breadcrumbs=Breadcrumb.build_crumbs(self.request.user, "Public assessments")
+            if self.request.user.is_authenticated
+            else [Breadcrumb.build_root(self.request.user)],
+            title="Public assessments",
+            description="""Publicly available assessments are below. Each assessment was conducted
+            by an independent team; details on the objectives and methodology applied are
+            described in each assessment. Data can also be downloaded for each individual
+            assessment.""",
+        )
         return context
 
 
