@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.http import (
     Http404,
     HttpRequest,
@@ -299,17 +299,9 @@ class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="search",
-            appended_fields=["role", "order_by"],
-            dynamic_fields=["search", "role", "order_by"],
+            appended_fields=["role", "published_status", "order_by"],
+            dynamic_fields=["search", "role", "published_status", "order_by"],
         )
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        id_list = self.request.user.assessment_pms.union(
-            self.request.user.assessment_reviewers.all(),
-            self.request.user.assessment_teams.all(),
-        ).values_list("id", flat=True)
-        return qs.filter(id__in=id_list)
 
     def get(self, request, *args, **kwargs):
         if settings.ACCEPT_LICENSE_REQUIRED and not self.request.user.license_v2_accepted:
@@ -317,20 +309,16 @@ class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        user = self.request.user
         return (
             super()
             .get_queryset()
-            .filter(Q(project_manager=user) | Q(team_members=user) | Q(reviewers=user))
-            .prefetch_related("project_manager", "team_members", "reviewers")
-            .distinct()
-            .order_by("-year", "-id")
+            .user_can_view(self.request.user)
+            .with_public_status()
+            .with_role(self.request.user)
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        for assessment in context["object_list"]:
-            assessment.role_cached = assessment.role(self.request.user)
         context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         return context
 
@@ -344,14 +332,18 @@ class AssessmentFullList(FilterSetMixin, ListView):
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="search",
-            appended_fields=["order_by"],
-            dynamic_fields=["search", "order_by"],
+            appended_fields=["published_status", "order_by"],
+            dynamic_fields=["search", "published_status", "order_by"],
         )
+
+    def get_queryset(self):
+        return super().get_queryset().with_public_status().with_role(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
             breadcrumbs=Breadcrumb.build_crumbs(self.request.user, "All assessments"),
+            table_fragment="assessment/fragments/assessment_list_team.html",
             title="All assessments",
             description="""View all assessments in HAWC. Only staff members can view this page.""",
         )
@@ -379,6 +371,7 @@ class AssessmentPublicList(FilterSetMixin, ListView):
             breadcrumbs=Breadcrumb.build_crumbs(self.request.user, "Public assessments")
             if self.request.user.is_authenticated
             else [Breadcrumb.build_root(self.request.user)],
+            table_fragment="assessment/fragments/assessment_list_public.html",
             title="Public assessments",
             description="""Publicly available assessments are below. Each assessment was conducted
             by an independent team; details on the objectives and methodology applied are

@@ -3,6 +3,7 @@ from django.db.models import Q
 
 from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import models
+from .constants import PublishedStatus
 
 
 class AssessmentFilterset(BaseFilterSet):
@@ -12,7 +13,7 @@ class AssessmentFilterset(BaseFilterSet):
         help_text="Search by name, year, chemical, or project type",
     )
     role = df.ChoiceFilter(
-        empty_label="Filter by role",
+        empty_label="Role",
         method="filter_role",
         choices=[
             ("project_manager", "Project Manager"),
@@ -21,6 +22,13 @@ class AssessmentFilterset(BaseFilterSet):
         ],
         label="Role",
         help_text="Filter by your role for an assessment.",
+    )
+    published_status = df.ChoiceFilter(
+        empty_label="Published",
+        method="filter_published_status",
+        choices=PublishedStatus.choices,
+        label="Published",
+        help_text="Published status of assessment.",
     )
     order_by = df.OrderingFilter(
         fields=(
@@ -54,3 +62,6 @@ class AssessmentFilterset(BaseFilterSet):
 
     def filter_role(self, queryset, name, value):
         return queryset.filter(**{value: self.request.user}).distinct()
+
+    def filter_published_status(self, queryset, name, value):
+        return queryset.with_public_status().filter(public_status=value)

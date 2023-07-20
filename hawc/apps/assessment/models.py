@@ -469,22 +469,6 @@ class Assessment(models.Model):
         """
         return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
 
-    def role(self, user):
-        if user in self.project_manager.all():
-            return "Project Manager"
-        elif user in self.team_members.all():
-            return "Team Member"
-        elif user in self.reviewers.all():
-            return "Reviewer"
-        else:
-            return "No Role"
-
-    def public_status(self):
-        if self.public_on is not None:
-            return "Unlisted" if self.hide_from_public_page else "Public"
-        else:
-            return "Private"
-
     @property
     def has_lit_data(self) -> bool:
         return self._has_data("lit", "Reference", filter="assessment")
