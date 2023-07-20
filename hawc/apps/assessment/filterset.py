@@ -8,8 +8,8 @@ from . import models
 class AssessmentFilterset(BaseFilterSet):
     search = df.CharFilter(
         method="filter_search",
-        label="Assessment Name/Year/Authors",
-        help_text="Filter by assessment name, year, or project type",
+        label="Search",
+        help_text="Search by name, year, chemical, or project type",
     )
     role = df.ChoiceFilter(
         empty_label="Filter by role",
@@ -45,14 +45,12 @@ class AssessmentFilterset(BaseFilterSet):
             | Q(authors__unaccent__icontains=value)
             | Q(cas__icontains=value)
             | Q(dtxsids__dtxsid__icontains=value)
+            | Q(dtxsids__content__casrn=value)
+            | Q(dtxsids__content__preferredName__icontains=value)
             | Q(details__project_type__icontains=value)
             | Q(details__report_id__icontains=value)
-            | Q(values__value_unit__icontains=value)
-            | Q(values__extra__icontains=value)
-            | Q(values__system__icontains=value)
         )
         return queryset.filter(query).distinct()
 
     def filter_role(self, queryset, name, value):
-        queryset = queryset.filter(**{f"{value}__id__exact": self.request.user.pk})
-        return queryset.distinct()
+        return queryset.filter(**{value: self.request.user}).distinct()

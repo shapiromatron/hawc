@@ -73,7 +73,7 @@ class Home(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["recent_assessments"] = models.Assessment.objects.recent_public()
+        context["recent_assessments"] = models.Assessment.objects.all().recent_public()
         context["page"] = models.Content.rendered_page(
             models.ContentTypeChoices.HOMEPAGE, self.request, context
         )
@@ -331,18 +331,17 @@ class AssessmentFullList(FilterSetMixin, ListView):
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="search",
-            appended_fields=["role", "order_by"],
-            dynamic_fields=["search", "role", "order_by"],
+            appended_fields=["order_by"],
+            dynamic_fields=["search", "order_by"],
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context["breadcrumbs"] = Breadcrumb.build_crumbs(
-                self.request.user, "Public assessments"
-            )
-        else:
-            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        context.update(
+            breadcrumbs=Breadcrumb.build_crumbs(self.request.user, "All assessments"),
+            title="All assessments",
+            description="""View all assessments in HAWC. Only staff members can view this page.""",
+        )
         return context
 
 
@@ -359,25 +358,20 @@ class AssessmentPublicList(FilterSetMixin, ListView):
         )
 
     def get_queryset(self):
-        qs = self.model.objects.get_public_assessments()
-        return super().get_queryset().filter(pk__in=qs)
+        return super().get_queryset().public()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context["breadcrumbs"] = Breadcrumb.build_crumbs(
-                self.request.user, "Public assessments"
-            )
-        else:
-            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
-        context[
-            "desc"
-        ] = """
-            Publicly available assessments are below. Each assessment was conducted by an independent
-            team; details on the objectives and methodology applied are described in each assessment.
-            Data can also be downloaded for each individual assessment.
-        """
-        context["is_public_list"] = True
+        context.update(
+            breadcrumbs=Breadcrumb.build_crumbs(self.request.user, "Public assessments")
+            if self.request.user.is_authenticated
+            else [Breadcrumb.build_root(self.request.user)],
+            title="Public assessments",
+            description="""Publicly available assessments are below. Each assessment was conducted
+            by an independent team; details on the objectives and methodology applied are
+            described in each assessment. Data can also be downloaded for each individual
+            assessment.""",
+        )
         return context
 
 
