@@ -297,117 +297,114 @@ class Assessment(AssessmentViewSet):
                 }
             )
 
+        # study
+        add_item(
+            "Study",
+            apps.get_model("study", "Study").objects.get_qs(instance.id).count(),
+            "Studies",
+            reverse("study:api:study-cleanup-list"),
+            "Study",
+        )
+
         # animal
         add_item(
             "Bioassay",
+            apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count(),
+            "Experiments",
+            reverse("animal:api:experiment-cleanup-list"),
+            "Experiment",
+        )
+        add_item(
+            "Bioassay",
+            apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count(),
+            "Animal Groups",
+            reverse("animal:api:animal_group-cleanup-list"),
+            "AnimalGroup",
+        )
+        add_item(
+            "Bioassay",
+            apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count(),
+            "Dosing Regimes",
+            reverse("animal:api:dosingregime-cleanup-list"),
+            "AnimalGroup",
+        )
+        add_item(
+            "Bioassay",
             instance.endpoint_count,
-            "animal bioassay endpoints",
+            "Endpoints",
             reverse("animal:api:endpoint-cleanup-list"),
             "Endpoint",
         )
 
-        add_item(
-            "Bioassay",
-            apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count(),
-            "animal bioassay experiments",
-            reverse("animal:api:experiment-cleanup-list"),
-            "Experiment",
-        )
-
-        add_item(
-            "Bioassay",
-            apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count(),
-            "animal bioassay animal groups",
-            reverse("animal:api:animal_group-cleanup-list"),
-            "AnimalGroup",
-        )
-
-        add_item(
-            "Bioassay",
-            apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count(),
-            "animal bioassay dosing regimes",
-            reverse("animal:api:dosingregime-cleanup-list"),
-            "AnimalGroup",
-        )
-
         # epi
         add_item(
-            "Epi",
-            instance.outcome_count,
-            "epidemiological outcomes assessed",
-            reverse("epi:api:outcome-cleanup-list"),
-            "Outcome",
-        )
-
-        add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epi", "StudyPopulation").objects.get_qs(instance.id).count(),
-            "epi study populations",
+            "Study Populations",
             reverse("epi:api:studypopulation-cleanup-list"),
             "StudyPopulation",
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count(),
-            "epi exposures",
+            "Exposures",
             reverse("epi:api:exposure-cleanup-list"),
             "Exposure",
         )
-
+        add_item(
+            "Epidemiology",
+            instance.outcome_count,
+            "Outcomes",
+            reverse("epi:api:outcome-cleanup-list"),
+            "Outcome",
+        )
         # epiv2
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "Design").objects.get_qs(instance.id).count(),
-            "epi study populations",
+            "Study Populations",
             reverse("epiv2:api:design-cleanup-list"),
             None,
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "Chemical").objects.get_qs(instance.id).count(),
-            "epi chemicals",
+            "Chemicals",
             reverse("epiv2:api:chemical-cleanup-list"),
             None,
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "Exposure").objects.get_qs(instance.id).count(),
-            "epi exposures",
+            "Exposures",
             reverse("epiv2:api:exposure-cleanup-list"),
             None,
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "ExposureLevel").objects.get_qs(instance.id).count(),
-            "epi exposure levels",
+            "Exposure Levels",
             reverse("epiv2:api:exposure-level-cleanup-list"),
             None,
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "Outcome").objects.get_qs(instance.id).count(),
-            "epidemiological outcomes assessed",
+            "Outcomes",
             reverse("epiv2:api:outcome-cleanup-list"),
             None,
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "AdjustmentFactor").objects.get_qs(instance.id).count(),
-            "epi adjustment factors",
+            "Adjustment Factors",
             reverse("epiv2:api:adjustment-factor-cleanup-list"),
             None,
         )
-
         add_item(
-            "Epi",
+            "Epidemiology",
             apps.get_model("epiv2", "DataExtraction").objects.get_qs(instance.id).count(),
-            "epi data extractions",
+            "Data Extractions",
             reverse("epiv2:api:data-extraction-cleanup-list"),
             None,
         )
@@ -415,27 +412,17 @@ class Assessment(AssessmentViewSet):
         # in vitro
         add_item(
             "In Vitro",
-            instance.ivendpoint_count,
-            "in vitro endpoints",
-            reverse("invitro:api:ivendpoint-cleanup-list"),
-            "IVEndpoint",
-        )
-
-        add_item(
-            "In Vitro",
             apps.get_model("invitro", "ivchemical").objects.get_qs(instance.id).count(),
-            "in vitro chemicals",
+            "Chemicals",
             reverse("invitro:api:ivchemical-cleanup-list"),
             "IVChemical",
         )
-
-        # study
         add_item(
-            "Study",
-            apps.get_model("study", "Study").objects.get_qs(instance.id).count(),
-            "studies",
-            reverse("study:api:study-cleanup-list"),
-            "Study",
+            "In Vitro",
+            instance.ivendpoint_count,
+            "Endpoints",
+            reverse("invitro:api:ivendpoint-cleanup-list"),
+            "IVEndpoint",
         )
 
         return Response({"name": instance.name, "id": instance.id, "items": items})

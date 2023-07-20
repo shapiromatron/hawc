@@ -23,7 +23,7 @@ class GroupedObject extends Component {
                     &nbsp;{store.currentValue || "<empty>"} ({store.objects.length})
                 </span>
                 <span className="form-group col-md-5">
-                    <input
+                    <textarea
                         name={store.fieldName}
                         className="form-control"
                         type="text"

@@ -99,16 +99,16 @@ class App extends Component {
                                             .filter(item => item.count > 0)
                                             .map(d => {
                                                 return (
-                                                    <li className="list-group-item" key={d.title}>
-                                                        <a
-                                                            href="#"
-                                                            onClick={() => store.selectModel(d)}>
-                                                            {d.title}
-                                                        </a>
+                                                    <a
+                                                        className="list-group-item list-group-item-action"
+                                                        key={d.title}
+                                                        href="#"
+                                                        onClick={() => store.selectModel(d)}>
+                                                        {d.title}
                                                         <span className="badge badge-primary badge-pill ml-2">
                                                             {d.count}
                                                         </span>
-                                                    </li>
+                                                    </a>
                                                 );
                                             })}
                                     </ul>

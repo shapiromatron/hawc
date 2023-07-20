@@ -261,7 +261,6 @@ class Exposure(models.Model):
 
     TEXT_CLEANUP_FIELDS = (
         "name",
-        "measurement_type",
         "measurement_timing",
     )
 
