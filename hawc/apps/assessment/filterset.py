@@ -25,7 +25,7 @@ class AssessmentFilterset(BaseFilterSet):
     )
     published_status = df.ChoiceFilter(
         empty_label="Published",
-        method="filter_published_status",
+        method="filter_published",
         choices=PublishedStatus.choices,
         label="Published",
         help_text="Published status of assessment.",
@@ -63,5 +63,5 @@ class AssessmentFilterset(BaseFilterSet):
     def filter_role(self, queryset, name, value):
         return queryset.filter(**{value: self.request.user}).distinct()
 
-    def filter_published_status(self, queryset, name, value):
-        return queryset.with_public_status().filter(public_status=value)
+    def filter_published(self, queryset, name, value):
+        return queryset.with_published().filter(published=value)

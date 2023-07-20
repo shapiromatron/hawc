@@ -44,17 +44,17 @@ class AssessmentQuerySet(QuerySet):
             "-public_on"
         )[:n]
 
-    def with_public_status(self) -> QuerySet:
+    def with_published(self) -> QuerySet:
         return self.annotate(
-            public_status=Case(
-                When(public_on__isnull=True, then=Value("Private")),
+            published=Case(
+                When(public_on__isnull=True, then=Value(constants.PublishedStatus.PRIVATE)),
                 When(
                     Q(public_on__isnull=False) & Q(hide_from_public_page=False),
-                    then=Value("Public"),
+                    then=Value(constants.PublishedStatus.PUBLIC),
                 ),
                 When(
                     Q(public_on__isnull=False) & Q(hide_from_public_page=True),
-                    then=Value("Unlisted"),
+                    then=Value(constants.PublishedStatus.UNLISTED),
                 ),
                 default=Value("???"),
             )
@@ -63,12 +63,10 @@ class AssessmentQuerySet(QuerySet):
     def with_role(self, user) -> QuerySet:
         return self.annotate(
             user_role=Case(
-                When(
-                    project_manager=user, then=Value(constants.AssessmentRole.PROJECT_MANAGER.value)
-                ),
-                When(team_members=user, then=Value(constants.AssessmentRole.TEAM_MEMBER.value)),
-                When(reviewers=user, then=Value(constants.AssessmentRole.REVIEWER.value)),
-                default=Value(constants.AssessmentRole.NO_ROLE.value),
+                When(project_manager=user, then=Value(constants.AssessmentRole.PROJECT_MANAGER)),
+                When(team_members=user, then=Value(constants.AssessmentRole.TEAM_MEMBER)),
+                When(reviewers=user, then=Value(constants.AssessmentRole.REVIEWER)),
+                default=Value(constants.AssessmentRole.NO_ROLE),
             )
         )
 

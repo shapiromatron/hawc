@@ -313,7 +313,7 @@ class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
             super()
             .get_queryset()
             .user_can_view(self.request.user)
-            .with_public_status()
+            .with_published()
             .with_role(self.request.user)
         )
 
@@ -337,7 +337,7 @@ class AssessmentFullList(FilterSetMixin, ListView):
         )
 
     def get_queryset(self):
-        return super().get_queryset().with_public_status().with_role(self.request.user)
+        return super().get_queryset().with_published().with_role(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
