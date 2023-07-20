@@ -64,6 +64,17 @@ class AlertWrapperNode(template.Node):
         return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
 
 
+@register.simple_tag(name="actions")
+def bs4_actions():
+    return mark_safe(
+        '<div class="dropdown btn-group ml-auto align-self-start"><a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a><div class="dropdown-menu dropdown-menu-right">')
+
+
+@register.simple_tag(name="endactions")
+def bs4_endactions():
+    return mark_safe("</div></div>")
+
+
 _plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
 
 
