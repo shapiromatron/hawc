@@ -23,7 +23,6 @@ class Design(models.Model):
     study_name = models.CharField(
         max_length=128,
         blank=True,
-        null=True,
         verbose_name="Study name (if applicable)",
         help_text="Study name assigned by authors. Typically available for cohorts.",
     )
@@ -347,7 +346,7 @@ class ExposureLevel(models.Model):
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
-    units = models.CharField(max_length=128, blank=True, null=True)
+    units = models.CharField(max_length=128, blank=True)
     ci_lcl = NumericTextField(
         max_length=16,
         blank=True,
