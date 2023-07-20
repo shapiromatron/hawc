@@ -89,18 +89,28 @@ class StudyFilterSet(BaseFilterSet):
 
 
 class StudyByChemicalFilterSet(df.FilterSet):
-    query = df.CharFilter(method="filter_chemical", label="Query", required=True)
     published = df.BooleanFilter(method="filter_published")
+    query = df.CharFilter(method="filter_chemical", label="Query", required=True)
+
+    def filter_published(self, queryset, name, value):
+        if value is True:
+            return queryset.filter(published=True)
+        else:
+            return queryset.filter(published=False)
 
     def filter_chemical(self, queryset, name, value):
         # bioassay
-        qs1 = queryset.all().filter(
-            Q(experiments__chemical__icontains=value)
-            | Q(experiments__cas=value)
-            | Q(experiments__dtxsid__dtxsid=value)
-            | Q(experiments__dtxsid__content__preferredName__icontains=value)
-            | Q(experiments__dtxsid__content__casrn=value)
-        ).annotate()
+        qs1 = (
+            queryset.all()
+            .filter(
+                Q(experiments__chemical__icontains=value)
+                | Q(experiments__cas=value)
+                | Q(experiments__dtxsid__dtxsid=value)
+                | Q(experiments__dtxsid__content__preferredName__icontains=value)
+                | Q(experiments__dtxsid__content__casrn=value)
+            )
+            .annotate()
+        )
         # epi
         qs2 = queryset.all().filter(
             Q(study_populations__exposures__name__icontains=value)
@@ -123,10 +133,5 @@ class StudyByChemicalFilterSet(df.FilterSet):
             | Q(ivchemicals__dtxsid__content__preferredName__icontains=value)
             | Q(ivchemicals__dtxsid__content__casrn=value)
         )
-        return qs1.union(qs2, qs3, qs4)
-
-    def filter_published(self, queryset, name, value):
-        if value is True:
-            return queryset.filter(study__published=True)
-        else:
-            return queryset.filter(study__published=False)
+        ids = qs1.union(qs2, qs3, qs4)
+        return queryset.all().filter(id__in=ids.values("id")) #allows filtering after union

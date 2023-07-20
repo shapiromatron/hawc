@@ -3,8 +3,10 @@ from zipfile import BadZipFile
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
+from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.db import transaction
+from django.db.models import Case, Count, Exists, OuterRef, Q, Value, When
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -25,7 +27,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, filterset, models, serializers
+from . import constants, exports, filterset, models, serializers
 
 
 class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
@@ -424,3 +426,116 @@ class ReferenceViewSet(
         )
         instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
         return Response({"status": "ok"})
+
+
+class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
+    "Global search of all references, across assessments."
+
+    permission_classes = (permissions.IsAdminUser,)
+    serializer_class = UnusedSerializer
+    model = models.Reference
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    @action(
+        detail=False,
+        url_path=r"(?P<id>[\d]+)/type/(?P<type>[\d])",
+        renderer_classes=PandasRenderers,
+    )
+    def reference(self, request, id: int, type: str):
+        try:
+            type = int(type)
+            id = int(id)
+        except ValueError:
+            raise ValueError("'type' and 'id' must be integers. Using type '1' for PubMed and '2' for HERO.")
+        choices = (constants.ReferenceDatabase.HERO.value, constants.ReferenceDatabase.PUBMED.value)
+        if type not in choices:
+            raise ValidationError(
+                f"'type' must be either {choices[0]} (for HERO), or {choices[1]} (for PubMed)."
+            )
+
+        model_fields = [
+            "id",
+            "title",
+            "authors_short",
+            "external_ids",
+            "assessment",
+            "assessment__name",
+            "assessment__dtxsids",
+            "assessment__cas",
+            "assessment_status",
+            "study",
+            "study__short_citation",
+            "study__published",
+            "num_robs",
+            "study__bioassay",
+            "study__epi",
+            "study__epi_meta",
+            "study__in_vitro",
+            "study__eco",
+            "num_tags",
+            "num_user_tags",
+        ]
+        column_names = [
+            "HAWC ID",
+            "Title",
+            "Authors",
+            "External IDs",
+            "Assessment ID",
+            "Assessment Name",
+            "Assessment DTXSIDs",
+            "Assessment CAS",
+            "Assessment Status",
+            "Study ID",
+            "Study Citation",
+            "Study Published",
+            "Study Risk of Bias Analysis Count",
+            "Study Bioassay",
+            "Study Epidemiological",
+            "Study Epi/Meta",
+            "Study In Vitro",
+            "Study Ecology",
+            "Reference Tags Count",
+            "Reference User Tags Count",
+        ]
+        ids = models.Identifiers.objects.filter(
+            references=OuterRef("pk"),
+            unique_id=id,
+            database=type,
+        )
+
+        qs = (
+            self.get_queryset()
+            .select_related("study")
+            .prefetch_related("identifiers", "tags")
+            .filter(Exists(ids)) #Exists keeps other Identifiers for export
+            .annotate(
+                num_tags=Count("tags"),
+                num_user_tags=Count("user_tags"),
+                num_robs=Count("study__riskofbiases"),
+                external_ids=StringAgg("identifiers__unique_id", delimiter=", ", distinct=True),
+                assessment__dtxsids=StringAgg("assessment__dtxsids", delimiter=", ", distinct=True),
+                assessment_status=Case(
+                    When(assessment__public_on__isnull=True, then=Value("private")),
+                    When(
+                        Q(assessment__public_on__isnull=False)
+                        & Q(assessment__hide_from_public_page=False),
+                        then=Value("public"),
+                    ),
+                    When(
+                        Q(assessment__public_on__isnull=False)
+                        & Q(assessment__hide_from_public_page=True),
+                        then=Value("unlisted"),
+                    ),
+                ),
+            )
+            .values_list(*model_fields)
+        )
+
+        df = pd.DataFrame(list(qs), columns=column_names)
+        export = FlatExport(
+            df=df,
+            filename=f"global-reference-data-{constants.ReferenceDatabase(type).label}_ID-{id}",
+        )
+        return Response(export)

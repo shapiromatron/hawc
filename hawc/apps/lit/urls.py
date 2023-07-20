@@ -6,6 +6,7 @@ from . import api, views
 router = SimpleRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewSet, basename="assessment")
 router.register(r"reference", api.ReferenceViewSet, basename="reference")
+router.register(r"reference-search", api.ReferenceIDSearchViewSet, basename="reference-search")
 router.register(r"search", api.SearchViewSet, basename="search")
 router.register(r"tags", api.ReferenceFilterTagViewSet, basename="tags")
 router.register(r"reference-cleanup", api.ReferenceCleanupViewSet, basename="reference-cleanup")

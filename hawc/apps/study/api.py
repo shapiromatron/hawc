@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Case, Q, Value, When
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -111,13 +112,27 @@ class StudySearchViewSet(viewsets.GenericViewSet):
     model = models.Study
 
     def get_queryset(self):
-        return self.model.objects.all()
+        return self.model.objects.all().prefetch_related("assessment")
 
     @action(detail=False)
     def chemical(self, request):
         """Search by chemical"""
         fs = filterset.StudyByChemicalFilterSet(request.GET, queryset=self.get_queryset())
-        qs = fs.qs.order_by("assessment_id", "id")
+        qs = fs.qs.annotate(
+            assessment_status=Case(
+                When(assessment__public_on__isnull=True, then=Value("private")),
+                When(
+                    Q(assessment__public_on__isnull=False)
+                    & Q(assessment__hide_from_public_page=False),
+                    then=Value("public"),
+                ),
+                When(
+                    Q(assessment__public_on__isnull=False)
+                    & Q(assessment__hide_from_public_page=True),
+                    then=Value("unlisted"),
+                ),
+            )
+        ).order_by("assessment_id", "id")
         page = self.paginate_queryset(qs)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

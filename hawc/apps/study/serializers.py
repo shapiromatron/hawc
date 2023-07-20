@@ -172,6 +172,19 @@ SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
 
 
 class GlobalStudySerializer(serializers.ModelSerializer):
+    assessment_creator = serializers.EmailField(source="assessment.creator.email")
+    assessment_name = serializers.CharField(source="assessment.name")
+    assessment_status = serializers.CharField()
+
     class Meta:
         model = models.Study
-        fields = ["assessment_id", "id", "short_citation"]
+        fields = [
+            "id",
+            "title",
+            "short_citation",
+            "published",
+            "assessment_id",
+            "assessment_name",
+            "assessment_creator",
+            "assessment_status",
+        ]
