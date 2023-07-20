@@ -57,6 +57,7 @@ loc: ## Generate lines of code report
 		--exclude-ext=json,yaml,svg,toml,ini \
 		--vcs=git \
 		--counted loc-files.txt \
+		--md \
 		.
 
 lint: lint-py lint-js  ## Check formatting issues
