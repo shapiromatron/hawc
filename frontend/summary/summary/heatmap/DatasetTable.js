@@ -14,7 +14,7 @@ const pillItems = function(text, delimiter) {
         .toString()
         .split(delimiter)
         .map((item, i) => (
-            <span key={i} className="badge badge-secondary" style={{marginRight: 3}}>
+            <span key={i} className="badge badge-secondary mr-1">
                 {item}
             </span>
         ));
@@ -45,7 +45,7 @@ class InteractiveCell extends Component {
                         className="btn btn-sm float-right"
                         onClick={() => store.showModalOnRow(extension, row)}
                         title="View additional information">
-                        <i className="fa fa-eye"></i>
+                        <i className="fa fa-external-link"></i>
                     </button>
                 ) : null}
             </td>
