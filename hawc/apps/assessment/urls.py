@@ -9,7 +9,6 @@ router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dataset", api.DatasetViewSet, basename="dataset")
 router.register(r"dsstox", api.DssToxViewSet, basename="dsstox")
 router.register(r"strain", api.StrainViewSet, basename="strain")
-router.register(r"search", api.AssessmentSearchViewSet, basename="search")
 
 
 app_name = "assessment"

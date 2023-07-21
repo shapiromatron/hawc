@@ -2,7 +2,7 @@ from pathlib import Path
 
 from django.apps import apps
 from django.db import transaction
-from django.db.models import Case, Count, Model, Q, Value, When
+from django.db.models import Count, Model
 from django.http import Http404
 from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
@@ -28,32 +28,6 @@ from .serializers import GlobalChemicalsSerializer
 
 # all http methods except PUT
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
-
-
-class AssessmentSearchViewSet(viewsets.ViewSet):
-    """Global search of all assessments, across assessments."""
-
-    permission_classes = (permissions.IsAdminUser,)
-
-    @action(detail=False)
-    def chemical(self, request):
-        queryset = models.Assessment.objects.all().prefetch_related("dtxsids")
-        filterset = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
-        qs = filterset.qs.annotate(
-            assessment_status=Case(
-                When(public_on__isnull=True, then=Value("private")),
-                When(
-                    Q(public_on__isnull=False) & Q(hide_from_public_page=False),
-                    then=Value("public"),
-                ),
-                When(
-                    Q(public_on__isnull=False) & Q(hide_from_public_page=True),
-                    then=Value("unlisted"),
-                ),
-            )
-        )
-        serializer = GlobalChemicalsSerializer(qs, many=True)
-        return Response(serializer.data)
 
 
 class CleanupFieldsBaseViewSet(
@@ -459,6 +433,15 @@ class Assessment(AssessmentViewSet):
         serializer = AssessmentAuditSerializer.from_drf(data=dict(assessment=instance, type=type))
         export = serializer.export()
         return Response(export)
+
+    @action(detail=False, permission_classes=(permissions.IsAdminUser,))
+    def chemical(self, request):
+        """Global chemical search, across all assessments."""
+        queryset = models.Assessment.objects.all().prefetch_related("dtxsids")
+        filterset = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
+        qs = filterset.qs.with_published()
+        serializer = GlobalChemicalsSerializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class DatasetViewSet(AssessmentViewSet):

@@ -134,4 +134,4 @@ class StudyByChemicalFilterSet(df.FilterSet):
             | Q(ivchemicals__dtxsid__content__casrn=value)
         )
         ids = qs1.union(qs2, qs3, qs4)
-        return queryset.all().filter(id__in=ids.values("id")) #allows filtering after union
+        return queryset.all().filter(id__in=ids.values("id"))  # allows filtering after union

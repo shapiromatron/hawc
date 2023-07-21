@@ -108,7 +108,7 @@ class TestDssToxViewSet:
 class TestAssessmentSearchViewSet:
     def test_chemical(self):
         client = APIClient()
-        url = reverse("assessment:api:search-chemical")
+        url = reverse("assessment:api:assessment-chemical")
 
         response = client.get(url)
         assert response.status_code == 403

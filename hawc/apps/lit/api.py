@@ -448,7 +448,9 @@ class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
             type = int(type)
             id = int(id)
         except ValueError:
-            raise ValueError("'type' and 'id' must be integers. Using type '1' for PubMed and '2' for HERO.")
+            raise ValueError(
+                "'type' and 'id' must be integers. Using type '1' for PubMed and '2' for HERO."
+            )
         choices = (constants.ReferenceDatabase.HERO.value, constants.ReferenceDatabase.PUBMED.value)
         if type not in choices:
             raise ValidationError(
@@ -509,7 +511,7 @@ class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
             self.get_queryset()
             .select_related("study")
             .prefetch_related("identifiers", "tags")
-            .filter(Exists(ids)) #Exists keeps other Identifiers for export
+            .filter(Exists(ids))  # Exists keeps other Identifiers for export
             .annotate(
                 num_tags=Count("tags"),
                 num_user_tags=Count("user_tags"),
