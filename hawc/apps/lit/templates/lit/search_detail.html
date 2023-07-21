@@ -1,21 +1,22 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
-  <h2 class="d-inline-block">{{object}}</h2>
-  {% if crud == "Read" %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
-        {% if obj_perms.edit %}
-          {% if not object.is_manual_import %}
-            <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
-            <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
+  <div class="d-flex">
+    <h2>{{object}}</h2>
+    {% if crud == "Read" %}
+      {% actions %}
+          {% if obj_perms.edit %}
+            {% if not object.is_manual_import %}
+              <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
+              <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
+            {% endif %}
           {% endif %}
-        {% endif %}
-        <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.id %}?format=xlsx&searches={{object.id}}">Download to Excel</a>
-      </div>
-    </div>
-  {% endif %}
+          <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.id %}?format=xlsx&searches={{object.id}}">Download to Excel</a>
+      {% endactions %}
+    {% endif %}
+  </div>
   <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">

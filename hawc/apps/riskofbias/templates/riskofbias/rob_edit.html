@@ -6,14 +6,11 @@
 {% load bs4 %}
 
 {% block content %}
-    <div class="d-flex justify-content-between">
+    <div class="d-flex">
         <h2>{{object}}&nbsp;{% if object.final %}[final]{% else %}[individual review]{% endif %}</h2>
-        <div class="dropdown btn-group d-inline-block">
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" data-toggle="collapse" href="#robInstructions" role="button" aria-expanded="false" aria-controls="robInstructions">Toggle instructions</a>
-            </div>
-        </div>
+        {% actions %}
+            <a class="dropdown-item" data-toggle="collapse" href="#robInstructions" role="button" aria-expanded="false" aria-controls="robInstructions">Toggle instructions</a>
+        {% endactions %}
     </div>
     <div class="collapse" id="robInstructions">{{assessment.rob_settings.help_text|safe}}</div>
     {% if not object.study.get_study_types %}
