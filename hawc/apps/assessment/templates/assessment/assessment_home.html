@@ -1,6 +1,7 @@
 {% extends 'crumbless.html' %}
+{% load bs4 %}
 
-{% block content %}
+{% block content_outer %}
   <div class="d-flex">
     <h2>Welcome, {{ user.get_full_name }}.</h2>
     <div class="dropdown ml-auto align-self-start">
@@ -17,10 +18,15 @@
   </div>
   <p>Welcome to the HAWC portal. Here you're able to create new assessments or work on existing assessments.</p>
   {% include "common/inline_filter_form.html" %}
-  {% include "assessment/_assessment_list_tbl.html" %}
+  {% include "assessment/fragments/assessment_list_team.html" %}
   {% include "includes/paginator.html" with plural_object_name="assessments" %}
-{% endblock content %}
+{% endblock content_outer %}
 
 {% block extrajs %}
   {% include "includes/hero_access.html" %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+    });
+  </script>
 {% endblock extrajs %}
