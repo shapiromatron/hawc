@@ -15,34 +15,10 @@
         {% endif %}
       {% endactions %}
   </div>
-
-  <p>
-    Welcome to the HAWC portal. Here you're able to create new assessments,
-    or work on existing assessments. Each assessment is a single human-health
-    risk assessment. You can view assessments by the role you've been assigned.
-  </p>
-
-  {% with assessments=user.assessment_pms.all %}
-    {% if assessments %}
-      <h3>Assessments you're managing:</h3>
-      {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
-    {% endif %}
-  {% endwith %}
-
-  {% with assessments=user.assessment_teams.all %}
-    {% if assessments %}
-      <h3>Assessments you're a team-member on:</h3>
-      {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
-    {% endif %}
-  {% endwith %}
-
-  {% with assessments=user.assessment_reviewers.all %}
-    {% if assessments %}
-      <h3>Assessments you can review:</h3>
-      {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
-    {% endif %}
-  {% endwith %}
-
+  <p>Welcome to the HAWC portal. Here you're able to create new assessments or work on existing assessments.</p>
+  {% include "common/inline_filter_form.html" %}
+  {% include "assessment/_assessment_list_tbl.html" %}
+  {% include "includes/paginator.html" with plural_object_name="assessments" %}
 {% endblock content %}
 
 {% block extrajs %}
