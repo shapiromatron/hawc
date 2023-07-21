@@ -107,16 +107,42 @@ class TestDssToxViewSet:
 
 
 @pytest.mark.django_db
-class TestAssessmentDetailsAndValues:
+class TestAssessmentDetail:
     def test_success(self, db_keys):
         client = APIClient()
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
-        details_data = {
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        data = {
             "assessment_id": db_keys.assessment_working,
             "project_status": constants.Status.SCOPING,
             "peer_review_status": constants.PeerReviewType.NONE,
         }
-        value_data = {
+        for url, code in [
+            (reverse("assessment:api:detail-list"), 201),
+        ]:
+            resp = client.post(url, data, format="json")
+            assert resp.status_code == code
+
+    def test_bad_request(self, db_keys):
+        client = APIClient()
+        data = {
+            "assessment_id": db_keys.assessment_working,
+            "project_status": constants.Status.SCOPING,
+            "peer_review_status": constants.PeerReviewType.NONE,
+        }
+        # Anon not allowed to use the api
+        for url, code in [
+            (reverse("assessment:api:detail-list"), 403),
+        ]:
+            resp = client.post(url, data, format="json")
+            assert resp.status_code == code
+
+
+@pytest.mark.django_db
+class TestAssessmentValue:
+    def test_success(self, db_keys):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        data = {
             "assessment_id": db_keys.assessment_working,
             "evaluation_type": constants.EvaluationType.CANCER,
             "value_type": constants.ValueType.OTHER,
@@ -125,22 +151,16 @@ class TestAssessmentDetailsAndValues:
             "value": 10,
             "value_unit": "mg",
         }
-        # only project manager can create Assessment Values or Details
-        for url, code, data in [
-            (reverse("assessment:api:value-list"), 201, value_data),
-            (reverse("assessment:api:details-list"), 201, details_data),
+        # only project manager can create Assessment Values
+        for url, code in [
+            (reverse("assessment:api:value-list"), 201),
         ]:
             resp = client.post(url, data, format="json")
             assert resp.status_code == code
 
     def test_bad_request(self, db_keys):
         client = APIClient()
-        details_data = {
-            "assessment_id": db_keys.assessment_working,
-            "project_status": constants.Status.SCOPING,
-            "peer_review_status": constants.PeerReviewType.NONE,
-        }
-        value_data = {
+        data = {
             "assessment_id": db_keys.assessment_working,
             "evaluation_type": constants.EvaluationType.CANCER,
             "value_type": constants.ValueType.OTHER,
@@ -150,9 +170,8 @@ class TestAssessmentDetailsAndValues:
             "value_unit": "mg",
         }
         # Anon not allowed to use the api
-        for url, code, data in [
-            (reverse("assessment:api:value-list"), 403, value_data),
-            (reverse("assessment:api:details-list"), 403, details_data),
+        for url, code in [
+            (reverse("assessment:api:value-list"), 403),
         ]:
             resp = client.post(url, data, format="json")
             assert resp.status_code == code

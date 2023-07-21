@@ -69,13 +69,11 @@ class AssessmentValueSerializer(serializers.ModelSerializer):
     )
     assessment = AssessmentMiniSerializer(read_only=True)
     study_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
         source="study",
         queryset=Study.objects.all(),
         required=False,
         allow_null=True,
     )
-    # study = StudySerializer(read_only=True)
     evaluation_type = FlexibleChoiceField(choices=constants.EvaluationType.choices)
     value_type = FlexibleChoiceField(choices=constants.ValueType.choices)
     uncertainty = FlexibleChoiceField(choices=constants.UncertaintyChoices.choices)

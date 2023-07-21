@@ -276,7 +276,7 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.public()
         assert isinstance(response, list)
 
-    def test_assessment_values(self):
+    def test_assessment_create_value(self):
         value_data = {
             "assessment_id": 3,
             "evaluation_type": constants.EvaluationType.CANCER,
@@ -291,7 +291,7 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.create_value(value_data)
         assert isinstance(response, dict)
 
-    def test_assessment_details(self):
+    def test_assessment_create_detail(self):
         details_data = {
             "assessment_id": 3,
             "project_status": constants.Status.SCOPING,
@@ -301,6 +301,13 @@ class TestClient(LiveServerTestCase, TestCase):
         client.authenticate("pm@hawcproject.org", "pw")
         response = client.assessment.create_details(details_data)
         assert isinstance(response, dict)
+
+    def test_assessment_all_values(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("admin@hawcproject.org", "pw")
+        response = client.assessment.all_values()
+        assert isinstance(response, list)
+        assert len(response) == 3
 
     ###################
     # EpiClient tests #

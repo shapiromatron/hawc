@@ -29,7 +29,7 @@ class AssessmentClient(BaseClient):
         url = f"{self.session.root_url}/assessment/api/value/"
         return self.session.post(url, data).json()
 
-    def create_details(self, data: dict) -> dict:
+    def create_detail(self, data: dict) -> dict:
         """
         Create additional details for an assessment.
 
@@ -39,10 +39,10 @@ class AssessmentClient(BaseClient):
         Returns:
             dict: The resulting object, if create was successful
         """
-        url = f"{self.session.root_url}/assessment/api/details/"
+        url = f"{self.session.root_url}/assessment/api/detail/"
         return self.session.post(url, data).json()
 
-    def values(self) -> list[dict]:
+    def all_values(self) -> list[dict]:
         """
         Get a list of all assessment values in HAWC (admin only).
 
