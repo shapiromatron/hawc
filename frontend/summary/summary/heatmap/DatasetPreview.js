@@ -69,7 +69,9 @@ class DatasetPreview extends Component {
                         : "No data available, select a different dataset ..."}
                 </h4>
                 {summary.numRows > 0 ? (
-                    <DataTable dataset={dataset} tablesort={false} datatables={true} />
+                    <div className="overflow-auto">
+                        <DataTable dataset={dataset} tablesort={false} datatables={true} />
+                    </div>
                 ) : null}
             </div>
         );

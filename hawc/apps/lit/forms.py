@@ -331,8 +331,8 @@ class SearchSelectorForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
-            "pk", flat=True
+        assessment_pks = (
+            Assessment.objects.all().user_can_view(self.user).values_list("pk", flat=True)
         )
 
         self.fields["searches"].queryset = (
@@ -544,7 +544,7 @@ class TagsCopyForm(forms.Form):
         self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
             user, exclusion_id=self.assessment.id
         )
 

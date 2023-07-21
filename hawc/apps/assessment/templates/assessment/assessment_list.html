@@ -1,27 +1,12 @@
 {% extends 'crumbless.html' %}
 
-{% load add_class %}
-{% load crispy_forms_tags %}
-
-{% block content_outer %}
-<div class="col-lg-12" >
-  {% if is_public_list %}
-    <h2>Public Assessments</h2>
-  {% else %}
-    <h2>Assessments</h2>
-  {% endif %}
-  {% if desc %}
-  <p>{{desc}}</p>
-  {% endif %}
-  <div class="card mb-2">
-    <div class="card-body pb-1">
-      {% crispy form %}
-    </div>
-  </div>
-  {% include "assessment/_assessment_list_tbl.html" %}
+{% block content %}
+  <h2>{{title}}</h2>
+  <p>{{description}}</p>
+  {% include "common/inline_filter_form.html" %}
+  {% include table_fragment %}
   {% include "includes/paginator.html" with plural_object_name="assessments" %}
-</div>
-{% endblock content_outer %}
+{% endblock content %}
 
 {% block extrajs %}
 <script type="text/javascript">
