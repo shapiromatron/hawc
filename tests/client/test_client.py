@@ -299,7 +299,7 @@ class TestClient(LiveServerTestCase, TestCase):
         }
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
-        response = client.assessment.create_details(details_data)
+        response = client.assessment.create_detail(details_data)
         assert isinstance(response, dict)
 
     def test_assessment_all_values(self):
