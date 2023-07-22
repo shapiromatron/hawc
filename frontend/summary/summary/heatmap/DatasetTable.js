@@ -3,22 +3,36 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
+import interactivityConfig from "../../interactivity/config";
+import {getDetailUrl, showAsModal} from "../../interactivity/rendering";
+
 const pillItems = function(text, delimiter) {
-    if (!delimiter) {
-        return text;
-    }
-    if (!text) {
-        return "";
-    }
-    return text
-        .toString()
-        .split(delimiter)
-        .map((item, i) => (
-            <span key={i} className="badge badge-secondary mr-1">
-                {item}
-            </span>
-        ));
-};
+        if (!delimiter) {
+            return text;
+        }
+        if (!text) {
+            return "";
+        }
+        return text
+            .toString()
+            .split(delimiter)
+            .map((item, i) => (
+                <span key={i} className="badge badge-secondary mr-1">
+                    {item}
+                </span>
+            ));
+    },
+    getInteractivityMap = function(columns) {
+        const map = {};
+        columns.forEach(col => {
+            const match = interactivityConfig[col.on_click_event];
+            if (match) {
+                map[col.column] = match;
+            }
+        });
+        return map;
+    };
+
 @observer
 class InteractiveCell extends Component {
     constructor(props) {
@@ -29,25 +43,25 @@ class InteractiveCell extends Component {
     }
 
     render() {
-        const {store, row, field, extension} = this.props,
+        const {row, field, extension} = this.props,
             {isHovering} = this.state,
             showButton = () => this.setState({isHovering: true}),
             hideButton = () => this.setState({isHovering: false});
 
         return (
             <td onMouseEnter={showButton} onMouseLeave={hideButton}>
-                <a href={store.getDetailUrl(field.on_click_event, row)}>
-                    {pillItems(row[field.column], field.delimiter)}
-                </a>
-                {extension.hasModal ? (
+                {extension.modal ? (
                     <button
                         style={{opacity: isHovering ? 1 : 0}}
                         className="btn btn-sm float-right"
-                        onClick={() => store.showModalOnRow(extension, row)}
+                        onClick={() => showAsModal(extension, row)}
                         title="View additional information">
                         <i className="fa fa-external-link"></i>
                     </button>
                 ) : null}
+                <a href={getDetailUrl(extension, row)}>
+                    {pillItems(row[field.column], field.delimiter)}
+                </a>
             </td>
         );
     }
@@ -68,7 +82,7 @@ class DatasetTable extends Component {
     }
     render() {
         const {table_fields} = this.props.store.settings,
-            tableRowExtensions = this.props.store.extensions.tableRows,
+            interactivity = getInteractivityMap(table_fields),
             data = this.props.store.getTableData.data;
 
         return (
@@ -84,19 +98,17 @@ class DatasetTable extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((row, i) =>
-                            this.renderRow(row, i, table_fields, tableRowExtensions)
-                        )}
+                        {data.map((row, i) => this.renderRow(row, i, table_fields, interactivity))}
                     </tbody>
                 </table>
             </div>
         );
     }
-    renderRow(row, index, table_fields, tableRowExtensions) {
+    renderRow(row, index, table_fields, interactivity) {
         return (
             <tr key={index}>
                 {table_fields.map((field, i2) => {
-                    const extension = tableRowExtensions[field.column];
+                    const extension = interactivity[field.column];
                     if (extension) {
                         return (
                             <InteractiveCell
