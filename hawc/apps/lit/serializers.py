@@ -480,37 +480,3 @@ class FilterReferences(PydanticDrfSerializer):
             .prefetch_related("searches", "identifiers", "tags")
             .order_by("id")
         )
-
-
-class GlobalReferenceSerializer(serializers.ModelSerializer):
-    study_name = serializers.CharField(source="study.name")
-    study_published = serializers.BooleanField(source="study.published")
-    study_num_robs = serializers.IntegerField()
-    assessment_name = serializers.CharField(source="assessment.name")
-    num_tags = serializers.IntegerField()
-    num_user_tags = serializers.IntegerField()
-    bioassay_data = serializers.BooleanField(source="study.bioassay")
-    epi_data = serializers.BooleanField(source="study.epi")
-    epi_meta_data = serializers.BooleanField(source="study.epi_meta")
-    in_vitro_data = serializers.BooleanField(source="study.in_vitro")
-    eco_data = serializers.BooleanField(source="study.eco")
-
-    class Meta:
-        model = models.Reference
-        fields = [
-            "assessment",
-            "assessment_name",
-            "identifiers",
-            "study",
-            "study_name",
-            "study_published",
-            "bioassay_data",
-            "epi_data",
-            "epi_meta_data",
-            "in_vitro_data",
-            "eco_data",
-            "authors_short",
-            "study_num_robs",
-            "num_tags",
-            "num_user_tags",
-        ]

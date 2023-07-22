@@ -20,7 +20,7 @@ from ..assessment.api import (
     AssessmentRootedTagTreeViewSet,
     CleanupFieldsBaseViewSet,
 )
-from ..assessment.constants import AssessmentViewSetPermissions
+from ..assessment.constants import AssessmentViewSetPermissions, PublishedStatus
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
 from ..common.helper import FlatExport, re_digits
@@ -427,23 +427,13 @@ class ReferenceViewSet(
         instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
         return Response({"status": "ok"})
 
-
-class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
-    "Global search of all references, across assessments."
-
-    permission_classes = (permissions.IsAdminUser,)
-    serializer_class = UnusedSerializer
-    model = models.Reference
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
     @action(
         detail=False,
-        url_path=r"(?P<id>[\d]+)/type/(?P<type>[\d])",
+        url_path=r"search/(?P<id>[\d]+)/type/(?P<type>[\d])",
         renderer_classes=PandasRenderers,
+        permission_classes=(permissions.IsAdminUser,),
     )
-    def reference(self, request, id: int, type: str):
+    def search(self, request, id: int, type: str):
         try:
             type = int(type)
             id = int(id)
@@ -461,12 +451,14 @@ class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
             "id",
             "title",
             "authors_short",
-            "external_ids",
+            "pmid",
+            "hero",
+            "doi",
             "assessment",
             "assessment__name",
             "assessment__dtxsids",
             "assessment__cas",
-            "assessment_status",
+            "published",
             "study",
             "study__short_citation",
             "study__published",
@@ -483,12 +475,14 @@ class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
             "HAWC ID",
             "Title",
             "Authors",
-            "External IDs",
+            "PubMed IDs",
+            "HERO IDs",
+            "DOIs",
             "Assessment ID",
             "Assessment Name",
             "Assessment DTXSIDs",
             "Assessment CAS",
-            "Assessment Status",
+            "Assessment Published",
             "Study ID",
             "Study Citation",
             "Study Published",
@@ -509,26 +503,46 @@ class ReferenceIDSearchViewSet(viewsets.GenericViewSet):
 
         qs = (
             self.get_queryset()
-            .select_related("study")
-            .prefetch_related("identifiers", "tags")
+            .select_related("study", "assessment")
+            .prefetch_related("identifiers", "tags", "user_tags")
             .filter(Exists(ids))  # Exists keeps other Identifiers for export
             .annotate(
                 num_tags=Count("tags"),
-                num_user_tags=Count("user_tags"),
+                num_user_tags=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
                 num_robs=Count("study__riskofbiases"),
-                external_ids=StringAgg("identifiers__unique_id", delimiter=", ", distinct=True),
+                pmid=StringAgg(
+                    "identifiers__unique_id",
+                    filter=Q(identifiers__database=constants.ReferenceDatabase.PUBMED),
+                    delimiter="|",
+                    distinct=True,
+                    default="",
+                ),
+                hero=StringAgg(
+                    "identifiers__unique_id",
+                    filter=Q(identifiers__database=constants.ReferenceDatabase.HERO),
+                    delimiter="|",
+                    distinct=True,
+                    default="",
+                ),
+                doi=StringAgg(
+                    "identifiers__unique_id",
+                    filter=Q(identifiers__database=constants.ReferenceDatabase.DOI),
+                    delimiter="|",
+                    distinct=True,
+                    default="",
+                ),
                 assessment__dtxsids=StringAgg("assessment__dtxsids", delimiter=", ", distinct=True),
-                assessment_status=Case(
-                    When(assessment__public_on__isnull=True, then=Value("private")),
+                published=Case(
+                    When(assessment__public_on__isnull=True, then=Value(PublishedStatus.PRIVATE)),
                     When(
                         Q(assessment__public_on__isnull=False)
                         & Q(assessment__hide_from_public_page=False),
-                        then=Value("public"),
+                        then=Value(PublishedStatus.PUBLIC),
                     ),
                     When(
                         Q(assessment__public_on__isnull=False)
                         & Q(assessment__hide_from_public_page=True),
-                        then=Value("unlisted"),
+                        then=Value(PublishedStatus.UNLISTED),
                     ),
                 ),
             )
