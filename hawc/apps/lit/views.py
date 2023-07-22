@@ -121,7 +121,7 @@ class SearchNew(BaseCreate):
 
         if pk > 0:
             obj = self.model.objects.filter(pk=pk).first()
-            permitted_assesments = Assessment.objects.get_viewable_assessments(
+            permitted_assesments = Assessment.objects.all().user_can_view(
                 self.request.user, exclusion_id=self.assessment.pk
             )
             if obj and obj.assessment in permitted_assesments:
