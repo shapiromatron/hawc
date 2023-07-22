@@ -58,7 +58,7 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
 
 class GlobalChemicalsSerializer(serializers.ModelSerializer):
     creator = serializers.EmailField(source="creator.email")
-    assessment_status = serializers.CharField()
+    published = serializers.CharField()
 
     class Meta:
         model = models.Assessment
@@ -68,6 +68,6 @@ class GlobalChemicalsSerializer(serializers.ModelSerializer):
             "cas",
             "public_on",
             "hide_from_public_page",
-            "assessment_status",
+            "published",
             "creator",
         ]

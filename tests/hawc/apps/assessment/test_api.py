@@ -105,8 +105,8 @@ class TestDssToxViewSet:
 
 
 @pytest.mark.django_db
-class TestAssessmentSearchViewSet:
-    def test_chemical(self):
+class TestAssessmentViewSet:
+    def test_global_chemical_search(self):
         client = APIClient()
         url = reverse("assessment:api:assessment-chemical")
 

@@ -241,12 +241,9 @@ class TestStudyViewSet:
             .exists()
         )
 
-
-@pytest.mark.django_db
-class TestStudySearchViewSet:
-    def test_chemical(self):
+    def test_global_chemical_search(self):
         client = APIClient()
-        url = reverse("study:api:search-chemical")
+        url = reverse("study:api:study-chemical")
 
         response = client.get(url)
         assert response.status_code == 403
