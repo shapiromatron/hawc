@@ -433,7 +433,7 @@ class ReferenceViewSet(
         renderer_classes=PandasRenderers,
         permission_classes=(permissions.IsAdminUser,),
     )
-    def search(self, request, id: int, type: str):
+    def search(self, request, id: int, type: int):
         try:
             type = int(type)
             id = int(id)
@@ -546,6 +546,7 @@ class ReferenceViewSet(
                     ),
                 ),
             )
+            .order_by("assessment_id", "id")
             .values_list(*model_fields)
         )
 

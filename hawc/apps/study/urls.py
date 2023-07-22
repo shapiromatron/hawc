@@ -5,7 +5,6 @@ from . import api, views
 
 router = SimpleRouter()
 router.register(r"study", api.Study, basename="study")
-router.register(r"search", api.StudySearchViewSet, basename="search")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
 
 app_name = "study"
