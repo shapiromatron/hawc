@@ -6,7 +6,7 @@ import {
     moveArrayElementUp,
 } from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
-import {getInteractivityOptions} from "summary/interactivity/rendering";
+import {getInteractivityOptions} from "summary/interactivity/actions";
 
 import {NULL_VALUE} from "../../summary/constants";
 import {DATA_FILTER_CONTAINS, DATA_FILTER_LOGIC_AND} from "../../summary/filters";

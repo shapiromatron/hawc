@@ -7,8 +7,7 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
-import interactivityConfig from "../interactivity/config";
-import {showAsModal} from "../interactivity/rendering";
+import {getAction, showAsModal} from "../interactivity/actions";
 import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
 import DataPivotLegend from "./DataPivotLegend";
@@ -327,18 +326,18 @@ class DataPivotVisualization extends D3Plot {
         // set datapoints
         settings.datapoints = _.chain(this.dp_settings.datapoint_settings)
             .filter(d => d.field_name !== NULL_CASE)
-            .map(d => _.extend(d, {interactivity: interactivityConfig[d.dpe]}))
+            .map(d => _.extend(d, {interactivity: getAction(d.dpe)}))
             .value();
 
-        // set barchart # todo - check
-        _.extend(settings.barchart.dpe, {
-            interactivity: interactivityConfig[settings.barchart.dpe],
+        // set barchart
+        _.extend(settings.barchart, this.dp_settings.barchart, {
+            interactivity: getAction(this.dp_settings.barchart.dpe),
         });
 
         // set description
         settings.descriptions = _.chain(this.dp_settings.description_settings)
             .filter(d => d.field_name !== NULL_CASE)
-            .map(d => _.extend(d, {interactivity: interactivityConfig[d.dpe]}))
+            .map(d => _.extend(d, {interactivity: getAction(d.dpe)}))
             .value();
 
         var get_selected_fields = v => v.field_name !== NULL_CASE;

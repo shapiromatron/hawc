@@ -7,7 +7,7 @@ import HAWCModal from "shared/utils/HAWCModal";
 
 import $ from "$";
 
-import {getInteractivityOptions} from "../interactivity/rendering";
+import {getInteractivityOptions} from "../interactivity/actions";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";

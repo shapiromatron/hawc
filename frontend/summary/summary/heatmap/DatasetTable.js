@@ -1,10 +1,10 @@
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
-import interactivityConfig from "../../interactivity/config";
-import {getDetailUrl, showAsModal} from "../../interactivity/rendering";
+import {getAction, getDetailUrl, showAsModal} from "../../interactivity/actions";
 
 const pillItems = function(text, delimiter) {
         if (!delimiter) {
@@ -25,9 +25,9 @@ const pillItems = function(text, delimiter) {
     getInteractivityMap = function(columns) {
         const map = {};
         columns.forEach(col => {
-            const match = interactivityConfig[col.on_click_event];
-            if (match) {
-                map[col.column] = match;
+            const action = getAction(col.on_click_event);
+            if (action) {
+                map[col.column] = action;
             }
         });
         return map;

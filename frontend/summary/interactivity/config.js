@@ -16,98 +16,124 @@ import Reference from "lit/Reference";
 import Study from "study/Study";
 
 /*
-key: unique item for action
-columns: column names
-cls: label to render
-label: label for interactivity dropdown configuration
+Configuration requirements:
+---------------------------
+key: must be unique item for action
+columns: valid column names for this action
+cls: class for rendering; must implement a `get_detail_url` and `displayAsModal`
+label: label for displaying action for users configuring interactivity
 modal: display modal on click
 */
 
-export default {
+export default [
     // lit
-    reference: {columns: ["reference id"], cls: Reference, label: "Show reference", modal: false},
-    hero: {columns: ["hero id"], cls: Reference, label: "Show HERO", modal: false},
-    pubmed: {columns: ["pubmed id"], cls: Reference, label: "Show PubMed", modal: false},
+    {
+        key: "reference",
+        columns: ["reference id"],
+        cls: Reference,
+        label: "Show reference",
+        modal: false,
+    },
+    {key: "hero", columns: ["hero id"], cls: Reference, label: "Show HERO", modal: false},
+    {key: "pubmed", columns: ["pubmed id"], cls: Reference, label: "Show PubMed", modal: false},
     // study
-    study: {columns: ["study id"], cls: Study, label: "Show study", modal: true},
+    {key: "study", columns: ["study id"], cls: Study, label: "Show study", modal: true},
     // animal
-    experiment: {
+    {
+        key: "experiment",
         columns: ["experiment id"],
         cls: Experiment,
         label: "Show animal experiment",
         modal: true,
     },
-    animal_group: {
+    {
+        key: "animal_group",
         columns: ["animal group id"],
         cls: AnimalGroup,
         label: "Show animal group",
         modal: true,
     },
-    endpoint: {
+    {
+        key: "endpoint",
         columns: ["endpoint id"],
         cls: Endpoint,
         label: "Show animal endpoint (basic)",
         modal: true,
     },
     // TODO - migrate data; remove old endpoint_complete and migrate behavior to endpoint
-    endpoint_complete: {
+    {
+        key: "endpoint_complete",
         columns: ["endpoint id"],
         cls: Endpoint,
         label: "Show animal endpoint (complete)",
         modal: true,
     },
     // epi
-    study_population: {
+    {
+        key: "study_population",
         columns: ["study population id"],
         cls: StudyPopulation,
         label: "Show epi study population",
         modal: true,
     },
-    comparison_set: {
+    {
+        key: "comparison_set",
         columns: ["comparison set id"],
         cls: ComparisonSet,
         label: "Show epi comparison set",
         modal: true,
     },
-    exposure: {columns: ["exposure id"], cls: Exposure, label: "Show epi exposure", modal: true},
-    outcome: {columns: ["outcome id"], cls: Outcome, label: "Show epi outcome", modal: true},
-    result: {columns: ["result id"], cls: Result, label: "Show epi result", modal: true},
+    {
+        key: "exposure",
+        columns: ["exposure id"],
+        cls: Exposure,
+        label: "Show epi exposure",
+        modal: true,
+    },
+    {key: "outcome", columns: ["outcome id"], cls: Outcome, label: "Show epi outcome", modal: true},
+    {key: "result", columns: ["result id"], cls: Result, label: "Show epi result", modal: true},
     // epimeta
-    meta_protocol: {
+    {
+        key: "meta_protocol",
         columns: ["protocol id"],
         cls: MetaProtocol,
         label: "Show epi meta protocol",
         modal: true,
     },
-    meta_result: {
+    {
+        key: "meta_result",
         columns: ["meta result id"],
         cls: MetaResult,
         label: "Show epi meta result",
         modal: true,
     },
     // invitro
-    iv_chemical: {
+    {
+        key: "iv_chemical",
         columns: ["chemical id"],
         cls: IVChemical,
         label: "Show invitro chemical",
         modal: true,
     },
-    iv_experiment: {
+    {
+        key: "iv_experiment",
         columns: ["IVExperiment id"],
         cls: IVExperiment,
         label: "Show invitro experiment",
         modal: true,
     },
-    iv_celltype: {
+    {
+        key: "iv_celltype",
         columns: ["IVCellType id"],
         cls: IVCellType,
         label: "Show invitro cell type",
         modal: true,
     },
-    iv_endpoint: {
+    {
+        key: "iv_endpoint",
         columns: ["IVEndpoint id"],
         cls: IVEndpoint,
         label: "Show invitro endpoint",
         modal: true,
     },
-};
+];

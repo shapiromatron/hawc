@@ -4,9 +4,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
-import interactivityConfig from "../../interactivity/config";
-import {showAsModal} from "../../interactivity/rendering";
-import {getInteractivityMap} from "./common";
+import {getAction, showAsModal} from "../../interactivity/actions";
 
 @observer
 class FilterWidget extends Component {
@@ -35,7 +33,7 @@ class FilterWidget extends Component {
                       })
                 ).sort()
             ),
-            extension = interactivityConfig[widget.on_click_event],
+            action = getAction(widget.on_click_event),
             widgetTitle = widget.header ? widget.header : h.titleCase(widget.column);
 
         return (
@@ -63,14 +61,14 @@ class FilterWidget extends Component {
                         flex: 1,
                     }}>
                     {items.map((item, index) =>
-                        this.renderItem(widget, item, index, _itemState, extension)
+                        this.renderItem(widget, item, index, _itemState, action)
                     )}
                 </div>
             </div>
         );
     }
 
-    renderItem(widget, item, index, _itemState, extension) {
+    renderItem(widget, item, index, _itemState, action) {
         const {toggleItemSelection, colorScale, maxValue} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
@@ -111,23 +109,20 @@ class FilterWidget extends Component {
                     </div>
                 </label>
                 <span style={{flex: "0 0 min-content"}}>
-                    {extension && extension.modal
-                        ? this.renderButton(widget, item, extension)
-                        : null}
+                    {action && action.modal ? this.renderButton(widget, item, action) : null}
                 </span>
             </div>
         );
     }
 
-    renderButton(widget, item, extension) {
-        const row_key = extension._dpe_key,
-            modalRows = _.chain(this.props.store.getTableData.data)
-                .filter({
-                    [widget.column]: item,
-                })
-                .uniqBy(row_key)
-                .sortBy(row_key)
-                .value();
+    renderButton(widget, item, action) {
+        const modalRows = _.chain(this.props.store.getTableData.data)
+            .filter({
+                [widget.column]: item,
+            })
+            .uniqBy(widget.column)
+            .sortBy(widget.column)
+            .value();
         // only show button if there's a single item
         if (modalRows.length === 1) {
             return (
@@ -135,7 +130,7 @@ class FilterWidget extends Component {
                     className="btn btn-sm"
                     onClick={e => {
                         e.stopPropagation();
-                        showAsModal(extension, modalRows[0]);
+                        showAsModal(action, modalRows[0]);
                     }}
                     title="View additional information">
                     <i className="fa fa-fw fa-external-link"></i>

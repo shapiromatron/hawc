@@ -8,15 +8,14 @@ import config from "./config";
 class ExtensionTableBody extends Component {
     render() {
         const items = [];
-        _.forEach(config, (val, key) => {
+        _.forEach(config, val => {
             _.forEach(val.columns, col => {
                 items.push({columnName: col, label: val.label});
             });
         });
-        const sortedItems = _.sortBy(items, d => d.columnName.toLowerCase());
         return (
             <>
-                {sortedItems.map((item, i) => {
+                {items.map((item, i) => {
                     return (
                         <tr key={i}>
                             <td>{item.columnName}</td>
@@ -32,9 +31,9 @@ class ExtensionTableBody extends Component {
 const getInteractivityOptions = function(columnNames) {
         const names = new Set(columnNames),
             options = [];
-        _.forEach(config, (val, key) => {
+        _.forEach(config, val => {
             if (_.some(val.columns, item => names.has(item))) {
-                options.push({id: key, label: val.label});
+                options.push({id: val.key, label: val.label});
             }
         });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
@@ -58,8 +57,9 @@ const getInteractivityOptions = function(columnNames) {
     getDetailUrl = (settings, data) => {
         const id = _getId(settings, data);
         return settings.cls.get_detail_url(id);
+    },
+    getAction = key => {
+        return _.find(config, d => d.key === key);
     };
 
-export {getDetailUrl, getInteractivityOptions, renderExtensionTableBody, showAsModal};
-
-// TODO - change back to array of items so we can have preferred order. throw error if duplicate keys
+export {getAction, getDetailUrl, getInteractivityOptions, renderExtensionTableBody, showAsModal};

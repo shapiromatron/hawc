@@ -11,7 +11,6 @@ class HeatmapDatastore {
     totals = null;
     intersection = null;
     matrixDatasetCache = {};
-
     colorScale = null;
     maxValue = null;
     maxCells = 3000;

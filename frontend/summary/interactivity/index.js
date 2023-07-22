@@ -1,3 +1,3 @@
-import {renderExtensionTableBody} from "./rendering";
+import {renderExtensionTableBody} from "./actions";
 
 export default {renderExtensionTableBody};
