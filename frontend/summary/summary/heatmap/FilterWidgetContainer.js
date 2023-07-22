@@ -1,4 +1,5 @@
 import _ from "lodash";
+import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -116,28 +117,34 @@ class FilterWidget extends Component {
     }
 
     renderButton(widget, item, action) {
-        const modalRows = _.chain(this.props.store.getTableData.data)
-            .filter({
-                [widget.column]: item,
-            })
-            .uniqBy(widget.column)
-            .sortBy(widget.column)
+        const matched = _.chain(this.props.store.getTableData.data)
+            .filter(d => d[widget.column] == item)
             .value();
-        // only show button if there's a single item
-        if (modalRows.length === 1) {
-            return (
-                <button
-                    className="btn btn-sm"
-                    onClick={e => {
-                        e.stopPropagation();
-                        showAsModal(action, modalRows[0]);
-                    }}
-                    title="View additional information">
-                    <i className="fa fa-fw fa-external-link"></i>
-                </button>
-            );
+
+        // cycle through columns to see if there's a single item in a column
+        for (let column of action.columns) {
+            const items = _.chain(matched)
+                .uniqBy(column)
+                .sortBy(column)
+                .value();
+
+            // only show button if there's a single item
+            if (items.length === 1) {
+                return (
+                    <button
+                        className="btn btn-sm"
+                        onClick={e => {
+                            e.stopPropagation();
+                            showAsModal(action, items[0]);
+                        }}
+                        title="View additional information">
+                        <i className="fa fa-fw fa-external-link"></i>
+                    </button>
+                );
+            }
         }
-        // show disabled button just to preserve layout
+
+        // couldn't find a column with a single item; show hidden to preserve layout
         return (
             <button className="btn btn-sm disabled" title="Disabled">
                 <i className="fa fa-fw"></i>
