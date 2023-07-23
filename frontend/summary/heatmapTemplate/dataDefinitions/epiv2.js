@@ -9,20 +9,12 @@ import {
 
 // ESD = epi study design
 const ESD = {
-        study_id: defineProps("study_id", "Study ID", "id"),
+        study_id: defineProps("study_id", "Study ID", "study_id"),
         PMID: defineProps("PMID", "PubMed ID", "PMID"),
-        HERO: defineProps("HERO", "HERO ID", "HERO"),
+        HERO: defineProps("HERO", "HERO ID", "HERO ID"),
         DOI: defineProps("DOI", "DOI", "DOI"),
         short_citation: defineProps("short_citation", "Study citation", "short_citation"),
         full_citation: defineProps("full_citation", "Full Citation", "full_citation"),
-        coi_reported: defineProps("coi_reported", "COI Reported", "coi_reported"),
-        coi_details: defineProps("coi_details", "COI Details", "coi_details"),
-        funding_source: defineProps("funding_source", "Funding Source", "funding_source"),
-        study_identifier: defineProps("study_identifier", "Study Identifier", "study_identifier"),
-        contact_author: defineProps("contact_author", "Author Contacted", "contact_author"),
-        ask_author: defineProps("ask_author", "Author Notes", "ask_author"),
-        published: defineProps("published", "Published", "published"),
-        summary: defineProps("summary", "Summary", "summary"),
         study_design: defineProps("study_design", "Study Design", "study_design"),
         countries: defineProps("countries", "Countries", "countries"),
         design_source: defineProps("design_source", "Design Source", "design_source"),

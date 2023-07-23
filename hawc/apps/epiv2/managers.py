@@ -179,8 +179,21 @@ class DesignManager(BaseManager):
         )
         df3 = (
             df1.merge(df2, how="right", left_on="id", right_on="study_id")
-            .drop(columns=["study_id"])
+            .drop(
+                columns=[
+                    "study_id",
+                    "coi_reported",
+                    "coi_details",
+                    "funding_source",
+                    "study_identifier",
+                    "contact_author",
+                    "ask_author",
+                    "published",
+                    "summary",
+                ]
+            )
             .dropna()
+            .rename(columns={"id": "study_id"})
         )
         df3.loc[:, "age_profile"] = to_display_array(df3.age_profile, constants.AgeProfile)
         return df3
