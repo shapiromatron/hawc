@@ -9,30 +9,32 @@ from rest_framework.test import APIClient
 from hawc.apps.assessment.models import Log
 from hawc.apps.epiv2 import models
 
-from ..test_utils import check_api_200, check_api_403, check_api_json_data
+from ..test_utils import check_200, check_403, check_api_json_data, get_client
 
 
 @pytest.mark.django_db
 class TestEpiAssessmentViewSet:
-    def test_export(self, api_client_anon, api_client_pm, rewrite_data_files):
+    def test_export(self, rewrite_data_files):
         url = reverse("epiv2:api:assessment-export", args=(1,))
+        client = get_client(api=True)
 
         # anon get 403
-        check_api_403(api_client_anon, url)
+        check_403(client, url)
 
         # pm can get valid response
-        response = check_api_200(api_client_pm, url + "?unpublished=true")
+        client = get_client("pm", api=True)
+        response = check_200(client, url + "?unpublished=true")
         key = "api-epiv2-export-1.json"
         check_api_json_data(response.json(), key, rewrite_data_files)
 
-    def test_study_export(self, api_client_anon, api_client_pm, rewrite_data_files):
+    def test_study_export(self, rewrite_data_files):
         url = reverse("epiv2:api:assessment-study-export", args=(1,))
 
         # anon get 403
-        check_api_403(api_client_anon, url)
+        check_403(get_client(api=True), url)
 
         # pm can get valid response
-        response = check_api_200(api_client_pm, url + "?unpublished=true")
+        response = check_200(get_client("pm", api=True), url + "?unpublished=true")
         assert len(response.json()) == 1
         key = "api-epiv2-study-export-1.json"
         check_api_json_data(response.json(), key, rewrite_data_files)
