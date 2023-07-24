@@ -38,7 +38,7 @@ class DomainTable extends Component {
                         />,
                         <ActionItem
                             key={1}
-                            icon="fa-eye"
+                            icon="fa-info-circle"
                             label={btnCaption}
                             onClick={() => this.setState({detailedView: !detailedView})}
                         />,

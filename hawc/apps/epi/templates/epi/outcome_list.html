@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Outcomes ({{page_obj.paginator.count}} found)</h2>
-{% include 'common/filter_list.html' with plural_object_name='outcomes' %}
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '17,20,17,18,14,14' %}
     {% bs4_thead 'Study,Study population,Outcome,System,Effect,Diagnostic' %}
@@ -12,16 +12,14 @@
         {% for object in object_list %}
         <tr>
             <td>
-                <a href="{% url 'study:detail' object.study_population.study.pk %}">{{object.study_population.study.short_citation}}</a>
+                <a href="{{object.study_population.study.get_absolute_url}}">{{object.study_population.study.short_citation}}</a>
             </td>
             <td>
-                <a href="{% url 'epi:sp_detail' object.study_population.pk %}">{{object.study_population.name}}</a>
+                <a href="{{object.study_population.get_absolute_url}}">{{object.study_population.name}}</a>
             </td>
-            <td>
-                <span class="previewModalParent">
-                    <a href="{% url 'epi:outcome_detail' object.pk %}">{{object.name}}</a>
-                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
-                </span>
+            <td class="previewModalParent">
+                <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+                <a href="{{object.get_absolute_url}}">{{object.name}}</a>
             </td>
             <td>
                 {{object.system|default:"--"}}

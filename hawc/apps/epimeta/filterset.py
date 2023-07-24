@@ -4,7 +4,7 @@ from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -22,9 +22,12 @@ class MetaResultFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Meta result label",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
+            autocomplete_class=autocomplete.MetaResultAutocomplete,
+            field="label",
+            attrs={
+                "data-placeholder": "Filter by meta result label (ex: ALL, folic acid, any time)"
+            },
         ),
-        help_text="ex: ALL, folic acid, any time",
     )
     protocol = df.CharFilter(
         field_name="protocol__name",
@@ -66,12 +69,13 @@ class MetaResultFilterSet(BaseFilterSet):
             ("health outcome", "health outcome"),
             ("estimate", "estimate"),
         ),
+        empty_label=("Default Order"),
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.MetaResult
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "label",
@@ -81,10 +85,12 @@ class MetaResultFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "label"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

@@ -21,7 +21,7 @@
     </div>
 </div>
 {% endif %}
-{% include 'common/filter_list.html' with plural_object_name='studies' %}
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% if feature_flags.ENABLE_ECO %}
     {% bs4_colgroup '25,40,7,7,7,7,7' %}

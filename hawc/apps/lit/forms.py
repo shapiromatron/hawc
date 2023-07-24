@@ -145,13 +145,17 @@ class ImportForm(SearchForm):
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
+            self.fields.pop("source")
 
     @property
     def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing literature search",
+                "help_text": """
+                    Update an existing literature import. After a literature import
+                    has been created, you can no longer edit the source or IDs to import.
+                """,
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
@@ -327,8 +331,8 @@ class SearchSelectorForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
-            "pk", flat=True
+        assessment_pks = (
+            Assessment.objects.all().user_can_view(self.user).values_list("pk", flat=True)
         )
 
         self.fields["searches"].queryset = (
@@ -540,7 +544,7 @@ class TagsCopyForm(forms.Form):
         self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
             user, exclusion_id=self.assessment.id
         )
 

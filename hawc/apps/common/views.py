@@ -494,7 +494,7 @@ class BaseCreate(
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
-            if initial and initial.get_assessment() in Assessment.objects.get_viewable_assessments(
+            if initial and initial.get_assessment() in Assessment.objects.all().user_can_view(
                 self.request.user
             ):
                 kwargs["initial"] = model_to_dict(initial)

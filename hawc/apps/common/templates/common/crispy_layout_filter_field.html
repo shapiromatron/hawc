@@ -1,14 +1,19 @@
 {% load crispy_forms_field %}
 {% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
 {% comment %} Adapted from https://github.com/django-crispy-forms/crispy-bootstrap4/blob/main/crispy_bootstrap4/templates/bootstrap4/field.html {% endcomment %}
 <div id="div_{{ field.auto_id }}" class="form-group mb-0">
-    <div class="input-group">
+    <div class="input-group flex-nowrap">
         {% if expandable %}
         <div class="input-group-prepend">
             <a id="ff-expand-form-toggle" class="btn btn-secondary d-flex align-items-center" data-toggle="collapse" data-target="#ff-expand-form" title="Toggle advanced options"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
         </div>
         {% endif %}
+        {% if field|is_select %}
+            {% crispy_field field 'class' 'custom-select' %}
+        {% else %}
         <input type="text" name="{% if field.name|wordcount > 1 %}{{ field.name|slugify }}{% else %}{{ field.name }}{% endif %}"  class="form-control {% if field.errors %} is-invalid {% endif %}" placeholder="{{field.help_text}}" aria-label="{{field.label}}" value="{% if field.value %}{{ field.value }}{% endif %}" {{ field.flat_attrs }}>
+        {% endif %}
         <div class="input-group-append">
             {% for field in appended_fields %}
                 {% if field|is_checkbox %}
@@ -22,12 +27,14 @@
                         {% endif %}
                     </div>
                 {% elif field|is_select and use_custom_control %}
-                    {{field.widget}}
-                    {% if field.errors %}
-                        {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
-                    {% else %}
-                        {% crispy_field field 'class' 'custom-select form-sm-field' %}
-                    {% endif %}
+                    <div title="{{field.help_text}}">
+                        {{field.widget}}
+                        {% if field.errors %}
+                            {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
+                        {% else %}
+                            {% crispy_field field 'class' 'custom-select form-sm-field' %}
+                        {% endif %}
+                    </div>
                 {% endif %}
             {% endfor %}
             <a role="button" class="btn btn-light d-flex flex-wrap align-content-center px-3" href="." title="Reset form"><span aria-hidden="true">&times;</span></a>

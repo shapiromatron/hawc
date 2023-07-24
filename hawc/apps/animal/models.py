@@ -35,7 +35,6 @@ class Experiment(models.Model):
         "cas",
         "chemical_source",
         "vehicle",
-        "description",
         "guideline_compliance",
     )
 
@@ -202,7 +201,6 @@ class AnimalGroup(models.Model):
         "animal_source",
         "lifestage_exposed",
         "lifestage_assessed",
-        "comments",
         "diet",
     )
 
@@ -380,10 +378,7 @@ class AnimalGroup(models.Model):
 class DosingRegime(models.Model):
     objects = managers.DosingRegimeManager()
 
-    TEXT_CLEANUP_FIELDS = (
-        "description",
-        "duration_exposure_text",
-    )
+    TEXT_CLEANUP_FIELDS = ("duration_exposure_text",)
 
     dosed_animals = models.OneToOneField(
         AnimalGroup, related_name="dosed_animals", on_delete=models.SET_NULL, blank=True, null=True
@@ -584,9 +579,6 @@ class Endpoint(BaseEndpoint):
         "response_units",
         "statistical_test",
         "diagnostic",
-        "trend_value",
-        "results_notes",
-        "endpoint_notes",
         "litter_effect_notes",
     )
     TERM_FIELD_MAPPING = {
@@ -736,7 +728,7 @@ class Endpoint(BaseEndpoint):
         default=constants.TrendResult.NR, choices=constants.TrendResult.choices
     )
     diagnostic = models.TextField(
-        verbose_name="Endpoint Name in Study",
+        verbose_name="Diagnostic (as reported)",
         blank=True,
         help_text="List the endpoint/adverse outcome name as used in the study. "
         "This will help during QA/QC of the extraction to the original "
@@ -816,6 +808,7 @@ class Endpoint(BaseEndpoint):
             "effect": "effect",
             "effect_subtype": "effect subtype",
             "name": "endpoint name",
+            "diagnostic": "diagnostic",
             "observation_time_text": "observation time",
         }
         qs = (
@@ -884,7 +877,7 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
-            return "|".join(sorted(set(el for el in els if el is not None)))
+            return "|".join(sorted(set(el for el in els if el is not None and el != "")))
 
         # get all studies,even if no endpoint data is extracted
         filters: dict[str, Any] = {"assessment_id": assessment_id, "bioassay": True}
@@ -910,6 +903,7 @@ class Endpoint(BaseEndpoint):
             "system": unique_items,
             "organ": unique_items,
             "effect": unique_items,
+            "diagnostic": unique_items,
         }
         if "overall study evaluation" in df2:
             aggregates["overall study evaluation"] = unique_items

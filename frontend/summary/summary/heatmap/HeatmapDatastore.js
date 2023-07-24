@@ -3,9 +3,7 @@ import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
 import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
-import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
-import {NULL_VALUE} from "../../summary/constants";
 import {applyRowFilters} from "../../summary/filters";
 
 class HeatmapDatastore {
@@ -13,16 +11,14 @@ class HeatmapDatastore {
     totals = null;
     intersection = null;
     matrixDatasetCache = {};
-    dpe = null;
     colorScale = null;
     maxValue = null;
-    extensions = null;
     maxCells = 3000;
 
     @observable dataset = null;
     @observable settings = null;
     @observable selectedTableData = [];
-    @observable filterWidgetState = null;
+    @observable _filterWidgetState = null;
     @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
@@ -41,11 +37,8 @@ class HeatmapDatastore {
 
     initialize() {
         // further initialization for full store use
-        this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
-        this.dpe = new DataPivotExtension();
-        this.filterWidgetState = this.setFilterWidgetState();
-        this.extensions = this.setDataExtensions();
+        this._filterWidgetState = this.setFilterWidgetState();
         this.setColorScale();
     }
 
@@ -121,7 +114,9 @@ class HeatmapDatastore {
         let state = {};
         _.each(this.intersection, (items, column) => {
             state[column] = {};
-            _.each(items, (value, key) => (state[column][key] = true));
+            _.each(items, (value, key) => {
+                state[column][key] = false;
+            });
         });
         return state;
     }
@@ -190,41 +185,20 @@ class HeatmapDatastore {
         return {x, y};
     }
 
-    setDataExtensions() {
-        let extensions = {
-            filterWidgets: {},
-            tableRows: {},
-        };
-
-        toJS(this.settings.filter_widgets)
-            .filter(d => {
-                return d.on_click_event !== NULL_VALUE;
-            })
-            .forEach(d => {
-                extensions.filterWidgets[d.column] = _.find(DataPivotExtension.values, {
-                    _dpe_name: d.on_click_event,
-                });
-            });
-
-        toJS(this.settings.table_fields)
-            .filter(d => {
-                return d.on_click_event !== NULL_VALUE;
-            })
-            .forEach(d => {
-                extensions.tableRows[d.column] = _.find(DataPivotExtension.values, {
-                    _dpe_name: d.on_click_event,
-                });
-            });
-
-        return extensions;
-    }
-
     setColorScale() {
         this.maxValue = d3.max(this.matrixDataset, d => (d.type == "cell" ? d.rows.length : 0));
         this.colorScale = d3
             .scaleLinear()
             .domain([0, this.maxValue])
             .range(this.settings.color_range);
+    }
+
+    @computed get filterWidgetState() {
+        return _.mapValues(this._filterWidgetState, (items, column) => {
+            return _.every(items, v => !v)
+                ? _.mapValues(items, () => true)
+                : _.mapValues(items, (visible, item) => visible);
+        });
     }
 
     @computed get settingsHash() {
@@ -435,31 +409,8 @@ class HeatmapDatastore {
         if (!value) this.tableDataFilters.add(d);
     }
 
-    @action.bound selectAllFilterWidget(column) {
-        const keys = _.keys(toJS(this.filterWidgetState[column]));
-        keys.forEach(item => {
-            this.filterWidgetState[column][item] = true;
-        });
-    }
-
-    @action.bound selectNoneFilterWidget(column) {
-        const keys = _.keys(toJS(this.filterWidgetState[column]));
-        keys.forEach(item => {
-            this.filterWidgetState[column][item] = false;
-        });
-    }
-
     @action.bound toggleItemSelection(column, item, visible) {
-        this.filterWidgetState[column][item] = visible;
-    }
-
-    @action.bound showModalOnRow(extension, row) {
-        this.dpe.render_plottip(extension, row);
-    }
-
-    getDetailUrl(on_click_event, row) {
-        let extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
-        return this.dpe.get_detail_url(extension, row);
+        this._filterWidgetState[column][item] = visible;
     }
 }
 

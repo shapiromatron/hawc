@@ -8,7 +8,7 @@ from ..common.filterset import (
     AutocompleteModelChoiceFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -88,9 +88,10 @@ class EndpointFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Endpoint name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="name"
+            autocomplete_class=autocomplete.EndpointAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by endpoint name (ex: heart weight)"},
         ),
-        help_text="ex: heart weight",
     )
     system = df.CharFilter(
         lookup_expr="icontains",
@@ -162,12 +163,13 @@ class EndpointFilterSet(BaseFilterSet):
             ("effect subtype", "effect subtype"),
             ("chemical", "chemical"),
         ),
+        empty_label="Default Order",
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(empty_label=None)
 
     class Meta:
         model = models.Endpoint
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "chemical",
@@ -188,13 +190,15 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

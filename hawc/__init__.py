@@ -1,3 +1,4 @@
+"""A content management system for human health assessments."""
 import os
 import sys
 

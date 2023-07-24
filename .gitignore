@@ -24,6 +24,7 @@ package-lock.json
 .idea/
 .ipynb_checkpoints/
 .mypy_cache/
+.ruff_cache/
 .vscode/
 /data/
 docs/site
@@ -37,6 +38,7 @@ private/
 public/
 scripts/private
 venv/
+**/.yarn/
 
 # keep folders; not contents
 hawc/static/bundles/*

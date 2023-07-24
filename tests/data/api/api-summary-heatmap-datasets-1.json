@@ -1,0 +1,59 @@
+{
+  "datasets": [
+    {
+      "name": "Literature summary",
+      "type": "Literature",
+      "url": "/lit/api/assessment/1/tag-heatmap/"
+    },
+    {
+      "name": "Bioassay study design",
+      "type": "Bioassay",
+      "url": "/ani/api/assessment/1/study-heatmap/"
+    },
+    {
+      "name": "Bioassay study design (including unpublished HAWC data)",
+      "type": "Bioassay",
+      "url": "/ani/api/assessment/1/study-heatmap/?unpublished=true"
+    },
+    {
+      "name": "Bioassay endpoint summary",
+      "type": "Bioassay",
+      "url": "/ani/api/assessment/1/endpoint-heatmap/"
+    },
+    {
+      "name": "Bioassay endpoint summary (including unpublished HAWC data)",
+      "type": "Bioassay",
+      "url": "/ani/api/assessment/1/endpoint-heatmap/?unpublished=true"
+    },
+    {
+      "name": "Bioassay endpoint with doses",
+      "type": "Bioassay",
+      "url": "/ani/api/assessment/1/endpoint-doses-heatmap/"
+    },
+    {
+      "name": "Bioassay endpoint with doses (including unpublished HAWC data)",
+      "type": "Bioassay",
+      "url": "/ani/api/assessment/1/endpoint-doses-heatmap/?unpublished=true"
+    },
+    {
+      "name": "Epidemiology evidence map",
+      "type": "Epi",
+      "url": "/epidemiology/api/assessment/1/study-export/"
+    },
+    {
+      "name": "Epidemiology data extractions",
+      "type": "Epi",
+      "url": "/epidemiology/api/assessment/1/export/"
+    },
+    {
+      "name": "Dataset: iris flowers",
+      "type": "Dataset",
+      "url": "/assessment/api/dataset/1/data/"
+    },
+    {
+      "name": "Dataset: iris flowers unpublished",
+      "type": "Dataset",
+      "url": "/assessment/api/dataset/3/data/"
+    }
+  ]
+}

@@ -1,18 +1,24 @@
-from typing import Type
-
 import pandas as pd
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import Choices, Prefetch, QuerySet
+from django.db.models import (
+    CharField,
+    Choices,
+    F,
+    Func,
+    Prefetch,
+    QuerySet,
+    Value,
+)
 
-from ..common.models import BaseManager
+from ..common.models import BaseManager, sql_display, to_display_array
 from . import constants, models
 
 
-def enum_dict(choice_enum: Type[Choices]) -> dict:
+def enum_dict(choice_enum: type[Choices]) -> dict:
     return {k: v for k, v in choice_enum.choices}
 
 
-def map_array(df: pd.DataFrame, key: str, choice_enum: Type[Choices]):
+def map_array(df: pd.DataFrame, key: str, choice_enum: type[Choices]):
     mapped = {k: v for k, v in choice_enum.choices}
     df.loc[:, key] = df.apply(lambda row: "|".join(mapped[item] for item in row[key]), axis=1)
 
@@ -66,7 +72,7 @@ class DesignQuerySet(QuerySet):
             "last_updated",
         ]
         qs = self.annotate(
-            countries_=StringAgg("countries__name", delimiter="|", distinct=True),
+            countries_=StringAgg("countries__name", delimiter="|", distinct=True, default=""),
         ).values_list(*names)
         df = (
             pd.DataFrame(
@@ -96,6 +102,102 @@ class DesignManager(BaseManager):
     def get_queryset(self):
         return DesignQuerySet(self.model, using=self._db)
 
+    def study_df(self, study_qs: QuerySet) -> pd.DataFrame:
+        """Returns a data frame, one row per study in study queryset
+
+        Args:
+            study_qs (QuerySet): A study queryset of studies
+
+        Returns:
+            pd.DataFrame: _description_
+        """
+        df1 = study_qs.flat_df()
+        df2 = pd.DataFrame(
+            data=study_qs.annotate(
+                designs__source_display=sql_display("designs__source", constants.Source),
+                designs__study_design_display=sql_display(
+                    "designs__study_design", constants.StudyDesign
+                ),
+                designs__outcomes__system_display=sql_display(
+                    "designs__outcomes__system", constants.HealthOutcomeSystem
+                ),
+                countries=StringAgg(
+                    "designs__countries__name", delimiter="|", distinct=True, default=""
+                ),
+                age_profile=Func(
+                    F("designs__age_profile"),
+                    Value("|"),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                ),
+                chemical_name=StringAgg(
+                    "designs__chemicals__name", delimiter="|", distinct=True, default=""
+                ),
+                exposure_name=StringAgg(
+                    "designs__exposures__name", delimiter="|", distinct=True, default=""
+                ),
+                design_source=StringAgg(
+                    "designs__source_display", delimiter="|", distinct=True, default=""
+                ),
+                study_design=StringAgg(
+                    "designs__study_design_display", delimiter="|", distinct=True, default=""
+                ),
+                outcome_system=StringAgg(
+                    "designs__outcomes__system_display", delimiter="|", distinct=True, default=""
+                ),
+                outcome_effect=StringAgg(
+                    "designs__outcomes__effect", delimiter="|", distinct=True, default=""
+                ),
+                outcome_endpoint=StringAgg(
+                    "designs__outcomes__endpoint", delimiter="|", distinct=True, default=""
+                ),
+            ).values_list(
+                "id",
+                "study_design",
+                "countries",
+                "design_source",
+                "age_profile",
+                "chemical_name",
+                "exposure_name",
+                "outcome_system",
+                "outcome_effect",
+                "outcome_endpoint",
+            ),
+            columns=[
+                "study_id",
+                "study_design",
+                "countries",
+                "design_source",
+                "age_profile",
+                "chemical_name",
+                "exposure_name",
+                "outcome_system",
+                "outcome_effect",
+                "outcome_endpoint",
+            ],
+        )
+        df3 = (
+            df1.merge(df2, how="right", left_on="id", right_on="study_id")
+            .drop(
+                columns=[
+                    "study_id",
+                    "coi_reported",
+                    "coi_details",
+                    "funding_source",
+                    "study_identifier",
+                    "contact_author",
+                    "ask_author",
+                    "published",
+                    "summary",
+                ]
+            )
+            .dropna()
+            .rename(columns={"id": "study_id"})
+        )
+        df3.loc[:, "age_profile"] = to_display_array(df3.age_profile, constants.AgeProfile)
+        return df3
+
 
 class ChemicalQuerySet(QuerySet):
     def flat_df(self) -> pd.DataFrame:
@@ -117,7 +219,7 @@ class ChemicalQuerySet(QuerySet):
 
 
 class ChemicalManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ChemicalQuerySet(self.model, using=self._db)
@@ -155,7 +257,7 @@ class ExposureQuerySet(QuerySet):
 
 
 class ExposureManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ExposureQuerySet(self.model, using=self._db)
@@ -197,7 +299,7 @@ class ExposureLevelQuerySet(QuerySet):
 
 
 class ExposureLevelManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ExposureLevelQuerySet(self.model, using=self._db)
@@ -226,7 +328,7 @@ class OutcomeQuerySet(QuerySet):
 
 
 class OutcomeManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return OutcomeQuerySet(self.model, using=self._db)
@@ -253,7 +355,7 @@ class AdjustmentFactorQuerySet(QuerySet):
 
 
 class AdjustmentFactorManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return AdjustmentFactorQuerySet(self.model, using=self._db)

@@ -100,6 +100,17 @@ class SummaryTableList(BaseFilterList):
     filterset_class = filterset.SummaryTableFilterSet
     breadcrumb_active_name = "Summary tables"
 
+    def get_filterset_form_kwargs(self):
+        if self.assessment.user_permissions(self.request.user)["edit"]:
+            return dict(
+                main_field="title",
+                appended_fields=["type", "published"],
+            )
+        else:
+            return dict(
+                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+            )
+
 
 class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
     model = models.SummaryTable
@@ -297,7 +308,10 @@ class VisualizationList(BaseFilterList):
     def form(self):
         if not hasattr(self, "_form"):
             fs = filterset.VisualFilterSet(
-                data=self.request.GET, request=self.request, assessment=self.assessment
+                data=self.request.GET,
+                request=self.request,
+                assessment=self.assessment,
+                form_kwargs=self.get_filterset_form_kwargs(),
             )
             form = fs.form
             # combine type choices for both visual and data pivot
@@ -310,7 +324,6 @@ class VisualizationList(BaseFilterList):
                 for choice, _ in self.data_pivot_fs.form.fields["type"].choices
                 if choice != ""
             ]
-            fs.pop_published(form)
             self._form = form
         return self._form
 
@@ -326,6 +339,17 @@ class VisualizationList(BaseFilterList):
         else:
             items = list(itertools.chain(self.visual_fs.qs, self.data_pivot_fs.qs))
         return sorted(items, key=lambda d: d.title.lower())
+
+    def get_filterset_form_kwargs(self):
+        if self.assessment.user_permissions(self.request.user)["edit"]:
+            return dict(
+                main_field="title",
+                appended_fields=["type", "published"],
+            )
+        else:
+            return dict(
+                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+            )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
