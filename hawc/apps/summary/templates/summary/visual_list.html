@@ -7,12 +7,12 @@
     <h2>Available visualizations</h2>
     {% if obj_perms.edit %}
       {% actions %}
-            <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">
-              <i class="fa fa-fw fa-edit"></i>&nbsp;Create new visual
-            </a>
-            <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">
-              <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
-            </a>
+        <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">
+          <i class="fa fa-fw fa-edit"></i>&nbsp;Create new visual
+        </a>
+        <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">
+          <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
+        </a>
       {% endactions %}
     {% endif %}
   </div>

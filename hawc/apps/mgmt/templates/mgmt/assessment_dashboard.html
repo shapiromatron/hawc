@@ -6,8 +6,8 @@
 <div class="d-flex">
   <h2>Management dashboard</h2>
   {% actions %}
-      <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
-      <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
+    <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
+    <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
   {% endactions %}
 </div>
 {% if object_list %}

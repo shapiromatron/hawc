@@ -11,13 +11,13 @@
   </div>
   {% if obj_perms.edit %}
     {% actions %}
-        <span class="dropdown-header">Visualization editing</span>
-        <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">
-          Update
-        </a>
-        <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">
-          Delete
-        </a>
+      <span class="dropdown-header">Visualization editing</span>
+      <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">
+        Update
+      </a>
+      <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">
+        Delete
+      </a>
     {% endactions %}
   {% endif %}
 </div>

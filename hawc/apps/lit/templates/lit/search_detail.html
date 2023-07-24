@@ -7,13 +7,13 @@
     <h2>{{object}}</h2>
     {% if crud == "Read" %}
       {% actions %}
-          {% if obj_perms.edit %}
-            {% if not object.is_manual_import %}
-              <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
-              <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
-            {% endif %}
+        {% if obj_perms.edit %}
+          {% if not object.is_manual_import %}
+            <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
+            <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
           {% endif %}
-          <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.id %}?format=xlsx&searches={{object.id}}">Download to Excel</a>
+        {% endif %}
+        <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.id %}?format=xlsx&searches={{object.id}}">Download to Excel</a>
       {% endactions %}
     {% endif %}
   </div>

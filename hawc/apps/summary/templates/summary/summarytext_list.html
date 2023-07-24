@@ -3,14 +3,13 @@
 {% load bs4 %}
 
 {% block content %}
-
   <div class="d-flex">
-      <h2>Summary text</h2>
-        {% if obj_perms.edit %}
-          {% actions %}
-            <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
-          {% endactions %}
-        {% endif %}
+    <h2>Summary text</h2>
+    {% if obj_perms.edit %}
+      {% actions %}
+        <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+      {% endactions %}
+    {% endif %}
   </div>
   <div id="main" class="container-fluid col-md-12"></div>
 {% endblock %}

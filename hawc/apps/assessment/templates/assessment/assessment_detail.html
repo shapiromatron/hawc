@@ -7,8 +7,8 @@
 {% block content %}
   <div class="d-flex">
     <h2>{{object}}</h2>
-      {% if crud == "Read" %}
-        {% actions %}
+    {% if crud == "Read" %}
+      {% actions %}
           <!-- assessment editing -->
           {% if obj_perms.edit %}
             <span class="dropdown-header">Assessment Editing</span>
@@ -65,9 +65,9 @@
               {% endif %}
               <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
           {% endif %}
-        {% endactions %}
+      {% endactions %}
+    {% endif %}
   </div>
-  {% endif %}
 
   <table id="assessment_table" class="table table-sm table-striped">
     {% bs4_colgroup '25,75' %}

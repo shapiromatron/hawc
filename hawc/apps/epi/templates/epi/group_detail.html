@@ -7,8 +7,8 @@
       <h2>{{object.name}}</h2>
       {% if obj_perms.edit and crud == "Read" %}
         {% actions %}
-              <span class="dropdown-header">Group editing</span>
-              <a class="dropdown-item" href="{% url 'epi:g_update' object.pk %}">Update</a>
+          <span class="dropdown-header">Group editing</span>
+          <a class="dropdown-item" href="{% url 'epi:g_update' object.pk %}">Update</a>
         {% endactions %}
       {% endif %}
     </div>
