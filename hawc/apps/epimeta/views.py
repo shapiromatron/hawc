@@ -146,6 +146,3 @@ class MetaResultFilterList(BaseFilterList):
                 )
             )
         )
-
-    def get_filterset_form_kwargs(self):
-        return dict(main_field="label", appended_fields=["order_by", "paginate_by"])

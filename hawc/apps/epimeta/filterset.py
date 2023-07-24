@@ -22,9 +22,12 @@ class MetaResultFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Meta result label",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
+            autocomplete_class=autocomplete.MetaResultAutocomplete,
+            field="label",
+            attrs={
+                "data-placeholder": "Filter by meta result label (ex: ALL, folic acid, any time)"
+            },
         ),
-        help_text="Filter by meta result label (ex: ALL, folic acid, any time)",
     )
     protocol = df.CharFilter(
         field_name="protocol__name",
@@ -68,7 +71,7 @@ class MetaResultFilterSet(BaseFilterSet):
         ),
         empty_label=("Default Order"),
     )
-    paginate_by = PaginationFilter(empty_label="Default Pagination")
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.MetaResult
@@ -82,6 +85,8 @@ class MetaResultFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "label"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
