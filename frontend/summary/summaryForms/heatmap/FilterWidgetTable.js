@@ -52,7 +52,7 @@ class FilterWidgetTable extends Component {
             moveArrayElementUp,
             moveArrayElementDown,
             deleteArrayElement,
-            getDpeSettings,
+            getInteractivityOptions,
         } = this.props.store.subclass;
 
         return (
@@ -84,7 +84,7 @@ class FilterWidgetTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-on_click_event-${index}`}
-                        choices={getDpeSettings}
+                        choices={getInteractivityOptions}
                         multiple={false}
                         handleSelect={value =>
                             changeArraySettings(key, index, "on_click_event", value)

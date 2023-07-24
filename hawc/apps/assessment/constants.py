@@ -10,6 +10,19 @@ ADAF_FOOTNOTE = (
 )
 
 
+class AssessmentRole(models.TextChoices):
+    PROJECT_MANAGER = "Project Manager"
+    TEAM_MEMBER = "Team Member"
+    REVIEWER = "Reviewer"
+    NO_ROLE = "No Role"
+
+
+class PublishedStatus(models.TextChoices):
+    PUBLIC = "Public"
+    UNLISTED = "Unlisted"
+    PRIVATE = "Private"
+
+
 class AssessmentViewPermissions(models.IntegerChoices):
     PROJECT_MANAGER = 1
     TEAM_MEMBER = 2

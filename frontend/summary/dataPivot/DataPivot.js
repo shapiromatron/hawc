@@ -7,8 +7,8 @@ import HAWCModal from "shared/utils/HAWCModal";
 
 import $ from "$";
 
+import {getInteractivityOptions} from "../interactivity/actions";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
-import DataPivotExtension from "./DataPivotExtension";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
 import build_description_tab from "./DPFDescriptionTab";
@@ -243,7 +243,11 @@ class DataPivot {
     }
 
     build_settings() {
-        this.dpe_options = DataPivotExtension.get_options(this);
+        const headers = _.keys(this.data[0]);
+        this.interactivity_options = getInteractivityOptions(headers)
+            .map(d => `<option value="${d.id}">${d.label}</option>`)
+            .join("");
+
         var self = this,
             content = [
                 $('<ul class="nav nav-tabs">').append(

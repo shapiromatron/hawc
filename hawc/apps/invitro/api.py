@@ -79,8 +79,14 @@ class IVEndpointCleanup(CleanupFieldsBaseViewSet):
     model = models.IVEndpoint
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("experiment__study")
+
 
 class IVChemicalCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.IVChemicalCleanupFieldsSerializer
     model = models.IVChemical
     assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
