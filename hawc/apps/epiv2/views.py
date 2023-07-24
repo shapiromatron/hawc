@@ -32,9 +32,6 @@ class OutcomeView(BaseFilterList):
     model = models.Outcome
     filterset_class = filterset.OutcomeFilterSet
 
-    def get_filterset_form_kwargs(self):
-        return dict(main_field="name", appended_fields=["order_by", "paginate_by"])
-
 
 # Design (Study Population)
 class DesignCreate(BaseCreate):

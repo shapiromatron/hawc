@@ -15,7 +15,7 @@ class OutcomeFilterSet(BaseFilterSet):
         field_name="endpoint",
         lookup_expr="icontains",
         label="Endpoint",
-        help_text="ex: B vitamins and risk of cancer",
+        help_text="Filter by outcome name (ex: B vitamins and risk of cancer)",
     )
     studies = AutocompleteModelMultipleChoiceFilter(
         field_name="design__study",
@@ -23,7 +23,7 @@ class OutcomeFilterSet(BaseFilterSet):
         label="Study reference",
         help_text="ex: Smith et al. 2010",
     )
-    sex = df.MultipleChoiceFilter(
+    design = df.MultipleChoiceFilter(
         field_name="design__study_design",
         label="Study Design",
         choices=constants.StudyDesign.choices,
@@ -37,9 +37,9 @@ class OutcomeFilterSet(BaseFilterSet):
             ("study", "study"),
             ("endpoint name", "endpoint"),
         ),
-        empty_label=("empty"),
+        empty_label=("Default Order"),
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.Outcome
@@ -49,12 +49,14 @@ class OutcomeFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
             "studies",
+            "design",
         ]
-
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
-                {"columns": [{"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 6}, {"width": 6}]},
             ]
         }
 
