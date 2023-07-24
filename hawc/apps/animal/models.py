@@ -35,7 +35,6 @@ class Experiment(models.Model):
         "cas",
         "chemical_source",
         "vehicle",
-        "description",
         "guideline_compliance",
     )
 
@@ -202,7 +201,6 @@ class AnimalGroup(models.Model):
         "animal_source",
         "lifestage_exposed",
         "lifestage_assessed",
-        "comments",
         "diet",
     )
 
@@ -380,10 +378,7 @@ class AnimalGroup(models.Model):
 class DosingRegime(models.Model):
     objects = managers.DosingRegimeManager()
 
-    TEXT_CLEANUP_FIELDS = (
-        "description",
-        "duration_exposure_text",
-    )
+    TEXT_CLEANUP_FIELDS = ("duration_exposure_text",)
 
     dosed_animals = models.OneToOneField(
         AnimalGroup, related_name="dosed_animals", on_delete=models.SET_NULL, blank=True, null=True
@@ -584,9 +579,6 @@ class Endpoint(BaseEndpoint):
         "response_units",
         "statistical_test",
         "diagnostic",
-        "trend_value",
-        "results_notes",
-        "endpoint_notes",
         "litter_effect_notes",
     )
     TERM_FIELD_MAPPING = {
