@@ -139,7 +139,10 @@ class BaseFilterSet(df.FilterSet):
             for name, f in self.base_filters.items():
                 initial = f.extra.get("initial")
                 if not data.get(name) and initial:
-                    data[name] = initial
+                    if type(initial) == list:
+                        data.setlist(name, initial)
+                    else:
+                        data[name] = initial
         super().__init__(data, *args, **kwargs)
         self.form_kwargs = form_kwargs or {}
         if "grid_layout" not in self.form_kwargs and hasattr(self.Meta, "grid_layout"):

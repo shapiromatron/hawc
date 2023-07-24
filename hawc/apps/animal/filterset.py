@@ -75,6 +75,7 @@ class EndpointFilterSet(BaseFilterSet):
         label="Sex",
         choices=constants.Sex.choices,
         widget=forms.CheckboxSelectMultiple,
+        initial=constants.Sex.values,
     )
     data_extracted = df.ChoiceFilter(
         choices=(
