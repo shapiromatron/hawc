@@ -13,16 +13,14 @@
         <tr>
             <td>
                 <a
-                    href="{% url 'study:detail' object.protocol.study.pk %}">{{object.protocol.study.short_citation}}</a>
+                    href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>
+            </td>
+            <td class="previewModalParent">
+                <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+                <a href="{{object.get_absolute_url}}">{{object.label}}</a>
             </td>
             <td>
-                <span class="previewModalParent">
-                    <a href="{% url 'meta:result_detail' object.pk %}">{{object.label}}</a>
-                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
-                </span>
-            </td>
-            <td>
-                <a href="{% url 'meta:protocol_detail' object.protocol.pk %}">{{object.protocol.name}}</a>
+                <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>
             </td>
             <td>
                 {{object.health_outcome|default:"--"}}

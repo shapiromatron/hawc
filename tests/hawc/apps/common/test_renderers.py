@@ -85,7 +85,7 @@ class TestXlsxRenderer:
             data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]],
             columns=["count", "when"],
         )
-        df.loc[:, "when"] = df.when.astype("datetime64")
+        df = df.assign(when=df.when.astype("datetime64[ns]"))
 
         def check_is_close(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
             return all(
@@ -114,7 +114,7 @@ class TestXlsxRenderer:
             check_is_close(df, df2)
 
         # with appropriate cast, success!
-        df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
+        df2.loc[:, "when"] = df2.when.astype("datetime64[ns]").dt.tz_localize(tz="US/Eastern")
         assert check_is_close(df, df2) is True
 
     def test_invalid_chars(self):

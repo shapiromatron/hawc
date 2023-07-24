@@ -285,21 +285,17 @@ class _DataPivot_settings_description {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control"></select>').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            header_name: $('<input class="form-control" type="text">'),
+            field_name: $('<select class="form-control"></select>')
+                .html(this.data_pivot._get_header_options(true))
+                .val(values.field_name),
+            header_name: $('<input class="form-control" type="text">').val(values.header_name),
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
             text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
-            max_width: $('<input class="form-control" type="number">'),
-            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
+            max_width: $('<input class="form-control" type="number">').val(values.max_width),
+            dpe: $('<select class="form-control"></select>')
+                .html(this.data_pivot.interactivity_options)
+                .val(values.dpe),
         };
-
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.header_name.val(values.header_name);
-        this.content.max_width.val(values.max_width);
-        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
         this.content.field_name.on("change", function() {
@@ -375,19 +371,16 @@ class _DataPivot_settings_pointdata {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control">').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            header_name: $('<input class="form-control" type="text">'),
+            field_name: $('<select class="form-control">')
+                .html(this.data_pivot._get_header_options(true))
+                .val(values.field_name),
+            header_name: $('<input class="form-control" type="text">').val(values.header_name),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
-            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
+            dpe: $('<select class="form-control"></select>')
+                .html(this.data_pivot.interactivity_options)
+                .val(values.dpe),
         };
-
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.header_name.val(values.header_name);
-        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
         this.content.field_name.on("change", function() {
@@ -739,7 +732,7 @@ class _DataPivot_settings_barchart {
 
                 conditional_formatting: cf,
                 dpe: $('<select id="bc_dpe" name="dpe" class="form-control">')
-                    .html(dp.dpe_options)
+                    .html(dp.interactivity_options)
                     .val(values.dpe),
                 error_show_tails: $(
                     '<input id="bc_error_show_tails" name="error_show_tails" type="checkbox" />'

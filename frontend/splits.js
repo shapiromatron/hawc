@@ -58,6 +58,9 @@ const startup = (name, cb) => {
         case "summaryTableViewStartup":
             import("./summary/summaryTable/viewing/index.js").then(app => cb(app.default));
             break;
+        case "summaryInteractivityStartup":
+            import("./summary/interactivity/index.js").then(app => cb(app.default));
+            break;
         case "summaryTextStartup":
             import("./summary/summaryText/index.js").then(app => cb(app.default));
             break;

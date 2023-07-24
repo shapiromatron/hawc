@@ -26,11 +26,13 @@ class DesignQuerySet(QuerySet):
         ]
         return pd.DataFrame(
             data=self.annotate(
-                countries_=StringAgg("countries__name", delimiter="|", distinct=True),
-                states_=StringAgg("states__name", delimiter="|", distinct=True),
-                ecoregions_=StringAgg("ecoregions__value", delimiter="|", distinct=True),
-                habitats_=StringAgg("habitats__value", delimiter="|", distinct=True),
-                climates_=StringAgg("climates__value", delimiter="|", distinct=True),
+                countries_=StringAgg("countries__name", delimiter="|", distinct=True, default=""),
+                states_=StringAgg("states__name", delimiter="|", distinct=True, default=""),
+                ecoregions_=StringAgg(
+                    "ecoregions__value", delimiter="|", distinct=True, default=""
+                ),
+                habitats_=StringAgg("habitats__value", delimiter="|", distinct=True, default=""),
+                climates_=StringAgg("climates__value", delimiter="|", distinct=True, default=""),
             ).values_list(*names),
             columns=names,
         ).rename(

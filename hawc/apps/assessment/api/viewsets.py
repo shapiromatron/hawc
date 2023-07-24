@@ -259,7 +259,7 @@ class Assessment(AssessmentViewSet):
 
     @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
-        queryset = self.model.objects.get_public_assessments()
+        queryset = self.model.objects.all().public()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -434,6 +434,20 @@ class Assessment(AssessmentViewSet):
         return Response(export)
 
 
+class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.AssessmentValue
+    serializer_class = serializers.AssessmentValueSerializer
+
+
+class AssessmentDetailViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.AssessmentDetail
+    serializer_class = serializers.AssessmentDetailSerializer
+
+
 class DatasetViewSet(AssessmentViewSet):
     model = models.Dataset
     serializer_class = serializers.DatasetSerializer
@@ -456,7 +470,7 @@ class DatasetViewSet(AssessmentViewSet):
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
-    def data(self, request, pk: int = None):
+    def data(self, request, pk: int | None = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
         if not revision.data_exists():
