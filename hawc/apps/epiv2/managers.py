@@ -38,23 +38,23 @@ class DesignManager(BaseManager):
 
 
 class ChemicalManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
 
 class ExposureManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
 
 class ExposureLevelManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
 
 class OutcomeManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
 
 class AdjustmentFactorManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
 
 class DataExtractionQuerySet(QuerySet):
