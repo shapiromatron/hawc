@@ -29,11 +29,6 @@ class VisualFilterSet(BaseFilterSet):
         model = models.Visual
         fields = ["title", "type", "published"]
         form = InlineFilterForm
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 12}]},
-            ]
-        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -118,11 +113,6 @@ class SummaryTableFilterSet(BaseFilterSet):
         model = models.SummaryTable
         fields = ["title", "type", "published"]
         form = InlineFilterForm
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 12}]},
-            ]
-        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)

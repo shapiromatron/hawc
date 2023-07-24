@@ -23,9 +23,10 @@ class EndpointFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Endpoint name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
+            autocomplete_class=autocomplete.IVEndpointAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by in vitro endpoint name (ex: B cells)"},
         ),
-        help_text="Filter by in vitro endpoint name (ex: B cells)",
     )
     chemical = df.CharFilter(
         field_name="chemical__name",
@@ -111,7 +112,7 @@ class EndpointFilterSet(BaseFilterSet):
         ),
         empty_label="Default Order",
     )
-    paginate_by = PaginationFilter(empty_label="Default Pagination")
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.IVEndpoint
@@ -129,6 +130,8 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},

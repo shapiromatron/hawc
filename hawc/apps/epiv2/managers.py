@@ -219,7 +219,7 @@ class ChemicalQuerySet(QuerySet):
 
 
 class ChemicalManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ChemicalQuerySet(self.model, using=self._db)
@@ -257,7 +257,7 @@ class ExposureQuerySet(QuerySet):
 
 
 class ExposureManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ExposureQuerySet(self.model, using=self._db)
@@ -299,7 +299,7 @@ class ExposureLevelQuerySet(QuerySet):
 
 
 class ExposureLevelManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return ExposureLevelQuerySet(self.model, using=self._db)
@@ -328,7 +328,7 @@ class OutcomeQuerySet(QuerySet):
 
 
 class OutcomeManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return OutcomeQuerySet(self.model, using=self._db)
@@ -355,7 +355,7 @@ class AdjustmentFactorQuerySet(QuerySet):
 
 
 class AdjustmentFactorManager(BaseManager):
-    assessment_relation = "studypopulation__study__assessment"
+    assessment_relation = "design__study__assessment"
 
     def get_queryset(self):
         return AdjustmentFactorQuerySet(self.model, using=self._db)

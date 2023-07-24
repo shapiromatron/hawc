@@ -2,7 +2,12 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentEditViewSet, BaseAssessmentViewSet, EditPermissionsCheckMixin
+from ..assessment.api import (
+    AssessmentEditViewSet,
+    BaseAssessmentViewSet,
+    CleanupFieldsBaseViewSet,
+    EditPermissionsCheckMixin,
+)
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api.utils import get_published_only
@@ -120,21 +125,66 @@ class DataExtractionViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
             "outcome", "exposure_level__exposure_measurement", "exposure_level__chemical", "factors"
         )
 
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-    )
-    def modal(self, request, pk):
-        instance = self.get_object()
-        qs = (
-            models.DataExtraction.objects.filter(outcome_id=instance.outcome_id)
-            .select_related(
-                "outcome",
-                "exposure_level__exposure_measurement",
-                "exposure_level__chemical",
-                "factors",
-            )
-            .order_by("id")
-        )
-        serializer = serializers.DataExtractionSerializer(qs, many=True)
-        return Response(serializer.data)
+
+# Cleanup ViewSets
+class DesignCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DesignCleanupSerializer
+    model = models.Design
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class ChemicalCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ChemicalCleanupSerializer
+    model = models.Chemical
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+
+class ExposureCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ExposureCleanupSerializer
+    model = models.Exposure
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+
+class ExposureLevelCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ExposureLevelCleanupSerializer
+    model = models.ExposureLevel
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+
+class OutcomeCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.OutcomeCleanupSerializer
+    model = models.Outcome
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+
+class AdjustmentFactorCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.AdjustmentFactorCleanupSerializer
+    model = models.AdjustmentFactor
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
+
+
+class DataExtractionCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DataExtractionCleanupSerializer
+    model = models.DataExtraction
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")

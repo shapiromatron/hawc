@@ -10,7 +10,7 @@ class StudyFilterSet(BaseFilterSet):
     citation_or_id = df.CharFilter(
         method="filter_search",
         label="Citation/Identifier",
-        help_text="Filter by citation (authors, year, title, etc) or identifier (PubMed ID, DOI, HERO ID, etc.)",
+        help_text="Filter by citation (authors, year, title, etc) or identifier (PubMed ID, HERO ID, etc.)",
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
@@ -37,11 +37,8 @@ class StudyFilterSet(BaseFilterSet):
         model = models.Study
         form = InlineFilterForm
         fields = ["citation_or_id", "data_type", "published", "assigned_user"]
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 12}]},
-            ]
-        }
+        main_field = "citation_or_id"
+        appended_fields = ["data_type", "assigned_user", "published"]
 
     def __init__(self, *args, assessment, **kwargs):
         super().__init__(*args, assessment=assessment, **kwargs)

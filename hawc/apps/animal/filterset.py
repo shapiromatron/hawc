@@ -88,9 +88,10 @@ class EndpointFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Endpoint name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="name"
+            autocomplete_class=autocomplete.EndpointAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by endpoint name (ex: heart weight)"},
         ),
-        help_text="Filter by animal endpoint name (ex: heart weight)",
     )
     system = df.CharFilter(
         lookup_expr="icontains",
@@ -164,7 +165,7 @@ class EndpointFilterSet(BaseFilterSet):
         ),
         empty_label="Default Order",
     )
-    paginate_by = PaginationFilter(empty_label="Default Pagination")
+    paginate_by = PaginationFilter(empty_label=None)
 
     class Meta:
         model = models.Endpoint
@@ -189,6 +190,8 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},

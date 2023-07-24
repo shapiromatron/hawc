@@ -6,7 +6,7 @@ from . import models
 from .constants import PublishedStatus
 
 
-class AssessmentFilterset(BaseFilterSet):
+class AssessmentFilterSet(BaseFilterSet):
     search = df.CharFilter(
         method="filter_search",
         label="Search",
@@ -24,7 +24,7 @@ class AssessmentFilterset(BaseFilterSet):
         help_text="Filter by your role for an assessment.",
     )
     published_status = df.ChoiceFilter(
-        empty_label="Published",
+        empty_label="Published Status",
         method="filter_published",
         choices=PublishedStatus.choices,
         label="Published",

@@ -24,7 +24,6 @@ class Design(models.Model):
     study_name = models.CharField(
         max_length=128,
         blank=True,
-        null=True,
         verbose_name="Study name (if applicable)",
         help_text="Study name assigned by authors. Typically available for cohorts.",
     )
@@ -75,6 +74,16 @@ class Design(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     BREADCRUMB_PARENT = "study"
+
+    TEXT_CLEANUP_FIELDS = (
+        "summary",
+        "study_name",
+        "age_description",
+        "race",
+        "years_enrolled",
+        "years_followup",
+        "region",
+    )
 
     class Meta:
         verbose_name = "Study Population"
@@ -171,6 +180,8 @@ class Chemical(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = ("name",)
+
     class Meta:
         ordering = ("id",)
 
@@ -248,6 +259,11 @@ class Exposure(models.Model):
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "measurement_timing",
+    )
 
     class Meta:
         ordering = ("id",)
@@ -330,7 +346,7 @@ class ExposureLevel(models.Model):
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
     )
-    units = models.CharField(max_length=128, blank=True, null=True)
+    units = models.CharField(max_length=128, blank=True)
     ci_lcl = NumericTextField(
         max_length=16,
         blank=True,
@@ -371,6 +387,14 @@ class ExposureLevel(models.Model):
     comments = models.TextField(verbose_name="Exposure level comments", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "sub_population",
+        "units",
+        "negligible_exposure",
+        "data_location",
+    )
 
     class Meta:
         ordering = ("id",)
@@ -473,6 +497,12 @@ class Outcome(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "effect",
+        "effect_detail",
+        "endpoint",
+    )
+
     class Meta:
         ordering = ("id",)
 
@@ -532,6 +562,11 @@ class AdjustmentFactor(models.Model):
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "description",
+    )
 
     class Meta:
         ordering = ("id",)
@@ -666,6 +701,19 @@ class DataExtraction(models.Model):
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "sub_population",
+        "outcome_measurement_timing",
+        "effect_estimate_type",
+        "units",
+        "p_value",
+        "group",
+        "exposure_transform",
+        "outcome_transform",
+        "confidence",
+        "data_location",
+    )
 
     class Meta:
         verbose_name = "Quantitative data extraction"
