@@ -10,9 +10,6 @@ class NestedTermFilterSet(BaseFilterSet):
             "name": ["contains"],
         }
         main_field = "name__contains"
-        grid_layout = {
-            "rows": [{"columns": [{"width": 12}]}],
-        }
 
     @property
     def has_query(self) -> bool:
