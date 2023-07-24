@@ -440,6 +440,20 @@ class Assessment(AssessmentViewSet):
         return Response(export)
 
 
+class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.AssessmentValue
+    serializer_class = serializers.AssessmentValueSerializer
+
+
+class AssessmentDetailViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.AssessmentDetail
+    serializer_class = serializers.AssessmentDetailSerializer
+
+
 class DatasetViewSet(AssessmentViewSet):
     model = models.Dataset
     serializer_class = serializers.DatasetSerializer
