@@ -41,11 +41,8 @@ class UserTaskFilterSet(BaseFilterSet):
         model = models.Task
         form = InlineFilterForm
         fields = ["study_assessment_name", "type", "show_completed"]
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 12}]},
-            ]
-        }
+        main_field = "study_assessment_name"
+        appended_fields = ["type", "show_completed"]
 
     def filter_show_completed(self, queryset, name, value):
         if value is True:
@@ -94,11 +91,8 @@ class TaskFilterSet(BaseFilterSet):
         model = models.Task
         form = InlineFilterForm
         fields = ["study_name", "data_type", "owner", "order_by"]
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 12}]},
-            ]
-        }
+        main_field = "study_name"
+        appended_fields = ["order_by", "data_type", "owner"]
 
     def filter_owner(self, queryset, name, value):
         return queryset.filter(
