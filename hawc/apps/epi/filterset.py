@@ -25,9 +25,10 @@ class OutcomeFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Outcome name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
+            autocomplete_class=autocomplete.OutcomeAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by endpoint name (ex: blood, glucose)"},
         ),
-        help_text="Filter by epi endpoint name (ex: blood, glucose)",
     )
     study_population = df.CharFilter(
         field_name="study_population__name",
@@ -136,7 +137,7 @@ class OutcomeFilterSet(BaseFilterSet):
         empty_label="Default Order",
         help_text="How results will be ordered",
     )
-    paginate_by = PaginationFilter(empty_label="Default Pagination")
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.Outcome
@@ -158,6 +159,8 @@ class OutcomeFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
