@@ -1,17 +1,17 @@
 {% extends object.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
+{% load bs4 %}
 
 {% block content %}
 
-{% if object.get_object_name %}
-<div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
+<div class="d-flex">
+    <h2>{{object}}</h2>
+    {% if object.get_object_name %}
+    {% actions %}
         <a class="dropdown-item" href="{{object.get_object_list_url}}">View all logs for object</a>
-    </div>
+    {% endactions %}
+    {% endif %}
 </div>
-{% endif %}
 
-<h2>{{object}}</h2>
 
 <table class="table table-sm table-striped">
     <colgroup>

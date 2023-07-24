@@ -1,11 +1,12 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
-    <h2 class="d-inline-block">{{object.name}}</h2>
-    {% if obj_perms.edit and crud == "Read" %}
-      <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
+    <div class="d-flex">
+      <h2>{{object.name}}</h2>
+      {% if obj_perms.edit and crud == "Read" %}
+        {% actions %}
             <span class="dropdown-header">Study population editing</span>
             <a class="dropdown-item" href="{% url 'epi:sp_update' object.pk %}">Update</a>
             <a class="dropdown-item" href="{% url 'epi:sp_delete' pk=object.pk %}">Delete</a>
@@ -23,9 +24,9 @@
             <span class="dropdown-header">Outcomes</span>
             <a class="dropdown-item" href="{% url 'epi:outcome_create' object.pk %}">Create</a>
             <a class="dropdown-item" href="{% url 'epi:outcome_copy_selector' object.pk %}">Copy from existing</a>
-        </div>
-      </div>
-    {% endif %}
+        {% endactions %}
+      {% endif %}
+    </div>
     <div id="objContainer"></div>
 {% endblock %}
 

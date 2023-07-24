@@ -6,9 +6,9 @@
 {% block content %}
 
   {% if crud == "Read" %}
+  <div class="d-flex">
+    <h2>{{object}}</h2>
     {% if obj_perms.edit %}
-    <div class="d-flex">
-      <h2>{{object}}</h2>
       {% actions %}
           <span class="dropdown-header">Endpoint Editing</span>
           <a class="dropdown-item" href="{{ object.get_update_url }}">Update endpoint</a>
@@ -25,16 +25,14 @@
             {% endif %}
           {% endif %}
       {% endactions %}
-    </div>
     {% elif assessment.enable_bmd and object.bmd_modeling_possible and bmd_session %}
-    <div class="d-flex">
       {% actions %}
           <span class="dropdown-header">BMD Modeling</span>
           <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
           <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
       {% endactions %}
-    </div>
     {% endif %}
+  </div>
   {% endif %}
 
   <!-- Endpoint details -->
