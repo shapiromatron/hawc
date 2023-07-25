@@ -3,8 +3,8 @@ from django.db.models import Q
 
 from ..common.filterset import (
     BaseFilterSet,
-    FilterForm,
     InlineFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from . import models
@@ -30,18 +30,18 @@ class ResultFilterSet(BaseFilterSet):
         label="Search",
         help_text="Search by cause, effect, study, design, or result name",
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("design__study__short_citation", "study"),
             ("name", "result name"),
         ),
         choices=(
-            ("study", "study"),
-            ("result name", "name"),
+            ("study", "↑ study"),
+            ("result name", "↑ name"),
         ),
-        empty_label=("Default Order"),
+        initial="study",
     )
-    paginate_by = PaginationFilter(empty_label="Default Pagination")
+    paginate_by = PaginationFilter(initial=25, empty_label=None)
 
     class Meta:
         model = models.Result

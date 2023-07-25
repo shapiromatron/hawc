@@ -8,6 +8,7 @@ from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -117,7 +118,7 @@ class OutcomeFilterSet(BaseFilterSet):
         label="Metric units",
         queryset=DoseUnits.objects.all(),
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("study_population__study__short_citation", "study"),
             ("study_population__name", "study_population"),
@@ -135,8 +136,6 @@ class OutcomeFilterSet(BaseFilterSet):
             ("diagnostic", "↑ diagnostic"),
         ),
         initial="study",
-        empty_label=None,
-        help_text="How results will be ordered",
     )
     paginate_by = PaginationFilter(initial=25)
 

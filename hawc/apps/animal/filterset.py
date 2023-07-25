@@ -9,6 +9,7 @@ from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -138,7 +139,7 @@ class EndpointFilterSet(BaseFilterSet):
         queryset=DoseUnits.objects.all(),
         distinct=True,
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("animal_group__experiment__study__short_citation", "study"),
             ("animal_group__experiment__name", "experiment_name"),
@@ -162,7 +163,6 @@ class EndpointFilterSet(BaseFilterSet):
             ("chemical", "↑ chemical"),
         ),
         initial="study",
-        empty_label=None,
     )
     paginate_by = PaginationFilter(empty_label=None)
 

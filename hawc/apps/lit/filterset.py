@@ -74,12 +74,10 @@ class ReferenceFilterSet(BaseFilterSet):
     )
     order_by = ArrowOrderingFilter(
         initial="-year",
-        empty_label=None,
         fields=(
             ("authors_short", "authors"),
             ("year", "year"),
         ),
-        help_text="How results will be ordered",
     )
     needs_tagging = df.BooleanFilter(
         method="filter_needs_tagging",
