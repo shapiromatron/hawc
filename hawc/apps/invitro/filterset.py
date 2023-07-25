@@ -25,7 +25,7 @@ class EndpointFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.IVEndpointAutocomplete,
             field="name",
-            attrs={"data-placeholder": "Filter by in vitro endpoint name (ex: B cells)"},
+            attrs={"data-placeholder": "Filter by endpoint name (ex: B cells)"},
         ),
     )
     chemical = df.CharFilter(

@@ -140,7 +140,7 @@ class BaseFilterSet(df.FilterSet):
             for name, f in self.base_filters.items():
                 initial = f.extra.get("initial")
                 if not data.get(name) and initial:
-                    if type(initial) == list:
+                    if isinstance(initial, list):
                         data.setlist(name, initial)
                     else:
                         data[name] = initial

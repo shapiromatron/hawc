@@ -19,13 +19,13 @@ class ReferenceFilterSet(BaseFilterSet):
         field_name="identifiers__unique_id",
         lookup_expr="icontains",
         label="External identifier",
-        help_text="Pubmed ID, DOI, HERO ID, etc.",
+        help_text="Pubmed ID, DOI, HERO ID",
     )
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
     ref_search = df.CharFilter(
         method="filter_search",
         label="Title/Author/Year",
-        help_text="Filter by title, abstract, authors, or year",
+        help_text="Filter citations (author, year, title, ID)",
     )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
@@ -133,6 +133,7 @@ class ReferenceFilterSet(BaseFilterSet):
             | Q(authors_short__unaccent__icontains=value)
             | Q(authors__unaccent__icontains=value)
             | Q(year__icontains=value)
+            | Q(identifiers__unique_id=value)
         )
         return queryset.filter(query)
 

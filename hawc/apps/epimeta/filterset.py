@@ -24,9 +24,7 @@ class MetaResultFilterSet(BaseFilterSet):
         widget=AutocompleteTextWidget(
             autocomplete_class=autocomplete.MetaResultAutocomplete,
             field="label",
-            attrs={
-                "data-placeholder": "Filter by meta result label (ex: ALL, folic acid, any time)"
-            },
+            attrs={"data-placeholder": "Filter results (ex: folic acid, any time)"},
         ),
     )
     protocol = df.CharFilter(

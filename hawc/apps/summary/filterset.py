@@ -10,19 +10,19 @@ class VisualFilterSet(BaseFilterSet):
         field_name="title",
         lookup_expr="icontains",
         label="Title text",
-        help_text="Filter by visual title text",
+        help_text="Filter by title",
     )
     type = df.ChoiceFilter(
         field_name="visual_type",
         label="Visualization type",
         help_text="Type of visualization to display",
-        empty_label="All visual data types",
+        empty_label="All visual types",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC visualization",
-        empty_label="Published and Unpublished",
+        empty_label="Published status",
     )
 
     class Meta:
@@ -94,7 +94,7 @@ class SummaryTableFilterSet(BaseFilterSet):
         field_name="title",
         lookup_expr="icontains",
         label="Title",
-        help_text="Filter by table title",
+        help_text="Filter by title",
     )
     type = df.ChoiceFilter(
         field_name="table_type",
@@ -106,7 +106,7 @@ class SummaryTableFilterSet(BaseFilterSet):
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC summary tables",
-        empty_label="Published and Unpublished",
+        empty_label="Published status",
     )
 
     class Meta:
