@@ -178,13 +178,14 @@ class BaseFilterSet(df.FilterSet):
 
 class OrderingFilter(df.OrderingFilter):
     def __init__(self, *args, **kwargs):
-        if "help_text" not in kwargs:
-            kwargs["help_text"] = "How results will be ordered"
-        if "empty_label" not in kwargs:
-            kwargs["empty_label"] = None
-            if "initial" not in kwargs:
-                raise AttributeError("Must define 'initial' attribute on OrderingFilter.")
-        super().__init__(*args, **kwargs)
+        default_kwargs = dict(
+            help_text="How results will be ordered",
+            empty_label=None,
+        )
+        default_kwargs.update(kwargs)
+        if "initial" not in default_kwargs:
+            raise AttributeError("Must define 'initial' attribute on OrderingFilter.")
+        super().__init__(*args, **default_kwargs)
 
 
 class ArrowOrderingFilter(OrderingFilter):
