@@ -25,7 +25,7 @@ class MetricToggle extends Component {
                     store.toggle();
                     h.maybeScrollIntoView(this, {yOffset: -50, animate: true});
                 }}>
-                <i className={store.show ? "fa fa-fw fa-eye-slash" : "fa fa-fw fa-eye"}></i>
+                <i className={store.show ? "fa fa-fw fa-compress" : "fa fa-fw fa-expand"}></i>
                 &nbsp;{store.show ? "Hide details" : "Show details"}
             </button>
         );
