@@ -10,7 +10,7 @@
       <td>
         <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
         {% if object.assessment_objective %}
-        <div class='text-muted'>{{object.assessment_objective|safe|truncatewords:30}}</div>
+        <div class='text-muted'>{{object.assessment_objective|truncatewords:30|striptags|safe}}</div>
         {% endif %}
       </td>
       <td>{{object.year}}</td>
