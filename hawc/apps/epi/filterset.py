@@ -137,7 +137,7 @@ class OutcomeFilterSet(BaseFilterSet):
         ),
         initial="study",
     )
-    paginate_by = PaginationFilter(initial=25)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Outcome

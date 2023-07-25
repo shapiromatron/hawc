@@ -164,7 +164,7 @@ class EndpointFilterSet(BaseFilterSet):
         ),
         initial="study",
     )
-    paginate_by = PaginationFilter(empty_label=None)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Endpoint

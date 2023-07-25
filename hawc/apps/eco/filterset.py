@@ -41,7 +41,7 @@ class ResultFilterSet(BaseFilterSet):
         ),
         initial="study",
     )
-    paginate_by = PaginationFilter(initial=25, empty_label=None)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Result

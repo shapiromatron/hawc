@@ -30,6 +30,8 @@ class PaginationFilter(df.ChoiceFilter):
                 (500, "500 per page"),
             ),
             method=filter_noop,
+            empty_label=None,
+            initial=25,
         )
         default_kwargs.update(kwargs)
         super().__init__(*args, **default_kwargs)

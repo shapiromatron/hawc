@@ -91,7 +91,7 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
-    paginate_by = PaginationFilter(initial=25)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Reference
