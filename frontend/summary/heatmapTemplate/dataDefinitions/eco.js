@@ -9,7 +9,7 @@ import {
 
 // EcSD = eco study design
 const EcSD = {
-        studyId: defineProps("studyId", "Study ID", "study-id"),
+        studyId: defineProps("studyId", "Study ID", "study"),
         studyCitation: defineProps("studyCitation", "Study citation", "study-short_citation"),
         designValue: defineProps("designValue", "Design Value", "design-design__value"),
         designClimates: defineProps("designClimates", "Design Climates", "design-climates_"),
@@ -24,10 +24,10 @@ const EcSD = {
             studyCitation: defineAxis(EcSD.studyCitation),
         },
         FILTER_OPTIONS: {
-            studyCitation: defineFilter(EcSD.studyCitation, {on_click_event: "study-id"}),
+            studyCitation: defineFilter(EcSD.studyCitation, {on_click_event: "study"}),
         },
         TABLE_FIELDS: {
-            studyCitation: defineTable(EcSD.studyCitation, {on_click_event: "study-id"}),
+            studyCitation: defineTable(EcSD.studyCitation, {on_click_event: "study"}),
         },
     };
 EcSDSettings.DASHBOARDS = [
@@ -44,7 +44,7 @@ EcSDSettings.DASHBOARDS = [
 
 // EcR = eco results
 const EcR = {
-        studyId: defineProps("studyId", "Study ID", "study-id"),
+        studyId: defineProps("studyId", "Study ID", "study"),
         studyPMID: defineProps("studyPMID", "PubMed ID", "study-pmid"),
         studyHERO: defineProps("studyHERO", "HERO ID", "study-hero"),
         studyDOI: defineProps("studyDOI", "DOI", "study-doi"),
@@ -240,7 +240,7 @@ const EcR = {
             resultSampleSize: defineAxis(EcR.resultSampleSize),
         },
         FILTER_OPTIONS: {
-            studyCitation: defineFilter(EcR.studyCitation, {on_click_event: "study-id"}),
+            studyCitation: defineFilter(EcR.studyCitation, {on_click_event: "study"}),
             designName: defineFilter(EcR.designName),
             designValue: defineFilter(EcR.designValue),
             designSetting: defineFilter(EcR.designSetting),
@@ -258,10 +258,10 @@ const EcR = {
             resultName: defineFilter(EcR.resultName),
         },
         TABLE_FIELDS: {
-            studyCitation: defineTable(EcR.studyCitation, {on_click_event: "study-id"}),
+            studyCitation: defineTable(EcR.studyCitation, {on_click_event: "study"}),
             studyFullCitation: defineTable(EcR.studyFullCitation),
             studySummary: defineTable(EcR.studySummary),
-            designName: defineTable(EcR.designName, {on_click_event: "eco-design"}),
+            designName: defineTable(EcR.designName, {on_click_event: "eco_design"}),
             designValue: defineTable(EcR.designValue),
             designSetting: defineTable(EcR.designSetting),
             designCountries: defineTable(EcR.designCountries),
