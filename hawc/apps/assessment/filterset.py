@@ -1,12 +1,12 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..common.filterset import BaseFilterSet, InlineFilterForm
+from ..common.filterset import ArrowOrderingFilter, BaseFilterSet, InlineFilterForm
 from . import models
 from .constants import PublishedStatus
 
 
-class AssessmentFilterset(BaseFilterSet):
+class AssessmentFilterSet(BaseFilterSet):
     search = df.CharFilter(
         method="filter_search",
         label="Search",
@@ -24,13 +24,13 @@ class AssessmentFilterset(BaseFilterSet):
         help_text="Filter by your role for an assessment.",
     )
     published_status = df.ChoiceFilter(
-        empty_label="Published",
+        empty_label="Published Status",
         method="filter_published",
         choices=PublishedStatus.choices,
         label="Published",
         help_text="Published status of assessment.",
     )
-    order_by = df.OrderingFilter(
+    order_by = ArrowOrderingFilter(
         fields=(
             ("name", "name"),
             ("year", "year"),

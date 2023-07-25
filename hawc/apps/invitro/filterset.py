@@ -5,7 +5,7 @@ from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -23,9 +23,10 @@ class EndpointFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Endpoint name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.IVEndpointAutocomplete, field="name"
+            autocomplete_class=autocomplete.IVEndpointAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by endpoint name (ex: B cells)"},
         ),
-        help_text="ex: B cells",
     )
     chemical = df.CharFilter(
         field_name="chemical__name",
@@ -87,34 +88,32 @@ class EndpointFilterSet(BaseFilterSet):
     order_by = df.OrderingFilter(
         fields=(
             ("experiment__study__short_citation", "study"),
-            ("experiment__name", "experiment name"),
-            ("name", "endpoint name"),
-            ("assay_type", "assay type"),
+            ("experiment__name", "experiment_name"),
+            ("name", "endpoint_name"),
+            ("assay_type", "assay_type"),
             ("effect", "effect"),
             ("chemical__name", "chemical"),
             ("category__name", "category"),
-            ("observation_time", "observation time"),
-            ("experiment__dose_units_id", "dose units"),
-            ("response_units", "response units"),
+            ("observation_time", "observation_time"),
         ),
         choices=(
-            ("study", "study"),
-            ("experiment name", "experiment name"),
-            ("endpoint name", "endpoint name"),
-            ("assay type", "assay type"),
-            ("effect", "effect"),
-            ("chemical", "chemical"),
-            ("category", "category"),
-            ("observation time", "observation time"),
-            ("dose units", "dose units"),
-            ("response units", "response units"),
+            ("study", "↑ study"),
+            ("experiment_name", "↑ experiment name"),
+            ("endpoint_name", "↑ endpoint name"),
+            ("assay_type", "↑ assay type"),
+            ("effect", "↑ effect"),
+            ("chemical", "↑ chemical"),
+            ("category", "↑ category"),
+            ("observation_time", "↑ observation time"),
         ),
+        initial="study",
+        empty_label=None,
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.IVEndpoint
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "name",
@@ -128,11 +127,13 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 
