@@ -185,4 +185,4 @@ class ArrowOrderingFilter(df.OrderingFilter):
             (f"-{param}", labels.get(field, f"↓ {pretty_name(param)}"))
             for field, param in fields.items()
         ]
-        return [val for pair in zip(ascending, descending) for val in pair]
+        return [val for pair in zip(ascending, descending, strict=True) for val in pair]
