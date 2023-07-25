@@ -29,6 +29,7 @@ class TestHeatmapResult:
         client = get_client("pm")
         check_200(client, url)
 
+
 @pytest.mark.django_db
 class TestResultView:
     def test_permission(self, db_keys):
