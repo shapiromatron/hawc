@@ -35,10 +35,28 @@ export default [
         label: "Show reference",
         modal: false,
     },
-    {key: "hero", columns: ["hero id"], cls: Reference, label: "Show HERO", modal: false},
-    {key: "pubmed", columns: ["pubmed id"], cls: Reference, label: "Show PubMed", modal: false},
+    {
+        key: "hero",
+        columns: ["hero id", "HERO ID"],
+        cls: Reference,
+        label: "Show HERO",
+        modal: false,
+    },
+    {
+        key: "pubmed",
+        columns: ["pubmed id", "PMID"],
+        cls: Reference,
+        label: "Show PubMed",
+        modal: false,
+    },
     // study
-    {key: "study", columns: ["study id", "study-id"], cls: Study, label: "Show study", modal: true},
+    {
+        key: "study",
+        columns: ["study id", "study_id", "study-id"],
+        cls: Study,
+        label: "Show study",
+        modal: true,
+    },
     // animal
     {
         key: "experiment",

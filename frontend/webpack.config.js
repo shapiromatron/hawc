@@ -56,6 +56,7 @@ module.exports = {
             bmd: path.join(__dirname, "bmd"),
             eco: path.join(__dirname, "eco"),
             epi: path.join(__dirname, "epi"),
+            epiv2: path.join(__dirname, "epiv2"),
             epimeta: path.join(__dirname, "epimeta"),
             invitro: path.join(__dirname, "invitro"),
             lit: path.join(__dirname, "lit"),

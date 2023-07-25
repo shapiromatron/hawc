@@ -24,6 +24,7 @@ from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
+from ..assessment.constants import EpiVersion
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
@@ -41,6 +42,8 @@ from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epimeta.models import MetaResult
+from ..epiv2.exports import EpiFlatComplete
+from ..epiv2.models import DataExtraction
 from ..invitro import exports as ivexports
 from ..invitro.models import IVEndpoint
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
@@ -346,80 +349,108 @@ class Visual(models.Model):
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
-        return HeatmapDatasets(
-            datasets=[
-                HeatmapDataset(
-                    type="Literature",
-                    name="Literature summary",
-                    url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay study design",
-                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay study design (including unpublished HAWC data)",
-                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint summary",
-                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint summary (including unpublished HAWC data)",
-                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint with doses",
-                    url=reverse(
-                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
-                    ),
-                ),
-                HeatmapDataset(
-                    type="Bioassay",
-                    name="Bioassay endpoint with doses (including unpublished HAWC data)",
-                    url=reverse(
-                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
-                    )
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology study design",
-                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology study design (including unpublished HAWC data)",
-                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology result summary",
-                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
-                ),
-                HeatmapDataset(
-                    type="Epi",
-                    name="Epidemiology result summary (including unpublished HAWC data)",
-                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
-                    + "?unpublished=true",
-                ),
-                *(
+        datasets = [
+            HeatmapDataset(
+                type="Literature",
+                name="Literature summary",
+                url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
+            )
+        ]
+        if assessment.has_animal_data:
+            datasets.extend(
+                [
                     HeatmapDataset(
-                        type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url()
-                    )
-                    for ds in assessment.datasets.all()
-                ),
-            ]
-        )
+                        type="Bioassay",
+                        name="Bioassay study design",
+                        url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,)),
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay study design (including unpublished HAWC data)",
+                        url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,))
+                        + "?unpublished=true",
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint summary",
+                        url=reverse(
+                            "animal:api:assessment-endpoint-heatmap", args=(assessment.id,)
+                        ),
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint summary (including unpublished HAWC data)",
+                        url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
+                        + "?unpublished=true",
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint with doses",
+                        url=reverse(
+                            "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                        ),
+                    ),
+                    HeatmapDataset(
+                        type="Bioassay",
+                        name="Bioassay endpoint with doses (including unpublished HAWC data)",
+                        url=reverse(
+                            "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                        )
+                        + "?unpublished=true",
+                    ),
+                ]
+            )
+        if assessment.has_epi_data:
+            if assessment.epi_version == EpiVersion.V1:
+                datasets.extend(
+                    [
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology study design",
+                            url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology study design (including unpublished HAWC data)",
+                            url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology result summary",
+                            url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology result summary (including unpublished HAWC data)",
+                            url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                    ]
+                )
+            elif assessment.epi_version == EpiVersion.V2:
+                datasets.extend(
+                    [
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology evidence map",
+                            url=reverse("epiv2:api:assessment-study-export", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology data extractions",
+                            url=reverse("epiv2:api:assessment-export", args=(assessment.id,)),
+                        ),
+                    ]
+                )
+            else:
+                raise ValueError("Unknown epi data type")
+        additional_datasets = [
+            HeatmapDataset(type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url())
+            for ds in assessment.datasets.all()
+        ]
+        datasets.extend(additional_datasets)
+        return HeatmapDatasets(datasets=datasets)
 
     @staticmethod
     def get_dose_units():
@@ -444,7 +475,9 @@ class Visual(models.Model):
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             if request:
                 dose_id = tryParseInt(request.POST.get("dose_units"), -1)
-                Prefilter.setFiltersFromForm(filters, request.POST, self.visual_type)
+                Prefilter.setFiltersFromForm(
+                    self.assessment, filters, request.POST, self.visual_type
+                )
 
             else:
                 dose_id = self.dose_units_id
@@ -470,7 +503,9 @@ class Visual(models.Model):
         ]:
             if request:
                 efilters = {"assessment_id": self.assessment_id}
-                Prefilter.setFiltersFromForm(efilters, request.POST, self.visual_type)
+                Prefilter.setFiltersFromForm(
+                    self.assessment, efilters, request.POST, self.visual_type
+                )
                 if len(efilters) > 1:
                     filters["id__in"] = set(
                         Endpoint.objects.filter(**efilters).values_list(
@@ -752,9 +787,14 @@ class DataPivotQuery(DataPivot):
                 filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
         elif self.evidence_type == constants.StudyType.EPI:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["study_population__study__published"] = True
+            if self.assessment.epi_version == EpiVersion.V1:
+                filters["assessment_id"] = self.assessment_id
+                if self.published_only:
+                    filters["study_population__study__published"] = True
+            else:
+                filters["design__study__assessment_id"] = self.assessment_id
+                if self.published_only:
+                    filters["design__study__published"] = True
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             filters["protocol__study__assessment_id"] = self.assessment_id
@@ -779,13 +819,18 @@ class DataPivotQuery(DataPivot):
             qs = Endpoint.objects.filter(**filters)
 
         elif self.evidence_type == constants.StudyType.EPI:
-            qs = Outcome.objects.filter(**filters)
+            if self.assessment.epi_version == EpiVersion.V1:
+                qs = Outcome.objects.filter(**filters)
+            else:
+                qs = DataExtraction.objects.filter(**filters)
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             qs = MetaResult.objects.filter(**filters)
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
+        else:
+            raise ValueError("Invalid data type")
 
         elif self.evidence_type == constants.StudyType.ECO:
             qs = Result.objects.filter(**filters)
@@ -808,11 +853,18 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == constants.StudyType.EPI:
-            exporter = OutcomeDataPivot(
-                qs,
-                assessment=self.assessment,
-                filename=f"{self.assessment}-epi",
-            )
+            if self.assessment.epi_version == EpiVersion.V1:
+                exporter = OutcomeDataPivot(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-epi",
+                )
+            else:
+                exporter = EpiFlatComplete(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-epi",
+                )
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             exporter = MetaResultFlatDataPivot(
@@ -911,8 +963,9 @@ class Prefilter:
     """
 
     @staticmethod
-    def setFiltersFromForm(filters, d, visual_type):
+    def setFiltersFromForm(assessment, filters, d, visual_type):
         evidence_type = d.get("evidence_type")
+        epi_version = assessment.epi_version
 
         if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             evidence_type = constants.StudyType.BIOASSAY
@@ -942,8 +995,10 @@ class Prefilter:
             studies = d.getlist("studies", [])
             if evidence_type == constants.StudyType.BIOASSAY:
                 filters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == constants.StudyType.EPI:
+            elif evidence_type == constants.StudyType.EPI and epi_version == 1:
                 filters["study_population__study__in"] = studies
+            elif evidence_type == constants.StudyType.EPI and epi_version == 2:
+                filters["design__study__in"] = studies
             elif evidence_type == constants.StudyType.IN_VITRO:
                 filters["experiment__study__in"] = studies
             elif evidence_type == constants.StudyType.EPI_META:
@@ -954,8 +1009,10 @@ class Prefilter:
         if d.get("published_only"):
             if evidence_type == constants.StudyType.BIOASSAY:
                 filters["animal_group__experiment__study__published"] = True
-            elif evidence_type == constants.StudyType.EPI:
+            elif evidence_type == constants.StudyType.EPI and epi_version == 1:
                 filters["study_population__study__published"] = True
+            elif evidence_type == constants.StudyType.EPI and epi_version == 2:
+                filters["design__study__published"] = True
             elif evidence_type == constants.StudyType.IN_VITRO:
                 filters["experiment__study__published"] = True
             elif evidence_type == constants.StudyType.EPI_META:

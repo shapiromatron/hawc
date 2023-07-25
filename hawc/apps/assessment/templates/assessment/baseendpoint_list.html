@@ -21,8 +21,13 @@
             </a></li>
         {% endif %}
 
+
         {% if eco_results > 0 %}
         <li><a href="{% url 'eco:result_list' assessment.id %}">{{eco_results}} ecology results</a></li>
+        {% endif %}
+      
+        {% if epiv2_outcomes > 0 %}
+        <li><a href="{% url 'epiv2:outcome' assessment.id %}">Epidemiology outcomes</a></li>
         {% endif %}
 
         {% if meta_results > 0 %}
@@ -113,6 +118,26 @@
                 </td>
                 <td><a href="{% url 'eco:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
                 <td><a href="{% url 'eco:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
+                <td>N/A</td>
+            </tr>
+            {% endif %}
+            {% endif %}
+            {% if epiv2_outcomes > 0 %}
+            <tr>
+                <td>Epidemiology</td>
+                <td><a href="{% url 'epiv2:heatmap-study-design' assessment.id %}">Study design</a></td>
+                <td><a href="{% url 'epiv2:heatmap-result' assessment.id %}">Study results</a></td>
+                <td>N/A</td>
+            </tr>
+            {% if obj_perms.edit %}
+            <tr>
+                <td>Epidemiology (including unpublished HAWC data)
+                    &nbsp;
+                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
+                        aria-hidden="true"></i>
+                </td>
+                <td><a href="{% url 'epiv2:heatmap-study-design' assessment.id %}?unpublished=true">Study design</a></td>
+                <td><a href="{% url 'epiv2:heatmap-result' assessment.id %}?unpublished=true">Study results</a></td>
                 <td>N/A</td>
             </tr>
             {% endif %}
