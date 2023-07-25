@@ -829,12 +829,12 @@ class DataPivotQuery(DataPivot):
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
-        else:
-            raise ValueError("Invalid data type")
 
         elif self.evidence_type == constants.StudyType.ECO:
             qs = Result.objects.filter(**filters)
 
+        else:
+            raise ValueError("Invalid data type")
         return qs.order_by("id")
 
     def _get_dataset_exporter(self, qs):

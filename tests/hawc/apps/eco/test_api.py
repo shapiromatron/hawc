@@ -1,45 +1,49 @@
 import pytest
 from django.urls import reverse
-from rest_framework.test import APIClient
 
-from hawc.apps.common.helper import FlatExport
+from ..test_utils import check_200, check_403, check_api_json_data, get_client
 
 
 @pytest.mark.django_db
 class TestAssessmentViewSet:
-    def test_nested(self):
-        client = APIClient()
+    def test_assessment(self, rewrite_data_files):
         url = reverse("eco:api:assessment-export", args=(1,))
+        client = get_client(api=True)
 
         # check permissions; must be authenticated
-        assert client.get(url).status_code == 403
+        check_403(client, url)
 
         # check successful status code
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
+        client = get_client("pm", api=True)
+        response = check_200(client, url + "?unpublished=true")
+        key = "api-eco-export-1.json"
+        check_api_json_data(response.json(), key, rewrite_data_files)
 
-        # check successful response data shape
-        assert isinstance(resp.data, FlatExport)
-        assert resp.data.df.shape == (1, 81)
-        assert "study-id" in resp.data.df.columns
+    def test_study(self, rewrite_data_files):
+        url = reverse("eco:api:assessment-study-export", args=(1,))
+        client = get_client(api=True)
+
+        # check permissions; must be authenticated
+        check_403(client, url)
+
+        # check successful status code
+        client = get_client("pm", api=True)
+        response = check_200(client, url + "?unpublished=true")
+        key = "api-eco-study-export-1.json"
+        check_api_json_data(response.json(), key, rewrite_data_files)
 
 
 @pytest.mark.django_db
 class TestTermViewSet:
-    def test_nested(self):
-        client = APIClient()
+    def test_nested(self, rewrite_data_files):
         url = reverse("eco:api:terms-nested")
+        client = get_client(api=True)
 
         # check permissions; must be authenticated
-        assert client.get(url).status_code == 403
+        check_403(client, url)
 
         # check successful status code
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        # check successful response data shape
-        assert isinstance(resp.data, FlatExport)
-        assert resp.data.df.shape == (1, 3)
-        assert resp.data.df.columns.tolist() == ["ID", "Depth", "Level 1"]
+        client = get_client("pm", api=True)
+        response = check_200(client, url + "?unpublished=true")
+        key = "api-eco-term-export.json"
+        check_api_json_data(response.json(), key, rewrite_data_files)
