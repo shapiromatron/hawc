@@ -120,21 +120,22 @@ class OutcomeFilterSet(BaseFilterSet):
     order_by = df.OrderingFilter(
         fields=(
             ("study_population__study__short_citation", "study"),
-            ("study_population__name", "study population"),
-            ("name", "outcome name"),
+            ("study_population__name", "study_population"),
+            ("name", "outcome_name"),
             ("system", "system"),
             ("effect", "effect"),
             ("diagnostic", "diagnostic"),
         ),
         choices=(
-            ("study", "study"),
-            ("study population", "study population"),
-            ("outcome name", "outcome name"),
-            ("system", "system"),
-            ("effect", "effect"),
-            ("diagnostic", "diagnostic"),
+            ("study", "↑ study"),
+            ("study_population", "↑ study population"),
+            ("outcome_name", "↑ outcome name"),
+            ("system", "↑ system"),
+            ("effect", "↑ effect"),
+            ("diagnostic", "↑ diagnostic"),
         ),
-        empty_label="Default Order",
+        initial="study",
+        empty_label=None,
         help_text="How results will be ordered",
     )
     paginate_by = PaginationFilter(initial=25)

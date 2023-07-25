@@ -3,6 +3,7 @@ from typing import ForwardRef
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
+from django.forms.utils import pretty_name
 from pydantic import BaseModel, conlist
 
 from ..assessment.models import Assessment
@@ -139,7 +140,7 @@ class BaseFilterSet(df.FilterSet):
             for name, f in self.base_filters.items():
                 initial = f.extra.get("initial")
                 if not data.get(name) and initial:
-                    if type(initial) == list:
+                    if isinstance(initial, list):
                         data.setlist(name, initial)
                     else:
                         data[name] = initial
@@ -173,3 +174,15 @@ class BaseFilterSet(df.FilterSet):
                 if field not in form.dynamic_fields and field != "is_expanded":
                     form.fields.pop(field)
         return form
+
+
+class ArrowOrderingFilter(df.OrderingFilter):
+    def build_choices(self, fields, labels):
+        ascending = [
+            (param, labels.get(field, f"↑ {pretty_name(param)}")) for field, param in fields.items()
+        ]
+        descending = [
+            (f"-{param}", labels.get(field, f"↓ {pretty_name(param)}"))
+            for field, param in fields.items()
+        ]
+        return [val for pair in zip(ascending, descending, strict=True) for val in pair]

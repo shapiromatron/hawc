@@ -101,7 +101,7 @@ class SummaryTableList(BaseFilterList):
     breadcrumb_active_name = "Summary tables"
 
     def get_filterset_form_kwargs(self):
-        if self.assessment.user_permissions(self.request.user)["edit"]:
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
                 appended_fields=["type", "published"],
@@ -341,7 +341,7 @@ class VisualizationList(BaseFilterList):
         return sorted(items, key=lambda d: d.title.lower())
 
     def get_filterset_form_kwargs(self):
-        if self.assessment.user_permissions(self.request.user)["edit"]:
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
                 appended_fields=["type", "published"],

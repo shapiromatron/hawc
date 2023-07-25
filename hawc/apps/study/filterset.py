@@ -7,23 +7,23 @@ from . import constants, models
 
 
 class StudyFilterSet(BaseFilterSet):
-    citation_or_id = df.CharFilter(
-        method="filter_search",
-        label="Citation/Identifier",
-        help_text="Filter by citation (authors, year, title, etc) or identifier (PubMed ID, HERO ID, etc.)",
+    query = df.CharFilter(
+        method="filter_query",
+        label="Citation",
+        help_text="Filter citations (author, year, title, ID)",
     )
     data_type = df.ChoiceFilter(
         method="filter_data_type",
         choices=constants.StudyTypeChoices.filtered_choices(),
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="All study data types",
+        empty_label="All data types",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
-        help_text="Published status for HAWC extraction",
-        empty_label="Published and unpublished",
+        help_text="Published status for HAWC study",
+        empty_label="Published status",
     )
     assigned_user = df.ModelChoiceFilter(
         method="filter_assigned_user",
@@ -36,8 +36,8 @@ class StudyFilterSet(BaseFilterSet):
     class Meta:
         model = models.Study
         form = InlineFilterForm
-        fields = ["citation_or_id", "data_type", "published", "assigned_user"]
-        main_field = "citation_or_id"
+        fields = ["query", "data_type", "published", "assigned_user"]
+        main_field = "query"
         appended_fields = ["data_type", "assigned_user", "published"]
 
     def __init__(self, *args, assessment, **kwargs):
@@ -50,7 +50,7 @@ class StudyFilterSet(BaseFilterSet):
             query &= Q(published=True)
         return queryset.filter(query)
 
-    def filter_search(self, queryset, name, value):
+    def filter_query(self, queryset, name, value):
         query = (
             Q(short_citation__icontains=value)
             | Q(full_citation__icontains=value)
@@ -66,6 +66,6 @@ class StudyFilterSet(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        if form.fields.get("assigned_user"):
+        if "assigned_user" in form.fields:
             form.fields["assigned_user"].queryset = self.assessment.pms_and_team_users()
         return form

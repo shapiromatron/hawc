@@ -25,17 +25,17 @@ class StudyFilterList(BaseFilterList):
         return super().get_queryset().distinct().prefetch_related("identifiers")
 
     def get_filterset_form_kwargs(self):
-        if self.assessment.user_permissions(self.request.user)["edit"]:
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
-                main_field="citation_or_id",
+                main_field="query",
                 appended_fields=["data_type", "published"],
-                dynamic_fields=["citation_or_id", "data_type", "published"],
+                dynamic_fields=["query", "data_type", "published"],
             )
         else:
             return dict(
-                main_field="citation_or_id",
+                main_field="query",
                 appended_fields=["data_type"],
-                dynamic_fields=["citation_or_id", "data_type"],
+                dynamic_fields=["query", "data_type"],
             )
 
 
