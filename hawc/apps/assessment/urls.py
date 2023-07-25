@@ -6,6 +6,7 @@ from . import api, views
 
 router = SimpleRouter()
 router.register("assessment", api.Assessment, basename="assessment")
+router.register("assessment-admin", api.AssessmentAdmin, basename="assessment-admin")
 router.register("detail", api.AssessmentDetailViewSet, basename="detail")
 router.register("value", api.AssessmentValueViewSet, basename="value")
 router.register("dataset", api.DatasetViewSet, basename="dataset")

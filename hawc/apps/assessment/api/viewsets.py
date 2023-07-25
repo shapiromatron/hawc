@@ -440,6 +440,40 @@ class Assessment(AssessmentViewSet):
         return Response(export)
 
 
+class AssessmentAdmin(viewsets.ModelViewSet):
+    """Viewset for admin only API actions, such as creating and deleting assessments."""
+
+    http_method_names = METHODS_NO_PUT
+    model = models.Assessment
+    serializer_class = serializers.AssessmentSerializer
+    permission_classes = (permissions.IsAdminUser,)
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        create_object_log(
+            "Created",
+            serializer.instance,
+            serializer.instance.id,
+            self.request.user.id,
+        )
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        create_object_log(
+            "Updated",
+            serializer.instance,
+            serializer.instance.id,
+            self.request.user.id,
+        )
+
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        create_object_log("Deleted", instance, instance.id, self.request.user.id)
+        super().perform_destroy(instance)
+
+
 class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
