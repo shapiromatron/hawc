@@ -1,7 +1,7 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..common.filterset import BaseFilterSet, InlineFilterForm
+from ..common.filterset import ArrowOrderingFilter, BaseFilterSet, InlineFilterForm
 from . import models
 from .constants import PublishedStatus
 
@@ -30,7 +30,7 @@ class AssessmentFilterSet(BaseFilterSet):
         label="Published",
         help_text="Published status of assessment.",
     )
-    order_by = df.OrderingFilter(
+    order_by = ArrowOrderingFilter(
         fields=(
             ("name", "name"),
             ("year", "year"),

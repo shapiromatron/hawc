@@ -3,13 +3,13 @@ from django.db.models import Q
 from django.forms.widgets import CheckboxInput
 from django_filters.constants import EMPTY_VALUES
 
-from ..common.filterset import BaseFilterSet, InlineFilterForm
+from ..common.filterset import ArrowOrderingFilter, BaseFilterSet, InlineFilterForm
 from ..myuser.models import HAWCUser
 from ..study.constants import StudyTypeChoices
 from . import constants, models
 
 
-class TaskOrderingFilter(df.OrderingFilter):
+class TaskOrderingFilter(ArrowOrderingFilter):
     def filter(self, qs, value):
         if value in EMPTY_VALUES:
             return qs
@@ -80,11 +80,11 @@ class TaskFilterSet(BaseFilterSet):
     order_by = TaskOrderingFilter(
         label="Ordering",
         fields=(
-            ("study__short_citation", "study__short_citation"),
+            ("study__short_citation", "citation"),
             ("study__created", "study_created"),
         ),
-        empty_label="Default Order",
-        null_label=None,
+        empty_label=None,
+        initial="citation",
     )
 
     class Meta:

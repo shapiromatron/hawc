@@ -3,7 +3,13 @@ from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
-from ..common.filterset import BaseFilterSet, ExpandableFilterForm, PaginationFilter, filter_noop
+from ..common.filterset import (
+    ArrowOrderingFilter,
+    BaseFilterSet,
+    ExpandableFilterForm,
+    PaginationFilter,
+    filter_noop,
+)
 from . import models
 
 
@@ -66,10 +72,11 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Tagged by me",
         help_text="All references that you have tagged",
     )
-    order_by = df.OrderingFilter(
-        empty_label="Default Order",
+    order_by = ArrowOrderingFilter(
+        initial="-year",
+        empty_label=None,
         fields=(
-            ("authors", "authors"),
+            ("authors_short", "authors"),
             ("year", "year"),
         ),
         help_text="How results will be ordered",

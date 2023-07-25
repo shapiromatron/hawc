@@ -57,19 +57,20 @@ class MetaResultFilterSet(BaseFilterSet):
     order_by = df.OrderingFilter(
         fields=(
             ("protocol__study__short_citation", "study"),
-            ("label", "meta result label"),
+            ("label", "meta_result"),
             ("protocol__name", "protocol"),
-            ("health_outcome", "health outcome"),
+            ("health_outcome", "health_outcome"),
             ("estimate", "estimate"),
         ),
         choices=(
-            ("study", "study"),
-            ("meta result label", "meta result label"),
-            ("protocol", "protocol"),
-            ("health outcome", "health outcome"),
-            ("estimate", "estimate"),
+            ("study", "↑ study"),
+            ("meta_result", "↑ meta result"),
+            ("protocol", "↑ protocol"),
+            ("health_outcome", "↑ health outcome"),
+            ("estimate", "↑ estimate"),
         ),
-        empty_label=("Default Order"),
+        initial="study",
+        empty_label=None,
     )
     paginate_by = PaginationFilter(initial=25)
 
