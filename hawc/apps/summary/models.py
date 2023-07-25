@@ -473,7 +473,9 @@ class Visual(models.Model):
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             if request:
                 dose_id = tryParseInt(request.POST.get("dose_units"), -1)
-                Prefilter.setFiltersFromForm(filters, request.POST, self.visual_type)
+                Prefilter.setFiltersFromForm(
+                    self.assessment, filters, request.POST, self.visual_type
+                )
 
             else:
                 dose_id = self.dose_units_id
@@ -499,7 +501,9 @@ class Visual(models.Model):
         ]:
             if request:
                 efilters = {"assessment_id": self.assessment_id}
-                Prefilter.setFiltersFromForm(efilters, request.POST, self.visual_type)
+                Prefilter.setFiltersFromForm(
+                    self.assessment, efilters, request.POST, self.visual_type
+                )
                 if len(efilters) > 1:
                     filters["id__in"] = set(
                         Endpoint.objects.filter(**efilters).values_list(
@@ -940,8 +944,9 @@ class Prefilter:
     """
 
     @staticmethod
-    def setFiltersFromForm(filters, d, visual_type):
+    def setFiltersFromForm(assessment, filters, d, visual_type):
         evidence_type = d.get("evidence_type")
+        epi_version = assessment.epi_version
 
         if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             evidence_type = constants.StudyType.BIOASSAY
@@ -971,8 +976,10 @@ class Prefilter:
             studies = d.getlist("studies", [])
             if evidence_type == constants.StudyType.BIOASSAY:
                 filters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == constants.StudyType.EPI:
+            elif evidence_type == constants.StudyType.EPI and epi_version == 1:
                 filters["study_population__study__in"] = studies
+            elif evidence_type == constants.StudyType.EPI and epi_version == 2:
+                filters["design__study__in"] = studies
             elif evidence_type == constants.StudyType.IN_VITRO:
                 filters["experiment__study__in"] = studies
             elif evidence_type == constants.StudyType.EPI_META:
@@ -983,8 +990,10 @@ class Prefilter:
         if d.get("published_only"):
             if evidence_type == constants.StudyType.BIOASSAY:
                 filters["animal_group__experiment__study__published"] = True
-            elif evidence_type == constants.StudyType.EPI:
+            elif evidence_type == constants.StudyType.EPI and epi_version == 1:
                 filters["study_population__study__published"] = True
+            elif evidence_type == constants.StudyType.EPI and epi_version == 2:
+                filters["design__study__published"] = True
             elif evidence_type == constants.StudyType.IN_VITRO:
                 filters["experiment__study__published"] = True
             elif evidence_type == constants.StudyType.EPI_META:
