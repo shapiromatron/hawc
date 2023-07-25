@@ -3,28 +3,13 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.db import models
 from django.db.models import Q, QuerySet
 
-from ..common.models import BaseManager
+from ..common.models import BaseManager, sql_display
 from ..lit.constants import ReferenceDatabase
+from . import constants
 
 
 class StudyQuerySet(QuerySet):
     def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "pmid",
-            "hero",
-            "doi",
-            "short_citation",
-            "full_citation",
-            "coi_reported",
-            "coi_details",
-            "funding_source",
-            "study_identifier",
-            "contact_author",
-            "ask_author",
-            "published",
-            "summary",
-        ]
         return pd.DataFrame(
             data=self.annotate(
                 pmid=StringAgg(
@@ -48,9 +33,44 @@ class StudyQuerySet(QuerySet):
                     distinct=True,
                     default="",
                 ),
-            ).values_list(*names),
-            columns=names,
+                coi_reported_display=sql_display("coi_reported", constants.CoiReported),
+            ).values_list(
+                "id",
+                "pmid",
+                "hero",
+                "doi",
+                "short_citation",
+                "full_citation",
+                "coi_reported_display",
+                "coi_details",
+                "funding_source",
+                "study_identifier",
+                "contact_author",
+                "ask_author",
+                "published",
+                "summary",
+            ),
+            columns=[
+                "id",
+                "PMID",
+                "HERO ID",
+                "DOI",
+                "short_citation",
+                "full_citation",
+                "coi_reported",
+                "coi_details",
+                "funding_source",
+                "study_identifier",
+                "contact_author",
+                "ask_author",
+                "published",
+                "summary",
+            ],
         )
+
+    def published_only(self, published_only: bool):
+        """If True, return only published studies. If False, all studies"""
+        return self.filter(published=True) if published_only else self
 
 
 class StudyManager(BaseManager):

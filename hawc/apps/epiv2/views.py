@@ -1,10 +1,36 @@
 from django.http import HttpRequest
 from django.shortcuts import render
 
+from ..assessment.models import Assessment
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseUpdate,
+    HeatmapBase,
+)
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
+
+
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "epidemiology-v2-study-design"
+    heatmap_data_url = "epiv2:api:assessment-study-export"
+    heatmap_view_title = "Epidemiology study design"
+
+
+class HeatmapResult(HeatmapBase):
+    heatmap_data_class = "epidemiology-v2-result-summary"
+    heatmap_data_url = "epiv2:api:assessment-export"
+    heatmap_view_title = "Epidemiology data extraction"
+
+
+class OutcomeView(BaseFilterList):
+    parent_model = Assessment
+    model = models.Outcome
+    filterset_class = filterset.OutcomeFilterSet
 
 
 # Design (Study Population)
