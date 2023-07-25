@@ -696,6 +696,9 @@ class BaseEndpointList(BaseList):
             self.assessment.id
         ).count()
         epiv2_designs = apps.get_model("epiv2", "Design").objects.get_qs(self.assessment.id).count()
+        epiv2_outcomes = (
+            apps.get_model("epiv2", "Outcome").objects.get_qs(self.assessment.id).count()
+        )
         epiv2_data_extractions = (
             apps.get_model("epiv2", "DataExtraction").objects.get_qs(self.assessment.id).count()
         )
@@ -706,6 +709,7 @@ class BaseEndpointList(BaseList):
                 "endpoints": eps,
                 "outcomes": os,
                 "epiv2_designs": epiv2_designs,
+                "epiv2_outcomes": epiv2_outcomes,
                 "epiv2_data_extractions": epiv2_data_extractions,
                 "meta_results": mrs,
                 "total_endpoints": alleps,

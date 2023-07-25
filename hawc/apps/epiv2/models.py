@@ -1,4 +1,3 @@
-import pandas as pd
 import reversion
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -738,70 +737,6 @@ class DataExtraction(models.Model):
         self.id = None
         self.save()
         return self
-
-    @classmethod
-    def complete_df(cls, assessment_id: int) -> pd.DataFrame:
-        design_df = (
-            Design.objects.filter(study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("design-")
-        )
-        chemical_df = (
-            Chemical.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("chemical-")
-        )
-        exposure_df = (
-            Exposure.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("exposure-")
-        )
-        exposure_level_df = (
-            ExposureLevel.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("exposure_level-")
-        )
-        outcome_df = (
-            Outcome.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("outcome-")
-        )
-        adjustment_factor_df = (
-            AdjustmentFactor.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("adjustment_factor-")
-        )
-        data_extraction_df = (
-            DataExtraction.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("data_extraction-")
-        )
-        tmp1 = pd.merge(
-            adjustment_factor_df,
-            data_extraction_df,
-            left_on="adjustment_factor-id",
-            right_on="data_extraction-factors_id",
-        )
-        tmp2 = pd.merge(
-            outcome_df, tmp1, left_on="outcome-id", right_on="data_extraction-outcome_id"
-        )
-        tmp3 = pd.merge(
-            exposure_level_df,
-            tmp2,
-            left_on="exposure_level-id",
-            right_on="data_extraction-exposure_level_id",
-        )
-        tmp4 = pd.merge(
-            exposure_df,
-            tmp3,
-            left_on="exposure-id",
-            right_on="exposure_level-exposure_measurement_id",
-        )
-        tmp5 = pd.merge(
-            chemical_df, tmp4, left_on="chemical-id", right_on="exposure_level-chemical_id"
-        )
-        df = pd.merge(design_df, tmp5, left_on="design-id", right_on="data_extraction-design_id")
-        return df
 
     @staticmethod
     def flat_complete_header_row():

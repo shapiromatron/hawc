@@ -2,7 +2,6 @@ import pandas as pd
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import (
     CharField,
-    Choices,
     F,
     Func,
     Prefetch,
@@ -12,15 +11,6 @@ from django.db.models import (
 
 from ..common.models import BaseManager, sql_display, to_display_array
 from . import constants, models
-
-
-def enum_dict(choice_enum: type[Choices]) -> dict:
-    return {k: v for k, v in choice_enum.choices}
-
-
-def map_array(df: pd.DataFrame, key: str, choice_enum: type[Choices]):
-    mapped = {k: v for k, v in choice_enum.choices}
-    df.loc[:, key] = df.apply(lambda row: "|".join(mapped[item] for item in row[key]), axis=1)
 
 
 class DesignQuerySet(QuerySet):
@@ -47,53 +37,6 @@ class DesignQuerySet(QuerySet):
                 ),
             ),
         )
-
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "study_id",
-            "summary",
-            "study_name",
-            "study_design",
-            "source",
-            "age_profile",
-            "age_description",
-            "sex",
-            "race",
-            "participant_n",
-            "years_enrolled",
-            "years_followup",
-            "countries_",
-            "region",
-            "criteria",
-            "susceptibility",
-            "comments",
-            "created",
-            "last_updated",
-        ]
-        qs = self.annotate(
-            countries_=StringAgg("countries__name", delimiter="|", distinct=True, default=""),
-        ).values_list(*names)
-        df = (
-            pd.DataFrame(
-                data=qs,
-                columns=names,
-            )
-            .rename(
-                columns={
-                    "countries_": "countries",
-                }
-            )
-            .replace(
-                {
-                    "study_design": enum_dict(constants.StudyDesign),
-                    "source": enum_dict(constants.Source),
-                    "sex": enum_dict(constants.Sex),
-                }
-            )
-        )
-        map_array(df, "age_profile", constants.AgeProfile)
-        return df
 
 
 class DesignManager(BaseManager):
@@ -200,22 +143,7 @@ class DesignManager(BaseManager):
 
 
 class ChemicalQuerySet(QuerySet):
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "design_id",
-            "name",
-            "dsstox__dtxsid",
-            "created",
-            "last_updated",
-        ]
-        qs = self.values_list(*names)
-        df = pd.DataFrame(data=qs, columns=names).rename(
-            columns={
-                "dsstox__dtxsid": "dtxsid",
-            }
-        )
-        return df
+    pass
 
 
 class ChemicalManager(BaseManager):
@@ -226,34 +154,7 @@ class ChemicalManager(BaseManager):
 
 
 class ExposureQuerySet(QuerySet):
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "name",
-            "design_id",
-            "measurement_type",
-            "biomonitoring_matrix",
-            "biomonitoring_source",
-            "measurement_timing",
-            "exposure_route",
-            "measurement_method",
-            "comments",
-            "created",
-            "last_updated",
-        ]
-        qs = self.values_list(*names)
-        df = (
-            pd.DataFrame(data=qs, columns=names)
-            .assign(measurement_type=lambda df: df.measurement_type.str.join(sep="|"))
-            .replace(
-                {
-                    "biomonitoring_matrix": enum_dict(constants.BiomonitoringMatrix),
-                    "biomonitoring_source": enum_dict(constants.BiomonitoringSource),
-                    "exposure_route": enum_dict(constants.ExposureRoute),
-                }
-            )
-        )
-        return df
+    pass
 
 
 class ExposureManager(BaseManager):
@@ -264,38 +165,7 @@ class ExposureManager(BaseManager):
 
 
 class ExposureLevelQuerySet(QuerySet):
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "name",
-            "design_id",
-            "chemical_id",
-            "exposure_measurement_id",
-            "sub_population",
-            "median",
-            "mean",
-            "variance",
-            "variance_type",
-            "units",
-            "ci_lcl",
-            "percentile_25",
-            "percentile_75",
-            "ci_ucl",
-            "ci_type",
-            "negligible_exposure",
-            "data_location",
-            "comments",
-            "created",
-            "last_updated",
-        ]
-        qs = self.values_list(*names)
-        df = pd.DataFrame(data=qs, columns=names).replace(
-            {
-                "variance_type": enum_dict(constants.VarianceType),
-                "ci_type": enum_dict(constants.ConfidenceIntervalType),
-            }
-        )
-        return df
+    pass
 
 
 class ExposureLevelManager(BaseManager):
@@ -306,25 +176,7 @@ class ExposureLevelManager(BaseManager):
 
 
 class OutcomeQuerySet(QuerySet):
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "design_id",
-            "system",
-            "effect",
-            "effect_detail",
-            "endpoint",
-            "comments",
-            "created",
-            "last_updated",
-        ]
-        qs = self.values_list(*names)
-        df = pd.DataFrame(data=qs, columns=names).replace(
-            {
-                "system": enum_dict(constants.HealthOutcomeSystem),
-            }
-        )
-        return df
+    pass
 
 
 class OutcomeManager(BaseManager):
@@ -335,23 +187,7 @@ class OutcomeManager(BaseManager):
 
 
 class AdjustmentFactorQuerySet(QuerySet):
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "design_id",
-            "name",
-            "description",
-            "comments",
-            "created",
-            "last_updated",
-        ]
-        qs = self.values_list(*names)
-        df = pd.DataFrame(data=qs, columns=names).replace(
-            {
-                "system": enum_dict(constants.HealthOutcomeSystem),
-            }
-        )
-        return df
+    pass
 
 
 class AdjustmentFactorManager(BaseManager):
@@ -373,48 +209,6 @@ class DataExtractionQuerySet(QuerySet):
             "outcome",
             "factors",
         ).prefetch_related("design__countries")
-
-    def flat_df(self) -> pd.DataFrame:
-        names = [
-            "id",
-            "design_id",
-            "outcome_id",
-            "exposure_level_id",
-            "sub_population",
-            "outcome_measurement_timing",
-            "effect_estimate_type",
-            "effect_estimate",
-            "ci_lcl",
-            "ci_ucl",
-            "ci_type",
-            "units",
-            "variance_type",
-            "variance",
-            "n",
-            "p_value",
-            "significant",
-            "group",
-            "exposure_rank",
-            "exposure_transform",
-            "outcome_transform",
-            "factors_id",
-            "confidence",
-            "data_location",
-            "effect_description",
-            "statistical_method",
-            "comments",
-            "created",
-            "last_updated",
-        ]
-        qs = models.DataExtraction.objects.values_list(*names)
-        df = pd.DataFrame(data=qs, columns=names).replace(
-            {
-                "ci_type": enum_dict(constants.ConfidenceIntervalType),
-                "variance_type": enum_dict(constants.VarianceType),
-                "significant": enum_dict(constants.Significant),
-            }
-        )
-        return df
 
 
 class DataExtractionManager(BaseManager):

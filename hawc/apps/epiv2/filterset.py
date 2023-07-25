@@ -1,6 +1,7 @@
 import django_filters as df
 
 from ..common.filterset import (
+    ArrowOrderingFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
@@ -28,18 +29,15 @@ class OutcomeFilterSet(BaseFilterSet):
         label="Study Design",
         choices=constants.StudyDesign.choices,
     )
-    order_by = df.OrderingFilter(
+    order_by = ArrowOrderingFilter(
         fields=(
             ("design__study__short_citation", "study"),
-            ("endpoint", "endpoint name"),
+            ("endpoint", "endpoint"),
         ),
-        choices=(
-            ("study", "study"),
-            ("endpoint name", "endpoint"),
-        ),
-        empty_label=("Default Order"),
+        initial="study",
+        empty_label=None,
     )
-    paginate_by = PaginationFilter(initial=25)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Outcome
@@ -50,13 +48,14 @@ class OutcomeFilterSet(BaseFilterSet):
             "paginate_by",
             "studies",
             "design",
+            "system",
         ]
         main_field = "name"
         appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
                 {"columns": [{"width": 12}]},
-                {"columns": [{"width": 6}, {"width": 6}]},
+                {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
             ]
         }
 
