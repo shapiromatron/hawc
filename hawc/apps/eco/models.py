@@ -327,7 +327,11 @@ class Cause(models.Model):
         "name",
         "species",
         "level",
+        "level_units",
+        "duration",
+        "duration_units",
         "exposure",
+        "exposure_units",
         "as_reported",
     )
 
@@ -617,6 +621,7 @@ class Result(models.Model):
         "name",
         "relationship_comment",
         "modifying_factors",
+        "modifying_factors_comment",
     )
 
     class Meta:
