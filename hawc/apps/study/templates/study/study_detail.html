@@ -98,8 +98,12 @@
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-      <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
-      <h3 class="d-inline-block">{{assessment.get_rob_name_display}}</h3>
+      <div class="d-flex">
+        <h3>{{assessment.get_rob_name_display}}</h3>
+        <div class="dropdown btn-group ml-auto align-self-start">
+          <a class="btn btn-primary" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
+        </div>
+      </div>
       <div id="rob_plot" class="mb-3"></div>
     {% endif %}
 
