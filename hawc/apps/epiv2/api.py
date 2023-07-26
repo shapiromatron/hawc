@@ -13,6 +13,7 @@ from ..assessment.models import Assessment
 from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from ..study.models import Study
 from . import exports, models, serializers
 from .actions.model_metadata import EpiV2Metadata
@@ -20,6 +21,7 @@ from .actions.model_metadata import EpiV2Metadata
 
 class EpiAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
+    serializer_class = UnusedSerializer
 
     @action(
         detail=True,
