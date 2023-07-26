@@ -801,8 +801,6 @@ class ReferenceTags(ItemBase):
 
 
 class Reference(models.Model):
-    TEXT_CLEANUP_FIELDS = ("full_text_url",)
-
     objects = managers.ReferenceManager()
 
     assessment = models.ForeignKey(

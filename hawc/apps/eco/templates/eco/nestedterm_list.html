@@ -5,9 +5,9 @@
 {% block content %}
 <a class="btn btn-primary float-right" href="{% url 'eco:api:terms-nested' %}?format=xlsx">Download</a>
 <h2 class="mt-3">Ecological cause/effect term list</h2>
-{% include 'common/filter_list.html' with plural_object_name='nested terms' %}
+{% include 'common/inline_filter_form.html' %}
 <p class="text-muted">
-Click "Filter nested terms" above to access a search box to filter the table below. The search will show matched terms, as well as the matched term's ancestors and descendants. If you find a term you'd like to use in data entry, on the data entry page, you can enter either the name of the term, or the Term ID (the grey number beside the text).
+Show matched terms, as well as the matched term's ancestors and descendants. If you find a term you'd like to use in data entry, on the data entry page, you can enter either the name of the term, or the Term ID (the grey number beside the text).
 </p>
 <ul class="list-unstyled">
 {% for object in object_list %}

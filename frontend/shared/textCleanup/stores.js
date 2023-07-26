@@ -115,7 +115,7 @@ class TextCleanupStore {
                 return true;
             })
             .groupBy(item => item[field])
-            .sortBy(item => item[0][field])
+            .sortBy(item => item[0][field].toLowerCase())
             .value();
     }
 

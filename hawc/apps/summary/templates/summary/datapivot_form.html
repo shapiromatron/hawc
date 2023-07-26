@@ -14,6 +14,7 @@
   <script type="text/javascript">
     $(document).ready(function () {
       let js_units_choices = {{form.js_units_choices|safe}},
+        epi_version = {{assessment.epi_version}},
         printf = window.app.HAWCUtils.printf;
 
       {% if crud == "Create" %}
@@ -59,34 +60,36 @@
 
       // determine which fields to display depending on data-type
       $('#id_evidence_type').on('change', function(){
-        var aniOnlyDivs = $([
-              "#div_id_preferred_units",
-              "#div_id_prefilter_system",
-              "#div_id_systems",
-              "#div_id_prefilter_organ",
-              "#div_id_organs",
-              "#div_id_prefilter_effect",
-              "#div_id_effects"
+        const value = parseInt($('#id_evidence_type').val()),
+          aniOnlyDivs = $([
+            "#div_id_preferred_units",
+            "#div_id_prefilter_system",
+            "#div_id_systems",
+            "#div_id_prefilter_organ",
+            "#div_id_organs",
+            "#div_id_prefilter_effect",
+            "#div_id_prefilter_effect_subtype",
+            "#div_id_effects"
           ].join(",")),
           epiOnlyDivs = $([
-              "#div_id_prefilter_episystem",
-              "#div_id_episystems",
-              "#div_id_prefilter_epieffect",
-              "#div_id_epieffects"
+            "#div_id_prefilter_episystem",
+            "#div_id_episystems",
+            "#div_id_prefilter_epieffect",
+            "#div_id_epieffects"
           ].join(",")),
           ivOnlyDivs = $([
-              "#div_id_prefilter_iv_category",
-              "#div_id_iv_categories",
-              "#div_id_prefilter_iv_chemical",
-              "#div_id_iv_chemicals",
+            "#div_id_prefilter_iv_category",
+            "#div_id_iv_categories",
+            "#div_id_prefilter_iv_chemical",
+            "#div_id_iv_chemicals",
           ].join(",")),
-          aniIvOnlyDivs = $([
-              "#div_id_export_style",
-          ].join(","));
-        ($('#id_evidence_type').val() === "0") ? aniOnlyDivs.show() : aniOnlyDivs.hide();
-        ($('#id_evidence_type').val() === "1") ? epiOnlyDivs.show() : epiOnlyDivs.hide();
-        ($('#id_evidence_type').val() === "2") ? ivOnlyDivs.show() : ivOnlyDivs.hide();
-        ($('#id_evidence_type').val() === "0" || $('#id_evidence_type').val() === "2") ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
+          aniIvOnlyDivs = $("#div_id_export_style"),
+          notEpiV2Divs = $("#div_id_prefilter_effect_tag");
+        (value === 0) ? aniOnlyDivs.show() : aniOnlyDivs.hide();
+        (value === 1 && epi_version === 1) ? epiOnlyDivs.show() : epiOnlyDivs.hide();
+        (value === 1 && epi_version === 1) ? notEpiV2Divs.show() : notEpiV2Divs.hide();
+        (value === 2) ? ivOnlyDivs.show() : ivOnlyDivs.hide();
+        (value == 0 || value == 2) ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
         togglePrefilterSelectorVisibility();
       }).trigger('change');
 

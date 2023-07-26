@@ -4,7 +4,7 @@ from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
-    FilterForm,
+    ExpandableFilterForm,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -22,9 +22,10 @@ class MetaResultFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Meta result label",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.MetaResultAutocomplete, field="label"
+            autocomplete_class=autocomplete.MetaResultAutocomplete,
+            field="label",
+            attrs={"data-placeholder": "Filter results (ex: folic acid, any time)"},
         ),
-        help_text="ex: ALL, folic acid, any time",
     )
     protocol = df.CharFilter(
         field_name="protocol__name",
@@ -54,24 +55,26 @@ class MetaResultFilterSet(BaseFilterSet):
     order_by = df.OrderingFilter(
         fields=(
             ("protocol__study__short_citation", "study"),
-            ("label", "meta result label"),
+            ("label", "meta_result"),
             ("protocol__name", "protocol"),
-            ("health_outcome", "health outcome"),
+            ("health_outcome", "health_outcome"),
             ("estimate", "estimate"),
         ),
         choices=(
-            ("study", "study"),
-            ("meta result label", "meta result label"),
-            ("protocol", "protocol"),
-            ("health outcome", "health outcome"),
-            ("estimate", "estimate"),
+            ("study", "↑ study"),
+            ("meta_result", "↑ meta result"),
+            ("protocol", "↑ protocol"),
+            ("health_outcome", "↑ health outcome"),
+            ("estimate", "↑ estimate"),
         ),
+        initial="study",
+        empty_label=None,
     )
-    paginate_by = PaginationFilter()
+    paginate_by = PaginationFilter(initial=25)
 
     class Meta:
         model = models.MetaResult
-        form = FilterForm
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "label",
@@ -81,10 +84,12 @@ class MetaResultFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "label"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

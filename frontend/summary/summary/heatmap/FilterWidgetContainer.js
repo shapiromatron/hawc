@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import h from "shared/utils/helpers";
 
+import {getAction, showAsModal} from "../../interactivity/actions";
+
 @observer
 class FilterWidget extends Component {
     constructor(props) {
@@ -31,7 +33,7 @@ class FilterWidget extends Component {
                       })
                 ).sort()
             ),
-            filterWidgetExtension = this.props.store.extensions.filterWidgets[widget.column],
+            action = getAction(widget.on_click_event),
             widgetTitle = widget.header ? widget.header : h.titleCase(widget.column);
 
         return (
@@ -59,14 +61,14 @@ class FilterWidget extends Component {
                         flex: 1,
                     }}>
                     {items.map((item, index) =>
-                        this.renderItem(widget, item, index, _itemState, filterWidgetExtension)
+                        this.renderItem(widget, item, index, _itemState, action)
                     )}
                 </div>
             </div>
         );
     }
 
-    renderItem(widget, item, index, _itemState, filterWidgetExtension) {
+    renderItem(widget, item, index, _itemState, action) {
         const {toggleItemSelection, colorScale, maxValue} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
@@ -107,41 +109,41 @@ class FilterWidget extends Component {
                     </div>
                 </label>
                 <span style={{flex: "0 0 min-content"}}>
-                    {filterWidgetExtension && filterWidgetExtension.hasModal
-                        ? this.renderButton(widget, item)
-                        : null}
+                    {action && action.modal ? this.renderButton(widget, item, action) : null}
                 </span>
             </div>
         );
     }
 
-    renderButton(widget, item) {
-        const extensions = this.props.store.extensions.filterWidgets,
-            {showModalOnRow} = this.props.store,
-            extension = extensions[widget.column],
-            row_key = extension._dpe_key,
-            modalRows = _.chain(this.props.store.getTableData.data)
-                .filter({
-                    [widget.column]: item,
-                })
-                .uniqBy(row_key)
-                .sortBy(row_key)
+    renderButton(widget, item, action) {
+        const matched = _.chain(this.props.store.getTableData.data)
+            .filter(d => d[widget.column] == item)
+            .value();
+
+        // cycle through columns to see if there's a single item in a column
+        for (let column of action.columns) {
+            const items = _.chain(matched)
+                .uniqBy(column)
+                .sortBy(column)
                 .value();
-        // only show button if there's a single item
-        if (modalRows.length === 1) {
-            return (
-                <button
-                    className="btn btn-sm"
-                    onClick={e => {
-                        e.stopPropagation();
-                        showModalOnRow(extension, modalRows[0]);
-                    }}
-                    title="View additional information">
-                    <i className="fa fa-fw fa-external-link"></i>
-                </button>
-            );
+
+            // only show button if there's a single item
+            if (items.length === 1) {
+                return (
+                    <button
+                        className="btn btn-sm"
+                        onClick={e => {
+                            e.stopPropagation();
+                            showAsModal(action, items[0]);
+                        }}
+                        title="View additional information">
+                        <i className="fa fa-fw fa-external-link"></i>
+                    </button>
+                );
+            }
         }
-        // show disabled button just to preserve layout
+
+        // couldn't find a column with a single item; show hidden to preserve layout
         return (
             <button className="btn btn-sm disabled" title="Disabled">
                 <i className="fa fa-fw"></i>

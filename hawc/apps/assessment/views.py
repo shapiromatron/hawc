@@ -293,7 +293,7 @@ class Error401(TemplateView):
 class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
     model = models.Assessment
     template_name = "assessment/assessment_home.html"
-    filterset_class = filterset.AssessmentFilterset
+    filterset_class = filterset.AssessmentFilterSet
     paginate_by = 50
 
     def get_filterset_form_kwargs(self):
@@ -326,7 +326,7 @@ class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
 @method_decorator(staff_member_required, name="dispatch")
 class AssessmentFullList(FilterSetMixin, ListView):
     model = models.Assessment
-    filterset_class = filterset.AssessmentFilterset
+    filterset_class = filterset.AssessmentFilterSet
     paginate_by = 50
 
     def get_filterset_form_kwargs(self):
@@ -352,7 +352,7 @@ class AssessmentFullList(FilterSetMixin, ListView):
 
 class AssessmentPublicList(FilterSetMixin, ListView):
     model = models.Assessment
-    filterset_class = filterset.AssessmentFilterset
+    filterset_class = filterset.AssessmentFilterSet
     paginate_by = 50
 
     def get_filterset_form_kwargs(self):
@@ -695,12 +695,16 @@ class BaseEndpointList(BaseList):
         iveps = self.model.ivendpoint.related.related_model.objects.get_qs(
             self.assessment.id
         ).count()
-        alleps = eps + os + mrs + iveps
+        epiv2_outcomes = (
+            apps.get_model("epiv2", "Outcome").objects.get_qs(self.assessment.id).count()
+        )
+        alleps = eps + os + mrs + iveps + epiv2_outcomes
         context.update(
             {
                 "ivendpoints": iveps,
                 "endpoints": eps,
                 "outcomes": os,
+                "epiv2_outcomes": epiv2_outcomes,
                 "meta_results": mrs,
                 "total_endpoints": alleps,
             }

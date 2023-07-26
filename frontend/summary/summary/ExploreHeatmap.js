@@ -30,6 +30,7 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
                 el
             );
         } catch (err) {
+            console.error(err);
             ReactDOM.render(<p>An error occurred</p>, el);
         }
     },

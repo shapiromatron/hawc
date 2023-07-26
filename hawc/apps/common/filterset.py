@@ -3,15 +3,14 @@ from typing import ForwardRef
 import django_filters as df
 from crispy_forms import layout as cfl
 from django import forms
+from django.forms.utils import pretty_name
 from pydantic import BaseModel, conlist
 
 from ..assessment.models import Assessment
 from . import autocomplete
 from .forms import (
-    BaseFormHelper,
     ExpandableFilterFormHelper,
     InlineFilterFormHelper,
-    form_actions_apply_filters,
 )
 
 
@@ -31,6 +30,8 @@ class PaginationFilter(df.ChoiceFilter):
                 (500, "500 per page"),
             ),
             method=filter_noop,
+            empty_label=None,
+            initial=25,
         )
         default_kwargs.update(kwargs)
         super().__init__(*args, **default_kwargs)
@@ -131,25 +132,6 @@ class ExpandableFilterForm(InlineFilterForm):
         cleaned_data.pop("is_expanded", None)
 
 
-class FilterForm(forms.Form):
-    # TODO: remove once all filtersets are converted to Inline or Expandable forms
-    def __init__(self, *args, **kwargs):
-        grid_layout = kwargs.pop("grid_layout", None)
-        self.grid_layout = GridLayout.parse_obj(grid_layout) if grid_layout is not None else None
-        self.dynamic_fields = kwargs.pop("dynamic_fields", None)
-        super().__init__(*args, **kwargs)
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-
-        if self.grid_layout:
-            self.grid_layout.apply_layout(helper)
-
-        return helper
-
-
 class BaseFilterSet(df.FilterSet):
     def __init__(
         self, data=None, *args, assessment: Assessment | None = None, form_kwargs=None, **kwargs
@@ -160,7 +142,10 @@ class BaseFilterSet(df.FilterSet):
             for name, f in self.base_filters.items():
                 initial = f.extra.get("initial")
                 if not data.get(name) and initial:
-                    data[name] = initial
+                    if isinstance(initial, list):
+                        data.setlist(name, initial)
+                    else:
+                        data[name] = initial
         super().__init__(data, *args, **kwargs)
         self.form_kwargs = form_kwargs or {}
         if "grid_layout" not in self.form_kwargs and hasattr(self.Meta, "grid_layout"):
@@ -191,3 +176,15 @@ class BaseFilterSet(df.FilterSet):
                 if field not in form.dynamic_fields and field != "is_expanded":
                     form.fields.pop(field)
         return form
+
+
+class ArrowOrderingFilter(df.OrderingFilter):
+    def build_choices(self, fields, labels):
+        ascending = [
+            (param, labels.get(field, f"↑ {pretty_name(param)}")) for field, param in fields.items()
+        ]
+        descending = [
+            (f"-{param}", labels.get(field, f"↓ {pretty_name(param)}"))
+            for field, param in fields.items()
+        ]
+        return [val for pair in zip(ascending, descending, strict=True) for val in pair]
