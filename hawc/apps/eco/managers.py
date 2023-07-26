@@ -54,6 +54,48 @@ class DesignManager(BaseManager):
     def get_queryset(self):
         return DesignQuerySet(self.model, using=self._db)
 
+    def study_df(self, study_qs: QuerySet) -> pd.DataFrame:
+        """Returns a data frame, one row per study in study queryset
+
+        Args:
+            study_qs (QuerySet): A study queryset of studies
+
+        Returns:
+            pd.DataFrame: _description_
+        """
+        df1 = study_qs.flat_df().add_prefix("study-")
+        df2 = pd.DataFrame(
+            data=study_qs.annotate(
+                design_name=StringAgg(
+                    "eco_designs__name", delimiter="|", distinct=True, default=""
+                ),
+            ).values_list(
+                "id",
+                "design_name",
+            ),
+            columns=[
+                "study-id",
+                "designs",
+            ],
+        )
+        df3 = (
+            df1.merge(df2, how="left", left_on="study-id", right_on="study-id")
+            .drop(
+                columns=[
+                    "study-coi_reported",
+                    "study-coi_details",
+                    "study-funding_source",
+                    "study-study_identifier",
+                    "study-contact_author",
+                    "study-ask_author",
+                    "study-published",
+                    "study-summary",
+                ]
+            )
+            .dropna()
+        )
+        return df3
+
 
 class CauseQuerySet(QuerySet):
     def published_only(self, published_only: bool):

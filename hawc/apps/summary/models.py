@@ -778,6 +778,7 @@ class DataPivotQuery(DataPivot):
 
     def _get_dataset_filters(self):
         filters = {}
+        epi_version = self.assessment.epi_version
 
         if self.evidence_type == constants.StudyType.BIOASSAY:
             filters["assessment_id"] = self.assessment_id
@@ -786,15 +787,15 @@ class DataPivotQuery(DataPivot):
             if self.preferred_units:
                 filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
-        elif self.evidence_type == constants.StudyType.EPI:
-            if self.assessment.epi_version == EpiVersion.V1:
-                filters["assessment_id"] = self.assessment_id
-                if self.published_only:
-                    filters["study_population__study__published"] = True
-            else:
-                filters["design__study__assessment_id"] = self.assessment_id
-                if self.published_only:
-                    filters["design__study__published"] = True
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
+            filters["assessment_id"] = self.assessment_id
+            if self.published_only:
+                filters["study_population__study__published"] = True
+
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
+            filters["design__study__assessment_id"] = self.assessment_id
+            if self.published_only:
+                filters["design__study__published"] = True
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             filters["protocol__study__assessment_id"] = self.assessment_id
@@ -815,24 +816,19 @@ class DataPivotQuery(DataPivot):
         return filters
 
     def _get_dataset_queryset(self, filters):
+        epi_version = self.assessment.epi_version
         if self.evidence_type == constants.StudyType.BIOASSAY:
             qs = Endpoint.objects.filter(**filters)
-
-        elif self.evidence_type == constants.StudyType.EPI:
-            if self.assessment.epi_version == EpiVersion.V1:
-                qs = Outcome.objects.filter(**filters)
-            else:
-                qs = DataExtraction.objects.filter(**filters)
-
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
+            qs = Outcome.objects.filter(**filters)
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
+            qs = DataExtraction.objects.filter(**filters)
         elif self.evidence_type == constants.StudyType.EPI_META:
             qs = MetaResult.objects.filter(**filters)
-
         elif self.evidence_type == constants.StudyType.IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
-
         elif self.evidence_type == constants.StudyType.ECO:
             qs = Result.objects.filter(**filters)
-
         else:
             raise ValueError("Invalid data type")
         return qs.order_by("id")
