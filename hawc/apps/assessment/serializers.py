@@ -21,8 +21,8 @@ class DSSToxSerializer(serializers.ModelSerializer):
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
-    rob_name = serializers.CharField(source="get_rob_name_display")
-    dtxsids = DSSToxSerializer(many=True)
+    rob_name = serializers.CharField(source="get_rob_name_display", read_only=True)
+    dtxsids = DSSToxSerializer(many=True, read_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
