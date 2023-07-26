@@ -260,7 +260,7 @@ class Assessment(AssessmentViewSet, AssessmentEditViewSet):
     assessment_filter_args = "id"
 
     def get_permissions(self):
-        if self.action in ["create", "update", "delete"]:
+        if self.action in ["create", "update", "partial_update", "destroy"]:
             return [permissions.IsAdminUser()]
         else:
             return super().get_permissions()
