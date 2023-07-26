@@ -1,7 +1,4 @@
-import pandas as pd
-from django.contrib.postgres.aggregates import StringAgg
 from django.db import transaction
-from django.db.models import Case, Count, Q, Value, When
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -14,12 +11,11 @@ from ..assessment.api import (
     InAssessmentFilter,
     get_assessment_from_query,
 )
-from ..assessment.constants import AssessmentViewSetPermissions, PublishedStatus
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api import DisabledPagination
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
-from ..lit.constants import ReferenceDatabase
 from ..lit.models import Reference
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import filterset, models, serializers
@@ -110,103 +106,9 @@ class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     def chemical(self, request):
         """Global search by chemical, across all studies."""
         fs = filterset.StudyByChemicalFilterSet(request.GET, queryset=self.get_queryset())
-        model_fields = [
-            "id",
-            "title",
-            "authors_short",
-            "pmid",
-            "hero",
-            "doi",
-            "assessment",
-            "assessment__name",
-            "assessment__dtxsids",
-            "assessment__cas",
-            "published",
-            "study",
-            "study__short_citation",
-            "study__published",
-            "num_robs",
-            "study__bioassay",
-            "study__epi",
-            "study__epi_meta",
-            "study__in_vitro",
-            "study__eco",
-            "num_tags",
-            "num_user_tags",
-        ]
-        column_names = [
-            "HAWC ID",
-            "Title",
-            "Authors",
-            "PubMed IDs",
-            "HERO IDs",
-            "DOIs",
-            "Assessment ID",
-            "Assessment Name",
-            "Assessment DTXSIDs",
-            "Assessment CAS",
-            "Assessment Published",
-            "Study ID",
-            "Study Citation",
-            "Study Published",
-            "Study Risk of Bias Analysis Count",
-            "Study Bioassay",
-            "Study Epidemiological",
-            "Study Epi/Meta",
-            "Study In Vitro",
-            "Study Ecology",
-            "Reference Tags Count",
-            "Reference User Tags Count",
-        ]
-        qs = (
-            Reference.objects.filter(id__in=fs.qs)
-            .select_related("study", "assessment")
-            .prefetch_related("identifiers", "tags", "user_tags")
-            .annotate(
-                num_tags=Count("tags"),
-                num_user_tags=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
-                num_robs=Count("study__riskofbiases"),
-                pmid=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
-                    delimiter="|",
-                    distinct=True,
-                    default="",
-                ),
-                hero=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.HERO),
-                    delimiter="|",
-                    distinct=True,
-                    default="",
-                ),
-                doi=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.DOI),
-                    delimiter="|",
-                    distinct=True,
-                    default="",
-                ),
-                assessment__dtxsids=StringAgg("assessment__dtxsids", delimiter=", ", distinct=True),
-                published=Case(
-                    When(assessment__public_on__isnull=True, then=Value(PublishedStatus.PRIVATE)),
-                    When(
-                        Q(assessment__public_on__isnull=False)
-                        & Q(assessment__hide_from_public_page=False),
-                        then=Value(PublishedStatus.PUBLIC),
-                    ),
-                    When(
-                        Q(assessment__public_on__isnull=False)
-                        & Q(assessment__hide_from_public_page=True),
-                        then=Value(PublishedStatus.UNLISTED),
-                    ),
-                ),
-            )
-            .values_list(*model_fields)
-        )
-        df = pd.DataFrame(list(qs), columns=column_names)
+        qs = Reference.objects.filter(id__in=fs.qs)
         export = FlatExport(
-            df=df,
+            df=qs.to_dataframe(),
             filename=f"global-study-data-{request.GET.get('query')}",
         )
         return Response(export)
