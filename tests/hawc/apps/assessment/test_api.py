@@ -190,16 +190,38 @@ class TestAssessmentCRUD:
             "noel_name": 0,
             "rob_name": 0,
             "editable": "on",
-            "project_manager": ("2",),
-            "team_members": ("1", "2"),
-            "reviewers": ("1",),
-            "epi_version": ("1",),
-            "dtxsids": ("DTXSID7020970",),
+            "project_manager": ["2"],
+            "team_members": ["1", "2"],
+            "reviewers": ["1"],
+            "epi_version": 1,
+            "dtxsids": ["DTXSID7020970"],
         }
+
+        # test success
         assert client.login(username="admin@hawcproject.org", password="pw") is True
-        resp = client.post(reverse("assessment:api:assessment-list"), data)
+        resp = client.post(reverse("assessment:api:assessment-list"), data, format="json")
         assert resp.status_code == 201
 
+        created_id = resp.json()["id"]
+        data.update(name="testing1")
+        resp = client.patch(reverse("assessment:api:assessment-detail", args=(created_id,)), data)
+        assert resp.status_code == 200
+
+        resp = client.delete(reverse("assessment:api:assessment-detail", args=(created_id,)))
+        assert resp.status_code == 204
+
+        # test failures
         assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.post(reverse("assessment:api:assessment-list"), data)
+        assert resp.status_code == 403
+
+        resp = client.patch(
+            reverse("assessment:api:assessment-detail", args=(db_keys.assessment_working,)), data
+        )
+        assert resp.status_code == 403
+
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        resp = client.delete(
+            reverse("assessment:api:assessment-detail", args=(db_keys.assessment_working,))
+        )
         assert resp.status_code == 403
