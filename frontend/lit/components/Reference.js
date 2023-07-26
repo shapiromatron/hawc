@@ -100,18 +100,18 @@ class Reference extends Component {
                             <span>
                                 {authors}&nbsp;{year}
                             </span>
-                        {showActionsTagless ? (
-                            <ActionsButton
-                                dropdownClasses={actionsBtnClassName}
-                                items={actionItems.slice(1)}
-                            />
-                        ) : null}
-                        {showActions ? (
-                            <ActionsButton
-                                dropdownClasses={actionsBtnClassName}
-                                items={actionItems}
-                            />
-                        ) : null}
+                            {showActionsTagless ? (
+                                <ActionsButton
+                                    dropdownClasses={actionsBtnClassName}
+                                    items={actionItems.slice(1)}
+                                />
+                            ) : null}
+                            {showActions ? (
+                                <ActionsButton
+                                    dropdownClasses={actionsBtnClassName}
+                                    items={actionItems}
+                                />
+                            ) : null}
                         </div>
                     </div>
                 }

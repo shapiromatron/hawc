@@ -27,25 +27,25 @@ class DomainTable extends Component {
             btnCaption = detailedView ? "Hide details" : "Show details";
         return (
             <>
-            <div className="d-flex">
-                <ActionsButton
-                    containerClasses="mb-2"
-                    items={[
-                        <ActionLink
-                            key={0}
-                            icon="fa-plus"
-                            label="Create new metric"
-                            href={metricCreateUrl(domain.id)}
-                        />,
-                        <ActionItem
-                            key={1}
-                            icon="fa-info-circle"
-                            label={btnCaption}
-                            onClick={() => this.setState({detailedView: !detailedView})}
-                        />,
-                    ]}
-                />
-            </div>
+                <div className="d-flex">
+                    <ActionsButton
+                        containerClasses="mb-2"
+                        items={[
+                            <ActionLink
+                                key={0}
+                                icon="fa-plus"
+                                label="Create new metric"
+                                href={metricCreateUrl(domain.id)}
+                            />,
+                            <ActionItem
+                                key={1}
+                                icon="fa-info-circle"
+                                label={btnCaption}
+                                onClick={() => this.setState({detailedView: !detailedView})}
+                            />,
+                        ]}
+                    />
+                </div>
                 <table className="table mt-2">
                     <colgroup>
                         <col width="115px" />

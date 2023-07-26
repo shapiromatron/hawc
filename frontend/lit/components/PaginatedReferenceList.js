@@ -69,13 +69,13 @@ class PaginatedReferenceList extends Component {
                 <div className="d-flex">
                     {formattedReferences ? (
                         <ReferenceTable references={formattedReferences} showActions={false} />
-                        ) : null}
+                    ) : null}
                     <TagActions
                         assessmentId={settings.assessment_id}
                         tagId={settings.tag_id}
                         canEdit={canEdit}
                     />
-                    </div>
+                </div>
                 <Paginator page={currentPage} onChangePage={fetchPage} />
             </>
         );
