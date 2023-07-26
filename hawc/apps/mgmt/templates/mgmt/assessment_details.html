@@ -9,7 +9,8 @@
     <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
   {% endactions %}
 </div>
-{% include 'common/filter_list.html' with plural_object_name='tasks' %}
+
+{% include 'common/inline_filter_form.html' %}
 
 {% if object_list %}
 <table class="task-row table table-sm">

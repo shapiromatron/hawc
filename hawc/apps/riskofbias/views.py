@@ -215,11 +215,6 @@ class RobAssignmentList(BaseFilterList):
     paginate_by = 50
     filterset_class = StudyFilterSet
 
-    def get_filterset_kwargs(self):
-        kwargs = super().get_filterset_kwargs()
-        kwargs["include_rob_authors"] = True
-        return kwargs
-
     def get_queryset(self):
         if not self.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
@@ -255,11 +250,6 @@ class RobAssignmentUpdate(BaseFilterList):
     filterset_class = StudyFilterSet
     paginate_by = 50
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
-
-    def get_filterset_kwargs(self):
-        kwargs = super().get_filterset_kwargs()
-        kwargs["include_rob_authors"] = True
-        return kwargs
 
     def get_queryset(self):
         if not self.assessment.user_can_edit_assessment(self.request.user):

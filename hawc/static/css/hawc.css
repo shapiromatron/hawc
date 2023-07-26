@@ -584,6 +584,19 @@ div.smart-tag.active {
     background-color: #eaf6ff;
 }
 
+#ff-expand-form .form-group {
+    padding: 0.2rem 0.75rem;
+}
+
+div.input-group span.autocompletetextwidget {
+    height: 37.5px;
+    line-height: 1.7;
+}
+
+div.input-group-append select {
+    height: 100%;
+}
+
 /* BMD APPLICATION STYLES */
 
 /* BMD output table */
