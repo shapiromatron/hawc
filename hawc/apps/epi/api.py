@@ -540,17 +540,26 @@ class OutcomeCleanup(CleanupFieldsBaseViewSet):
     model = models.Outcome
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
+
 
 class StudyPopulationCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.StudyPopulationCleanupFieldsSerializer
     model = models.StudyPopulation
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class ExposureCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ExposureCleanupFieldsSerializer
     model = models.Exposure
     assessment_filter_args = "study_population__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
 
 
 class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

@@ -17,7 +17,6 @@ from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
     AssessmentRootedTagTreeViewSet,
-    CleanupFieldsBaseViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
@@ -365,12 +364,6 @@ class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
 class ReferenceFilterTagViewSet(AssessmentRootedTagTreeViewSet):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
-
-
-class ReferenceCleanupViewSet(CleanupFieldsBaseViewSet):
-    serializer_class = serializers.ReferenceCleanupFieldsSerializer
-    model = models.Reference
-    assessment_filter_args = "assessment"
 
 
 class ReferenceViewSet(
