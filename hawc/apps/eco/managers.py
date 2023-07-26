@@ -6,6 +6,9 @@ from ..common.models import BaseManager
 
 
 class DesignQuerySet(QuerySet):
+    def published_only(self, published_only: bool):
+        return self.filter(study__published=True) if published_only else self
+
     def flat_df(self) -> pd.DataFrame:
         names = [
             "id",
@@ -53,6 +56,9 @@ class DesignManager(BaseManager):
 
 
 class CauseQuerySet(QuerySet):
+    def published_only(self, published_only: bool):
+        return self.filter(study__published=True) if published_only else self
+
     def flat_df(self) -> pd.DataFrame:
         names = [
             "id",
@@ -91,6 +97,9 @@ class CauseManager(BaseManager):
 
 
 class EffectQuerySet(QuerySet):
+    def published_only(self, published_only: bool):
+        return self.filter(study__published=True) if published_only else self
+
     def flat_df(self) -> pd.DataFrame:
         names = [
             "id",

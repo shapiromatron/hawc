@@ -7,6 +7,7 @@ from rest_framework.viewsets import GenericViewSet
 from ..assessment.api import AssessmentLevelPermissions
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
+from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -47,7 +48,8 @@ class AssessmentViewSet(GenericViewSet):
         Export entire ecological dataset.
         """
         instance = self.get_object()
-        df = models.Result.complete_df(instance.id)
+        published_only = get_published_only(instance, request)
+        df = models.Result.complete_df(instance.id, published_only=published_only)
         export = FlatExport(df=df, filename=f"ecological-export-{self.assessment.id}")
         return Response(export)
 

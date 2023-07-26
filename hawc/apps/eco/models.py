@@ -181,45 +181,6 @@ class Design(models.Model):
     def get_delete_url(self):
         return reverse("eco:design_delete", args=(self.pk,))
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "design-pk",
-            "design-url",
-            "design-name",
-            "design-design_type",
-            "design-study_setting",
-            "design-countries",
-            "design-states",
-            "design-ecoregions",
-            "design-habitats",
-            "design-habitats_as_reported",
-            "design-climates",
-            "design-climates_as_reported",
-            "design-comments",
-            "design-created",
-            "design-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.get_absolute_url(),
-            self.name,
-            self.design.value,
-            self.study_setting.value,
-            "|".join(el.name for el in self.countries.all()),
-            "|".join(el.name for el in self.states.all()) if self.states else "",
-            "|".join(el.value for el in self.ecoregions.all()) if self.ecoregions else "",
-            "|".join(el.value for el in self.habitats.all()) if self.habitats else "",
-            self.habitats_as_reported,
-            "|".join(el.value for el in self.climates.all()),
-            self.climates_as_reported,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
-
 
 class Cause(models.Model):
     objects = managers.CauseManager()
@@ -335,51 +296,6 @@ class Cause(models.Model):
         self.save()
         return self
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "cause-pk",
-            "cause-name",
-            "cause-term",
-            "cause-biological-organization",
-            "cause-species",
-            "cause-level",
-            "cause-level_value",
-            "cause-level_units",
-            "cause-duration",
-            "cause-duration_value",
-            "cause-duration_units",
-            "cause-exposure",
-            "cause-exposure_value",
-            "cause-exposure_units",
-            "cause-as_reported",
-            "cause-comments",
-            "cause-created",
-            "cause-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            self.term.name,
-            self.biological_organization.value if self.biological_organization else "",
-            self.species,
-            self.level,
-            self.level_value,
-            self.level_units,
-            self.duration,
-            self.duration_value,
-            self.duration_units,
-            self.exposure,
-            self.exposure_value,
-            self.exposure_units,
-            self.as_reported,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
-
 
 class Effect(models.Model):
     objects = managers.EffectManager()
@@ -449,35 +365,6 @@ class Effect(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "effect-pk",
-            "effect-name",
-            "effect-term",
-            "effect-biological_organization",
-            "effect-species",
-            "effect-units",
-            "effect-as_reported",
-            "effect-comments",
-            "effect-created",
-            "effect-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            self.term.name,
-            self.biological_organization.value if self.biological_organization else "",
-            self.species,
-            self.units,
-            self.as_reported,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
 
 
 class Result(models.Model):
@@ -622,75 +509,35 @@ class Result(models.Model):
             ),
         }
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "result-pk",
-            "result-name",
-            "result-cause",
-            "result-effect",
-            "result-sort_order",
-            "result-relationship_direction",
-            "result-relationship_comment",
-            "result-statistical_sig_type",
-            "result-statistical_sig_value",
-            "result-modifying_factors",
-            "result-modifying_factors_comment",
-            "result-measure_type",
-            "result-measure_value",
-            "result-derived_value",
-            "result-sample_size",
-            "result-variability",
-            "result-low_variability",
-            "result-upper_variability",
-            "result-comments",
-            "result-created",
-            "result-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            self.cause.name,
-            self.effect.name,
-            self.sort_order,
-            self.get_relationship_direction_display(),
-            self.relationship_comment,
-            self.statistical_sig_type.value,
-            self.statistical_sig_value,
-            self.modifying_factors,
-            self.modifying_factors_comment,
-            self.measure_type.value if self.measure_type else "",
-            self.measure_value,
-            self.derived_value,
-            self.sample_size,
-            self.variability.value if self.variability else "",
-            self.low_variability,
-            self.upper_variability,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
-
     @classmethod
-    def complete_df(cls, assessment_id: int) -> pd.DataFrame:
-        study_df = Study.objects.filter(assessment_id=assessment_id).flat_df().add_prefix("study-")
+    def complete_df(cls, assessment_id: int, published_only: bool = True) -> pd.DataFrame:
+        study_df = (
+            Study.objects.assessment_qs(assessment_id=assessment_id)
+            .published_only(published_only)
+            .flat_df()
+            .add_prefix("study-")
+        )
         design_df = (
-            Design.objects.filter(study__assessment_id=assessment_id)
+            Design.objects.assessment_qs(assessment_id)
+            .published_only(published_only)
             .flat_df()
             .add_prefix("design-")
         )
         cause_df = (
-            Cause.objects.filter(study__assessment_id=assessment_id).flat_df().add_prefix("cause-")
+            Cause.objects.assessment_qs(assessment_id)
+            .published_only(published_only)
+            .flat_df()
+            .add_prefix("cause-")
         )
         effect_df = (
-            Effect.objects.filter(study__assessment_id=assessment_id)
+            Effect.objects.assessment_qs(assessment_id)
+            .published_only(published_only)
             .flat_df()
             .add_prefix("effect-")
         )
         result_df = (
-            cls.objects.filter(design__study__assessment_id=assessment_id)
+            cls.objects.assessment_qs(assessment_id)
+            .published_only(published_only)
             .flat_df()
             .add_prefix("result-")
         )
