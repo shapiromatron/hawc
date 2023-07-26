@@ -41,8 +41,10 @@ class DatasetPreview extends Component {
 
         return (
             <div>
-                <ActionsButton items={actionItems} />
-                <h4 className="d-inline-block">Dataset overview</h4>
+                <div className="d-flex">
+                    <h4>Dataset overview</h4>
+                    <ActionsButton items={actionItems} />
+                </div>
                 <ul>
                     <li>
                         <b>Number of rows:</b>&nbsp;{summary.numRows}

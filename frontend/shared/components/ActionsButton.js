@@ -3,8 +3,10 @@ import React from "react";
 
 const ActionsButton = props => {
     return (
-        <div className={`dropdown btn-group float-right ${props.containerClasses}`}>
-            <a className={`dropdown-toggle btn ${props.dropdownClasses}`} data-toggle="dropdown">
+        <div className={`dropdown btn-group ml-auto align-self-start ${props.containerClasses}`}>
+            <a
+                className={`btn btn-primary dropdown-toggle ${props.dropdownClasses}`}
+                data-toggle="dropdown">
                 Actions
             </a>
             <div className="dropdown-menu dropdown-menu-right">{props.items}</div>

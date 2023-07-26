@@ -27,6 +27,7 @@ class DomainTable extends Component {
             btnCaption = detailedView ? "Hide details" : "Show details";
         return (
             <>
+            <div className="d-flex">
                 <ActionsButton
                     containerClasses="mb-2"
                     items={[
@@ -44,6 +45,7 @@ class DomainTable extends Component {
                         />,
                     ]}
                 />
+            </div>
                 <table className="table mt-2">
                     <colgroup>
                         <col width="115px" />

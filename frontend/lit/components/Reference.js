@@ -96,21 +96,23 @@ class Reference extends Component {
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div className="ref_small">
+                        <div className="d-flex">
+                            <span>
+                                {authors}&nbsp;{year}
+                            </span>
                         {showActionsTagless ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
                                 items={actionItems.slice(1)}
                             />
                         ) : null}
-                        <span>
-                            {authors}&nbsp;{year}
-                        </span>
                         {showActions ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
                                 items={actionItems}
                             />
                         ) : null}
+                        </div>
                     </div>
                 }
                 {data.title ? (
