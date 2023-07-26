@@ -695,12 +695,16 @@ class BaseEndpointList(BaseList):
         iveps = self.model.ivendpoint.related.related_model.objects.get_qs(
             self.assessment.id
         ).count()
-        alleps = eps + os + mrs + iveps
+        epiv2_outcomes = (
+            apps.get_model("epiv2", "Outcome").objects.get_qs(self.assessment.id).count()
+        )
+        alleps = eps + os + mrs + iveps + epiv2_outcomes
         context.update(
             {
                 "ivendpoints": iveps,
                 "endpoints": eps,
                 "outcomes": os,
+                "epiv2_outcomes": epiv2_outcomes,
                 "meta_results": mrs,
                 "total_endpoints": alleps,
             }

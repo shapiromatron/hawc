@@ -1,0 +1,31 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+
+{% block content %}
+<h2>Outcomes ({{page_obj.paginator.count}} found)</h2>
+{% include 'common/inline_filter_form.html' %}
+<table class="table table-sm table-striped">
+    {% bs4_colgroup '25,25,25,25' %}
+    {% bs4_thead 'Study,Study Population,Design,Outcome' %}
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a></td>
+            <td><a href="{{object.design.get_absolute_url}}">{{object.design}}</a></td>
+            <td>{{object.design.get_study_design_display}}</td>
+            <td>{{object}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">
+                No outcomes available
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "includes/paginator.html" with plural_object_name="endpoints" %}
+
+{% endblock %}

@@ -32,6 +32,24 @@ router.register(
 app_name = "epiv2"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
+    # Heatmap views
+    path(
+        "assessment/<int:pk>/heatmap-study-design/",
+        views.HeatmapStudyDesign.as_view(),
+        name="heatmap-study-design",
+    ),
+    path(
+        "assessment/<int:pk>/heatmap-result/",
+        views.HeatmapResult.as_view(),
+        name="heatmap-result",
+    ),
+    # List views
+    path(
+        "assessment/<int:pk>/outcomes/",
+        views.OutcomeView.as_view(),
+        name="outcome",
+    ),
+    # CRUD
     path(
         "study/<int:pk>/design/create/",
         views.DesignCreate.as_view(),
