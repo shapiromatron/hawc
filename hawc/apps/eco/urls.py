@@ -6,6 +6,10 @@ from . import api, views
 router = SimpleRouter()
 router.register("terms", api.TermViewSet, basename="terms")
 router.register("assessment", api.AssessmentViewSet, basename="assessment")
+router.register("design-cleanup", api.DesignCleanupViewSet, basename="design-cleanup")
+router.register("cause-cleanup", api.CauseCleanupViewSet, basename="cause-cleanup")
+router.register("effect-cleanup", api.EffectCleanupViewSet, basename="effect-cleanup")
+router.register("result-cleanup", api.ResultCleanupViewSet, basename="result-cleanup")
 
 app_name = "eco"
 urlpatterns = [
