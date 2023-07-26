@@ -6,10 +6,10 @@ const ActionsButton = props => {
         <div className={`dropdown btn-group ml-auto align-self-start ${props.containerClasses}`}>
             <a
                 className={`btn btn-primary dropdown-toggle ${props.dropdownClasses}`}
-                data-toggle="dropdown">
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Actions
             </a>
-            <div className="dropdown-menu dropdown-menu-right">{props.items}</div>
+            <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">{props.items}</div>
         </div>
     );
 };
