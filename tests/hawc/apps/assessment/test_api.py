@@ -194,7 +194,7 @@ class TestAssessmentCRUD:
             "team_members": ["1", "2"],
             "reviewers": ["1"],
             "epi_version": 1,
-            "dtxsids": ["DTXSID7020970"],
+            "dtxsids_ids": ["DTXSID7020970"],
         }
 
         # test success
