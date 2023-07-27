@@ -254,7 +254,6 @@ class DoseUnitsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class Assessment(AssessmentEditViewSet):
-    http_method_names = METHODS_NO_PUT
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"

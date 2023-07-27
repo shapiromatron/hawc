@@ -190,9 +190,10 @@ class TestAssessmentCRUD:
             "noel_name": 0,
             "rob_name": 0,
             "editable": "on",
-            "project_manager": ["2"],
-            "team_members": ["1", "2"],
-            "reviewers": ["1"],
+            "creator": 1,
+            "project_manager": [2],
+            "team_members": [1, 2],
+            "reviewers": [1],
             "epi_version": 1,
             "dtxsids_ids": ["DTXSID7020970"],
         }
