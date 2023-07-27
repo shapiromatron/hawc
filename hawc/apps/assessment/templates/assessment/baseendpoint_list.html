@@ -1,5 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
 {% block content %}
 
     <h2>Assessment endpoints</h2>
@@ -10,36 +11,27 @@
         {% endif %}
 
         {% if endpoints > 0 %}
-        <li><a href="{% url 'animal:endpoint_list' assessment.id %}">
-            {{endpoints}} animal bioassay endpoints
-            </a></li>
+        <li><a href="{% url 'animal:endpoint_list' assessment.id %}">{{endpoints}} animal bioassay endpoints</a></li>
         {% endif %}
 
         {% if outcomes > 0 %}
-        <li><a href="{% url 'epi:outcome_list' assessment.id %}">
-            {{outcomes}} epidemiological outcomes assessed
-            </a></li>
+        <li><a href="{% url 'epi:outcome_list' assessment.id %}">{{outcomes}} epidemiological outcomes</a></li>
         {% endif %}
 
+        {% if epiv2_outcomes > 0 %}
+        <li><a href="{% url 'epiv2:outcome' assessment.id %}">{{epiv2_outcomes}} epidemiological outcomes</a></li>
+        {% endif %}
 
         {% if eco_results > 0 %}
-        <li><a href="{% url 'eco:result_list' assessment.id %}">{{eco_results}} ecology results</a></li>
-        {% endif %}
-      
-        {% if epiv2_outcomes > 0 %}
-        <li><a href="{% url 'epiv2:outcome' assessment.id %}">Epidemiology outcomes</a></li>
+        <li><a href="{% url 'eco:result_list' assessment.id %}">{{eco_results}} ecological results</a></li>
         {% endif %}
 
         {% if meta_results > 0 %}
-        <li><a href="{% url 'meta:result_list' assessment.id %}">
-            {{meta_results}} epidemiological meta-analyses results
-            </a></li>
+        <li><a href="{% url 'meta:result_list' assessment.id %}">{{meta_results}} epidemiological meta-analyses results</a></li>
         {% endif %}
 
         {% if ivendpoints > 0 %}
-        <li><a href="{% url 'invitro:endpoint_list' assessment.id %}">
-            {{ivendpoints}} <i>in vitro</i> endpoints
-            </a></li>
+        <li><a href="{% url 'invitro:endpoint_list' assessment.id %}">{{ivendpoints}} <i>in vitro</i> endpoints</a></li>
         {% endif %}
 
     </ul>
@@ -47,20 +39,8 @@
     {% if total_endpoints > 0  %}
     <h3>Dataset overview dashboards</h3>
     <table class='table table-sm table-striped'>
-        <colgroup>
-            <col style="width: 40%" />
-            <col style="width: 20%" />
-            <col style="width: 20%" />
-            <col style="width: 20%" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Data type</th>
-                <th>Study summary</th>
-                <th>Outcome/Results</th>
-                <th>Outcome/Results + Doses</th>
-            </tr>
-        </thead>
+        {% bs4_colgroup '40,20,20,20' %}
+        {% bs4_thead 'Data type,Study summary,Outcome/Results,Outcome/Results + Doses' %}
         <tbody>
             {% if endpoints > 0 %}
             <tr>

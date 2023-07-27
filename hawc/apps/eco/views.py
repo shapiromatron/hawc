@@ -21,13 +21,13 @@ from . import filterset, forms, models
 class HeatmapStudyDesign(HeatmapBase):
     heatmap_data_class = "ecology-study-design"
     heatmap_data_url = "eco:api:assessment-study-export"
-    heatmap_view_title = "Ecology study design"
+    heatmap_view_title = "Ecological study design"
 
 
 class HeatmapResults(HeatmapBase):
     heatmap_data_class = "ecology-result-summary"
     heatmap_data_url = "eco:api:assessment-export"
-    heatmap_view_title = "Ecology data extraction"
+    heatmap_view_title = "Ecological data extraction"
 
 
 # Design

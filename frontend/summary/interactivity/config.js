@@ -37,14 +37,14 @@ export default [
     },
     {
         key: "hero",
-        columns: ["hero id", "HERO ID"],
+        columns: ["hero id", "HERO ID", "hero_id"],
         cls: Reference,
         label: "Show HERO",
         modal: false,
     },
     {
         key: "pubmed",
-        columns: ["pubmed id", "PMID"],
+        columns: ["pubmed id", "PMID", "pubmed_id"],
         cls: Reference,
         label: "Show PubMed",
         modal: false,

@@ -25,23 +25,54 @@ class DesignManager(BaseManager):
         """
         mapping = {
             **study_df_mapping("study-"),
-            "designs": "design_name",
+            "designs": "eco_designs_str",
+            "design_types": "eco_design_types_str",
+            "study_settings": "eco_study_settings_str",
+            "countries": "countries_str",
+            "states": "states_str",
+            "ecoregions": "ecoregions_str",
+            "habitats": "habitats_str",
+            "climates": "climates_str",
+            "causes": "eco_causes_str",
+            "effects": "eco_effects_str",
         }
         qs = study_qs.annotate(
             **study_df_annotations(),
-            design_name=str_m2m("eco_designs__name"),
+            eco_designs_str=str_m2m("eco_designs__name"),
+            eco_design_types_str=str_m2m("eco_designs__design__value"),
+            eco_study_settings_str=str_m2m("eco_designs__study_setting__value"),
+            countries_str=str_m2m("eco_designs__countries__name"),
+            states_str=str_m2m("eco_designs__states__name"),
+            ecoregions_str=str_m2m("eco_designs__ecoregions__value"),
+            habitats_str=str_m2m("eco_designs__habitats__value"),
+            climates_str=str_m2m("eco_designs__climates__value"),
+            eco_causes_str=str_m2m("eco_causes__name"),
+            eco_effects_str=str_m2m("eco_effects__name"),
         ).values_list(*list(mapping.values()))
-        return pd.DataFrame(data=qs, columns=list(mapping.keys())).drop(
-            columns=[
-                "study-coi_reported",
-                "study-coi_details",
-                "study-funding_source",
-                "study-study_identifier",
-                "study-contact_author",
-                "study-ask_author",
-                "study-published",
-                "study-summary",
-            ]
+        return (
+            pd.DataFrame(data=qs, columns=list(mapping.keys()))
+            .drop(
+                columns=[
+                    "study-coi_reported",
+                    "study-coi_details",
+                    "study-funding_source",
+                    "study-study_identifier",
+                    "study-contact_author",
+                    "study-ask_author",
+                    "study-published",
+                    "study-summary",
+                ]
+            )
+            .rename(
+                columns={
+                    "study-id": "study_id",
+                    "study-PMID": "pubmed_id",
+                    "study-HERO ID": "hero_id",
+                    "study-DOI": "doi",
+                    "study-short_citation": "short_citation",
+                    "study-full_citation": "full_citation",
+                }
+            )
         )
 
 
