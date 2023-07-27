@@ -13,6 +13,7 @@
       "Adult": "Adult",
       "Adult (gestation)": "Adult (gestation)",
       "Developmental": "Developmental",
+      "Juvenile": "Juvenile",
       "Multi-lifestage": "Multi-lifestage"
     },
     "sex": {
@@ -154,6 +155,7 @@
       "Me": "Mechanistic",
       "NR": "Not-reported",
       "Ot": "Other",
+      "Pb": "Pubertal",
       "Rp": "Reproductive",
       "Sb": "Subchronic (30-90 days)",
       "St": "Short-term (1-30 days)"
