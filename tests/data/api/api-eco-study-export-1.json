@@ -1,25 +1,11 @@
 [
   {
-    "study-ask_author": "",
-    "study-bioassay": true,
-    "study-coi_details": "",
-    "study-coi_reported": "---",
-    "study-contact_author": false,
-    "study-doi": null,
-    "study-eco": true,
-    "study-editable": true,
-    "study-epi": true,
-    "study-epi_meta": false,
+    "designs": "example eco design",
+    "study-DOI": "",
+    "study-HERO ID": "2",
+    "study-PMID": "",
     "study-full_citation": "Foo et al. 2010",
-    "study-funding_source": "",
-    "study-hero_id": 2,
     "study-id": 1,
-    "study-in_vitro": false,
-    "study-published": false,
-    "study-pubmed_id": null,
-    "study-short_citation": "Foo et al.",
-    "study-study_identifier": "",
-    "study-summary": "",
-    "study-url": "/study/1/"
+    "study-short_citation": "Foo et al."
   }
 ]

@@ -10,9 +10,8 @@
     {% bs4_thead 'Study,Design,Cause,Effect,Result,Modifying Factors,Derived Value,Comments' %}
     <tbody id="result-tbody">
         {% for object in result_list %}
-        
-        <tr hx-target="this" hx-swap="outerHTML" id="result-{{object.id}}">
-            <td><a href="{{object.study.get_absolute_url}}">{{object.design.study.short_citation}}</a></td>
+        <tr>
+            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a></td>
             <td><a href="{{object.design.get_absolute_url}}">{{object.design.name}}</a></td>
             <td>{{object.cause.name}}</td>
             <td>{{object.effect.name }}</td>
@@ -26,13 +25,10 @@
             <td>{{object.derived_value|floatformat:3 }}</td>
             <td>{{object.comments}}</td>
         </tr>
-        
         {% empty %}
             {% bs4_fullrow 'No results available.' %}
         {% endfor %}
     </tbody>
 </table>
-
 {% include "includes/paginator.html" with plural_object_name="results" %}
-
-{% endblock %}
+{% endblock content %}

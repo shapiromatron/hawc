@@ -11,8 +11,8 @@ import {
 const EcSD = {
         studyId: defineProps("studyId", "Study ID", "study"),
         studyCitation: defineProps("studyCitation", "Study citation", "study-short_citation"),
-        designValue: defineProps("designValue", "Design Value", "design-design__value"),
-        designClimates: defineProps("designClimates", "Design Climates", "design-climates_"),
+        designType: defineProps("designType", "Design Type", "design-design_type"),
+        designClimates: defineProps("designClimates", "Design Climates", "design-climates"),
         designCountries: defineProps("designCountries", "Design Countries", "design-countries"),
         designStates: defineProps("designStates", "Design States", "design-states"),
         causeTerm: defineProps("causeTerm", "Cause Term", "cause-term"),
@@ -79,7 +79,7 @@ const EcR = {
         studyPublished: defineProps("studyPublished", "Study Published", "study-published"),
         studySummary: defineProps("studySummary", "Study Summary", "study-summary"),
         designName: defineProps("designName", "Design Name", "design-name"),
-        designValue: defineProps("designValue", "Design Value", "design-design__value"),
+        designType: defineProps("designType", "Design Type", "design-design_type"),
         designSetting: defineProps("designSetting", "Design Study Setting", "design-study_setting"),
         designCountries: defineProps("designCountries", "Design Countries", "design-countries"),
         designStates: defineProps("designStates", "Design States", "design-states"),
@@ -90,11 +90,11 @@ const EcR = {
             "Design Habitats as reported",
             "design-habitats_as_reported"
         ),
-        designClimates: defineProps("designClimates", "Design Climates", "design-climates_"),
+        designClimates: defineProps("designClimates", "Design Climates", "design-climates"),
         designClimatesReported: defineProps(
             "designClimatesReported",
             "Design Climates as reported",
-            "design-climates_as_reported"
+            "design-climatesas_reported"
         ),
         designComments: defineProps("designComments", "Design Comments", "design-comments"),
         causeName: defineProps("causeName", "Cause Name", "cause-name"),
@@ -102,7 +102,7 @@ const EcR = {
         causeBioOrg: defineProps(
             "causeBioOrg",
             "Cause Biological Organization",
-            "cause-biological_organization__value"
+            "cause-biological_organization"
         ),
         causeSpecies: defineProps("causeSpecies", "Cause Species", "cause-species"),
         causeLevel: defineProps("causeLevel", "Cause Level", "cause-level"),
@@ -132,7 +132,7 @@ const EcR = {
         effectBioOrg: defineProps(
             "effectBioOrg",
             "Effect Biological Organization",
-            "effect-biological_organization__value"
+            "effect-biological_organization"
         ),
         effectSpecies: defineProps("effectSpecies", "Effect Species", "effect-species"),
         effectUnits: defineProps("effectUnits", "Effect Units", "effect-units"),
@@ -215,7 +215,7 @@ const EcR = {
         AXIS_OPTIONS: {
             studyCitation: defineAxis(EcR.studyCitation),
             designName: defineAxis(EcR.designName),
-            designValue: defineAxis(EcR.designValue),
+            designType: defineAxis(EcR.designType),
             designSetting: defineAxis(EcR.designSetting),
             designCountries: defineAxis(EcR.designCountries),
             designEcoregions: defineAxis(EcR.designEcoregions),
@@ -242,7 +242,7 @@ const EcR = {
         FILTER_OPTIONS: {
             studyCitation: defineFilter(EcR.studyCitation, {on_click_event: "study"}),
             designName: defineFilter(EcR.designName),
-            designValue: defineFilter(EcR.designValue),
+            designType: defineFilter(EcR.designType),
             designSetting: defineFilter(EcR.designSetting),
             designCountries: defineFilter(EcR.designCountries),
             designStates: defineFilter(EcR.designStates),
@@ -262,7 +262,7 @@ const EcR = {
             studyFullCitation: defineTable(EcR.studyFullCitation),
             studySummary: defineTable(EcR.studySummary),
             designName: defineTable(EcR.designName, {on_click_event: "eco_design"}),
-            designValue: defineTable(EcR.designValue),
+            designType: defineTable(EcR.designType),
             designSetting: defineTable(EcR.designSetting),
             designCountries: defineTable(EcR.designCountries),
             designStates: defineTable(EcR.designStates),

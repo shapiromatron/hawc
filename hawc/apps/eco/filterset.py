@@ -2,9 +2,9 @@ import django_filters as df
 from django.db.models import Q
 
 from ..common.filterset import (
+    ArrowOrderingFilter,
     BaseFilterSet,
     InlineFilterForm,
-    OrderingFilter,
     PaginationFilter,
 )
 from . import models
@@ -28,16 +28,12 @@ class ResultFilterSet(BaseFilterSet):
     search = df.CharFilter(
         method="filter_search",
         label="Search",
-        help_text="Search by cause, effect, study, design, or result name",
+        help_text="Search by study, design, cause, effect, or result",
     )
-    order_by = OrderingFilter(
+    order_by = ArrowOrderingFilter(
         fields=(
             ("design__study__short_citation", "study"),
-            ("name", "result name"),
-        ),
-        choices=(
-            ("study", "↑ study"),
-            ("result name", "↑ name"),
+            ("name", "result"),
         ),
         initial="study",
     )

@@ -7,10 +7,12 @@ from rest_framework.viewsets import GenericViewSet
 from ..assessment.api import AssessmentLevelPermissions, CleanupFieldsBaseViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
+from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import exports, models, serializers
+from ..study.models import Study
+from . import models, serializers
 
 
 class TermViewSet(GenericViewSet):
@@ -46,9 +48,10 @@ class AssessmentViewSet(GenericViewSet):
         """
         Export entire ecological dataset.
         """
-        instance = self.get_object()
-        df = models.Result.complete_df(instance.id)
-        export = FlatExport(df=df, filename=f"ecological-export-{self.assessment.id}")
+        assessment = self.get_object()
+        published_only = get_published_only(assessment, request)
+        qs = models.Result.objects.assessment_qs(assessment.id).published_only(published_only)
+        export = FlatExport(df=qs.complete_df(), filename=f"ecological-export-{assessment.id}")
         return Response(export)
 
     @action(
@@ -62,10 +65,15 @@ class AssessmentViewSet(GenericViewSet):
         Retrieve epidemiology at the study level for assessment.
         """
         assessment: Assessment = self.get_object()
-        published_only = not assessment.user_can_edit_object(request.user)
-        qs = models.Result.objects.get_qs(assessment).published_only(published_only).complete()
-        exporter = exports.EcoStudyComplete(qs, filename=f"{assessment}-eco-study")
-        return Response(exporter.build_export())
+        published_only = get_published_only(assessment, request)
+        qs = (
+            Study.objects.assessment_qs(assessment.id)
+            .filter(eco=True)
+            .published_only(published_only)
+        )
+        df = models.Design.objects.study_df(qs)
+        export = FlatExport(df=df, filename=f"ecological-study-export-{assessment.id}")
+        return Response(export)
 
 
 class DesignCleanupViewSet(CleanupFieldsBaseViewSet):
