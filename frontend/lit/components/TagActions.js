@@ -46,7 +46,7 @@ class TagActions extends Component {
         if (links.length == 0) {
             return null;
         }
-        return <ActionsButton containerClasses="btn-primary" items={links} />;
+        return <ActionsButton items={links} />;
     }
 }
 

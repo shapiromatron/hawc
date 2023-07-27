@@ -95,16 +95,16 @@ class Reference extends Component {
             <div className="referenceDetail pb-2">
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
-                    <div className="ref_small">
+                    <div className="d-flex ref_small">
+                        <span>
+                            {authors}&nbsp;{year}
+                        </span>
                         {showActionsTagless ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
                                 items={actionItems.slice(1)}
                             />
                         ) : null}
-                        <span>
-                            {authors}&nbsp;{year}
-                        </span>
                         {showActions ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
@@ -186,7 +186,7 @@ Reference.propTypes = {
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn-sm",
+    actionsBtnClassName: "btn-sm btn-secondary",
     showHr: false,
     showTags: true,
     showActionsTagsless: false,
