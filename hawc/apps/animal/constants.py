@@ -14,6 +14,7 @@ class ExperimentType(models.TextChoices):
     R1 = "1r", "1-generation reproductive"
     R2 = "2r", "2-generation reproductive"
     DV = "Dv", "Developmental"
+    PB = "Pb", "Pubertal"
     OT = "Ot", "Other"
     NR = "NR", "Not-reported"
 
@@ -53,6 +54,7 @@ class Lifestage(models.TextChoices):
     """
 
     DEV = "Developmental", "Developmental"
+    JUV = "Juvenile", "Juvenile"
     ADULT = "Adult", "Adult"
     AG = "Adult (gestation)", "Adult (gestation)"
     ML = "Multi-lifestage", "Multi-lifestage"
