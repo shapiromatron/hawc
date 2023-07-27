@@ -4,11 +4,13 @@ import math
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
-from django.db.models import Case, Choices, Q, QuerySet, URLField, Value, When
+from django.db.models import Case, CharField, Choices, Q, QuerySet, URLField, Value, When
+from django.db.models.functions import Coalesce
 from django.template.defaultfilters import slugify as default_slugify
 from treebeard.mp_tree import MP_Node
 
@@ -532,6 +534,30 @@ def sql_display(name: str, Choice: type[Choices]) -> Case:
         *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
         default=Value("?"),
     )
+
+
+def replace_null(field: str, replacement: str = ""):
+    """Replace null values with a replacement string
+
+    Args:
+        field (str): The field to replace
+        replacement (str, optional): The replacement string. Defaults to "".
+    """
+    return Coalesce(field, Value(replacement), output_field=CharField())
+
+
+def str_m2m(field: str, delimiter: str = "|", default: str = "", **kw):
+    """Generate a delimited string aggregation of a m2m field.
+
+    The resulting aggregation must be saved to an annotation on the QuerySet;
+    you cannot use directly on a values_list (but you can use after annotation).
+
+    Args:
+        field (str): The field name to aggregate
+        delimiter (str, optional): The field to use; defaults to "|".
+        default (str, optional): The default value to use; defaults to "".
+    """
+    return StringAgg(field, delimiter=delimiter, distinct=True, default=Value(default), **kw)
 
 
 def to_display(series: pd.Series, Choice: type[Choices]) -> pd.Series:

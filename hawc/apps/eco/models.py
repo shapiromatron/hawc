@@ -153,6 +153,12 @@ class Design(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "habitats_as_reported",
+        "climates_as_reported",
+    )
+
     class Meta:
         verbose_name = "Ecological Design"
         verbose_name_plural = "Ecological Designs"
@@ -278,6 +284,18 @@ class Cause(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "species",
+        "level",
+        "level_units",
+        "duration",
+        "duration_units",
+        "exposure",
+        "exposure_units",
+        "as_reported",
+    )
+
     class Meta:
         verbose_name = "Cause"
 
@@ -347,6 +365,13 @@ class Effect(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "species",
+        "units",
+        "as_reported",
+    )
 
     class Meta:
         verbose_name = "Effect/Response"
@@ -479,6 +504,13 @@ class Result(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "relationship_comment",
+        "modifying_factors",
+        "modifying_factors_comment",
+    )
+
     class Meta:
         verbose_name = "Result"
         verbose_name_plural = "Results"
@@ -508,32 +540,6 @@ class Result(models.Model):
                 category=VocabCategories.STATISTICAL, value="Not applicable"
             ),
         }
-
-    @classmethod
-    def complete_df(cls, assessment_id: int) -> pd.DataFrame:
-        study_df = Study.objects.filter(assessment_id=assessment_id).flat_df().add_prefix("study-")
-        design_df = (
-            Design.objects.filter(study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("design-")
-        )
-        cause_df = (
-            Cause.objects.filter(study__assessment_id=assessment_id).flat_df().add_prefix("cause-")
-        )
-        effect_df = (
-            Effect.objects.filter(study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("effect-")
-        )
-        result_df = (
-            cls.objects.filter(design__study__assessment_id=assessment_id)
-            .flat_df()
-            .add_prefix("result-")
-        )
-        tmp1 = pd.merge(effect_df, result_df, left_on="effect-id", right_on="result-effect_id")
-        tmp2 = pd.merge(cause_df, tmp1, left_on="cause-id", right_on="result-cause_id")
-        tmp3 = pd.merge(design_df, tmp2, left_on="design-id", right_on="result-design_id")
-        return pd.merge(study_df, tmp3, left_on="study-id", right_on="design-study_id")
 
 
 reversion.register(Design)

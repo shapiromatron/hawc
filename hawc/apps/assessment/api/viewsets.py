@@ -341,6 +341,35 @@ class Assessment(AssessmentEditViewSet):
             reverse("animal:api:endpoint-cleanup-list"),
             "Endpoint",
         )
+        # eco
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Design").objects.get_qs(instance.id).count(),
+            "Designs",
+            reverse("eco:api:design-cleanup-list"),
+            "Design",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Cause").objects.get_qs(instance.id).count(),
+            "Causes",
+            reverse("eco:api:cause-cleanup-list"),
+            "Cause",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Effect").objects.get_qs(instance.id).count(),
+            "Effects",
+            reverse("eco:api:effect-cleanup-list"),
+            "Effect",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Result").objects.get_qs(instance.id).count(),
+            "Results",
+            reverse("eco:api:result-cleanup-list"),
+            "Results",
+        )
 
         # epi
         add_item(

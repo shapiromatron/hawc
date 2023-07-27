@@ -1,5 +1,4 @@
 import pandas as pd
-from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import (
     CharField,
     F,
@@ -9,7 +8,7 @@ from django.db.models import (
     Value,
 )
 
-from ..common.models import BaseManager, sql_display, to_display_array
+from ..common.models import BaseManager, sql_display, str_m2m, to_display_array
 from . import constants, models
 
 
@@ -64,9 +63,7 @@ class DesignManager(BaseManager):
                 designs__outcomes__system_display=sql_display(
                     "designs__outcomes__system", constants.HealthOutcomeSystem
                 ),
-                countries=StringAgg(
-                    "designs__countries__name", delimiter="|", distinct=True, default=""
-                ),
+                countries=str_m2m("designs__countries__name"),
                 age_profile=Func(
                     F("designs__age_profile"),
                     Value("|"),
@@ -74,27 +71,13 @@ class DesignManager(BaseManager):
                     function="array_to_string",
                     output_field=CharField(max_length=256),
                 ),
-                chemical_name=StringAgg(
-                    "designs__chemicals__name", delimiter="|", distinct=True, default=""
-                ),
-                exposure_name=StringAgg(
-                    "designs__exposures__name", delimiter="|", distinct=True, default=""
-                ),
-                design_source=StringAgg(
-                    "designs__source_display", delimiter="|", distinct=True, default=""
-                ),
-                study_design=StringAgg(
-                    "designs__study_design_display", delimiter="|", distinct=True, default=""
-                ),
-                outcome_system=StringAgg(
-                    "designs__outcomes__system_display", delimiter="|", distinct=True, default=""
-                ),
-                outcome_effect=StringAgg(
-                    "designs__outcomes__effect", delimiter="|", distinct=True, default=""
-                ),
-                outcome_endpoint=StringAgg(
-                    "designs__outcomes__endpoint", delimiter="|", distinct=True, default=""
-                ),
+                chemical_name=str_m2m("designs__chemicals__name"),
+                exposure_name=str_m2m("designs__exposures__name"),
+                design_source=str_m2m("designs__source_display"),
+                study_design=str_m2m("designs__study_design_display"),
+                outcome_system=str_m2m("designs__outcomes__system_display"),
+                outcome_effect=str_m2m("designs__outcomes__effect"),
+                outcome_endpoint=str_m2m("designs__outcomes__endpoint"),
             ).values_list(
                 "id",
                 "study_design",

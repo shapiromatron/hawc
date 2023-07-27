@@ -6,6 +6,7 @@ from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -85,7 +86,7 @@ class EndpointFilterSet(BaseFilterSet):
         label="Dose units",
         queryset=DoseUnits.objects.all(),
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("experiment__study__short_citation", "study"),
             ("experiment__name", "experiment_name"),
@@ -107,9 +108,8 @@ class EndpointFilterSet(BaseFilterSet):
             ("observation_time", "↑ observation time"),
         ),
         initial="study",
-        empty_label=None,
     )
-    paginate_by = PaginationFilter(initial=25)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.IVEndpoint
