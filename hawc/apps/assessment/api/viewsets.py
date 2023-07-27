@@ -253,10 +253,16 @@ class DoseUnitsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class Assessment(AssessmentViewSet):
+class Assessment(AssessmentEditViewSet):
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
+
+    def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [permissions.IsAdminUser()]
+        else:
+            return super().get_permissions()
 
     @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
