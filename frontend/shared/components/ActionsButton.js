@@ -3,17 +3,17 @@ import React from "react";
 
 const ActionsButton = props => {
     return (
-        <div className={`dropdown btn-group ml-auto align-self-start ${props.containerClasses}`}>
+        <div
+            style={{minWidth: 85}}
+            className={`dropdown btn-group ml-auto align-self-start ${props.containerClasses}`}>
             <a
-                className={`btn btn-primary dropdown-toggle ${props.dropdownClasses}`}
+                className={`btn dropdown-toggle ${props.dropdownClasses}`}
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 aria-expanded="false">
                 Actions
             </a>
-            <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                {props.items}
-            </div>
+            <div className="dropdown-menu dropdown-menu-right">{props.items}</div>
         </div>
     );
 };
