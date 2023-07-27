@@ -246,7 +246,7 @@ class AnimalGroup(models.Model):
         help_text="Definitions: <b>Developmental</b>: Prenatal and perinatal exposure in dams or "
         + "postnatal exposure in offspring until sexual maturity (~6 weeks in rats and "
         + "mice). Include studies with pre-mating exposure if the endpoint focus is "
-        + "developmental. <strong>Juvenile</strong>: Exposure between weaned and sexual maturity. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult "
+        + "developmental. <b>Juvenile</b>: Exposure between weaned and sexual maturity. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult "
         + "(gestation)</b>: Exposure in dams during pregnancy. <b>Multi-lifestage</b>: includes both "
         + "developmental and adult (i.e., multi-generational studies, exposure that start "
         + "before sexual maturity and continue to adulthood)",
