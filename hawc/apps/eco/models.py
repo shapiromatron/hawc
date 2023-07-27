@@ -153,6 +153,12 @@ class Design(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "habitats_as_reported",
+        "climates_as_reported",
+    )
+
     class Meta:
         verbose_name = "Ecological Design"
         verbose_name_plural = "Ecological Designs"
@@ -278,6 +284,18 @@ class Cause(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "species",
+        "level",
+        "level_units",
+        "duration",
+        "duration_units",
+        "exposure",
+        "exposure_units",
+        "as_reported",
+    )
+
     class Meta:
         verbose_name = "Cause"
 
@@ -347,6 +365,13 @@ class Effect(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "species",
+        "units",
+        "as_reported",
+    )
 
     class Meta:
         verbose_name = "Effect/Response"
@@ -478,6 +503,13 @@ class Result(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "relationship_comment",
+        "modifying_factors",
+        "modifying_factors_comment",
+    )
 
     class Meta:
         verbose_name = "Result"

@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..assessment.api import AssessmentLevelPermissions
+from ..assessment.api import AssessmentLevelPermissions, CleanupFieldsBaseViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api.utils import get_published_only
@@ -12,7 +12,7 @@ from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..study.models import Study
-from . import models
+from . import models, serializers
 
 
 class TermViewSet(GenericViewSet):
@@ -71,7 +71,42 @@ class AssessmentViewSet(GenericViewSet):
             .filter(eco=True)
             .published_only(published_only)
         )
-
         df = models.Design.objects.study_df(qs)
-        export = FlatExport(df=df, filename=f"epi-study-{assessment.id}")
+        export = FlatExport(df=df, filename=f"ecological-study-export-{assessment.id}")
         return Response(export)
+
+
+class DesignCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DesignCleanupSerializer
+    model = models.Design
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class CauseCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.CauseCleanupSerializer
+    model = models.Cause
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class EffectCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.EffectCleanupSerializer
+    model = models.Effect
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class ResultCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ResultCleanupSerializer
+    model = models.Result
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")
