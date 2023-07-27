@@ -253,7 +253,7 @@ class DoseUnitsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class Assessment(AssessmentViewSet, AssessmentEditViewSet):
+class Assessment(AssessmentEditViewSet):
     http_method_names = METHODS_NO_PUT
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
