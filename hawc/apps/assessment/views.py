@@ -695,15 +695,20 @@ class BaseEndpointList(BaseList):
         iveps = self.model.ivendpoint.related.related_model.objects.get_qs(
             self.assessment.id
         ).count()
+        eco_designs = apps.get_model("eco", "Design").objects.get_qs(self.assessment.id).count()
+        eco_results = apps.get_model("eco", "Result").objects.get_qs(self.assessment.id).count()
+        alleps = eps + os + mrs + iveps + eco_results
         epiv2_outcomes = (
             apps.get_model("epiv2", "Outcome").objects.get_qs(self.assessment.id).count()
         )
-        alleps = eps + os + mrs + iveps + epiv2_outcomes
+        alleps = eps + os + mrs + iveps + epiv2_outcomes + eco_results
         context.update(
             {
                 "ivendpoints": iveps,
                 "endpoints": eps,
                 "outcomes": os,
+                "eco_results": eco_results,
+                "eco_designs": eco_designs,
                 "epiv2_outcomes": epiv2_outcomes,
                 "meta_results": mrs,
                 "total_endpoints": alleps,

@@ -83,7 +83,6 @@ class TaskFilterSet(BaseFilterSet):
             ("study__short_citation", "citation"),
             ("study__created", "study_created"),
         ),
-        empty_label=None,
         initial="citation",
     )
 

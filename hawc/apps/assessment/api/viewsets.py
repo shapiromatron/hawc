@@ -254,10 +254,16 @@ class DoseUnitsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class Assessment(AssessmentViewSet):
+class Assessment(AssessmentEditViewSet):
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
+
+    def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [permissions.IsAdminUser()]
+        else:
+            return super().get_permissions()
 
     @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
@@ -335,6 +341,35 @@ class Assessment(AssessmentViewSet):
             "Endpoints",
             reverse("animal:api:endpoint-cleanup-list"),
             "Endpoint",
+        )
+        # eco
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Design").objects.get_qs(instance.id).count(),
+            "Designs",
+            reverse("eco:api:design-cleanup-list"),
+            "Design",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Cause").objects.get_qs(instance.id).count(),
+            "Causes",
+            reverse("eco:api:cause-cleanup-list"),
+            "Cause",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Effect").objects.get_qs(instance.id).count(),
+            "Effects",
+            reverse("eco:api:effect-cleanup-list"),
+            "Effect",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Result").objects.get_qs(instance.id).count(),
+            "Results",
+            reverse("eco:api:result-cleanup-list"),
+            "Results",
         )
 
         # epi

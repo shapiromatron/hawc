@@ -5,6 +5,7 @@ from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -52,7 +53,7 @@ class MetaResultFilterSet(BaseFilterSet):
         ),
         help_text="ex: Folate",
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("protocol__study__short_citation", "study"),
             ("label", "meta_result"),
@@ -68,9 +69,8 @@ class MetaResultFilterSet(BaseFilterSet):
             ("estimate", "↑ estimate"),
         ),
         initial="study",
-        empty_label=None,
     )
-    paginate_by = PaginationFilter(initial=25)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.MetaResult

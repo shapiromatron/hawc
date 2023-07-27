@@ -6,8 +6,10 @@ import hawc.apps.animal.urls
 import hawc.apps.assessment.urls
 import hawc.apps.bmd.urls
 import hawc.apps.common.urls
+import hawc.apps.eco.urls
 import hawc.apps.epi.urls
 import hawc.apps.epimeta.urls
+import hawc.apps.epiv2.urls
 import hawc.apps.hawc_admin.urls
 import hawc.apps.invitro.urls
 import hawc.apps.lit.urls
@@ -64,8 +66,10 @@ open_api_patterns = [
     path("assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
     path("bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
     path("common/api/", include(hawc.apps.common.urls.router.urls)),
+    path("eco/api/", include(hawc.apps.eco.urls.router.urls)),
     path("epi/api/", include(hawc.apps.epi.urls.router.urls)),
     path("epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
+    path("epidemiology/api/", include(hawc.apps.epiv2.urls.router.urls)),
     path("in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
     path("lit/api/", include(hawc.apps.lit.urls.router.urls)),
     path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),

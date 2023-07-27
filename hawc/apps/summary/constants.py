@@ -7,6 +7,7 @@ class StudyType(models.IntegerChoices):
     EPI = 1, "Epidemiology"
     EPI_META = 4, "Epidemiology meta-analysis/pooled analysis"
     IN_VITRO = 2, "In vitro"
+    ECO = 5, "Ecology"
     OTHER = 3, "Other"
 
 

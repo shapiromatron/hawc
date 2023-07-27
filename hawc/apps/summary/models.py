@@ -36,6 +36,8 @@ from ..common.helper import (
 )
 from ..common.models import get_model_copy_name
 from ..common.validators import validate_html_tags, validate_hyperlinks
+from ..eco.exports import EcoFlatComplete
+from ..eco.models import Result
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -776,6 +778,7 @@ class DataPivotQuery(DataPivot):
 
     def _get_dataset_filters(self):
         filters = {}
+        epi_version = self.assessment.epi_version
 
         if self.evidence_type == constants.StudyType.BIOASSAY:
             filters["assessment_id"] = self.assessment_id
@@ -784,15 +787,15 @@ class DataPivotQuery(DataPivot):
             if self.preferred_units:
                 filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
 
-        elif self.evidence_type == constants.StudyType.EPI:
-            if self.assessment.epi_version == EpiVersion.V1:
-                filters["assessment_id"] = self.assessment_id
-                if self.published_only:
-                    filters["study_population__study__published"] = True
-            else:
-                filters["design__study__assessment_id"] = self.assessment_id
-                if self.published_only:
-                    filters["design__study__published"] = True
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
+            filters["assessment_id"] = self.assessment_id
+            if self.published_only:
+                filters["study_population__study__published"] = True
+
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
+            filters["design__study__assessment_id"] = self.assessment_id
+            if self.published_only:
+                filters["design__study__published"] = True
 
         elif self.evidence_type == constants.StudyType.EPI_META:
             filters["protocol__study__assessment_id"] = self.assessment_id
@@ -804,27 +807,30 @@ class DataPivotQuery(DataPivot):
             if self.published_only:
                 filters["experiment__study__published"] = True
 
+        elif self.evidence_type == constants.StudyType.ECO:
+            filters["design__study__assessment_id"] = self.assessment_id
+            if self.published_only:
+                filters["design__study__published"] = True
+
         Prefilter.setFiltersFromObj(filters, self.prefilters)
         return filters
 
     def _get_dataset_queryset(self, filters):
+        epi_version = self.assessment.epi_version
         if self.evidence_type == constants.StudyType.BIOASSAY:
             qs = Endpoint.objects.filter(**filters)
-
-        elif self.evidence_type == constants.StudyType.EPI:
-            if self.assessment.epi_version == EpiVersion.V1:
-                qs = Outcome.objects.filter(**filters)
-            else:
-                qs = DataExtraction.objects.filter(**filters)
-
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
+            qs = Outcome.objects.filter(**filters)
+        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
+            qs = DataExtraction.objects.filter(**filters)
         elif self.evidence_type == constants.StudyType.EPI_META:
             qs = MetaResult.objects.filter(**filters)
-
         elif self.evidence_type == constants.StudyType.IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
+        elif self.evidence_type == constants.StudyType.ECO:
+            qs = Result.objects.filter(**filters)
         else:
             raise ValueError("Invalid data type")
-
         return qs.order_by("id")
 
     def _get_dataset_exporter(self, qs):
@@ -877,6 +883,13 @@ class DataPivotQuery(DataPivot):
                 filename=f"{self.assessment}-invitro",
             )
 
+        elif self.evidence_type == constants.StudyType.ECO:
+            exporter = EcoFlatComplete(
+                qs,
+                assessment=self.assessment,
+                filename=f"{self.assessment}-eco",
+            )
+
         return exporter
 
     def get_queryset(self):
@@ -898,6 +911,8 @@ class DataPivotQuery(DataPivot):
             return "Data pivot (epidemiology meta-analysis/pooled-analysis)"
         elif self.evidence_type == constants.StudyType.IN_VITRO:
             return "Data pivot (in vitro)"
+        elif self.evidence_type == constants.StudyType.ECO:
+            return "Data pivot (ecology)"
         else:
             raise ValueError("Unknown type")
 

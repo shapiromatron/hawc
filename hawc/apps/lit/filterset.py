@@ -74,12 +74,10 @@ class ReferenceFilterSet(BaseFilterSet):
     )
     order_by = ArrowOrderingFilter(
         initial="-year",
-        empty_label=None,
         fields=(
             ("authors_short", "authors"),
             ("year", "year"),
         ),
-        help_text="How results will be ordered",
     )
     needs_tagging = df.BooleanFilter(
         method="filter_needs_tagging",
@@ -93,7 +91,7 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
-    paginate_by = PaginationFilter(initial=25)
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Reference
