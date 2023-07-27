@@ -509,43 +509,6 @@ class Result(models.Model):
             ),
         }
 
-    @classmethod
-    def complete_df(cls, assessment_id: int, published_only: bool = True) -> pd.DataFrame:
-        study_df = (
-            Study.objects.assessment_qs(assessment_id=assessment_id)
-            .published_only(published_only)
-            .flat_df()
-            .add_prefix("study-")
-        )
-        design_df = (
-            Design.objects.assessment_qs(assessment_id)
-            .published_only(published_only)
-            .flat_df()
-            .add_prefix("design-")
-        )
-        cause_df = (
-            Cause.objects.assessment_qs(assessment_id)
-            .published_only(published_only)
-            .flat_df()
-            .add_prefix("cause-")
-        )
-        effect_df = (
-            Effect.objects.assessment_qs(assessment_id)
-            .published_only(published_only)
-            .flat_df()
-            .add_prefix("effect-")
-        )
-        result_df = (
-            cls.objects.assessment_qs(assessment_id)
-            .published_only(published_only)
-            .flat_df()
-            .add_prefix("result-")
-        )
-        tmp1 = pd.merge(effect_df, result_df, left_on="effect-id", right_on="result-effect_id")
-        tmp2 = pd.merge(cause_df, tmp1, left_on="cause-id", right_on="result-cause_id")
-        tmp3 = pd.merge(design_df, tmp2, left_on="design-id", right_on="result-design_id")
-        return pd.merge(study_df, tmp3, left_on="study-id", right_on="design-study_id")
-
 
 reversion.register(Design)
 reversion.register(Cause)

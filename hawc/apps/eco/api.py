@@ -50,8 +50,8 @@ class AssessmentViewSet(GenericViewSet):
         """
         assessment = self.get_object()
         published_only = get_published_only(assessment, request)
-        df = models.Result.complete_df(assessment.id, published_only=published_only)
-        export = FlatExport(df=df, filename=f"ecological-export-{assessment.id}")
+        qs = models.Result.objects.assessment_qs(assessment.id).published_only(published_only)
+        export = FlatExport(df=qs.complete_df(), filename=f"ecological-export-{assessment.id}")
         return Response(export)
 
     @action(

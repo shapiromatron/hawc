@@ -10,6 +10,4 @@ class EcoFlatComplete(FlatFileExporter):
     """
 
     def build_df(self) -> pd.DataFrame:
-        data = self.queryset.values_list("id", flat=True)
-        headers = ["id"]
-        return pd.DataFrame(data=data, columns=headers)
+        return self.queryset.complete_df()
