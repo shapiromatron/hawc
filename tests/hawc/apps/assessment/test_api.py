@@ -107,20 +107,6 @@ class TestDssToxViewSet:
 
 
 @pytest.mark.django_db
-class TestAssessmentViewSet:
-    def test_global_chemical_search(self):
-        client = APIClient()
-        url = reverse("assessment:api:assessment-chemical")
-
-        response = client.get(url)
-        assert response.status_code == 403
-
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-        response = client.get(url)
-        assert response.status_code == 200
-
-
-@pytest.mark.django_db
 class TestAssessmentDetail:
     def test_success(self, db_keys):
         client = APIClient()
@@ -192,8 +178,8 @@ class TestAssessmentValue:
 
 
 @pytest.mark.django_db
-class TestAssessmentCRUD:
-    def test_permissions(self, db_keys):
+class TestAssessmentViewSet:
+    def test_crud(self, db_keys):
         client = APIClient()
         data = {
             "name": "testing",
@@ -240,3 +226,20 @@ class TestAssessmentCRUD:
             reverse("assessment:api:assessment-detail", args=(db_keys.assessment_working,))
         )
         assert resp.status_code == 403
+
+    def test_chemical(self):
+        url = reverse("assessment:api:assessment-chemical")
+
+        client = APIClient()
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 403
+
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 400
+        assert "query" in response.json()
+
+        response = client.get(url + "?query=foo")
+        assert response.status_code == 200

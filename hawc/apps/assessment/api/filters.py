@@ -30,13 +30,13 @@ class InAssessmentFilter(filters.BaseFilterBackend):
 
 class GlobalChemicalsFilterSet(df.FilterSet):
     query = df.CharFilter(
-        method="filter_assessment_level_data",
+        method="filter_query",
         label="Query",
-        help_text="Enter chemical name, dtxsid, or cas",
+        help_text="Enter chemical name, DTXSID, or CASRN",
     )
-    published = df.BooleanFilter(method="filter_published")
+    published_only = df.BooleanFilter(method="filter_published_only")  # published_only=true
 
-    def filter_assessment_level_data(self, queryset, name, value):
+    def filter_query(self, queryset, name, value):
         query = (
             Q(name__icontains=value)
             | Q(cas=value)
@@ -46,12 +46,11 @@ class GlobalChemicalsFilterSet(df.FilterSet):
         )
         return queryset.filter(query).distinct()
 
-    def filter_published(self, queryset, name, value):
+    def filter_published_only(self, queryset, name, value):
         if value is True:
-            return queryset.filter(public_on__isnull=False)
-        else:
-            return queryset.filter(public_on__isnull=True)
+            return queryset.filter(public_on__isnull=False, hide_from_public_page=False)
+        return queryset
 
     class Meta:
         model = Assessment
-        fields = ["name", "dtxsids__dtxsid", "cas", "public_on"]
+        fields = ["query", "published_only"]

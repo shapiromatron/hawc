@@ -8,7 +8,7 @@ from django.db.models import Case, Q, QuerySet, Value, When
 from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum
-from ..common.models import BaseManager
+from ..common.models import BaseManager, replace_null, str_m2m
 from . import constants
 
 
@@ -69,6 +69,28 @@ class AssessmentQuerySet(QuerySet):
                 default=Value(constants.AssessmentRole.NO_ROLE),
             )
         )
+
+    def global_chemical_report(self) -> pd.DataFrame:
+        mapping = {
+            "id": "id",
+            "name": "name",
+            "year": "year",
+            "assessment_objective": "assessment_objective",
+            "creator_email": replace_null("creator__email"),
+            "cas": "cas",
+            "dtxsids": "dtxsids_str",
+            "published": "published",
+            "public_on": "public_on",
+            "hide_from_public_page": "hide_from_public_page",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+        data = (
+            self.with_published()
+            .annotate(dtxsids_str=str_m2m("dtxsids__dtxsid"))
+            .values_list(*list(mapping.values()))
+        )
+        return pd.DataFrame(data=data, columns=list(mapping.keys()))
 
 
 class AssessmentManager(BaseManager):

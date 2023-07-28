@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from .. import models
-
 
 class AssessmentRootedSerializer(serializers.ModelSerializer):
     """
@@ -54,20 +52,3 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
             instance.move(parent, pos="last-child")
 
         return instance
-
-
-class GlobalChemicalsSerializer(serializers.ModelSerializer):
-    creator = serializers.EmailField(source="creator.email")
-    published = serializers.CharField()
-
-    class Meta:
-        model = models.Assessment
-        fields = [
-            "name",
-            "dtxsids",
-            "cas",
-            "public_on",
-            "hide_from_public_page",
-            "published",
-            "creator",
-        ]

@@ -8,7 +8,7 @@ from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -24,7 +24,6 @@ from ..constants import AssessmentViewSetPermissions
 from .filters import GlobalChemicalsFilterSet, InAssessmentFilter
 from .helper import get_assessment_from_query
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
-from .serializers import GlobalChemicalsSerializer
 
 # all http methods except PUT
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
@@ -475,14 +474,21 @@ class Assessment(AssessmentEditViewSet):
         export = serializer.export()
         return Response(export)
 
-    @action(detail=False, permission_classes=(permissions.IsAdminUser,))
+    @action(
+        detail=False,
+        permission_classes=(permissions.IsAdminUser,),
+        renderer_classes=PandasRenderers,
+    )
     def chemical(self, request):
         """Global chemical search, across all assessments."""
-        queryset = models.Assessment.objects.all().prefetch_related("dtxsids")
+        queryset = models.Assessment.objects.all()
         filterset = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
-        qs = filterset.qs.with_published()
-        serializer = GlobalChemicalsSerializer(qs, many=True)
-        return Response(serializer.data)
+        query = filterset.data.get("query")
+        if not query:
+            raise ValidationError({"query": "No query parameters provided"})
+        df = filterset.qs.global_chemical_report()
+        filename = f"assessment-search-{query}"
+        return FlatExport.api_response(df, filename)
 
 
 class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
