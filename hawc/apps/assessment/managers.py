@@ -8,8 +8,25 @@ from django.db.models import Case, Q, QuerySet, Value, When
 from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum
-from ..common.models import BaseManager
+from ..common.models import BaseManager, replace_null, str_m2m
 from . import constants
+
+
+def published(prefix: str = "") -> Case:
+    public = f"{prefix}public_on__isnull"
+    hidden = f"{prefix}hide_from_public_page"
+    return Case(
+        When(**{public: True}, then=Value(constants.PublishedStatus.PRIVATE)),
+        When(
+            Q(**{public: False}) & Q(**{hidden: False}),
+            then=Value(constants.PublishedStatus.PUBLIC),
+        ),
+        When(
+            Q(**{public: False}) & Q(**{hidden: True}),
+            then=Value(constants.PublishedStatus.UNLISTED),
+        ),
+        default=Value("???"),
+    )
 
 
 class AssessmentQuerySet(QuerySet):
@@ -45,20 +62,7 @@ class AssessmentQuerySet(QuerySet):
         )[:n]
 
     def with_published(self) -> QuerySet:
-        return self.annotate(
-            published=Case(
-                When(public_on__isnull=True, then=Value(constants.PublishedStatus.PRIVATE)),
-                When(
-                    Q(public_on__isnull=False) & Q(hide_from_public_page=False),
-                    then=Value(constants.PublishedStatus.PUBLIC),
-                ),
-                When(
-                    Q(public_on__isnull=False) & Q(hide_from_public_page=True),
-                    then=Value(constants.PublishedStatus.UNLISTED),
-                ),
-                default=Value("???"),
-            )
-        )
+        return self.annotate(published=published())
 
     def with_role(self, user) -> QuerySet:
         return self.annotate(
@@ -69,6 +73,28 @@ class AssessmentQuerySet(QuerySet):
                 default=Value(constants.AssessmentRole.NO_ROLE),
             )
         )
+
+    def global_chemical_report(self) -> pd.DataFrame:
+        mapping = {
+            "id": "id",
+            "name": "name",
+            "year": "year",
+            "assessment_objective": "assessment_objective",
+            "creator_email": replace_null("creator__email"),
+            "cas": "cas",
+            "dtxsids": "dtxsids_str",
+            "published": "published",
+            "public_on": "public_on",
+            "hide_from_public_page": "hide_from_public_page",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+        data = (
+            self.with_published()
+            .annotate(dtxsids_str=str_m2m("dtxsids__dtxsid"))
+            .values_list(*list(mapping.values()))
+        )
+        return pd.DataFrame(data=data, columns=list(mapping.keys()))
 
 
 class AssessmentManager(BaseManager):

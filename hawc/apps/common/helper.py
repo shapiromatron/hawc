@@ -27,6 +27,7 @@ from matplotlib.dates import DateFormatter
 from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
 
 logger = logging.getLogger(__name__)
@@ -281,6 +282,13 @@ class FlatExport(NamedTuple):
     df: pd.DataFrame
     filename: str
     metadata: pd.DataFrame | None = None
+
+    @classmethod
+    def api_response(
+        cls, df: pd.DataFrame, filename: str, metadata: pd.DataFrame | None = None
+    ) -> Response:
+        export = cls(df=df, filename=filename, metadata=metadata)
+        return Response(export)
 
 
 class FlatFileExporter:

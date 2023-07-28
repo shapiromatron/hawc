@@ -69,3 +69,37 @@ class StudyFilterSet(BaseFilterSet):
         if "assigned_user" in form.fields:
             form.fields["assigned_user"].queryset = self.assessment.pms_and_team_users()
         return form
+
+
+class StudyByChemicalFilterSet(df.FilterSet):
+    query = df.CharFilter(method="filter_query", label="Query", required=True)
+    published = df.BooleanFilter(method="filter_published")
+
+    def filter_published(self, queryset, name, value):
+        return queryset.filter(published=value)
+
+    def filter_query(self, queryset, name, value):
+        return queryset.filter(
+            # bioassay
+            Q(experiments__chemical__icontains=value)
+            | Q(experiments__cas=value)
+            | Q(experiments__dtxsid__dtxsid=value)
+            | Q(experiments__dtxsid__content__preferredName__icontains=value)
+            | Q(experiments__dtxsid__content__casrn=value)
+            # epi
+            | Q(study_populations__exposures__name__icontains=value)
+            | Q(study_populations__exposures__dtxsid__dtxsid=value)
+            | Q(study_populations__exposures__dtxsid__content__preferredName__icontains=value)
+            | Q(study_populations__exposures__dtxsid__content__casrn=value)
+            # epiv2
+            | Q(designs__chemicals__name__icontains=value)
+            | Q(designs__chemicals__dsstox__dtxsid=value)
+            | Q(designs__chemicals__dsstox__content__preferredName__icontains=value)
+            | Q(designs__chemicals__dsstox__content__casrn=value)
+            # in vitro
+            | Q(ivchemicals__name__icontains=value)
+            | Q(ivchemicals__cas=value)
+            | Q(ivchemicals__dtxsid__dtxsid=value)
+            | Q(ivchemicals__dtxsid__content__preferredName__icontains=value)
+            | Q(ivchemicals__dtxsid__content__casrn=value)
+        )

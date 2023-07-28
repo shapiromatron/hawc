@@ -24,7 +24,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, filterset, models, serializers
+from . import constants, exports, filterset, models, serializers
 
 
 class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
@@ -417,3 +417,19 @@ class ReferenceViewSet(
         )
         instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
         return Response({"status": "ok"})
+
+    @action(
+        detail=False,
+        url_path=r"search/type/(?P<db_id>[\d])/id/(?P<id>.*)",
+        renderer_classes=PandasRenderers,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def id_search(self, request, id: str, db_id: int):
+        db_id = int(db_id)
+        if db_id not in constants.ReferenceDatabase:
+            raise ValidationError({"type": f"Must be in {constants.ReferenceDatabase.choices}"})
+        qs = self.get_queryset().filter(identifiers__unique_id=id, identifiers__database=db_id)
+        return FlatExport.api_response(
+            df=qs.global_df(),
+            filename=f"global-reference-data-{id}",
+        )
