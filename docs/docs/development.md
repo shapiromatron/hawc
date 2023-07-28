@@ -7,7 +7,7 @@ following applications installed on your local development system:
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) == 3.11
 - [Node.js](https://nodejs.org)
-- [Yarn](https://yarnpkg.com/) > 3.6
+- [Yarn](https://yarnpkg.com/) < 2
 - [PostgreSQL](https://www.postgresql.org/) >= 12
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
@@ -19,7 +19,6 @@ When writing code for HAWC, there are a few requirements for code acceptance. We
 See the `Useful utilities` below for more details on how to automatically lint/format your code.
 
 ## Environment setup
-
 
 HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
 
