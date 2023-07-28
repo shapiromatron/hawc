@@ -10,7 +10,6 @@ DEBUG = True
 
 # enable feature flags for tests
 HAWC_FEATURES.ENABLE_BMDS_33 = True
-HAWC_FEATURES.ENABLE_ASSESSMENT_VALUES = True
 
 # remove toolbar for integration tests
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]

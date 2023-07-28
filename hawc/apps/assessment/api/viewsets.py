@@ -497,6 +497,9 @@ class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     model = models.AssessmentValue
     serializer_class = serializers.AssessmentValueSerializer
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("assessment")
+
 
 class AssessmentDetailViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]

@@ -906,7 +906,7 @@
     assessment: 2
     evaluation_type: 1
     system: Urinary
-    value_type: 5
+    value_type: 10
     value: 4.0
     value_unit: mg/kg/day
     confidence: Medium High

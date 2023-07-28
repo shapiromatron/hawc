@@ -488,7 +488,6 @@ class AssessmentDownloads(BaseDetail):
     def get_context_data(self, **kwargs):
         kwargs.update(
             EpiVersion=constants.EpiVersion,
-            eco_enabled=settings.HAWC_FEATURES.ENABLE_ECO,
         )
         return super().get_context_data(**kwargs)
 

@@ -15,8 +15,6 @@ class FeatureFlags(BaseModel):
     DEFAULT_LITERATURE_CONFLICT_RESOLUTION: bool = False
     ALLOW_RIS_IMPORTS: bool = True
     ANONYMOUS_ACCOUNT_CREATION: bool = True
-    ENABLE_ECO: bool = False
-    ENABLE_ASSESSMENT_VALUES: bool = False
     ENABLE_BMDS_33 = False
     ENABLE_PLOTLY_VISUAL: bool = False
 
