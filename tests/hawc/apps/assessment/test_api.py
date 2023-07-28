@@ -228,7 +228,7 @@ class TestAssessmentViewSet:
         assert resp.status_code == 403
 
     def test_chemical(self):
-        url = reverse("assessment:api:assessment-chemical")
+        url = reverse("assessment:api:assessment-chemical-search")
 
         client = APIClient()
         assert client.login(username="pm@hawcproject.org", password="pw") is True
@@ -241,5 +241,6 @@ class TestAssessmentViewSet:
         assert response.status_code == 400
         assert "query" in response.json()
 
-        response = client.get(url + "?query=foo")
+        response = client.get(url + "?query=58-08-2")
         assert response.status_code == 200
+        assert len(response.json()) == 1

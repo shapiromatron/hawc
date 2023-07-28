@@ -21,7 +21,8 @@ from ...common.views import bulk_create_object_log, create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
 from ..constants import AssessmentViewSetPermissions
-from .filters import GlobalChemicalsFilterSet, InAssessmentFilter
+from ..filterset import GlobalChemicalsFilterSet
+from .filters import InAssessmentFilter
 from .helper import get_assessment_from_query
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
 
@@ -479,14 +480,13 @@ class Assessment(AssessmentEditViewSet):
         permission_classes=(permissions.IsAdminUser,),
         renderer_classes=PandasRenderers,
     )
-    def chemical(self, request):
+    def chemical_search(self, request):
         """Global chemical search, across all assessments."""
         queryset = models.Assessment.objects.all()
-        filterset = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
-        query = filterset.data.get("query")
-        if not query:
+        fs = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
+        if not (query := fs.data.get("query")):
             raise ValidationError({"query": "No query parameters provided"})
-        df = filterset.qs.global_chemical_report()
+        df = fs.qs.global_chemical_report()
         filename = f"assessment-search-{query}"
         return FlatExport.api_response(df, filename)
 

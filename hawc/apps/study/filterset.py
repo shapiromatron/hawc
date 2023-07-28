@@ -72,49 +72,34 @@ class StudyFilterSet(BaseFilterSet):
 
 
 class StudyByChemicalFilterSet(df.FilterSet):
+    query = df.CharFilter(method="filter_query", label="Query", required=True)
     published = df.BooleanFilter(method="filter_published")
-    query = df.CharFilter(method="filter_chemical", label="Query", required=True)
 
     def filter_published(self, queryset, name, value):
-        if value is True:
-            return queryset.filter(published=True)
-        else:
-            return queryset.filter(published=False)
+        return queryset.filter(published=value)
 
-    def filter_chemical(self, queryset, name, value):
-        # bioassay
-        qs1 = (
-            queryset.all()
-            .filter(
-                Q(experiments__chemical__icontains=value)
-                | Q(experiments__cas=value)
-                | Q(experiments__dtxsid__dtxsid=value)
-                | Q(experiments__dtxsid__content__preferredName__icontains=value)
-                | Q(experiments__dtxsid__content__casrn=value)
-            )
-            .annotate()
-        )
-        # epi
-        qs2 = queryset.all().filter(
-            Q(study_populations__exposures__name__icontains=value)
+    def filter_query(self, queryset, name, value):
+        return queryset.filter(
+            # bioassay
+            Q(experiments__chemical__icontains=value)
+            | Q(experiments__cas=value)
+            | Q(experiments__dtxsid__dtxsid=value)
+            | Q(experiments__dtxsid__content__preferredName__icontains=value)
+            | Q(experiments__dtxsid__content__casrn=value)
+            # epi
+            | Q(study_populations__exposures__name__icontains=value)
             | Q(study_populations__exposures__dtxsid__dtxsid=value)
             | Q(study_populations__exposures__dtxsid__content__preferredName__icontains=value)
             | Q(study_populations__exposures__dtxsid__content__casrn=value)
-        )
-        # epiv2
-        qs3 = queryset.all().filter(
-            Q(designs__chemicals__name__icontains=value)
+            # epiv2
+            | Q(designs__chemicals__name__icontains=value)
             | Q(designs__chemicals__dsstox__dtxsid=value)
             | Q(designs__chemicals__dsstox__content__preferredName__icontains=value)
             | Q(designs__chemicals__dsstox__content__casrn=value)
-        )
-        # in vitro
-        qs4 = queryset.all().filter(
-            Q(ivchemicals__name=value)
+            # in vitro
+            | Q(ivchemicals__name__icontains=value)
             | Q(ivchemicals__cas=value)
             | Q(ivchemicals__dtxsid__dtxsid=value)
             | Q(ivchemicals__dtxsid__content__preferredName__icontains=value)
             | Q(ivchemicals__dtxsid__content__casrn=value)
         )
-        ids = qs1.union(qs2, qs3, qs4)
-        return queryset.all().filter(id__in=ids.values("id"))  # allows filtering after union

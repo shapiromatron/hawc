@@ -5,7 +5,6 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
-from django.db.models import Exists, OuterRef
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -421,33 +420,16 @@ class ReferenceViewSet(
 
     @action(
         detail=False,
-        url_path=r"search/(?P<id>[\d]+)/type/(?P<type>[\d])",
+        url_path=r"search/type/(?P<db_id>[\d])/id/(?P<id>.*)",
         renderer_classes=PandasRenderers,
         permission_classes=(permissions.IsAdminUser,),
     )
-    def search(self, request, id: int, type: int):
-        try:
-            type = int(type)
-            id = int(id)
-        except ValueError:
-            raise ValueError(
-                "'type' and 'id' must be integers. Using type '1' for PubMed and '2' for HERO."
-            )
-        choices = (constants.ReferenceDatabase.HERO.value, constants.ReferenceDatabase.PUBMED.value)
-        if type not in choices:
-            raise ValidationError(
-                f"'type' must be either {choices[0]} (for HERO), or {choices[1]} (for PubMed)."
-            )
-
-        ids = models.Identifiers.objects.filter(
-            references=OuterRef("pk"),
-            unique_id=id,
-            database=type,
-        )
-
-        qs = self.get_queryset().filter(Exists(ids))
-        export = FlatExport(
+    def id_search(self, request, id: str, db_id: int):
+        db_id = int(db_id)
+        if db_id not in constants.ReferenceDatabase:
+            raise ValidationError({"type": f"Must be in {constants.ReferenceDatabase.choices}"})
+        qs = self.get_queryset().filter(identifiers__unique_id=id, identifiers__database=db_id)
+        return FlatExport.api_response(
             df=qs.to_dataframe(),
-            filename=f"global-reference-data-{constants.ReferenceDatabase(type).label}_ID-{id}",
+            filename=f"global-reference-data-{id}",
         )
-        return Response(export)

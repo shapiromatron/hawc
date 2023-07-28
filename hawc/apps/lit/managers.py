@@ -3,10 +3,10 @@ import logging
 
 import pandas as pd
 from django.apps import apps
-from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Case, Count, Q, QuerySet, Value, When
+from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -16,9 +16,9 @@ from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
-from ..assessment.constants import PublishedStatus
-from ..common.models import BaseManager
-from ..lit.constants import ReferenceDatabase
+from ..assessment.managers import published
+from ..common.models import BaseManager, replace_null, str_m2m
+from ..study.managers import study_df_annotations
 from . import constants
 
 logger = logging.getLogger(__name__)
@@ -518,100 +518,46 @@ class ReferenceQuerySet(models.QuerySet):
         }
 
     def to_dataframe(self):
-        model_fields = [
-            "id",
-            "title",
-            "authors_short",
-            "pmid",
-            "hero",
-            "doi",
-            "assessment",
-            "assessment__name",
-            "assessment__dtxsids",
-            "assessment__cas",
-            "published",
-            "study",
-            "study__short_citation",
-            "study__published",
-            "num_robs",
-            "study__bioassay",
-            "study__epi",
-            "study__epi_meta",
-            "study__in_vitro",
-            "study__eco",
-            "num_tags",
-            "num_user_tags",
-        ]
-        column_names = [
-            "HAWC ID",
-            "Title",
-            "Authors",
-            "PubMed IDs",
-            "HERO IDs",
-            "DOIs",
-            "Assessment ID",
-            "Assessment Name",
-            "Assessment DTXSIDs",
-            "Assessment CAS",
-            "Assessment Published",
-            "Study ID",
-            "Study Citation",
-            "Study Published",
-            "Study Risk of Bias Analysis Count",
-            "Study Bioassay",
-            "Study Epidemiological",
-            "Study Epi/Meta",
-            "Study In Vitro",
-            "Study Ecology",
-            "Reference Tags Count",
-            "Reference User Tags Count",
-        ]
-        qs = (
-            self.select_related("study", "assessment")
-            .prefetch_related("identifiers", "tags", "user_tags")
-            .annotate(
-                num_tags=Count("tags"),
-                num_user_tags=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
-                num_robs=Count("study__riskofbiases"),
-                pmid=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.PUBMED),
-                    delimiter="|",
-                    distinct=True,
-                    default="",
-                ),
-                hero=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.HERO),
-                    delimiter="|",
-                    distinct=True,
-                    default="",
-                ),
-                doi=StringAgg(
-                    "identifiers__unique_id",
-                    filter=Q(identifiers__database=ReferenceDatabase.DOI),
-                    delimiter="|",
-                    distinct=True,
-                    default="",
-                ),
-                assessment__dtxsids=StringAgg("assessment__dtxsids", delimiter=", ", distinct=True),
-                published=Case(
-                    When(assessment__public_on__isnull=True, then=Value(PublishedStatus.PRIVATE)),
-                    When(
-                        Q(assessment__public_on__isnull=False)
-                        & Q(assessment__hide_from_public_page=False),
-                        then=Value(PublishedStatus.PUBLIC),
-                    ),
-                    When(
-                        Q(assessment__public_on__isnull=False)
-                        & Q(assessment__hide_from_public_page=True),
-                        then=Value(PublishedStatus.UNLISTED),
-                    ),
-                ),
-            )
-            .values_list(*model_fields)
-        )
-        return pd.DataFrame(list(qs), columns=column_names)
+        mapping = {
+            "ID": "id",
+            "PubMed ID": "pmid",
+            "HERO ID": "hero",
+            "DOI": "doi",
+            "Title": "title",
+            "Author": "authors_short",
+            "Year": "year",
+            "Created": "created",
+            "Last updated": "last_updated",
+            "Tags count": "num_tags",
+            "Assessment ID": "assessment",
+            "Assessment name": "assessment__name",
+            "Assessment year": "assessment__year",
+            "Assessment DTXSIDs": "assessment__dtxsids_str",
+            "Assessment CAS": "assessment__cas",
+            "Assessment published": "published",
+            "Assessment creator": replace_null("assessment__creator__email"),
+            "Assessment created": "assessment__created",
+            "Assessment last updated": "assessment__last_updated",
+            "Study citation": replace_null("study__short_citation", "N/A"),
+            "Study published": "study__published",
+            "Study riskofbias count": "num_robs",
+            "Study bioassay": "study__bioassay",
+            "Study epi": "study__epi",
+            "Study epi meta": "study__epi_meta",
+            "Study in vitro": "study__in_vitro",
+            "Study ecology": "study__eco",
+            "Study created": "study__created",
+            "Study last updated": "study__last_updated",
+        }
+
+        qs = self.annotate(
+            **study_df_annotations(),
+            num_tags=Count("tags"),
+            num_robs=Count("study__riskofbiases", Q(study__riskofbiases__final=True)),
+            assessment__dtxsids_str=str_m2m("assessment__dtxsids"),
+            published=published("assessment__"),
+        ).values_list(*mapping.values())
+        return pd.DataFrame(list(qs), columns=list(mapping.keys()))
 
 
 class ReferenceManager(BaseManager):

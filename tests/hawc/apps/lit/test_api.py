@@ -788,13 +788,17 @@ class TestReferenceViewSet:
         response = client.post(url, data, format="json")
         assert response.status_code == 404
 
-    def test_global_id_search(self, db_keys):
+    def test_id_search(self):
         client = APIClient()
-        url = reverse("lit:api:reference-search", args=[2, constants.ReferenceDatabase.PUBMED])
+        url = reverse(
+            "lit:api:reference-id-search", args=[constants.ReferenceDatabase.PUBMED, 15907334]
+        )
 
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.get(url)
         assert response.status_code == 403
 
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         response = client.get(url)
         assert response.status_code == 200
+        assert len(response.json()) == 1
