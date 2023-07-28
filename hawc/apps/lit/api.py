@@ -430,6 +430,6 @@ class ReferenceViewSet(
             raise ValidationError({"type": f"Must be in {constants.ReferenceDatabase.choices}"})
         qs = self.get_queryset().filter(identifiers__unique_id=id, identifiers__database=db_id)
         return FlatExport.api_response(
-            df=qs.to_dataframe(),
+            df=qs.global_df(),
             filename=f"global-reference-data-{id}",
         )

@@ -109,7 +109,7 @@ class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         if not (query := fs.data.get("query")):
             raise ValidationError({"query": "No query parameters provided"})
         return FlatExport.api_response(
-            df=Reference.objects.filter(id__in=fs.qs.values_list("id")).to_dataframe(),
+            df=Reference.objects.filter(id__in=fs.qs.values_list("id")).global_df(),
             filename=f"global-study-data-{query}",
         )
 

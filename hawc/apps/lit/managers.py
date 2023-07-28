@@ -517,7 +517,7 @@ class ReferenceQuerySet(models.QuerySet):
             for reference_id, tag_ids in user_qs
         }
 
-    def to_dataframe(self):
+    def global_df(self) -> pd.DataFrame:
         mapping = {
             "ID": "id",
             "PubMed ID": "pmid",
