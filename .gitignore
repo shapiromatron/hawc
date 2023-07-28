@@ -38,7 +38,6 @@ private/
 public/
 scripts/private
 venv/
-**/.yarn/
 
 # keep folders; not contents
 hawc/static/bundles/*
