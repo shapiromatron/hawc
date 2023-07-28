@@ -43,6 +43,7 @@ class Migration(migrations.Migration):
                     (1, "Epidemiology"),
                     (4, "Epidemiology meta-analysis/pooled analysis"),
                     (2, "In vitro"),
+                    (5, "Ecology"),
                     (3, "Other"),
                 ],
                 default=0,
