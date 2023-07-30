@@ -1,94 +1,63 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
-const CRITICAL_VALUES = ["noel", "loel", "fel", "bmd", "bmdl"];
+// TODO - generalize this store; create a subclass that does this additional year filtering
+// TODO - move to common components
 
 class EndpointListStore {
-    config = null;
-
-    @observable rawDataset = null;
-
-    @observable settings = null;
-
-    @observable doseOptions = null;
-    @observable systemOptions = null;
-    @observable criticalValueOptions = null;
-
+    @observable config = null;
+    @observable data = null;
+    @observable activeFilters = [];
     constructor(config) {
         this.config = config;
         this.getDataset();
     }
-    @computed get filteredData() {
-        if (this.rawDataset === null) {
-            return null;
-        }
-        return _.chain(toJS(this.rawDataset))
-            .filter(d => _.includes(this.settings.doses, d["dose units id"]))
-            .filter(d => _.includes(this.settings.systems, d.system))
-            .filter(d => _.some(this.settings.criticalValues.filter(val => d[val] !== null)))
-            .value();
-    }
-    @computed get plotData() {
-        if (this.filteredData === null) {
-            return null;
-        }
-        return _.chain(toJS(this.rawDataset))
-            .map(d => {
-                return this.settings.criticalValues.map(type => {
-                    return {data: d, dose: d[type], type};
-                });
-            })
-            .flatten()
-            .filter(d => d.dose !== null && d.dose > 0)
-            .sortBy("dose")
-            .value();
-    }
-
-    @computed get hasDataset() {
-        return this.dataset !== null;
-    }
-
     @action.bound getDataset() {
         const {data_url} = this.config;
         fetch(data_url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                this.getDefaultSettings(json);
-                this.rawDataset = json;
+                json.year = _.map(json, d => {
+                    const cit = d["study citation"],
+                        year = cit.match(/\d{4}/);
+                    d.year = year ? parseInt(year[0]) : null;
+                });
+                this.data = json;
             });
     }
-    @action.bound getDefaultSettings(dataset) {
-        const doseOptions = _.chain(dataset)
-                .map(d => {
-                    return {id: d["dose units id"], label: d["dose units name"]};
-                })
-                .uniqBy(d => d.id)
-                .value(),
-            systemOptions = _.chain(dataset)
-                .map(d => {
-                    return {id: d.system, label: d.system || h.nullString};
-                })
-                .uniqBy(d => d.id)
-                .sortBy(d => d.id.toLowerCase())
-                .value(),
-            criticalValueOptions = CRITICAL_VALUES.map(d => {
-                return {id: d, label: d};
-            }),
-            settings = {
-                doses: doseOptions.map(d => d.id),
-                systems: systemOptions.map(d => d.id),
-                criticalValues: criticalValueOptions.map(d => d.id),
-                approximateXValues: true,
-            };
-
-        this.settings = settings;
-        this.doseOptions = doseOptions;
-        this.systemOptions = systemOptions;
-        this.criticalValueOptions = criticalValueOptions;
+    @computed get filteredDataStack() {
+        if (!this.data) {
+            return null;
+        }
+        let currentData = this.data,
+            filteredDataStack = [currentData];
+        this.activeFilters.forEach(filter => {
+            currentData = filter.filter(currentData);
+            filteredDataStack.push(currentData);
+        });
+        return filteredDataStack;
     }
-    @action.bound changeSettingsSelection(key, value) {
-        this.settings[key] = value;
+    @computed get filteredData() {
+        if (!this.data) {
+            return null;
+        }
+        return this.filteredDataStack[this.filteredDataStack.length - 1];
+    }
+    @action.bound changeFilter(value) {
+        let idx = _.findIndex(this.activeFilters, d => d.field === value.field);
+        if (idx >= 0) {
+            if (value.isEmpty()) {
+                // delete
+                this.activeFilters.splice(idx, 1);
+            } else {
+                // update
+                this.activeFilters[idx] = value;
+            }
+        } else {
+            // add
+            this.activeFilters.push(value);
+        }
     }
 }
 
