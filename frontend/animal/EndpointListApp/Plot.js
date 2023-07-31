@@ -133,7 +133,8 @@ const dodgeLogarithmic = (data, x, radius, options) => {
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
-        const refresh = function(settings) {
+        const refresh = function(filteredData, settings) {
+                console.log("here...");
                 const filterDataset = function() {
                         const filtered = fullDataset
                                 .filter(d => _.includes(settings.doses, d.data["dose units id"]))
@@ -146,7 +147,6 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                     t = svg.transition();
 
                 let range,
-                    filteredData = filterDataset(),
                     maxYRange = 0;
 
                 // get max range for each group to determine spacing
@@ -305,7 +305,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                     });
             };
         colorLegend();
-        autorun(() => refresh(toJS(store.settings)));
+        autorun(() => refresh(toJS(store.filteredData, store.settings)));
     };
 
 @inject("store")

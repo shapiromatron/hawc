@@ -1,39 +1,31 @@
 import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
+import {DataFilterStore} from "shared/dashboard/stores";
 import h from "shared/utils/helpers";
 
 const CRITICAL_VALUES = ["noel", "loel", "fel", "bmd", "bmdl"];
 
 class EndpointListStore {
     config = null;
-
-    @observable rawDataset = null;
-
+    @observable data = null;
     @observable settings = null;
-
-    @observable doseOptions = null;
-    @observable systemOptions = null;
-    @observable criticalValueOptions = null;
-
     constructor(config) {
         this.config = config;
+        this.filterStore = new DataFilterStore();
+        this.setDefaultConfig();
         this.getDataset();
     }
     @computed get filteredData() {
-        if (this.rawDataset === null) {
+        if (this.data === null) {
             return null;
         }
-        return _.chain(toJS(this.rawDataset))
-            .filter(d => _.includes(this.settings.doses, d["dose units id"]))
-            .filter(d => _.includes(this.settings.systems, d.system))
-            .filter(d => _.some(this.settings.criticalValues.filter(val => d[val] !== null)))
-            .value();
+        return this.filterStore.filteredData;
     }
     @computed get plotData() {
         if (this.filteredData === null) {
             return null;
         }
-        return _.chain(toJS(this.rawDataset))
+        return _.chain(toJS(this.data))
             .map(d => {
                 return this.settings.criticalValues.map(type => {
                     return {data: d, dose: d[type], type};
@@ -44,51 +36,25 @@ class EndpointListStore {
             .sortBy("dose")
             .value();
     }
-
-    @computed get hasDataset() {
-        return this.dataset !== null;
-    }
-
     @action.bound getDataset() {
         const {data_url} = this.config;
         fetch(data_url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                this.getDefaultSettings(json);
-                this.rawDataset = json;
+                json.year = _.map(json, d => {
+                    const cit = d["study citation"],
+                        year = cit.match(/\d{4}/);
+                    d.year = year ? parseInt(year[0]) : null;
+                });
+                this.filterStore.setData(json);
+                this.data = json;
             });
     }
-    @action.bound getDefaultSettings(dataset) {
-        const doseOptions = _.chain(dataset)
-                .map(d => {
-                    return {id: d["dose units id"], label: d["dose units name"]};
-                })
-                .uniqBy(d => d.id)
-                .value(),
-            systemOptions = _.chain(dataset)
-                .map(d => {
-                    return {id: d.system, label: d.system || h.nullString};
-                })
-                .uniqBy(d => d.id)
-                .sortBy(d => d.id.toLowerCase())
-                .value(),
-            criticalValueOptions = CRITICAL_VALUES.map(d => {
-                return {id: d, label: d};
-            }),
-            settings = {
-                doses: doseOptions.map(d => d.id),
-                systems: systemOptions.map(d => d.id),
-                criticalValues: criticalValueOptions.map(d => d.id),
-                approximateXValues: true,
-            };
-
-        this.settings = settings;
-        this.doseOptions = doseOptions;
-        this.systemOptions = systemOptions;
-        this.criticalValueOptions = criticalValueOptions;
-    }
-    @action.bound changeSettingsSelection(key, value) {
-        this.settings[key] = value;
+    @action.bound setDefaultConfig() {
+        this.settings = {
+            approximateXValues: true,
+            criticalValues: CRITICAL_VALUES,
+        };
     }
 }
 

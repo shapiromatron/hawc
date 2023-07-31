@@ -1,28 +1,9 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
-import h from "shared/utils/helpers";
 
 class DataFilterStore {
-    @observable config = null;
     @observable data = null;
     @observable activeFilters = [];
-    constructor(config) {
-        this.config = config;
-        this.getDataset();
-    }
-    @action.bound getDataset() {
-        const {data_url} = this.config;
-        fetch(data_url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
-                json.year = _.map(json, d => {
-                    const cit = d["study citation"],
-                        year = cit.match(/\d{4}/);
-                    d.year = year ? parseInt(year[0]) : null;
-                });
-                this.data = json;
-            });
-    }
     @computed get filteredDataStack() {
         if (!this.data) {
             return null;
@@ -41,6 +22,10 @@ class DataFilterStore {
         }
         return this.filteredDataStack[this.filteredDataStack.length - 1];
     }
+    @action.bound setData(data) {
+        this.data = data;
+        this.activeFilters = [];
+    }
     @action.bound changeFilter(value) {
         let idx = _.findIndex(this.activeFilters, d => d.field === value.field);
         if (idx >= 0) {
@@ -56,7 +41,7 @@ class DataFilterStore {
             this.activeFilters.push(value);
         }
     }
-    static getDataStack = (field, dataStack, activeFilters) => {
+    getDataStack = (field, dataStack, activeFilters) => {
         const idx = _.findIndex(activeFilters, d => d.field === field);
         if (idx < 0) {
             return dataStack[dataStack.length - 1];
