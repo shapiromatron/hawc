@@ -152,7 +152,7 @@ class AssessmentDetailForm(forms.ModelForm):
     def clean(self) -> dict:
         cleaned_data = super().clean()
         # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
-        if cleaned_data["extra"] is None:
+        if cleaned_data.get("extra") is None:
             cleaned_data["extra"] = dict()
         return cleaned_data
 
@@ -227,7 +227,7 @@ class AssessmentValueForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
-        if cleaned_data["extra"] is None:
+        if cleaned_data.get("extra") is None:
             cleaned_data["extra"] = dict()
 
         evaluation_type = cleaned_data.get("evaluation_type")
