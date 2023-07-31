@@ -9,7 +9,7 @@ from django.db.models import (
 )
 
 from ..common.models import BaseManager, sql_display, str_m2m, to_display_array
-from ..study.managers import study_df_mapping
+from ..study.managers import study_df_annotations, study_df_mapping
 from . import constants, models
 
 
@@ -200,7 +200,7 @@ class DataExtractionQuerySet(QuerySet):
             #study
             **study_df_mapping("study-", "design__study__"),
             #design
-            "design-id": "design__pk",
+            "design-pk": "design__pk",
             # "design-url": "design__get_absolute_url",
             "design-summary": "design__summary",
             "design-study_name": "design__study_name",
@@ -299,7 +299,7 @@ class DataExtractionQuerySet(QuerySet):
             "data_extraction-created": "created",
             "data_extraction-last_updated": "last_updated",
         }
-        qs = self.values_list(*list(mapping.values()))
+        qs = self.annotate(**study_df_annotations("design__study__")).values_list(*list(mapping.values()))
         return pd.DataFrame(data=qs, columns=list(mapping.keys()))
 
 
