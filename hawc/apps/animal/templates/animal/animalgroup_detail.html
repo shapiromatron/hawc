@@ -4,8 +4,8 @@
 {% load bs4 %}
 
 {% block content %}
-  <div class="d-flex">
-    <h2 class="mb-0">{{object}}</h2>
+  <div id="animal-group-header" class="d-flex">
+    <h2>{{object}}</h2>
     {% if obj_perms.edit %}
       {% actions %}
         <span class="dropdown-header">Animal Group Editing</span>
@@ -27,8 +27,6 @@
       {% endactions %}
     {% endif %}
   </div>
-  <!-- TODO fix javascript so we can put header before actions -->
-  <h2 id="animal-group-header" class="mt-0"></h2>
 
   {% if crud == "Read" %}
   <div id="animalGroupTableMain"></div>
@@ -49,7 +47,7 @@ window.app.startup("animalStartup", function(animal){
         inserts.push($("<h3>Dosing regime</h3>"));
         inserts.push(d.build_dr_details_table());
       }
-      $('h2#animal-group-header').after(inserts);
+      $('div#animal-group-header').after(inserts);
     });
     animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
   });
