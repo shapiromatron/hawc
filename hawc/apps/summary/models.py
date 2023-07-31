@@ -214,7 +214,7 @@ class SummaryTable(models.Model):
 
     def get_content_schema_class(self):
         if self.table_type not in self.TABLE_SCHEMA_MAP:
-            raise NotImplementedError(f"Table type not found: {self.table_type}")
+            raise ValueError(f"Table type not found: {self.table_type}")
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self) -> BaseTable:

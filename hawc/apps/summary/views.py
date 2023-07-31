@@ -163,7 +163,11 @@ class SummaryTableCreate(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["table_type"] = self.kwargs["table_type"]
+        try:
+            table_type = constants.TableType(self.kwargs["table_type"])
+        except ValueError:
+            raise Http404()
+        kwargs["table_type"] = table_type
         return kwargs
 
     def get_context_data(self, **kwargs):
