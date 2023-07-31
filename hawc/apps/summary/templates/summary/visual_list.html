@@ -32,7 +32,7 @@
           <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
           {% endif %}
           {% if visual.caption %}
-          <div class='text-muted'>{{visual.caption|truncatewords_html:20|striptags|safe}}</div>
+          <div class='text-muted'>{{visual.captionstriptags|striptags|truncatewords:20|safe}}</div>
           {% endif %}
         </td>
         <td>{{visual.get_visual_type_display}}</td>

@@ -1,6 +1,7 @@
 import AnimalGroup from "animal/AnimalGroup";
 import Endpoint from "animal/Endpoint";
 import Experiment from "animal/Experiment";
+import EcoDesign from "eco/EcoDesign";
 import ComparisonSet from "epi/ComparisonSet";
 import Exposure from "epi/Exposure";
 import Outcome from "epi/Outcome";
@@ -36,14 +37,14 @@ export default [
     },
     {
         key: "hero",
-        columns: ["hero id", "HERO ID"],
+        columns: ["hero id", "HERO ID", "hero_id"],
         cls: Reference,
         label: "Show HERO",
         modal: false,
     },
     {
         key: "pubmed",
-        columns: ["pubmed id", "PMID"],
+        columns: ["pubmed id", "PMID", "pubmed_id"],
         cls: Reference,
         label: "Show PubMed",
         modal: false,
@@ -85,6 +86,14 @@ export default [
         cls: Endpoint,
         label: "Show animal endpoint (complete)",
         modal: true,
+    },
+    //eco
+    {
+        key: "eco_design",
+        columns: ["design-id"],
+        cls: EcoDesign,
+        label: "Show ecology design",
+        modal: false,
     },
     // epi
     {

@@ -56,7 +56,7 @@ const getInteractivityOptions = function(columnNames) {
     },
     getDetailUrl = (settings, data) => {
         const id = _getId(settings, data);
-        return settings.cls.get_detail_url(id);
+        return settings.cls.get_detail_url(id, settings.key);
     },
     getAction = key => {
         return _.find(config, d => d.key === key);

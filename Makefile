@@ -25,14 +25,14 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 sync-dev:  ## Sync dev environment after code checkout
 	python -m pip install -U pip
-	pip install -r requirements/dev.txt
+	python -m pip install -r requirements/dev.txt
 	yarn --cwd frontend
-	manage migrate
-	manage recreate_views
+	python manage.py migrate
+	python manage.py recreate_views
 
 build:  ## build hawc package
 	npm --prefix ./frontend run build
-	manage set_git_commit
+	python manage.py set_git_commit
 	flit build
 
 dev: ## Start development environment

@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
@@ -29,7 +29,7 @@ def versions_by_related_field(
     return qs.filter(serialized_data__iregex=data_regex)
 
 
-class AuditType(str, Enum):
+class AuditType(StrEnum):
     ASSESSMENT = "assessment"
     ANIMAL = "animal"
     EPI = "epi"
@@ -242,7 +242,7 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         audit_type = self.type
         if audit_type == AuditType.EPI:
             audit_type = "epiv1" if self.assessment.epi_version == EpiVersion.V1 else "epiv2"
-        qs = getattr(self, f"get_{audit_type}_queryset")()
+        qs = getattr(self, f"get_{audit_type.value}_queryset")()
         return qs.select_related("content_type", "revision")
 
     def export(self) -> FlatExport:

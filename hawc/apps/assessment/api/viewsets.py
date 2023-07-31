@@ -8,7 +8,7 @@ from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -21,6 +21,7 @@ from ...common.views import bulk_create_object_log, create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
 from ..constants import AssessmentViewSetPermissions
+from ..filterset import GlobalChemicalsFilterSet
 from .filters import InAssessmentFilter
 from .helper import get_assessment_from_query
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
@@ -253,10 +254,16 @@ class DoseUnitsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return self.model.objects.all()
 
 
-class Assessment(AssessmentViewSet):
+class Assessment(AssessmentEditViewSet):
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
     assessment_filter_args = "id"
+
+    def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [permissions.IsAdminUser()]
+        else:
+            return super().get_permissions()
 
     @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
@@ -334,6 +341,35 @@ class Assessment(AssessmentViewSet):
             "Endpoints",
             reverse("animal:api:endpoint-cleanup-list"),
             "Endpoint",
+        )
+        # eco
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Design").objects.get_qs(instance.id).count(),
+            "Designs",
+            reverse("eco:api:design-cleanup-list"),
+            "Design",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Cause").objects.get_qs(instance.id).count(),
+            "Causes",
+            reverse("eco:api:cause-cleanup-list"),
+            "Cause",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Effect").objects.get_qs(instance.id).count(),
+            "Effects",
+            reverse("eco:api:effect-cleanup-list"),
+            "Effect",
+        )
+        add_item(
+            "Ecology",
+            apps.get_model("eco", "Result").objects.get_qs(instance.id).count(),
+            "Results",
+            reverse("eco:api:result-cleanup-list"),
+            "Results",
         )
 
         # epi
@@ -439,12 +475,30 @@ class Assessment(AssessmentViewSet):
         export = serializer.export()
         return Response(export)
 
+    @action(
+        detail=False,
+        permission_classes=(permissions.IsAdminUser,),
+        renderer_classes=PandasRenderers,
+    )
+    def chemical_search(self, request):
+        """Global chemical search, across all assessments."""
+        queryset = models.Assessment.objects.all()
+        fs = GlobalChemicalsFilterSet(request.GET, queryset=queryset)
+        if not (query := fs.data.get("query")):
+            raise ValidationError({"query": "No query parameters provided"})
+        df = fs.qs.global_chemical_report()
+        filename = f"assessment-search-{query}"
+        return FlatExport.api_response(df, filename)
+
 
 class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.AssessmentValue
     serializer_class = serializers.AssessmentValueSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("assessment")
 
 
 class AssessmentDetailViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):

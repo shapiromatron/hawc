@@ -178,7 +178,19 @@ class BaseFilterSet(df.FilterSet):
         return form
 
 
-class ArrowOrderingFilter(df.OrderingFilter):
+class OrderingFilter(df.OrderingFilter):
+    def __init__(self, *args, **kwargs):
+        default_kwargs = dict(
+            help_text="How results will be ordered",
+            empty_label=None,
+        )
+        default_kwargs.update(kwargs)
+        if "initial" not in default_kwargs:
+            raise AttributeError("Must define 'initial' attribute on OrderingFilter.")
+        super().__init__(*args, **default_kwargs)
+
+
+class ArrowOrderingFilter(OrderingFilter):
     def build_choices(self, fields, labels):
         ascending = [
             (param, labels.get(field, f"↑ {pretty_name(param)}")) for field, param in fields.items()

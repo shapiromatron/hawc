@@ -37,8 +37,6 @@ class AssessmentFilterSet(BaseFilterSet):
             ("last_updated", "Date Updated"),
         ),
         initial="-year",
-        empty_label=None,
-        help_text="How results will be ordered",
     )
 
     class Meta:
@@ -65,3 +63,27 @@ class AssessmentFilterSet(BaseFilterSet):
 
     def filter_published(self, queryset, name, value):
         return queryset.with_published().filter(published=value)
+
+
+class GlobalChemicalsFilterSet(df.FilterSet):
+    query = df.CharFilter(
+        method="filter_query",
+        label="Query",
+        help_text="Enter chemical name, DTXSID, or CASRN",
+    )
+    public_only = df.BooleanFilter(method="filter_public_only")  # public_only=true/false
+
+    def filter_query(self, queryset, name, value):
+        query = (
+            Q(name__icontains=value)
+            | Q(cas=value)
+            | Q(dtxsids__dtxsid=value)
+            | Q(dtxsids__content__preferredName__icontains=value)
+            | Q(dtxsids__content__casrn=value)
+        )
+        return queryset.filter(query).distinct()
+
+    def filter_public_only(self, queryset, name, value):
+        if value is True:
+            return queryset.filter(public_on__isnull=False, hide_from_public_page=False)
+        return queryset

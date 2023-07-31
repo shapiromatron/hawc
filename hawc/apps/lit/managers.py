@@ -16,7 +16,9 @@ from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
-from ..common.models import BaseManager
+from ..assessment.managers import published
+from ..common.models import BaseManager, replace_null, str_m2m
+from ..study.managers import study_df_annotations
 from . import constants
 
 logger = logging.getLogger(__name__)
@@ -514,6 +516,48 @@ class ReferenceQuerySet(models.QuerySet):
             reference_id: [tag for tag in tag_ids if tag is not None]
             for reference_id, tag_ids in user_qs
         }
+
+    def global_df(self) -> pd.DataFrame:
+        mapping = {
+            "ID": "id",
+            "PubMed ID": "pmid",
+            "HERO ID": "hero",
+            "DOI": "doi",
+            "Title": "title",
+            "Author": "authors_short",
+            "Year": "year",
+            "Created": "created",
+            "Last updated": "last_updated",
+            "Tags count": "num_tags",
+            "Assessment ID": "assessment",
+            "Assessment name": "assessment__name",
+            "Assessment year": "assessment__year",
+            "Assessment DTXSIDs": "assessment__dtxsids_str",
+            "Assessment CAS": "assessment__cas",
+            "Assessment published": "published",
+            "Assessment creator": replace_null("assessment__creator__email"),
+            "Assessment created": "assessment__created",
+            "Assessment last updated": "assessment__last_updated",
+            "Study citation": replace_null("study__short_citation", "N/A"),
+            "Study published": "study__published",
+            "Study riskofbias count": "num_robs",
+            "Study bioassay": "study__bioassay",
+            "Study epi": "study__epi",
+            "Study epi meta": "study__epi_meta",
+            "Study in vitro": "study__in_vitro",
+            "Study ecology": "study__eco",
+            "Study created": "study__created",
+            "Study last updated": "study__last_updated",
+        }
+
+        qs = self.annotate(
+            **study_df_annotations(),
+            num_tags=Count("tags"),
+            num_robs=Count("study__riskofbiases", Q(study__riskofbiases__final=True)),
+            assessment__dtxsids_str=str_m2m("assessment__dtxsids"),
+            published=published("assessment__"),
+        ).values_list(*mapping.values())
+        return pd.DataFrame(list(qs), columns=list(mapping.keys()))
 
 
 class ReferenceManager(BaseManager):
