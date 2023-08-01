@@ -15,13 +15,15 @@
           <a class="dropdown-item" href="{% audit_url object %}">Change logs</a>
           <a class="dropdown-item" href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a>
           {% if assessment.enable_bmd and object.bmd_modeling_possible %}
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-header">BMD Modeling</span>
-            {% if bmd_session %}
-              <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
-              <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
-            {% elif assessment.bmd_settings.can_create_sessions %}
-              <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
+            {% if bmd_session or assessment.bmd_settings.can_create_sessions %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">BMD Modeling</span>
+              {% if bmd_session %}
+                <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
+                <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
+              {% elif assessment.bmd_settings.can_create_sessions %}
+                <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
+              {% endif %}
             {% endif %}
           {% endif %}
       {% endactions %}
