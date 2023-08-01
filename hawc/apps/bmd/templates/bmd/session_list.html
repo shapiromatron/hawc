@@ -5,7 +5,7 @@
     <div class="d-flex">
       <h2>BMD sessions</h2>
       {% if obj_perms.edit and crud == "Read" and assessment.bmd_settings.can_create_sessions %}
-        {% actions % }
+        {% actions %}
           <span class="dropdown-header">BMD editing</span>
           <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create new</a>
         {% endactions %}
