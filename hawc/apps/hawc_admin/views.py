@@ -60,7 +60,10 @@ class Dashboard(View):
 
     @method_decorator(cache_page(3600))
     def assessment_growth(self, request: HttpRequest, *args, **kwargs):
-        matrix = methods.growth_matrix().to_html()
+        try:
+            matrix = methods.growth_matrix().to_html()
+        except ValueError:
+            matrix = None
         return render(
             request,
             "admin/fragments/assessment_growth.html",
