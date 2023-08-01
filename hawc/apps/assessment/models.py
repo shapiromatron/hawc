@@ -22,6 +22,7 @@ from reversion import revisions as reversion
 
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
 from ..common.models import get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
@@ -746,6 +747,8 @@ class Attachment(models.Model):
         }
 
     def get_assessment(self):
+        if self.content_object is None:
+            raise AssessmentNotFound()
         return self.content_object.get_assessment()
 
 

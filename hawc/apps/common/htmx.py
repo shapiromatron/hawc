@@ -17,6 +17,7 @@ from django.views.generic import View
 
 from ..assessment.models import Assessment
 from ..assessment.permissions import AssessmentPermissions
+from .exceptions import AssessmentNotFound
 from .views import create_object_log
 
 
@@ -140,7 +141,10 @@ class HtmxViewSet(View):
             parent = get_object_or_404(self.parent_model, pk=self.kwargs.get(self.pk_url_kwarg))
         else:
             object = get_object_or_404(self.model, pk=self.kwargs.get(self.pk_url_kwarg))
-        assessment: Assessment = parent.get_assessment() if parent else object.get_assessment()
+        try:
+            assessment: Assessment = parent.get_assessment() if parent else object.get_assessment()
+        except AssessmentNotFound:
+            raise PermissionDenied()
         return Item(object=object, parent=parent, assessment=assessment)
 
     def get_context_data(self, **kwargs):
