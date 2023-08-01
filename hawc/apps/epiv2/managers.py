@@ -230,11 +230,11 @@ class DataExtractionQuerySet(QuerySet):
             "exposure-name": "exposure_level__exposure_measurement__name",
             "exposure-measurement_type": "exposure_level__exposure_measurement__measurement_type",
             "exposure-biomonitoring_matrix": sql_display(
-                "exposure_level__exposure_measurement__biomonitoring_matrix",
+                "exposure_level__exposure_measurement__biomonitoring_matrix",  # todo fix default display
                 constants.BiomonitoringMatrix,
             ),
             "exposure-biomonitoring_source": sql_display(
-                "exposure_level__exposure_measurement__biomonitoring_source",
+                "exposure_level__exposure_measurement__biomonitoring_source",  # todo fix default display
                 constants.BiomonitoringSource,
             ),
             "exposure-measurement_timing": "exposure_level__exposure_measurement__measurement_timing",
