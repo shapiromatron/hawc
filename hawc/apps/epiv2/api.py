@@ -35,10 +35,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         """
         assessment: Assessment = self.get_object()
         published_only = get_published_only(assessment, request)
-        qs = (
-            models.DataExtraction.objects.get_qs(assessment)
-            .published_only(published_only)
-        )
+        qs = models.DataExtraction.objects.get_qs(assessment).published_only(published_only)
         export = FlatExport(df=qs.complete_df(), filename=f"epidemiological-export-{assessment.id}")
         return Response(export)
 
@@ -56,7 +53,8 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         published_only = get_published_only(assessment, request)
         qs = (
             models.DataExtraction.objects.get_qs(assessment)
-            .published_only(published_only).complete()
+            .published_only(published_only)
+            .complete()
         )
         exporter = exports.EpiFlatComplete(qs, filename=f"{assessment}-epi")
         return Response(exporter.build_export())

@@ -39,7 +39,6 @@ class DesignQuerySet(QuerySet):
         )
 
 
-
 class DesignManager(BaseManager):
     assessment_relation = "study__assessment"
 
@@ -197,82 +196,94 @@ class DataExtractionQuerySet(QuerySet):
 
     def complete_df(self) -> pd.DataFrame:
         mapping = {
-            #study
+            # study
             **study_df_mapping("study-", "design__study__"),
-            #design
+            # design
             "design-pk": "design__pk",
-            # "design-url": "design__get_absolute_url",
+            # "design-url": "design__get_absolute_url", #todo
             "design-summary": "design__summary",
             "design-study_name": "design__study_name",
-            "design-study_design": "design__study_design",
-            "design-source": "design__source",
-            "design-age_profile": "design__age_profile",
+            "design-study_design": sql_display("design__study_design", constants.StudyDesign),
+            "design-source": sql_display("design__source", constants.Source),
+            "design-age_profile": "design__age_profile",  # todo
             "design-age_description": "design__age_description",
-            "design-sex": "design__sex",
+            "design-sex": sql_display("design__sex", constants.Sex),
             "design-race": "design__race",
             "design-participant_n": "design__participant_n",
             "design-years_enrolled": "design__years_enrolled",
             "design-years_followup": "design__years_followup",
-            "design-countries": "design__countries",
+            "design-countries": "design__countries__name",
             "design-region": "design__region",
             "design-criteria": "design__criteria",
             "design-susceptibility": "design__susceptibility",
             "design-comments": "design__comments",
             "design-created": "design__created",
             "design-last_updated": "design__last_updated",
-            #chemical
+            # chemical
             "chemical-pk": "exposure_level__chemical__pk",
             "chemical-name": "exposure_level__chemical__name",
             "chemical-DTSXID": "exposure_level__chemical__dsstox__dtxsid",
             "chemical-created": "exposure_level__chemical__created",
             "chemical-last_updated": "exposure_level__chemical__last_updated",
-            #exposure
+            # exposure
             "exposure-pk": "exposure_level__exposure_measurement__pk",
             "exposure-name": "exposure_level__exposure_measurement__name",
             "exposure-measurement_type": "exposure_level__exposure_measurement__measurement_type",
-            "exposure-biomonitoring_matrix": "exposure_level__exposure_measurement__biomonitoring_matrix",
-            "exposure-biomonitoring_source": "exposure_level__exposure_measurement__biomonitoring_source",
+            "exposure-biomonitoring_matrix": sql_display(
+                "exposure_level__exposure_measurement__biomonitoring_matrix",
+                constants.BiomonitoringMatrix,
+            ),
+            "exposure-biomonitoring_source": sql_display(
+                "exposure_level__exposure_measurement__biomonitoring_source",
+                constants.BiomonitoringSource,
+            ),
             "exposure-measurement_timing": "exposure_level__exposure_measurement__measurement_timing",
-            "exposure-exposure_route": "exposure_level__exposure_measurement__exposure_route",
+            "exposure-exposure_route": sql_display(
+                "exposure_level__exposure_measurement__exposure_route", constants.ExposureRoute
+            ),
             "exposure-measurement_method": "exposure_level__exposure_measurement__measurement_method",
             "exposure-comments": "exposure_level__exposure_measurement__comments",
             "exposure-created": "exposure_level__exposure_measurement__created",
             "exposure-last_updated": "exposure_level__exposure_measurement__last_updated",
-            #exposure level
+            # exposure level
             "exposure_level-pk": "exposure_level__pk",
             "exposure_level-name": "exposure_level__name",
             "exposure_level-sub_population": "exposure_level__sub_population",
             "exposure_level-median": "exposure_level__median",
             "exposure_level-mean": "exposure_level__mean",
             "exposure_level-variance": "exposure_level__variance",
-            "exposure_level-variance_type": "exposure_level__variance_type",
+            "exposure_level-variance_type": sql_display(
+                "exposure_level__variance_type", constants.VarianceType
+            ),
             "exposure_level-units": "exposure_level__units",
             "exposure_level-ci_lcl": "exposure_level__ci_lcl",
             "exposure_level-percentile_25": "exposure_level__percentile_25",
             "exposure_level-percentile_75": "exposure_level__percentile_75",
             "exposure_level-ci_ucl": "exposure_level__ci_ucl",
-            "exposure_level-ci_type": "exposure_level__ci_type",
+            "exposure_level-ci_type": sql_display(
+                "exposure_level__ci_type", constants.ConfidenceIntervalType
+            ),
             "exposure_level-negligible_exposure": "exposure_level__negligible_exposure",
             "exposure_level-data_location": "exposure_level__data_location",
             "exposure_level-comments": "exposure_level__comments",
             "exposure_level-created": "exposure_level__created",
             "exposure_level-last_updated": "exposure_level__last_updated",
-            #outcome
+            # outcome
             "outcome-pk": "outcome__pk",
-            "outcome-system": "outcome__system",
+            "outcome-system": sql_display("outcome__system", constants.HealthOutcomeSystem),
             "outcome-effect": "outcome__effect",
             "outcome-effect_detail": "outcome__effect_detail",
             "outcome-comments": "outcome__comments",
             "outcome-created": "outcome__created",
             "outcome-last_updated": "outcome__last_updated",
-            #adj factor
+            # adj factor
             "adjustment_factor-pk": "factors__pk",
             "adjustment_factor-name": "factors__name",
             "adjustment_factor-description": "factors__description",
             "adjustment_factor-comments": "factors__comments",
             "adjustment_factor-created": "factors__created",
             "adjustment_factor-last_updated": "factors__last_updated",
-            #data extraction
+            # data extraction
             "data_extraction-pk": "pk",
             "data_extraction-sub_population": "sub_population",
             "data_extraction-outcome_measurement_timing": "outcome_measurement_timing",
@@ -280,13 +291,13 @@ class DataExtractionQuerySet(QuerySet):
             "data_extraction-effect_estimate": "effect_estimate",
             "data_extraction-ci_lcl": "ci_lcl",
             "data_extraction-ci_ucl": "ci_ucl",
-            "data_extraction-ci_type": "ci_type",
+            "data_extraction-ci_type": sql_display("ci_type", constants.ConfidenceIntervalType),
             "data_extraction-units": "units",
-            "data_extraction-variance_type": "variance_type",
+            "data_extraction-variance_type": sql_display("variance_type", constants.VarianceType),
             "data_extraction-variance": "variance",
             "data_extraction-n": "n",
             "data_extraction-p_value": "p_value",
-            "data_extraction-significant": "significant",
+            "data_extraction-significant": sql_display("significant", constants.Significant),
             "data_extraction-group": "group",
             "data_extraction-exposure_rank": "exposure_rank",
             "data_extraction-exposure_transform": "exposure_transform",
@@ -299,7 +310,17 @@ class DataExtractionQuerySet(QuerySet):
             "data_extraction-created": "created",
             "data_extraction-last_updated": "last_updated",
         }
-        qs = self.annotate(**study_df_annotations("design__study__")).values_list(*list(mapping.values()))
+        qs = self.annotate(
+            **study_df_annotations("design__study__"),
+            design__countries__name=str_m2m("design__countries__name"),
+            exposure_level__exposure_measurement__measurement_type=Func(
+                F("exposure_level__exposure_measurement__measurement_type"),
+                Value(", "),
+                Value(""),
+                function="array_to_string",
+                output_field=CharField(max_length=256),
+            ),
+        ).values_list(*list(mapping.values()))
         return pd.DataFrame(data=qs, columns=list(mapping.keys()))
 
 
