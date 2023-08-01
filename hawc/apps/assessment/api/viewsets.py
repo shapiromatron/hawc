@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from django.apps import apps
+from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Count, Model
 from django.http import Http404
@@ -14,7 +15,6 @@ from rest_framework.response import Response
 
 from ....services.epa.dsstox import RE_DTXSID
 from ...common.api import CleanupBulkIdFilter, DisabledPagination, ListUpdateModelMixin
-from ...common.exceptions import ClassConfigurationException
 from ...common.helper import FlatExport, re_digits
 from ...common.renderers import PandasRenderers
 from ...common.views import bulk_create_object_log, create_object_log
@@ -113,7 +113,7 @@ class EditPermissionsCheckMixin:
 
         # ensure we have at least one object to check
         if len(objects) == 0:
-            raise ClassConfigurationException("Permission check required; nothing to check")
+            raise ImproperlyConfigured("Permission check required; nothing to check")
 
         return objects
 

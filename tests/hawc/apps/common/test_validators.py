@@ -45,16 +45,19 @@ def test_validate_hyperlinks():
         '<a href="https://oehha.ca.gov/">Valid</a>',
         '<a href="https://hawcproject.org">Valid</a>',
         '<a href="http://epa.gov">Valid</a>',
-        '<a href="/local-path#test?foo=T&bar=F">Valid</a>',
+        '<a href="/local-path/#test?foo=T&bar=F">Valid</a>',
     ]:
         assert validate_hyperlinks(text) == text
 
     # these are invalid
     for text in [
-        '<a href="https://google.com">Invalid</a>',
-        '<a href="https://facebook.com">Invalid</a>',
-        '<a href="https://wikipedia.org">Invalid</a>',
-        '<a href="https://epa.gov">Valid</a> and <a href="https://google.com">Invalid</a>',
+        '<a href="https://google.com">Invalid</a>',  # invalid domain
+        '<a href="https://facebook.com">Invalid</a>',  # invalid domain
+        '<a href="https://wikipedia.org">Invalid</a>',  # invalid domain
+        '<a href="https://epa.gov">Valid</a> and <a href="https://google.com">Invalid</a>',  # invalid domain
+        '<a href="/local-path">Invalid</a>',  # missing trailing slash
+        '<a href="/local-path.png">Invalid</a>',  # filename extension; missing trailing slash
+        '<a href="/local-path.png/">Invalid</a>',  # filename extension
     ]:
         with pytest.raises(ValidationError, match="Invalid hyperlinks"):
             validate_hyperlinks(text)
