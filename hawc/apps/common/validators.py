@@ -113,6 +113,8 @@ def validate_hyperlink(value: str, raise_exception: bool = True) -> bool:
     valid = url.scheme in valid_scheme and (
         url.netloc == "" or any(url.netloc.endswith(ending) for ending in valid_netloc_endings)
     )
+    if url.netloc == "" and ("." in url.path or not url.path.endswith("/")):
+        valid = False
     if raise_exception and not valid:
         raise ValidationError(f"Invalid hyperlink: {value}")
     return valid

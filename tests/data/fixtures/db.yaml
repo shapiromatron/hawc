@@ -10252,3 +10252,8 @@
     due_date: null
     started: null
     completed: null
+- model: reversion.revision
+  pk: 1
+  fields:
+    date_created: 2099-08-01 00:00:00.000000+00:00
+    user_id: 1
