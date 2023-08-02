@@ -888,7 +888,6 @@ class AssessmentLogList(BaseFilterList):
     model = models.Log
     breadcrumb_active_name = "Logs"
     template_name = "assessment/assessment_log_list.html"
-    paginate_by = 25
     assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
     filterset_class = filterset.LogFilterSet
 
