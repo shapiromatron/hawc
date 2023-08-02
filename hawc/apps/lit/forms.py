@@ -189,15 +189,16 @@ class ImportForm(SearchForm):
 
     def clean_search_string(self):
         search_string = self.cleaned_data["search_string"]
-
         ids = self.validate_import_search_string(search_string)
-
-        if self.cleaned_data["source"] == constants.ReferenceDatabase.HERO:
+        source = self.cleaned_data.get("source")
+        if source == constants.ReferenceDatabase.HERO:
             content = models.Identifiers.objects.validate_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
-        elif self.cleaned_data["source"] == constants.ReferenceDatabase.PUBMED:
+        elif source == constants.ReferenceDatabase.PUBMED:
             content = models.Identifiers.objects.validate_pubmed_ids(ids)
             self._import_data = dict(ids=ids, content=content)
+        else:
+            raise forms.ValidationError("Invalid  source")
 
         return search_string
 
