@@ -46,8 +46,6 @@ class AssessmentFilterSet(BaseFilterSet):
             ("last_updated", "Date Updated"),
         ),
         initial="-year",
-        empty_label=None,
-        help_text="How results will be ordered",
     )
 
     class Meta:
