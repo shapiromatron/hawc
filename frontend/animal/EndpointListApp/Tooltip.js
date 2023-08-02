@@ -4,7 +4,7 @@ import React, {Component} from "react";
 class Tooltip extends Component {
     render() {
         const {d} = this.props;
-        const classification = [d.data.system, d.data.organ, d.data.effect, d.data.effect_subtype]
+        const classification = [d.system, d.organ, d.effect, d.effect_subtype]
             .filter(el => el != null && el !== "")
             .join("<br/>");
         return (
@@ -17,11 +17,11 @@ class Tooltip extends Component {
                     <tbody>
                         <tr>
                             <th>Study</th>
-                            <td>{d.data["study citation"]}</td>
+                            <td>{d["study citation"]}</td>
                         </tr>
                         <tr>
                             <th>Animal Group</th>
-                            <td>{d.data["animal group name"]}</td>
+                            <td>{d["animal group name"]}</td>
                         </tr>
                         <tr>
                             <th>
@@ -35,12 +35,12 @@ class Tooltip extends Component {
                         </tr>
                         <tr>
                             <th>Endpoint</th>
-                            <td>{d.data["endpoint name"]}</td>
+                            <td>{d["endpoint name"]}</td>
                         </tr>
                         <tr>
                             <th>{d.type.toUpperCase()}</th>
                             <td>
-                                {d.dose} {d.data["dose units name"]}
+                                {d.dose} {d["dose units name"]}
                             </td>
                         </tr>
                     </tbody>

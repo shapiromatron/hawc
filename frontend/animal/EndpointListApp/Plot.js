@@ -87,7 +87,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                 margin.top -
                 margin.bottom,
             itemRadius = 5,
-            fullDataset = toJS(store.plotData);
+            fullDataset = toJS(store.data);
 
         // init full dataset
         fullDataset.forEach((d, i) => {
@@ -133,20 +133,10 @@ const dodgeLogarithmic = (data, x, radius, options) => {
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
-        const refresh = function(filteredData, settings) {
-                console.log("here...");
-                const filterDataset = function() {
-                        const filtered = fullDataset
-                                .filter(d => _.includes(settings.doses, d.data["dose units id"]))
-                                .filter(d => _.includes(settings.systems, d.data.system))
-                                .filter(d => _.includes(settings.criticalValues, d.type)),
-                            grouped = h.groupNest(filtered, d => d.data.system);
-
-                        return _.values(grouped);
-                    },
-                    t = svg.transition();
-
+        const refresh = function(data, settings) {
+                const t = svg.transition();
                 let range,
+                    filteredData = _.cloneDeep(_.values(h.groupNest(data, d => d.system))),
                     maxYRange = 0;
 
                 // get max range for each group to determine spacing
@@ -241,7 +231,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .attr("r", 0)
                                 .attr("fill", d => colorScale(d.type))
                                 .on("click", (event, d) =>
-                                    Endpoint.displayAsModal(d.data["endpoint id"])
+                                    Endpoint.displayAsModal(d["endpoint id"])
                                 ),
                         update =>
                             update
@@ -305,7 +295,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                     });
             };
         colorLegend();
-        autorun(() => refresh(toJS(store.filteredData, store.settings)));
+        autorun(() => refresh(toJS(store.filteredData), toJS(store.settings)));
     };
 
 @inject("store")

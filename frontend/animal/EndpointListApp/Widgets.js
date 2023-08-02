@@ -16,7 +16,7 @@ class SelectMultipleFilter extends React.Component {
         };
     }
     render() {
-        const {label, field, store} = this.props,
+        const {label, field, store, selectSize} = this.props,
             {values} = this.state,
             choices = _.chain(
                 store.getDataStack(field, store.filteredDataStack, store.activeFilters)
@@ -36,12 +36,21 @@ class SelectMultipleFilter extends React.Component {
                 value={values}
                 handleSelect={onChange}
                 multiple={true}
-                selectSize={10}
+                selectSize={selectSize}
                 label={label}
             />
         );
     }
 }
+SelectMultipleFilter.propTypes = {
+    label: PropTypes.string.isRequired,
+    field: PropTypes.string.isRequired,
+    store: PropTypes.object,
+    selectSize: PropTypes.number,
+};
+SelectMultipleFilter.defaultProps = {
+    selectSize: 10,
+};
 
 @inject("store")
 @observer
@@ -53,15 +62,21 @@ class Widgets extends React.Component {
             <div className="row">
                 <div className="col-md-4">
                     <SelectMultipleFilter
-                        label="Doses(s)"
+                        label="Doses"
                         field="dose units name"
                         store={filterStore}
                     />
                 </div>
                 <div className="col-md-4">
-                    <SelectMultipleFilter label="System(s)" field="system" store={filterStore} />
+                    <SelectMultipleFilter label="Systems" field="system" store={filterStore} />
                 </div>
                 <div className="col-md-4">
+                    <SelectMultipleFilter
+                        label="Critical value"
+                        field="type"
+                        store={filterStore}
+                        selectSize={5}
+                    />
                     <CheckboxInput
                         label="Approximate x-values"
                         checked={store.settings.approximateXValues}

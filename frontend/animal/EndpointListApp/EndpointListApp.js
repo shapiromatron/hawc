@@ -11,9 +11,10 @@ import Widgets from "./Widgets";
 @observer
 class EndpointListApp extends React.Component {
     render() {
-        const {store} = this.props;
+        const {store} = this.props,
+            {filteredData} = store;
 
-        if (!store.plotData) {
+        if (!filteredData) {
             return <Loading />;
         }
 
@@ -22,9 +23,9 @@ class EndpointListApp extends React.Component {
                 <Widgets />
                 <Plot />
                 <p>
-                    <b>{store.filteredData.length}</b> endpoints selected.
+                    <b>{filteredData.length}</b> endpoints selected.
                 </p>
-                <DataTable dataset={store.filteredData} />
+                <DataTable dataset={filteredData} />
             </div>
         );
     }

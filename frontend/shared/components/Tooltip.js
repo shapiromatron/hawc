@@ -74,7 +74,7 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
                 }px`,
             });
         })
-        .on("mouseleave", () => $el.css("display", "none"));
+        .on("mouseleave", () => ReactDOM.unmountComponentAtNode($el[0]));
 };
 
 export default bindTooltip;

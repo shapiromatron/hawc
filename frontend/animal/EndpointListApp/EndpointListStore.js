@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, observable} from "mobx";
 import {DataFilterStore} from "shared/dashboard/stores";
 import h from "shared/utils/helpers";
 
@@ -21,33 +21,21 @@ class EndpointListStore {
         }
         return this.filterStore.filteredData;
     }
-    @computed get plotData() {
-        if (this.filteredData === null) {
-            return null;
-        }
-        return _.chain(toJS(this.data))
-            .map(d => {
-                return this.settings.criticalValues.map(type => {
-                    return {data: d, dose: d[type], type};
-                });
-            })
-            .flatten()
-            .filter(d => d.dose !== null && d.dose > 0)
-            .sortBy("dose")
-            .value();
-    }
     @action.bound getDataset() {
         const {data_url} = this.config;
         fetch(data_url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                json.year = _.map(json, d => {
-                    const cit = d["study citation"],
-                        year = cit.match(/\d{4}/);
-                    d.year = year ? parseInt(year[0]) : null;
-                });
-                this.filterStore.setData(json);
-                this.data = json;
+                const data = _.chain(json)
+                    .map(d =>
+                        this.settings.criticalValues.map(type => _.extend({type, dose: d[type]}, d))
+                    )
+                    .flatten()
+                    .filter(d => d.dose !== null && d.dose > 0)
+                    .sortBy("dose")
+                    .value();
+                this.filterStore.setData(data);
+                this.data = data;
             });
     }
     @action.bound setDefaultConfig() {
