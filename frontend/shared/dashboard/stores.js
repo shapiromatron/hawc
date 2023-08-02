@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
-class DataFilterStore {
+class ReactiveDataStore {
     @observable data = null;
     @observable activeFilters = [];
     @computed get filteredDataStack() {
@@ -50,4 +50,4 @@ class DataFilterStore {
     };
 }
 
-export {DataFilterStore};
+export {ReactiveDataStore};

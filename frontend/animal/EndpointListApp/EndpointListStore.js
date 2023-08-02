@@ -1,6 +1,6 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
-import {DataFilterStore} from "shared/dashboard/stores";
+import {ReactiveDataStore} from "shared/dashboard/stores";
 import h from "shared/utils/helpers";
 
 const CRITICAL_VALUES = ["noel", "loel", "fel", "bmd", "bmdl"];
@@ -11,7 +11,7 @@ class EndpointListStore {
     @observable settings = null;
     constructor(config) {
         this.config = config;
-        this.filterStore = new DataFilterStore();
+        this.filterStore = new ReactiveDataStore();
         this.setDefaultConfig();
         this.getDataset();
     }
