@@ -205,7 +205,7 @@ class DataExtractionQuerySet(QuerySet):
             "design-study_name": "design__study_name",
             "design-study_design": sql_display("design__study_design", constants.StudyDesign),
             "design-source": sql_display("design__source", constants.Source),
-            "design-age_profile": "design__age_profile",  # todo
+            "design-age_profile": "design-age_profile",
             "design-age_description": "design__age_description",
             "design-sex": sql_display("design__sex", constants.Sex),
             "design-race": "design__race",
@@ -320,8 +320,21 @@ class DataExtractionQuerySet(QuerySet):
                 function="array_to_string",
                 output_field=CharField(max_length=256),
             ),
+            **{
+                "design-age_profile": Func(
+                    F("design__age_profile"),
+                    Value(", "),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                )
+            },
         ).values_list(*list(mapping.values()))
-        return pd.DataFrame(data=qs, columns=list(mapping.keys()))
+        df = pd.DataFrame(data=qs, columns=list(mapping.keys()))
+        df.loc[:, "design-age_profile"] = to_display_array(
+            df["design-age_profile"], constants.AgeProfile, ", "
+        )
+        return df
 
 
 class DataExtractionManager(BaseManager):
