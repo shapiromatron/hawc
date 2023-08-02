@@ -200,7 +200,7 @@ class DataExtractionQuerySet(QuerySet):
             **study_df_mapping("study-", "design__study__"),
             # design
             "design-pk": "design__pk",
-            # "design-url": "design__get_absolute_url", #todo
+            # "design-url": "design__get_absolute_url", #todo make a sql function or remove?
             "design-summary": "design__summary",
             "design-study_name": "design__study_name",
             "design-study_design": sql_display("design__study_design", constants.StudyDesign),
@@ -230,11 +230,11 @@ class DataExtractionQuerySet(QuerySet):
             "exposure-name": "exposure_level__exposure_measurement__name",
             "exposure-measurement_type": "exposure_level__exposure_measurement__measurement_type",
             "exposure-biomonitoring_matrix": sql_display(
-                "exposure_level__exposure_measurement__biomonitoring_matrix",  # todo fix default display
+                "exposure_level__exposure_measurement__biomonitoring_matrix",  # todo fix default display "?"
                 constants.BiomonitoringMatrix,
             ),
             "exposure-biomonitoring_source": sql_display(
-                "exposure_level__exposure_measurement__biomonitoring_source",  # todo fix default display
+                "exposure_level__exposure_measurement__biomonitoring_source",  # todo fix default display "?"
                 constants.BiomonitoringSource,
             ),
             "exposure-measurement_timing": "exposure_level__exposure_measurement__measurement_timing",
