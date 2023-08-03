@@ -235,16 +235,20 @@ class D3Plot {
                     .scaleLog()
                     .clamp(true)
                     .domain(settings.domain)
-                    .rangeRound(settings.rangeRound)
-                    .nice();
+                    .rangeRound(settings.rangeRound);
+                if (!settings.force_range) {
+                    scale.nice();
+                }
                 break;
             case "linear":
                 scale = d3
                     .scaleLinear()
                     .clamp(true)
                     .domain(settings.domain)
-                    .rangeRound(settings.rangeRound)
-                    .nice();
+                    .rangeRound(settings.rangeRound);
+                if (!settings.force_range) {
+                    scale.nice();
+                }
                 break;
             case "ordinal":
                 scale = d3
