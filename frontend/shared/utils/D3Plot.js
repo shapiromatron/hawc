@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import _ from "lodash";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -113,6 +114,9 @@ class D3Plot {
     }
 
     build_plot_skeleton(background, ariaLabel) {
+        // background: true, false, or a color string
+        // ariaLabel: string to use for aria-label attribute
+
         //Basic plot setup to set size and positions
         var self = this,
             w = this.w + this.padding.left + this.padding.right,
@@ -171,15 +175,22 @@ class D3Plot {
         };
         $(window).resize(this.trigger_resize);
 
-        // add gray background to plot.
+        // add background to plot.
         if (background) {
-            this.vis
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("height", this.h)
-                .attr("width", this.w)
-                .attr("class", "dp_bg");
+            const className = background === true ? "dp_bg" : undefined,
+                style = _.isString(background) ? background : undefined,
+                bg = this.vis
+                    .append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("height", this.h)
+                    .attr("width", this.w);
+            if (className) {
+                bg.attr("class", className);
+            }
+            if (style) {
+                bg.style("fill", style);
+            }
         }
     }
 
@@ -300,6 +311,9 @@ class D3Plot {
             .attr("y1", line_settings[2])
             .attr("y2", line_settings[3])
             .attr("class", settings.gridline_class);
+        if (settings.gridline_stroke) {
+            gridlines.selectAll("line").style("stroke", settings.gridline_stroke);
+        }
 
         return gridlines;
     }

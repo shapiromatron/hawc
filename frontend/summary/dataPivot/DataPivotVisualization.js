@@ -211,6 +211,7 @@ class DataPivotVisualization extends D3Plot {
             text_orient: "bottom",
             axis_class: "axis x_axis",
             gridline_class: "primary_gridlines x_gridlines",
+            gridline_stroke: "transparent",
             number_ticks: 10,
             axis_labels: true,
             x_translate: 0,
@@ -222,6 +223,7 @@ class DataPivotVisualization extends D3Plot {
             text_orient: "left",
             axis_class: "axis y_axis",
             gridline_class: "primary_gridlines y_gridlines",
+            gridline_stroke: "transparent",
             axis_labels: false,
             x_translate: 0,
             y_translate: 0,
@@ -244,7 +246,7 @@ class DataPivotVisualization extends D3Plot {
                 this.plot_div
             );
         }
-        this.build_plot_skeleton(true, "A forest-plot of data in this assessment");
+        this.build_plot_skeleton("transparent", "A forest-plot of data in this assessment");
         this.set_font_style();
         this.layout_text();
         this.layout_plot();
@@ -808,6 +810,10 @@ class DataPivotVisualization extends D3Plot {
             .attr("y1", d => d)
             .attr("y2", d => d)
             .attr("class", "primary_gridlines y_gridlines");
+        let gridline_stroke = "transparent";
+        if (gridline_stroke) {
+            this.g_y_gridlines.selectAll("line").style("stroke", gridline_stroke);
+        }
     }
 
     renderReferenceObjects() {
