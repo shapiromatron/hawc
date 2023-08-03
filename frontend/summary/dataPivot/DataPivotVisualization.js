@@ -1005,27 +1005,42 @@ class DataPivotVisualization extends D3Plot {
             .selectAll()
             .data(bar_rows)
             .enter()
-            .append("svg:line")
-            .attr("x1", d => x(d[bars.low_field_name]))
-            .attr("x2", d => x(d[bars.low_field_name]))
-            .attr("y1", d => row_heights[d._dp_index].mid + bar_half_height)
-            .attr("y2", d => row_heights[d._dp_index].mid - bar_half_height)
+            .append("svg:path")
+            .attr("d", (d, i) => {
+                const dx = d[bars.low_field_name] < x.domain()[0] ? 8 : 0,
+                    xValue = x(d[bars.low_field_name]),
+                    yValue = row_heights[d._dp_index].mid;
+
+                return d3.line()([
+                    [xValue + dx, yValue + bar_half_height],
+                    [xValue, yValue],
+                    [xValue + dx, yValue - bar_half_height],
+                ]);
+            })
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
-            });
+            })
+            .style("fill", d => d._styles.bars.stroke);
 
         g_bars
             .selectAll()
             .data(bar_rows)
             .enter()
-            .append("svg:line")
-            .attr("x1", d => x(d[bars.high_field_name]))
-            .attr("x2", d => x(d[bars.high_field_name]))
-            .attr("y1", d => row_heights[d._dp_index].mid + bar_half_height)
-            .attr("y2", d => row_heights[d._dp_index].mid - bar_half_height)
+            .append("svg:path")
+            .attr("d", (d, i) => {
+                const dx = d[bars.high_field_name] > x.domain()[1] ? 8 : 0,
+                    xValue = x(d[bars.high_field_name]),
+                    yValue = row_heights[d._dp_index].mid;
+                return d3.line()([
+                    [xValue - dx, yValue + bar_half_height],
+                    [xValue, yValue],
+                    [xValue - dx, yValue - bar_half_height],
+                ]);
+            })
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
-            });
+            })
+            .style("fill", d => d._styles.bars.stroke);
 
         // add points
         this.g_dose_points = this.vis.append("g");
