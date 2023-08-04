@@ -614,10 +614,11 @@ class DataPivot(models.Model):
         help_text="The URL (web address) used to describe this object "
         "(no spaces or special-characters).",
     )
-    settings = models.TextField(
-        default="undefined",
-        help_text="Paste content from a settings file from a different "
-        'data-pivot, or keep set to "undefined".',
+    settings = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="To clone settings from an existing data-pivot, copy them into this field, "
+        "otherwise leave blank.",
     )
     caption = models.TextField(blank=True, default="")
     published = models.BooleanField(
@@ -636,6 +637,11 @@ class DataPivot(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, **kw):
+        if self.settings is None:
+            self.settings = {}
+        return super().save(**kw)
 
     @staticmethod
     def get_list_url(assessment_id):
@@ -675,17 +681,10 @@ class DataPivot(models.Model):
     def get_visual_type_display(self):
         return self.visual_type
 
-    def get_settings(self):
-        try:
-            return json.loads(self.settings)
-        except ValueError:
-            return None
-
     @staticmethod
     def reset_row_overrides(settings):
-        settings_as_json = json.loads(settings)
-        settings_as_json["row_overrides"] = []
-        return json.dumps(settings_as_json)
+        settings["row_overrides"] = []
+        return settings
 
 
 class DataPivotUpload(DataPivot):
@@ -760,20 +759,17 @@ class DataPivotQuery(DataPivot):
 
         if count == 0:
             err = """
-                Current settings returned 0 results; make your filtering
-                settings less restrictive (check units and/or prefilters).
+                Current settings returned 0 results. Please update your settings to make
+                data filters less restrictive.
             """
             raise ValidationError(err)
 
         if count > self.MAXIMUM_QUERYSET_COUNT:
-            err = """
-                Current settings returned too many results
-                ({} returned; a maximum of {} are allowed);
-                make your filtering settings more restrictive
-                (check units and/or prefilters).
-            """.format(
-                count, self.MAXIMUM_QUERYSET_COUNT
-            )
+            err = f"""
+                Current settings returned too many results ({count} returned; a maximum of
+                {self.MAXIMUM_QUERYSET_COUNT} are allowed). Please update your settings to make
+                data filters more restrictive.
+            """
             raise ValidationError(err)
 
     def _get_dataset_filters(self):

@@ -22,8 +22,11 @@ import StyleManager from "./StyleManager";
 
 class DataPivot {
     constructor(data, settings, dom_bindings, title, url) {
+        if (_.keys(settings).length == 0) {
+            settings = DataPivot.default_plot_settings();
+        }
         this.data = data;
-        this.settings = settings || DataPivot.default_plot_settings();
+        this.settings = settings;
         this.title = title;
         this.url = url;
         this.onRendered = [];
