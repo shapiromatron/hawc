@@ -1351,7 +1351,7 @@ class DataPivotVisualization extends D3Plot {
             left = textDims.width + textDims.x + this.padding.left;
 
         this.vis.attr("transform", `translate(${left},${top})`);
-        this.vis.select(".dp_bg").attr("height", this.h);
+        this.bg_rect.attr("height", this.h);
 
         // resize SVG to account for new size
         var svgDims = this.svg.getBBox(),

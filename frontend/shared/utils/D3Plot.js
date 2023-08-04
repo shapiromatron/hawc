@@ -114,7 +114,7 @@ class D3Plot {
     }
 
     build_plot_skeleton(background, ariaLabel) {
-        // background: true, false, or a color string
+        // background: true, false, or a fill color string
         // ariaLabel: string to use for aria-label attribute
 
         //Basic plot setup to set size and positions
@@ -175,22 +175,16 @@ class D3Plot {
         };
         $(window).resize(this.trigger_resize);
 
-        // add background to plot.
+        // optionally background to plot.
         if (background) {
-            const className = background === true ? "dp_bg" : undefined,
-                style = _.isString(background) ? background : undefined,
-                bg = this.vis
-                    .append("rect")
-                    .attr("x", 0)
-                    .attr("y", 0)
-                    .attr("height", this.h)
-                    .attr("width", this.w);
-            if (className) {
-                bg.attr("class", className);
-            }
-            if (style) {
-                bg.style("fill", style);
-            }
+            const fill = _.isBoolean(background) ? "#eeeeee" : background;
+            this.bg_rect = this.vis
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("height", this.h)
+                .attr("width", this.w)
+                .style("fill", fill);
         }
     }
 
@@ -490,12 +484,6 @@ class D3Plot {
                 .attr("class", options.classes);
         }
         return l;
-    }
-
-    isWithinDomain(event) {
-        // check that event is within plot domain
-        var v = d3.pointer(event);
-        return !(v[1] > this.h || v[1] < 0 || v[0] < 0 || v[0] > this.w);
     }
 
     add_menu() {

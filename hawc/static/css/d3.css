@@ -337,19 +337,6 @@ path.tagslink {
 }
 
 /*
- * Data Pivot
- */
-
-.dp_bg {
-    fill: #eee;
-}
-
-.dp_header {
-    stroke: #666666;
-    stroke-width: 2px;
-}
-
-/*
  * Exploratory heatmap
  */
 
