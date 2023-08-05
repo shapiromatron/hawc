@@ -749,18 +749,19 @@ class DataPivotVisualization extends D3Plot {
             : "transparent";
         this.add_final_rectangle(border_color);
         this.renderTextLabels();
+        this.vis.moveToFront();
     }
 
     calcBackgroundRectanglesAndGridlines() {
         var bgs = [],
             gridlines = [],
             everyOther = true,
-            datarows = this.datarows,
+            {datarows} = this,
             {left, right} = this.padding,
             behindPlot = this.dp_settings.plot_settings.text_background_extend,
             pushBG = (first, last) => {
                 bgs.push({
-                    x: -this.text_width - left,
+                    x: 0,
                     y: this.row_heights[first].min,
                     w: this.text_width + left + (behindPlot ? this.w + right : 0),
                     h: this.row_heights[last].max - this.row_heights[first].min,
@@ -789,7 +790,10 @@ class DataPivotVisualization extends D3Plot {
 
     renderTextBackgroundRectangles() {
         // add background rectangles behind text
-        this.g_text_bg_rects = this.vis.append("g");
+        this.g_text_bg_rects = d3
+            .select(this.svg)
+            .insert("g", ":first-child")
+            .attr("transform", `translate(0,${this.plot_y_offset})`);
 
         this.g_text_bg_rects
             .selectAll()
@@ -1355,10 +1359,6 @@ class DataPivotVisualization extends D3Plot {
         this.text_width = textDim.width + textDim.x;
         this.h = heights[heights.length - 1].max;
         this.row_heights = heights;
-
-        // render background text rectangles
-        this.calcBackgroundRectanglesAndGridlines();
-        this.renderTextBackgroundRectangles();
     }
 
     layout_plot() {
@@ -1385,8 +1385,13 @@ class DataPivotVisualization extends D3Plot {
             .attr("height", h)
             .attr("viewBox", `0 0 ${w} ${h}`);
 
+        this.plot_y_offset = top;
         this.full_width = w;
         this.full_height = h;
+
+        // render background text rectangles
+        this.calcBackgroundRectanglesAndGridlines();
+        this.renderTextBackgroundRectangles();
     }
 }
 
