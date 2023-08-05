@@ -995,7 +995,12 @@ class DataPivotVisualization extends D3Plot {
         // filter bars to include only bars where the difference between low/high
         // is greater than 0
         let bar_half_height = 5,
-            bar_rows = datarows.filter(d => d[bars.high_field_name] - d[bars.low_field_name] > 0),
+            bar_rows = datarows
+                .filter(d => d[bars.high_field_name] - d[bars.low_field_name] > 0)
+                .map(d => {
+                    d._bar_title = `[${d[bars.low_field_name]}, ${d[bars.high_field_name]}]`;
+                    return d;
+                }),
             g_bars = this.vis.append("g");
 
         g_bars
@@ -1009,7 +1014,9 @@ class DataPivotVisualization extends D3Plot {
             .attr("y2", d => row_heights[d._dp_index].mid)
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
-            });
+            })
+            .append("svg:title")
+            .text(d => d._bar_title);
 
         g_bars
             .selectAll()
@@ -1030,7 +1037,9 @@ class DataPivotVisualization extends D3Plot {
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
             })
-            .style("fill", d => d._styles.bars.stroke);
+            .style("fill", d => d._styles.bars.stroke)
+            .append("svg:title")
+            .text(d => d._bar_title);
 
         g_bars
             .selectAll()
@@ -1050,7 +1059,9 @@ class DataPivotVisualization extends D3Plot {
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
             })
-            .style("fill", d => d._styles.bars.stroke);
+            .style("fill", d => d._styles.bars.stroke)
+            .append("svg:title")
+            .text(d => d._bar_title);
 
         // add points
         this.g_dose_points = this.vis.append("g");
@@ -1081,7 +1092,9 @@ class DataPivotVisualization extends D3Plot {
                     if (datum.interactivity) {
                         showAsModal(datum.interactivity, d);
                     }
-                });
+                })
+                .append("svg:title")
+                .text(d => d[datum.field_name]);
         });
     }
 
