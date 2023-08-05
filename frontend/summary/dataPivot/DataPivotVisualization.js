@@ -733,8 +733,6 @@ class DataPivotVisualization extends D3Plot {
     }
 
     draw_visualizations() {
-        this.calcBackgroundRectanglesAndGridlines();
-        this.renderTextBackgroundRectangles();
         this.renderYGridlines();
         this.renderReferenceObjects();
         if (this.dp_settings.plot_settings.as_barchart) {
@@ -750,11 +748,13 @@ class DataPivotVisualization extends D3Plot {
             gridlines = [],
             everyOther = true,
             datarows = this.datarows,
+            {left, right} = this.padding,
+            behindPlot = true,
             pushBG = (first, last) => {
                 bgs.push({
-                    x: -this.text_width - this.padding.left,
+                    x: -this.text_width - left,
                     y: this.row_heights[first].min,
-                    w: this.text_width + this.padding.left,
+                    w: this.text_width + left + (behindPlot ? this.w + right : 0),
                     h: this.row_heights[last].max - this.row_heights[first].min,
                 });
             };
@@ -1337,6 +1337,10 @@ class DataPivotVisualization extends D3Plot {
         this.text_width = textDim.width + textDim.x;
         this.h = heights[heights.length - 1].max;
         this.row_heights = heights;
+
+        // render background text rectangles
+        this.calcBackgroundRectanglesAndGridlines();
+        this.renderTextBackgroundRectangles();
     }
 
     layout_plot() {
@@ -1354,8 +1358,8 @@ class DataPivotVisualization extends D3Plot {
         this.bg_rect.attr("height", this.h);
 
         // resize SVG to account for new size
-        var svgDims = this.svg.getBBox(),
-            w = svgDims.width + svgDims.x + this.padding.right,
+        var w = this.text_width + this.padding.left + this.w + this.padding.right,
+            svgDims = this.svg.getBBox(),
             h = svgDims.height + svgDims.y + this.padding.bottom;
 
         d3.select(this.svg)
