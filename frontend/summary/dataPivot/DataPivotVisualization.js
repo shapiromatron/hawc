@@ -197,7 +197,7 @@ class DataPivotVisualization extends D3Plot {
     }
 
     set_defaults() {
-        const gridline_stroke = this.dp_settings.plot_settings.draw_gridlines
+        const gridline_stroke = this.dp_settings.plot_settings.show_xticks
             ? this.dp_settings.plot_settings.gridline_color
             : "transparent";
 
@@ -227,7 +227,6 @@ class DataPivotVisualization extends D3Plot {
             text_orient: "left",
             axis_class: "axis y_axis",
             gridline_class: "primary_gridlines y_gridlines",
-            gridline_stroke,
             axis_labels: false,
             x_translate: 0,
             y_translate: 0,
@@ -807,7 +806,7 @@ class DataPivotVisualization extends D3Plot {
     renderYGridlines() {
         let x = this.x_scale,
             buffer = this.use_extra_buffer() ? EXTRA_BUFFER : 0,
-            gridline_stroke = this.dp_settings.plot_settings.draw_gridlines
+            gridline_stroke = this.dp_settings.plot_settings.show_yticks
                 ? this.dp_settings.plot_settings.gridline_color
                 : "transparent";
 
@@ -1200,10 +1199,7 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // naively layout components
-        this.g_text_columns = d3
-            .select(this.svg)
-            .append("g")
-            .attr("class", "text_g");
+        this.g_text_columns = d3.select(this.svg).append("g");
 
         this.text_rows = this.g_text_columns
             .selectAll("g")

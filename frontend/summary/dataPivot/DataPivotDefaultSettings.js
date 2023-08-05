@@ -36,7 +36,6 @@ export default {
         as_barchart: false,
         draw_background: true,
         plot_background_color: "#EEEEEE",
-        draw_gridlines: true,
         gridline_color: "#FFFFFF",
         draw_plot_border: true,
         plot_border_color: "#666666",
