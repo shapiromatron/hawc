@@ -561,9 +561,11 @@ class _DataPivot_settings_general {
 
         // create fields
         this.content = {
-            plot_width: $(`<input class="form-control" type="text" value="${values.plot_width}">`),
+            plot_width: $(
+                `<input class="form-control" type="number" value="${values.plot_width}">`
+            ),
             minimum_row_height: $(
-                `<input class="form-control" type="text" value="${values.minimum_row_height}">`
+                `<input class="form-control" type="number" value="${values.minimum_row_height}">`
             ),
             title: $(`<input class="form-control" type="text" value="${values.title}">`),
             axis_label: $(`<input class="form-control" type="text" value="${values.axis_label}">`),
@@ -588,16 +590,16 @@ class _DataPivot_settings_general {
                     value="${values.domain}">`
             ),
             padding_top: $(
-                `<input class="form-control" type="text" value="${values.padding.top}">`
+                `<input class="form-control" type="number" value="${values.padding.top}">`
             ),
             padding_right: $(
-                `<input class="form-control" type="text" value="${values.padding.right}">`
+                `<input class="form-control" type="number" value="${values.padding.right}">`
             ),
             padding_bottom: $(
-                `<input class="form-control" type="text" value="${values.padding.bottom}">`
+                `<input class="form-control" type="number" value="${values.padding.bottom}">`
             ),
             padding_left: $(
-                `<input class="form-control" type="text" value="${values.padding.left}">`
+                `<input class="form-control" type="number" value="${values.padding.left}">`
             ),
             merge_descriptions: $('<input class="ml-1" type="checkbox">').prop(
                 "checked",
@@ -614,6 +616,39 @@ class _DataPivot_settings_general {
             ),
             text_background_color: $('<input class="form-control" type="color">').val(
                 values.text_background_color
+            ),
+            // TODO-reorganize
+            x_axis_number_ticks: $(
+                `<input class="form-control" type="number" value="${values.x_axis_number_ticks}">`
+            ),
+            x_axis_force_domain: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.x_axis_force_domain
+            ),
+            text_background_extend: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.text_background_extend
+            ),
+            draw_background: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.draw_background
+            ),
+            plot_background_color: $('<input class="form-control" type="color">').val(
+                values.plot_background_color
+            ),
+            draw_gridlines: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.draw_gridlines
+            ),
+            gridline_color: $('<input class="form-control" type="color">').val(
+                values.gridline_color
+            ),
+            draw_plot_border: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.draw_plot_border
+            ),
+            plot_border_color: $('<input class="form-control" type="color">').val(
+                values.plot_border_color
             ),
         };
 
@@ -648,6 +683,16 @@ class _DataPivot_settings_general {
             build_tr("Merge aggressively", this.content.merge_aggressive),
             build_tr("Highlight background text", this.content.text_background),
             build_tr("Highlight background text color", this.content.text_background_color),
+            // here
+            build_tr("x_axis_number_ticks", this.content.x_axis_number_ticks),
+            build_tr("x_axis_force_domain", this.content.x_axis_force_domain),
+            build_tr("text_background_extend", this.content.text_background_extend),
+            build_tr("draw_background", this.content.draw_background),
+            build_tr("plot_background_color", this.content.plot_background_color),
+            build_tr("draw_gridlines", this.content.draw_gridlines),
+            build_tr("gridline_color", this.content.gridline_color),
+            build_tr("draw_plot_border", this.content.draw_plot_border),
+            build_tr("plot_border_color", this.content.plot_border_color),
         ];
 
         // display merge_until only when merge_descriptions activated
@@ -689,6 +734,16 @@ class _DataPivot_settings_general {
         this.values.merge_until = parseInt(this.content.merge_until.val(), 10) || 0;
         this.values.text_background = this.content.text_background.prop("checked");
         this.values.text_background_color = this.content.text_background_color.val();
+        // here
+        this.values.x_axis_number_ticks = parseInt(this.content.x_axis_number_ticks.val());
+        this.values.x_axis_force_domain = this.content.x_axis_force_domain.prop("checked");
+        this.values.text_background_extend = this.content.text_background_extend.prop("checked");
+        this.values.draw_background = this.content.draw_background.prop("checked");
+        this.values.plot_background_color = this.content.plot_background_color.val();
+        this.values.draw_gridlines = this.content.draw_gridlines.prop("checked");
+        this.values.gridline_color = this.content.gridline_color.val();
+        this.values.draw_plot_border = this.content.draw_plot_border.prop("checked");
+        this.values.plot_border_color = this.content.plot_border_color.val();
     }
 
     update_merge_until() {

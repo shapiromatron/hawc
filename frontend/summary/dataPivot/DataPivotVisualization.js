@@ -197,6 +197,10 @@ class DataPivotVisualization extends D3Plot {
     }
 
     set_defaults() {
+        const gridline_stroke = this.dp_settings.plot_settings.draw_gridlines
+            ? this.dp_settings.plot_settings.gridline_color
+            : "transparent";
+
         this.padding = $.extend({}, this.dp_settings.plot_settings.padding); //copy object
         this.padding.left_original = this.padding.left;
         this.w = this.dp_settings.plot_settings.plot_width;
@@ -204,16 +208,15 @@ class DataPivotVisualization extends D3Plot {
         this.textPadding = 5; // text padding on all sides of text
 
         var scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear";
-
         this.text_spacing_offset = 10;
         this.x_axis_settings = {
             scale_type,
             text_orient: "bottom",
             axis_class: "axis x_axis",
             gridline_class: "primary_gridlines x_gridlines",
-            gridline_stroke: "#dabaca",
-            number_ticks: 6,
-            force_range: false,
+            gridline_stroke,
+            number_ticks: this.dp_settings.plot_settings.x_axis_number_ticks,
+            force_range: this.dp_settings.plot_settings.x_axis_force_domain,
             axis_labels: true,
             x_translate: 0,
             label_format: h.numericAxisFormat,
@@ -224,7 +227,7 @@ class DataPivotVisualization extends D3Plot {
             text_orient: "left",
             axis_class: "axis y_axis",
             gridline_class: "primary_gridlines y_gridlines",
-            gridline_stroke: "transparent",
+            gridline_stroke,
             axis_labels: false,
             x_translate: 0,
             y_translate: 0,
@@ -247,13 +250,15 @@ class DataPivotVisualization extends D3Plot {
                 this.plot_div
             );
         }
-        this.build_plot_skeleton("transparent", "A forest-plot of data in this assessment");
+        const bg = this.dp_settings.plot_settings.draw_background
+            ? this.dp_settings.plot_settings.plot_background_color
+            : "transparent";
+        this.build_plot_skeleton(bg, "A forest-plot of data in this assessment");
         this.set_font_style();
         this.layout_text();
         this.layout_plot();
         this.add_axes();
         this.draw_visualizations();
-        this.add_final_rectangle();
         this.legend = new DataPivotLegend(
             this.svg,
             this.vis,
@@ -740,6 +745,10 @@ class DataPivotVisualization extends D3Plot {
         } else {
             this.renderDataPoints();
         }
+        const border_color = this.dp_settings.plot_settings.draw_plot_border
+            ? this.dp_settings.plot_settings.plot_border_color
+            : "transparent";
+        this.add_final_rectangle(border_color);
         this.renderTextLabels();
     }
 
@@ -749,7 +758,7 @@ class DataPivotVisualization extends D3Plot {
             everyOther = true,
             datarows = this.datarows,
             {left, right} = this.padding,
-            behindPlot = true,
+            behindPlot = this.dp_settings.plot_settings.text_background_extend,
             pushBG = (first, last) => {
                 bgs.push({
                     x: -this.text_width - left,
@@ -797,7 +806,10 @@ class DataPivotVisualization extends D3Plot {
 
     renderYGridlines() {
         let x = this.x_scale,
-            buffer = this.use_extra_buffer() ? EXTRA_BUFFER : 0;
+            buffer = this.use_extra_buffer() ? EXTRA_BUFFER : 0,
+            gridline_stroke = this.dp_settings.plot_settings.draw_gridlines
+                ? this.dp_settings.plot_settings.gridline_color
+                : "transparent";
 
         this.g_y_gridlines = this.vis.append("g").attr("class", "primary_gridlines y_gridlines");
 
@@ -810,11 +822,8 @@ class DataPivotVisualization extends D3Plot {
             .attr("x2", x.range()[1] + buffer)
             .attr("y1", d => d)
             .attr("y2", d => d)
-            .attr("class", "primary_gridlines y_gridlines");
-        let gridline_stroke = "transparent";
-        if (gridline_stroke) {
-            this.g_y_gridlines.selectAll("line").style("stroke", gridline_stroke);
-        }
+            .attr("class", "primary_gridlines y_gridlines")
+            .style("stroke", gridline_stroke);
     }
 
     renderReferenceObjects() {
