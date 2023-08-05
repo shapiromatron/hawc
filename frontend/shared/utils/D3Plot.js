@@ -24,14 +24,18 @@ class D3Plot {
             .html(this.title_str);
     }
 
-    add_final_rectangle() {
-        // Add final rectangle around plot.
-        if (this.bounding_rectangle) this.bounding_rectangle.remove();
+    add_final_rectangle(color) {
+        // Add final rectangle around plot. Color is optional
+        if (this.bounding_rectangle) {
+            this.bounding_rectangle.remove();
+        }
+
         this.bounding_rectangle = this.vis
             .append("rect")
             .attr("width", this.w)
             .attr("height", this.h)
-            .attr("class", "bounding_rectangle");
+            .attr("class", "bounding_rectangle")
+            .style("stroke", color ? color : "#666666");
     }
 
     set_legend_location(top, left) {
@@ -119,8 +123,9 @@ class D3Plot {
 
         //Basic plot setup to set size and positions
         var self = this,
-            w = this.w + this.padding.left + this.padding.right,
-            h = this.h + this.padding.top + this.padding.bottom;
+            {left, right, top, bottom} = this.padding,
+            w = this.w + left + right,
+            h = this.h + top + bottom;
 
         //clear plot div and and append new svg object
         this.plot_div.empty();
@@ -140,7 +145,7 @@ class D3Plot {
         this.vis = d3
             .select(this.svg)
             .append("g")
-            .attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+            .attr("transform", `translate(${left},${top})`);
 
         var chart = $(this.svg),
             container = chart.parent();

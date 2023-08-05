@@ -120,19 +120,7 @@ svg {
 
 rect.bounding_rectangle {
     fill: none;
-    stroke: #666666;
     stroke-width: 2px;
-}
-
-rect.bounding_rectangle_cover {
-    fill: Gold;
-    fill-opacity: 0.1;
-    stroke-width: 4px;
-}
-
-rect.selected_overlay {
-    fill: yellow;
-    fill-opacity: 0.5;
 }
 
 .centeredLabel {
