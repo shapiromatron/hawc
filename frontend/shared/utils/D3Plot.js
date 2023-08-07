@@ -396,17 +396,17 @@ class D3Plot {
     build_y_axis() {
         // build y-axis based on plot-settings
         this.y_scale = this._build_scale(this.y_axis_settings);
-        this.yAxis = this._print_axis(
-            this.getAxisType(this.y_axis_settings.text_orient),
-            this.y_scale,
-            this.y_axis_settings
-        );
         this.y_primary_gridlines = this._print_gridlines(this.y_scale, this.y_axis_settings, [
             0,
             this.w,
             this.y_scale,
             this.y_scale,
         ]);
+        this.yAxis = this._print_axis(
+            this.getAxisType(this.y_axis_settings.text_orient),
+            this.y_scale,
+            this.y_axis_settings
+        );
     }
 
     getAxisType(val) {
@@ -425,17 +425,17 @@ class D3Plot {
     build_x_axis(axisType) {
         // build x-axis based on plot-settings
         this.x_scale = this._build_scale(this.x_axis_settings);
-        this.xAxis = this._print_axis(
-            this.getAxisType(this.x_axis_settings.text_orient),
-            this.x_scale,
-            this.x_axis_settings
-        );
         this.x_primary_gridlines = this._print_gridlines(this.x_scale, this.x_axis_settings, [
             this.x_scale,
             this.x_scale,
             0,
             this.h,
         ]);
+        this.xAxis = this._print_axis(
+            this.getAxisType(this.x_axis_settings.text_orient),
+            this.x_scale,
+            this.x_axis_settings
+        );
     }
 
     build_line(options, existing) {
