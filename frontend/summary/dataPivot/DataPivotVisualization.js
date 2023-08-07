@@ -988,7 +988,9 @@ class DataPivotVisualization extends D3Plot {
 
     renderDataPoints() {
         // Add error bars for points
-        let x = this.x_scale,
+        const arrowX = 3, // shift arrows to avoid line from overlapping
+            bar_half_height = 5,
+            x = this.x_scale,
             bars = this.settings.bars,
             datapoints = this.settings.datapoints,
             row_heights = this.row_heights,
@@ -997,11 +999,12 @@ class DataPivotVisualization extends D3Plot {
 
         // filter bars to include only bars where the difference between low/high
         // is greater than 0
-        let bar_half_height = 5,
-            bar_rows = datarows
+        let bar_rows = datarows
                 .filter(d => d[bars.high_field_name] - d[bars.low_field_name] > 0)
                 .map(d => {
                     d._bar_title = `[${d[bars.low_field_name]}, ${d[bars.high_field_name]}]`;
+                    d._bar_arrow_lower = d[bars.low_field_name] < x.domain()[0];
+                    d._bar_arrow_upper = d[bars.high_field_name] > x.domain()[1];
                     return d;
                 }),
             g_bars = this.vis.append("g");
@@ -1026,21 +1029,21 @@ class DataPivotVisualization extends D3Plot {
             .data(bar_rows)
             .enter()
             .append("svg:path")
-            .attr("d", (d, i) => {
-                const dx = d[bars.low_field_name] < x.domain()[0] ? 8 : 0,
-                    xValue = x(d[bars.low_field_name]),
-                    yValue = row_heights[d._dp_index].mid;
-
-                return d3.line()([
-                    [xValue + dx, yValue + bar_half_height],
-                    [xValue, yValue],
-                    [xValue + dx, yValue - bar_half_height],
-                ]);
+            .attr("transform", d => {
+                const xValue = x(d[bars.low_field_name]) - (d._bar_arrow_lower ? arrowX : 0),
+                    yValue = row_heights[d._dp_index].mid - bar_half_height;
+                return `translate(${xValue},${yValue})`;
+            })
+            .attr("d", d => {
+                const dx = d._bar_arrow_lower ? bar_half_height * 2 : 0,
+                    dy = bar_half_height * 2;
+                return `M0,${dy / 2}L${dx},0L${dx},${dy}Z`;
             })
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
             })
             .style("fill", d => d._styles.bars.stroke)
+            .style("stroke-width", d => (d._bar_arrow_lower ? 0 : d._styles.bars["stroke-width"]))
             .append("svg:title")
             .text(d => d._bar_title);
 
@@ -1049,20 +1052,21 @@ class DataPivotVisualization extends D3Plot {
             .data(bar_rows)
             .enter()
             .append("svg:path")
-            .attr("d", (d, i) => {
-                const dx = d[bars.high_field_name] > x.domain()[1] ? 8 : 0,
-                    xValue = x(d[bars.high_field_name]),
-                    yValue = row_heights[d._dp_index].mid;
-                return d3.line()([
-                    [xValue - dx, yValue + bar_half_height],
-                    [xValue, yValue],
-                    [xValue - dx, yValue - bar_half_height],
-                ]);
+            .attr("transform", d => {
+                const xValue = x(d[bars.high_field_name]) + (d._bar_arrow_upper ? arrowX : 0),
+                    yValue = row_heights[d._dp_index].mid - bar_half_height;
+                return `translate(${xValue},${yValue})`;
+            })
+            .attr("d", d => {
+                const dx = d._bar_arrow_upper ? bar_half_height * 2 : 0,
+                    dy = bar_half_height * 2;
+                return `M0,${dy / 2}L${-dx},0L${-dx},${dy}Z`;
             })
             .each(function(d) {
                 applyStyles(self.svg, this, d._styles.bars);
             })
             .style("fill", d => d._styles.bars.stroke)
+            .style("stroke-width", d => (d._bar_arrow_upper ? 0 : d._styles.bars["stroke-width"]))
             .append("svg:title")
             .text(d => d._bar_title);
 
