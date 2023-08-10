@@ -120,6 +120,11 @@ urlpatterns = [
         name="dp_new-query",
     ),
     path(
+        "data-pivot/assessment/<int:pk>/create/query/1/",
+        views.DataPivotQueryNew1.as_view(),
+        name="dp_new-query1",
+    ),
+    path(
         "data-pivot/assessment/<int:pk>/create/file/",
         views.DataPivotFileNew.as_view(),
         name="dp_new-file",

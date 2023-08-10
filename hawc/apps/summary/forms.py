@@ -13,7 +13,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
+from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment, DynamicFormField
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..epi.models import Outcome
@@ -21,7 +21,7 @@ from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
 from ..study.autocomplete import StudyAutocomplete
 from ..study.models import Study
-from . import autocomplete, constants, models
+from . import autocomplete, constants, models, prefilters
 
 
 class PrefilterMixin:
@@ -1077,6 +1077,32 @@ class DataPivotUploadForm(DataPivotForm):
             if df.shape[1] < 2:
                 self.add_error("excel_file", "Must contain at least 2 columns.")
 
+
+class DataPivotQueryForm1(DataPivotForm):
+    class Meta:
+        model = models.DataPivotQuery
+        fields = (
+            "title",
+            "slug",
+            "evidence_type",
+            "export_style",
+            "preferred_units",
+            "settings",
+            "caption",
+            "published",
+            "published_only",
+            "prefilters",
+        )
+
+    def _get_prefilter_form(self,data,**form_kwargs):
+        prefix = form_kwargs.pop("prefix",None)
+        return prefilters.BioassayPrefilter(data=data,prefix=prefix,assessment=self.instance.assessment,form_kwargs=form_kwargs).form
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["prefilters"] = DynamicFormField(prefix="prefilters",form_class=self._get_prefilter_form)
+
+            
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     prefilter_include = ("study", "bioassay", "epi", "invitro", "eco", "effect_tags")

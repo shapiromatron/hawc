@@ -452,3 +452,29 @@ class ConfirmationField(forms.CharField):
         super().validate(value)
         if value != self.check_value:
             raise forms.ValidationError(f'The value of "{self.check_value}" is required.')
+
+class DynamicFormField(forms.JSONField):
+    """Field to display dynamic form inline."""
+
+    default_error_messages = {"invalid": "Invalid input"}
+    widget = widgets.DynamicFormWidget
+
+    def __init__(self, prefix, form_class, form_kwargs=None, *args, **kwargs):
+        """Create dynamic form field."""
+        self.form_class = form_class
+        self.form_kwargs = {} if form_kwargs is None else form_kwargs
+        self.widget = self.widget(prefix, form_class, form_kwargs)
+        super().__init__(*args, **kwargs)
+
+    def bound_data(self, data, initial):
+        """Get data to be shown for this field on render."""
+        if self.disabled:
+            return initial
+        return data
+
+    def validate(self, value):
+        """Validate inline form."""
+        super().validate(value)
+        form = self.form_class(data=value, **self.form_kwargs)
+        if not form.is_valid():
+            raise forms.ValidationError(self.error_messages["invalid"])

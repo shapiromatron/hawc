@@ -1,0 +1,42 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load crispy_forms_tags %}
+{% load add_class %}
+
+{% block content %}
+  {% include "assessment/preferred_dose_units_widget.html" %}
+  {% crispy form %}
+  {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
+{% endblock %}
+
+{% block extrajs %}
+  {{ smart_tag_form.media }}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      let js_units_choices = {{form.js_units_choices|safe}},
+        epi_version = {{assessment.epi_version}},
+        printf = window.app.HAWCUtils.printf;
+
+      {% if crud == "Create" %}
+        $('#id_title').on('keyup', function(){
+          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
+        });
+      {% endif %}
+
+      window.app.startup("assessmentStartup", function(app){
+        var doseWidget = new app.DoseUnitsWidget($('form'), {
+          choices: js_units_choices,
+          el: '#id_preferred_units',
+        });
+      });
+
+      window.app.startup("smartTagsStartup", function(smartTags){
+          new smartTags.SmartTagEditor(
+            $('#id_caption'),
+            {submitEl: '#dataPivotForm', takeFocusEl: "#id_evidence_type"}
+          );
+      })
+
+    });
+  </script>
+{% endblock extrajs %}

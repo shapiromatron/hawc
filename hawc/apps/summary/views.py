@@ -15,9 +15,9 @@ from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate, FilterSetMixin
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, serializers
+from . import constants, filterset, forms, models, serializers, prefilters
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -642,6 +642,19 @@ class DataPivotQueryNew(DataPivotNew):
         )
         return context
 
+class DataPivotQueryNew1(DataPivotNew):
+    model = models.DataPivotQuery
+    form_class = forms.DataPivotQueryForm1
+    template_name = "summary/datapivot_form1.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["file_loader"] = False
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
 
 class DataPivotFileNew(DataPivotNew):
     model = models.DataPivotUpload
