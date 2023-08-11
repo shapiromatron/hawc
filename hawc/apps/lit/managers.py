@@ -559,6 +559,11 @@ class ReferenceQuerySet(models.QuerySet):
         ).values_list(*mapping.values())
         return pd.DataFrame(list(qs), columns=list(mapping.keys()))
 
+    def full_text_search(self, search_text):
+        return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
+            Q(search=search_text) | Q(identifiers__unique_id=search_text)
+        )
+
 
 class ReferenceManager(BaseManager):
     assessment_relation = "assessment"

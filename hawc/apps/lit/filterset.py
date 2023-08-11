@@ -125,15 +125,7 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.filter(query)
 
     def filter_search(self, queryset, name, value):
-        query = (
-            Q(title__icontains=value)
-            | Q(abstract__icontains=value)
-            | Q(authors_short__unaccent__icontains=value)
-            | Q(authors__unaccent__icontains=value)
-            | Q(year__icontains=value)
-            | Q(identifiers__unique_id=value)
-        )
-        return queryset.filter(query)
+        return queryset.full_text_search(value)
 
     def filter_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)
