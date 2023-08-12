@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any
+from typing import Any, Self
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
@@ -563,7 +563,7 @@ class BulkSerializer(serializers.ListSerializer):
 
 class PydanticDrfSerializer(BaseModel):
     @classmethod
-    def from_drf(cls, data: dict | QueryDict, **extras):
+    def from_drf(cls, data: dict | QueryDict, **extras) -> Self:
         """Generate an instance of a Pydantic model assuming successful validation.
 
         Args:

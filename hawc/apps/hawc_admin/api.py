@@ -10,6 +10,7 @@ from ..common.api import FivePerMinuteThrottle
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from .actions import media_metadata_report
+from .methods.updates import updates
 
 
 class DashboardViewSet(viewsets.ViewSet):
@@ -22,6 +23,12 @@ class DashboardViewSet(viewsets.ViewSet):
         df = media_metadata_report(uri)
         export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
         return Response(export)
+
+    @action(detail=False, renderer_classes=PandasRenderers)
+    def updates(self, request):
+        return FlatExport.api_response(
+            df=updates(request), filename=f"updates-{timezone.now().strftime('%Y-%m-%d')}"
+        )
 
 
 class DiagnosticViewSet(viewsets.ViewSet):
