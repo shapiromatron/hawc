@@ -23,6 +23,18 @@
     visibility: hidden;
 }
 
+input[type="submit"].btn, section button.btn, section input[type="button"].btn, section a.btn, .modal-content .btn {
+    border: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: baseline;
+    white-space: normal;
+}
+
 /* sidebar  */
 .sidebar {
     width: 230px;
@@ -397,12 +409,6 @@ div.smart-tag.active {
     border-radius: 7px;
     height: 50rem;
 }
-.abstracts {
-    font-size: 1.15rem;
-    margin-top: 0.25rem;
-    background-color: #f5f5f5;
-    border-radius: 6px;
-}
 .ref_small {
     font-size: 0.8465em;
     display: block;
@@ -410,9 +416,8 @@ div.smart-tag.active {
 }
 .ref_title {
     margin: 0;
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     line-height: 1.4;
-    text-shadow: 0 0 0 black;
     color: #1b1b1b;
     font-family: Source Sans Pro Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans;
 }
@@ -534,21 +539,35 @@ div.smart-tag.active {
     width: auto;
 }
 
+.referenceDetail {
+    max-width: 65vw;
+}
+.referenceDetail.expanded {
+    max-width: unset;
+}
+.referenceDetail>div.d-flex, .referenceDetail>p {
+    padding-left: 8px;
+}
+.referenceDetail.expanded>div.d-flex, .referenceDetail.expanded>p {
+    padding-left: unset;
+}
+.referenceDetail>hr{
+    margin: 25px 0;
+}
 .abstracts {
     font-size: 0.95rem;
     font-family: BlinkMacSystemFont,-apple-system,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
-    line-height: 24px;
+    line-height: 1.45rem;
     height: 15rem;
-    border-radius: 7px;
     display: block;
     cursor: pointer;
     background-color: #f8f8f8;
     transition: all 0.15s ease-out;
     overflow-y: scroll;
     cursor: pointer;
-    margin: 5px 0px;
-    max-width: 75rem;
+    margin: 3px 0px;
     padding-left: 3px;
+    margin-left: 8px;
 }
 .abstract-collapsed {
     text-overflow: ellipsis;
@@ -558,6 +577,7 @@ div.smart-tag.active {
     padding-right: 20px;
     padding-left: 0px;
 }
+
 .referenceDetail.expanded .abstracts {
     height: fit-content;
     cursor: unset;
@@ -566,6 +586,7 @@ div.smart-tag.active {
     background-color: unset;
     overflow-y: unset;
     padding: unset;
+    margin: unset;
 }
 .abstracts:hover {
     background-color: #f3f3f3;
@@ -592,33 +613,18 @@ div.smart-tag.active {
     padding: 4px 7px;
     margin: 0 5px 7px 0;
 }
-
 .outline-btn {
     padding: 0.25em 0.4em;
     font-size: 0.75rem;
     height: fit-content;
-    line-height: 0.8rem;
-    color: #404040 !important;
-    border: 1px solid gray;
+    line-height: 0.8rem !important;
+    color: #666666 !important;
+    border: 1px solid #666666 !important;
     border-radius: 4px;
     margin-bottom: 2px;
-    transition: background-color 0.15s ease;
+    transition: all 0.15s ease;
 }
-input[type="submit"].btn, section button.btn, section input[type="button"].btn, section a.btn, .modal-content .btn {
-    border: 0 !important;
-    cursor: pointer;
-    display: inline-block;
-    font-weight: bold;
-    line-height: 1;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: baseline;
-    white-space: normal;
-}
-.outline-btn .dropdown-toggle {
-    padding: 0;
-    font-size: 0.75rem;
-}
+
 .outline-btn i {
     line-height: 0.8rem;
 }
@@ -632,22 +638,20 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
 .referenceDetail.expanded .outline-btn .dropdown-toggle {
     padding: 0;
 }
+
 .outline-btn.left{
     border-radius: 4px 0 0 4px;
 }
 .outline-btn.right{
     border-radius: 0 4px 4px 0;
-    border-left: none;
+    border-left: none !important;
 }
-.outline-btn+ {
-    border-radius: 4px;
-}
-a.outline-btn {
+a.outline-btn, .btn.outline-btn {
     font-weight: bold;
 }
-a.outline-btn:hover, .dropdown.outline-btn:hover {
+a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     text-decoration:none;
-    color: black;
+    color: black  !important;
     background-color: #d4d4d4;
 }
 
