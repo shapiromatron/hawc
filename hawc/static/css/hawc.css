@@ -409,10 +409,12 @@ div.smart-tag.active {
     margin: 0;
 }
 .ref_title {
-    font-weight: bold;
     margin: 0;
     font-size: 1.35rem;
+    line-height: 1.4;
+    text-shadow: 0 0 0 black;
     color: #1b1b1b;
+    font-family: Source Sans Pro Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans;
 }
 .refTag {
     color: #ffffff;
@@ -531,6 +533,124 @@ div.smart-tag.active {
     white-space: unset;
     width: auto;
 }
+
+.abstracts {
+    font-size: 0.95rem;
+    font-family: BlinkMacSystemFont,-apple-system,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+    line-height: 24px;
+    height: 15rem;
+    border-radius: 7px;
+    display: block;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    transition: all 0.15s ease-out;
+    overflow-y: scroll;
+    cursor: pointer;
+    margin: 5px 0px;
+    max-width: 75rem;
+    padding-left: 3px;
+}
+.abstract-collapsed {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 4.6rem;
+    background-color: #ffffff;
+    padding-right: 20px;
+    padding-left: 0px;
+}
+.referenceDetail.expanded .abstracts {
+    height: fit-content;
+    cursor: unset;
+    font-size: 1.06rem;
+    line-height: unset;
+    background-color: unset;
+    overflow-y: unset;
+    padding: unset;
+}
+.abstracts:hover {
+    background-color: #f3f3f3;
+}
+.abstract-collapsed:hover {
+    padding-left: 3px;
+    padding-right: 17px;
+}
+.referenceDetail.expanded .abstracts:hover {
+    background-color: unset;
+}
+.tagLink:hover {
+    text-decoration: none;
+    background-color: #29559c;
+}
+.tagLink {
+    transition: background-color 0.15s ease-out;
+    font-size: 0.85rem;
+    padding: 2px 4px;
+    margin: 0 4px 3px 0;
+}
+.referenceDetail.expanded .tagLink {
+    font-size: 1rem;
+    padding: 4px 7px;
+    margin: 0 5px 7px 0;
+}
+
+.outline-btn {
+    padding: 0.25em 0.4em;
+    font-size: 0.75rem;
+    height: fit-content;
+    line-height: 0.8rem;
+    color: #404040 !important;
+    border: 1px solid gray;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    transition: background-color 0.15s ease;
+}
+input[type="submit"].btn, section button.btn, section input[type="button"].btn, section a.btn, .modal-content .btn {
+    border: 0 !important;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: baseline;
+    white-space: normal;
+}
+.outline-btn .dropdown-toggle {
+    padding: 0;
+    font-size: 0.75rem;
+}
+.outline-btn i {
+    line-height: 0.8rem;
+}
+.referenceDetail.expanded .outline-btn, .referenceDetail.expanded .outline-btn .dropdown-toggle {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.5rem;
+}
+.referenceDetail.expanded .dropdown.outline-btn {
+    padding: 0.25rem 0.5rem;
+}
+.referenceDetail.expanded .outline-btn .dropdown-toggle {
+    padding: 0;
+}
+.outline-btn.left{
+    border-radius: 4px 0 0 4px;
+}
+.outline-btn.right{
+    border-radius: 0 4px 4px 0;
+    border-left: none;
+}
+.outline-btn+ {
+    border-radius: 4px;
+}
+a.outline-btn {
+    font-weight: bold;
+}
+a.outline-btn:hover, .dropdown.outline-btn:hover {
+    text-decoration:none;
+    color: black;
+    background-color: #d4d4d4;
+}
+
 
 .list-item-clicked,
 .list-item-clicked:hover {
