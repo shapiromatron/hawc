@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.search import SearchQuery
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count, Q, QuerySet
@@ -561,7 +562,7 @@ class ReferenceQuerySet(models.QuerySet):
 
     def full_text_search(self, search_text):
         return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
-            Q(search=search_text) | Q(identifiers__unique_id=search_text)
+            search=SearchQuery(search_text)
         )
 
 
