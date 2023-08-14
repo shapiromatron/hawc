@@ -422,7 +422,7 @@ div.smart-tag.active {
     font-family: Source Sans Pro Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans;
 }
 .refTag {
-    color: #ffffff;
+    color: #ffffff !important;
     background-color: #162e51;
     border-radius: 10px;
     border: 0.15rem dotted transparent;
@@ -431,7 +431,7 @@ div.smart-tag.active {
     display: inline-block;
 }
 .refUserTag {
-    color: #162e51;
+    color: #162e51 !important;
     background-color: #ffffff;
     border: 0.15rem dotted #162e51;
 }
@@ -525,22 +525,8 @@ div.smart-tag.active {
     border-bottom: 5px solid #b0b0b0 !important;
 }
 
-.abstract_collapsed {
-    overflow: hidden;
-    white-space: nowrap !important;
-    width: 800px !important;
-    height: 30px;
-}
-
-.abstract {
-    text-overflow: ellipsis;
-    display: block;
-    white-space: unset;
-    width: auto;
-}
-
 .referenceDetail {
-    max-width: 65vw;
+    max-width: 75vw;
 }
 .referenceDetail.expanded {
     max-width: unset;
@@ -586,6 +572,9 @@ div.smart-tag.active {
     background-color: unset;
     overflow-y: unset;
     padding: unset;
+    margin: unset;
+}
+.html-referenceDetail .abstracts {
     margin: unset;
 }
 .abstracts:hover {
@@ -663,7 +652,7 @@ a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
 
 .refTagDiff,
 .refTagSame {
-    color: #ffffff;
+    color: #ffffff !important;
     border-radius: 8px;
     font-weight: bold;
     margin: 4px 2px 4px 8px;
@@ -671,14 +660,14 @@ a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
 }
 
 .refUserTagRemove {
-    color: rgb(128,0,0);
+    color: rgb(128,0,0) !important;
     background-color: #ffffff;
     border: 0.15rem dotted rgb(128,0,0);
     text-decoration: line-through rgba(128,0,0,0.5);
 }
 
 .refTagSame {
-    color: #ffffff;
+    color: #ffffff !important;
     font-size: 0.85rem;
     padding: 5px 7px 5px 7px;
     background-color: #7e7e7e;
