@@ -75,6 +75,9 @@ tfoot > tr > td {
     overflow-y: auto;
     resize:vertical;
 }
+.vw75 {
+    max-width: 75vw;
+}
 .clickable {
     transition: background-color 0.15s ease;
 }
@@ -540,9 +543,6 @@ div.smart-tag.active {
     padding-right: 20px;
     padding-left: 0px !important;
 }
-.vw75 {
-    max-width: 75vw;
-}
 .referenceDetail>div, .referenceDetail>p {
     padding-left: 8px;
 }
@@ -624,6 +624,8 @@ div.smart-tag.active {
     padding: 4px 7px;
     margin: 0 10px 14px 0;
 }
+
+/* custom button classes */
 .outline-btn {
     height: fit-content;
     color: #666666 !important;

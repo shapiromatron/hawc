@@ -74,9 +74,7 @@ class ReferenceTreeMain extends Component {
                                         : "References tagged:"}
                                 </span>
                             </h4>
-                            <span
-                                className="mb-0 ml-2 refTag"
-                                style={{fontSize: "1rem", padding: "2px 4px"}}>
+                            <span className="mb-0 ml-2 refTag">
                                 {store.selectedTag.get_full_name()}
                             </span>
                             <span>{yearText}</span>
