@@ -11,7 +11,15 @@ export const markKeywords = function(text, allSettings) {
             .concat(allSettings.set2.keywords)
             .concat(allSettings.set3.keywords),
         all_re = new RegExp(
-            "\\b".concat(all_tokens.join("\\b|\\b").replace(/\*/g, "[\\S]*?")).concat("\\b"),
+            "\\b"
+                .concat(
+                    all_tokens
+                        .join("WORD-JOIN-HERE")
+                        .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+                        .replace(/WORD-JOIN-HERE/gm, "\\b|\\b")
+                        .replace(/\*/g, "[\\S]*?")
+                )
+                .concat("\\b"),
             "gim"
         );
     if (all_tokens.length === 0) {
@@ -30,7 +38,9 @@ export const markText = function(text, settings) {
     }
     const re = new RegExp(
         `<mark>(?<token>\\b${settings.keywords
-            .join("\\b|\\b")
+            .join("WORD-JOIN-HERE")
+            .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+            .replace(/WORD-JOIN-HERE/gm, "\\b|\\b")
             .replace(/\*/g, "[\\S]*?")}\\b)</mark>`,
         "gim"
     );
