@@ -15,6 +15,7 @@ class Reference extends Component {
     renderIdentifiers(data, study_url, expanded) {
         const nodes = [];
 
+        const btn_size = expanded ? "btn-sm" : "btn-tny";
         if (data.full_text_url) {
             nodes.push(
                 <a
@@ -34,11 +35,13 @@ class Reference extends Component {
                 nodes.push(
                     <div className="d-flex mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
                         <a
-                            className="outline-btn left"
+                            className={`btn outline-btn ${btn_size} btn-left`}
                             href={v.database === "HERO" ? Hero.getUrl(v.id) : v.url}>
                             {v.database}
                         </a>
-                        <div className="outline-btn right">{v.id}</div>
+                        <div className={`outline-btn ${btn_size} btn-right font-weight-normal`}>
+                            {v.id}
+                        </div>
                     </div>
                 );
             })
@@ -46,16 +49,19 @@ class Reference extends Component {
 
         nodes.push(
             <div className="d-flex mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
-                <a className="outline-btn left" href={data.url}>
+                <a className={`btn outline-btn ${btn_size} btn-left`} href={data.url}>
                     <i className="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC
                 </a>
                 <div
-                    className="outline-btn right"
+                    className={`outline-btn ${btn_size} btn-right font-weight-normal`}
                     style={data.has_study ? {borderRadius: "0px"} : null}>
                     {data.pk.toString()}
                 </div>
                 {data.has_study ? (
-                    <a className="outline-btn right" href={study_url} key={h.randomString()}>
+                    <a
+                        className={`btn outline-btn ${btn_size} btn-right`}
+                        href={study_url}
+                        key={h.randomString()}>
                         <i className="fa fa-book" aria-hidden="true"></i>&nbsp;Study
                     </a>
                 ) : null}
@@ -69,7 +75,7 @@ class Reference extends Component {
                     className="d-flex dropdown flex-shrink-0"
                     key={h.randomString()}>
                     <a
-                        className="btn dropdown-toggle btn-sm outline-btn"
+                        className={`btn dropdown-toggle ${btn_size} outline-btn`}
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false">
@@ -118,53 +124,63 @@ class Reference extends Component {
             <div className={expanded ? "referenceDetail expanded" : "referenceDetail"}>
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
-                    <div className="d-flex ref_small">
-                        <div>
-                            <span title={expanded ? null : data.authors}>
-                                {authors}&nbsp;{year}
-                                {year != "" && data.journal && !expanded ? ". " : ""}
-                                <i className="gray">
-                                    {data.journal && !expanded ? data.journal : null}
-                                </i>
-                            </span>
+                    <div>
+                        <div className="d-flex ref_small">
+                            <div className="vw75 mb-2">
+                                <span title={expanded ? null : data.authors}>
+                                    {authors}&nbsp;{year}
+                                    {year != "" && data.journal && !expanded ? ". " : ""}
+                                    <i>{data.journal && !expanded ? data.journal : null}</i>
+                                </span>
+                            </div>
+                            {showActionsTagless ? (
+                                <ActionsButton
+                                    dropdownClasses={actionsBtnClassName}
+                                    items={actionItems.slice(1)}
+                                />
+                            ) : null}
+                            {showActions ? (
+                                <ActionsButton
+                                    dropdownClasses={actionsBtnClassName}
+                                    items={actionItems}
+                                />
+                            ) : null}
+                        </div>
+                        <div className="vw75">
                             {data.title ? (
                                 keywordDict ? (
                                     <p
-                                        style={{lineHeight: 1.25}}
-                                        className="ref_title my-1"
+                                        style={{lineHeight: 1.25, marginTop: "-5px"}}
+                                        className="ref_title mb-1"
                                         dangerouslySetInnerHTML={{
                                             __html: markKeywords(data.title, keywordDict),
                                         }}
                                     />
                                 ) : (
-                                    <p className="ref_title my-1">{data.title}</p>
+                                    <p
+                                        className="ref_title mb-1"
+                                        style={{lineHeight: 1.25, marginTop: "-5px"}}>
+                                        {data.title}
+                                    </p>
                                 )
                             ) : null}
                             {data.journal && expanded ? (
-                                <p className="gray">{data.journal}</p>
+                                <p className="ref_small">{data.journal}</p>
                             ) : null}
                         </div>
-                        {showActionsTagless ? (
-                            <ActionsButton
-                                dropdownClasses={actionsBtnClassName}
-                                items={actionItems.slice(1)}
-                            />
-                        ) : null}
-                        {showActions ? (
-                            <ActionsButton
-                                dropdownClasses={actionsBtnClassName}
-                                items={actionItems}
-                            />
-                        ) : null}
                     </div>
                 }
-                <div className="d-flex">
+                <div className="d-flex vw75">
                     {this.renderIdentifiers(data, reference.get_study_url(), expanded)}
                 </div>
                 {data.abstract ? (
                     <div
                         onClick={!expanded ? this.toggleAbstract : null}
-                        className={abstractExpanded ? "abstracts" : "abstracts abstract-collapsed"}
+                        className={
+                            abstractExpanded
+                                ? "abstracts vw75"
+                                : "abstracts abstract-collapsed vw75"
+                        }
                         style={expanded ? {} : {}}
                         dangerouslySetInnerHTML={
                             keywordDict

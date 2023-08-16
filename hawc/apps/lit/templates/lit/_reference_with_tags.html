@@ -1,4 +1,4 @@
-<div id="tagged-ref-{{ref.pk}}" class="referenceDetail">
+<div id="tagged-ref-{{ref.pk}}" class="vw75">
     {% if show_actions %}
     <div class="dropdown btn-group float-right">
         <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -16,16 +16,16 @@
             {% for id in ref.identifiers.all %}
             {% if id.get_url %}
             <div class="d-flex mr-1 mb-1 flex-shrink-0">
-                <a class="outline-btn left" href="{{id.get_url}}">{{id.get_database_display}}</a>
-                <div class="outline-btn right">{{id.unique_id}}</div>
+                <a class="btn btn-tny outline-btn btn-left" href="{{id.get_url}}">{{id.get_database_display}}</a>
+                <div class="outline-btn btn-tny btn-right font-weight-normal">{{id.unique_id}}</div>
             </div>
             {% endif %}
             {% endfor %}
             <div class="d-flex mr-1 mb-1 flex-shrink-0">
-                <a class="outline-btn left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
-                <div class="outline-btn right" {% if ref.has_study %} style="border-radius: 0px;" {% endif %}>{{ref.id}}</div>
+                <a class="btn btn-tny outline-btn btn-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
+                <div class="btn-tny outline-btn btn-right font-weight-normal" {% if ref.has_study %} style="border-radius: 0px;" {% endif %}>{{ref.id}}</div>
                 {% if ref.has_study %}
-                <a class="outline-btn right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
+                <a class="btn btn-tny outline-btn btn-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
                 {% endif %}
             </div>
         </div>
