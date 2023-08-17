@@ -6,6 +6,12 @@ export const addOuterTag = function(html, tag) {
     return match == null || match[1] != tag ? `<${tag}>${html}</${tag}>` : html;
 };
 
+export const escapeRegex = function(text) {
+    // Escape text containing regex special characters.
+    // Lifted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions#escaping
+    return text.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+};
+
 export const markKeywords = function(text, allSettings) {
     const all_tokens = allSettings.set1.keywords
             .concat(allSettings.set2.keywords)
@@ -13,9 +19,7 @@ export const markKeywords = function(text, allSettings) {
         all_re = new RegExp(
             "\\b"
                 .concat(
-                    all_tokens
-                        .join("WORD-JOIN-HERE")
-                        .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+                    escapeRegex(all_tokens.join("WORD-JOIN-HERE"))
                         .replace(/WORD-JOIN-HERE/gm, "\\b|\\b")
                         .replace(/\*/g, "[\\S]*?")
                 )
@@ -37,9 +41,7 @@ export const markText = function(text, settings) {
         return text;
     }
     const re = new RegExp(
-        `<mark>(?<token>\\b${settings.keywords
-            .join("WORD-JOIN-HERE")
-            .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+        `<mark>(?<token>\\b${escapeRegex(settings.keywords.join("WORD-JOIN-HERE"))
             .replace(/WORD-JOIN-HERE/gm, "\\b|\\b")
             .replace(/\*/g, "[\\S]*?")}\\b)</mark>`,
         "gim"
