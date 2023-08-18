@@ -1,21 +1,21 @@
 import re
 
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
-from .common import PlaywrightTestCase
+from .common import PlaywrightTest
 
 
-class TestSummary(PlaywrightTestCase):
-    def test_exploratory_heatmaps(self):
+class TestSummary(PlaywrightTest):
+    def test_exploratory_heatmaps(self, live_server, page: Page):
         """
         Assert we have a list of built-in exploratory heatmap tables and they render.
         """
-        page = self.page
-        page.goto(self.live_server_url)
+
+        page.goto(live_server.url)
 
         # /assessment/:id/endpoints/
         self.login_and_goto_url(
-            page, f"{self.live_server_url}/assessment/2/endpoints/", "pm@hawcproject.org"
+            page, f"{live_server.url}/assessment/2/endpoints/", "pm@hawcproject.org"
         )
         expect(page.locator("tr")).to_have_count(3)
         expect(page.locator("td")).to_have_count(8)
@@ -23,11 +23,11 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator('tr >> nth=1:has-text("Epidemiology")'))
 
         # /ani/assessment/:id/heatmap-study-design/
-        page.goto(self.live_server_url + "/ani/assessment/2/heatmap-study-design/")
+        page.goto(live_server.url + "/ani/assessment/2/heatmap-study-design/")
         expect(page.locator("svg")).not_to_have_count(0)
         expect(page.locator(".exp_heatmap_cell")).to_have_count(6)
 
-    def test_browsing(self):
+    def test_browsing(self, live_server, page: Page):
         """
         Assert we can render the completed HAWC visualizations. This includes:
 
@@ -35,12 +35,12 @@ class TestSummary(PlaywrightTestCase):
         - a data pivot summary page
         - a risk of bias heatmap can be rendered
         """
-        page = self.page
-        page.goto(self.live_server_url)
+
+        page.goto(live_server.url)
 
         # /summary/assessment/2/visuals/
         self.login_and_goto_url(
-            page, f"{self.live_server_url}/summary/assessment/2/visuals/", "pm@hawcproject.org"
+            page, f"{live_server.url}/summary/assessment/2/visuals/", "pm@hawcproject.org"
         )
         expect(page.locator("text=Available visualizations")).to_be_visible()
         assert page.locator("tr").count() > 10
@@ -55,112 +55,110 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("text=Download as a SVG")).to_be_visible()
 
         # rob heatmap
-        page.goto(self.live_server_url + "/summary/assessment/2/visuals/")
+        page.goto(live_server.url + "/summary/assessment/2/visuals/")
         page.locator("text='rob-heatmap'").click()
         expect(page).to_have_url(re.compile(r"rob-heatmap"))
         expect(page.locator('.dropdown-toggle:has-text("Actions")')).not_to_be_visible()
         expect(page.locator("svg.d3")).not_to_have_count(0)
         assert page.locator("svg.d3 g rect").count() > 5
 
-    def test_visuals(self):
+    def test_visuals(self, live_server, page: Page):
         """
         Tests to ensure all visual types are displayed.
         """
-        page = self.page
-        page.goto(self.live_server_url)
+
+        page.goto(live_server.url)
 
         # visual id should redirect to slug url
-        self.login_and_goto_url(
-            page, f"{self.live_server_url}/summary/visual/5/", "pm@hawcproject.org"
-        )
+        self.login_and_goto_url(page, f"{live_server.url}/summary/visual/5/", "pm@hawcproject.org")
         expect(page).to_have_url(re.compile(r"/summary/visual/assessment/2/barchart/"))
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .legend")).not_to_have_count(0)
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/crossview/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/crossview/")
         expect(page.locator("text=dose")).not_to_have_count(0)
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .crossview_path_group")).not_to_have_count(0)
 
         page.goto(
-            self.live_server_url
+            live_server.url
             + "/summary/data-pivot/assessment/2/animal-bioassay-data-pivot-endpoint/"
         )
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .x_gridlines")).not_to_have_count(0)
         expect(page.locator("svg >> .y_gridlines")).not_to_have_count(0)
 
-        page.goto(self.live_server_url + "/summary/data-pivot/assessment/2/data-pivot-epi/")
+        page.goto(live_server.url + "/summary/data-pivot/assessment/2/data-pivot-epi/")
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .x_gridlines")).not_to_have_count(0)
         expect(page.locator("svg >> .y_gridlines")).not_to_have_count(0)
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/embedded-tableau/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/embedded-tableau/")
         expect(page.locator("h2:has-text('embedded-tableau')")).to_be_visible()
         expect(page.locator("tableau-viz >> iframe")).to_be_visible()
         expect(page.locator("iframe")).not_to_have_count(0)
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/rob-heatmap/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/rob-heatmap/")
         expect(page.locator("h2:has-text('rob-heatmap')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .legend")).not_to_have_count(0)
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/tagtree/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/tagtree/")
         expect(page.locator("text='Human Study'")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .tagnode")).to_have_count(5)
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/exploratory-heatmap/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/exploratory-heatmap/")
         expect(page.locator("h2:has-text('exploratory-heatmap')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         assert page.locator("svg.d3 >> g >> rect").count() > 5
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/bioassay-aggregation/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/bioassay-aggregation/")
         expect(page.locator("h2:has-text('bioassay-aggregation')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         assert page.locator("svg.d3 >> g >> circle").count() > 5
 
-        page.goto(self.live_server_url + "/summary/visual/assessment/2/plotly/")
+        page.goto(live_server.url + "/summary/visual/assessment/2/plotly/")
         expect(page.locator("h2:has-text('plotly')")).to_be_visible()
         expect(page.locator(".plotly")).to_be_visible()
 
-    def test_tables(self):
+    def test_tables(self, live_server, page: Page):
         """
         Tests to ensure all visual types are displayed.
         """
-        page = self.page
-        page.goto(self.live_server_url)
+
+        page.goto(live_server.url)
 
         # check summary table
         self.login_and_goto_url(
-            page, self.live_server_url + "/summary/assessment/1/tables/", "pm@hawcproject.org"
+            page, live_server.url + "/summary/assessment/1/tables/", "pm@hawcproject.org"
         )
         expect(page.locator("text=Available tables")).to_be_visible()
         expect(page.locator("table >> tbody >> tr")).to_have_count(3)
 
         # check generic table
-        page.goto(self.live_server_url + "/summary/assessment/1/tables/Generic-1/")
+        page.goto(live_server.url + "/summary/assessment/1/tables/Generic-1/")
         expect(page.locator(".summaryTable")).to_be_visible()
 
         # check evidence profile
-        page.goto(self.live_server_url + "/summary/assessment/1/tables/Evidence-Profile-1/")
+        page.goto(live_server.url + "/summary/assessment/1/tables/Evidence-Profile-1/")
         expect(page.locator(".summaryTable")).to_be_visible()
 
         # check study evaluation
-        page.goto(self.live_server_url + "/summary/assessment/1/tables/Study-Evaluation-1/")
+        page.goto(live_server.url + "/summary/assessment/1/tables/Study-Evaluation-1/")
         expect(page.locator(".summaryTable")).to_be_visible()
 
-    def test_modals(self):
+    def test_modals(self, live_server, page: Page):
         """
         Tests to ensure that modals on visuals are working correctly.
         """
-        page = self.page
-        page.goto(self.live_server_url)
+
+        page.goto(live_server.url)
 
         # check study display modal
         self.login_and_goto_url(
             page,
-            self.live_server_url
+            live_server.url
             + "/summary/data-pivot/assessment/2/animal-bioassay-data-pivot-endpoint/",
             "pm@hawcproject.org",
         )

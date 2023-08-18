@@ -1,16 +1,16 @@
-from playwright.sync_api import expect
+from django.urls import reverse
+from playwright.sync_api import Page, expect
 
-from .common import PlaywrightTestCase
+from .common import PlaywrightTest
 
 
-class TestCleanup(PlaywrightTestCase):
-    def test_cleanup(self):
-        page = self.page
-        page.goto(self.live_server_url)
+class TestCleanup(PlaywrightTest):
+    def test_cleanup(self, live_server, page: Page):
+        page.goto("/")
 
         # /assessment/:id/clean-extracted-data/
         self.login_and_goto_url(
-            page, f"{self.live_server_url}/assessment/1/clean-extracted-data/", "pm@hawcproject.org"
+            page, reverse("assessment:clean_extracted_data", args=(1,)), "pm@hawcproject.org"
         )
         expect(page.locator("text=Cleanup Chemical Z")).to_be_visible()
 
@@ -29,7 +29,7 @@ class TestCleanup(PlaywrightTestCase):
         expect(page.locator("text=N/A (1)")).to_be_visible()
 
         # /assessment/:id/clean-study-metrics/
-        page.goto(f"{self.live_server_url}/assessment/1/clean-study-metrics/")
+        page.goto(reverse("assessment:clean_study_metrics", args=(1,)))
         expect(page.locator("text=Select the metric to edit")).to_be_visible()
         page.locator("text=Load responses").click()
         expect(page.locator('css=p:has-text("1 response met your criteria")')).to_be_visible()

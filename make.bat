@@ -103,14 +103,16 @@ goto :eof
 playwright install --with-deps chromium
 set INTEGRATION_TESTS=1
 set PWDEBUG=0
-py.test -sv tests/integration/
+set PYTEST_BASE_URL=http://localhost:8080
+py.test -sv --liveserver localhost:8080 tests/integration/
 goto :eof
 
 :test-integration-debug
 playwright install --with-deps chromium
 set INTEGRATION_TESTS=1
 set PWDEBUG=1
-py.test -sv tests/integration/
+set PYTEST_BASE_URL=http://localhost:8080
+py.test -sv --liveserver localhost:8080 tests/integration/
 goto :eof
 
 :test-refresh

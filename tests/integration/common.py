@@ -1,8 +1,6 @@
 import os
 
 import pytest
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.test import TestCase
 from playwright.sync_api import Page
 
 RUN_INTEGRATION = os.environ.get("INTEGRATION_TESTS") is not None
@@ -11,22 +9,7 @@ if RUN_INTEGRATION:
 
 
 @pytest.mark.skipif(not RUN_INTEGRATION, reason="integration test")
-class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
-    """
-    We use a single class that inherits from both StaticLiveServerTestCase and TestCase
-    in order to supersede properties of StaticLiveServerTestCase that cause the database to be
-    flushed after every test, while still being able to utilize a live server for HTTP requests.
-
-    Further reading: https://code.djangoproject.com/ticket/23640#comment:3
-    """
-
-    host = os.environ.get("LIVESERVER_HOST", "localhost")
-    port = int(os.environ.get("LIVESERVER_PORT", 0))
-
-    @pytest.fixture(autouse=True)
-    def set_page(self, page: Page):
-        self.page: Page = page
-
+class PlaywrightTest:
     def login_and_goto_url(
         self, page: Page, url: str = "", username: str = "admin@hawcproject.org"
     ):

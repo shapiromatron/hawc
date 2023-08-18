@@ -81,11 +81,11 @@ test:  ## Run python tests
 
 test-integration:  ## Run integration tests (requires `npm run start`)
 	@playwright install --with-deps chromium
-	@INTEGRATION_TESTS=1 py.test -sv tests/integration/
+	@INTEGRATION_TESTS=1 PYTEST_BASE_URL=http://localhost:8080 py.test -sv --liveserver localhost:8080 tests/integration/
 
 test-integration-debug:  ## Run integration tests in debug mode (requires npm run start)
 	@playwright install --with-deps chromium
-	@INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/
+	@INTEGRATION_TESTS=1 PYTEST_BASE_URL=http://localhost:8080 PWDEBUG=1 py.test -sv --liveserver localhost:8080 tests/integration/
 
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes

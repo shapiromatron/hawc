@@ -1,17 +1,18 @@
 import re
 
-from playwright.sync_api import expect
+from django.urls import reverse
+from playwright.sync_api import Page, expect
 
-from .common import PlaywrightTestCase
+from .common import PlaywrightTest
 
 
-class TestLogin(PlaywrightTestCase):
-    def test_login(self):
+class TestLogin(PlaywrightTest):
+    def test_login(self, live_server, page: Page):
         """
         expect( that we're able to login/logout successfully and an errors are displayed as expected.
         """
-        page = self.page
-        page.goto(self.live_server_url)
+
+        page.goto("/")
 
         expect(page.locator(".navbar a >> text=Login")).to_be_visible()
         page.locator(".navbar a >> text=Login").click()
@@ -31,9 +32,9 @@ class TestLogin(PlaywrightTestCase):
         page.locator('input[name="username"]').fill("admin@hawcproject.org")
         page.locator('input[name="password"]').fill("pw")
         page.locator('input:has-text("Login")').click()
-        expect(page).to_have_url(self.live_server_url + "/portal/")
+        expect(page).to_have_url(reverse("portal"))
 
         # confirm logout
         page.locator("#navbarDropdownMenuLink").click()
         page.locator("div.dropdown-menu >> text=Logout").click()
-        expect(page).to_have_url(self.live_server_url + "/")
+        expect(page).to_have_url("/")

@@ -1,17 +1,17 @@
 import re
 
-from playwright.sync_api import expect
+from django.urls import reverse
+from playwright.sync_api import Page, expect
 
-from .common import PlaywrightTestCase
+from .common import PlaywrightTest
 
 
-class TestEco(PlaywrightTestCase):
-    def test_eco(self):
-        page = self.page
-        page.goto(self.live_server_url)
+class TestEco(PlaywrightTest):
+    def test_eco(self, live_server, page: Page):
+        page.goto("/")
 
         # /study-population/:id/
-        self.login_and_goto_url(page, f"{self.live_server_url}/eco/design/1/", "pm@hawcproject.org")
+        self.login_and_goto_url(page, reverse("eco:design_detail", args=(1,)), "pm@hawcproject.org")
 
         # Check that all tables are visible on detail page
         expect(page.locator("text=Causes")).to_be_visible()

@@ -1,25 +1,25 @@
 import re
 
-from playwright.sync_api import expect
+from django.urls import reverse
+from playwright.sync_api import Page, expect
 
-from .common import PlaywrightTestCase
+from .common import PlaywrightTest
 
 
-class TestBioassay(PlaywrightTestCase):
-    def test_read(self):
-        page = self.page
-        page.goto(self.live_server_url)
+class TestBioassay(PlaywrightTest):
+    def test_read(self, live_server, page: Page):
+        page.goto("/")
 
         # /experiment/:id/
         self.login_and_goto_url(
-            page, f"{self.live_server_url}/ani/experiment/1/", "pm@hawcproject.org"
+            page, reverse("animal:experiment_detail", args=(1,)), "pm@hawcproject.org"
         )
         expect(page.locator("text=Multiple generations")).to_be_visible()
         expect(page.locator('css=#objContainer table:has-text("2 year bioassay")')).to_have_count(1)
         expect(page.locator("css=#ag-table tbody tr")).to_have_count(1)
 
         # /animal-group/:id/
-        page.goto(f"{self.live_server_url}/ani/animal-group/1/")
+        page.goto(reverse("animal:animal_group_detail", args=(1,)))
         expect(page.locator("text=Dosing regime")).to_be_visible()
         expect(page.locator("text=sprague dawley")).to_be_visible()
         expect(page.locator("text=Oral diet")).to_be_visible()
@@ -27,17 +27,16 @@ class TestBioassay(PlaywrightTestCase):
         expect(page.locator("text=my outcome")).to_be_visible()
 
         # /endpoint/:id/
-        page.goto(f"{self.live_server_url}/ani/endpoint/1/")
+        page.goto(reverse("animal:endpoint_detail", args=(1,)))
         expect(page.locator("text=my outcome")).not_to_have_count(0)
         expect(page.locator("css=svg")).not_to_have_count(0)
         expect(page.locator("css=.d3 .dr_dots .dose_points")).to_have_count(3)
         expect(page.locator("#dr-tbl")).not_to_have_count(0)
         expect(page.locator("#dr-tbl tr")).to_have_count(5)
 
-    def test_write(self):
-        page = self.page
-        page.goto(self.live_server_url)
-        self.login_and_goto_url(page, f"{self.live_server_url}/study/1/", "team@hawcproject.org")
+    def test_write(self, live_server, page: Page):
+        page.goto("/")
+        self.login_and_goto_url(page, reverse("study:detail", args=(1,)), "team@hawcproject.org")
         page.locator("text=Actions").click()
         page.locator("text=Create new experiment").click()
 
