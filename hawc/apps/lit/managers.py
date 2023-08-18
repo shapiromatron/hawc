@@ -572,7 +572,7 @@ class ReferenceQuerySet(models.QuerySet):
         Returns:
             Queryset: The filtered ReferenceQueryset
         """
-        query = Q(search=SearchQuery(search_text))
+        query = Q(search=SearchQuery(search_text, search_type="websearch"))
         if filters is None:
             filters = query
         else:
