@@ -124,3 +124,21 @@ class TestRefListExtract:
         resp = c.post(url, {"references": 11, "study_type": "bioassay"}, follow=True)
         assert success in resp.content
         assert qs.exists() is True
+
+
+@pytest.mark.django_db
+class TestRefFilterList:
+    def test_full_text_search(self, db_keys):
+        c = Client()
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+        url = reverse("lit:ref_search", args=(db_keys.assessment_final,))
+
+        # search by author/year combo
+        resp = c.get(url + "?ref_search=kawana+2001")
+        n_results = b"References (1 found)"
+        title = b"Psycho-physiological effects of the terrorist sarin attack on the Tokyo subway system."
+        assert (n_results in resp.content) and (title in resp.content)
+
+        # search by identifier
+        resp = c.get(url + "?ref_search=10.1093%2Fmilmed%2F166.suppl_2.23")
+        assert (n_results in resp.content) and (title in resp.content)
