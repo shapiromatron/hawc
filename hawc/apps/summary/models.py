@@ -48,7 +48,7 @@ from ..invitro import exports as ivexports
 from ..invitro.models import IVEndpoint
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
-from . import constants, managers
+from . import constants, managers, prefilters
 
 logger = logging.getLogger(__name__)
 
@@ -747,13 +747,8 @@ class DataPivotQuery(DataPivot):
         "percent-response, where dose-units are not needed, or for "
         "creating one plot similar, but not identical, dose-units.",
     )
-    prefilters = models.TextField(default="{}")
-    published_only = models.BooleanField(
-        default=True,
-        verbose_name="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
-    )
+    prefilters = models.JSONField(default=dict)
+
 
     def clean(self):
         count = self.get_queryset().count()
@@ -776,62 +771,30 @@ class DataPivotQuery(DataPivot):
             )
             raise ValidationError(err)
 
-    def _get_dataset_filters(self):
-        filters = {}
+    def _refine_queryset(self, qs):
         epi_version = self.assessment.epi_version
 
         if self.evidence_type == constants.StudyType.BIOASSAY:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["animal_group__experiment__study__published"] = True
+            qs = qs.filter(assessment_id = self.assessment_id)
             if self.preferred_units:
-                filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
+                qs = qs.filter(animal_group__dosing_regime__doses__dose_units__in = self.preferred_units)
 
         elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["study_population__study__published"] = True
+            qs = qs.filter(assessment_id = self.assessment_id)
 
         elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
-            filters["design__study__assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["design__study__published"] = True
+            qs = qs.filter(design__study__assessment_id = self.assessment_id)
 
         elif self.evidence_type == constants.StudyType.EPI_META:
-            filters["protocol__study__assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["protocol__study__published"] = True
+            qs = qs.filter(protocol__study__assessment_id = self.assessment_id)
 
         elif self.evidence_type == constants.StudyType.IN_VITRO:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["experiment__study__published"] = True
+            qs = qs.filter(assessment_id = self.assessment_id)
 
         elif self.evidence_type == constants.StudyType.ECO:
-            filters["design__study__assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["design__study__published"] = True
+            qs = qs.filter(design__study__assessment_id = self.assessment_id)
 
-        Prefilter.setFiltersFromObj(filters, self.prefilters)
-        return filters
-
-    def _get_dataset_queryset(self, filters):
-        epi_version = self.assessment.epi_version
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            qs = Endpoint.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
-            qs = Outcome.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
-            qs = DataExtraction.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            qs = MetaResult.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            qs = IVEndpoint.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.ECO:
-            qs = Result.objects.filter(**filters)
-        else:
-            raise ValueError("Invalid data type")
-        return qs.order_by("id")
+        return qs
 
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == constants.StudyType.BIOASSAY:
@@ -893,8 +856,10 @@ class DataPivotQuery(DataPivot):
         return exporter
 
     def get_queryset(self):
-        filters = self._get_dataset_filters()
-        return self._get_dataset_queryset(filters)
+        fs = prefilters.Prefilter.from_study_type(self.evidence_type,self.assessment).value
+        qs = fs(data=self.prefilters,assessment=self.assessment).qs
+        qs = self._refine_queryset(qs)
+        return qs.order_by("id")
 
     def get_dataset(self) -> FlatExport:
         qs = self.get_queryset()

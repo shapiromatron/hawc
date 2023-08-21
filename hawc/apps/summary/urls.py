@@ -120,7 +120,7 @@ urlpatterns = [
         name="dp_new-query",
     ),
     path(
-        "data-pivot/assessment/<int:pk>/create/query/1/",
+        "data-pivot/assessment/<int:pk>/create/query/<int:study_type>/",
         views.DataPivotQueryNew1.as_view(),
         name="dp_new-query1",
     ),
@@ -153,6 +153,11 @@ urlpatterns = [
         "data-pivot/assessment/<int:pk>/<slug:slug>/query-update/",
         views.DataPivotUpdateQuery.as_view(),
         name="dp_query-update",
+    ),
+    path(
+        "data-pivot/assessment/<int:pk>/<slug:slug>/query-update1/",
+        views.DataPivotUpdateQuery1.as_view(),
+        name="dp_query-update1",
     ),
     path(
         "data-pivot/assessment/<int:pk>/<slug:slug>/file-update/",

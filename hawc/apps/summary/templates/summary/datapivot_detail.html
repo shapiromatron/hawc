@@ -10,7 +10,7 @@
       {% if obj_perms.edit %}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a>
-        <a class="dropdown-item" href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}{% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a>
+        <a class="dropdown-item" href="{% if object.datapivotquery %}{% url 'summary:dp_query-update1' assessment.pk object.slug %}{% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a>
         <a class="dropdown-item" href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a>
       {% endif %}
     </div>

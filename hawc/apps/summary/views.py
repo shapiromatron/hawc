@@ -647,6 +647,19 @@ class DataPivotQueryNew1(DataPivotNew):
     form_class = forms.DataPivotQueryForm1
     template_name = "summary/datapivot_form1.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        try:
+            # get study type enum
+            study_type = constants.StudyType(self.kwargs.get("study_type"))
+            # make sure prefilter exists for study type
+            prefilters.Prefilter.from_study_type(study_type,self.assessment)
+            # pass study type to form
+            kwargs["evidence_type"] = study_type
+        except (KeyError,ValueError):
+            raise Http404
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["file_loader"] = False
@@ -769,6 +782,20 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
         )
         return context
 
+class DataPivotUpdateQuery1(GetDataPivotObjectMixin, BaseUpdate):
+    success_message = "Data Pivot updated."
+    model = models.DataPivotQuery
+    form_class = forms.DataPivotQueryForm1
+    template_name = "summary/datapivot_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["file_loader"] = False
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
+        return context
 
 class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
     success_message = "Data Pivot updated."

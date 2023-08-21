@@ -1090,18 +1090,49 @@ class DataPivotQueryForm1(DataPivotForm):
             "settings",
             "caption",
             "published",
-            "published_only",
             "prefilters",
         )
 
     def _get_prefilter_form(self,data,**form_kwargs):
         prefix = form_kwargs.pop("prefix",None)
-        return prefilters.BioassayPrefilter(data=data,prefix=prefix,assessment=self.instance.assessment,form_kwargs=form_kwargs).form
+        #data = json.loads(data) # TODO migrate to json
+        return self.prefilter(data=data,prefix=prefix,assessment=self.instance.assessment,form_kwargs=form_kwargs).form
     
     def __init__(self, *args, **kwargs):
+        evidence_type = kwargs.pop("evidence_type",None)
         super().__init__(*args, **kwargs)
-        self.fields["prefilters"] = DynamicFormField(prefix="prefilters",form_class=self._get_prefilter_form)
 
+        if evidence_type is not None:
+            self.instance.evidence_type = evidence_type
+        self.fields["evidence_type"].initial = self.instance.evidence_type
+        self.fields["evidence_type"].disabled = True
+
+        self.prefilter = prefilters.Prefilter.from_study_type(self.instance.evidence_type,self.instance.assessment).value
+        self.fields["prefilters"] = DynamicFormField(prefix="prefilters",form_class=self._get_prefilter_form,label="")
+        self.fields["preferred_units"].required = False
+        self.js_units_choices = json.dumps(
+            [
+                {"id": obj.id, "name": obj.name}
+                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+            ]
+        )
+        self.helper = self.setHelper()
+
+    def save(self, commit=True):
+        self.instance.preferred_units = self.cleaned_data.get("preferred_units", [])
+        return super().save(commit=commit)
+
+    def clean_export_style(self):
+        evidence_type = self.cleaned_data["evidence_type"]
+        export_style = self.cleaned_data["export_style"]
+        if (
+            evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)
+            and export_style != constants.ExportStyle.EXPORT_GROUP
+        ):
+            raise forms.ValidationError(
+                "Outcome/Result level export not implemented for this data-type."
+            )
+        return export_style
             
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
@@ -1118,7 +1149,6 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             "settings",
             "caption",
             "published",
-            "published_only",
             "prefilters",
         )
 

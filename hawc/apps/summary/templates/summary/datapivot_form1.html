@@ -24,7 +24,7 @@
       {% endif %}
 
       window.app.startup("assessmentStartup", function(app){
-        var doseWidget = new app.DoseUnitsWidget($('form'), {
+        new app.DoseUnitsWidget($('form'), {
           choices: js_units_choices,
           el: '#id_preferred_units',
         });
@@ -37,6 +37,12 @@
           );
       })
 
+      // determine which fields to display depending on data-type
+      const value = {{form.instance.evidence_type}},
+        aniOnlyDivs = $("#div_id_preferred_units"),
+        aniIvOnlyDivs = $("#div_id_export_style");
+      (value === 0) ? aniOnlyDivs.show() : aniOnlyDivs.hide();
+      (value == 0 || value == 2) ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
     });
   </script>
 {% endblock extrajs %}
