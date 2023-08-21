@@ -289,7 +289,7 @@ class Visual(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
-    prefilters = models.TextField(default="{}")
+    prefilters = models.JSONField(default=dict)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
         related_name="visuals",
@@ -459,6 +459,17 @@ class Visual(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
+    def get_filterset(self):
+        return prefilters.VisualTypePrefilter.from_visual_type(self.visual_type).value
+
+    def get_request_prefilters(self,request):
+        # TODO move get_editing_dataset out of models
+        # so that we can utilize the forms
+
+        # find all keys that start with "prefilters-" prefix
+        prefix = "prefilters-"
+        return {key[len(prefix):]:value for key,value in request.POST.lists() if key.startswith(prefix)}
+
     def get_endpoints(self, request=None):
         qs = Endpoint.objects.none()
         filters = {"assessment_id": self.assessment_id}
@@ -473,18 +484,17 @@ class Visual(models.Model):
             qs = Endpoint.objects.filter(**filters)
 
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
+            fs = self.get_filterset()
             if request:
                 dose_id = tryParseInt(request.POST.get("dose_units"), -1)
-                Prefilter.setFiltersFromForm(
-                    self.assessment, filters, request.POST, self.visual_type
-                )
+                qs = fs(data=self.get_request_prefilters(request),assessment=self.assessment).qs
 
             else:
                 dose_id = self.dose_units_id
-                Prefilter.setFiltersFromObj(filters, self.prefilters)
+                qs = fs(data=self.prefilters,assessment=self.assessment).qs
 
             filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
-            qs = Endpoint.objects.filter(**filters).distinct("id")
+            qs = qs.filter(**filters).distinct("id")
 
         return qs
 
@@ -501,14 +511,13 @@ class Visual(models.Model):
             constants.VisualType.ROB_HEATMAP,
             constants.VisualType.ROB_BARCHART,
         ]:
+            fs = self.get_filterset()
             if request:
-                efilters = {"assessment_id": self.assessment_id}
-                Prefilter.setFiltersFromForm(
-                    self.assessment, efilters, request.POST, self.visual_type
-                )
-                if len(efilters) > 1:
+                prefilters = self.get_request_prefilters(request)
+                if any(value for value in prefilters.values()):
+                    endpoint_qs = fs(data=prefilters,assessment=self.assessment).qs
                     filters["id__in"] = set(
-                        Endpoint.objects.filter(**efilters).values_list(
+                        endpoint_qs.filter(assessment_id=self.assessment_id).values_list(
                             "animal_group__experiment__study_id", flat=True
                         )
                     )
@@ -518,11 +527,10 @@ class Visual(models.Model):
                 qs = Study.objects.filter(**filters)
 
             else:
-                if self.prefilters != "{}":
-                    efilters = {"assessment_id": self.assessment_id}
-                    Prefilter.setFiltersFromObj(efilters, self.prefilters)
+                if any(value for value in self.prefilters.values()):
+                    endpoint_qs = fs(data=self.prefilters,assessment=self.assessment).qs
                     filters["id__in"] = set(
-                        Endpoint.objects.filter(**efilters).values_list(
+                        endpoint_qs.filter(assessment_id=self.assessment_id).values_list(
                             "animal_group__experiment__study_id", flat=True
                         )
                     )
@@ -854,9 +862,13 @@ class DataPivotQuery(DataPivot):
             )
 
         return exporter
+    
+    def get_filterset(self):
+        return prefilters.StudyTypePrefilter.from_study_type(self.evidence_type,self.assessment).value
+
 
     def get_queryset(self):
-        fs = prefilters.Prefilter.from_study_type(self.evidence_type,self.assessment).value
+        fs = self.get_filterset()
         qs = fs(data=self.prefilters,assessment=self.assessment).qs
         qs = self._refine_queryset(qs)
         return qs.order_by("id")

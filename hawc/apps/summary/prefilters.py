@@ -15,7 +15,7 @@ from ..epimeta.models import MetaResult
 from ..invitro.models import IVEndpoint, IVEndpointCategory, IVChemical
 from ..eco.models import Result
 
-from .constants import StudyType
+from .constants import StudyType, VisualType
 
 class TestForm(forms.Form):
     
@@ -266,7 +266,7 @@ class InvitroPrefilter(BaseFilterSet):
         return form
 
 
-class Prefilter(Enum):
+class StudyTypePrefilter(Enum):
     BIOASSAY = BioassayPrefilter
     EPIV1 = EpiV1Prefilter
     EPIV2 = EpiV2Prefilter
@@ -282,4 +282,15 @@ class Prefilter(Enum):
                 name = "EPIV1"
             elif assessment.epi_version == EpiVersion.V2:
                 name = "EPIV2"
+        return cls[name]
+
+class VisualTypePrefilter(Enum):
+    BIOASSAY_CROSSVIEW = BioassayPrefilter
+    ROB_HEATMAP = BioassayPrefilter
+    ROB_BARCHART = BioassayPrefilter
+
+    @classmethod
+    def from_visual_type(cls,visual_type:VisualType):
+        visual_type = VisualType(visual_type)
+        name = visual_type.name
         return cls[name]

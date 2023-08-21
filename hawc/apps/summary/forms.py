@@ -681,6 +681,24 @@ class CrossviewForm(PrefilterMixin, VisualForm):
         model = models.Visual
         exclude = ("assessment", "visual_type", "endpoints", "studies")
 
+class CrossviewForm1(VisualForm):
+
+    def _get_prefilter_form(self,data,**form_kwargs):
+        prefix = form_kwargs.pop("prefix",None)
+        return self.prefilter(data=data,prefix=prefix,assessment=self.instance.assessment,form_kwargs=form_kwargs).form
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
+            self.instance.assessment
+        )
+        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(constants.VisualType.BIOASSAY_CROSSVIEW).value
+        self.fields["prefilters"] = DynamicFormField(prefix="prefilters",form_class=self._get_prefilter_form,label="")
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        exclude = ("assessment", "visual_type", "endpoints", "studies")
 
 class RoBForm(PrefilterMixin, VisualForm):
     prefilter_include = ("bioassay",)
@@ -696,6 +714,24 @@ class RoBForm(PrefilterMixin, VisualForm):
         model = models.Visual
         exclude = ("assessment", "visual_type", "dose_units", "endpoints")
 
+class RoBForm1(VisualForm):
+
+    def _get_prefilter_form(self,data,**form_kwargs):
+        prefix = form_kwargs.pop("prefix",None)
+        return self.prefilter(data=data,prefix=prefix,assessment=self.instance.assessment,form_kwargs=form_kwargs).form
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(
+            assessment=self.instance.assessment
+        )
+        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(constants.VisualType.ROB_BARCHART).value
+        self.fields["prefilters"] = DynamicFormField(prefix="prefilters",form_class=self._get_prefilter_form,label="")
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        exclude = ("assessment", "visual_type", "dose_units", "endpoints")
 
 class TagtreeForm(VisualForm):
     root_node = forms.TypedChoiceField(
@@ -979,9 +1015,9 @@ def get_visual_form(visual_type):
     try:
         return {
             constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
-            constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
-            constants.VisualType.ROB_HEATMAP: RoBForm,
-            constants.VisualType.ROB_BARCHART: RoBForm,
+            constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm1,
+            constants.VisualType.ROB_HEATMAP: RoBForm1,
+            constants.VisualType.ROB_BARCHART: RoBForm1,
             constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
             constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
@@ -1095,7 +1131,6 @@ class DataPivotQueryForm1(DataPivotForm):
 
     def _get_prefilter_form(self,data,**form_kwargs):
         prefix = form_kwargs.pop("prefix",None)
-        #data = json.loads(data) # TODO migrate to json
         return self.prefilter(data=data,prefix=prefix,assessment=self.instance.assessment,form_kwargs=form_kwargs).form
     
     def __init__(self, *args, **kwargs):
@@ -1107,7 +1142,7 @@ class DataPivotQueryForm1(DataPivotForm):
         self.fields["evidence_type"].initial = self.instance.evidence_type
         self.fields["evidence_type"].disabled = True
 
-        self.prefilter = prefilters.Prefilter.from_study_type(self.instance.evidence_type,self.instance.assessment).value
+        self.prefilter = prefilters.StudyTypePrefilter.from_study_type(self.instance.evidence_type,self.instance.assessment).value
         self.fields["prefilters"] = DynamicFormField(prefix="prefilters",form_class=self._get_prefilter_form,label="")
         self.fields["preferred_units"].required = False
         self.js_units_choices = json.dumps(

@@ -653,7 +653,7 @@ class DataPivotQueryNew1(DataPivotNew):
             # get study type enum
             study_type = constants.StudyType(self.kwargs.get("study_type"))
             # make sure prefilter exists for study type
-            prefilters.Prefilter.from_study_type(study_type,self.assessment)
+            prefilters.StudyTypePrefilter.from_study_type(study_type,self.assessment)
             # pass study type to form
             kwargs["evidence_type"] = study_type
         except (KeyError,ValueError):
