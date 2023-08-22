@@ -1,24 +1,23 @@
-import django_filters as df
-from django.forms.widgets import CheckboxInput
-from django import forms
 from enum import Enum
 
+import django_filters as df
+from django import forms
+from django.forms.widgets import CheckboxInput
+
+from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion
 from ..assessment.models import Assessment, EffectTag
-from ..animal.models import Endpoint
-from ..common.filterset import BaseFilterSet, filter_noop
+from ..common.filterset import BaseFilterSet
 from ..common.forms import BaseFormHelper
-from ..study.models import Study
 from ..epi.models import Outcome
-from ..epiv2.models import DataExtraction
 from ..epimeta.models import MetaResult
-from ..invitro.models import IVEndpoint, IVEndpointCategory, IVChemical
-from ..eco.models import Result
-
+from ..epiv2.models import DataExtraction
+from ..invitro.models import IVChemical, IVEndpoint, IVEndpointCategory
+from ..study.models import Study
 from .constants import StudyType, VisualType
 
+
 class TestForm(forms.Form):
-    
     @property
     def helper(self):
         helper = BaseFormHelper(self)
@@ -26,10 +25,11 @@ class TestForm(forms.Form):
 
         return helper
 
+
 def filter_published_only(queryset, name, value):
     if not value:
         return queryset
-    return queryset.filter(**{name:True})
+    return queryset.filter(**{name: True})
 
 
 class BioassayPrefilter(BaseFilterSet):
@@ -74,8 +74,8 @@ class BioassayPrefilter(BaseFilterSet):
     )
     effects__in = df.MultipleChoiceFilter(
         field_name="effects",
-                            label="Tags to include",
-                            help_text="""Select one or more effect-tags to include in the plot.
+        label="Tags to include",
+        help_text="""Select one or more effect-tags to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
 
@@ -87,13 +87,16 @@ class BioassayPrefilter(BaseFilterSet):
             "system__in",
             "organ__in",
             "effect__in",
-            "effect_subtype__in","effects__in",
+            "effect_subtype__in",
+            "effects__in",
         ]
         form = TestForm
 
     def create_form(self):
         form = super().create_form()
-        form.fields["animal_group__experiment__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["animal_group__experiment__study__in"].choices = Study.objects.get_choices(
+            self.assessment.pk
+        )
         form.fields["system__in"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
         form.fields["organ__in"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
         form.fields["effect__in"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)
@@ -102,7 +105,6 @@ class BioassayPrefilter(BaseFilterSet):
         )
         form.fields["effects__in"].choices = EffectTag.objects.get_choices(self.assessment.pk)
         return form
-
 
 
 class EpiV1Prefilter(BaseFilterSet):
@@ -123,20 +125,20 @@ class EpiV1Prefilter(BaseFilterSet):
     # epi
     system__in = df.MultipleChoiceFilter(
         field_name="system",
-                            label="Systems to include",
-                            help_text="""Select one or more systems to include in the plot.
+        label="Systems to include",
+        help_text="""Select one or more systems to include in the plot.
                                  If no system is selected, no endpoints will be available.""",
     )
     effect__in = df.MultipleChoiceFilter(
         field_name="effect",
-                            label="Effects to include",
-                            help_text="""Select one or more effects to include in the plot.
+        label="Effects to include",
+        help_text="""Select one or more effects to include in the plot.
                                  If no effect is selected, no endpoints will be available.""",
     )
     effects__in = df.MultipleChoiceFilter(
         field_name="effects",
-                            label="Tags to include",
-                            help_text="""Select one or more effect-tags to include in the plot.
+        label="Tags to include",
+        help_text="""Select one or more effect-tags to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
 
@@ -144,17 +146,23 @@ class EpiV1Prefilter(BaseFilterSet):
         model = Outcome
         fields = [
             "study_population__study__published",
-            "study_population__study__in","system__in","effect__in","effects__in",
+            "study_population__study__in",
+            "system__in",
+            "effect__in",
+            "effects__in",
         ]
         form = TestForm
 
     def create_form(self):
         form = super().create_form()
-        form.fields["study_population__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["study_population__study__in"].choices = Study.objects.get_choices(
+            self.assessment.pk
+        )
         form.fields["system__in"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
         form.fields["effect__in"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
         form.fields["effects__in"].choices = EffectTag.objects.get_choices(self.assessment.pk)
         return form
+
 
 class EpiV2Prefilter(BaseFilterSet):
     # studies
@@ -185,6 +193,7 @@ class EpiV2Prefilter(BaseFilterSet):
         form.fields["design__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
         return form
 
+
 class EpiMetaPrefilter(BaseFilterSet):
     # studies
     protocol__study__published = df.BooleanFilter(
@@ -214,6 +223,7 @@ class EpiMetaPrefilter(BaseFilterSet):
         form.fields["protocol__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
         return form
 
+
 class InvitroPrefilter(BaseFilterSet):
     # studies
     experiment__study__published = df.BooleanFilter(
@@ -232,20 +242,20 @@ class InvitroPrefilter(BaseFilterSet):
     # invitro
     category__in = df.MultipleChoiceFilter(
         field_name="category",
-                            label="Categories to include",
-                            help_text="""Select one or more categories to include in the plot.
+        label="Categories to include",
+        help_text="""Select one or more categories to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
     chemical__name__in = df.MultipleChoiceFilter(
         field_name="chemical__name",
-                            label="Chemicals to include",
-                            help_text="""Select one or more chemicals to include in the plot.
+        label="Chemicals to include",
+        help_text="""Select one or more chemicals to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
     effects__in = df.MultipleChoiceFilter(
         field_name="effects",
-                            label="Tags to include",
-                            help_text="""Select one or more effect-tags to include in the plot.
+        label="Tags to include",
+        help_text="""Select one or more effect-tags to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
 
@@ -253,7 +263,10 @@ class InvitroPrefilter(BaseFilterSet):
         model = IVEndpoint
         fields = [
             "experiment__study__published",
-            "experiment__study__in","category__in","chemical__name__in","effects__in",
+            "experiment__study__in",
+            "category__in",
+            "chemical__name__in",
+            "effects__in",
         ]
         form = TestForm
 
@@ -261,7 +274,9 @@ class InvitroPrefilter(BaseFilterSet):
         form = super().create_form()
         form.fields["experiment__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
         form.fields["category__in"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
-        form.fields["chemical__name__in"].choices = IVChemical.objects.get_choices(self.assessment.pk)
+        form.fields["chemical__name__in"].choices = IVChemical.objects.get_choices(
+            self.assessment.pk
+        )
         form.fields["effects__in"].choices = EffectTag.objects.get_choices(self.assessment.pk)
         return form
 
@@ -274,7 +289,7 @@ class StudyTypePrefilter(Enum):
     IN_VITRO = InvitroPrefilter
 
     @classmethod
-    def from_study_type(cls,study_type:StudyType,assessment:Assessment):
+    def from_study_type(cls, study_type: int | StudyType, assessment: Assessment):
         study_type = StudyType(study_type)
         name = study_type.name
         if study_type == StudyType.EPI:
@@ -284,13 +299,14 @@ class StudyTypePrefilter(Enum):
                 name = "EPIV2"
         return cls[name]
 
+
 class VisualTypePrefilter(Enum):
     BIOASSAY_CROSSVIEW = BioassayPrefilter
     ROB_HEATMAP = BioassayPrefilter
     ROB_BARCHART = BioassayPrefilter
 
     @classmethod
-    def from_visual_type(cls,visual_type:VisualType):
+    def from_visual_type(cls, visual_type: int | VisualType):
         visual_type = VisualType(visual_type)
         name = visual_type.name
         return cls[name]

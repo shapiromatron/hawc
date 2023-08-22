@@ -453,6 +453,7 @@ class ConfirmationField(forms.CharField):
         if value != self.check_value:
             raise forms.ValidationError(f'The value of "{self.check_value}" is required.')
 
+
 class DynamicFormField(forms.JSONField):
     """Field to display dynamic form inline."""
 

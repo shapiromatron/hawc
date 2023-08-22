@@ -4,14 +4,13 @@ import json
 from django.db import migrations, models
 
 
-
 def prefilters_dict(apps, schema_editor):
     # load prefilters textfield into temp jsonfield
     Visual = apps.get_model("summary", "Visual")
     objs = Visual.objects.all()
     for obj in objs:
         obj.temp = json.loads(obj.prefilters)
-    Visual.objects.bulk_update(objs,["temp"])
+    Visual.objects.bulk_update(objs, ["temp"])
 
 
 def reverse_prefilters_dict(apps, schema_editor):
@@ -20,7 +19,8 @@ def reverse_prefilters_dict(apps, schema_editor):
     objs = Visual.objects.all()
     for obj in objs:
         obj.prefilters = json.dumps(obj.temp)
-    Visual.objects.bulk_update(objs,["prefilters"])
+    Visual.objects.bulk_update(objs, ["prefilters"])
+
 
 class Migration(migrations.Migration):
     dependencies = [

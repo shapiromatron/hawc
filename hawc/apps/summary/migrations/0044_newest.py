@@ -4,14 +4,13 @@ import json
 from django.db import migrations, models
 
 
-
 def prefilters_dict(apps, schema_editor):
     # load prefilters textfield into temp jsonfield
     DataPivotQuery = apps.get_model("summary", "DataPivotQuery")
     objs = DataPivotQuery.objects.all()
     for obj in objs:
         obj.temp = json.loads(obj.prefilters)
-    DataPivotQuery.objects.bulk_update(objs,["temp"])
+    DataPivotQuery.objects.bulk_update(objs, ["temp"])
 
 
 def reverse_prefilters_dict(apps, schema_editor):
@@ -20,7 +19,8 @@ def reverse_prefilters_dict(apps, schema_editor):
     objs = DataPivotQuery.objects.all()
     for obj in objs:
         obj.prefilters = json.dumps(obj.temp)
-    DataPivotQuery.objects.bulk_update(objs,["prefilters"])
+    DataPivotQuery.objects.bulk_update(objs, ["prefilters"])
+
 
 class Migration(migrations.Migration):
     dependencies = [

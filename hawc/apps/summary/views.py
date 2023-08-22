@@ -15,9 +15,16 @@ from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate, FilterSetMixin
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseList,
+    BaseUpdate,
+)
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, serializers, prefilters
+from . import constants, filterset, forms, models, prefilters, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -632,20 +639,7 @@ class DataPivotNew(BaseCreate):
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["file_loader"] = False
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-class DataPivotQueryNew1(DataPivotNew):
-    model = models.DataPivotQuery
-    form_class = forms.DataPivotQueryForm1
-    template_name = "summary/datapivot_form1.html"
+    template_name = "summary/datapivot_form.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -653,10 +647,10 @@ class DataPivotQueryNew1(DataPivotNew):
             # get study type enum
             study_type = constants.StudyType(self.kwargs.get("study_type"))
             # make sure prefilter exists for study type
-            prefilters.StudyTypePrefilter.from_study_type(study_type,self.assessment)
+            prefilters.StudyTypePrefilter.from_study_type(study_type, self.assessment)
             # pass study type to form
             kwargs["evidence_type"] = study_type
-        except (KeyError,ValueError):
+        except (KeyError, ValueError):
             raise Http404
         return kwargs
 
@@ -668,6 +662,7 @@ class DataPivotQueryNew1(DataPivotNew):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         return context
+
 
 class DataPivotFileNew(DataPivotNew):
     model = models.DataPivotUpload
@@ -782,20 +777,6 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
         )
         return context
 
-class DataPivotUpdateQuery1(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = "Data Pivot updated."
-    model = models.DataPivotQuery
-    form_class = forms.DataPivotQueryForm1
-    template_name = "summary/datapivot_form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["file_loader"] = False
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
-        )
-        return context
 
 class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
     success_message = "Data Pivot updated."

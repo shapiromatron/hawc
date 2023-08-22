@@ -1,5 +1,5 @@
-from random import randint
 import json
+from random import randint
 
 from django.conf import settings
 from django.forms import ValidationError
@@ -11,7 +11,7 @@ from django.forms.widgets import (
     SelectMultiple,
     Textarea,
     TextInput,
-    Widget
+    Widget,
 )
 from django.utils import timezone
 
@@ -126,6 +126,7 @@ class QuillWidget(Textarea):
         class_name = attrs.get("class")
         attrs["class"] = class_name + " quilltext" if class_name else "quilltext"
         return attrs
+
 
 class DynamicFormWidget(Widget):
     """Widget to display dynamic form inline."""

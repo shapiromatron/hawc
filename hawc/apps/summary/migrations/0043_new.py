@@ -3,8 +3,9 @@ import json
 
 from django.db import migrations
 
-from hawc.apps.summary import constants
 from hawc.apps.assessment.constants import EpiVersion
+from hawc.apps.summary import constants
+
 
 def published_only_prefilters(apps, schema_editor):
     # add published_only field to prefilters
@@ -28,8 +29,8 @@ def published_only_prefilters(apps, schema_editor):
             prefilters["design__study__published"] = obj.published_only
 
         obj.prefilters = json.dumps(prefilters)
-    DataPivotQuery.objects.bulk_update(objs,["prefilters"])
-    
+    DataPivotQuery.objects.bulk_update(objs, ["prefilters"])
+
 
 def reverse_published_only_prefilters(apps, schema_editor):
     # TODO
@@ -42,7 +43,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(published_only_prefilters, reverse_code=reverse_published_only_prefilters),
+        migrations.RunPython(
+            published_only_prefilters, reverse_code=reverse_published_only_prefilters
+        ),
         migrations.RemoveField(
             model_name="datapivotquery",
             name="published_only",
