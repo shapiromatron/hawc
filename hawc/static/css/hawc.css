@@ -523,25 +523,14 @@ div.smart-tag.active {
 }
 .abstracts {
     font-size: 0.95rem;
-    font-family: BlinkMacSystemFont,-apple-system,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
-    line-height: 1.45rem;
-    height: 15rem;
+    line-height: 1.4rem;
     display: block;
-    background-color: #f8f8f8;
-    transition: all 0.15s ease-out;
     overflow-y: scroll;
     cursor: pointer;
-    margin: 3px 0px;
-    padding-left: 3px !important;
-    margin-left: 8px;
 }
 .abstract-collapsed {
     text-overflow: ellipsis;
-    overflow: hidden;
-    height: 4.6rem;
-    background-color: #ffffff;
-    padding-right: 20px;
-    padding-left: 0px !important;
+    height: 4.2rem;
 }
 .referenceDetail>div, .referenceDetail>p {
     padding-left: 8px;
@@ -559,22 +548,15 @@ div.smart-tag.active {
 .referenceDetail.expanded .abstracts {
     height: fit-content;
     cursor: unset;
-    font-size: 1.06rem;
-    line-height: unset;
-    background-color: unset;
-    overflow-y: unset;
-    padding: unset !important;
-    margin: unset;
 }
 .html-referenceDetail .abstracts {
     margin: unset;
 }
-.abstracts:hover {
-    background-color: #f8f8f8;
+.abstract-collapsed {
+    scrollbar-color: transparent transparent;
 }
-.abstract-collapsed:hover {
-    padding-left: 3px !important;
-    padding-right: 17px;
+.abstract-collapsed::-webkit-scrollbar {
+    background-color: transparent;
 }
 .refTag {
     color: #ffffff !important;
