@@ -15,7 +15,7 @@ class Reference extends Component {
     renderIdentifiers(data, study_url, expanded) {
         const nodes = [];
 
-        const btn_size = expanded ? "btn-sm" : "btn-tny";
+        const btn_size = expanded ? "" : "btn-tny";
         if (data.full_text_url) {
             nodes.push(
                 <a
@@ -33,13 +33,14 @@ class Reference extends Component {
             .sortBy(v => v.database_id)
             .each(v => {
                 nodes.push(
-                    <div className="d-flex mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
+                    <div className="btn-group mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
                         <a
-                            className={`btn outline-btn ${btn_size} btn-left`}
+                            className={`btn outline-btn ${btn_size} rounded-left`}
                             href={v.database === "HERO" ? Hero.getUrl(v.id) : v.url}>
                             {v.database}
                         </a>
-                        <div className={`outline-btn ${btn_size} btn-right font-weight-normal`}>
+                        <div
+                            className={`outline-btn ${btn_size} rounded-right font-weight-normal border-left-0`}>
                             {v.id}
                         </div>
                     </div>
@@ -48,18 +49,19 @@ class Reference extends Component {
             .value();
 
         nodes.push(
-            <div className="d-flex mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
-                <a className={`btn outline-btn ${btn_size} btn-left`} href={data.url}>
+            <div className="btn-group mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
+                <a className={`btn outline-btn ${btn_size} rounded-left`} href={data.url}>
                     <i className="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC
                 </a>
                 <div
-                    className={`outline-btn ${btn_size} btn-right font-weight-normal`}
-                    style={data.has_study ? {borderRadius: "0px"} : null}>
+                    className={`outline-btn ${btn_size} ${
+                        data.has_study ? "border-right-0" : "rounded-right"
+                    } font-weight-normal border-left-0`}>
                     {data.pk.toString()}
                 </div>
                 {data.has_study ? (
                     <a
-                        className={`btn outline-btn ${btn_size} btn-right`}
+                        className={`btn outline-btn ${btn_size} rounded-right`}
                         href={study_url}
                         key={h.randomString()}>
                         <i className="fa fa-book" aria-hidden="true"></i>&nbsp;Study

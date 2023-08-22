@@ -15,17 +15,17 @@
         <div class="d-flex my-1">
             {% for id in ref.identifiers.all %}
             {% if id.get_url %}
-            <div class="d-flex mr-1 mb-1 flex-shrink-0">
-                <a class="btn btn-tny outline-btn btn-left" href="{{id.get_url}}">{{id.get_database_display}}</a>
-                <div class="outline-btn btn-tny btn-right font-weight-normal">{{id.unique_id}}</div>
+            <div class="btn-group mr-1 mb-1 flex-shrink-0">
+                <a class="btn btn-tny outline-btn rounded-left" href="{{id.get_url}}">{{id.get_database_display}}</a>
+                <span class="outline-btn btn-tny rounded-right font-weight-normal border-left-0">{{id.unique_id}}</span>
             </div>
             {% endif %}
             {% endfor %}
-            <div class="d-flex mr-1 mb-1 flex-shrink-0">
-                <a class="btn btn-tny outline-btn btn-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
-                <div class="btn-tny outline-btn btn-right font-weight-normal" {% if ref.has_study %} style="border-radius: 0px;" {% endif %}>{{ref.id}}</div>
+            <div class="btn-group mr-1 mb-1 flex-shrink-0">
+                <a class="btn btn-tny outline-btn rounded-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
+                <span class="outline-btn btn-tny {% if not ref.has_study %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
                 {% if ref.has_study %}
-                <a class="btn btn-tny outline-btn btn-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
+                <a class="btn btn-tny outline-btn rounded-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
                 {% endif %}
             </div>
         </div>

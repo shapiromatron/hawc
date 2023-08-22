@@ -629,13 +629,15 @@ div.smart-tag.active {
 .outline-btn {
     height: fit-content;
     color: #666666 !important;
-    border: 1px solid #666666 !important;
+    border: 1px solid #666666;
     transition: all 0.15s ease;
     font-weight: bold;
     line-height: 1;
     font-size: 0.9rem;
     padding: 0.3rem 0.3rem;
-    border-radius: 5px;
+}
+input[type="submit"].outline-btn, section button.outline-btn, section input[type="button"].outline-btn, section a.outline-btn, .modal-content .outline-btn {
+    border: 1px solid #666666;
 }
 a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     text-decoration:none;
@@ -646,18 +648,8 @@ a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     font-size: 0.75rem;
     padding: 0.25em 0.4em;
     line-height: 0.8rem !important;
-    border-radius: 4px;
     margin-bottom: 2px;
-}
-
-.btn-left {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-.btn-right {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-left: none !important;
+    height: fit-content;
 }
 
 /* preview modal icon */
