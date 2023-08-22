@@ -203,7 +203,7 @@ class Reference extends Component {
                         ))}
                     </p>
                 ) : null}
-                {showHr ? <hr /> : null}
+                {showHr ? <hr className="my-4" /> : null}
             </div>
         );
     }
