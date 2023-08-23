@@ -3246,7 +3246,9 @@
   ],
   "id": 4,
   "last_updated": "2020-05-08T15:37:19.255730-04:00",
-  "prefilters": "{\"animal_group__experiment__study__published\": true}",
+  "prefilters": {
+    "published_only": true
+  },
   "published": true,
   "settings": {
     "colorBase": "#cccccc",

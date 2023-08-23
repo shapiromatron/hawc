@@ -8,7 +8,7 @@
   "endpoints": [],
   "id": 6,
   "last_updated": "2020-05-08T15:43:09.448621-04:00",
-  "prefilters": "{}",
+  "prefilters": {},
   "published": true,
   "settings": {
     "height": 500,

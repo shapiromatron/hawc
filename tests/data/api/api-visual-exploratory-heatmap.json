@@ -8,7 +8,7 @@
   "endpoints": [],
   "id": 8,
   "last_updated": "2020-11-25T09:29:33.991892-05:00",
-  "prefilters": "{}",
+  "prefilters": {},
   "published": true,
   "settings": {
     "autorotate_tick_labels": true,

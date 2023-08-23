@@ -8,7 +8,11 @@
   "endpoints": [],
   "id": 3,
   "last_updated": "2020-05-08T15:36:41.324440-04:00",
-  "prefilters": "{}",
+  "prefilters": {
+    "studies": [
+      7
+    ]
+  },
   "published": true,
   "rob_settings": {
     "assessment_id": 2,
