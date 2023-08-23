@@ -26,53 +26,47 @@ class TestForm(forms.Form):
         return helper
 
 
-def filter_published_only(queryset, name, value):
-    if not value:
-        return queryset
-    return queryset.filter(**{name: True})
-
-
 class BioassayPrefilter(BaseFilterSet):
     # studies
-    animal_group__experiment__study__published = df.BooleanFilter(
-        method=filter_published_only,
+    published_only = df.BooleanFilter(
+        method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
         help_text="Only present data from studies which have been marked as "
         '"published" in HAWC.',
     )
-    animal_group__experiment__study__in = df.MultipleChoiceFilter(
+    studies = df.MultipleChoiceFilter(
         field_name="animal_group__experiment__study",
         label="Studies to include",
         help_text="""Select one or more studies to include in the plot.
                 If no study is selected, no endpoints will be available.""",
     )
     # bioassay
-    system__in = df.MultipleChoiceFilter(
+    systems = df.MultipleChoiceFilter(
         field_name="system",
         label="Systems to include",
         help_text="""Select one or more systems to include in the plot.
                                  If no system is selected, no endpoints will be available.""",
     )
-    organ__in = df.MultipleChoiceFilter(
+    organs = df.MultipleChoiceFilter(
         field_name="organ",
         label="Organs to include",
         help_text="""Select one or more organs to include in the plot.
                                  If no organ is selected, no endpoints will be available.""",
     )
-    effect__in = df.MultipleChoiceFilter(
+    effects = df.MultipleChoiceFilter(
         field_name="effect",
         label="Effects to include",
         help_text="""Select one or more effects to include in the plot.
                                  If no effect is selected, no endpoints will be available.""",
     )
-    effect_subtype__in = df.MultipleChoiceFilter(
+    effect_subtypes = df.MultipleChoiceFilter(
         field_name="effect_subtype",
         label="Effect Sub-Types to include",
         help_text="""Select one or more effect sub-types to include in the plot.
                                  If no effect sub-type is selected, no endpoints will be available.""",
     )
-    effects__in = df.MultipleChoiceFilter(
+    effect_tags = df.MultipleChoiceFilter(
         field_name="effects",
         label="Tags to include",
         help_text="""Select one or more effect-tags to include in the plot.
@@ -82,60 +76,67 @@ class BioassayPrefilter(BaseFilterSet):
     class Meta:
         model = Endpoint
         fields = [
-            "animal_group__experiment__study__published",
-            "animal_group__experiment__study__in",
-            "system__in",
-            "organ__in",
-            "effect__in",
-            "effect_subtype__in",
-            "effects__in",
+            "published_only",
+            "studies",
+            "systems",
+            "organs",
+            "effects",
+            "effect_subtypes",
+            "effect_tags",
         ]
         form = TestForm
 
+    def filter_published_only(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(animal_group__experiment__study__published=True)
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(assessment_id=self.assessment.pk)
+        return super().filter_queryset(queryset)
+
     def create_form(self):
         form = super().create_form()
-        form.fields["animal_group__experiment__study__in"].choices = Study.objects.get_choices(
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["systems"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
+        form.fields["organs"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
+        form.fields["effects"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)
+        form.fields["effect_subtypes"].choices = Endpoint.objects.get_effect_subtype_choices(
             self.assessment.pk
         )
-        form.fields["system__in"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
-        form.fields["organ__in"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
-        form.fields["effect__in"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)
-        form.fields["effect_subtype__in"].choices = Endpoint.objects.get_effect_subtype_choices(
-            self.assessment.pk
-        )
-        form.fields["effects__in"].choices = EffectTag.objects.get_choices(self.assessment.pk)
+        form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
         return form
 
 
 class EpiV1Prefilter(BaseFilterSet):
     # studies
-    study_population__study__published = df.BooleanFilter(
-        method=filter_published_only,
+    published_only = df.BooleanFilter(
+        method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
         help_text="Only present data from studies which have been marked as "
         '"published" in HAWC.',
     )
-    study_population__study__in = df.MultipleChoiceFilter(
+    studies = df.MultipleChoiceFilter(
         field_name="study_population__study",
         label="Studies to include",
         help_text="""Select one or more studies to include in the plot.
                 If no study is selected, no endpoints will be available.""",
     )
     # epi
-    system__in = df.MultipleChoiceFilter(
+    systems = df.MultipleChoiceFilter(
         field_name="system",
         label="Systems to include",
         help_text="""Select one or more systems to include in the plot.
                                  If no system is selected, no endpoints will be available.""",
     )
-    effect__in = df.MultipleChoiceFilter(
+    effects = df.MultipleChoiceFilter(
         field_name="effect",
         label="Effects to include",
         help_text="""Select one or more effects to include in the plot.
                                  If no effect is selected, no endpoints will be available.""",
     )
-    effects__in = df.MultipleChoiceFilter(
+    effect_tags = df.MultipleChoiceFilter(
         field_name="effects",
         label="Tags to include",
         help_text="""Select one or more effect-tags to include in the plot.
@@ -145,35 +146,42 @@ class EpiV1Prefilter(BaseFilterSet):
     class Meta:
         model = Outcome
         fields = [
-            "study_population__study__published",
-            "study_population__study__in",
-            "system__in",
-            "effect__in",
-            "effects__in",
+            "published_only",
+            "studies",
+            "systems",
+            "effects",
+            "effect_tags",
         ]
         form = TestForm
 
+    def filter_published_only(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(study_population__study__published=True)
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(assessment_id=self.assessment.pk)
+        return super().filter_queryset(queryset)
+
     def create_form(self):
         form = super().create_form()
-        form.fields["study_population__study__in"].choices = Study.objects.get_choices(
-            self.assessment.pk
-        )
-        form.fields["system__in"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
-        form.fields["effect__in"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
-        form.fields["effects__in"].choices = EffectTag.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["systems"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
+        form.fields["effects"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
+        form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
         return form
 
 
 class EpiV2Prefilter(BaseFilterSet):
     # studies
-    design__study__published = df.BooleanFilter(
-        method=filter_published_only,
+    published_only = df.BooleanFilter(
+        method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
         help_text="Only present data from studies which have been marked as "
         '"published" in HAWC.',
     )
-    design__study__in = df.MultipleChoiceFilter(
+    studies = df.MultipleChoiceFilter(
         field_name="design__study",
         label="Studies to include",
         help_text="""Select one or more studies to include in the plot.
@@ -183,27 +191,36 @@ class EpiV2Prefilter(BaseFilterSet):
     class Meta:
         model = DataExtraction
         fields = [
-            "design__study__published",
-            "design__study__in",
+            "published_only",
+            "studies",
         ]
         form = TestForm
 
+    def filter_published_only(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(design__study__published=True)
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(design__study__assessment_id=self.assessment.pk)
+        return super().filter_queryset(queryset)
+
     def create_form(self):
         form = super().create_form()
-        form.fields["design__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
         return form
 
 
 class EpiMetaPrefilter(BaseFilterSet):
     # studies
-    protocol__study__published = df.BooleanFilter(
-        method=filter_published_only,
+    published_only = df.BooleanFilter(
+        method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
         help_text="Only present data from studies which have been marked as "
         '"published" in HAWC.',
     )
-    protocol__study__in = df.MultipleChoiceFilter(
+    studies = df.MultipleChoiceFilter(
         field_name="protocol__study",
         label="Studies to include",
         help_text="""Select one or more studies to include in the plot.
@@ -213,46 +230,55 @@ class EpiMetaPrefilter(BaseFilterSet):
     class Meta:
         model = MetaResult
         fields = [
-            "protocol__study__published",
-            "protocol__study__in",
+            "published_only",
+            "studies",
         ]
         form = TestForm
 
+    def filter_published_only(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(protocol__study__published=True)
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(protocol__study__assessment_id=self.assessment.pk)
+        return super().filter_queryset(queryset)
+
     def create_form(self):
         form = super().create_form()
-        form.fields["protocol__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
         return form
 
 
 class InvitroPrefilter(BaseFilterSet):
     # studies
-    experiment__study__published = df.BooleanFilter(
-        method=filter_published_only,
+    published_only = df.BooleanFilter(
+        method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
         help_text="Only present data from studies which have been marked as "
         '"published" in HAWC.',
     )
-    experiment__study__in = df.MultipleChoiceFilter(
+    studies = df.MultipleChoiceFilter(
         field_name="experiment__study",
         label="Studies to include",
         help_text="""Select one or more studies to include in the plot.
                 If no study is selected, no endpoints will be available.""",
     )
     # invitro
-    category__in = df.MultipleChoiceFilter(
+    categories = df.MultipleChoiceFilter(
         field_name="category",
         label="Categories to include",
         help_text="""Select one or more categories to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
-    chemical__name__in = df.MultipleChoiceFilter(
+    chemicals = df.MultipleChoiceFilter(
         field_name="chemical__name",
         label="Chemicals to include",
         help_text="""Select one or more chemicals to include in the plot.
                                  If no study is selected, no endpoints will be available.""",
     )
-    effects__in = df.MultipleChoiceFilter(
+    effect_tags = df.MultipleChoiceFilter(
         field_name="effects",
         label="Tags to include",
         help_text="""Select one or more effect-tags to include in the plot.
@@ -262,22 +288,29 @@ class InvitroPrefilter(BaseFilterSet):
     class Meta:
         model = IVEndpoint
         fields = [
-            "experiment__study__published",
-            "experiment__study__in",
-            "category__in",
-            "chemical__name__in",
-            "effects__in",
+            "published_only",
+            "studies",
+            "categories",
+            "chemicals",
+            "effect_tags",
         ]
         form = TestForm
 
+    def filter_published_only(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(experiment__study__published=True)
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(assessment_id=self.assessment.pk)
+        return super().filter_queryset(queryset)
+
     def create_form(self):
         form = super().create_form()
-        form.fields["experiment__study__in"].choices = Study.objects.get_choices(self.assessment.pk)
-        form.fields["category__in"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
-        form.fields["chemical__name__in"].choices = IVChemical.objects.get_choices(
-            self.assessment.pk
-        )
-        form.fields["effects__in"].choices = EffectTag.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["categories"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
+        form.fields["chemicals"].choices = IVChemical.objects.get_choices(self.assessment.pk)
+        form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
         return form
 
 

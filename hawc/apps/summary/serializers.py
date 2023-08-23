@@ -48,10 +48,7 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        exclude = (
-            "endpoints",
-            "studies",
-        )
+        exclude = ("endpoints",)
 
 
 class VisualSerializer(CollectionVisualSerializer):

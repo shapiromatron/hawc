@@ -291,12 +291,6 @@ class Visual(models.Model):
         help_text="Endpoints to be included in visualization",
         blank=True,
     )
-    studies = models.ManyToManyField(
-        Study,
-        related_name="visuals",
-        help_text="Studies to be included in visualization",
-        blank=True,
-    )
     settings = models.TextField(default="{}")
     caption = models.TextField(blank=True)
     published = models.BooleanField(
@@ -461,9 +455,6 @@ class Visual(models.Model):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
 
     def get_request_prefilters(self, request):
-        # TODO move get_editing_dataset out of models
-        # so that we can utilize the forms
-
         # find all keys that start with "prefilters-" prefix
         prefix = "prefilters-"
         return {
@@ -474,7 +465,7 @@ class Visual(models.Model):
 
     def get_endpoints(self, request=None):
         qs = Endpoint.objects.none()
-        filters = {"assessment_id": self.assessment_id}
+        filters = {}
 
         if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
             if request:
@@ -504,7 +495,7 @@ class Visual(models.Model):
         to the model.
         """
         qs = Study.objects.none()
-        filters = {"assessment_id": self.assessment_id}
+        filters = {}
 
         if self.visual_type in [
             constants.VisualType.ROB_HEATMAP,
@@ -516,8 +507,8 @@ class Visual(models.Model):
             cleaned_prefilters = fs.form.cleaned_data
 
             study_fields = [
-                "animal_group__experiment__study__published",
-                "animal_group__experiment__study__in",
+                "published_only",
+                "studies",
             ]
             endpoint_prefilters = {
                 k: v for k, v in cleaned_prefilters.items() if k not in study_fields
@@ -778,26 +769,11 @@ class DataPivotQuery(DataPivot):
             raise ValidationError(err)
 
     def _refine_queryset(self, qs):
-        epi_version = self.assessment.epi_version
-
         if self.evidence_type == constants.StudyType.BIOASSAY:
-            qs = qs.filter(assessment_id=self.assessment_id)
             if self.preferred_units:
                 qs = qs.filter(
                     animal_group__dosing_regime__doses__dose_units__in=self.preferred_units
                 )
-
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
-            qs = qs.filter(assessment_id=self.assessment_id)
-
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
-            qs = qs.filter(design__study__assessment_id=self.assessment_id)
-
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            qs = qs.filter(protocol__study__assessment_id=self.assessment_id)
-
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            qs = qs.filter(assessment_id=self.assessment_id)
 
         elif self.evidence_type == constants.StudyType.ECO:
             qs = qs.filter(design__study__assessment_id=self.assessment_id)

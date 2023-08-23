@@ -278,9 +278,6 @@ class RoBForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(
-            assessment=self.instance.assessment
-        )
         self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
             constants.VisualType.ROB_BARCHART
         ).value
