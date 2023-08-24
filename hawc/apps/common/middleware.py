@@ -30,7 +30,7 @@ class RequestLogMiddleware:
             request.method,
             request.path,
             response.status_code,
-            len(response.content) if hasattr(response, "content") else 0,
+            getattr(response, "content", 0),
             request.META["REMOTE_ADDR"],
             get_user_id(request.user),
             get_assessment_id(response),
