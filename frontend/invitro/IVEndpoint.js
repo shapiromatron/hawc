@@ -61,7 +61,7 @@ class IVEndpoint {
     }
 
     build_title() {
-        var el = $("<div class='d-flex'>").append($("<h2>").text(this.data.name));
+        var el = $("<div class='d-flex'>").append($("<h2>").text(this._title_text()));
         if (window.canEdit) {
             var urls = [
                 "Endpoint editing",
