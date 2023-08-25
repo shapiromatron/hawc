@@ -26,7 +26,7 @@ class IVCellType {
     }
 
     build_title() {
-        var el = $("<h2>").text(this.data.title);
+        var el = $("<div class='d-flex'>").append($("<h2>").text(this.data.name));
         if (window.canEdit) {
             var urls = [
                 "Cell type editing",

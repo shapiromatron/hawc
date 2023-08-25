@@ -66,7 +66,14 @@ class ExternalWebsite extends BaseVisual {
         $el.empty().append($plotDiv);
 
         if (!options.visualOnly) {
-            $el.prepend([actions, title]).append(captionDiv);
+            var headerRow = $('<div class="d-flex">').append([
+                title,
+                HAWCUtils.unpublished(this.data.published, window.isEditable),
+                actions,
+            ]);
+            $el.prepend(headerRow)
+                .append(captionDiv)
+                .append(this.displayAsModal());
         }
 
         this.embedPage($plotDiv[0]);
@@ -85,13 +92,14 @@ class ExternalWebsite extends BaseVisual {
             this.embedPage($plotDiv[0]);
         });
         modal
-            .addHeader(
+            .addHeader([
                 $("<h4>")
                     .text(this.data.title)
                     .append(
                         `<span style="margin-left: 12px" title=${this.data.settings.external_url}>(<a target="_blank" href="${this.data.settings.external_url}">View <i class='fa fa-external-link'></i></a>)</span>`
-                    )
-            )
+                    ),
+                HAWCUtils.unpublished(this.data.published, window.isEditable),
+            ])
             .addBody([$plotDiv, captionDiv])
             .addFooter("")
             .show({maxWidth: 1200});

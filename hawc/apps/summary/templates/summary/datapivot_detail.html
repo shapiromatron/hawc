@@ -7,6 +7,7 @@
 {% block content %}
 <div class="d-flex">
   <h2>{{object}}</h2>
+  {% include "common/unpublished_logo.html" %}
   {% actions %}
     <a class="dropdown-item" href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a>
     {% if obj_perms.edit %}

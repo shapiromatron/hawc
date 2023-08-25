@@ -4,6 +4,7 @@
 {% block content %}
   <div class="d-flex">
     <h2>{{object}}</h2>
+    {% include "common/unpublished_logo.html" %}
     {% if crud == "Read" %}
       {% actions %}
         <span class="dropdown-header">Reporting</span>
