@@ -167,7 +167,7 @@ class EndpointQuerySet(QuerySet):
                 "animal_group__name",
                 "name",
             )
-            .only("id") # https://code.djangoproject.com/ticket/30052
+            .only("id")  # https://code.djangoproject.com/ticket/30052
         )
 
 

@@ -161,3 +161,20 @@ class TestEndpointGroupForm:
         assert resp == {"incidence": forms.EndpointGroupForm.INC_REQ}
         resp = forms.EndpointGroupForm.clean_endpoint_group("D", 0, {"n": 1, "incidence": 2})
         assert resp == {"incidence": forms.EndpointGroupForm.POS_N_REQ}
+
+
+@pytest.mark.django_db
+class TestMultipleEndpointChoiceField:
+    def test_success(self, db_keys, django_assert_max_num_queries):
+        # check widget returns and uses our efficient queryset
+        qs = models.Endpoint.objects.assessment_qs(db_keys.assessment_final).selector()
+        field = forms.MultipleEndpointChoiceField(queryset=qs)
+
+        with django_assert_max_num_queries(1):
+            options = list(field.widget.options("test", []))
+
+        assert len(options) >= 5
+        assert (
+            options[0]["label"]
+            == "Biesemeier JA et al. 2011 | developmental | sd rats | bmd3 - continuous"
+        )
