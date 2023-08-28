@@ -3,6 +3,7 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
+import hawc.apps.epiv2.models as epiv2models
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import (
@@ -19,6 +20,7 @@ from hawc.apps.epi.models import (
 )
 from hawc.apps.lit.models import Reference
 from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.study.models import Study
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
@@ -496,6 +498,304 @@ class TestClient(LiveServerTestCase, TestCase):
         ComparisonSet.objects.filter(id=comparison_set_id).delete()
         Exposure.objects.filter(id=exposure_id).delete()
         StudyPopulation.objects.filter(id=study_pop_id).delete()
+
+    #####################
+    # EpiV2Client tests #
+    #####################
+
+    def test_epiv2_crud(self):
+        """
+        Test all the create/read/update/delete methods for epi v2
+        """
+
+        def common_result_check(result, payload, key):
+            assert isinstance(result, dict) and result[key] == payload[key]
+
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        epi_client = client.epiv2
+
+        ###
+        ### design
+        ###
+        design_payload = {
+            "study_id": self.db_keys.study_working,
+            "summary": "D summary",
+            "study_name": "D study name",
+            "study_design": "Cohort",
+            "source": "General Population",
+            "age_profile": ["Adults"],
+            "age_description": "D age",
+            "sex": "Male and Female",
+            "countries": ["JP"],
+            "race": "D race",
+            "participant_n": 99,
+            "criteria": "D criteria",
+            "susceptibility": "D susceptibility",
+            "region": "D region",
+            "years_enrolled": "D years enrolled",
+            "years_followup": "D years followup",
+            "comments": "D comments",
+        }
+
+        # create
+        design_result = epi_client.create_design(design_payload)
+
+        common_result_check(design_result, design_payload, "summary")
+
+        design_id = design_result["id"]
+
+        # update
+        design_payload["summary"] = "modified summary"
+        design_result = epi_client.update_design(design_id, design_payload)
+        common_result_check(design_result, design_payload, "summary")
+
+        # read
+        design_result = epi_client.get_design(design_id)
+        common_result_check(design_result, design_payload, "summary")
+
+        # list
+        study = Study.objects.get(id=self.db_keys.study_working)
+        list_by_assessment_result = epi_client.get_designs_for_assessment(
+            assessment_id=study.assessment_id
+        )
+        list_by_study_result = epi_client.get_designs_for_study(
+            assessment_id=study.assessment_id, study_id=study.id
+        )
+        assert (
+            list_by_study_result["count"].tolist()[0]
+            == list_by_assessment_result["count"].tolist()[0]
+        )
+
+        ###
+        ### chemical
+        ###
+        chemical_payload = {
+            "design": design_id,
+            "name": "C name",
+            "dsstox_id": "DTXSID6026296",
+        }
+
+        # create
+        chemical_result = epi_client.create_chemical(chemical_payload)
+        common_result_check(chemical_result, chemical_payload, "name")
+
+        assert chemical_result["dsstox"]["dtxsid"] == chemical_payload["dsstox_id"]
+        chemical_id = chemical_result["id"]
+
+        # update
+        chemical_payload["name"] = "modified name"
+        chemical_result = epi_client.update_chemical(chemical_id, chemical_payload)
+        common_result_check(chemical_result, chemical_payload, "name")
+
+        # read
+        chemical_result = epi_client.get_chemical(chemical_id)
+        common_result_check(chemical_result, chemical_payload, "name")
+
+        ###
+        ### exposure (measurement)
+        ###
+        exposure_payload = {
+            "design": design_id,
+            "name": "E name",
+            "measurement_type": ["Biomonitoring", "Air"],
+            "biomonitoring_matrix": "BLP",
+            "biomonitoring_source": "PT",
+            "measurement_timing": "E timing",
+            "exposure_route": "IH",
+            "measurement_method": "E meas method",
+            "comments": "E comments",
+        }
+
+        # create
+        exposure_result = epi_client.create_exposure(exposure_payload)
+        common_result_check(exposure_result, exposure_payload, "name")
+
+        exposure_id = exposure_result["id"]
+
+        # update
+        exposure_payload["name"] = "modified name"
+        exposure_result = epi_client.update_exposure(exposure_id, exposure_payload)
+        common_result_check(exposure_result, exposure_payload, "name")
+
+        # read
+        exposure_result = epi_client.get_exposure(exposure_id)
+        common_result_check(exposure_result, exposure_payload, "name")
+
+        ###
+        ### exposure level
+        ###
+        exposure_level_payload = {
+            "design": design_id,
+            "name": "EL name",
+            "chemical_id": chemical_id,
+            "exposure_measurement_id": exposure_id,
+            "sub_population": "EL subpop",
+            "median": 1.1,
+            "mean": 1.2,
+            "variance": 1.3,
+            "variance_type": "SD",
+            "units": "EL units",
+            "ci_lcl": "1.4",
+            "percentile_25": "1.5",
+            "percentile_75": "1.6",
+            "ci_ucl": "1.7",
+            "ci_type": "Rng",
+            "negligible_exposure": "EL neg expo",
+            "data_location": "EL dataloc",
+            "comments": "EL comments",
+        }
+
+        # create
+        exposure_level_result = epi_client.create_exposure_level(exposure_level_payload)
+        common_result_check(exposure_level_result, exposure_level_payload, "name")
+
+        exposure_level_id = exposure_level_result["id"]
+
+        # update
+        exposure_level_payload["name"] = "modified name"
+        exposure_level_result = epi_client.update_exposure_level(
+            exposure_level_id, exposure_level_payload
+        )
+        common_result_check(exposure_level_result, exposure_level_payload, "name")
+
+        # read
+        exposure_level_result = epi_client.get_exposure_level(exposure_level_id)
+        common_result_check(exposure_level_result, exposure_level_payload, "name")
+
+        ###
+        ### outcome
+        ###
+        outcome_payload = {
+            "design": design_id,
+            "system": "Reproductive",
+            "effect": "O effect",
+            "effect_detail": "O detail",
+            "endpoint": "O endpoint",
+            "comments": "O comments",
+        }
+
+        # create
+        outcome_result = epi_client.create_outcome(outcome_payload)
+        common_result_check(outcome_result, outcome_payload, "effect")
+
+        outcome_id = outcome_result["id"]
+
+        # update
+        outcome_payload["effect"] = "modified effect"
+        outcome_result = epi_client.update_outcome(outcome_id, outcome_payload)
+        common_result_check(outcome_result, outcome_payload, "effect")
+
+        # read
+        outcome_result = epi_client.get_outcome(outcome_id)
+        common_result_check(outcome_result, outcome_payload, "effect")
+
+        ###
+        ### adjustment factor
+        ###
+        adjustment_factor_payload = {
+            "design": design_id,
+            "name": "AF name",
+            "description": "AF description",
+            "comments": "AF comments",
+        }
+
+        # create
+        adjustment_factor_result = epi_client.create_adjustment_factor(adjustment_factor_payload)
+        common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
+
+        adjustment_factor_id = adjustment_factor_result["id"]
+
+        # update
+        adjustment_factor_payload["name"] = "modified name"
+        adjustment_factor_result = epi_client.update_adjustment_factor(
+            adjustment_factor_id, adjustment_factor_payload
+        )
+        common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
+
+        # read
+        adjustment_factor_result = epi_client.get_adjustment_factor(adjustment_factor_id)
+        common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
+
+        ###
+        ### data extraction
+        ###
+        data_extraction_payload = {
+            "design": design_id,
+            "outcome_id": outcome_id,
+            "exposure_level_id": exposure_level_id,
+            "sub_population": "DE subpop",
+            "outcome_measurement_timing": "DE meas timing",
+            "effect_estimate_type": "Absolute Risk %",
+            "effect_estimate": 1.1,
+            "ci_lcl": 1.2,
+            "ci_ucl": 1.3,
+            "ci_type": "Rng",
+            "units": "DE units",
+            "variance_type": "SD",
+            "variance": 1.4,
+            "n": 99,
+            "p_value": "DE pval",
+            "significant": "No",
+            "group": "DE group",
+            "exposure_rank": 1,
+            "exposure_transform": "DE expo transform",
+            "outcome_transform": "DE outcome transform",
+            "factors": adjustment_factor_id,
+            "confidence": "DE confidence",
+            "data_location": "DE loc",
+            "effect_description": "DE effect desc",
+            "statistical_method": "DE stat method",
+            "comments": "DE comments",
+        }
+
+        # create
+        data_extraction_result = epi_client.create_data_extraction(data_extraction_payload)
+        common_result_check(data_extraction_result, data_extraction_payload, "comments")
+
+        data_extraction_id = data_extraction_result["id"]
+
+        # update
+        data_extraction_payload["comments"] = "modified comments"
+        data_extraction_result = epi_client.update_data_extraction(
+            data_extraction_id, data_extraction_payload
+        )
+        common_result_check(data_extraction_result, data_extraction_payload, "comments")
+
+        # read
+        data_extraction_result = epi_client.get_data_extraction(data_extraction_id)
+        common_result_check(data_extraction_result, data_extraction_payload, "comments")
+
+        ###
+        ### all
+        ###
+        # delete
+        # tuple of tuples, each sub-tuple is:
+        # [0] a primary key
+        # [1] the client method to use to delete it
+        # [2] the model class
+
+        deletions = (
+            (data_extraction_id, epi_client.delete_data_extraction, epiv2models.DataExtraction),
+            (exposure_level_id, epi_client.delete_exposure_level, epiv2models.ExposureLevel),
+            (outcome_id, epi_client.delete_outcome, epiv2models.Outcome),
+            (
+                adjustment_factor_id,
+                epi_client.delete_adjustment_factor,
+                epiv2models.AdjustmentFactor,
+            ),
+            (chemical_id, epi_client.delete_chemical, epiv2models.Chemical),
+            (exposure_id, epi_client.delete_exposure, epiv2models.Exposure),
+            (design_id, epi_client.delete_design, epiv2models.Design),
+        )
+
+        for deletion in deletions:
+            primary_key = deletion[0]
+            client_delete_method = deletion[1]
+            model_class = deletion[2]
+            deletion_response = client_delete_method(primary_key)
+            assert deletion_response.status_code == 204
+            assert not model_class.objects.filter(id=primary_key).exists()
 
     #######################
     # EpiMetaClient tests #
