@@ -9,6 +9,7 @@ from ..assessment.constants import EpiVersion
 from ..assessment.models import Assessment, EffectTag
 from ..common.filterset import BaseFilterSet
 from ..common.forms import BaseFormHelper
+from ..eco.models import Result
 from ..epi.models import Outcome
 from ..epimeta.models import MetaResult
 from ..epiv2.models import DataExtraction
@@ -293,12 +294,50 @@ class InvitroPrefilter(BaseFilterSet):
         return form
 
 
+class EcoPrefilter(BaseFilterSet):
+    # studies
+    published_only = df.BooleanFilter(
+        method="filter_published_only",
+        widget=CheckboxInput(),
+        label="Published studies only",
+        help_text='Only present data from studies which have been marked as "published" in HAWC.',
+    )
+    studies = df.MultipleChoiceFilter(
+        field_name="design__study",
+        label="Studies to include",
+        help_text="Select one or more studies to include in the plot.",
+    )
+
+    class Meta:
+        model = Result
+        fields = [
+            "published_only",
+            "studies",
+        ]
+        form = TestForm
+
+    def filter_published_only(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter(design__study__published=True)
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(design__study__assessment_id=self.assessment.pk)
+        return super().filter_queryset(queryset)
+
+    def create_form(self):
+        form = super().create_form()
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        return form
+
+
 class StudyTypePrefilter(Enum):
     BIOASSAY = BioassayPrefilter
     EPIV1 = EpiV1Prefilter
     EPIV2 = EpiV2Prefilter
     EPI_META = EpiMetaPrefilter
     IN_VITRO = InvitroPrefilter
+    ECO = EcoPrefilter
 
     @classmethod
     def from_study_type(cls, study_type: int | StudyType, assessment: Assessment):

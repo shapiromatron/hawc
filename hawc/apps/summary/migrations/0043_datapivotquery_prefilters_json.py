@@ -36,6 +36,10 @@ mapping = {
         "categories":"category__in",
         "chemicals":"chemical__name__in",
         "effect_tags":"effects__in"
+    },
+    StudyTypePrefilter.ECO:{
+        "published_only":"design__study__published",
+        "studies":"design__study__in"
     }
 }
 
