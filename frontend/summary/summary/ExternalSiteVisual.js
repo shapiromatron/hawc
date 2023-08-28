@@ -71,9 +71,7 @@ class ExternalWebsite extends BaseVisual {
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 actions,
             ]);
-            $el.prepend(headerRow)
-                .append(captionDiv)
-                .append(this.displayAsModal());
+            $el.prepend(headerRow).append(captionDiv);
         }
 
         this.embedPage($plotDiv[0]);
