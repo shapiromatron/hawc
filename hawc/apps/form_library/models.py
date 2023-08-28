@@ -7,3 +7,5 @@ class CustomDataExtraction(models.Model):
     name = models.CharField()
     description = models.TextField()
     schema = models.JSONField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
