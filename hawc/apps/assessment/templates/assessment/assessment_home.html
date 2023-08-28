@@ -9,9 +9,7 @@
       {% if user.can_create_assessments %}
         <a class="dropdown-item" href="{% url 'assessment:new' %}">Create a new assessment</a>
       {% else %}
-        <p class="dropdown-item help-block">
-          Assessment creation disabled - please <a href="{% url 'contact' %}">contact us</a> if needed.
-        </p>
+        <p class="dropdown-item help-block">Assessment creation disabled - please <a href="{% url 'contact' %}">contact us</a> if needed.</p>
       {% endif %}
     {% endactions %}
   </div>

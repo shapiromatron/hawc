@@ -16,8 +16,7 @@
             {% endif %}
 
             {% if obj_perms.edit_assessment %}
-            <a class="dropdown-item"
-                href="{% url 'study:toggle-lock' object.pk %}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
+            <a class="dropdown-item" href="{% url 'study:toggle-lock' object.pk %}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
             {% endif %}
 
             {% if object.editable %}

@@ -13,7 +13,7 @@
       {% endactions %}
     {% endif %}
   </div>
-  {% if not object.can_edit %}{% include 'bmd/_read_only_session_alert.html' %}{% endif %}
+  {% if obj_perms.edit and crud == "Read" and not object.can_edit %}{% include 'bmd/_read_only_session_alert.html' %}{% endif %}
   <div id="main"></div>
 {% endblock %}
 
