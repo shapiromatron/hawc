@@ -107,7 +107,7 @@ class LogFilterSet(BaseFilterSet):
     )
     object_id = df.NumberFilter(
         label="Object ID",
-        help_text="Filter by Object ID, or the HAWC ID for the item which was modified; can often be found in the URL or in data exports",
+        help_text="Filter by HAWC ID; can be found in the URL or in data exports",
     )
     content_type = df.NumberFilter(
         label="Data type",
