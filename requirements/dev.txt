@@ -10,6 +10,7 @@ ruff==0.0.277
 
 # django development
 django-debug-toolbar==4.1.0
+django-browser-reload==1.11.0
 django-extensions==3.2.3
 faker==13.3.0
 
