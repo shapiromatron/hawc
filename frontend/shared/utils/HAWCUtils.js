@@ -70,7 +70,9 @@ class HAWCUtils {
     }
 
     static pageActionsButton(items) {
-        var $menu = $('<div class="dropdown-menu dropdown-menu-right">');
+        var $menu = $(
+            '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionsDropdownButton">'
+        );
         items.forEach(function(d) {
             if (d instanceof Object) {
                 $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
@@ -80,8 +82,12 @@ class HAWCUtils {
                 console.error("unknown input type");
             }
         });
-        return $('<div class="dropdown btn-group float-right">')
-            .append('<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>')
+        return $(
+            `<div class="actionsMenu dropdown btn-group ml-auto align-self-start flex-shrink-0 pl-2">`
+        )
+            .append(
+                '<a class="btn btn-primary dropdown-toggle" id="actionsDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>'
+            )
             .append($menu);
     }
 
@@ -287,6 +293,15 @@ class HAWCUtils {
         return $(`<p class="loader">
             Loading, please wait...&nbsp;<span class="fa fa-spin fa-spinner"></span>
         </p>`);
+    }
+
+    static unpublished(published = true, editable = true) {
+        if (!published && editable) {
+            return $(
+                `<span class="unpublishedBadge align-self-start flex-shrink-0 badge badge-pill ml-auto mt-1 border border-secondary text-secondary"><i title="Unpublished" class="fa fa-eye-slash" aria-hidden="true"></i> <i>Unpublished</i></span>`
+            );
+        }
+        return null;
     }
 
     static onSelectChangeShowDetail(selectEl, insertEl, insertItems) {
