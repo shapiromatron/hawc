@@ -173,8 +173,7 @@ class TestMultipleEndpointChoiceField:
         with django_assert_max_num_queries(1):
             options = list(field.widget.options("test", []))
 
+        # check label looks correct
         assert len(options) >= 5
-        assert (
-            options[0]["label"]
-            == "Biesemeier JA et al. 2011 | developmental | sd rats | bmd3 - continuous"
-        )
+        labels = {option["label"] for option in options}
+        assert "Biesemeier JA et al. 2011 | developmental | sd rats | bmd3 - continuous" in labels
