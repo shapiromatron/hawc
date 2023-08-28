@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.db import models, transaction
-from django.db.models import Max, Min, OuterRef, QuerySet, Subquery, Value
+from django.db.models import Case, F, Max, Min, OuterRef, QuerySet, Subquery, Value, When
+from django.db.models.functions import Concat
 from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment, DoseUnits
@@ -137,6 +138,36 @@ class EndpointQuerySet(QuerySet):
             loel_value=Subquery(loel_value_qs.values("dose")),
             bmd=Subquery(bmd_qs.values("selected__bmd")),
             bmdl=Subquery(bmd_qs.values("selected__bmdl")),
+        )
+
+    def selector(self) -> QuerySet:
+        """Get a queryset of endpoints with a label for use in an assessment-level selector."""
+        return (
+            self.annotate(
+                label=Concat(
+                    F("animal_group__experiment__study__short_citation"),
+                    Case(
+                        When(
+                            animal_group__experiment__study__published=False,
+                            then=Value(" (unpublished)"),
+                        ),
+                        default=Value(""),
+                    ),
+                    Value(" | "),
+                    F("animal_group__experiment__name"),
+                    Value(" | "),
+                    F("animal_group__name"),
+                    Value(" | "),
+                    F("name"),
+                )
+            )
+            .order_by(
+                "animal_group__experiment__study__short_citation",
+                "animal_group__experiment__name",
+                "animal_group__name",
+                "name",
+            )
+            .only("id") # https://code.djangoproject.com/ticket/30052
         )
 
 
