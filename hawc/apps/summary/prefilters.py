@@ -32,45 +32,38 @@ class BioassayPrefilter(BaseFilterSet):
         method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
+        help_text='Only present data from studies which have been marked as "published" in HAWC.',
     )
     studies = df.MultipleChoiceFilter(
         field_name="animal_group__experiment__study",
         label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more studies to include in the plot.",
     )
     # bioassay
     systems = df.MultipleChoiceFilter(
         field_name="system",
         label="Systems to include",
-        help_text="""Select one or more systems to include in the plot.
-                                 If no system is selected, no endpoints will be available.""",
+        help_text="Select one or more systems to include in the plot.",
     )
     organs = df.MultipleChoiceFilter(
         field_name="organ",
         label="Organs to include",
-        help_text="""Select one or more organs to include in the plot.
-                                 If no organ is selected, no endpoints will be available.""",
+        help_text="Select one or more organs to include in the plot.",
     )
     effects = df.MultipleChoiceFilter(
         field_name="effect",
         label="Effects to include",
-        help_text="""Select one or more effects to include in the plot.
-                                 If no effect is selected, no endpoints will be available.""",
+        help_text="Select one or more effects to include in the plot.",
     )
     effect_subtypes = df.MultipleChoiceFilter(
         field_name="effect_subtype",
         label="Effect Sub-Types to include",
-        help_text="""Select one or more effect sub-types to include in the plot.
-                                 If no effect sub-type is selected, no endpoints will be available.""",
+        help_text="Select one or more effect sub-types to include in the plot.",
     )
     effect_tags = df.MultipleChoiceFilter(
         field_name="effects",
         label="Tags to include",
-        help_text="""Select one or more effect-tags to include in the plot.
-                                 If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more effect-tags to include in the plot.",
     )
 
     class Meta:
@@ -114,33 +107,28 @@ class EpiV1Prefilter(BaseFilterSet):
         method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
+        help_text='Only present data from studies which have been marked as "published" in HAWC.',
     )
     studies = df.MultipleChoiceFilter(
         field_name="study_population__study",
         label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more studies to include in the plot.",
     )
     # epi
     systems = df.MultipleChoiceFilter(
         field_name="system",
         label="Systems to include",
-        help_text="""Select one or more systems to include in the plot.
-                                 If no system is selected, no endpoints will be available.""",
+        help_text="Select one or more systems to include in the plot.",
     )
     effects = df.MultipleChoiceFilter(
         field_name="effect",
         label="Effects to include",
-        help_text="""Select one or more effects to include in the plot.
-                                 If no effect is selected, no endpoints will be available.""",
+        help_text="Select one or more effects to include in the plot.",
     )
     effect_tags = df.MultipleChoiceFilter(
         field_name="effects",
         label="Tags to include",
-        help_text="""Select one or more effect-tags to include in the plot.
-                                 If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more effect-tags to include in the plot.",
     )
 
     class Meta:
@@ -178,14 +166,12 @@ class EpiV2Prefilter(BaseFilterSet):
         method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
+        help_text='Only present data from studies which have been marked as "published" in HAWC.',
     )
     studies = df.MultipleChoiceFilter(
         field_name="design__study",
         label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more studies to include in the plot.",
     )
 
     class Meta:
@@ -217,14 +203,12 @@ class EpiMetaPrefilter(BaseFilterSet):
         method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
+        help_text='Only present data from studies which have been marked as "published" in HAWC.',
     )
     studies = df.MultipleChoiceFilter(
         field_name="protocol__study",
         label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more studies to include in the plot.",
     )
 
     class Meta:
@@ -256,33 +240,28 @@ class InvitroPrefilter(BaseFilterSet):
         method="filter_published_only",
         widget=CheckboxInput(),
         label="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
+        help_text='Only present data from studies which have been marked as "published" in HAWC.',
     )
     studies = df.MultipleChoiceFilter(
         field_name="experiment__study",
         label="Studies to include",
-        help_text="""Select one or more studies to include in the plot.
-                If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more studies to include in the plot.",
     )
     # invitro
     categories = df.MultipleChoiceFilter(
         field_name="category",
         label="Categories to include",
-        help_text="""Select one or more categories to include in the plot.
-                                 If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more categories to include in the plot.",
     )
     chemicals = df.MultipleChoiceFilter(
         field_name="chemical__name",
         label="Chemicals to include",
-        help_text="""Select one or more chemicals to include in the plot.
-                                 If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more chemicals to include in the plot.",
     )
     effect_tags = df.MultipleChoiceFilter(
         field_name="effects",
         label="Tags to include",
-        help_text="""Select one or more effect-tags to include in the plot.
-                                 If no study is selected, no endpoints will be available.""",
+        help_text="Select one or more effect-tags to include in the plot.",
     )
 
     class Meta:

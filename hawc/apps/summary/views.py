@@ -610,6 +610,7 @@ class DataPivotNewPrompt(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["evidence_type"] = constants.StudyType
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -697,7 +698,10 @@ class DataPivotCopyAsNewSelector(BaseUpdate):
         if hasattr(dp, "datapivotupload"):
             url = reverse_lazy("summary:dp_new-file", kwargs={"pk": self.assessment.id})
         else:
-            url = reverse_lazy("summary:dp_new-query", kwargs={"pk": self.assessment.id})
+            url = reverse_lazy(
+                "summary:dp_new-query",
+                kwargs={"pk": self.assessment.id, "study_type": dp.datapivotquery.evidence_type},
+            )
 
         url += f"?initial={dp.pk}"
 
