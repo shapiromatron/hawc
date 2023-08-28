@@ -18,7 +18,7 @@ from ..study.models import Study
 from .constants import StudyType, VisualType
 
 
-class TestForm(forms.Form):
+class PrefilterForm(forms.Form):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
@@ -78,7 +78,7 @@ class BioassayPrefilter(BaseFilterSet):
             "effect_subtypes",
             "effect_tags",
         ]
-        form = TestForm
+        form = PrefilterForm
 
     def filter_published_only(self, queryset, name, value):
         if not value:
@@ -141,7 +141,7 @@ class EpiV1Prefilter(BaseFilterSet):
             "effects",
             "effect_tags",
         ]
-        form = TestForm
+        form = PrefilterForm
 
     def filter_published_only(self, queryset, name, value):
         if not value:
@@ -181,7 +181,7 @@ class EpiV2Prefilter(BaseFilterSet):
             "published_only",
             "studies",
         ]
-        form = TestForm
+        form = PrefilterForm
 
     def filter_published_only(self, queryset, name, value):
         if not value:
@@ -218,7 +218,7 @@ class EpiMetaPrefilter(BaseFilterSet):
             "published_only",
             "studies",
         ]
-        form = TestForm
+        form = PrefilterForm
 
     def filter_published_only(self, queryset, name, value):
         if not value:
@@ -274,7 +274,7 @@ class InvitroPrefilter(BaseFilterSet):
             "chemicals",
             "effect_tags",
         ]
-        form = TestForm
+        form = PrefilterForm
 
     def filter_published_only(self, queryset, name, value):
         if not value:
@@ -314,7 +314,7 @@ class EcoPrefilter(BaseFilterSet):
             "published_only",
             "studies",
         ]
-        form = TestForm
+        form = PrefilterForm
 
     def filter_published_only(self, queryset, name, value):
         if not value:
