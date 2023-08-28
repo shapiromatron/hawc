@@ -30,6 +30,8 @@ class ReferenceFilterSet(BaseFilterSet):
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
+    authors = df.CharFilter(method="filter_authors", label="Authors")
+    year = df.NumberFilter(label="Year", help_text="Year of publication")
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         null_value="untagged",
@@ -99,10 +101,10 @@ class ReferenceFilterSet(BaseFilterSet):
         fields = [
             "id",
             "db_id",
-            "year",
             "journal",
             "ref_search",
             "authors",
+            "year",
             "search",
             "tags",
             "include_descendants",
