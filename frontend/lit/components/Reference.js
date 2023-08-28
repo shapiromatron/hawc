@@ -2,38 +2,12 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
+import {markKeywords} from "shared/utils/_helpers";
 import h from "shared/utils/helpers";
 import Hero from "shared/utils/Hero";
 import {getReferenceTagListUrl} from "shared/utils/urls";
 
 import ReferenceButton from "./ReferenceButton";
-
-const markKeywords = (text, allSettings) => {
-        const all_tokens = allSettings.set1.keywords
-                .concat(allSettings.set2.keywords)
-                .concat(allSettings.set3.keywords),
-            all_re = new RegExp(all_tokens.join("|"), "gim");
-
-        if (all_tokens.length === 0) {
-            return text;
-        }
-        text = text.replace(all_re, match => `<mark>${match}</mark>`);
-        text = markText(text, allSettings.set1);
-        text = markText(text, allSettings.set2);
-        text = markText(text, allSettings.set3);
-        return text;
-    },
-    markText = (text, settings) => {
-        if (settings.keywords.length === 0) {
-            return text;
-        }
-        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
-        return text.replace(
-            re,
-            (match, token) =>
-                `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
-        );
-    };
 
 class Reference extends Component {
     renderIdentifiers(data) {
@@ -121,16 +95,16 @@ class Reference extends Component {
             <div className="referenceDetail pb-2">
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
-                    <div className="ref_small">
+                    <div className="d-flex ref_small">
+                        <span>
+                            {authors}&nbsp;{year}
+                        </span>
                         {showActionsTagless ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
                                 items={actionItems.slice(1)}
                             />
                         ) : null}
-                        <span>
-                            {authors}&nbsp;{year}
-                        </span>
                         {showActions ? (
                             <ActionsButton
                                 dropdownClasses={actionsBtnClassName}
@@ -212,7 +186,7 @@ Reference.propTypes = {
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn-sm",
+    actionsBtnClassName: "btn-sm btn-secondary",
     showHr: false,
     showTags: true,
     showActionsTagsless: false,

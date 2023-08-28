@@ -42,10 +42,6 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: loc
-      run: |
-        sudo apt-get install -y cloc
-        make loc
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
@@ -78,7 +74,20 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
           export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
         fi
-        py.test --vcr-record=none
+        coverage run -m pytest --vcr-record=none
+        coverage html -d coverage_report
+        echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
+        make loc >> $GITHUB_STEP_SUMMARY
+    - name: upload-coverage-report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage_report
 
   frontend:
     name: frontend

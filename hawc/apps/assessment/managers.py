@@ -4,21 +4,36 @@ from typing import Any, NamedTuple
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q, QuerySet
+from django.db.models import Case, Q, QuerySet, Value, When
 from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum
-from ..common.models import BaseManager
+from ..common.models import BaseManager, replace_null, str_m2m
 from . import constants
 
 
-class AssessmentManager(BaseManager):
-    assessment_relation = "id"
+def published(prefix: str = "") -> Case:
+    public = f"{prefix}public_on__isnull"
+    hidden = f"{prefix}hide_from_public_page"
+    return Case(
+        When(**{public: True}, then=Value(constants.PublishedStatus.PRIVATE)),
+        When(
+            Q(**{public: False}) & Q(**{hidden: False}),
+            then=Value(constants.PublishedStatus.PUBLIC),
+        ),
+        When(
+            Q(**{public: False}) & Q(**{hidden: True}),
+            then=Value(constants.PublishedStatus.UNLISTED),
+        ),
+        default=Value("???"),
+    )
 
-    def get_public_assessments(self):
-        return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by("name")
 
-    def get_viewable_assessments(self, user, exclusion_id=None, public=False):
+class AssessmentQuerySet(QuerySet):
+    def public(self):
+        return self.filter(public_on__isnull=False, hide_from_public_page=False)
+
+    def user_can_view(self, user, exclusion_id=None, public=False):
         """
         Return queryset of all assessments which that user is able to view,
         optionally excluding assessment exclusion_id,
@@ -33,18 +48,6 @@ class AssessmentManager(BaseManager):
             filters |= Q(public_on__isnull=False) & Q(hide_from_public_page=False)
         return self.filter(filters).exclude(id=exclusion_id).distinct()
 
-    def get_editable_assessments(self, user, exclusion_id=None):
-        """
-        Return queryset of all assessments which that user is able to edit,
-        optionally excluding assessment exclusion_id,
-        not including public assessments
-        """
-        return (
-            self.filter(Q(project_manager=user) | Q(team_members=user))
-            .exclude(id=exclusion_id)
-            .distinct()
-        )
-
     def recent_public(self, n: int = 5) -> QuerySet:
         """Get recent public, published assessments
 
@@ -57,6 +60,48 @@ class AssessmentManager(BaseManager):
         return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by(
             "-public_on"
         )[:n]
+
+    def with_published(self) -> QuerySet:
+        return self.annotate(published=published())
+
+    def with_role(self, user) -> QuerySet:
+        return self.annotate(
+            user_role=Case(
+                When(project_manager=user, then=Value(constants.AssessmentRole.PROJECT_MANAGER)),
+                When(team_members=user, then=Value(constants.AssessmentRole.TEAM_MEMBER)),
+                When(reviewers=user, then=Value(constants.AssessmentRole.REVIEWER)),
+                default=Value(constants.AssessmentRole.NO_ROLE),
+            )
+        )
+
+    def global_chemical_report(self) -> pd.DataFrame:
+        mapping = {
+            "id": "id",
+            "name": "name",
+            "year": "year",
+            "assessment_objective": "assessment_objective",
+            "creator_email": replace_null("creator__email"),
+            "cas": "cas",
+            "dtxsids": "dtxsids_str",
+            "published": "published",
+            "public_on": "public_on",
+            "hide_from_public_page": "hide_from_public_page",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+        data = (
+            self.with_published()
+            .annotate(dtxsids_str=str_m2m("dtxsids__dtxsid"))
+            .values_list(*list(mapping.values()))
+        )
+        return pd.DataFrame(data=data, columns=list(mapping.keys()))
+
+
+class AssessmentManager(BaseManager):
+    assessment_relation = "id"
+
+    def get_queryset(self):
+        return AssessmentQuerySet(self.model, using=self._db)
 
 
 class AttachmentManager(BaseManager):

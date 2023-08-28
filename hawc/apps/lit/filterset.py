@@ -3,7 +3,13 @@ from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
-from ..common.filterset import BaseFilterSet, ExpandableFilterForm, PaginationFilter, filter_noop
+from ..common.filterset import (
+    ArrowOrderingFilter,
+    BaseFilterSet,
+    ExpandableFilterForm,
+    PaginationFilter,
+    filter_noop,
+)
 from . import models
 
 
@@ -13,13 +19,13 @@ class ReferenceFilterSet(BaseFilterSet):
         field_name="identifiers__unique_id",
         lookup_expr="icontains",
         label="External identifier",
-        help_text="Pubmed ID, DOI, HERO ID, etc.",
+        help_text="Pubmed ID, DOI, HERO ID",
     )
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
     ref_search = df.CharFilter(
         method="filter_search",
         label="Title/Author/Year",
-        help_text="Filter by title, abstract, authors, or year",
+        help_text="Filter citations (author, year, title, ID)",
     )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
@@ -66,13 +72,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Tagged by me",
         help_text="All references that you have tagged",
     )
-    order_by = df.OrderingFilter(
-        empty_label="Default Order",
+    order_by = ArrowOrderingFilter(
+        initial="-year",
         fields=(
-            ("authors", "authors"),
+            ("authors_short", "authors"),
             ("year", "year"),
         ),
-        help_text="How results will be ordered",
     )
     needs_tagging = df.BooleanFilter(
         method="filter_needs_tagging",
@@ -86,7 +91,7 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
-    paginate_by = PaginationFilter(empty_label="Default Pagination")
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Reference
@@ -126,6 +131,7 @@ class ReferenceFilterSet(BaseFilterSet):
             | Q(authors_short__unaccent__icontains=value)
             | Q(authors__unaccent__icontains=value)
             | Q(year__icontains=value)
+            | Q(identifiers__unique_id=value)
         )
         return queryset.filter(query)
 

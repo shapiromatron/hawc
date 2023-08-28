@@ -61,18 +61,12 @@ class ReferenceTreeMain extends Component {
         return (
             <div className="row">
                 <div className="col-md-12 pb-2">
-                    <TagActions
-                        assessmentId={store.config.assessment_id}
-                        tagId={store.selectedTag ? store.selectedTag.data.pk : undefined}
-                        untagged={store.untaggedReferencesSelected}
-                        canEdit={store.config.canEdit}
-                    />
                     {store.untaggedReferencesSelected === true ? (
                         <h4>Untagged references</h4>
                     ) : store.selectedTag === null ? (
                         <h4>Available references</h4>
                     ) : (
-                        <div className="d-flex align-items-center">
+                        <div className="d-flex">
                             <h4>
                                 <span>
                                     {selectedReferences && selectedReferences.length > 0
@@ -82,6 +76,12 @@ class ReferenceTreeMain extends Component {
                             </h4>
                             <span className="ml-2 refTag">{store.selectedTag.get_full_name()}</span>
                             <span>{yearText}</span>
+                            <TagActions
+                                assessmentId={store.config.assessment_id}
+                                tagId={store.selectedTag ? store.selectedTag.data.pk : undefined}
+                                untagged={store.untaggedReferencesSelected}
+                                canEdit={store.config.canEdit}
+                            />
                         </div>
                     )}
                 </div>

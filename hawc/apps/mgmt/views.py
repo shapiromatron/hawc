@@ -102,16 +102,6 @@ class UserAssessmentTaskList(BaseFilterList):
             .order_by("study__short_citation", "type")
         )
 
-    def get_filterset_form_kwargs(self):
-        return dict(
-            dynamic_fields=["study_name", "type", "show_completed"],
-            grid_layout={
-                "rows": [
-                    {"columns": [{"width": 4}, {"width": 4}, {"width": 4}]},
-                ]
-            },
-        )
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))

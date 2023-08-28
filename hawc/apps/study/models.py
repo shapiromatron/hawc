@@ -3,7 +3,6 @@ import os
 
 import pandas as pd
 from django.apps import apps
-from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
@@ -192,7 +191,7 @@ class Study(Reference):
             )
         )
 
-    def get_study_type(self):
+    def get_study_types(self) -> list[str]:
         types = []
         for field in self.STUDY_TYPE_FIELDS:
             if getattr(self, field):
@@ -216,6 +215,7 @@ class Study(Reference):
             "study-epi",
             "study-epi_meta",
             "study-in_vitro",
+            "study-eco",
             "study-study_identifier",
             "study-contact_author",
             "study-ask_author",
@@ -248,6 +248,7 @@ class Study(Reference):
             ser["epi"],
             ser["epi_meta"],
             ser["in_vitro"],
+            ser["eco"],
             ser["study_identifier"],
             ser["contact_author"],
             ser["ask_author"],
@@ -358,10 +359,7 @@ class Study(Reference):
         self.save()
 
     def data_types(self) -> list[bool]:
-        types = [self.bioassay, self.epi, self.epi_meta, self.in_vitro, self.eco]
-        if not settings.HAWC_FEATURES.ENABLE_ECO:
-            types = types[:-1]
-        return types
+        return [self.bioassay, self.epi, self.epi_meta, self.in_vitro, self.eco]
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):

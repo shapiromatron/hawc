@@ -7,9 +7,9 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
+import {getAction, showAsModal} from "../interactivity/actions";
 import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
-import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
 import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
@@ -26,7 +26,6 @@ class DataPivotVisualization extends D3Plot {
         this.plot_div = plot_div;
         this.set_defaults();
         this.build_plot();
-        this.dpe = new DataPivotExtension();
         return this;
     }
 
@@ -324,41 +323,22 @@ class DataPivotVisualization extends D3Plot {
             settings.bars.marker_style = datum.marker_style;
         });
 
-        // unpack datapoints and data bar settings
-        this.dp_settings.datapoint_settings.forEach(function(datum) {
-            if (datum.field_name !== NULL_CASE) {
-                var copy = {};
+        // set datapoints
+        settings.datapoints = _.chain(this.dp_settings.datapoint_settings)
+            .filter(d => d.field_name !== NULL_CASE)
+            .map(d => _.extend(d, {interactivity: getAction(d.dpe)}))
+            .value();
 
-                // get dpe settings (if any)
-                if (datum.dpe !== NULL_CASE) {
-                    DataPivotExtension.update_extensions(copy, datum.dpe);
-                }
-
-                // now, push extended settings values
-                settings.datapoints.push($.extend(copy, datum));
-            }
+        // set barchart
+        _.extend(settings.barchart, this.dp_settings.barchart, {
+            interactivity: getAction(this.dp_settings.barchart.dpe),
         });
 
-        // unpack barchart settings
-        settings.barchart = this.dp_settings.barchart;
-        if (settings.barchart.dpe !== NULL_CASE) {
-            let dpe = {};
-            DataPivotExtension.update_extensions(dpe, settings.barchart.dpe);
-            _.extend(settings.barchart, dpe);
-        }
-
-        // unpack description settings
-        this.dp_settings.description_settings.forEach(function(datum) {
-            if (datum.field_name !== NULL_CASE) {
-                var copy = {};
-                // get dpe settings (if any)
-                if (datum.dpe !== NULL_CASE) {
-                    DataPivotExtension.update_extensions(copy, datum.dpe);
-                }
-                // now, push extended settings values
-                settings.descriptions.push($.extend(copy, datum));
-            }
-        });
+        // set description
+        settings.descriptions = _.chain(this.dp_settings.description_settings)
+            .filter(d => d.field_name !== NULL_CASE)
+            .map(d => _.extend(d, {interactivity: getAction(d.dpe)}))
+            .value();
 
         var get_selected_fields = v => v.field_name !== NULL_CASE;
         settings.sorts = this.dp_settings.sorts.filter(get_selected_fields);
@@ -905,10 +885,10 @@ class DataPivotVisualization extends D3Plot {
             .attr("y", d => this.row_heights[d._dp_index].min + barPadding)
             .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr("height", barHeight)
-            .style("cursor", barchart._dpe_key ? "pointer" : "auto")
+            .style("cursor", barchart.interactivity ? "pointer" : "auto")
             .on("click", (event, d) => {
-                if (barchart._dpe_key) {
-                    this.dpe.render_plottip(barchart, d);
+                if (barchart.interactivity) {
+                    showAsModal(barchart.interactivity, d);
                 }
             })
             .each(function(d) {
@@ -1065,10 +1045,10 @@ class DataPivotVisualization extends D3Plot {
                 .each(function(d) {
                     applyStyles(self.svg, this, d._styles["points_" + i]);
                 })
-                .style("cursor", d => (datum._dpe_key ? "pointer" : "auto"))
+                .style("cursor", d => (datum.interactivity ? "pointer" : "auto"))
                 .on("click", function(event, d) {
-                    if (datum._dpe_key) {
-                        self.dpe.render_plottip(datum, d);
+                    if (datum.interactivity) {
+                        showAsModal(datum.interactivity, d);
                     }
                 });
         });
@@ -1164,10 +1144,10 @@ class DataPivotVisualization extends D3Plot {
                     col: j,
                     text: txt,
                     style: v._styles["text_" + j],
-                    cursor: desc._dpe_key ? "pointer" : "auto",
+                    cursor: desc.interactivity ? "pointer" : "auto",
                     onclick() {
-                        if (desc._dpe_key) {
-                            self.dpe.render_plottip(desc, v);
+                        if (desc.interactivity) {
+                            showAsModal(desc.interactivity, v);
                         }
                     },
                 });

@@ -46,7 +46,7 @@ class Study {
     }
 
     has_riskofbias() {
-        return this.riskofbias.length > 0;
+        return this.riskofbias && this.riskofbias.length > 0;
     }
 
     build_breadcrumbs() {

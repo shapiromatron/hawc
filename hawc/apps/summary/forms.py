@@ -40,6 +40,7 @@ class PrefilterMixin:
 
     def createFields(self):
         fields = dict()
+        epi_version = self.instance.assessment.epi_version
 
         if "study" in self.prefilter_include:
             fields.update(
@@ -153,7 +154,7 @@ class PrefilterMixin:
                 ]
             )
 
-        if "epi" in self.prefilter_include:
+        if "epi" in self.prefilter_include and epi_version == 1:
             fields.update(
                 [
                     (
@@ -317,6 +318,7 @@ class PrefilterMixin:
                 "study_population__study__in",
                 "experiment__study__in",
                 "protocol__study__in",
+                "design__study__in",
             ]:
                 self.fields["prefilter_study"].initial = True
                 self.fields["studies"].initial = v
@@ -372,6 +374,7 @@ class PrefilterMixin:
 
     def setPrefilters(self, data):
         prefilters = {}
+        epi_version = self.instance.assessment.epi_version
 
         if data.get("prefilter_study") is True:
             studies = data.get("studies", [])
@@ -385,7 +388,12 @@ class PrefilterMixin:
             elif evidence_type == constants.StudyType.IN_VITRO:
                 prefilters["experiment__study__in"] = studies
             elif evidence_type == constants.StudyType.EPI:
-                prefilters["study_population__study__in"] = studies
+                if epi_version == 1:
+                    prefilters["study_population__study__in"] = studies
+                elif epi_version == 2:
+                    prefilters["design__study__in"] = studies
+                else:
+                    raise ValueError("Invalid epi_version")
             elif evidence_type == constants.StudyType.EPI_META:
                 prefilters["protocol__study__in"] = studies
             else:
@@ -1071,7 +1079,7 @@ class DataPivotUploadForm(DataPivotForm):
 
 
 class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
-    prefilter_include = ("study", "bioassay", "epi", "invitro", "effect_tags")
+    prefilter_include = ("study", "bioassay", "epi", "invitro", "eco", "effect_tags")
 
     class Meta:
         model = models.DataPivotQuery
@@ -1095,6 +1103,7 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
             (constants.StudyType.EPI, "Epidemiology"),
             (constants.StudyType.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
             (constants.StudyType.IN_VITRO, "In vitro"),
+            (constants.StudyType.ECO, "Ecology"),
         )
         self.fields["preferred_units"].required = False
         self.js_units_choices = json.dumps(

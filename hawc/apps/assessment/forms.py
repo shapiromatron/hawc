@@ -25,7 +25,7 @@ from ..common.forms import (
     form_actions_apply_filters,
     form_actions_create_or_close,
 )
-from ..common.helper import new_window_a, tryParseInt
+from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..myuser.models import HAWCUser
@@ -152,7 +152,7 @@ class AssessmentDetailForm(forms.ModelForm):
     def clean(self) -> dict:
         cleaned_data = super().clean()
         # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
-        if cleaned_data["extra"] is None:
+        if cleaned_data.get("extra") is None:
             cleaned_data["extra"] = dict()
         return cleaned_data
 
@@ -227,7 +227,7 @@ class AssessmentValueForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
-        if cleaned_data["extra"] is None:
+        if cleaned_data.get("extra") is None:
             cleaned_data["extra"] = dict()
 
         evaluation_type = cleaned_data.get("evaluation_type")
@@ -282,44 +282,6 @@ class AssessmentValueForm(forms.ModelForm):
         helper.add_row("comments", 2, "col-md-6")
 
         return helper
-
-
-class AssessmentFilterForm(forms.Form):
-    search = forms.CharField(required=False)
-
-    DEFAULT_ORDER_BY = "-year"
-    ORDER_BY_CHOICES = [
-        ("name", "Name"),
-        ("year", "Year, ascending"),
-        ("-year", "Year, descending"),
-        ("last_updated", "Date Updated, ascending"),
-        ("-last_updated", "Date Updated, descending"),
-    ]
-    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial=DEFAULT_ORDER_BY)
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-        helper.add_row("search", 2, ["col-md-8", "col-md-4"])
-        return helper
-
-    def get_filters(self):
-        query = Q()
-        if name := self.cleaned_data.get("search"):
-            if name_int := tryParseInt(name):
-                query &= Q(year=name_int)
-            query |= Q(name__icontains=name)
-        return query
-
-    def get_queryset(self, qs):
-        if self.is_valid():
-            qs = qs.filter(self.get_filters())
-        return qs.order_by(self.get_order_by())
-
-    def get_order_by(self):
-        value = self.cleaned_data.get("order_by") if self.is_valid() else None
-        return value or self.DEFAULT_ORDER_BY
 
 
 class AssessmentAdminForm(forms.ModelForm):

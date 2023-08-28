@@ -46,17 +46,17 @@ goto :eof
 
 :sync-dev
 python -m pip install -U pip
-pip install -r requirements/dev.txt
+python -m pip install -r requirements/dev.txt
 yarn --cwd frontend
-manage migrate
-manage recreate_views
+python manage.py migrate
+python manage.py recreate_views
 goto :eof
 
 :build
 del /f /q .\build .\dist
 call npm --prefix .\frontend run build
-manage set_git_commit
-python -m build --wheel
+python manage.py set_git_commit
+flit build
 goto :eof
 
 :docs

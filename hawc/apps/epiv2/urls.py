@@ -13,10 +13,43 @@ router.register("exposure-level", api.ExposureLevelViewSet, basename="exposure-l
 router.register("outcome", api.OutcomeViewSet, basename="outcome")
 router.register("adjustment-factor", api.AdjustmentFactorViewSet, basename="adjustment-factor")
 router.register("data-extraction", api.DataExtractionViewSet, basename="data-extraction")
+router.register("design-cleanup", api.DesignCleanupViewSet, basename="design-cleanup")
+router.register("chemical-cleanup", api.ChemicalCleanupViewSet, basename="chemical-cleanup")
+router.register("exposure-cleanup", api.ExposureCleanupViewSet, basename="exposure-cleanup")
+router.register(
+    "exposure-level-cleanup", api.ExposureLevelCleanupViewSet, basename="exposure-level-cleanup"
+)
+router.register("outcome-cleanup", api.OutcomeCleanupViewSet, basename="outcome-cleanup")
+router.register(
+    "adjustment-factor-cleanup",
+    api.AdjustmentFactorCleanupViewSet,
+    basename="adjustment-factor-cleanup",
+)
+router.register(
+    "data-extraction-cleanup", api.DataExtractionCleanupViewSet, basename="data-extraction-cleanup"
+)
 
 app_name = "epiv2"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
+    # Heatmap views
+    path(
+        "assessment/<int:pk>/heatmap-study-design/",
+        views.HeatmapStudyDesign.as_view(),
+        name="heatmap-study-design",
+    ),
+    path(
+        "assessment/<int:pk>/heatmap-result/",
+        views.HeatmapResult.as_view(),
+        name="heatmap-result",
+    ),
+    # List views
+    path(
+        "assessment/<int:pk>/outcomes/",
+        views.OutcomeView.as_view(),
+        name="outcome",
+    ),
+    # CRUD
     path(
         "study/<int:pk>/design/create/",
         views.DesignCreate.as_view(),

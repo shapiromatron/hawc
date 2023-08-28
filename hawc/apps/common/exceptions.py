@@ -1,6 +1,4 @@
-class ClassConfigurationException(Exception):
-    """
-    Raised when a programmer has misconfigured something; should not occur in normal application lifecycle.
-    """
+class AssessmentNotFound(Exception):
+    """Raise when an assessment cannot be determined"""
 
     pass

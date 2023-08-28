@@ -230,7 +230,7 @@ class PubMedParser:
     @classmethod
     def _authors_info(cls, tree: ET.Element, dtype) -> dict:
         names = []
-
+        auths = []
         if dtype == cls.ARTICLE:
             auths = tree.findall("MedlineCitation/Article/AuthorList/Author")
         elif dtype == cls.BOOK:
@@ -238,19 +238,20 @@ class PubMedParser:
                 tree.findall('BookDocument/Book/AuthorList[@Type="authors"]/Author'),
                 tree.findall('BookDocument/AuthorList[@Type="authors"]/Author'),
             )
+        else:
+            logger.error(f"Unknown dtype: {dtype}")
 
         for auth in auths:
-            try:
-                names.append(
-                    normalize_author(f"{auth.find('LastName').text} {auth.find('Initials').text}")
-                )
-            except Exception:
-                logger.error("Error parsing LastName + Initials")
-
-            try:
-                names.append(auth.find("CollectiveName").text)
-            except Exception:
-                logger.error("Error parsing CollectiveName")
+            last = auth.find("LastName")
+            collective = auth.find("CollectiveName")
+            if last is not None:
+                initials = cls._try_single_find(auth, "Initials")
+                names.append(normalize_author(f"{last.text} {initials}".strip()))
+            elif collective is not None:
+                names.append(collective.text)
+            else:
+                text = ET.tostring(auth, encoding="unicode")
+                logger.error(f"Error parsing authors: {text}")
 
         return {"authors": names, "authors_short": get_author_short_text(names)}
 

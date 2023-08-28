@@ -125,10 +125,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: blog
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: content
 - model: contenttypes.contenttype
   fields:
@@ -910,7 +906,7 @@
     assessment: 2
     evaluation_type: 1
     system: Urinary
-    value_type: 5
+    value_type: 10
     value: 4.0
     value_unit: mg/kg/day
     confidence: Medium High
@@ -1264,24 +1260,6 @@
     - assessment
     object_id: 1
     created: 2021-09-17 18:47:19.786686+00:00
-- model: assessment.blog
-  pk: 1
-  fields:
-    subject: Unpublished Blog
-    content: Content
-    rendered_content: '<p>Content</p>'
-    published: false
-    created: 2020-08-20 03:01:09.747019+00:00
-    last_updated: 2020-08-20 03:01:09.747019+00:00
-- model: assessment.blog
-  pk: 2
-  fields:
-    subject: Published Blog
-    content: Content
-    rendered_content: '<p>Content</p>'
-    published: true
-    created: 2020-08-20 03:01:26.973291+00:00
-    last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: assessment.content
   pk: 1
   fields:
@@ -1319,9 +1297,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390879+00:00
     last_updated: 2020-04-11 20:53:19.390902+00:00
 - model: lit.literatureassessment
@@ -1340,9 +1315,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
     last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.literatureassessment
@@ -1361,9 +1333,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
     last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.literatureassessment
@@ -1382,9 +1351,6 @@
     name_list_3: Additional
     color_list_3: '#4477AA'
     keyword_list_3: ''
-    topic_tsne_data: ''
-    topic_tsne_refresh_requested: null
-    topic_tsne_last_refresh: null
     created: 2022-10-27 21:02:29.769131+00:00
     last_updated: 2022-10-27 21:02:29.769146+00:00
 - model: lit.search
@@ -10286,3 +10252,8 @@
     due_date: null
     started: null
     completed: null
+- model: reversion.revision
+  pk: 1
+  fields:
+    date_created: 2099-08-01 00:00:00.000000+00:00
+    user_id: 1

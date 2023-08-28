@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             name="lifestage_assessed",
             field=models.CharField(
                 blank=True,
-                help_text="Definitions: <b>Developmental</b>: Prenatal and perinatal exposure in dams or postnatal exposure in offspring until sexual maturity (~6 weeks in rats and mice). Include studies with pre-mating exposure if the endpoint focus is developmental. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult (gestation)</b>: Exposure in dams during pregnancy. <b>Multi-lifestage</b>: includes both developmental and adult (i.e., multi-generational studies, exposure that start before sexual maturity and continue to adulthood)",
+                help_text="Definitions: <b>Developmental</b>: Prenatal and perinatal exposure in dams or postnatal exposure in offspring until sexual maturity (~6 weeks in rats and mice). Include studies with pre-mating exposure if the endpoint focus is developmental. <b>Juvenile</b>: Exposure between weaned and sexual maturity. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult (gestation)</b>: Exposure in dams during pregnancy. <b>Multi-lifestage</b>: includes both developmental and adult (i.e., multi-generational studies, exposure that start before sexual maturity and continue to adulthood)",
                 max_length=32,
             ),
         ),
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
             name="lifestage_exposed",
             field=models.CharField(
                 blank=True,
-                help_text="Definitions: <strong>Developmental</strong>: Prenatal and perinatal exposure in dams or postnatal exposure in offspring until sexual maturity (~6 weeks in rats and mice). Include studies with pre-mating exposure <em>if the endpoint focus is developmental</em>. <strong>Adult</strong>: Exposure in sexually mature males or females. <strong>Adult (gestation)</strong>: Exposure in dams duringpregnancy. <strong>Multi-lifestage</strong>: includes both developmental and adult (i.e., multi-generational studies, exposure that start before sexual maturity and continue to adulthood)",
+                help_text="Definitions: <strong>Developmental</strong>: Prenatal and perinatal exposure in dams or postnatal exposure in offspring until sexual maturity (~6 weeks in rats and mice). Include studies with pre-mating exposure <em>if the endpoint focus is developmental</em>. <strong>Juvenile</strong>: Exposure between weaned and sexual maturity. <strong>Adult</strong>: Exposure in sexually mature males or females. <strong>Adult (gestation)</strong>: Exposure in dams duringpregnancy. <strong>Multi-lifestage</strong>: includes both developmental and adult (i.e., multi-generational studies, exposure that start before sexual maturity and continue to adulthood)",
                 max_length=32,
                 verbose_name="Exposure lifestage",
             ),
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
             field=models.TextField(
                 blank=True,
                 help_text="List the endpoint/adverse outcome name as used in the study. This will help during QA/QC of the extraction to the original study in cases where the endpoint/adverse outcome name is adjusted for consistency across studies or assessments.",
-                verbose_name="Endpoint Name in Study",
+                verbose_name="Diagnostic (as reported)",
             ),
         ),
         migrations.AlterField(
@@ -287,6 +287,7 @@ class Migration(migrations.Migration):
                     ("1r", "1-generation reproductive"),
                     ("2r", "2-generation reproductive"),
                     ("Dv", "Developmental"),
+                    ("Pb", "Pubertal"),
                     ("Ot", "Other"),
                     ("NR", "Not-reported"),
                 ],

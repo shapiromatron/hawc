@@ -10,7 +10,7 @@ class GroupedObject extends Component {
         let {store} = this.props;
         return (
             <div className="stripe row">
-                <span className="bulk-element field col-md-4">
+                <span className="field col-md-4">
                     <button
                         type="button"
                         title="Show/hide all items"
@@ -22,8 +22,8 @@ class GroupedObject extends Component {
                     </button>
                     &nbsp;{store.currentValue || "<empty>"} ({store.objects.length})
                 </span>
-                <span className="form-group bulk-element col-md-5">
-                    <input
+                <span className="form-group col-md-5">
+                    <textarea
                         name={store.fieldName}
                         className="form-control"
                         type="text"
@@ -31,7 +31,7 @@ class GroupedObject extends Component {
                         onChange={event => store.updateValue(event.target.value)}
                     />
                 </span>
-                <span className="bulk-element button span">
+                <span>
                     <button
                         type="button"
                         onClick={() => store.submitChanges()}

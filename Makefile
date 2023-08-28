@@ -25,17 +25,15 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 sync-dev:  ## Sync dev environment after code checkout
 	python -m pip install -U pip
-	pip install -r requirements/dev.txt
+	python -m pip install -r requirements/dev.txt
 	yarn --cwd frontend
-	manage migrate
-	manage recreate_views
+	python manage.py migrate
+	python manage.py recreate_views
 
 build:  ## build hawc package
 	npm --prefix ./frontend run build
-	manage set_git_commit
-	rm -rf build/ dist/
-	python -m build --wheel
-	twine check dist/*.whl
+	python manage.py set_git_commit
+	flit build
 
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \
@@ -59,6 +57,7 @@ loc: ## Generate lines of code report
 		--exclude-ext=json,yaml,svg,toml,ini \
 		--vcs=git \
 		--counted loc-files.txt \
+		--md \
 		.
 
 lint: lint-py lint-js  ## Check formatting issues

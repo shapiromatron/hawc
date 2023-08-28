@@ -45,6 +45,14 @@ The HAWC database is a [PostgreSQL](https://www.postgresql.org/) database. See d
   <figcaption>Epidemiology meta-analysis schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
 
+
+## Ecology schema
+
+<figure markdown>
+  ![HAWC ecological data schema](./static/img/hawc-schema-eco.png)
+  <figcaption>Ecology schema. The image is very large; please save/or open in another tab.</figcaption>
+</figure>
+
 ## *In-vitro* data schema
 
 <figure markdown>
@@ -71,6 +79,8 @@ The HAWC database is a [PostgreSQL](https://www.postgresql.org/) database. See d
 To generate these database schema diagrams:
 
 ```bash
+conda install graphviz
+pip install -U pydot
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-lit.png lit study
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-study.png study riskofbias
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-animal.png animal
@@ -78,6 +88,7 @@ manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-bmd.png bmd
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epi.png epi
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epiv2.png epiv2
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epimeta.png epimeta
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-eco.png eco
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-invitro.png invitro
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-vocab.png vocab
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-summary.png summary

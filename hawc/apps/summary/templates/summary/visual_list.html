@@ -1,4 +1,5 @@
 {% extends 'assessment-rooted.html' %}
+{% load bs4 %}
 
 {% block content %}
   <h2 class="d-inline-block">Available visualizations</h2>
@@ -16,25 +17,11 @@
       </div>
   {% endif %}
 
-{% include 'common/filter_list.html' with plural_object_name='visuals' %}
+{% include 'common/inline_filter_form.html' %}
 
   <table id="mainTbl" class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 20%;">
-      <col style="width: 30%;">
-      <col style="width: 10%;">
-      <col style="width: 10%;">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Visual Type</th>
-        <th>Description</th>
-        <th>Created</th>
-        <th>Modified</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup "50,26,12,12" %}
+    {% bs4_thead "Viusal,Type,Created,Modified" %}
     <tbody>
       {% for visual in objects %}
       <tr>
@@ -43,9 +30,11 @@
           {% if not visual.published %}
           <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
           {% endif %}
+          {% if visual.caption %}
+          <div class='text-muted'>{{visual.captionstriptags|striptags|truncatewords:20|safe}}</div>
+          {% endif %}
         </td>
         <td>{{visual.get_visual_type_display}}</td>
-        <td><p>{{ visual.caption|truncatewords_html:40|safe }}</p></td>
         <td>{{ visual.created|date:"Y-m-d" }}</td>
         <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
       </tr>

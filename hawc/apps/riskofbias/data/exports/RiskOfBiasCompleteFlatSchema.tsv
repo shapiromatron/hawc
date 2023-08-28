@@ -13,6 +13,7 @@ study-bioassay	Study contains animal bioassay data
 study-epi	Study contains epidemiology data
 study-epi_meta	Study contains epidemiology meta-analysis/pooled analysis data
 study-in_vitro	Study contains in-vitro data
+study-eco	Study contains ecology data
 study-study_identifier	Reference descriptor for assessment-tracking purposes (for example, "{Author, year, #EndNoteNumber}")
 study-contact_author	Was the author contacted for clarification of methods, results, or to request additional data?
 study-ask_author	Details on correspondence between data-extractor and author (if author contacted).  Redact confidential or personal information (e.g., email address).

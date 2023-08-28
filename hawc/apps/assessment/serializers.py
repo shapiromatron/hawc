@@ -6,7 +6,9 @@ from plotly.subplots import make_subplots
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
-from . import models
+from ..common.serializers import FlexibleChoiceField
+from ..study.models import Study
+from . import constants, models
 
 
 class DSSToxSerializer(serializers.ModelSerializer):
@@ -19,8 +21,16 @@ class DSSToxSerializer(serializers.ModelSerializer):
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
-    rob_name = serializers.CharField(source="get_rob_name_display")
-    dtxsids = DSSToxSerializer(many=True)
+    rob_name = serializers.CharField(source="get_rob_name_display", read_only=True)
+    dtxsids = DSSToxSerializer(many=True, read_only=True)
+    dtxsids_ids = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        many=True,
+        source="dtxsids",
+        queryset=models.DSSTox.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -38,6 +48,47 @@ class AssessmentMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Assessment
         fields = ("id", "url", "enable_risk_of_bias", "name")
+
+
+class AssessmentDetailSerializer(serializers.ModelSerializer):
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="assessment",
+        queryset=models.Assessment.objects.all(),
+        required=True,
+        allow_null=False,
+    )
+    assessment = AssessmentMiniSerializer(read_only=True)
+    project_status = FlexibleChoiceField(choices=constants.Status.choices)
+    peer_review_status = FlexibleChoiceField(choices=constants.PeerReviewType.choices)
+
+    class Meta:
+        model = models.AssessmentDetail
+        exclude = ("created", "last_updated")
+
+
+class AssessmentValueSerializer(serializers.ModelSerializer):
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="assessment",
+        queryset=models.Assessment.objects.all(),
+        required=True,
+        allow_null=False,
+    )
+    assessment = AssessmentMiniSerializer(read_only=True)
+    study_id = serializers.PrimaryKeyRelatedField(
+        source="study",
+        queryset=Study.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    evaluation_type = FlexibleChoiceField(choices=constants.EvaluationType.choices)
+    value_type = FlexibleChoiceField(choices=constants.ValueType.choices)
+    uncertainty = FlexibleChoiceField(choices=constants.UncertaintyChoices.choices)
+
+    class Meta:
+        model = models.AssessmentValue
+        exclude = ("created", "last_updated")
 
 
 class EffectTagsSerializer(serializers.ModelSerializer):

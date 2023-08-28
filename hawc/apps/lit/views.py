@@ -1,5 +1,3 @@
-import json
-
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -64,7 +62,6 @@ class LitOverview(BaseList):
             context["need_import_count"] = models.Reference.objects.get_references_ready_for_import(
                 self.assessment
             ).count()
-        context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["config"] = {
             "tags": models.ReferenceFilterTag.get_all_tags(self.assessment.id),
             "references": models.Reference.objects.tag_pairs(self.assessment.references.all()),
@@ -124,7 +121,7 @@ class SearchNew(BaseCreate):
 
         if pk > 0:
             obj = self.model.objects.filter(pk=pk).first()
-            permitted_assesments = Assessment.objects.get_viewable_assessments(
+            permitted_assesments = Assessment.objects.all().user_can_view(
                 self.request.user, exclusion_id=self.assessment.pk
             )
             if obj and obj.assessment in permitted_assesments:
@@ -297,8 +294,8 @@ class TagReferences(BaseFilterList):
                         {"columns": [{"width": 12}]},
                         {
                             "columns": [
-                                {"width": 6, "extra_css": "px-4"},
-                                {"width": 6, "extra_css": "px-4"},
+                                {"width": 6},
+                                {"width": 6},
                             ]
                         },
                         {
@@ -308,9 +305,9 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 7, "extra_css": "pl-4 pb-2"},
-                                                {"width": 5, "extra_css": "pr-4 pb-2"},
+                                                {"width": 12},
+                                                {"width": 7},
+                                                {"width": 5},
                                             ]
                                         }
                                     ],
@@ -320,9 +317,9 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "px-4 py-2"},
-                                                {"width": 7, "extra_css": "px-4 pb-2"},
-                                                {"width": 5, "extra_css": "px-4 pb-2"},
+                                                {"width": 12},
+                                                {"width": 7},
+                                                {"width": 5},
                                             ]
                                         }
                                     ],
@@ -355,8 +352,8 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "px-3"},
-                                                {"width": 12, "extra_css": "px-3"},
+                                                {"width": 12},
+                                                {"width": 12},
                                             ]
                                         }
                                     ],
@@ -366,9 +363,9 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12, "extra_css": "px-3"},
-                                                {"width": 6, "extra_css": "pl-3"},
-                                                {"width": 6, "extra_css": "pr-3"},
+                                                {"width": 12},
+                                                {"width": 6},
+                                                {"width": 6},
                                             ]
                                         }
                                     ],
@@ -427,7 +424,7 @@ class ConflictResolution(BaseFilterList):
                     },
                     {
                         "columns": [
-                            {"width": 12, "extra_css": "px-4"},
+                            {"width": 12},
                         ]
                     },
                     {
@@ -437,9 +434,9 @@ class ConflictResolution(BaseFilterList):
                                 "rows": [
                                     {
                                         "columns": [
-                                            {"width": 12, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 12},
+                                            {"width": 6},
+                                            {"width": 6},
                                         ]
                                     }
                                 ],
@@ -449,9 +446,9 @@ class ConflictResolution(BaseFilterList):
                                 "rows": [
                                     {
                                         "columns": [
-                                            {"width": 12, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 12},
+                                            {"width": 6},
+                                            {"width": 6},
                                         ]
                                     }
                                 ],
@@ -613,10 +610,10 @@ class RefFilterList(BaseFilterList):
                                 "rows": [
                                     {
                                         "columns": [
-                                            {"width": 6, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 6},
+                                            {"width": 6},
+                                            {"width": 6},
+                                            {"width": 6},
                                         ]
                                     },
                                 ],
@@ -626,9 +623,9 @@ class RefFilterList(BaseFilterList):
                                 "rows": [
                                     {
                                         "columns": [
-                                            {"width": 12, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
-                                            {"width": 6, "extra_css": "px-4"},
+                                            {"width": 12},
+                                            {"width": 6},
+                                            {"width": 6},
                                         ]
                                     }
                                 ],
@@ -843,30 +840,6 @@ class RefVisualization(BaseDetail):
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_viz_app_startup(self, context)
-
-
-class RefTopicModel(BaseDetail):
-    model = models.LiteratureAssessment
-    template_name = "lit/topic_model.html"
-    breadcrumb_active_name = "Topic model"
-
-    def get_object(self, queryset=None):
-        # use the assessment_id as the primary key instead of the models.LiteratureAssessment
-        assessment_id = self.kwargs.get(self.pk_url_kwarg)
-        object_ = get_object_or_404(self.model, assessment_id=assessment_id)
-        return super().get_object(object=object_)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["num_references"] = self.object.assessment.references.count()
-        context["breadcrumbs"][2] = lit_overview_breadcrumb(self.assessment)
-        context["data"] = json.dumps(
-            dict(
-                topicModelUrl=self.object.get_topic_model_url(),
-                topicModelRefreshUrl=self.object.get_topic_model_refresh_url(),
-            )
-        )
-        return context
 
 
 class TagsUpdate(BaseDetail):

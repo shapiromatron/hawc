@@ -1,34 +1,34 @@
 import django_filters as df
 from django.db.models import Q
 
-from ..common.filterset import BaseFilterSet, FilterForm
+from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import constants, models
 
 
 class VisualFilterSet(BaseFilterSet):
-    title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title text")
+    title = df.CharFilter(
+        field_name="title",
+        lookup_expr="icontains",
+        label="Title text",
+        help_text="Filter by title",
+    )
     type = df.ChoiceFilter(
         field_name="visual_type",
         label="Visualization type",
         help_text="Type of visualization to display",
-        empty_label="<All>",
+        empty_label="All visual types",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC visualization",
-        empty_label="<All>",
+        empty_label="Published status",
     )
 
     class Meta:
         model = models.Visual
         fields = ["title", "type", "published"]
-        form = FilterForm
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
-            ]
-        }
+        form = InlineFilterForm
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -50,14 +50,6 @@ class VisualFilterSet(BaseFilterSet):
         form = super().create_form()
         form.fields["type"].choices = self.get_type_choices()
         return form
-
-    def pop_published(self, form):
-        # hide published filter and modify layout
-        if not self.perms["edit"]:
-            form.fields.pop("published")
-            form.grid_layout.rows[0].columns[0].width = 8
-            form.grid_layout.rows[0].columns[1].width = 4
-            del form.grid_layout.rows[0].columns[2]
 
 
 class DataPivotFilterSet(VisualFilterSet):
@@ -98,29 +90,29 @@ class DataPivotFilterSet(VisualFilterSet):
 
 
 class SummaryTableFilterSet(BaseFilterSet):
-    title = df.CharFilter(field_name="title", lookup_expr="icontains", label="Title")
+    title = df.CharFilter(
+        field_name="title",
+        lookup_expr="icontains",
+        label="Title",
+        help_text="Filter by title",
+    )
     type = df.ChoiceFilter(
         field_name="table_type",
         label="Table type",
         help_text="Type of summary table to display",
-        empty_label="<All>",
+        empty_label="All table types",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
         help_text="Published status for HAWC summary tables",
-        empty_label="<All>",
+        empty_label="Published status",
     )
 
     class Meta:
         model = models.SummaryTable
         fields = ["title", "type", "published"]
-        form = FilterForm
-        grid_layout = {
-            "rows": [
-                {"columns": [{"width": 6}, {"width": 3}, {"width": 3}]},
-            ]
-        }
+        form = InlineFilterForm
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -131,13 +123,6 @@ class SummaryTableFilterSet(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-
-        if not self.perms["edit"]:
-            # hide published filter and modify layout
-            form.fields.pop("published")
-            form.grid_layout.rows[0].columns[0].width = 8
-            form.grid_layout.rows[0].columns[1].width = 4
-            del form.grid_layout.rows[0].columns[2]
 
         # set type choices based on what is available
         choices = models.SummaryTable.objects.filter(assessment=self.assessment).values_list(

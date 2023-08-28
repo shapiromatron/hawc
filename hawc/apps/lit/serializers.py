@@ -16,7 +16,6 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.api.serializers import AssessmentRootedSerializer
-from ..common.api import DynamicFieldsMixin
 from ..common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from ..common.serializers import PydanticDrfSerializer, validate_jsonschema
 from . import constants, forms, models, tasks
@@ -127,13 +126,6 @@ class ReferenceFilterTagSerializer(AssessmentRootedSerializer):
     class Meta:
         model = models.ReferenceFilterTag
         fields = ("id", "name", "parent")
-
-
-class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    class Meta:
-        model = models.Reference
-        cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = (*cleanup_fields, "id")
 
 
 class ReferenceTreeSerializer(serializers.Serializer):

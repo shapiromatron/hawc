@@ -1,6 +1,5 @@
 import json
 import re
-from pathlib import Path
 
 import pytest
 from django.test.client import Client, RequestFactory
@@ -10,7 +9,7 @@ from rest_framework.test import APIClient
 
 from hawc.apps.summary import models
 
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data
 
 
 @pytest.mark.django_db
@@ -84,21 +83,16 @@ class TestVisual:
 
     def _test_visual_detail_api(self, rewrite_data_files: bool, slug: str):
         client = Client()
-
-        fn = Path(DATA_ROOT / f"api-visual-{slug}.json")
         url = models.Visual.objects.get(slug=slug).get_api_detail()
         response = client.get(url)
-
         assert response.status_code == 200
 
         data = response.json()
         data_str = json.dumps(data, indent=2, sort_keys=True)
         data_str = re.sub(r"obj_ct=\d+", "obj_ct=9999", data_str)
 
-        if rewrite_data_files:
-            fn.write_text(data_str)
-
-        assert data_str == fn.read_text()
+        key = f"api-visual-{slug}.json"
+        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
 
     def test_bioassay_aggregation(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
@@ -127,24 +121,17 @@ class TestDataPivot:
     def _test_dp(self, rewrite_data_files: bool, slug: str, fn_key: str):
         client = Client()
 
-        fn = Path(DATA_ROOT / f"api-dp-{fn_key}.json")
-
         dp = models.DataPivot.objects.get(slug=slug)
         url = dp.get_api_detail()
         response = client.get(url)
         assert response.status_code == 200
 
         data = response.json()
-
-        if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert json.loads(fn.read_text()) == data
+        key = f"api-dp-{fn_key}.json"
+        check_api_json_data(data, key, rewrite_data_files)
 
     def _test_dp_data(self, rewrite_data_files: bool, slug: str, fn_key: str):
         client = Client()
-
-        fn = Path(DATA_ROOT / f"api-dp-data-{fn_key}.json")
 
         dp = models.DataPivot.objects.get(slug=slug)
         url = dp.get_data_url().replace("tsv", "json")
@@ -152,11 +139,8 @@ class TestDataPivot:
         assert response.status_code == 200
 
         data = response.json()
-
-        if rewrite_data_files:
-            fn.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert json.loads(fn.read_text()) == data
+        key = f"api-dp-data-{fn_key}.json"
+        check_api_json_data(data, key, rewrite_data_files)
 
     def test_bioassay_endpoint(self, rewrite_data_files: bool):
         self._test_dp(
@@ -199,87 +183,20 @@ class TestDataPivot:
 
 @pytest.mark.django_db
 class TestSummaryAssessmentViewSet:
-    def test_heatmap_datasets(self, db_keys):
+    def test_heatmap_datasets(self, db_keys, rewrite_data_files):
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
-        urls = [
-            reverse("summary:api:assessment-heatmap-datasets", args=(db_keys.assessment_working,)),
-        ]
-        for url in urls:
-            assert anon_client.get(url).status_code == 403
-            resp = rev_client.get(url)
-            assert resp.status_code == 200
-            assert resp.json() == {
-                "datasets": [
-                    {
-                        "type": "Literature",
-                        "name": "Literature summary",
-                        "url": "/lit/api/assessment/1/tag-heatmap/",
-                    },
-                    {
-                        "type": "Bioassay",
-                        "name": "Bioassay study design",
-                        "url": "/ani/api/assessment/1/study-heatmap/",
-                    },
-                    {
-                        "type": "Bioassay",
-                        "name": "Bioassay study design (including unpublished HAWC data)",
-                        "url": "/ani/api/assessment/1/study-heatmap/?unpublished=true",
-                    },
-                    {
-                        "type": "Bioassay",
-                        "name": "Bioassay endpoint summary",
-                        "url": "/ani/api/assessment/1/endpoint-heatmap/",
-                    },
-                    {
-                        "type": "Bioassay",
-                        "name": "Bioassay endpoint summary (including unpublished HAWC data)",
-                        "url": "/ani/api/assessment/1/endpoint-heatmap/?unpublished=true",
-                    },
-                    {
-                        "type": "Bioassay",
-                        "name": "Bioassay endpoint with doses",
-                        "url": "/ani/api/assessment/1/endpoint-doses-heatmap/",
-                    },
-                    {
-                        "type": "Bioassay",
-                        "name": "Bioassay endpoint with doses (including unpublished HAWC data)",
-                        "url": "/ani/api/assessment/1/endpoint-doses-heatmap/?unpublished=true",
-                    },
-                    {
-                        "type": "Epi",
-                        "name": "Epidemiology study design",
-                        "url": "/epi/api/assessment/1/study-heatmap/",
-                    },
-                    {
-                        "type": "Epi",
-                        "name": "Epidemiology study design (including unpublished HAWC data)",
-                        "url": "/epi/api/assessment/1/study-heatmap/?unpublished=true",
-                    },
-                    {
-                        "type": "Epi",
-                        "name": "Epidemiology result summary",
-                        "url": "/epi/api/assessment/1/result-heatmap/",
-                    },
-                    {
-                        "type": "Epi",
-                        "name": "Epidemiology result summary (including unpublished HAWC data)",
-                        "url": "/epi/api/assessment/1/result-heatmap/?unpublished=true",
-                    },
-                    {
-                        "type": "Dataset",
-                        "name": "Dataset: iris flowers",
-                        "url": "/assessment/api/dataset/1/data/",
-                    },
-                    {
-                        "type": "Dataset",
-                        "name": "Dataset: iris flowers unpublished",
-                        "url": "/assessment/api/dataset/3/data/",
-                    },
-                ]
-            }
+        url = reverse("summary:api:assessment-heatmap-datasets", args=(db_keys.assessment_working,))
+
+        assert anon_client.get(url).status_code == 403
+
+        resp = rev_client.get(url)
+        assert resp.status_code == 200
+        data = resp.json()
+        key = f"api-summary-heatmap-datasets-{db_keys.assessment_working}.json"
+        check_api_json_data(data, key, rewrite_data_files)
 
 
 @pytest.mark.django_db
@@ -348,14 +265,10 @@ class TestSummaryTextViewSet:
 @pytest.mark.django_db
 class TestSummaryTableViewSet:
     def _test_data_file(self, rewrite_data_files: bool, fn_key: str, data):
-        fn = Path(DATA_ROOT / f"api-summary-table-{fn_key}-data.json")
         data_str = json.dumps(data, indent=2, sort_keys=True)
         data_str = re.sub(r'"content_type_id": \d+', '"content_type_id": 9999', data_str)
-
-        if rewrite_data_files:
-            fn.write_text(data_str)
-
-        assert json.loads(data_str) == json.loads(fn.read_text())
+        key = f"api-summary-table-{fn_key}-data.json"
+        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
 
     def test_data(self, rewrite_data_files: bool):
         data = {"assessment_id": 1, "table_type": 2, "data_source": "ani", "published_only": False}

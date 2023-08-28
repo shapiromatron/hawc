@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 
 from ..common.constants import NO_LABEL
@@ -23,9 +22,3 @@ class StudyTypeChoices(models.TextChoices):
     EPI_META = "epi_meta", "Epidemiology meta-analysis"
     IN_VITRO = "in_vitro", "In vitro"
     ECO = "eco", "Ecology"
-
-    @classmethod
-    def filtered_choices(cls):
-        if not settings.HAWC_FEATURES.ENABLE_ECO:
-            return cls.choices[:-1]
-        return cls.choices

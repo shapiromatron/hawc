@@ -45,6 +45,7 @@ class Migration(migrations.Migration):
                     (3, "High/low confidence"),
                     (4, "Yes/No"),
                     (5, "Minor/Critical concerns"),
+                    (6, "Minor/Critical concerns (sensitivity)"),
                 ],
                 default=999,
             ),

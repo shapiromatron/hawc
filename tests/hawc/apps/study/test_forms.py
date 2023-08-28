@@ -29,7 +29,7 @@ def test_study_forms(db_keys):
 
     # can't create a new study citation field that already exists
     response = c.post(new_study_url, study_dict)
-    assertFormError(response, "form", "short_citation", ASSESSMENT_UNIQUE_MESSAGE)
+    assertFormError(response.context["form"], "short_citation", ASSESSMENT_UNIQUE_MESSAGE)
 
     # can change an existing study citation field to a different type
     with assertTemplateUsed("study/study_detail.html"):

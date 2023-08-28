@@ -27,6 +27,7 @@ from matplotlib.dates import DateFormatter
 from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
 
 logger = logging.getLogger(__name__)
@@ -78,7 +79,7 @@ def strip_entities(value):
 
 
 def tryParseInt(
-    value: Any, default: int = None, min_value: int = -inf, max_value: int = inf
+    value: Any, default: int | None = None, min_value: int = -inf, max_value: int = inf
 ) -> int | None:
     """Cast value to integer if possible, or return None
 
@@ -97,7 +98,7 @@ def tryParseInt(
         return default
 
 
-def try_parse_list_ints(val: str = None) -> list[int]:
+def try_parse_list_ints(val: str | None = None) -> list[int]:
     """
     Try to parse a list of integers and return a list of integers, eg., `1,2,3` -> [1,2,3].
     If this fails for any reason, an empty list is returned
@@ -281,6 +282,13 @@ class FlatExport(NamedTuple):
     df: pd.DataFrame
     filename: str
     metadata: pd.DataFrame | None = None
+
+    @classmethod
+    def api_response(
+        cls, df: pd.DataFrame, filename: str, metadata: pd.DataFrame | None = None
+    ) -> Response:
+        export = cls(df=df, filename=filename, metadata=metadata)
+        return Response(export)
 
 
 class FlatFileExporter:

@@ -35,7 +35,7 @@ class SpeciesAutocomplete(BaseAutocomplete):
     filter_fields = ["animalgroup__experiment__study__assessment_id"]
 
     @classmethod
-    def get_base_queryset(cls, filters: dict = None):
+    def get_base_queryset(cls, filters: dict | None = None):
         return super().get_base_queryset(filters).distinct()
 
 
@@ -46,7 +46,7 @@ class StrainAutocomplete(BaseAutocomplete):
     filter_fields = ["animalgroup__experiment__study__assessment_id"]
 
     @classmethod
-    def get_base_queryset(cls, filters: dict = None):
+    def get_base_queryset(cls, filters: dict | None = None):
         return super().get_base_queryset(filters).distinct()
 
 

@@ -21,15 +21,10 @@
     </div>
 </div>
 {% endif %}
-{% include 'common/filter_list.html' with plural_object_name='studies' %}
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
-    {% if feature_flags.ENABLE_ECO %}
     {% bs4_colgroup '25,40,7,7,7,7,7' %}
     {% bs4_thead 'Short citation,Full citation,Bioassay,Epidemiology,Epi. meta-analysis,In vitro,Ecology' %}
-    {% else %}
-    {% bs4_colgroup '25,40,9,9,9,8' %}
-    {% bs4_thead 'Short citation,Full citation,Bioassay,Epidemiology,Epi. meta-analysis,In vitro' %}
-    {% endif %}
     <tbody>
         {% for object in object_list %}
         <tr>

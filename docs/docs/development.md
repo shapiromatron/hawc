@@ -20,7 +20,6 @@ See the `Useful utilities` below for more details on how to automatically lint/f
 
 ## Environment setup
 
-
 HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
 
 ```bash title="Mac/Linux"

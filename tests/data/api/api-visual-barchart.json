@@ -103,7 +103,11 @@
         "50": "Critical concerns",
         "51": "Major concerns",
         "52": "Some concerns",
-        "53": "Minor concerns"
+        "53": "Minor concerns",
+        "54": "Critical concerns",
+        "55": "Major concerns",
+        "56": "Some concerns",
+        "57": "Minor concerns"
       },
       "colors": {
         "0": "#DFDFDF",
@@ -128,7 +132,11 @@
         "50": "#f7fcf5",
         "51": "#addea7",
         "52": "#238d46",
-        "53": "#00441b"
+        "53": "#00441b",
+        "54": "#CC3333",
+        "55": "#FFCC00",
+        "56": "#6FFF00",
+        "57": "#00CC00"
       },
       "symbols": {
         "0": "\u2501",
@@ -153,7 +161,11 @@
         "50": "0",
         "51": "+",
         "52": "++",
-        "53": "+++"
+        "53": "+++",
+        "54": "0",
+        "55": "+",
+        "56": "++",
+        "57": "+++"
       }
     }
   },
@@ -384,7 +396,11 @@
             "50": "Critical concerns",
             "51": "Major concerns",
             "52": "Some concerns",
-            "53": "Minor concerns"
+            "53": "Minor concerns",
+            "54": "Critical concerns",
+            "55": "Major concerns",
+            "56": "Some concerns",
+            "57": "Minor concerns"
           },
           "colors": {
             "0": "#DFDFDF",
@@ -409,7 +425,11 @@
             "50": "#f7fcf5",
             "51": "#addea7",
             "52": "#238d46",
-            "53": "#00441b"
+            "53": "#00441b",
+            "54": "#CC3333",
+            "55": "#FFCC00",
+            "56": "#6FFF00",
+            "57": "#00CC00"
           },
           "symbols": {
             "0": "\u2501",
@@ -434,7 +454,11 @@
             "50": "0",
             "51": "+",
             "52": "++",
-            "53": "+++"
+            "53": "+++",
+            "54": "0",
+            "55": "+",
+            "56": "++",
+            "57": "+++"
           }
         }
       },

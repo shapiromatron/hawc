@@ -24,6 +24,20 @@ class StudyFilterList(BaseFilterList):
     def get_queryset(self):
         return super().get_queryset().distinct().prefetch_related("identifiers")
 
+    def get_filterset_form_kwargs(self):
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
+            return dict(
+                main_field="query",
+                appended_fields=["data_type", "published"],
+                dynamic_fields=["query", "data_type", "published"],
+            )
+        else:
+            return dict(
+                main_field="query",
+                appended_fields=["data_type"],
+                dynamic_fields=["query", "data_type"],
+            )
+
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
     # Create Study from an existing lit.Reference.

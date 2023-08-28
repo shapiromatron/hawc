@@ -1,8 +1,8 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -13,10 +13,12 @@ from ..assessment.api import (
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api import DisabledPagination
-from ..common.helper import re_digits
+from ..common.helper import FlatExport, re_digits
+from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
+from ..lit.models import Reference
 from ..riskofbias.serializers import RiskOfBiasSerializer
-from . import models, serializers
+from . import filterset, models, serializers
 
 
 class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
@@ -95,6 +97,21 @@ class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=False,
+        renderer_classes=PandasRenderers,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def chemical_search(self, request):
+        """Global search by chemical, across all studies."""
+        fs = filterset.StudyByChemicalFilterSet(request.GET, queryset=self.get_queryset())
+        if not (query := fs.data.get("query")):
+            raise ValidationError({"query": "No query parameters provided"})
+        return FlatExport.api_response(
+            df=Reference.objects.filter(id__in=fs.qs.values_list("id")).global_df(),
+            filename=f"global-study-data-{query}",
+        )
 
 
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):

@@ -4,11 +4,13 @@ import math
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
-from django.db.models import Q, QuerySet, URLField
+from django.db.models import Case, CharField, Choices, Q, QuerySet, URLField, Value, When
+from django.db.models.functions import Coalesce
 from django.template.defaultfilters import slugify as default_slugify
 from treebeard.mp_tree import MP_Node
 
@@ -516,6 +518,78 @@ def include_related(
         filters |= Q(path__regex=f"^({items}).+")
 
     return queryset | queryset.model.objects.filter(filters)
+
+
+def sql_display(name: str, Choice: type[Choices]) -> Case:
+    """Create a annotation to return the display name via SQL
+
+    Args:
+        name (str): the field name
+        Choice (type[Choices]): a choice field
+
+    Returns:
+        Case: the case statement for use in an annotation
+    """
+    return Case(
+        *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
+        default=Value("?"),
+    )
+
+
+def replace_null(field: str, replacement: str = ""):
+    """Replace null values with a replacement string
+
+    Args:
+        field (str): The field to replace
+        replacement (str, optional): The replacement string. Defaults to "".
+    """
+    return Coalesce(field, Value(replacement), output_field=CharField())
+
+
+def str_m2m(field: str, delimiter: str = "|", default: str = "", **kw):
+    """Generate a delimited string aggregation of a m2m field.
+
+    The resulting aggregation must be saved to an annotation on the QuerySet;
+    you cannot use directly on a values_list (but you can use after annotation).
+
+    Args:
+        field (str): The field name to aggregate
+        delimiter (str, optional): The field to use; defaults to "|".
+        default (str, optional): The default value to use; defaults to "".
+    """
+    return StringAgg(field, delimiter=delimiter, distinct=True, default=Value(default), **kw)
+
+
+def to_display(series: pd.Series, Choice: type[Choices]) -> pd.Series:
+    """Return a new series of display values from django choices
+
+    Args:
+        series (pd.Series): the series with db values
+        Choice (type[Choices]): a Choices instance
+
+    Returns:
+        pd.Series: a series of display values
+    """
+    return series.map({k: v for k, v in Choice.choices}).fillna("?")
+
+
+def to_display_array(series: pd.Series, Choice: type[Choices], delimiter: str = "|") -> pd.Series:
+    """Return a new series of delimited display values from django choices
+
+    Args:
+        series (pd.Series): the series with db values
+        Choice (type[Choices]): a Choices instance
+        delimiter (str, optional): delimiter to use. Defaults to "|".
+
+    Returns:
+        pd.Series: a series of delimited display values
+    """
+    mapping = {k: v for k, v in Choice.choices}
+    return (
+        series.str.split(pat=delimiter)
+        .apply(lambda items: [mapping.get(item, "?") for item in items])
+        .str.join(delimiter)
+    )
 
 
 class NumericTextField(models.CharField):

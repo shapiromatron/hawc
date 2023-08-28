@@ -22,6 +22,7 @@ from reversion import revisions as reversion
 
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
 from ..common.models import get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
@@ -746,6 +747,8 @@ class Attachment(models.Model):
         }
 
     def get_assessment(self):
+        if self.content_object is None:
+            raise AssessmentNotFound()
         return self.content_object.get_assessment()
 
 
@@ -1068,7 +1071,7 @@ class DatasetRevision(models.Model):
             return False
 
     @classmethod
-    def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
+    def try_read_df(cls, data, suffix: str, worksheet_name: str | None = None) -> pd.DataFrame:
         """
         Try to load and return a pandas dataframe.
 
@@ -1256,21 +1259,6 @@ class Log(models.Model):
         )
 
 
-class Blog(models.Model):
-    subject = models.CharField(max_length=128)
-    content = models.TextField()
-    rendered_content = models.TextField(editable=False)
-    published = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("-created",)
-
-    def __str__(self) -> str:
-        return self.subject
-
-
 class ContentTypeChoices(models.IntegerChoices):
     HOMEPAGE = 1
     ABOUT = 2
@@ -1337,5 +1325,4 @@ reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
 reversion.register(Communication)
-reversion.register(Blog)
 reversion.register(Content)

@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2><i>In vitro</i> endpoints ({{page_obj.paginator.count}} found)</h2>
-{% include 'common/filter_list.html' with plural_object_name='endpoints' %}
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '10,13,12,20,16,13,8,8' %}
     {% bs4_thead 'Study,Experiment,Chemical,Endpoint,Effect Category,Effects,Dose Units,Response Units' %}
@@ -12,19 +12,17 @@
         {% for object in object_list %}
         <tr>
             <td>
-                <a href="{% url 'study:detail' object.experiment.study.pk %}">{{object.experiment.study.short_citation}}</a>
+                <a href="{{object.experiment.study.get_absolute_url}}">{{object.experiment.study.short_citation}}</a>
             </td>
             <td>
-                <a href="{% url 'invitro:experiment_detail' object.experiment.pk %}">{{object.experiment.name}}</a>
+                <a href="{{object.experiment.get_absolute_url}}">{{object.experiment.name}}</a>
             </td>
             <td>
-                <a href="{% url 'invitro:chemical_detail' object.chemical.pk %}">{{object.chemical.name}}</a>
+                <a href="{{object.chemical.get_absolute_url}}">{{object.chemical.name}}</a>
             </td>
-            <td>
-                <span class="previewModalParent">
-                    <a href="{% url 'invitro:endpoint_detail' object.pk %}">{{object.name}}</a>
-                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
-                </span>
+            <td  class="previewModalParent">
+                <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+                <a href="{{object.get_absolute_url}}">{{object.name}}</a>
             </td>
             <td>
                 {{object.effect|default:"--"}}
