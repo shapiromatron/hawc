@@ -34,8 +34,7 @@ class EhvTermViewSet(viewsets.GenericViewSet):
     @action(detail=False, renderer_classes=PandasRenderers)
     def nested(self, request: Request):
         df = models.Term.ehv_dataframe()
-        export = FlatExport(df=df, filename="ehv")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename="ehv")
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
