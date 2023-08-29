@@ -1,17 +1,17 @@
 {% extends "crumbless.html" %}
 
 {% load hawc %}
+{% load bs4 %}
 
 {% block content %}
-<h2 class="d-inline-block">User Profile</h2>
-<div class="dropdown btn-group float-right">
-  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-  <div class="dropdown-menu dropdown-menu-right">
+<div class="d-flex">
+  <h2>User Profile</h2>
+  {% actions %}
     <a class="dropdown-item" href="{% url 'user:profile_update' %}">Update profile</a>
     {% if user.has_usable_password %}
     <a class="dropdown-item" href="{% url 'user:change_password' %}">Change password</a>
     {% endif %}
-  </div>
+  {% endactions %}
 </div>
 <table class="table table-sm table-striped table-hover table-bordered">
   <colgroup>

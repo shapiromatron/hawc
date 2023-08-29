@@ -3,6 +3,7 @@ import EndpointDetailRow from "animal/EndpointDetailRow";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import BaseTable from "shared/utils/BaseTable";
 import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -46,7 +47,12 @@ class EndpointAggregation extends BaseVisual {
             .append(this.$tblDiv);
 
         if (!options.visualOnly) {
-            $el.prepend([actions, title]).append(captionDiv);
+            var headerRow = $('<div class="d-flex">').append([
+                title,
+                HAWCUtils.unpublished(this.data.published, window.isEditable),
+                actions,
+            ]);
+            $el.prepend(headerRow).append(captionDiv);
         }
 
         this.buildTbl();
@@ -75,7 +81,10 @@ class EndpointAggregation extends BaseVisual {
         this.buildTbl();
         this.plotData = this.getPlotData();
         modal
-            .addHeader($("<h4>").text(this.data.title))
+            .addHeader([
+                $("<h4>").text(this.data.title),
+                HAWCUtils.unpublished(this.data.published, window.isEditable),
+            ])
             .addBody($("<div>").append(this.$plotDiv, this.$tblDiv, captionDiv))
             .addFooter("")
             .show({maxWidth: 1200});
