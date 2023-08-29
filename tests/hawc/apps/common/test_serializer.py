@@ -155,12 +155,13 @@ def test_FlexibleDBLinkedChoiceField(db_keys):
     assert saw_first_metric is True and saw_second_metric is True
 
     # Test bad input on the "many" case
-    try:
-        many_demo.to_internal_value([first_metric.id, second_metric.id * -1])
-        raise AssertionError()
-    except ValidationError:
-        # This is correct behavior
-        pass
+    for invalid__many_input in [[first_metric.id, second_metric.id * -1], "invalid input", False]:
+        try:
+            many_demo.to_internal_value(invalid__many_input)
+            raise AssertionError()
+        except ValidationError:
+            # This is correct behavior
+            pass
 
     # Test serialization on the single case
     serialized_metric = single_demo.to_representation(first_metric)
