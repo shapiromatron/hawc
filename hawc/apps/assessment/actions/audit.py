@@ -259,5 +259,4 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
             ),
             columns=["app", "model", "pk", "serialized_data", "user", "date_revised"],
         )
-        export = FlatExport(df=df, filename=f"{self.assessment}-{self.type}-audit-logs")
-        return export
+        return FlatExport.api_response(df=df, filename=f"{self.assessment}-{self.type}-audit-logs")
