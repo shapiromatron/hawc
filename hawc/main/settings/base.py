@@ -196,7 +196,7 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
 LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
-DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DIABLED_LOGIN_HOSTS", "").split("|")
+DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DISABLED_LOGIN_HOSTS", "").split("|")
 
 # Static files
 STATIC_URL = "/static/"
