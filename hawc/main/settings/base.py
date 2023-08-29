@@ -128,7 +128,7 @@ INSTALLED_APPS = (
 )
 
 if HAWC_FEATURES.ENABLE_DYNAMIC_FORMS:
-    INSTALLED_APPS = (*INSTALLED_APPS, "hawc.apps.form_library")
+    INSTALLED_APPS += ("hawc.apps.form_library",)
 
 # DB settings
 DATABASES = {

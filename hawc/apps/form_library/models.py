@@ -1,3 +1,4 @@
+import reversion
 from django.db import models
 
 
@@ -9,3 +10,6 @@ class CustomDataExtraction(models.Model):
     schema = models.JSONField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+
+reversion.register(CustomDataExtraction)
