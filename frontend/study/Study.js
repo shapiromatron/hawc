@@ -147,7 +147,7 @@ class Study {
         this.render($content, modal.getModal());
 
         modal
-            .addHeader(title)
+            .addHeader([title, HAWCUtils.unpublished(this.data.published, window.isEditable)])
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
