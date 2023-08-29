@@ -1,8 +1,9 @@
 from django import forms
-from models import CustomDataExtraction
 
 from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import PydanticValidator
+
+from .models import CustomDataExtraction
 
 
 class CustomDataExtractionForm(forms.ModelForm):

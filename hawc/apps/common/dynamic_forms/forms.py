@@ -3,7 +3,6 @@ import json
 
 from crispy_forms import layout as cfl
 from django import forms
-from django.core.exceptions import ValidationError
 
 from ..forms import BaseFormHelper
 from .schemas import Behavior, Schema

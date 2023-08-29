@@ -5,6 +5,7 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
+from django.forms.widgets import RadioSelect
 from django.template.loader import render_to_string
 
 from . import autocomplete, validators, widgets
@@ -480,6 +481,13 @@ class DynamicFormField(forms.JSONField):
         form = self.form_class(data=value, **self.form_kwargs)
         if not form.is_valid():
             raise forms.ValidationError(self.error_messages["invalid"])
+
+
+class InlineRadioChoiceField(forms.ChoiceField):
+    """Choice widget that uses radio buttons that are inline."""
+
+    widget = RadioSelect
+    crispy_field_class = cfb.InlineRadios
 
 
 class PydanticValidator:

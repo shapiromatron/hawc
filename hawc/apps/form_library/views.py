@@ -1,7 +1,8 @@
-from forms import CustomDataExtractionForm
+from django.views.generic.edit import CreateView
 
-from hawc.apps.common import views
+from .forms import CustomDataExtractionForm
 
 
-class CreateDataExtractionView(views.BaseCreate):
+class CreateDataExtractionView(CreateView):
+    template_name = "form_library/custom_data_extraction_form.html"
     form_class = CustomDataExtractionForm
