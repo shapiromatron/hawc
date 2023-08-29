@@ -226,6 +226,11 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         * etc.
     """
 
+    default_error_messages = {
+        "invalid_choice": _('"{input}" is not a valid choice.'),
+        "not_a_list": _('Expected a list of items but got type "{input_type}".'),
+    }
+
     def __init__(
         self,
         mapped_model: models.Model,
@@ -273,16 +278,11 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         self.load_related_objects_if_needed()
 
         if self.many:
-            # super() doesn't work inside list comprehensions; could this leverage __class__ somehow?
-            # resolved_ids = [super().to_internal_value(x) for x in data]
-            # for now just write the loop by hand.
-
-            resolved_ids = []
-            for raw_input_el in data:
-                # Each element could be an id or a readable value, so first we convert to id
-                resolved_ids.append(super().to_internal_value(raw_input_el))
-
-            # And now we return the actual objects in a list
+            if isinstance(data, str) or not hasattr(data, "__iter__"):
+                self.fail("not_a_list", input_type=type(data).__name__)
+            resolved_ids = [
+                super(FlexibleDBLinkedChoiceField, self).to_internal_value(item) for item in data
+            ]
             return list(self.mapped_model.objects.filter(id__in=resolved_ids))
         else:
             obj_id = super().to_internal_value(data)

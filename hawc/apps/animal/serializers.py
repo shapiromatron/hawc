@@ -57,26 +57,18 @@ class ExperimentSerializer(serializers.ModelSerializer):
 
 class DosesSerializer(serializers.ModelSerializer):
     dose_regime = serializers.PrimaryKeyRelatedField(read_only=True)
+    dose_units_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="dose_units",
+        queryset=DoseUnits.objects.all(),
+        required=True,
+        allow_null=False,
+    )
 
     class Meta:
         model = models.DoseGroup
         fields = "__all__"
         depth = 1
-
-    def validate(self, data):
-        if hasattr(self, "initial_data"):
-            if "dose_regime_id" in self.initial_data:
-                # make sure instance exists
-                dosing_regime = get_matching_instance(
-                    models.DosingRegime, self.initial_data, "dosing_regime_id"
-                )
-                data["dosing_regime_id"] = dosing_regime.id
-
-            if "dose_units_id" in self.initial_data:
-                dose_units = get_matching_instance(DoseUnits, self.initial_data, "dose_units_id")
-                data["dose_units_id"] = dose_units.id
-
-        return data
 
 
 class AnimalGroupRelationSerializer(serializers.ModelSerializer):
