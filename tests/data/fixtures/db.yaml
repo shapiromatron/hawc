@@ -9498,7 +9498,7 @@
     assessment: 2
     title: data pivot - animal bioassay - endpoint group
     slug: animal-bioassay-data-pivot-endpoint-group
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 45, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 45, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
       false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 257, "top": -51, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "percent control
@@ -9596,7 +9596,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>caption</p>
     published: true
     created: 2020-05-08 17:48:36.143248+00:00
@@ -9607,7 +9607,7 @@
     assessment: 2
     title: data pivot - animal bioassay - endpoint
     slug: animal-bioassay-data-pivot-endpoint
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 50, "right": 100, "bottom": 50, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 50, "right": 100, "bottom": 50, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": true, "show_xticks": true, "show_yticks": true, "domain": "0.1,10000", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
       false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 419, "top": -60, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "Dose 1", "symbol_style":
@@ -9710,7 +9710,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: ''
     published: true
     created: 2020-05-08 17:52:21.928839+00:00
@@ -9721,7 +9721,7 @@
     assessment: 2
     title: data pivot - epimeta
     slug: data-pivot-epimeta
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 55, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 55, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
       false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 324, "top": -57, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "estimate", "symbol_style":
@@ -9820,7 +9820,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: ''
     published: true
     created: 2020-05-09 03:22:01.190725+00:00
@@ -9831,7 +9831,7 @@
     assessment: 2
     title: data pivot - epi
     slug: data-pivot-epi
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "#", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "1,30", "filter_logic": "and", "font_style": "Arial", "merge_descriptions": true,
       "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true, "left":
       322, "top": -32, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "estimate", "symbol_style":
@@ -9929,7 +9929,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>Example.</p>
     published: true
     created: 2020-05-11 02:26:51.725098+00:00
@@ -9940,7 +9940,7 @@
     assessment: 2
     title: data pivot - invitro - endpoint
     slug: data-pivot-invitro-endpoint
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": true, "show_xticks": true, "show_yticks": true, "domain": ".1,1000", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
       true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true,
       "left": 310, "top": -33, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"line_index": 0, "label": "dose range", "line_style":
@@ -10038,7 +10038,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:10:29.880052+00:00
@@ -10049,7 +10049,7 @@
     assessment: 2
     title: data pivot - invitro - endpoint group
     slug: data-pivot-invitro-endpoint-group
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "-1,120", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
       true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true,
       "left": 344, "top": -29, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "dose", "symbol_style":
@@ -10147,7 +10147,7 @@
       "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity":
       0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke":
       "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c",
-      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:12:54.866928+00:00

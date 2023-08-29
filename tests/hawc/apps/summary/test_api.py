@@ -126,10 +126,7 @@ class TestDataPivot:
         response = client.get(url)
         assert response.status_code == 200
 
-        # using DRF client returns a string; not a dict; cast to dict
         data = response.json()
-        data["settings"] = json.loads(data["settings"])
-
         key = f"api-dp-{fn_key}.json"
         check_api_json_data(data, key, rewrite_data_files)
 
