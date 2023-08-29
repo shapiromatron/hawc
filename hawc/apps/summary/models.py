@@ -682,9 +682,10 @@ class DataPivot(models.Model):
         return self.visual_type
 
     @staticmethod
-    def reset_row_overrides(settings):
-        settings["row_overrides"] = []
-        return settings
+    def reset_row_overrides(settings: str):
+        settings_as_json = json.loads(settings)
+        settings_as_json["row_overrides"] = []
+        return json.dumps(settings_as_json)
 
 
 class DataPivotUpload(DataPivot):

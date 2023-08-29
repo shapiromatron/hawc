@@ -9500,7 +9500,7 @@
     slug: animal-bioassay-data-pivot-endpoint-group
     settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 45, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 0}, "legend": {"show": true,
+      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 257, "top": -51, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "percent control
       mean", "symbol_style": "base", "line_style": "---", "rect_style": "---"}, {"line_index": 0, "label": "percent control low", "line_style": "base", "symbol_style":
       "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "percent control low", "high_field_name": "percent control high", "header_name": "percent
@@ -9609,7 +9609,7 @@
     slug: animal-bioassay-data-pivot-endpoint
     settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 50, "right": 100, "bottom": 50, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": true, "show_xticks": true, "show_yticks": true, "domain": "0.1,10000", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 0}, "legend": {"show": true,
+      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 419, "top": -60, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "Dose 1", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}, {"symbol_index": 1, "label": "Dose 2", "symbol_style": "base", "line_style": "---", "rect_style": "---"},
       {"symbol_index": 2, "label": "Dose 3", "symbol_style": "base", "line_style": "---", "rect_style": "---"}, {"symbol_index": 3, "label": "Dose 4", "symbol_style":
@@ -9723,7 +9723,7 @@
     slug: data-pivot-epimeta
     settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 55, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 0}, "legend": {"show": true,
+      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 324, "top": -57, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "estimate", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}, {"line_index": 0, "label": "lower CI", "line_style": "base", "symbol_style": "---", "rect_style": "---"}]},
       "dataline_settings": [{"low_field_name": "lower CI", "high_field_name": "upper CI", "header_name": "lower CI", "marker_style": "base", "conditional_formatting":
@@ -9833,7 +9833,7 @@
     slug: data-pivot-epi
     settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "#", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "1,30", "filter_logic": "and", "font_style": "Arial", "merge_descriptions": true,
-      "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true, "left":
+      "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true, "left":
       322, "top": -32, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "estimate", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting":
@@ -9942,7 +9942,7 @@
     slug: data-pivot-invitro-endpoint
     settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": true, "show_xticks": true, "show_yticks": true, "domain": ".1,1000", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true,
+      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true,
       "left": 310, "top": -33, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"line_index": 0, "label": "dose range", "line_style":
       "base", "symbol_style": "base", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "minimum dose", "high_field_name": "maximum dose", "header_name":
       "minimum dose", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "Dose 1", "header_name": "Dose 1", "marker_style":
@@ -10051,7 +10051,7 @@
     slug: data-pivot-invitro-endpoint-group
     settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "-1,120", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true,
+      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true,
       "left": 344, "top": -29, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "dose", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "dose", "header_name": "dose", "marker_style": "base", "dpe": "---", "conditional_formatting":
