@@ -125,11 +125,8 @@ INSTALLED_APPS = (
     "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
+    "hawc.apps.form_library",
 )
-
-if HAWC_FEATURES.ENABLE_DYNAMIC_FORMS:
-    INSTALLED_APPS += ("hawc.apps.form_library",)
-
 # DB settings
 DATABASES = {
     "default": {
