@@ -46,9 +46,7 @@ class _Field(BaseModel):
 
     def get_form_field_kwargs(self) -> dict:
         """Get keyword arguments for Django form field."""
-        kwargs = self.dict(
-            exclude={"type", "widget", "name", "css_class"}, exclude_none=True
-        )
+        kwargs = self.dict(exclude={"type", "widget", "name", "css_class"}, exclude_none=True)
         kwargs["widget"] = constants.Widget[self.widget.upper()].value
         return kwargs
 
@@ -66,14 +64,14 @@ class _Field(BaseModel):
 class BooleanField(_Field):
     """Boolean field."""
 
-    type: Literal["boolean"] = "boolean"  # noqa: A003
+    type: Literal["boolean"] = "boolean"
     widget: Literal["checkbox_input"] = "checkbox_input"
 
 
 class CharField(_Field):
     """Character field."""
 
-    type: Literal["char"] = "char"  # noqa: A003
+    type: Literal["char"] = "char"
     widget: Literal["text_input", "textarea"] = "text_input"
 
     max_length: int | None
@@ -85,7 +83,7 @@ class CharField(_Field):
 class IntegerField(_Field):
     """Integer field."""
 
-    type: Literal["integer"] = "integer"  # noqa: A003
+    type: Literal["integer"] = "integer"
     widget: Literal["number_input"] = "number_input"
 
     min_value: int | None
@@ -95,7 +93,7 @@ class IntegerField(_Field):
 class FloatField(_Field):
     """Float field."""
 
-    type: Literal["float"] = "float"  # noqa: A003
+    type: Literal["float"] = "float"
     widget: Literal["number_input"] = "number_input"
 
     min_value: int | None
@@ -105,7 +103,7 @@ class FloatField(_Field):
 class ChoiceField(_Field):
     """Choice field."""
 
-    type: Literal["choice"] = "choice"  # noqa: A003
+    type: Literal["choice"] = "choice"
     widget: Literal["select", "radio_select"] = "select"
 
     choices: list[tuple[str, str]]
@@ -114,18 +112,16 @@ class ChoiceField(_Field):
 class YesNoChoiceField(_Field):
     """Yes No field."""
 
-    type: Literal["yes_no"] = "yes_no"  # noqa: A003
+    type: Literal["yes_no"] = "yes_no"
     widget: Literal["radio_select"] = PydanticField("radio_select", const=True)
 
-    choices: list[tuple[str, str]] = PydanticField(
-        [("yes", "Yes"), ("no", "No")], const=True
-    )
+    choices: list[tuple[str, str]] = PydanticField([("yes", "Yes"), ("no", "No")], const=True)
 
 
 class MultipleChoiceField(_Field):
     """Multiple choice field."""
 
-    type: Literal["multiple_choice"] = "multiple_choice"  # noqa: A003
+    type: Literal["multiple_choice"] = "multiple_choice"
     widget: Literal["select_multiple", "checkbox_select_multiple"] = "select_multiple"
 
     choices: list[tuple[str, str]]

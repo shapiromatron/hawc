@@ -31,7 +31,7 @@ class TestDynamicForm:
         <label class="custom-control-label" for="id_yesno_1">No</label>
         </div>
         <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
-        </div> </div> </div> </div>"""  # noqa: E501
+        </div> </div> </div> </div>"""
         assertInHTML(expected, form_rendering)
 
     def test_validation(self):

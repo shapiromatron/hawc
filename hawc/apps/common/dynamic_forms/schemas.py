@@ -73,15 +73,11 @@ class Schema(BaseModel):
         field_names = {field.name for field in fields}
         conditions = values["conditions"]
         subjects = {condition.subject for condition in conditions}
-        observers = {
-            observer for condition in conditions for observer in condition.observers
-        }
+        observers = {observer for condition in conditions for observer in condition.observers}
         if bad_subjects := (subjects - field_names):
             raise ValueError(f"Invalid condition subject(s): {', '.join(bad_subjects)}")
         if bad_observers := (observers - field_names):
-            raise ValueError(
-                f"Invalid condition observer(s): {', '.join(bad_observers)}"
-            )
+            raise ValueError(f"Invalid condition observer(s): {', '.join(bad_observers)}")
         return values
 
     @validator("fields")
@@ -100,6 +96,4 @@ class Schema(BaseModel):
         """Get dynamic form field for this schema."""
         if len(self.fields) == 0:
             return JSONField(widget=HiddenInput(), required=False)
-        return forms.DynamicFormField(
-            prefix, self.to_form, form_kwargs, *args, **kwargs
-        )
+        return forms.DynamicFormField(prefix, self.to_form, form_kwargs, *args, **kwargs)
