@@ -64,8 +64,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         )
 
         df = models.Design.objects.study_df(qs)
-        export = FlatExport(df=df, filename=f"epi-study-{assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-study-{assessment.id}")
 
 
 class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
