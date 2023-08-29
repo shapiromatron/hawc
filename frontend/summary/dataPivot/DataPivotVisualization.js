@@ -757,13 +757,15 @@ class DataPivotVisualization extends D3Plot {
             gridlines = [],
             everyOther = true,
             {datarows} = this,
-            {left, right} = this.padding,
+            {left} = this.padding,
             behindPlot = this.dp_settings.plot_settings.text_background_extend,
+            LEFT_BORDER_PADDING = _.min([4, left]), // don't extend background to full padding
+            LEFT_BORDER_PADDING_OFFSET = _.max([0, left - LEFT_BORDER_PADDING]),
             pushBG = (first, last) => {
                 bgs.push({
-                    x: 0,
+                    x: LEFT_BORDER_PADDING_OFFSET,
                     y: this.row_heights[first].min,
-                    w: this.text_width + left + (behindPlot ? this.w + right : 0),
+                    w: LEFT_BORDER_PADDING + this.text_width + (behindPlot ? this.w : 0),
                     h: this.row_heights[last].max - this.row_heights[first].min,
                 });
             };
