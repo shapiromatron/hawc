@@ -10,8 +10,6 @@ class CustomDataExtraction(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True)
     schema = models.JSONField()
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(
         HAWCUser, on_delete=models.SET_NULL, null=True, related_name="created_forms"
     )
@@ -23,6 +21,8 @@ class CustomDataExtraction(models.Model):
         on_delete=models.SET_NULL,
         related_name="child_forms",
     )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 reversion.register(CustomDataExtraction)
