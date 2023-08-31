@@ -456,6 +456,12 @@ class Visual(models.Model):
     def get_dose_units():
         return DoseUnits.objects.json_all()
 
+    def get_settings(self) -> dict | None:
+        try:
+            return json.loads(self.settings)
+        except ValueError:
+            return None
+
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -675,7 +681,7 @@ class DataPivot(models.Model):
     def get_visual_type_display(self):
         return self.visual_type
 
-    def get_settings(self):
+    def get_settings(self) -> dict | None:
         try:
             return json.loads(self.settings)
         except ValueError:
