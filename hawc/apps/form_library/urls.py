@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
@@ -9,5 +9,10 @@ urlpatterns = [
         "form/create/",
         views.CreateDataExtractionView.as_view(),
         name="form_create",
+    ),
+    re_path(
+        r"^form/schema-preview/(?P<field>schema)/$",
+        views.SchemaPreview.as_view(),
+        name="schema_preview",
     ),
 ]

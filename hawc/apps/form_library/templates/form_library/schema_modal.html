@@ -1,0 +1,16 @@
+{% extends 'form_library/components/modal_htmx.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block modal_title %}
+Custom data extraction form preview
+{% endblock modal_title %}
+
+{% block modal_body %}
+{% if valid %}
+{% crispy form %}
+<!-- <script>$(document).ready(() => window.llr.annotationFormStartup().then(f=>f.default()))</script> -->
+{% else %}
+{% include "common/widgets/error.html" with message="Unable to load preview; invalid schema." %}
+{% endif %}
+{% endblock modal_body %}
