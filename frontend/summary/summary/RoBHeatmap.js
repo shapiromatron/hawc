@@ -25,6 +25,16 @@ class RoBHeatmap extends BaseVisual {
         delete this.data.studies;
     }
 
+    addActionsMenu() {
+        return HAWCUtils.pageActionsButton([
+            "Download data file",
+            {url: this.data.data_url + "?format=xlsx", text: "Download (xlsx)"},
+            "Visualization editing",
+            {url: this.data.url_update, text: "Update"},
+            {url: this.data.url_delete, text: "Delete"},
+        ]);
+    }
+
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),

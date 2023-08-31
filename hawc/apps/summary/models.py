@@ -46,6 +46,7 @@ from ..epiv2.exports import EpiFlatComplete
 from ..epiv2.models import DataExtraction
 from ..invitro import exports as ivexports
 from ..invitro.models import IVEndpoint
+from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers
@@ -344,6 +345,9 @@ class Visual(models.Model):
     def get_api_detail(self):
         return reverse("summary:api:visual-detail", args=(self.id,))
 
+    def get_data_url(self):
+        return reverse("summary:api:visual-data", args=(self.id,))
+
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
 
@@ -605,6 +609,31 @@ class Visual(models.Model):
             return from_json(self.settings)
         except ValueError as err:
             raise ValueError(err)
+
+    def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
+        study_ids = list(self.get_studies().values_list("id", flat=True))
+        settings = json.loads(self.settings)
+
+        qs = RiskOfBiasScore.objects.filter(
+            riskofbias__active=True,
+            riskofbias__final=True,
+            riskofbias__study__in=study_ids,
+        )
+
+        # use settings in read-only view; dont use when configuring plot
+        if use_settings:
+            qs = qs.filter(metric__in=settings["included_metrics"]).exclude(
+                id__in=settings.get("excluded_score_ids", [])
+            )
+        return qs
+
+    def data_df(self, use_settings: bool = True) -> pd.DataFrame:
+        if self.visual_type not in [
+            constants.VisualType.ROB_BARCHART,
+            constants.VisualType.ROB_HEATMAP,
+        ]:
+            raise ValueError("Not supported for this visual type")
+        return self._rob_data_qs(use_settings=use_settings).df()
 
 
 class DataPivot(models.Model):

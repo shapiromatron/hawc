@@ -32,16 +32,18 @@ class DataPivotSerializer(serializers.ModelSerializer):
 class CollectionVisualSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url")
     visual_type = serializers.CharField(source="get_visual_type_display")
+    data_url = serializers.CharField(source="get_data_url")
 
     class Meta:
         model = models.Visual
-        fields = ("id", "title", "url", "visual_type", "visual_type")
+        fields = ("id", "title", "url", "visual_type", "visual_type", "data_url")
 
 
 class VisualSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url")
     visual_type = serializers.CharField(source="get_visual_type_display")
     settings = serializers.JSONField(source="get_settings")
+    data_url = serializers.CharField(source="get_data_url")
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
