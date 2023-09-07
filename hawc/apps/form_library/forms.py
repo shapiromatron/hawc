@@ -16,16 +16,16 @@ class CustomDataExtractionForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
+        user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        self.fields["creator"].initial = self.user
+        if self.instance.id is None:
+            self.instance.creator = user
 
     class Meta:
         model = CustomDataExtraction
-        exclude = ("parent_form", "created", "last_updated")
+        exclude = ("parent_form", "creator", "created", "last_updated")
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
-            "creator": forms.HiddenInput,
         }
 
     @property
