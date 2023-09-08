@@ -79,8 +79,7 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -106,8 +105,7 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Result.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
 
 
 class Criteria(EditPermissionsCheckMixin, AssessmentEditViewSet):
