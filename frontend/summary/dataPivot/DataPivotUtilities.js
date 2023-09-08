@@ -688,8 +688,8 @@ class _DataPivot_settings_general {
             build_tr("Plot border color", this.content.plot_border_color),
         ];
 
-        var toggle_display = function(src, targets) {
-            const show = src.prop("checked");
+        var toggle_display = function(src, targets, reverse = false) {
+            const show = reverse ? !src.prop("checked") : src.prop("checked");
             targets.forEach(target => {
                 target
                     .parent()
@@ -697,6 +697,12 @@ class _DataPivot_settings_general {
                     .toggle(show);
             });
         };
+
+        this.content.logscale
+            .on("change", () =>
+                toggle_display(this.content.logscale, [this.content.x_axis_force_domain], true)
+            )
+            .trigger("change");
 
         this.content.text_background
             .on("change", () =>
