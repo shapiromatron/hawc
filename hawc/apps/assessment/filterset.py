@@ -1,7 +1,16 @@
 import django_filters as df
+from django import forms
 from django.db.models import Q
+from django.urls import reverse
 
-from ..common.filterset import ArrowOrderingFilter, BaseFilterSet, InlineFilterForm
+from ..common.filterset import (
+    ArrowOrderingFilter,
+    BaseFilterSet,
+    ExpandableFilterForm,
+    InlineFilterForm,
+)
+from ..common.helper import new_window_a
+from ..myuser.models import HAWCUser
 from . import models
 from .constants import PublishedStatus
 
@@ -87,3 +96,68 @@ class GlobalChemicalsFilterSet(df.FilterSet):
         if value is True:
             return queryset.filter(public_on__isnull=False, hide_from_public_page=False)
         return queryset
+
+
+class LogFilterSet(BaseFilterSet):
+    user = df.ModelChoiceFilter(
+        label="User",
+        queryset=HAWCUser.objects.all(),
+        help_text="The user who made the change",
+        empty_label="All Users",
+    )
+    object_id = df.NumberFilter(
+        label="Object ID",
+        help_text="Filter by HAWC ID; can be found in the URL or in data exports",
+    )
+    content_type = df.NumberFilter(
+        label="Data type",
+    )
+    before = df.DateFilter(
+        label="Modified before",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+        method="filter_before",
+    )
+    after = df.DateFilter(
+        label="Modified After",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+        method="filter_after",
+    )
+    on = df.DateFilter(
+        label="Modified On",
+        widget=forms.widgets.DateInput(attrs={"type": "date"}),
+        method="filter_on",
+    )
+
+    class Meta:
+        model = models.Log
+        form = ExpandableFilterForm
+        fields = ("user", "object_id", "content_type", "before", "after", "on")
+        main_field = "object_id"
+        appended_fields = ("user",)
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 12}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
+            ]
+        }
+
+    def filter_before(self, queryset, name, value):
+        query = Q(created__date__lt=value)
+        return queryset.filter(query)
+
+    def filter_after(self, queryset, name, value):
+        query = Q(created__date__gt=value)
+        return queryset.filter(query)
+
+    def filter_on(self, queryset, name, value):
+        query = Q(created__date=value)
+        return queryset.filter(query)
+
+    def create_form(self):
+        form = super().create_form()
+        url = reverse("assessment:content_types")
+        form.fields[
+            "content_type"
+        ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
+        form.fields["user"].queryset = self.assessment.pms_and_team_users()
+        return form

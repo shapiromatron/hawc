@@ -3,22 +3,17 @@
 {% load bs4 %}
 
 {% block content %}
-{% if obj_perms.edit %}
-  <div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-      <span class="dropdown-header">Visualization editing</span>
-      <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">
-        Update
-      </a>
-      <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">
-        Delete
-      </a>
-    </div>
+<div class="visualization">
+  <div class='d-flex'>
+    <h2>{{object.title}}</h2>
+    {% if obj_perms.edit %}
+      {% actions %}
+        <span class="dropdown-header">Visualization editing</span>
+        <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">Update</a>
+        <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">Delete</a>
+      {% endactions %}
+    {% endif %}
   </div>
-{% endif %}
-<div class='visualization'>
-  <h2>{{object.title}}</h2>
   {% plotly object.get_plotly_from_json %}
   <p>{{object.caption|safe}}</p>
 </div>
