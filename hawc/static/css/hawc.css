@@ -83,7 +83,7 @@ tfoot > tr > td {
     max-width: 75vw;
 }
 .clickable {
-    transition: background-color 0.15s ease;
+    transition: background-color 0.25s ease;
 }
 .clickable:hover {
     cursor: pointer;
@@ -430,7 +430,6 @@ div.smart-tag.active {
     font-size: 1.2rem;
     line-height: 1.4;
     color: #1b1b1b;
-    font-family: Source Sans Pro Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans;
 }
 .referenceTag{
     text-align: left;
@@ -617,7 +616,7 @@ input[type="submit"].outline-btn, section button.outline-btn, section input[type
 }
 a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     text-decoration:none;
-    color: black  !important;
+    color: black !important;
     background-color: #d4d4d4;
 }
 .btn-tny {

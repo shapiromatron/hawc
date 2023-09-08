@@ -94,7 +94,3 @@ a.dropdown-toggle:not([href])::after {
 .dataTables_filter [type="search"]{
     float: none;
 }
-
-.abstracts {
-    font-family: unset;
-}
