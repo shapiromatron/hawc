@@ -17,7 +17,7 @@
             {% for id in ref.identifiers.all %}
             {% if id.get_url %}
             <div class="btn-group mr-1 mb-1 flex-shrink-0">
-                <a class="btn btn-tny outline-btn rounded-left" href="{{id.get_url}}">{{id.get_database_display}}</a>
+                <a class="btn btn-tny outline-btn rounded-left" href="{{id.get_url}}" rel="noopener noreferrer" target="_blank" >{{id.get_database_display}}</a>
                 <span class="outline-btn btn-tny rounded-right font-weight-normal border-left-0">{{id.unique_id}}</span>
             </div>
             {% endif %}

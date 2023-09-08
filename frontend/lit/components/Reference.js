@@ -19,9 +19,12 @@ class Reference extends Component {
         if (data.full_text_url) {
             nodes.push(
                 <a
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="outline-btn mr-1 mb-1 flex-shrink-0"
                     href={data.full_text_url}
-                    key={h.randomString()}>
+                    key={h.randomString()}
+                    rel="noreferrer">
                     Full Text&nbsp;
                     <i className="fa fa-external-link" aria-hidden="true"></i>
                 </a>
@@ -35,6 +38,8 @@ class Reference extends Component {
                 nodes.push(
                     <div className="btn-group mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
                         <a
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className={`btn outline-btn ${btn_size} rounded-left`}
                             href={v.database === "HERO" ? Hero.getUrl(v.id) : v.url}>
                             {v.database}
