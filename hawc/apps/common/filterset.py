@@ -124,7 +124,7 @@ class ExpandableFilterForm(InlineFilterForm):
 
     helper_class = ExpandableFilterFormHelper
 
-    is_expanded = forms.CharField(initial="false", widget=forms.HiddenInput())
+    is_expanded = forms.CharField(initial="false", widget=forms.HiddenInput(), required=False)
 
     def clean(self):
         """Remove 'is_expanded' from form data before data is used for filtering."""

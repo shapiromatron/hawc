@@ -1,21 +1,22 @@
 {% extends 'assessment-rooted.html' %}
 {% load bs4 %}
 
+{% load bs4 %}
+
 {% block content %}
-  <h2 class="d-inline-block">Available visualizations</h2>
-  {% if obj_perms.edit %}
-      <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">
-            <i class="fa fa-fw fa-edit"></i>&nbsp;Create new visual
-          </a>
-          <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">
-            <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
-          </a>
-        </div>
-      </div>
-  {% endif %}
+  <div class="d-flex">
+    <h2>Available visualizations</h2>
+    {% if obj_perms.edit %}
+      {% actions %}
+        <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">
+          <i class="fa fa-fw fa-edit"></i>&nbsp;Create new visual
+        </a>
+        <a class="dropdown-item" href="{% url 'summary:visualization_copy_selector' assessment.pk %}">
+          <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
+        </a>
+      {% endactions %}
+    {% endif %}
+  </div>
 
 {% include 'common/inline_filter_form.html' %}
 
