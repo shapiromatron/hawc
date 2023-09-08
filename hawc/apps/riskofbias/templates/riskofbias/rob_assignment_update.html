@@ -1,15 +1,15 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
+{% load bs4 %}
 
 {% block content %}
-    <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
+    <div class="d-flex">
+        <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
+        {% actions %}
             <a class="dropdown-item" href="{% url 'riskofbias:rob_num_reviewers' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update number of reviewers</a>
-        </div>
+        {% endactions %}
     </div>
-    <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
     {% include 'common/inline_filter_form.html' %}
     <div id="main"></div>
     {% include "includes/paginator.html" with plural_object_name="assignments" %}

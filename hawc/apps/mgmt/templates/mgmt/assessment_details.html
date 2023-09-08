@@ -3,12 +3,11 @@
 {% load bs4 %}
 
 {% block content %}
-<h2 class="d-inline-block">Task assignments</h2>
-<div class="btn-group float-right">
-  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-  <div class="dropdown-menu dropdown-menu-right">
+<div class="d-flex">
+  <h2>Task assignments</h2>
+  {% actions %}
     <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
-  </div>
+  {% endactions %}
 </div>
 
 {% include 'common/inline_filter_form.html' %}

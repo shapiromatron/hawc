@@ -1,10 +1,12 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
-  {% if obj_perms.edit and crud == "Read" %}
-  <div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
+  <div class="d-flex">
+    <h2>{{object}}</h2>
+    {% if obj_perms.edit and crud == "Read" %}
+      {% actions %}
         <span class="dropdown-header">Meta-protocol editing</span>
         <a class="dropdown-item" href="{% url 'meta:protocol_update' object.pk %}">Update</a>
         <a class="dropdown-item" href="{% url 'meta:protocol_delete' object.pk %}">Delete</a>
@@ -12,10 +14,9 @@
         <span class="dropdown-header">Meta-result editing</span>
         <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
         <a class="dropdown-item" href="{% url 'meta:result_copy_selector' object.pk %}">Copy from existing</a>
-    </div>
+      {% endactions %}
+    {% endif %}
   </div>
-  {% endif %}
-  <h2 class="d-inline-block">{{object}}</h2>
   <div id="main"></div>
 {% endblock %}
 
