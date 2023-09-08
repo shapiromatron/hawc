@@ -234,7 +234,7 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     def __init__(
         self,
         mapped_model: models.Model,
-        serializer_class: serializers.ModelSerializer,
+        serializer_class: type[serializers.ModelSerializer],
         field_for_descriptor: str,
         many: bool,
     ):
@@ -280,6 +280,7 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         if self.many:
             if isinstance(data, str) or not hasattr(data, "__iter__"):
                 self.fail("not_a_list", input_type=type(data).__name__)
+            # Arguments for super() needed b/c of scoping inside comprehensions
             resolved_ids = [
                 super(FlexibleDBLinkedChoiceField, self).to_internal_value(item) for item in data
             ]
