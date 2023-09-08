@@ -23,8 +23,7 @@ class Reference extends Component {
                     rel="noopener noreferrer"
                     className="outline-btn mr-1 mb-1 flex-shrink-0"
                     href={data.full_text_url}
-                    key={h.randomString()}
-                    rel="noreferrer">
+                    key={h.randomString()}>
                     Full Text&nbsp;
                     <i className="fa fa-external-link" aria-hidden="true"></i>
                 </a>
