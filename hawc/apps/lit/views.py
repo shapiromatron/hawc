@@ -358,10 +358,10 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12},
-                                                {"width": 12},
-                                                {"width": 6},
-                                                {"width": 6},
+                                                {"width": 5},
+                                                {"width": 7},
+                                                {"width": 5},
+                                                {"width": 7},
                                             ]
                                         }
                                     ],
@@ -434,9 +434,9 @@ class ConflictResolution(BaseFilterList):
                     },
                     {
                         "columns": [
-                            {"width": 4},
-                            {"width": 4},
-                            {"width": 4},
+                            {"width": 3},
+                            {"width": 6},
+                            {"width": 3},
                         ]
                     },
                     {

@@ -31,7 +31,7 @@ class ReferenceFilterSet(BaseFilterSet):
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
     authors = df.CharFilter(method="filter_authors", label="Authors")
-    year = df.NumberFilter(label="Year", help_text="Year of publication")
+    year = df.NumberFilter(label="Year")
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         null_value="untagged",
