@@ -1,20 +1,20 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load hawc %}
+{% load bs4 %}
 
 {% block content %}
 {% if crud == "Read" %}
-<div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-        {% if obj_perms.edit %}
+<div class="d-flex">
+    <h3>Assessment Value for {{object.assessment}}</h3>
+    {% if obj_perms.edit %}
+    {% actions %}
         <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update</a>
         <a class="dropdown-item" href="{% url 'assessment:values-delete' object.pk %}">Delete</a>
-        {% endif %}
-    </div>
+    {% endactions %}
+    {% endif %}
 </div>
 {% endif %}
-<h3>Assessment Value for {{object.assessment}}</h3>
 <table class="table table-sm table-striped">
     <colgroup>
         <col style="width: 30%;">

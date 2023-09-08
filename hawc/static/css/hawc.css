@@ -61,6 +61,10 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
 }
 /* end sidebar */
 
+.unpublishedBadge+.actionsMenu, .unpublishedBadge+button.close {
+    margin-left: unset !important;
+}
+
 iframe {
     resize: both;
 }

@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import DataTable from "shared/components/DataTable";
 import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
@@ -314,7 +315,7 @@ class DataPivot {
         modal.getModal().on("shown.bs.modal", () => self.build_data_pivot_vis($plot));
 
         modal
-            .addHeader(title)
+            .addHeader([title, HAWCUtils.unpublished(this.data.published, window.isEditable)])
             .addBody($content)
             .addFooter("")
             .show();

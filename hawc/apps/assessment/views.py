@@ -36,6 +36,7 @@ from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     CloseIfSuccessMixin,
@@ -882,13 +883,13 @@ class LogObjectList(ListView):
         return context
 
 
-class AssessmentLogList(BaseList):
+class AssessmentLogList(BaseFilterList):
     parent_model = models.Assessment
     model = models.Log
     breadcrumb_active_name = "Logs"
     template_name = "assessment/assessment_log_list.html"
-    paginate_by = 25
     assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+    filterset_class = filterset.LogFilterSet
 
     def get_queryset(self):
         qs = (
@@ -897,15 +898,7 @@ class AssessmentLogList(BaseList):
             .filter(assessment=self.assessment)
             .select_related("assessment", "content_type", "user")
         )
-        self.form = forms.LogFilterForm(self.request.GET, assessment=self.assessment)
-        if self.form.is_valid():
-            qs = qs.filter(self.form.filters())
         return qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = self.form
-        return context
 
 
 @method_decorator(cache_page(3600), name="dispatch")
