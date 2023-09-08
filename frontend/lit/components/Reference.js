@@ -82,7 +82,7 @@ class Reference extends Component {
                         aria-haspopup="true"
                         aria-expanded="false">
                         <i className="fa fa-cloud-download" aria-hidden="true"></i>
-                        &nbsp;Imports
+                        &nbsp;Source
                     </a>
                     <div className="dropdown-menu dropdown-menu-right">
                         {data.searches.map((d, i) => (
