@@ -61,8 +61,6 @@ class DosesSerializer(serializers.ModelSerializer):
         write_only=True,
         source="dose_units",
         queryset=DoseUnits.objects.all(),
-        required=True,
-        allow_null=False,
     )
 
     class Meta:
@@ -83,7 +81,7 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
 
 
 class DosingRegimeSerializer(serializers.ModelSerializer):
-    doses = DosesSerializer(many=True)
+    doses = DosesSerializer(many=True, required=True)
     dosed_animals = AnimalGroupRelationSerializer(required=False)
 
     def to_representation(self, instance):
@@ -94,32 +92,22 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-        # validate dose-groups too
-        dose_serializers = []
-        doses = self.initial_data.get("doses", [])
-        for dose in doses:
-            dose_serializer = DosesSerializer(data=dose)
-            dose_serializer.is_valid(raise_exception=True)
-            dose_serializers.append(dose_serializer)
-        self.dose_serializers = dose_serializers
-
-        # validate that we have the same number of `dose_group_id`
-        dose_groups = set([d["dose_group_id"] for d in doses])
-        units = set([d["dose_units_id"] for d in doses])
-
-        if len(dose_groups) == 0:
+        if len(data["doses"]) == 0:
             raise serializers.ValidationError("Must have at least one dose-group.")
+
+        dose_groups: set[int] = set([d["dose_group_id"] for d in data["doses"]])
+        units: set[int] = set([d["dose_units"].id for d in data["doses"]])
 
         expected_dose_groups = list(range(max(dose_groups) + 1))
         if dose_groups != set(expected_dose_groups):
             raise serializers.ValidationError(f"Expected `dose_group_id` in {expected_dose_groups}")
 
         expected_doses = len(dose_groups) * len(units)
-        if len(doses) != expected_doses:
+        if len(data["doses"]) != expected_doses:
             raise serializers.ValidationError(f"Expected {expected_doses} dose-groups.")
 
         expected_set = set(itertools.product(dose_groups, units))
-        actual_set = set((d["dose_group_id"], d["dose_units_id"]) for d in doses)
+        actual_set = set((d["dose_group_id"], d["dose_units"].id) for d in data["doses"])
         if expected_set != actual_set:
             raise serializers.ValidationError("Missing or duplicate dose-groups")
 
@@ -129,10 +117,11 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data.pop("doses", None)
+        doses = validated_data.pop("doses", None)
         dosing_regime = models.DosingRegime.objects.create(**validated_data)
-        for dose_serializer in self.dose_serializers:
-            dose_serializer.save(dose_regime_id=dosing_regime.id)
+        for dose in doses:
+            dose["dose_regime"] = dosing_regime
+            models.DoseGroup.objects.create(**dose)
         return dosing_regime
 
     class Meta:
