@@ -432,6 +432,7 @@ class VisualizationCreate(BaseCreate):
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
@@ -545,6 +546,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,

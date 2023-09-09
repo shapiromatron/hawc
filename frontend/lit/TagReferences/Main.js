@@ -182,6 +182,7 @@ class TagReferencesMain extends Component {
                                 showTags={false}
                                 showActionsTagless={true}
                                 actionsBtnClassName={"btn-sm btn-secondary"}
+                                expanded={true}
                                 extraActions={[
                                     <div
                                         className="dropdown-item cursor-pointer"
