@@ -1,5 +1,5 @@
 import django_filters as df
-from django.db.models import Q
+from django.db.models import Q, Subquery
 
 from ..common.filterset import BaseFilterSet, InlineFilterForm, PaginationFilter
 from ..myuser.models import HAWCUser
@@ -49,7 +49,11 @@ class StudyFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
+        return self._meta.model.objects.filter(
+            id__in=Subquery(
+                queryset.filter(query).order_by("id").distinct("id").values_list("id", flat=True)
+            )
+        )
 
     def filter_query(self, queryset, name, value):
         query = (
