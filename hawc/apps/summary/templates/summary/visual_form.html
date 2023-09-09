@@ -60,9 +60,6 @@
           summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
           mainElement.show();
         });
-      } else if (config.visual_type == 0){
-        mainElement.show();
-        summaryForms.VisualForm.create(config.visual_type, mainElement, config);
       } else {
         const mountElement = $('.tabbable');
         mountElement.show();

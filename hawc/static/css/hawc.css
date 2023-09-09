@@ -111,6 +111,10 @@ p {
     margin-bottom: 0rem !important;
 }
 
+select[multiple]{
+    resize: vertical;
+}
+
 /* BOOTSTRAP 4 OVERRIDES */
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;

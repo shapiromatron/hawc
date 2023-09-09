@@ -9,6 +9,7 @@ from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
 from ..animal.autocomplete import EndpointAutocomplete
+from ..animal.forms import MultipleEndpointChoiceField
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
@@ -657,14 +658,23 @@ class VisualSelectorForm(forms.Form):
 
 
 class EndpointAggregationForm(VisualForm):
+    endpoints = MultipleEndpointChoiceField(required=True, queryset=Endpoint.objects.none())
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.attrs["novalidate"] = ""
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
+            self.instance.assessment
+        )
+        self.fields["endpoints"].widget.attrs["size"] = 20
+        self.fields["endpoints"].queryset = Endpoint.objects.assessment_qs(
+            self.instance.assessment
+        ).selector()
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "prefilters", "studies", "sort_order")
+        exclude = ("assessment", "visual_type", "settings", "prefilters", "studies", "sort_order")
 
 
 class CrossviewForm(PrefilterMixin, VisualForm):
