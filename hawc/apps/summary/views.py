@@ -740,6 +740,10 @@ class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context["config"] = {
+            "data_url": self.object.get_data_url(),
+            "settings": self.object.settings,
+        }
         return context
 
 
