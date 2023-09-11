@@ -627,6 +627,8 @@ class DataPivotForm(forms.ModelForm):
                 """,
                 "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
+            if hasattr(self.instance, "evidence_type"):
+                inputs["legend_text"] += f" ({self.instance.get_evidence_type_display()})"
 
         helper = BaseFormHelper(self, **inputs)
 
