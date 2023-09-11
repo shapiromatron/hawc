@@ -58,6 +58,29 @@ class TestAssessmentClearCache:
 
 
 @pytest.mark.django_db
+class TestHomePage:
+    def test_functionality(self):
+        # anon
+        anon_client = Client()
+        url = reverse("home")
+        response = anon_client.get(url)
+        assert response.status_code == 200
+
+        # auth
+        rev_client = Client()
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
+        response = rev_client.get(url)
+        assert response.status_code == 302
+
+        # external
+        settings.EXTERNAL_HOME = "."
+        response = anon_client.get(url)
+        assert urlparse(response.url).path == "."
+        assert response.status_code == 302
+        settings.EXTERNAL_HOME = ""
+
+
+@pytest.mark.django_db
 class TestAboutPage:
     def test_counts(self):
         client = Client()
@@ -66,6 +89,26 @@ class TestAboutPage:
         assert "counts" in response.context
         assert response.context["counts"]["assessments"] == 4
         assert response.context["counts"]["users"] == 5
+
+    def test_settings_external(self):
+        client = Client()
+        url = reverse("about")
+        settings.EXTERNAL_ABOUT = "."
+        resp = client.get(url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == "."
+        settings.EXTERNAL_ABOUT = ""
+
+    def test_settings_hawc_flavor(self):
+        client = Client()
+        url = reverse("about")
+        settings.HAWC_FLAVOR = "EPA"
+        assert client.get(url).status_code == 200
+
+        settings.HAWC_FLAVOR = "INVALID"
+        with pytest.raises(ValueError):
+            client.get(url)
+        settings.HAWC_FLAVOR = "PRIME"
 
 
 @pytest.mark.django_db
@@ -131,6 +174,21 @@ class TestAssessmentCreate:
 
 
 @pytest.mark.django_db
+class TestResourcesPage:
+    def test_functionality(self):
+        client = Client()
+        url = reverse("resources")
+        assert client.get(url).status_code == 200
+
+        # external
+        settings.EXTERNAL_RESOURCES = "."
+        resp = client.get(url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == "."
+        settings.EXTERNAL_RESOURCES = ""
+
+
+@pytest.mark.django_db
 class TestContactUsPage:
     def test_login_required(self):
         contact_url = reverse("contact")
@@ -146,6 +204,16 @@ class TestContactUsPage:
         client.login(username="pm@hawcproject.org", password="pw")
         resp = client.get(contact_url)
         assert resp.status_code == 200
+
+    def test_external(self):
+        settings.EXTERNAL_CONTACT_US = "."
+        contact_url = reverse("contact")
+        client = Client()
+
+        resp = client.get(contact_url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == "."
+        settings.EXTERNAL_CONTACT_US = ""
 
     def test_referrer(self):
         contact_url = reverse("contact")
