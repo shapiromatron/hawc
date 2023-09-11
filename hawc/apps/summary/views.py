@@ -284,7 +284,6 @@ class VisualizationList(BaseFilterList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
-
     filterset_class = filterset.VisualFilterSet
 
     @property

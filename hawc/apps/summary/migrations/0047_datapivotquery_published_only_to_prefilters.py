@@ -24,7 +24,7 @@ def reverse_published_only_prefilters(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("summary", "0044_visual_prefilters_json"),
+        ("summary", "0046_visual_prefilters_json"),
     ]
 
     operations = [

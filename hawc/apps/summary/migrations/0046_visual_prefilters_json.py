@@ -66,7 +66,7 @@ def reverse_prefilters_dict(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("summary", "0043_datapivotquery_prefilters_json"),
+        ("summary", "0045_datapivotquery_prefilters_json"),
     ]
 
     operations = [

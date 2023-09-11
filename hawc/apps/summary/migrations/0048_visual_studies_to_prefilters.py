@@ -30,7 +30,7 @@ def reverse_studies_prefilters(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("summary", "0045_datapivotquery_published_only_to_prefilters"),
+        ("summary", "0047_datapivotquery_published_only_to_prefilters"),
     ]
 
     operations = [
