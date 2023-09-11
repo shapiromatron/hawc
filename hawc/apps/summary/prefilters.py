@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Self
 
 import django_filters as df
 from django import forms
@@ -340,7 +341,7 @@ class StudyTypePrefilter(Enum):
     ECO = EcoPrefilter
 
     @classmethod
-    def from_study_type(cls, study_type: int | StudyType, assessment: Assessment):
+    def from_study_type(cls, study_type: int | StudyType, assessment: Assessment) -> Self:
         study_type = StudyType(study_type)
         name = study_type.name
         if study_type == StudyType.EPI:
@@ -357,7 +358,7 @@ class VisualTypePrefilter(Enum):
     ROB_BARCHART = BioassayPrefilter
 
     @classmethod
-    def from_visual_type(cls, visual_type: int | VisualType):
+    def from_visual_type(cls, visual_type: int | VisualType) -> Self:
         visual_type = VisualType(visual_type)
         name = visual_type.name
         return cls[name]

@@ -643,17 +643,19 @@ class DataPivotQueryNew(DataPivotNew):
     form_class = forms.DataPivotQueryForm
     template_name = "summary/datapivot_form.html"
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
+    def get_evidence_type(self) -> prefilters.StudyType:
         try:
-            # get study type enum
-            study_type = constants.StudyType(self.kwargs.get("study_type"))
-            # make sure prefilter exists for study type
-            prefilters.StudyTypePrefilter.from_study_type(study_type, self.assessment)
-            # pass study type to form
-            kwargs["evidence_type"] = study_type
+            evidence_type = constants.StudyType(self.kwargs["study_type"])
+            prefilter = prefilters.StudyTypePrefilter.from_study_type(
+                evidence_type, self.assessment
+            ).value
         except (KeyError, ValueError):
             raise Http404
+        return evidence_type, prefilter
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["evidence_type"], kwargs["prefilter"] = self.get_evidence_type()
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -776,6 +778,13 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
     template_name = "summary/datapivot_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["prefilter"] = prefilters.StudyTypePrefilter.from_study_type(
+            self.object.evidence_type, self.assessment
+        ).value
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

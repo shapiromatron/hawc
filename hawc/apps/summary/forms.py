@@ -689,7 +689,6 @@ class DataPivotQueryForm(DataPivotForm):
         fields = (
             "title",
             "slug",
-            "evidence_type",
             "export_style",
             "preferred_units",
             "settings",
@@ -706,16 +705,11 @@ class DataPivotQueryForm(DataPivotForm):
 
     def __init__(self, *args, **kwargs):
         evidence_type = kwargs.pop("evidence_type", None)
+        self.prefilter = kwargs.pop("prefilter")
         super().__init__(*args, **kwargs)
-
-        if evidence_type is not None:
+        if self.instance.id is None:
             self.instance.evidence_type = evidence_type
-        self.fields["evidence_type"].initial = self.instance.evidence_type
-        self.fields["evidence_type"].disabled = True
 
-        self.prefilter = prefilters.StudyTypePrefilter.from_study_type(
-            self.instance.evidence_type, self.instance.assessment
-        ).value
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
@@ -733,7 +727,7 @@ class DataPivotQueryForm(DataPivotForm):
         return super().save(commit=commit)
 
     def clean_export_style(self):
-        evidence_type = self.cleaned_data["evidence_type"]
+        evidence_type = self.instance.evidence_type
         export_style = self.cleaned_data["export_style"]
         if (
             evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)
