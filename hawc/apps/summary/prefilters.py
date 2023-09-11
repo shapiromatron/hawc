@@ -92,7 +92,7 @@ class BioassayPrefilter(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "bioassay")
         form.fields["systems"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
         form.fields["organs"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
         form.fields["effects"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)
@@ -155,7 +155,7 @@ class EpiV1Prefilter(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "epi")
         form.fields["systems"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
         form.fields["effects"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
@@ -195,7 +195,7 @@ class EpiV2Prefilter(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "epi")
         return form
 
 
@@ -232,7 +232,7 @@ class EpiMetaPrefilter(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "epi_meta")
         return form
 
 
@@ -288,7 +288,7 @@ class InvitroPrefilter(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "in_vitro")
         form.fields["categories"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
         form.fields["chemicals"].choices = IVChemical.objects.get_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
@@ -328,7 +328,7 @@ class EcoPrefilter(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "eco")
         return form
 
 
