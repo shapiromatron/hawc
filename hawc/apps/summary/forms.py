@@ -717,10 +717,12 @@ class DataPivotQueryForm(DataPivotForm):
         )
 
         if self.instance.evidence_type == constants.StudyType.BIOASSAY:
-            self.fields["preferred_units"].choices = json.dumps([
-                {"id": obj.id, "name": obj.name}
-                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
-            ])
+            self.fields["preferred_units"].choices = json.dumps(
+                [
+                    {"id": obj.id, "name": obj.name}
+                    for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+                ]
+            )
         else:
             self.fields.pop("preferred_units")
 
