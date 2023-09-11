@@ -20,8 +20,9 @@ class DashboardViewSet(viewsets.ViewSet):
     def media(self, request):
         uri = request.build_absolute_uri(location="/")[:-1]
         df = media_metadata_report(uri)
-        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
-        return Response(export)
+        return FlatExport.api_response(
+            df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}"
+        )
 
 
 class DiagnosticViewSet(viewsets.ViewSet):

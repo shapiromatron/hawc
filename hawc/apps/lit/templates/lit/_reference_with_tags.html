@@ -1,4 +1,4 @@
-<div id="tagged-ref-{{ref.pk}}">
+<div id="tagged-ref-{{ref.pk}}" class="vw75">
     {% if show_actions %}
     <div class="dropdown btn-group float-right">
         <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -10,15 +10,29 @@
     </div>
     {% endif %}
     <div>
-        <div class="ref_authors cursor-pointer ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
-        <div class="ref_title cursor-pointer m-0">{{ref.title}}</div>
-        <div class="ref_small mb-1">
+        <div class="ref_authors ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
+        <div class="ref_title m-0">{{ref.title}}</div>
+        <p className="ref_small">{{ref.journal}}</p>
+        <div class="d-flex my-1">
             {% for id in ref.identifiers.all %}
-            <a href="{{id.get_url}}" class="ids badge badge-info">{{id.get_database_display}}</a>
+            {% if id.get_url %}
+            <div class="btn-group mr-1 mb-1 flex-shrink-0">
+                <a class="btn btn-tny outline-btn rounded-left" href="{{id.get_url}}" rel="noopener noreferrer" target="_blank" >{{id.get_database_display}}</a>
+                <span class="outline-btn btn-tny rounded-right font-weight-normal border-left-0">{{id.unique_id}}</span>
+            </div>
+            {% endif %}
             {% endfor %}
-            <a href="{{ref.get_absolute_url}}" class="ids badge badge-warning">HAWC</a>
+            <div class="btn-group mr-1 mb-1 flex-shrink-0">
+                <a class="btn btn-tny outline-btn rounded-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
+                <span class="outline-btn btn-tny {% if not ref.has_study %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
+                {% if ref.has_study %}
+                <a class="btn btn-tny outline-btn rounded-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
+                {% endif %}
+            </div>
         </div>
-        <p class="abstract abstract_collapsed cursor-pointer mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
+        {% if ref.abstract %}
+        <p class="abstracts abstract-collapsed  mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
+        {% endif %}
     </div>
     <div>
         {% with ref.tags.all as tags %}{% if tags %}
@@ -68,8 +82,8 @@
 <script type="text/javascript">
 {% comment %}jQuery not available when script is inserted, but available when events are triggered{% endcomment %}
 document.querySelectorAll(
-    "#tagged-ref-{{ref.pk}} .abstract, #tagged-ref-{{ref.pk}} .ref_authors, #tagged-ref-{{ref.pk}} .ref_title"
+    ".abstracts"
 ).forEach(
-    el => el.addEventListener('click', e => $(e.target).closest('#tagged-ref-{{ref.pk}}').find('.abstract').toggleClass("abstract_collapsed"))
+    el => el.addEventListener('click', e => $(e.target).closest('#tagged-ref-{{ref.pk}}').find('.abstracts').toggleClass("abstract-collapsed"))
 );
 </script>

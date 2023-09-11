@@ -19,13 +19,12 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DataPivot
-        exclude = ("settings",)
+        fields = "__all__"
 
 
 class DataPivotSerializer(CollectionDataPivotSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["settings"] = instance.get_settings()
         ret["data_url"] = instance.get_data_url()
         ret["download_url"] = instance.get_download_url()
         return ret
