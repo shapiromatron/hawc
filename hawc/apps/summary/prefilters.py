@@ -24,7 +24,6 @@ class PrefilterForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
-
         return helper
 
 

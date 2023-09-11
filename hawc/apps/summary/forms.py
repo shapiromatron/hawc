@@ -715,13 +715,14 @@ class DataPivotQueryForm(DataPivotForm):
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
-        self.fields["preferred_units"].required = False
-        self.js_units_choices = json.dumps(
-            [
+
+        if self.instance.evidence_type == constants.StudyType.BIOASSAY:
+            self.fields["preferred_units"].choices = json.dumps([
                 {"id": obj.id, "name": obj.name}
                 for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
-            ]
-        )
+            ])
+        else:
+            self.fields.pop("preferred_units")
 
         if self.instance.evidence_type not in (
             constants.StudyType.IN_VITRO,
