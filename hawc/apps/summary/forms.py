@@ -720,6 +720,13 @@ class DataPivotQueryForm(DataPivotForm):
                 for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
             ]
         )
+
+        if self.instance.evidence_type not in (
+            constants.StudyType.IN_VITRO,
+            constants.StudyType.BIOASSAY,
+        ):
+            self.fields.pop("export_style")
+
         self.helper = self.setHelper()
 
     def save(self, commit=True):
