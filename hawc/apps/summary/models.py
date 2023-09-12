@@ -763,18 +763,6 @@ class DataPivotQuery(DataPivot):
             """
             raise ValidationError(err)
 
-    def _refine_queryset(self, qs):
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            if self.preferred_units:
-                qs = qs.filter(
-                    animal_group__dosing_regime__doses__dose_units__in=self.preferred_units
-                )
-
-        elif self.evidence_type == constants.StudyType.ECO:
-            qs = qs.filter(design__study__assessment_id=self.assessment_id)
-
-        return qs
-
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == constants.StudyType.BIOASSAY:
             # select export class
@@ -844,7 +832,8 @@ class DataPivotQuery(DataPivot):
 
     def get_queryset(self):
         qs = self.get_filterset(self.prefilters, self.assessment).qs
-        qs = self._refine_queryset(qs)
+        if self.evidence_type == constants.StudyType.BIOASSAY and self.preferred_units:
+            qs = qs.filter(animal_group__dosing_regime__doses__dose_units__in=self.preferred_units)
         return qs.order_by("id")
 
     def get_dataset(self) -> FlatExport:
