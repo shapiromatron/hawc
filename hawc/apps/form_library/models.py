@@ -4,8 +4,6 @@ from django.db import models
 from ..myuser.models import HAWCUser
 
 
-# TODO: is this a good name? i changed it from dynamic form because it makes the naming scheme weird
-# for the actual form class (DynamicFormForm)
 class UserDefinedForm(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField()
