@@ -1,7 +1,12 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2>References ({{page_obj.paginator.count}} found)</h2>
+<div class="d-flex mb-2">
+    <h2 class="mb-0">References ({{page_obj.paginator.count}} found)</h2>
+    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+    <a href="{% url 'lit:api:assessment-reference-export' assessment.id %}?format=xlsx" class="btn btn-sm btn-primary align-self-center flex-shrink-0 ml-3"><i class="fa fa-download" aria-hidden="true"></i>&nbsp; Download {{page_obj.paginator.count}} results</a>
+    {% endif %}
+</div>
 {% include 'common/inline_filter_form.html' %}
 <div id="main"></div>
 {% include 'includes/paginator.html' with plural_object_name='references' %}

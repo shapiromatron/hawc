@@ -652,8 +652,6 @@ class RefFilterList(BaseFilterList):
             },
         )
 
-    paginate_by = 50
-
     def get_queryset(self):
         return (
             super()
@@ -665,6 +663,7 @@ class RefFilterList(BaseFilterList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        context["ref_ids"] = list(self.object_list.values_list("pk", flat=True))
         return context
 
     def get_app_config(self, context) -> WebappConfig:
