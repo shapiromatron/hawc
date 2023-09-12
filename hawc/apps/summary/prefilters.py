@@ -27,7 +27,7 @@ class PrefilterForm(forms.Form):
         return helper
 
 
-class BioassayPrefilter(BaseFilterSet):
+class BioassayEndpointPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -102,7 +102,7 @@ class BioassayPrefilter(BaseFilterSet):
         return form
 
 
-class EpiV1Prefilter(BaseFilterSet):
+class EpiV1ResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -161,7 +161,7 @@ class EpiV1Prefilter(BaseFilterSet):
         return form
 
 
-class EpiV2Prefilter(BaseFilterSet):
+class EpiV2ResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -198,7 +198,7 @@ class EpiV2Prefilter(BaseFilterSet):
         return form
 
 
-class EpiMetaPrefilter(BaseFilterSet):
+class EpiMetaResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -235,7 +235,7 @@ class EpiMetaPrefilter(BaseFilterSet):
         return form
 
 
-class InvitroPrefilter(BaseFilterSet):
+class InvitroOutcomePrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -294,7 +294,7 @@ class InvitroPrefilter(BaseFilterSet):
         return form
 
 
-class EcoPrefilter(BaseFilterSet):
+class EcoResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -332,12 +332,12 @@ class EcoPrefilter(BaseFilterSet):
 
 
 class StudyTypePrefilter(Enum):
-    BIOASSAY = BioassayPrefilter
-    EPIV1 = EpiV1Prefilter
-    EPIV2 = EpiV2Prefilter
-    EPI_META = EpiMetaPrefilter
-    IN_VITRO = InvitroPrefilter
-    ECO = EcoPrefilter
+    BIOASSAY = BioassayEndpointPrefilter
+    EPIV1 = EpiV1ResultPrefilter
+    EPIV2 = EpiV2ResultPrefilter
+    EPI_META = EpiMetaResultPrefilter
+    IN_VITRO = InvitroOutcomePrefilter
+    ECO = EcoResultPrefilter
 
     @classmethod
     def from_study_type(cls, study_type: int | StudyType, assessment: Assessment) -> Self:
@@ -352,9 +352,9 @@ class StudyTypePrefilter(Enum):
 
 
 class VisualTypePrefilter(Enum):
-    BIOASSAY_CROSSVIEW = BioassayPrefilter
-    ROB_HEATMAP = BioassayPrefilter
-    ROB_BARCHART = BioassayPrefilter
+    BIOASSAY_CROSSVIEW = BioassayEndpointPrefilter
+    ROB_HEATMAP = BioassayEndpointPrefilter
+    ROB_BARCHART = BioassayEndpointPrefilter
 
     @classmethod
     def from_visual_type(cls, visual_type: int | VisualType) -> Self:
