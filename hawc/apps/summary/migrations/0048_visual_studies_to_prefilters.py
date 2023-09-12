@@ -7,12 +7,17 @@ def studies_prefilters(apps, schema_editor):
     # add studies field to prefilters
     Visual = apps.get_model("summary", "Visual")
     objs = Visual.objects.all().prefetch_related("studies")
+    vis_updates = []
     for obj in objs:
         # old logic was to use studies field if there were no prefilters
         # we preserve this here so that the visuals don't change
         if not any(value for value in obj.prefilters.values()):
-            obj.prefilters["studies"] = list(obj.studies.all().values_list("pk", flat=True))
-    Visual.objects.bulk_update(objs, ["prefilters"])
+            studies = list(obj.studies.all().values_list("pk", flat=True))
+            if studies:
+                obj.prefilters["studies"] = studies
+                vis_updates.append(obj)
+    if vis_updates:
+        Visual.objects.bulk_update(vis_updates, ["prefilters"])
 
 
 def reverse_studies_prefilters(apps, schema_editor):
