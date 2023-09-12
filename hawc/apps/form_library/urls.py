@@ -4,10 +4,10 @@ from . import views
 
 app_name = "form_library"
 urlpatterns = [
-    # Create a Data Extraction form
+    # Create a user defined form
     path(
-        "form/create/",
-        views.CreateDataExtractionView.as_view(),
+        "create/",
+        views.CreateUDFView.as_view(),
         name="form_create",
     ),
 ]

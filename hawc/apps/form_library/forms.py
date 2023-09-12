@@ -6,10 +6,10 @@ from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import BaseFormHelper, PydanticValidator
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
-from .models import CustomDataExtraction
+from .models import UserDefinedForm
 
 
-class CustomDataExtractionForm(forms.ModelForm):
+class UDFForm(forms.ModelForm):
     schema = forms.JSONField(
         initial=Schema(fields=[]).dict(),
         validators=[PydanticValidator(Schema)],
@@ -22,7 +22,7 @@ class CustomDataExtractionForm(forms.ModelForm):
             self.instance.creator = user
 
     class Meta:
-        model = CustomDataExtraction
+        model = UserDefinedForm
         exclude = ("parent_form", "creator", "created", "last_updated")
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),

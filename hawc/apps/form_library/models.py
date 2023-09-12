@@ -6,23 +6,26 @@ from ..myuser.models import HAWCUser
 
 # TODO: is this a good name? i changed it from dynamic form because it makes the naming scheme weird
 # for the actual form class (DynamicFormForm)
-class CustomDataExtraction(models.Model):
+class UserDefinedForm(models.Model):
     name = models.CharField(max_length=128)
-    description = models.TextField(blank=True)
+    description = models.TextField()
     schema = models.JSONField()
-    creator = models.ForeignKey(
-        HAWCUser, on_delete=models.SET_NULL, null=True, related_name="created_forms"
-    )
+    creator = models.ForeignKey(HAWCUser, on_delete=models.DO_NOTHING, related_name="created_forms")
     editors = models.ManyToManyField(HAWCUser, blank=True, related_name="editable_forms")
-    parent_form = models.ForeignKey(
-        "form_library.CustomDataExtraction",
+    parent = models.ForeignKey(
+        "form_library.UserDefinedForm",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        related_name="child_forms",
+        related_name="children",
     )
+    deprecated = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ["creator", "name"]
+        ordering = ["-last_updated"]
 
-reversion.register(CustomDataExtraction)
+
+reversion.register(UserDefinedForm)

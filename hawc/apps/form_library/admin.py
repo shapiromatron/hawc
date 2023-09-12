@@ -4,8 +4,8 @@ from . import models
 
 
 class CustomDataExtractionInline(admin.TabularInline):
-    model = models.CustomDataExtraction
+    model = models.UserDefinedForm
     extra = 0
 
 
-admin.site.register(models.CustomDataExtraction)
+admin.site.register(models.UserDefinedForm)
