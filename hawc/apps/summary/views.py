@@ -432,6 +432,7 @@ class VisualizationCreate(BaseCreate):
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
@@ -545,6 +546,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
@@ -738,6 +740,10 @@ class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context["config"] = {
+            "data_url": self.object.get_data_url(),
+            "settings": self.object.settings,
+        }
         return context
 
 

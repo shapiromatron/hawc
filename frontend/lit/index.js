@@ -27,6 +27,7 @@ export default {
             options = {
                 showActions: config.canEdit,
                 actionsBtnClassName: "btn-primary",
+                expanded: true,
             };
 
         ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);
