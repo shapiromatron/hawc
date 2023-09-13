@@ -280,6 +280,8 @@ class TagReferences(BaseFilterList):
                     "needs_tagging",
                     "order_by",
                     "search",
+                    "authors",
+                    "year",
                     "partially_tagged",
                     "id",
                     "tags",
@@ -294,8 +296,10 @@ class TagReferences(BaseFilterList):
                         {"columns": [{"width": 12}]},
                         {
                             "columns": [
-                                {"width": 6},
-                                {"width": 6},
+                                {"width": 3},
+                                {"width": 3},
+                                {"width": 3},
+                                {"width": 3},
                             ]
                         },
                         {
@@ -336,6 +340,8 @@ class TagReferences(BaseFilterList):
                     "search",
                     "id",
                     "order_by",
+                    "authors",
+                    "year",
                     "tags",
                     "include_descendants",
                     "anything_tagged",
@@ -352,8 +358,10 @@ class TagReferences(BaseFilterList):
                                     "rows": [
                                         {
                                             "columns": [
-                                                {"width": 12},
-                                                {"width": 12},
+                                                {"width": 5},
+                                                {"width": 7},
+                                                {"width": 5},
+                                                {"width": 7},
                                             ]
                                         }
                                     ],
@@ -408,6 +416,8 @@ class ConflictResolution(BaseFilterList):
             dynamic_fields=[
                 "id",
                 "ref_search",
+                "authors",
+                "year",
                 "tags",
                 "include_descendants",
                 "anything_tagged",
@@ -424,7 +434,9 @@ class ConflictResolution(BaseFilterList):
                     },
                     {
                         "columns": [
-                            {"width": 12},
+                            {"width": 3},
+                            {"width": 6},
+                            {"width": 3},
                         ]
                     },
                     {
@@ -592,6 +604,8 @@ class RefFilterList(BaseFilterList):
                 "id",
                 "db_id",
                 "search",
+                "authors",
+                "year",
                 "ref_search",
                 "journal",
                 "order_by",
@@ -610,6 +624,8 @@ class RefFilterList(BaseFilterList):
                                 "rows": [
                                     {
                                         "columns": [
+                                            {"width": 6},
+                                            {"width": 6},
                                             {"width": 6},
                                             {"width": 6},
                                             {"width": 6},

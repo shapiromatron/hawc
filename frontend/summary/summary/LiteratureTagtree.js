@@ -3,6 +3,7 @@ import TagTreeViz from "lit/TagTreeViz";
 import _ from "lodash";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
 
@@ -83,7 +84,12 @@ class LiteratureTagtree extends BaseVisual {
         $el.empty().append($plotDiv);
 
         if (!options.visualOnly) {
-            $el.prepend([actions, title]).append(captionDiv);
+            var headerRow = $('<div class="d-flex">').append([
+                title,
+                HAWCUtils.unpublished(this.data.published, window.isEditable),
+                actions,
+            ]);
+            $el.prepend(headerRow).append(captionDiv);
         }
 
         this.getPlotData($plotDiv);
@@ -106,7 +112,10 @@ class LiteratureTagtree extends BaseVisual {
         });
 
         modal
-            .addHeader($("<h4>").text(this.data.title))
+            .addHeader([
+                $("<h4>").text(this.data.title),
+                HAWCUtils.unpublished(this.data.published, window.isEditable),
+            ])
             .addBody([$plotDiv, captionDiv])
             .addFooter("")
             .show({maxWidth: 1200});

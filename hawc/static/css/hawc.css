@@ -23,6 +23,18 @@
     visibility: hidden;
 }
 
+input[type="submit"].btn, section button.btn, section input[type="button"].btn, section a.btn, .modal-content .btn {
+    border: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: baseline;
+    white-space: normal;
+}
+
 /* sidebar  */
 .sidebar {
     width: 230px;
@@ -49,6 +61,10 @@
 }
 /* end sidebar */
 
+.unpublishedBadge+.actionsMenu, .unpublishedBadge+button.close {
+    margin-left: unset !important;
+}
+
 iframe {
     resize: both;
 }
@@ -62,6 +78,12 @@ tfoot > tr > td {
 .resize-y {
     overflow-y: auto;
     resize:vertical;
+}
+.vw75 {
+    max-width: 75vw;
+}
+.clickable {
+    transition: background-color 0.25s ease;
 }
 .clickable:hover {
     cursor: pointer;
@@ -87,6 +109,10 @@ tfoot > tr > td {
 }
 p {
     margin-bottom: 0rem !important;
+}
+
+select[multiple]{
+    resize: vertical;
 }
 
 /* BOOTSTRAP 4 OVERRIDES */
@@ -397,36 +423,17 @@ div.smart-tag.active {
     border-radius: 7px;
     height: 50rem;
 }
-.abstracts {
-    font-size: 1.15rem;
-    margin-top: 0.25rem;
-    background-color: #f5f5f5;
-    border-radius: 6px;
-}
 .ref_small {
     font-size: 0.8465em;
     display: block;
     margin: 0;
+    color: #555555;
 }
 .ref_title {
-    font-weight: bold;
     margin: 0;
-    font-size: 1.35rem;
+    font-size: 1.2rem;
+    line-height: 1.4;
     color: #1b1b1b;
-}
-.refTag {
-    color: #ffffff;
-    background-color: #162e51;
-    border-radius: 10px;
-    border: 0.15rem dotted transparent;
-    padding: 4px 7px 4px 7px;
-    margin: 0 5px 7px 0;
-    display: inline-block;
-}
-.refUserTag {
-    color: #162e51;
-    background-color: #ffffff;
-    border: 0.15rem dotted #162e51;
 }
 .referenceTag{
     text-align: left;
@@ -487,10 +494,14 @@ div.smart-tag.active {
 }
 .tagHover:hover, .tagSelected {
     font-weight: bold;
+    font-style: italic;
 }
 
 .tagSelected {
-    text-decoration: underline;
+    background-color: #747474;
+    color: white;
+    border-radius: 5px;
+    font-style: normal !important;
 }
 .reference {
     border-bottom: 3px solid lightgray;
@@ -517,29 +528,51 @@ div.smart-tag.active {
 .conflict-reference-li {
     border-bottom: 5px solid #b0b0b0 !important;
 }
-
-.abstract_collapsed {
-    overflow: hidden;
-    white-space: nowrap !important;
-    width: 800px !important;
-    height: 30px;
-}
-
-.abstract {
-    text-overflow: ellipsis;
+.abstracts {
+    font-size: 0.95rem;
+    line-height: 1.4rem;
+    height: 15rem;
     display: block;
-    white-space: unset;
-    width: auto;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    transition: all 0.15s ease-out;
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
 }
-
-.list-item-clicked,
-.list-item-clicked:hover {
-    background-color: #eeeeee;
+.abstracts:hover {
+    background-color: #f8f8f8;
 }
-
+.abstract-collapsed {
+    height: 4.2rem;
+    overflow: hidden;
+    background-color: unset;
+}
+.referenceDetail.expanded .ref_title {
+    font-size: 1.35rem;
+    text-shadow: 0 0 0 black;
+}
+.referenceDetail.expanded .abstracts {
+    height: fit-content;
+    cursor: unset;
+}
+.refTag {
+    color: #ffffff !important;
+    background-color: #162e51;
+    border-radius: 10px;
+    border: 0.1rem dotted transparent;
+    padding: 2px 5px;
+    margin: 0 10px 14px 0;
+    display: inline-block;
+    font-size: 0.95rem;
+}
+.refUserTag {
+    color: #162e51 !important;
+    background-color: #ffffff;
+    border: 0.1rem dotted #162e51;
+}
 .refTagDiff,
 .refTagSame {
-    color: #ffffff;
+    color: #ffffff !important;
     border-radius: 8px;
     font-weight: bold;
     margin: 4px 2px 4px 8px;
@@ -547,17 +580,55 @@ div.smart-tag.active {
 }
 
 .refUserTagRemove {
-    color: rgb(128,0,0);
+    color: rgb(128,0,0) !important;
     background-color: #ffffff;
-    border: 0.15rem dotted rgb(128,0,0);
+    border: 0.1rem dotted rgb(128,0,0);
     text-decoration: line-through rgba(128,0,0,0.5);
 }
-
 .refTagSame {
-    color: #ffffff;
     font-size: 0.85rem;
-    padding: 5px 7px 5px 7px;
     background-color: #7e7e7e;
+}
+.tagLink:hover {
+    text-decoration: none;
+    background-color: #29559c;
+}
+.tagLink {
+    transition: background-color 0.15s ease-out;
+    font-size: 0.85rem;
+    margin: 0 4px 3px 0;
+}
+.referenceDetail.expanded .tagLink {
+    font-size: 1rem;
+    padding: 4px 7px;
+    margin: 0 10px 14px 0;
+}
+
+/* custom button classes */
+.outline-btn {
+    height: fit-content;
+    color: #666666 !important;
+    border: 1px solid #666666;
+    transition: all 0.15s ease;
+    font-weight: bold;
+    line-height: 1;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.3rem;
+}
+input[type="submit"].outline-btn, section button.outline-btn, section input[type="button"].outline-btn, section a.outline-btn, .modal-content .outline-btn {
+    border: 1px solid #666666;
+}
+a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
+    text-decoration:none;
+    color: black !important;
+    background-color: #d4d4d4;
+}
+.btn-tny {
+    font-size: 0.75rem;
+    padding: 0.25em 0.4em;
+    line-height: 0.8rem !important;
+    margin-bottom: 2px;
+    height: fit-content;
 }
 
 /* preview modal icon */
