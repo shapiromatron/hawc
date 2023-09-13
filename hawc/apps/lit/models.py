@@ -1167,6 +1167,11 @@ class UserReferenceTag(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=("user", "reference"), name="user_reference_tag"),
+        ]
+
     @property
     def assessment_id(self) -> int:
         return self.reference.assessment_id
