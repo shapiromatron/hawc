@@ -716,12 +716,6 @@ class DataPivot(models.Model):
     def get_visual_type_display(self):
         return self.visual_type
 
-    def get_settings(self) -> dict | None:
-        try:
-            return json.loads(self.settings)
-        except ValueError:
-            return None
-
     @staticmethod
     def reset_row_overrides(settings: dict):
         settings["row_overrides"] = []

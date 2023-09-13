@@ -21,7 +21,6 @@ class DataPivotSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url")
     data_url = serializers.CharField(source="get_data_url")
     download_url = serializers.CharField(source="get_download_url")
-    settings = serializers.JSONField(source="get_settings")
     visual_type = serializers.CharField(source="get_visual_type_display")
 
     class Meta:
