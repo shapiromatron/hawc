@@ -53,10 +53,17 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         qs = cls.model.objects.all()
         return qs.filter(**filters)
 
+    def _clean_query(self):
+        self.qry = self.request.GET.dict()
+        if "q" in self.qry:
+            self.qry["q"] = self.qry["q"].replace("\0", "")
+        self.q = self.q.replace("\0", "")
+
     def get_queryset(self):
+        self._clean_query()
         # get base queryset
         try:
-            qs = self.get_base_queryset(self.request.GET)
+            qs = self.get_base_queryset(self.qry)
         except ValueError:
             raise BadRequest("Invalid filter parameters")
 
