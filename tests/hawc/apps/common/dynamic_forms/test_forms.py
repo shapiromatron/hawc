@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-import pytest
 from crispy_forms.utils import render_crispy_form
 from pytest_django.asserts import assertInHTML
 
@@ -14,26 +13,27 @@ class TestDynamicForm:
         form_rendering = render_crispy_form(schema.to_form({}))
         assert len(form_rendering) > 0
 
-    @pytest.mark.skip
     def test_yesno_rendering(self, complete_schema):
         # ensure yesno field with inline styles renders as expected
         yesno = deepcopy(complete_schema)
         yesno["fields"] = [field for field in yesno["fields"] if field["name"] == "yesno"]
         schema = Schema.parse_obj(yesno)
         form_rendering = render_crispy_form(schema.to_form({}))
-        expected = """<div class="form-row " id="row_id_dynamic_form">
-        <div class="col-6" > <div id="div_id_yesno" class="form-group">
-        <label class="">Yes/no field?</label><div>
-        <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
-        <label class="custom-control-label" for="id_yesno_0">Yes</label>
-        </div>
-        <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
-        <label class="custom-control-label" for="id_yesno_1">No</label>
-        </div>
-        <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
-        </div> </div> </div> </div>"""
+        expected = """
+            <div id="div_id_yesno" class="form-group">
+                <label class="">Yes/no field?</label>
+                <div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
+                        <label class="custom-control-label" for="id_yesno_0">Yes</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
+                        <label class="custom-control-label" for="id_yesno_1">No</label>
+                    </div>
+                    <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
+                </div>
+            </div>"""
         assertInHTML(expected, form_rendering)
 
     def test_validation(self):

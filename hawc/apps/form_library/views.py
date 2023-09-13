@@ -5,12 +5,12 @@ from django.views.generic.edit import CreateView, FormView
 from hawc.apps.common import dynamic_forms
 from hawc.apps.common.views import LoginRequiredMixin, htmx_required
 
-from .forms import CustomDataExtractionForm, SchemaPreviewForm
+from .forms import SchemaPreviewForm, UDFForm
 
 
-class CreateDataExtractionView(LoginRequiredMixin, CreateView):
-    template_name = "form_library/custom_data_extraction_form.html"
-    form_class = CustomDataExtractionForm
+class CreateUDFView(LoginRequiredMixin, CreateView):
+    template_name = "form_library/udf_form.html"
+    form_class = UDFForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

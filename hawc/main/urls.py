@@ -44,7 +44,7 @@ urlpatterns = [
     path("epidemiology/", include("hawc.apps.epiv2.urls")),
     path("epi-meta/", include("hawc.apps.epimeta.urls")),
     path("in-vitro/", include("hawc.apps.invitro.urls")),
-    path("form-library/", include("hawc.apps.form_library.urls")),
+    path("forms/", include("hawc.apps.form_library.urls")),
     path("bmd/", include("hawc.apps.bmd.urls")),
     path("lit/", include("hawc.apps.lit.urls")),
     path("summary/", include("hawc.apps.summary.urls")),
