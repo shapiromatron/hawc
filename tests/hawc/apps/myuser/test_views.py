@@ -1,10 +1,12 @@
 import pytest
 from django.conf import settings
+from django.contrib.messages import get_messages
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 from django.test.client import Client
 from django.urls import reverse
+from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.myuser import models
 from hawc.apps.myuser.forms import _accept_license_error
@@ -140,6 +142,22 @@ class TestLoginView:
         resp = c.post(url, data=success)
         assert resp.status_code == 200
         assert resp.context["form"].errors == {"__all__": ["Failed bot challenge - are you human?"]}
+
+    def test_disable_login(self, settings):
+        settings.ALLOWED_HOSTS = ["*"]
+        settings.DISABLED_LOGIN_HOSTS = ["bad-example.com"]
+        url = reverse("user:login")
+        client = Client()
+
+        # host not disabled; passed to login
+        response = client.get(url, HTTP_HOST="example.com")
+        assert len(get_messages(response.wsgi_request)) == 0
+        assertTemplateUsed(response, "registration/login.html")
+
+        # host disabled; redirects home w/ message to user
+        response = client.get(url, follow=True, HTTP_HOST="bad-example.com")
+        assert len(get_messages(response.wsgi_request)) == 1
+        assertTemplateUsed(response, "hawc/home.html")
 
 
 class ExternalAuthSetup(ExternalAuth):
