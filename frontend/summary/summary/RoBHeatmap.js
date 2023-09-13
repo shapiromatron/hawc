@@ -25,6 +25,23 @@ class RoBHeatmap extends BaseVisual {
         delete this.data.studies;
     }
 
+    addActionsMenu() {
+        const items = [
+            "Download data file",
+            {url: this.data.data_url + "?format=xlsx", text: "Download (xlsx)"},
+        ];
+        if (window.isEditable) {
+            items.push(
+                ...[
+                    "Visualization editing",
+                    {url: this.data.url_update, text: "Update"},
+                    {url: this.data.url_delete, text: "Delete"},
+                ]
+            );
+        }
+        return HAWCUtils.pageActionsButton(items);
+    }
+
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
@@ -34,15 +51,13 @@ class RoBHeatmap extends BaseVisual {
 
         options = options || {};
 
-        const actions = window.isEditable ? this.addActionsMenu() : null;
-
         $el.empty().append($plotDiv);
 
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
-                actions,
+                this.addActionsMenu(),
             ]);
             $el.prepend(headerRow).append(captionDiv);
         }
