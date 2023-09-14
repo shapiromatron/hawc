@@ -46,7 +46,7 @@ def prefilters_dict(apps, schema_editor):
             continue
         key_map = mapping[VisualTypePrefilter.from_visual_type(obj.visual_type)]
         key_map = {v: k for k, v in key_map.items()}
-        data = {key_map[k]: v for k, v in data.items()}
+        data = {key_map[k]: v for k, v in data.items() if v}
         obj.temp = data
     Visual.objects.bulk_update(objs, ["temp"])
 

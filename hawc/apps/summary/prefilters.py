@@ -89,8 +89,12 @@ class BioassayPrefilter(BaseFilterSet):
         queryset = queryset.filter(assessment_id=self.assessment.pk)
         return super().filter_queryset(queryset)
 
-    def create_form(self):
-        form = super().create_form()
+    def set_passthrough_options(self, form):
+        set_passthrough_choices(
+            form, ["studies", "systems", "organs", "effects", "effect_subtypes", "effect_tags"]
+        )
+
+    def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
         form.fields["systems"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
         form.fields["organs"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
@@ -99,7 +103,6 @@ class BioassayPrefilter(BaseFilterSet):
             self.assessment.pk
         )
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
-        return form
 
 
 class EpiV1Prefilter(BaseFilterSet):
@@ -152,13 +155,14 @@ class EpiV1Prefilter(BaseFilterSet):
         queryset = queryset.filter(assessment_id=self.assessment.pk)
         return super().filter_queryset(queryset)
 
-    def create_form(self):
-        form = super().create_form()
+    def set_passthrough_options(self, form):
+        set_passthrough_choices(form, ["studies", "systems", "effects", "effect_tags"])
+
+    def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
         form.fields["systems"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
         form.fields["effects"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
-        return form
 
 
 class EpiV2Prefilter(BaseFilterSet):
@@ -192,10 +196,11 @@ class EpiV2Prefilter(BaseFilterSet):
         queryset = queryset.filter(design__study__assessment_id=self.assessment.pk)
         return super().filter_queryset(queryset)
 
-    def create_form(self):
-        form = super().create_form()
+    def set_passthrough_options(self, form):
+        set_passthrough_choices(form, ["studies"])
+
+    def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
-        return form
 
 
 class EpiMetaPrefilter(BaseFilterSet):
@@ -229,10 +234,11 @@ class EpiMetaPrefilter(BaseFilterSet):
         queryset = queryset.filter(protocol__study__assessment_id=self.assessment.pk)
         return super().filter_queryset(queryset)
 
-    def create_form(self):
-        form = super().create_form()
+    def set_passthrough_options(self, form):
+        set_passthrough_choices(form, ["studies"])
+
+    def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
-        return form
 
 
 class InvitroPrefilter(BaseFilterSet):
@@ -285,13 +291,19 @@ class InvitroPrefilter(BaseFilterSet):
         queryset = queryset.filter(assessment_id=self.assessment.pk)
         return super().filter_queryset(queryset)
 
-    def create_form(self):
-        form = super().create_form()
+    def set_passthrough_options(self, form):
+        set_passthrough_choices(form, ["studies", "categories", "chemicals", "effect_tags"])
+
+    def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
         form.fields["categories"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
         form.fields["chemicals"].choices = IVChemical.objects.get_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
-        return form
+
+
+def set_passthrough_choices(form: forms.Form, field_names: list[str]):
+    for field_name in field_names:
+        form.fields[field_name].choices = [(v, v) for v in form.data.get(field_name, [])]
 
 
 class EcoPrefilter(BaseFilterSet):
@@ -325,10 +337,11 @@ class EcoPrefilter(BaseFilterSet):
         queryset = queryset.filter(design__study__assessment_id=self.assessment.pk)
         return super().filter_queryset(queryset)
 
-    def create_form(self):
-        form = super().create_form()
+    def set_passthrough_options(self, form):
+        set_passthrough_choices(form, ["studies"])
+
+    def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
-        return form
 
 
 class StudyTypePrefilter(Enum):

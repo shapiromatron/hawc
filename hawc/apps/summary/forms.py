@@ -258,16 +258,19 @@ class EndpointAggregationForm(VisualForm):
 class CrossviewForm(VisualForm):
     def _get_prefilter_form(self, data, **form_kwargs):
         prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
+        prefilter = self.prefilter_cls(
             data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
-        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
+        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
             constants.VisualType.BIOASSAY_CROSSVIEW
         ).value
         self.fields["prefilters"] = DynamicFormField(
@@ -283,13 +286,16 @@ class CrossviewForm(VisualForm):
 class RoBForm(VisualForm):
     def _get_prefilter_form(self, data, **form_kwargs):
         prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
+        prefilter = self.prefilter_cls(
             data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
+        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
             constants.VisualType.ROB_BARCHART
         ).value
         self.fields["prefilters"] = DynamicFormField(
@@ -699,10 +705,14 @@ class DataPivotQueryForm(DataPivotForm):
         )
 
     def _get_prefilter_form(self, data, **form_kwargs):
+        # TODO - refactor here in in other calls; identical code
         prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
+        prefilter = self.prefilter_cls(
             data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def __init__(self, *args, **kwargs):
         evidence_type = kwargs.pop("evidence_type", None)
@@ -713,7 +723,7 @@ class DataPivotQueryForm(DataPivotForm):
         self.fields["evidence_type"].initial = self.instance.evidence_type
         self.fields["evidence_type"].disabled = True
 
-        self.prefilter = prefilters.StudyTypePrefilter.from_study_type(
+        self.prefilter_cls = prefilters.StudyTypePrefilter.from_study_type(
             self.instance.evidence_type, self.instance.assessment
         ).value
         self.fields["prefilters"] = DynamicFormField(
