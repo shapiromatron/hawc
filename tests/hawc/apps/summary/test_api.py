@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from rest_framework.test import APIClient
 
-from hawc.apps.summary import models
+from hawc.apps.summary import constants, models
 
 from ..test_utils import check_api_json_data
 
@@ -81,10 +81,16 @@ class TestVisual:
     Make sure our API gives expected results for all visual types
     """
 
-    def _test_visual_detail_api(self, rewrite_data_files: bool, slug: str):
-        client = Client()
+    def _test_visual_crud_api(self, rewrite_data_files: bool, slug: str, assessment_id):
+        user_anon = APIClient()
+        user_reviewer = APIClient()
+        assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
+        user_team = APIClient()
+        assert user_team.login(username="team@hawcproject.org", password="pw") is True
+
+        # read visual
         url = models.Visual.objects.get(slug=slug).get_api_detail()
-        response = client.get(url)
+        response = user_anon.get(url)
         assert response.status_code == 200
 
         data = response.json()
@@ -94,26 +100,72 @@ class TestVisual:
         key = f"api-visual-{slug}.json"
         check_api_json_data(json.loads(data_str), key, rewrite_data_files)
 
-    def test_bioassay_aggregation(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
+        visual_types = dict(constants.VisualType.choices)
 
-    def test_rob_heatmap(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "rob-heatmap")
+        # use read data for CUD operations
+        data["title"] = data["title"] + "-2"
+        data["assessment"] = assessment_id
+        data["slug"] = data["slug"] + "-2"
+        data["visual_type"] = {
+            key for key, value in visual_types.items() if data["visual_type"] in value
+        }.pop()
+        data["settings"] = json.dumps(data["settings"])
+        data["studies"] = []
+        data["endpoints"] = []
 
-    def test_crossview(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "crossview")
+        # create visual
+        for user in [user_anon, user_reviewer]:
+            response = user.post(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.post(url, data, format="json")
+        assert response.status_code == 201
+        assert response.json()["title"] == data["title"]
 
-    def test_barchart(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "barchart")
+        visual_id = response.json()["id"]
+        url = reverse("summary:api:visual-detail", args=(visual_id,))
 
-    def test_tagtree(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "tagtree")
+        # update visual
+        data["title"] = "updated-title"
+        for user in [user_anon, user_reviewer]:
+            response = user.patch(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.patch(url, data, format="json")
+        assert response.status_code == 200
+        assert response.json()["title"] == "updated-title"
 
-    def test_embedded_tableau(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "embedded-tableau")
+        # delete visual
+        for user in [user_anon, user_reviewer]:
+            response = user.delete(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.delete(url, data, format="json")
+        assert response.status_code == 204
 
-    def test_exploratory_heatmap(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "exploratory-heatmap")
+    def test_bioassay_aggregation(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(
+            rewrite_data_files, "bioassay-aggregation", db_keys.assessment_working
+        )
+
+    def test_rob_heatmap(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(rewrite_data_files, "rob-heatmap", db_keys.assessment_working)
+
+    def test_crossview(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(rewrite_data_files, "crossview", db_keys.assessment_working)
+
+    def test_barchart(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(rewrite_data_files, "barchart", db_keys.assessment_working)
+
+    def test_tagtree(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(rewrite_data_files, "tagtree", db_keys.assessment_working)
+
+    def test_embedded_tableau(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(
+            rewrite_data_files, "embedded-tableau", db_keys.assessment_working
+        )
+
+    def test_exploratory_heatmap(self, rewrite_data_files: bool, db_keys):
+        self._test_visual_crud_api(
+            rewrite_data_files, "exploratory-heatmap", db_keys.assessment_working
+        )
 
 
 @pytest.mark.django_db

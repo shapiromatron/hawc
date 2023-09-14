@@ -91,7 +91,7 @@ class DataPivotViewSet(AssessmentViewSet):
         return Response(export)
 
 
-class VisualViewSet(AssessmentViewSet):
+class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     """
     For list view, return all Visual objects for an assessment, but using the
     simplified collection view.
@@ -99,6 +99,7 @@ class VisualViewSet(AssessmentViewSet):
     For all other views, use the detailed visual view.
     """
 
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Visual
     pagination_class = DisabledPagination
