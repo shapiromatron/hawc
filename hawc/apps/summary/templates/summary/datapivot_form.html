@@ -34,6 +34,20 @@
             {submitEl: '#dataPivotForm', takeFocusEl: "#id_evidence_type"}
           );
       })
+
+      const bindCheckboxToPrefilter = function(){
+        // show/hide prefilter based on checkbox selection
+        const checkbox = $(this),
+          input = $(`#id_prefilters-${checkbox.data('pf')}`),
+          inputDiv = $(`#div_id_prefilters-${checkbox.data('pf')}`),
+          hasItems = input.val().length>0;
+
+        checkbox.prop('checked', hasItems);
+        checkbox.on('change', function(){
+          inputDiv.toggle(checkbox.prop('checked'));
+        }).trigger('change');
+      }
+      $('input[data-pf]').each(bindCheckboxToPrefilter)
     });
   </script>
 {% endblock extrajs %}
