@@ -255,6 +255,11 @@ class InvitroPrefilter(BaseFilterSet):
         help_text="Select one or more studies to include in the plot.",
     )
     # invitro
+    effects = df.MultipleChoiceFilter(
+        field_name="effect",
+        label="Effects to include",
+        help_text="Select one or more effects to include in the plot.",
+    )
     categories = df.MultipleChoiceFilter(
         field_name="category",
         label="Categories to include",
@@ -276,6 +281,7 @@ class InvitroPrefilter(BaseFilterSet):
         fields = [
             "published_only",
             "studies",
+            "effects",
             "categories",
             "chemicals",
             "effect_tags",
@@ -292,10 +298,13 @@ class InvitroPrefilter(BaseFilterSet):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(form, ["studies", "categories", "chemicals", "effect_tags"])
+        set_passthrough_choices(
+            form, ["studies", "effects", "categories", "chemicals", "effect_tags"]
+        )
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["effects"].choices = IVEndpoint.objects.get_effect_choices(self.assessment.pk)
         form.fields["categories"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
         form.fields["chemicals"].choices = IVChemical.objects.get_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)

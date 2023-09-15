@@ -38,6 +38,7 @@ mapping = {
         "studies": "experiment__study__in",
         "categories": "category__in",
         "chemicals": "chemical__name__in",
+        "effects": "effect__in",
         "effect_tags": "effects__in",
     },
     StudyTypePrefilter.ECO: {
@@ -57,12 +58,7 @@ def prefilters_dict(apps, schema_editor):
             continue
         key_map = mapping[StudyTypePrefilter.from_study_type(obj.evidence_type, obj.assessment)]
         key_map = {v: k for k, v in key_map.items()}
-        try:
-            data = {key_map[k]: v for k, v in data.items() if v}
-        except KeyError as err:
-            logger.warning(
-                f"Mapping failed: {obj.id} {obj.get_evidence_type_display()} -> {err.args[0]}"
-            )
+        data = {key_map[k]: v for k, v in data.items() if v}
         obj.temp = data
     DataPivotQuery.objects.bulk_update(objs, ["temp"])
 
