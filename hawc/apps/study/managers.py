@@ -66,8 +66,11 @@ class StudyManager(BaseManager):
     def published(self, assessment_id=None):
         return self.get_qs(assessment_id).filter(published=True)
 
-    def get_choices(self, assessment_id=None):
-        return self.get_qs(assessment_id).values_list("id", "short_citation")
+    def get_choices(self, assessment_id: int, data_type: str = ""):
+        qs = self.get_qs(assessment_id).values_list("id", "short_citation")
+        if data_type:
+            qs = qs.filter(**{data_type: True})
+        return qs
 
     def rob_scores(self, assessment_id=None):
         return (

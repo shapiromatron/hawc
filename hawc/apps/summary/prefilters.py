@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Self
 
 import django_filters as df
 from django import forms
@@ -23,11 +24,10 @@ class PrefilterForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
-
         return helper
 
 
-class BioassayPrefilter(BaseFilterSet):
+class BioassayEndpointPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -105,7 +105,7 @@ class BioassayPrefilter(BaseFilterSet):
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
 
 
-class EpiV1Prefilter(BaseFilterSet):
+class EpiV1ResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -165,7 +165,7 @@ class EpiV1Prefilter(BaseFilterSet):
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
 
 
-class EpiV2Prefilter(BaseFilterSet):
+class EpiV2ResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -203,7 +203,7 @@ class EpiV2Prefilter(BaseFilterSet):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
 
 
-class EpiMetaPrefilter(BaseFilterSet):
+class EpiMetaResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -241,7 +241,7 @@ class EpiMetaPrefilter(BaseFilterSet):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
 
 
-class InvitroPrefilter(BaseFilterSet):
+class InvitroOutcomePrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -315,7 +315,7 @@ def set_passthrough_choices(form: forms.Form, field_names: list[str]):
         form.fields[field_name].choices = [(v, v) for v in form.data.get(field_name, [])]
 
 
-class EcoPrefilter(BaseFilterSet):
+class EcoResultPrefilter(BaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -354,15 +354,15 @@ class EcoPrefilter(BaseFilterSet):
 
 
 class StudyTypePrefilter(Enum):
-    BIOASSAY = BioassayPrefilter
-    EPIV1 = EpiV1Prefilter
-    EPIV2 = EpiV2Prefilter
-    EPI_META = EpiMetaPrefilter
-    IN_VITRO = InvitroPrefilter
-    ECO = EcoPrefilter
+    BIOASSAY = BioassayEndpointPrefilter
+    EPIV1 = EpiV1ResultPrefilter
+    EPIV2 = EpiV2ResultPrefilter
+    EPI_META = EpiMetaResultPrefilter
+    IN_VITRO = InvitroOutcomePrefilter
+    ECO = EcoResultPrefilter
 
     @classmethod
-    def from_study_type(cls, study_type: int | StudyType, assessment: Assessment):
+    def from_study_type(cls, study_type: int | StudyType, assessment: Assessment) -> Self:
         study_type = StudyType(study_type)
         name = study_type.name
         if study_type == StudyType.EPI:
@@ -374,12 +374,12 @@ class StudyTypePrefilter(Enum):
 
 
 class VisualTypePrefilter(Enum):
-    BIOASSAY_CROSSVIEW = BioassayPrefilter
-    ROB_HEATMAP = BioassayPrefilter
-    ROB_BARCHART = BioassayPrefilter
+    BIOASSAY_CROSSVIEW = BioassayEndpointPrefilter
+    ROB_HEATMAP = BioassayEndpointPrefilter
+    ROB_BARCHART = BioassayEndpointPrefilter
 
     @classmethod
-    def from_visual_type(cls, visual_type: int | VisualType):
+    def from_visual_type(cls, visual_type: int | VisualType) -> Self:
         visual_type = VisualType(visual_type)
         name = visual_type.name
         return cls[name]

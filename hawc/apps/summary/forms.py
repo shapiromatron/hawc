@@ -633,6 +633,8 @@ class DataPivotForm(forms.ModelForm):
                 """,
                 "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
+            if hasattr(self.instance, "evidence_type"):
+                inputs["legend_text"] += f" ({self.instance.get_evidence_type_display()})"
 
         helper = BaseFormHelper(self, **inputs)
 
@@ -695,7 +697,6 @@ class DataPivotQueryForm(DataPivotForm):
         fields = (
             "title",
             "slug",
-            "evidence_type",
             "export_style",
             "preferred_units",
             "settings",
@@ -716,12 +717,10 @@ class DataPivotQueryForm(DataPivotForm):
 
     def __init__(self, *args, **kwargs):
         evidence_type = kwargs.pop("evidence_type", None)
+        self.prefilter = kwargs.pop("prefilter")
         super().__init__(*args, **kwargs)
-
-        if evidence_type is not None:
+        if self.instance.id is None:
             self.instance.evidence_type = evidence_type
-        self.fields["evidence_type"].initial = self.instance.evidence_type
-        self.fields["evidence_type"].disabled = True
 
         self.prefilter_cls = prefilters.StudyTypePrefilter.from_study_type(
             self.instance.evidence_type, self.instance.assessment
@@ -729,13 +728,23 @@ class DataPivotQueryForm(DataPivotForm):
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
-        self.fields["preferred_units"].required = False
-        self.js_units_choices = json.dumps(
-            [
-                {"id": obj.id, "name": obj.name}
-                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
-            ]
-        )
+
+        if self.instance.evidence_type == constants.StudyType.BIOASSAY:
+            self.fields["preferred_units"].choices = json.dumps(
+                [
+                    {"id": obj.id, "name": obj.name}
+                    for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+                ]
+            )
+        else:
+            self.fields.pop("preferred_units")
+
+        if self.instance.evidence_type not in (
+            constants.StudyType.IN_VITRO,
+            constants.StudyType.BIOASSAY,
+        ):
+            self.fields.pop("export_style")
+
         self.helper = self.setHelper()
 
     def save(self, commit=True):
@@ -743,7 +752,7 @@ class DataPivotQueryForm(DataPivotForm):
         return super().save(commit=commit)
 
     def clean_export_style(self):
-        evidence_type = self.cleaned_data["evidence_type"]
+        evidence_type = self.instance.evidence_type
         export_style = self.cleaned_data["export_style"]
         if (
             evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)

@@ -51,7 +51,7 @@ mapping = {
 def prefilters_dict(apps, schema_editor):
     # load prefilters textfield into temp jsonfield
     DataPivotQuery = apps.get_model("summary", "DataPivotQuery")
-    objs = DataPivotQuery.objects.all().select_related("assessment")
+    objs = DataPivotQuery.objects.all().select_related("assessment").order_by("id")
     for obj in objs:
         data = json.loads(obj.prefilters)
         if not data:

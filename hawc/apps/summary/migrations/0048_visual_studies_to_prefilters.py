@@ -16,7 +16,8 @@ def studies_prefilters(apps, schema_editor):
             if studies:
                 obj.prefilters["studies"] = studies
                 updated_objects.append(obj)
-    Visual.objects.bulk_update(updated_objects, ["prefilters"])
+    if updated_objects:
+        Visual.objects.bulk_update(updated_objects, ["prefilters"])
 
 
 def reverse_studies_prefilters(apps, schema_editor):
