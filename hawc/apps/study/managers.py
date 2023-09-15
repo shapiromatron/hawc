@@ -1,6 +1,7 @@
 import pandas as pd
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Case, F, Q, QuerySet, Value, When
+from django.db.models.functions import Concat
 
 from ..common.models import BaseManager, sql_display, str_m2m
 from ..lit.constants import ReferenceDatabase
@@ -67,7 +68,16 @@ class StudyManager(BaseManager):
         return self.get_qs(assessment_id).filter(published=True)
 
     def get_choices(self, assessment_id: int, data_type: str = ""):
-        qs = self.get_qs(assessment_id).values_list("id", "short_citation")
+        qs = (
+            self.get_qs(assessment_id)
+            .annotate(
+                label=Concat(
+                    F("short_citation"),
+                    Case(When(published=False, then=Value(" (unpublished)")), default=Value("")),
+                )
+            )
+            .values_list("id", "label")
+        )
         if data_type:
             qs = qs.filter(**{data_type: True})
         return qs
