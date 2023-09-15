@@ -27,12 +27,24 @@ class PrefilterForm(forms.Form):
         return helper
 
 
-class PrefilterBase(BaseFilterSet):
+class PrefilterBaseFilterSet(BaseFilterSet):
     def noop(self, queryset, name, value):
         return queryset
 
+    def _set_passthrough_choices(self, form: forms.Form, field_names: list[str]):
+        for field_name in field_names:
+            form.fields[field_name].choices = [(v, v) for v in form.data.get(field_name, [])]
 
-class BioassayEndpointPrefilter(PrefilterBase):
+    def set_passthrough_options(self, form):
+        """Don't set valid queryset choices from db when querying; accept what is saved."""
+        raise NotImplementedError("Subclass requires implementation")
+
+    def set_form_options(self, form):
+        """Set valid queryset choices when editing a visual."""
+        raise NotImplementedError("Subclass requires implementation")
+
+
+class BioassayEndpointPrefilter(PrefilterBaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -137,7 +149,7 @@ class BioassayEndpointPrefilter(PrefilterBase):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(
+        self._set_passthrough_choices(
             form, ["studies", "systems", "organs", "effects", "effect_subtypes", "effect_tags"]
         )
 
@@ -152,7 +164,7 @@ class BioassayEndpointPrefilter(PrefilterBase):
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
 
 
-class EpiV1ResultPrefilter(PrefilterBase):
+class EpiV1ResultPrefilter(PrefilterBaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -231,7 +243,7 @@ class EpiV1ResultPrefilter(PrefilterBase):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(form, ["studies", "systems", "effects", "effect_tags"])
+        self._set_passthrough_choices(form, ["studies", "systems", "effects", "effect_tags"])
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
@@ -240,7 +252,7 @@ class EpiV1ResultPrefilter(PrefilterBase):
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
 
 
-class EpiV2ResultPrefilter(PrefilterBase):
+class EpiV2ResultPrefilter(PrefilterBaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -279,13 +291,13 @@ class EpiV2ResultPrefilter(PrefilterBase):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(form, ["studies"])
+        self._set_passthrough_choices(form, ["studies"])
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
 
 
-class EpiMetaResultPrefilter(PrefilterBase):
+class EpiMetaResultPrefilter(PrefilterBaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -324,13 +336,13 @@ class EpiMetaResultPrefilter(PrefilterBase):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(form, ["studies"])
+        self._set_passthrough_choices(form, ["studies"])
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
 
 
-class InvitroOutcomePrefilter(PrefilterBase):
+class InvitroOutcomePrefilter(PrefilterBaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -422,7 +434,7 @@ class InvitroOutcomePrefilter(PrefilterBase):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(
+        self._set_passthrough_choices(
             form, ["studies", "effects", "categories", "chemicals", "effect_tags"]
         )
 
@@ -434,12 +446,7 @@ class InvitroOutcomePrefilter(PrefilterBase):
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
 
 
-def set_passthrough_choices(form: forms.Form, field_names: list[str]):
-    for field_name in field_names:
-        form.fields[field_name].choices = [(v, v) for v in form.data.get(field_name, [])]
-
-
-class EcoResultPrefilter(BaseFilterSet):
+class EcoResultPrefilter(PrefilterBaseFilterSet):
     # studies
     published_only = df.BooleanFilter(
         method="filter_published_only",
@@ -478,7 +485,7 @@ class EcoResultPrefilter(BaseFilterSet):
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
-        set_passthrough_choices(form, ["studies"])
+        self._set_passthrough_choices(form, ["studies"])
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)

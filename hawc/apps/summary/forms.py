@@ -717,7 +717,6 @@ class DataPivotQueryForm(DataPivotForm):
 
     def __init__(self, *args, **kwargs):
         evidence_type = kwargs.pop("evidence_type", None)
-        self.prefilter = kwargs.pop("prefilter")
         super().__init__(*args, **kwargs)
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type

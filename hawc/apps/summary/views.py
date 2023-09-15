@@ -646,16 +646,14 @@ class DataPivotQueryNew(DataPivotNew):
     def get_evidence_type(self) -> prefilters.StudyType:
         try:
             evidence_type = constants.StudyType(self.kwargs["study_type"])
-            prefilter = prefilters.StudyTypePrefilter.from_study_type(
-                evidence_type, self.assessment
-            ).value
+            _ = prefilters.StudyTypePrefilter.from_study_type(evidence_type, self.assessment).value
         except (KeyError, ValueError):
             raise Http404
-        return evidence_type, prefilter
+        return evidence_type
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["evidence_type"], kwargs["prefilter"] = self.get_evidence_type()
+        kwargs["evidence_type"] = self.get_evidence_type()
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -778,13 +776,6 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
     template_name = "summary/datapivot_form.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["prefilter"] = prefilters.StudyTypePrefilter.from_study_type(
-            self.object.evidence_type, self.assessment
-        ).value
-        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
