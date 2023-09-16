@@ -9352,8 +9352,8 @@
 - model: summary.visual
   pk: 5
   fields:
-    title: barchart
-    slug: barchart
+    title: rob-barchart
+    slug: rob-barchart
     assessment: 2
     visual_type: 3
     dose_units: null

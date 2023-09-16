@@ -4,6 +4,7 @@
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>caption</p>",
   "created": "2020-05-08T15:35:41.634588-04:00",
+  "data_url": "/summary/api/visual/3/data/",
   "dose_units": null,
   "endpoints": [],
   "id": 3,
@@ -195,7 +196,6 @@
     "x_field": "study",
     "yAxisLabel": ""
   },
-  "slug": "rob-heatmap",
   "sort_order": "short_citation",
   "studies": [
     {

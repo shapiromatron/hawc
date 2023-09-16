@@ -5,9 +5,11 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
+from django.forms.widgets import RadioSelect
 from django.template.loader import render_to_string
 
 from . import autocomplete, validators, widgets
+from .helper import PydanticToDjangoError
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
 
@@ -479,3 +481,23 @@ class DynamicFormField(forms.JSONField):
         form = self.form_class(data=value, **self.form_kwargs)
         if not form.is_valid():
             raise forms.ValidationError(self.error_messages["invalid"])
+
+
+class InlineRadioChoiceField(forms.ChoiceField):
+    """Choice widget that uses radio buttons that are inline."""
+
+    widget = RadioSelect
+    crispy_field_class = cfb.InlineRadios
+
+
+class PydanticValidator:
+    """JSON field validator that uses a pydantic model."""
+
+    def __init__(self, schema):
+        """Set the schema."""
+        self.schema = schema
+
+    def __call__(self, value):
+        """Validate the field with the pydantic model."""
+        with PydanticToDjangoError(include_field=False):
+            self.schema.parse_obj(value)
