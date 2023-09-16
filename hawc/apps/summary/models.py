@@ -41,6 +41,7 @@ from ..epi.exports import OutcomeDataPivot
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
+from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
