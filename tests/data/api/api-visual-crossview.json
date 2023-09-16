@@ -4,6 +4,7 @@
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>example</p>",
   "created": "2020-05-08T15:37:19.255703-04:00",
+  "data_url": "/summary/api/visual/4/data/",
   "dose_units": 1,
   "endpoints": [
     {
@@ -3246,9 +3247,6 @@
   ],
   "id": 4,
   "last_updated": "2020-05-08T15:37:19.255730-04:00",
-  "prefilters": {
-    "published_only": true
-  },
   "published": true,
   "settings": {
     "colorBase": "#cccccc",
@@ -3330,7 +3328,6 @@
     "ylabel_x": 0,
     "ylabel_y": 0
   },
-  "slug": "crossview",
   "sort_order": "short_citation",
   "studies": [],
   "title": "crossview",

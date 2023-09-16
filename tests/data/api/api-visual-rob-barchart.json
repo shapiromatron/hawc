@@ -4,15 +4,11 @@
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>caption</p>",
   "created": "2020-05-08T15:37:44.283008-04:00",
+  "data_url": "/summary/api/visual/5/data/",
   "dose_units": null,
   "endpoints": [],
   "id": 5,
   "last_updated": "2020-05-08T15:38:48.445082-04:00",
-  "prefilters": {
-    "studies": [
-      7
-    ]
-  },
   "published": true,
   "rob_settings": {
     "assessment_id": 2,
@@ -193,7 +189,6 @@
     "xAxisLabel": "Percent of studies",
     "yAxisLabel": ""
   },
-  "slug": "barchart",
   "sort_order": "short_citation",
   "studies": [
     {
@@ -483,9 +478,9 @@
       "year": 2011
     }
   ],
-  "title": "barchart",
-  "url": "/summary/visual/assessment/2/barchart/",
-  "url_delete": "/summary/visual/assessment/2/barchart/delete/",
-  "url_update": "/summary/visual/assessment/2/barchart/update/",
+  "title": "rob-barchart",
+  "url": "/summary/visual/assessment/2/rob-barchart/",
+  "url_delete": "/summary/visual/assessment/2/rob-barchart/delete/",
+  "url_update": "/summary/visual/assessment/2/rob-barchart/update/",
   "visual_type": "risk of bias barchart"
 }

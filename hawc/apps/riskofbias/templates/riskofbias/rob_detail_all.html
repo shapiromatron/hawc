@@ -1,15 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load bs4 %}
+
 {% block content %}
   {% if obj_perms.edit_assessment %}
-  <div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
+  <div class="d-flex">
+    <h2>{{object}}: {{assessment.get_rob_name_display}} (all reviews)</h2>
+    {% actions %}
       <a class="dropdown-item" href="{{object.get_final_rob.get_edit_url}}">Edit final review</a>
-    </div>
+    {% endactions %}
   </div>
   {% endif %}
-  <h2>{{object}}: {{assessment.get_rob_name_display}} (all reviews)</h2>
   <div id="main"></div>
 {% endblock %}
 

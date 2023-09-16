@@ -13,7 +13,7 @@
   {{ smart_tag_form.media }}
   <script type="text/javascript">
     $(document).ready(function () {
-      let js_units_choices = {{form.js_units_choices|safe}},
+      let js_units_choices = {% autoescape off %}{% firstof form.js_units_choices "[]" %}{% endautoescape %},
         epi_version = {{assessment.epi_version}},
         printf = window.app.HAWCUtils.printf;
 
