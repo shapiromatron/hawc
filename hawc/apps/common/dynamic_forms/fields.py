@@ -3,7 +3,7 @@ from typing import Annotated, Any, Literal
 
 from django import forms
 from django.utils.html import conditional_escape
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, constr, validator
 from pydantic import Field as PydanticField
 
 from . import constants
@@ -19,7 +19,7 @@ class _Field(BaseModel):
     in constants.Widget.
     """
 
-    name: str  # the variable name in the form; extra validation for no whitespace etc?
+    name: str = PydanticField(regex=r"^[a-zA-Z0-9_]+$")
     required: bool | None
     label: str | None
     label_suffix: str | None
