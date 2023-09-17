@@ -29,15 +29,15 @@ class Migration(migrations.Migration):
                 (
                     "creator",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.DO_NOTHING,
-                        related_name="created_forms",
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="udf_forms_creator",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
                 (
                     "editors",
                     models.ManyToManyField(
-                        blank=True, related_name="editable_forms", to=settings.AUTH_USER_MODEL
+                        blank=True, related_name="udf_forms", to=settings.AUTH_USER_MODEL
                     ),
                 ),
                 (
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "ordering": ["-last_updated"],
+                "ordering": ("-last_updated",),
                 "unique_together": {("creator", "name")},
             },
         ),

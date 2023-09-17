@@ -1,17 +1,18 @@
 import reversion
+from django.conf import settings
 from django.db import models
-
-from ..myuser.models import HAWCUser
 
 
 class UserDefinedForm(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField()
     schema = models.JSONField()
-    creator = models.ForeignKey(HAWCUser, on_delete=models.DO_NOTHING, related_name="created_forms")
-    editors = models.ManyToManyField(HAWCUser, blank=True, related_name="editable_forms")
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="udf_forms_creator"
+    )
+    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="udf_forms")
     parent = models.ForeignKey(
-        "udf.UserDefinedForm",
+        "self",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
@@ -22,8 +23,8 @@ class UserDefinedForm(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ["creator", "name"]
-        ordering = ["-last_updated"]
+        unique_together = (("creator", "name"),)
+        ordering = ("-last_updated",)
 
 
 reversion.register(UserDefinedForm)
