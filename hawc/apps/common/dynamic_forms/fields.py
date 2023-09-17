@@ -19,7 +19,7 @@ class _Field(BaseModel):
     in constants.Widget.
     """
 
-    name: str  # the variable name in the form; extra validation for no whitespace etc?
+    name: str = PydanticField(regex=r"^[a-zA-Z0-9_]+$")
     required: bool | None
     label: str | None
     label_suffix: str | None
