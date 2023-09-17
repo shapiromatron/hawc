@@ -30,6 +30,12 @@ class DataPivotSerializer(CollectionDataPivotSerializer):
         return ret
 
 
+class DataPivotQuerySerializer(DataPivotSerializer):
+    class Meta:
+        model = models.DataPivotQuery
+        fields = "__all__"
+
+
 class CollectionVisualSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)

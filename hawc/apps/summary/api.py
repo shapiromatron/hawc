@@ -91,6 +91,14 @@ class DataPivotViewSet(AssessmentViewSet):
         return Response(export)
 
 
+class DataPivotQueryViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.DataPivotQuery
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
+    serializer_class = serializers.DataPivotQuerySerializer
+
+
 class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     """
     For list view, return all Visual objects for an assessment, but using the
