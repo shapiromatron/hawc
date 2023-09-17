@@ -73,7 +73,7 @@ class VisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        exclude = ("slug", "prefilters", "studies", "endpoints")
+        exclude = ("slug", "endpoints")
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
