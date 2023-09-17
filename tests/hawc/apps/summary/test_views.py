@@ -14,7 +14,7 @@ class TestDataPivotNew:
         c = Client()
         assert c.login(username="pm@hawcproject.org", password="pw") is True
 
-        url = reverse("summary:dp_new-query", args=(1, 0))
+        url = reverse("summary:dp_new-query", args=(1,))
 
         # no initial settings or invalid settings
         for args in ["", "?initial=-1", "?initial=-1&reset_row_overrides=1"]:

@@ -11,15 +11,437 @@ from openpyxl.utils.exceptions import InvalidFileException
 from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.forms import MultipleEndpointChoiceField
 from ..animal.models import Endpoint
-from ..assessment.models import DoseUnits
+from ..assessment.models import DoseUnits, EffectTag
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, DynamicFormField, QuillField, check_unique_for_assessment
+from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
+from ..epi.models import Outcome
+from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
 from ..study.autocomplete import StudyAutocomplete
-from . import autocomplete, constants, models, prefilters
+from ..study.models import Study
+from . import autocomplete, constants, models
+
+
+class PrefilterMixin:
+    PREFILTER_COMBO_FIELDS = [
+        "studies",
+        "systems",
+        "organs",
+        "effects",
+        "effect_subtypes",
+        "episystems",
+        "epieffects",
+        "iv_categories",
+        "iv_chemicals",
+        "effect_tags",
+    ]
+
+    def createFields(self):
+        fields = dict()
+        epi_version = self.instance.assessment.epi_version
+
+        if "study" in self.prefilter_include:
+            fields.update(
+                [
+                    (
+                        "published_only",
+                        forms.BooleanField(
+                            required=False,
+                            initial=True,
+                            label="Published studies only",
+                            help_text="Only present data from studies which have been marked as "
+                            '"published" in HAWC.',
+                        ),
+                    ),
+                    (
+                        "prefilter_study",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by study",
+                            help_text="Prefilter endpoints to include only selected studies.",
+                        ),
+                    ),
+                    (
+                        "studies",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Studies to include",
+                            help_text="""Select one or more studies to include in the plot.
+                                 If no study is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                ]
+            )
+
+        if "bioassay" in self.prefilter_include:
+            fields.update(
+                [
+                    (
+                        "prefilter_system",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by system",
+                            help_text="Prefilter endpoints on plot to include selected systems.",
+                        ),
+                    ),
+                    (
+                        "systems",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Systems to include",
+                            help_text="""Select one or more systems to include in the plot.
+                                 If no system is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                    (
+                        "prefilter_organ",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by organ",
+                            help_text="Prefilter endpoints on plot to include selected organs.",
+                        ),
+                    ),
+                    (
+                        "organs",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Organs to include",
+                            help_text="""Select one or more organs to include in the plot.
+                                 If no organ is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                    (
+                        "prefilter_effect",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by effect",
+                            help_text="Prefilter endpoints on plot to include selected effects.",
+                        ),
+                    ),
+                    (
+                        "effects",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Effects to include",
+                            help_text="""Select one or more effects to include in the plot.
+                                 If no effect is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                    (
+                        "prefilter_effect_subtype",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by effect sub-type",
+                            help_text="Prefilter endpoints on plot to include selected effects.",
+                        ),
+                    ),
+                    (
+                        "effect_subtypes",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Effect Sub-Types to include",
+                            help_text="""Select one or more effect sub-types to include in the plot.
+                                 If no effect sub-type is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                ]
+            )
+
+        if "epi" in self.prefilter_include and epi_version == 1:
+            fields.update(
+                [
+                    (
+                        "prefilter_episystem",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by system",
+                            help_text="Prefilter endpoints on plot to include selected systems.",
+                        ),
+                    ),
+                    (
+                        "episystems",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Systems to include",
+                            help_text="""Select one or more systems to include in the plot.
+                                 If no system is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                    (
+                        "prefilter_epieffect",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by effect",
+                            help_text="Prefilter endpoints on plot to include selected effects.",
+                        ),
+                    ),
+                    (
+                        "epieffects",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Effects to include",
+                            help_text="""Select one or more effects to include in the plot.
+                                 If no effect is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                ]
+            )
+
+        if "invitro" in self.prefilter_include:
+            fields.update(
+                [
+                    (
+                        "prefilter_iv_category",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by category",
+                            help_text="Prefilter endpoints to include only selected category.",
+                        ),
+                    ),
+                    (
+                        "iv_categories",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Categories to include",
+                            help_text="""Select one or more categories to include in the plot.
+                                 If no study is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                    (
+                        "prefilter_iv_chemical",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by chemical",
+                            help_text="Prefilter endpoints to include only selected chemicals.",
+                        ),
+                    ),
+                    (
+                        "iv_chemicals",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Chemicals to include",
+                            help_text="""Select one or more chemicals to include in the plot.
+                                 If no study is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                ]
+            )
+
+        if "effect_tags" in self.prefilter_include:
+            fields.update(
+                [
+                    (
+                        "prefilter_effect_tag",
+                        forms.BooleanField(
+                            required=False,
+                            label="Prefilter by effect-tag",
+                            help_text="Prefilter endpoints to include only selected effect-tags.",
+                        ),
+                    ),
+                    (
+                        "effect_tags",
+                        forms.MultipleChoiceField(
+                            required=False,
+                            widget=forms.SelectMultiple,
+                            label="Tags to include",
+                            help_text="""Select one or more effect-tags to include in the plot.
+                                 If no study is selected, no endpoints will be available.""",
+                        ),
+                    ),
+                ]
+            )
+
+        for k, v in fields.items():
+            self.fields[k] = v
+
+    def setInitialValues(self):
+        is_new = self.initial == {}
+        try:
+            prefilters = json.loads(self.initial.get("prefilters", "{}"))
+        except ValueError:
+            prefilters = {}
+
+        if type(self.instance) is models.Visual:
+            evidence_type = constants.StudyType.BIOASSAY
+        else:
+            evidence_type = self.initial.get("evidence_type") or self.instance.evidence_type
+        for k, v in prefilters.items():
+            if k == "system__in":
+                if evidence_type == constants.StudyType.BIOASSAY:
+                    self.fields["prefilter_system"].initial = True
+                    self.fields["systems"].initial = v
+                elif evidence_type == constants.StudyType.EPI:
+                    self.fields["prefilter_episystem"].initial = True
+                    self.fields["episystems"].initial = v
+
+            if k == "organ__in":
+                self.fields["prefilter_organ"].initial = True
+                self.fields["organs"].initial = v
+
+            if k == "effect__in":
+                if evidence_type == constants.StudyType.BIOASSAY:
+                    self.fields["prefilter_effect"].initial = True
+                    self.fields["effects"].initial = v
+                elif evidence_type == constants.StudyType.EPI:
+                    self.fields["prefilter_epieffect"].initial = True
+                    self.fields["epieffects"].initial = v
+
+            if k == "effect_subtype__in":
+                self.fields["prefilter_effect_subtype"].initial = True
+                self.fields["effect_subtypes"].initial = v
+
+            if k == "effects__in":
+                self.fields["prefilter_effect_tag"].initial = True
+                self.fields["effect_tags"].initial = v
+
+            if k == "category__in":
+                self.fields["prefilter_iv_category"].initial = True
+                self.fields["iv_categories"].initial = v
+
+            if k == "chemical__name__in":
+                self.fields["prefilter_iv_chemical"].initial = True
+                self.fields["iv_chemicals"].initial = v
+
+            if k in [
+                "animal_group__experiment__study__in",
+                "study_population__study__in",
+                "experiment__study__in",
+                "protocol__study__in",
+                "design__study__in",
+            ]:
+                self.fields["prefilter_study"].initial = True
+                self.fields["studies"].initial = v
+
+        if self.__class__.__name__ == "CrossviewForm":
+            published_only = prefilters.get("animal_group__experiment__study__published", False)
+            if is_new:
+                published_only = True
+            self.fields["published_only"].initial = published_only
+
+        for fldname in self.PREFILTER_COMBO_FIELDS:
+            field = self.fields.get(fldname)
+            if field:
+                field.choices = self.getPrefilterQueryset(fldname)
+
+    def getPrefilterQueryset(self, field_name):
+        assessment_id = self.instance.assessment_id
+        choices = None
+
+        if field_name == "systems":
+            choices = Endpoint.objects.get_system_choices(assessment_id)
+        elif field_name == "organs":
+            choices = Endpoint.objects.get_organ_choices(assessment_id)
+        elif field_name == "effects":
+            choices = Endpoint.objects.get_effect_choices(assessment_id)
+        elif field_name == "effect_subtypes":
+            choices = Endpoint.objects.get_effect_subtype_choices(assessment_id)
+        elif field_name == "iv_categories":
+            choices = IVEndpointCategory.get_choices(assessment_id)
+        elif field_name == "iv_chemicals":
+            choices = IVChemical.objects.get_choices(assessment_id)
+        elif field_name == "effect_tags":
+            choices = EffectTag.objects.get_choices(assessment_id)
+        elif field_name == "studies":
+            choices = Study.objects.get_choices(assessment_id)
+        elif field_name == "episystems":
+            choices = Outcome.objects.get_system_choices(assessment_id)
+        elif field_name == "epieffects":
+            choices = Outcome.objects.get_effect_choices(assessment_id)
+        else:
+            raise ValueError(f"Unknown field name: {field_name}")
+
+        return choices
+
+    def setFieldStyles(self):
+        if self.fields.get("prefilters"):
+            self.fields["prefilters"].widget = forms.HiddenInput()
+
+        for fldname in self.PREFILTER_COMBO_FIELDS:
+            field = self.fields.get(fldname)
+            if field:
+                field.widget.attrs["size"] = 10
+
+    def setPrefilters(self, data):
+        prefilters = {}
+        epi_version = self.instance.assessment.epi_version
+
+        if data.get("prefilter_study") is True:
+            studies = data.get("studies", [])
+
+            evidence_type = data.get("evidence_type", None)
+            if self.__class__.__name__ == "CrossviewForm":
+                evidence_type = 0
+
+            if evidence_type == constants.StudyType.BIOASSAY:
+                prefilters["animal_group__experiment__study__in"] = studies
+            elif evidence_type == constants.StudyType.IN_VITRO:
+                prefilters["experiment__study__in"] = studies
+            elif evidence_type == constants.StudyType.EPI:
+                if epi_version == 1:
+                    prefilters["study_population__study__in"] = studies
+                elif epi_version == 2:
+                    prefilters["design__study__in"] = studies
+                else:
+                    raise ValueError("Invalid epi_version")
+            elif evidence_type == constants.StudyType.EPI_META:
+                prefilters["protocol__study__in"] = studies
+            else:
+                raise ValueError("Unknown evidence type")
+
+        if data.get("prefilter_system") is True:
+            prefilters["system__in"] = data.get("systems", [])
+
+        if data.get("prefilter_organ") is True:
+            prefilters["organ__in"] = data.get("organs", [])
+
+        if data.get("prefilter_effect") is True:
+            prefilters["effect__in"] = data.get("effects", [])
+
+        if data.get("prefilter_effect_subtype") is True:
+            prefilters["effect_subtype__in"] = data.get("effect_subtypes", [])
+
+        if data.get("prefilter_episystem") is True:
+            prefilters["system__in"] = data.get("episystems", [])
+
+        if data.get("prefilter_epieffect") is True:
+            prefilters["effect__in"] = data.get("epieffects", [])
+
+        if data.get("prefilter_iv_category") is True:
+            prefilters["category__in"] = data.get("iv_categories", [])
+
+        if data.get("prefilter_iv_chemical") is True:
+            prefilters["chemical__name__in"] = data.get("iv_chemicals", [])
+
+        if data.get("prefilter_effect_tag") is True:
+            prefilters["effects__in"] = data.get("effect_tags", [])
+
+        if self.__class__.__name__ == "CrossviewForm" and data.get("published_only") is True:
+            prefilters["animal_group__experiment__study__published"] = True
+
+        return json.dumps(prefilters)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["prefilters"] = self.setPrefilters(cleaned_data)
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.createFields()
+        self.setInitialValues()
+        self.setFieldStyles()
 
 
 class SummaryTextForm(forms.ModelForm):
@@ -255,23 +677,13 @@ class EndpointAggregationForm(VisualForm):
         exclude = ("assessment", "visual_type", "settings", "prefilters", "studies", "sort_order")
 
 
-class CrossviewForm(VisualForm):
-    def _get_prefilter_form(self, data, **form_kwargs):
-        prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
-            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+class CrossviewForm(PrefilterMixin, VisualForm):
+    prefilter_include = ("study", "bioassay", "effect_tags")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
-        )
-        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
-            constants.VisualType.BIOASSAY_CROSSVIEW
-        ).value
-        self.fields["prefilters"] = DynamicFormField(
-            prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
         self.helper = self.setHelper()
 
@@ -280,20 +692,13 @@ class CrossviewForm(VisualForm):
         exclude = ("assessment", "visual_type", "endpoints", "studies")
 
 
-class RoBForm(VisualForm):
-    def _get_prefilter_form(self, data, **form_kwargs):
-        prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
-            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+class RoBForm(PrefilterMixin, VisualForm):
+    prefilter_include = ("bioassay",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
-            constants.VisualType.ROB_BARCHART
-        ).value
-        self.fields["prefilters"] = DynamicFormField(
-            prefix="prefilters", form_class=self._get_prefilter_form, label=""
+        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(
+            assessment=self.instance.assessment
         )
         self.helper = self.setHelper()
 
@@ -683,7 +1088,9 @@ class DataPivotUploadForm(DataPivotForm):
                 self.add_error("excel_file", "Must contain at least 2 columns.")
 
 
-class DataPivotQueryForm(DataPivotForm):
+class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
+    prefilter_include = ("study", "bioassay", "epi", "invitro", "eco", "effect_tags")
+
     class Meta:
         model = models.DataPivotQuery
         fields = (
@@ -695,29 +1102,18 @@ class DataPivotQueryForm(DataPivotForm):
             "settings",
             "caption",
             "published",
+            "published_only",
             "prefilters",
         )
 
-    def _get_prefilter_form(self, data, **form_kwargs):
-        prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
-            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
-
     def __init__(self, *args, **kwargs):
-        evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
-
-        if evidence_type is not None:
-            self.instance.evidence_type = evidence_type
-        self.fields["evidence_type"].initial = self.instance.evidence_type
-        self.fields["evidence_type"].disabled = True
-
-        self.prefilter = prefilters.StudyTypePrefilter.from_study_type(
-            self.instance.evidence_type, self.instance.assessment
-        ).value
-        self.fields["prefilters"] = DynamicFormField(
-            prefix="prefilters", form_class=self._get_prefilter_form, label=""
+        self.fields["evidence_type"].choices = (
+            (constants.StudyType.BIOASSAY, "Animal Bioassay"),
+            (constants.StudyType.EPI, "Epidemiology"),
+            (constants.StudyType.EPI_META, "Epidemiology meta-analysis/pooled analysis"),
+            (constants.StudyType.IN_VITRO, "In vitro"),
+            (constants.StudyType.ECO, "Ecology"),
         )
         self.fields["preferred_units"].required = False
         self.js_units_choices = json.dumps(

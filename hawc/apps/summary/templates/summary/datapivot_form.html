@@ -24,7 +24,7 @@
       {% endif %}
 
       window.app.startup("assessmentStartup", function(app){
-        new app.DoseUnitsWidget($('form'), {
+        var doseWidget = new app.DoseUnitsWidget($('form'), {
           choices: js_units_choices,
           el: '#id_preferred_units',
         });
@@ -37,12 +37,63 @@
           );
       })
 
+      var togglePrefilterSelectorVisibility = function(d){
+         var fields = [
+            ["study", "studies"],
+            ["system", "systems"],
+            ["organ", "organs"],
+            ["effect", "effects"],
+            ["effect_subtype", "effect_subtypes"],
+            ["episystem", "episystems"],
+            ["epieffect", "epieffects"],
+            ["iv_category", "iv_categories"],
+            ["iv_chemical", "iv_chemicals"],
+            ["effect_tag", "effect_tags"],
+        ];
+        _.each(fields, function(d){
+            $(printf('#id_prefilter_{0}', d[0])).on('change', function(){
+                var div = $(printf('#div_id_{0}', d[1]));
+                ($(this).prop('checked')) ? div.show(1000) : div.hide(0);
+            }).trigger('change');
+        });
+      }
+
       // determine which fields to display depending on data-type
-      const value = {{form.instance.evidence_type}},
-        aniOnlyDivs = $("#div_id_preferred_units"),
-        aniIvOnlyDivs = $("#div_id_export_style");
-      (value === 0) ? aniOnlyDivs.show() : aniOnlyDivs.hide();
-      (value == 0 || value == 2) ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
+      $('#id_evidence_type').on('change', function(){
+        const value = parseInt($('#id_evidence_type').val()),
+          aniOnlyDivs = $([
+            "#div_id_preferred_units",
+            "#div_id_prefilter_system",
+            "#div_id_systems",
+            "#div_id_prefilter_organ",
+            "#div_id_organs",
+            "#div_id_prefilter_effect",
+            "#div_id_prefilter_effect_subtype",
+            "#div_id_effects"
+          ].join(",")),
+          epiOnlyDivs = $([
+            "#div_id_prefilter_episystem",
+            "#div_id_episystems",
+            "#div_id_prefilter_epieffect",
+            "#div_id_epieffects"
+          ].join(",")),
+          ivOnlyDivs = $([
+            "#div_id_prefilter_iv_category",
+            "#div_id_iv_categories",
+            "#div_id_prefilter_iv_chemical",
+            "#div_id_iv_chemicals",
+          ].join(",")),
+          aniIvOnlyDivs = $("#div_id_export_style"),
+          notEpiV2Divs = $("#div_id_prefilter_effect_tag");
+        (value === 0) ? aniOnlyDivs.show() : aniOnlyDivs.hide();
+        (value === 1 && epi_version === 1) ? epiOnlyDivs.show() : epiOnlyDivs.hide();
+        (value === 1 && epi_version === 1) ? notEpiV2Divs.show() : notEpiV2Divs.hide();
+        (value === 2) ? ivOnlyDivs.show() : ivOnlyDivs.hide();
+        (value == 0 || value == 2) ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
+        togglePrefilterSelectorVisibility();
+      }).trigger('change');
+
+      togglePrefilterSelectorVisibility();
     });
   </script>
 {% endblock extrajs %}

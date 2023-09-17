@@ -15,16 +15,9 @@ from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseList,
-    BaseUpdate,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, prefilters, serializers
+from . import constants, filterset, forms, models, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -641,20 +634,6 @@ class DataPivotNew(BaseCreate):
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
-    template_name = "summary/datapivot_form.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        try:
-            # get study type enum
-            study_type = constants.StudyType(self.kwargs.get("study_type"))
-            # make sure prefilter exists for study type
-            prefilters.StudyTypePrefilter.from_study_type(study_type, self.assessment)
-            # pass study type to form
-            kwargs["evidence_type"] = study_type
-        except (KeyError, ValueError):
-            raise Http404
-        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

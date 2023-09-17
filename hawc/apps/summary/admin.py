@@ -22,7 +22,7 @@ class VisualAdmin(admin.ModelAdmin):
 
     list_filter = ("visual_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("assessment__name", "title")
-    raw_id_fields = ("endpoints",)
+    raw_id_fields = ("endpoints", "studies")
 
     @admin.display(description="URL")
     def show_url(self, obj):
