@@ -3,16 +3,16 @@ from django.urls import path
 
 from . import views
 
-app_name = "form_library"
+app_name = "udf"
 urlpatterns = (
     [
         # Create a user defined form
         path(
             "create/",
             views.CreateUDFView.as_view(),
-            name="form_create",
+            name="udf_create",
         ),
     ]
-    if settings.HAWC_FEATURES.ENABLE_DYNAMIC_FORMS
+    if settings.HAWC_FEATURES.ENABLE_UDF
     else []
 )

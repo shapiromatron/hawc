@@ -11,7 +11,7 @@ class UserDefinedForm(models.Model):
     creator = models.ForeignKey(HAWCUser, on_delete=models.DO_NOTHING, related_name="created_forms")
     editors = models.ManyToManyField(HAWCUser, blank=True, related_name="editable_forms")
     parent = models.ForeignKey(
-        "form_library.UserDefinedForm",
+        "udf.UserDefinedForm",
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
