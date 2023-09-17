@@ -1,5 +1,3 @@
-import json
-
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
@@ -11,23 +9,23 @@ from . import constants, models
 
 
 class CollectionDataPivotSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["url"] = instance.get_absolute_url()
-        ret["visual_type"] = instance.visual_type
-        return ret
+    url = serializers.CharField(source="get_absolute_url")
+    visual_type = serializers.CharField(source="get_visual_type_display")
+
+    class Meta:
+        model = models.DataPivot
+        fields = ("id", "title", "url", "visual_type")
+
+
+class DataPivotSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source="get_absolute_url")
+    data_url = serializers.CharField(source="get_data_url")
+    download_url = serializers.CharField(source="get_download_url")
+    visual_type = serializers.CharField(source="get_visual_type_display")
 
     class Meta:
         model = models.DataPivot
         fields = "__all__"
-
-
-class DataPivotSerializer(CollectionDataPivotSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["data_url"] = instance.get_data_url()
-        ret["download_url"] = instance.get_download_url()
-        return ret
 
 
 class DataPivotQuerySerializer(DataPivotSerializer):
@@ -37,33 +35,26 @@ class DataPivotQuerySerializer(DataPivotSerializer):
 
 
 class CollectionVisualSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        if instance.id != instance.FAKE_INITIAL_ID:
-            ret["url"] = instance.get_absolute_url()
-        ret["visual_type"] = instance.get_rob_visual_type_display(
-            instance.get_visual_type_display()
-        )
-        try:
-            settings = json.loads(instance.settings)
-        except json.JSONDecodeError:
-            settings = {}
-        ret["settings"] = settings
-        return ret
+    url = serializers.CharField(source="get_absolute_url")
+    visual_type = serializers.CharField(source="get_visual_type_display")
+    data_url = serializers.CharField(source="get_data_url")
 
     class Meta:
         model = models.Visual
-        exclude = (
-            "endpoints",
-            "studies",
-        )
+        fields = ("id", "title", "url", "visual_type", "visual_type", "data_url")
 
 
-class VisualSerializer(CollectionVisualSerializer):
+class VisualSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source="get_absolute_url")
+    visual_type = serializers.CharField(source="get_visual_type_display")
+    settings = serializers.JSONField(source="get_settings")
+    data_url = serializers.CharField(source="get_data_url")
+
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
         if instance.id != instance.FAKE_INITIAL_ID:
+            ret["url"] = instance.get_absolute_url()
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
 
@@ -85,6 +76,10 @@ class VisualSerializer(CollectionVisualSerializer):
         ret["assessment_name"] = str(instance.assessment)
 
         return ret
+
+    class Meta:
+        model = models.Visual
+        exclude = ("slug", "prefilters", "studies", "endpoints")
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
