@@ -3,7 +3,7 @@ from typing import Annotated, Any, Literal
 
 from django import forms
 from django.utils.html import conditional_escape
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel, validator
 from pydantic import Field as PydanticField
 
 from . import constants
