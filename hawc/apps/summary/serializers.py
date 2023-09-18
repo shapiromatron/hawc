@@ -1,3 +1,5 @@
+import json
+
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
@@ -18,10 +20,23 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
 
 class DataPivotSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url")
-    data_url = serializers.CharField(source="get_data_url")
-    download_url = serializers.CharField(source="get_download_url")
-    visual_type = serializers.CharField(source="get_visual_type_display")
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
+    data_url = serializers.CharField(source="get_data_url", read_only=True)
+    download_url = serializers.CharField(source="get_download_url", read_only=True)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["visual_type"] = instance.get_visual_type_display()
+        return ret
+
+    def validate(self, data):
+        try:
+            json.loads(data["settings"])
+            if "prefilters" in data:
+                json.loads(data["prefilters"])
+        except ValueError:
+            raise ValueError("The 'settings' and 'prefilters' fields must be valid json.")
+        return data
 
     class Meta:
         model = models.DataPivot
@@ -79,6 +94,14 @@ class VisualSerializer(serializers.ModelSerializer):
         ret["assessment_name"] = str(instance.assessment)
 
         return ret
+
+    def validate(self, data):
+        try:
+            json.loads(data["settings"])
+            json.loads(data["prefilters"])
+        except ValueError:
+            raise ValueError("The 'settings' and 'prefilters' fields must be valid json.")
+        return data
 
     class Meta:
         model = models.Visual
