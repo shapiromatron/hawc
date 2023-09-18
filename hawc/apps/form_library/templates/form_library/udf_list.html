@@ -1,0 +1,36 @@
+{% extends 'crumbless.html' %}
+
+{% load bs4 %}
+
+{% block content %}
+<div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{% url 'form_library:form_create' %}">Create a form</a>
+    </div>
+</div>
+<h2>User Defined Forms</h2>
+{% if object_list %}
+<table id="mainTbl" class="table table-sm table-striped">
+    {% bs4_colgroup '15,45,15,15,10' %}
+    {% bs4_thead 'Name,Description,Creator,Last Updated,Actions' %}
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td>
+                <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
+            </td>
+            <td>{{object.description}}</td>
+            <td>{{object.creator}}</td>
+            <td>{{object.last_updated|date:"Y-m-d"}}</td>
+            <td></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+{% alert info %}No forms found.{% endalert %}
+{% endif %}
+
+{% include "includes/paginator.html" with plural_object_name="forms" %}
+{% endblock content %}

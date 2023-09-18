@@ -42,7 +42,7 @@ class UDFForm(forms.ModelForm):
     @property
     def helper(self):
         self.fields["description"].widget.attrs["rows"] = 3
-        cancel_url = reverse("portal")  # TODO: replace temp cancel url
+        cancel_url = reverse("form_library:form_list")
         helper = BaseFormHelper(
             self,
             legend_text="Create a custom data extraction form",

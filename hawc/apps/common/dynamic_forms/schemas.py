@@ -4,6 +4,8 @@ from enum import Enum
 from django.forms import HiddenInput, JSONField
 from pydantic import BaseModel, conlist, root_validator, validator
 
+from hawc.apps.common.forms import DynamicFormField
+
 from . import fields, forms
 
 
@@ -96,4 +98,4 @@ class Schema(BaseModel):
         """Get dynamic form field for this schema."""
         if len(self.fields) == 0:
             return JSONField(widget=HiddenInput(), required=False)
-        return forms.DynamicFormField(prefix, self.to_form, form_kwargs, *args, **kwargs)
+        return DynamicFormField(prefix, self.to_form, form_kwargs, *args, **kwargs)

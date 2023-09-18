@@ -1,0 +1,22 @@
+{% extends "crumbless.html" %}
+
+{% load hawc %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+        {% if view.user_can_edit %}
+        <a class="dropdown-item" href="{% url 'form_library:form_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'form_library:form_delete' object.pk %}">Delete</a>
+        {% endif %}
+        <a class="dropdown-item" href="{% url 'form_library:form_clone' object.pk %}">Clone</a>
+    </div>
+</div>
+<h3>{{object.name}}</h3>
+<p>{{object.description}}</p>
+<h3>Preview:</h3>
+{% crispy form %}
+
+{% endblock content %}

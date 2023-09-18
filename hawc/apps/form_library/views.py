@@ -1,16 +1,39 @@
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic import DetailView, ListView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from hawc.apps.common import dynamic_forms
-from hawc.apps.common.views import LoginRequiredMixin, htmx_required
+from hawc.apps.common.views import LoginRequiredMixin, MessageMixin, htmx_required
 
+from . import models
 from .forms import SchemaPreviewForm, UDFForm
 
 
-class CreateUDFView(LoginRequiredMixin, CreateView):
+class UDFListView(LoginRequiredMixin, ListView):
+    template_name = "form_library/udf_list.html"
+    model = models.UserDefinedForm
+
+
+class UDFDetailView(LoginRequiredMixin, DetailView):
+    template_name = "form_library/udf_detail.html"
+    model = models.UserDefinedForm
+
+    def get_context_data(self, **kwargs):
+        form = dynamic_forms.Schema.parse_obj(self.object.schema).to_form()
+        kwargs.update(form=form)
+        return super().get_context_data(**kwargs)
+
+    def user_can_edit(self):
+        breakpoint()
+        return self.object.user_can_edit(self.request.user)
+
+
+class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
     template_name = "form_library/udf_form.html"
     form_class = UDFForm
+    success_url = reverse_lazy("form_library:form_list")
+    success_message = "Form created."
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
