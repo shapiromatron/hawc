@@ -729,6 +729,7 @@ class DataPivotQueryForm(DataPivotForm):
         )
 
         if self.instance.evidence_type == constants.StudyType.BIOASSAY:
+            self.fields["preferred_units"].required = False
             self.fields["preferred_units"].choices = json.dumps(
                 [
                     {"id": obj.id, "name": obj.name}
