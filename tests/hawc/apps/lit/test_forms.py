@@ -1,6 +1,7 @@
 import re
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.forms.models import model_to_dict
@@ -11,12 +12,15 @@ from hawc.apps.lit.forms import (
     BulkReferenceStudyExtractForm,
     ImportForm,
     LiteratureAssessmentForm,
+    ReferenceExcelUploadForm,
     ReferenceForm,
     RisImportForm,
 )
 from hawc.apps.lit.models import Reference
 from hawc.apps.study.models import Study
 from hawc.services.utils.ris import ReferenceParser
+
+from ..test_utils import df_to_form_data
 
 
 @pytest.mark.django_db
@@ -441,3 +445,68 @@ class TestBulkReferenceStudyExtractForm:
         assert form.errors == {
             "study_type": ["Select a valid choice. crazy is not one of the available choices."]
         }
+
+
+@pytest.mark.django_db
+class TestReferenceExcelUploadForm:
+    def test_success(self):
+        df = pd.DataFrame(
+            data={
+                "HAWC ID": [1],
+                "Full text URL": ["https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5448372/"],
+            }
+        )
+        form = ReferenceExcelUploadForm(
+            instance={},
+            assessment=Assessment.objects.get(id=1),
+            data={},
+            files=df_to_form_data("excel_file", df),
+        )
+        assert form.is_valid() is True
+
+    def test_validation(self):
+        assessment = Assessment.objects.get(id=1)
+
+        # Incorrect file extension
+        form = ReferenceExcelUploadForm(
+            instance={},
+            assessment=assessment,
+            data={},
+            files={"excel_file": SimpleUploadedFile("z", b"test")},
+        )
+        assert form.is_valid() is False
+        assert "Must be an Excel file with an xlsx extension." in form.errors["excel_file"][0]
+
+        # Incorrect file format
+        form = ReferenceExcelUploadForm(
+            instance={},
+            assessment=assessment,
+            data={},
+            files={"excel_file": SimpleUploadedFile("test.xlsx", b"test")},
+        )
+        assert form.is_valid() is False
+        assert "Invalid Excel format." in form.errors["excel_file"][0]
+
+        # Incorrect data in Excel
+        datasets = [
+            # incorrect column names
+            ({"test": [1, 2, 3]}, "Invalid Excel format."),
+            # non-integer HAWC IDs
+            (
+                {"HAWC ID": [""], "Full text URL": ["https://www.ncbi.nlm.nih.gov/"]},
+                "HAWC IDs must be integers.",
+            ),
+            # non-URL full text URL
+            ({"HAWC ID": [1], "Full text URL": [None]}, "Invalid URLs"),
+            ({"HAWC ID": [1], "Full text URL": [""]}, "Invalid URLs"),
+            ({"HAWC ID": [1], "Full text URL": ["test"]}, "Invalid URLs"),
+        ]
+        for data, error_msg in datasets:
+            form = ReferenceExcelUploadForm(
+                instance={},
+                assessment=assessment,
+                data={},
+                files=df_to_form_data("excel_file", pd.DataFrame(data)),
+            )
+            assert form.is_valid() is False
+            assert error_msg in form.errors["excel_file"][0]

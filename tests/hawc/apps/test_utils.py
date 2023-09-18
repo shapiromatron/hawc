@@ -3,8 +3,11 @@ Utility toolbelt for testing HAWC.
 """
 
 import json
+from io import BytesIO
 from pathlib import Path
 
+import pandas as pd
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
 from django.test.client import Client
 from rest_framework.response import Response
@@ -88,3 +91,9 @@ def check_200(
     response = client.get(url, **kw)
     assert response.status_code == 200
     return response
+
+
+def df_to_form_data(key: str, df: pd.DataFrame) -> dict:
+    f = BytesIO()
+    df.to_excel(f, index=False)
+    return {key: SimpleUploadedFile("test.xlsx", f.getvalue())}
