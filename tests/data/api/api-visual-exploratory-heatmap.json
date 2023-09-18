@@ -9,6 +9,7 @@
   "endpoints": [],
   "id": 8,
   "last_updated": "2020-11-25T09:29:33.991892-05:00",
+  "prefilters": {},
   "published": true,
   "settings": {
     "autorotate_tick_labels": true,
@@ -118,6 +119,7 @@
     },
     "y_tick_rotate": -90
   },
+  "slug": "exploratory-heatmap",
   "sort_order": "short_citation",
   "studies": [],
   "title": "exploratory-heatmap",
