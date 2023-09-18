@@ -444,7 +444,7 @@ class ExternalSiteForm(VisualForm):
             Embed an external website. The following websites can be linked to:
         </p>
         <ul class="form-text text-muted">
-            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box. For example, <code>https://public.tableau.com/shared/JWH9N8XGN</code>.</li>
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box. For example, <code>https://public.tableau.com/views/PFAS150EpidemiologySQ/EpiOverview</code>.</li>
         </ul>
         <p class="form-text text-muted">
             If you'd like to link to another website, please contact us.
