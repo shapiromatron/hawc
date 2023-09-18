@@ -45,10 +45,10 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 
 class VisualSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url")
-    visual_type = serializers.CharField(source="get_visual_type_display")
-    settings = serializers.JSONField(source="get_settings")
-    data_url = serializers.CharField(source="get_data_url")
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
+    data_url = serializers.CharField(source="get_data_url", read_only=True)
+    slug = serializers.CharField(write_only=True)
+    prefilters = serializers.JSONField(write_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -63,6 +63,9 @@ class VisualSerializer(serializers.ModelSerializer):
             constants.VisualType.ROB_BARCHART,
         ]:
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
+
+        ret["visual_type"] = instance.get_visual_type_display()
+        ret["settings"] = instance.get_settings()
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
@@ -79,7 +82,7 @@ class VisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        exclude = ("slug", "prefilters", "studies", "endpoints")
+        exclude = ("studies", "endpoints")
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
