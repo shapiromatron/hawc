@@ -34,7 +34,7 @@ class DataPivotSerializer(serializers.ModelSerializer):
             json.loads(data["settings"])
             if "prefilters" in data:
                 json.loads(data["prefilters"])
-        except ValueError:
+        except (ValueError, TypeError):
             raise ValueError("The 'settings' and 'prefilters' fields must be valid json.")
         return data
 
@@ -99,7 +99,7 @@ class VisualSerializer(serializers.ModelSerializer):
         try:
             json.loads(data["settings"])
             json.loads(data["prefilters"])
-        except ValueError:
+        except (ValueError, TypeError):
             raise ValueError("The 'settings' and 'prefilters' fields must be valid json.")
         return data
 

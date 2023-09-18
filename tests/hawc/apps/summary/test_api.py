@@ -282,6 +282,7 @@ class TestDataPivot:
         data["title"] = data["title"] + "-2"
         data["slug"] = data["slug"] + "-2"
         data["assessment"] = db_keys.assessment_working
+        data["settings"] = json.dumps(data["settings"])
         if "preferred_units" in data:
             data.pop("preferred_units")
         url = reverse("summary:api:data_pivot_query-list")
