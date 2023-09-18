@@ -285,7 +285,6 @@ class Visual(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
-    prefilters = models.JSONField(default=dict)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
         related_name="visuals",
@@ -304,6 +303,7 @@ class Visual(models.Model):
         choices=constants.SortOrder.choices,
         default=constants.SortOrder.SC,
     )
+    prefilters = models.JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
