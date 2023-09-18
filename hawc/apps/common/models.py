@@ -453,7 +453,7 @@ def get_distinct_charfield(Cls, assessment_id, field):
 
 def get_distinct_charfield_opts(Cls, assessment_id, field):
     objs = get_distinct_charfield(Cls, assessment_id, field)
-    return [(obj, obj) for obj in sorted(objs)]
+    return [(obj, obj) for obj in sorted(objs) if obj]
 
 
 def apply_flavored_help_text(app_name: str):

@@ -324,5 +324,23 @@ class HAWCUtils {
     static tablesort(el) {
         new Tablesort(el);
     }
+
+    static bindCheckboxToPrefilter() {
+        // show/hide prefilter based on checkbox selection
+        const checkbox = $(this),
+            input = $(`#id_prefilters-${checkbox.data("pf")}`),
+            inputDiv = $(`#div_id_prefilters-${checkbox.data("pf")}`),
+            hasItems = input.val().length > 0;
+
+        checkbox.prop("checked", hasItems);
+        checkbox
+            .on("change", function() {
+                inputDiv.toggle(checkbox.prop("checked"));
+                if (checkbox.prop("checked") === false) {
+                    input.val("");
+                }
+            })
+            .trigger("change");
+    }
 }
 export default HAWCUtils;
