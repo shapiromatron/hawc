@@ -190,7 +190,7 @@ class TestVisual:
             "endpoints": [],
             "studies": [],
         }
-        self._test_visual_crud_api(data, rewrite_data_files, "barchart")
+        self._test_visual_crud_api(data, rewrite_data_files, "rob-barchart")
 
     def test_tagtree(self, rewrite_data_files: bool, db_keys):
         data = {
