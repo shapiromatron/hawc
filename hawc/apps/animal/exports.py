@@ -633,6 +633,7 @@ class EndpointSummary(FlatFileExporter):
             "endpoint-observation_time",
             "endpoint-response_units",
             "Dose units",
+            "N",
             "Doses",
             "Responses",
             "Doses and responses",
@@ -646,6 +647,9 @@ class EndpointSummary(FlatFileExporter):
         def getDoses(doses, unit):
             doses = [d["dose"] for d in doses if d["dose_units"]["name"] == unit]
             return [f"{d:g}" for d in doses]
+
+        def getNs(groups):
+            return [f"{grp['n'] or ''}" for grp in groups]
 
         def getResponses(groups):
             resps = []
@@ -720,6 +724,7 @@ class EndpointSummary(FlatFileExporter):
             ]
 
             responses_list = getResponses(ser["groups"])
+            ns_list = getNs(ser["groups"])
             response_direction = getResponseDirection(ser["groups"], ser["data_type"])
             for unit in units:
                 row_copy = copy(row)
@@ -727,6 +732,7 @@ class EndpointSummary(FlatFileExporter):
                 row_copy.extend(
                     [
                         unit,  # 'units'
+                        ", ".join(ns_list),  # Ns
                         ", ".join(doses_list),  # Doses
                         ", ".join(responses_list),  # Responses w/ units
                         getDR(doses_list, responses_list, unit),
