@@ -10,9 +10,9 @@
     <ul class="nav nav-tabs">
         <li class="nav-item"><a class="nav-link active" href="#dp_data" data-toggle="tab">Data</a></li>
         <li class="nav-item"><a class="nav-link" href="#dp_settings" data-toggle="tab">Settings</a></li>
-        <li class="nav-item"><a class="nav-link" id="display_tab_icon" href="#dp_display" data-toggle="tab">Visualization</a></li>
+        <li class="nav-item"><a class="nav-link" id="display_tab_icon" href="#dp_display" data-toggle="tab">Preview</a></li>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content mt-2">
         <div class="tab-pane active" id="dp_data" style="overflow-y: scroll; max-height: 70vh"></div>
         <div class="tab-pane" id="dp_settings"></div>
         <div class="tab-pane" id="dp_display"></div>
@@ -36,20 +36,20 @@
 {% endblock dp_content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-  $('#loading_div').html(window.app.HAWCUtils.loading())
-  window.app.startup("dataPivotStartup", function(app){
-      var data_url = '{{object.get_data_url|safe}}',
-          settings = {{object.settings|safe}},
-          options = {
-              container: '#data_pivot',
-              dataDiv: '#dp_data',
-              settingsDiv: '#dp_settings',
-              displayDiv: '#dp_display',
-              submissionDiv: '#dp_settings_form',
-              settingsField: '#id_settings',
-          };
-      app.DataPivot.displayEditView(data_url, settings, options)
-  });
-  </script>
+{{ config|json_script:"dp-config" }}
+<script type="text/javascript">
+$('#loading_div').html(window.app.HAWCUtils.loading())
+window.app.startup("dataPivotStartup", function(app){
+  const config = JSON.parse(document.getElementById('dp-config').textContent),
+    options = {
+      container: '#data_pivot',
+      dataDiv: '#dp_data',
+      settingsDiv: '#dp_settings',
+      displayDiv: '#dp_display',
+      submissionDiv: '#dp_settings_form',
+      settingsField: '#id_settings',
+    };
+  app.DataPivot.displayEditView(config.data_url, config.settings, options)
+});
+</script>
 {% endblock extrajs %}

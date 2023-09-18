@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import _ from "lodash";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -23,14 +24,18 @@ class D3Plot {
             .html(this.title_str);
     }
 
-    add_final_rectangle() {
-        // Add final rectangle around plot.
-        if (this.bounding_rectangle) this.bounding_rectangle.remove();
+    add_final_rectangle(color) {
+        // Add final rectangle around plot. Color is optional
+        if (this.bounding_rectangle) {
+            this.bounding_rectangle.remove();
+        }
+
         this.bounding_rectangle = this.vis
             .append("rect")
             .attr("width", this.w)
             .attr("height", this.h)
-            .attr("class", "bounding_rectangle");
+            .attr("class", "bounding_rectangle")
+            .style("stroke", color ? color : "#666666");
     }
 
     set_legend_location(top, left) {
@@ -113,10 +118,14 @@ class D3Plot {
     }
 
     build_plot_skeleton(background, ariaLabel) {
+        // background: true, false, or a fill color string
+        // ariaLabel: string to use for aria-label attribute
+
         //Basic plot setup to set size and positions
         var self = this,
-            w = this.w + this.padding.left + this.padding.right,
-            h = this.h + this.padding.top + this.padding.bottom;
+            {left, right, top, bottom} = this.padding,
+            w = this.w + left + right,
+            h = this.h + top + bottom;
 
         //clear plot div and and append new svg object
         this.plot_div.empty();
@@ -136,7 +145,7 @@ class D3Plot {
         this.vis = d3
             .select(this.svg)
             .append("g")
-            .attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+            .attr("transform", `translate(${left},${top})`);
 
         var chart = $(this.svg),
             container = chart.parent();
@@ -171,15 +180,16 @@ class D3Plot {
         };
         $(window).resize(this.trigger_resize);
 
-        // add gray background to plot.
+        // optionally background to plot.
         if (background) {
-            this.vis
+            const fill = _.isBoolean(background) ? "#eeeeee" : background;
+            this.bg_rect = this.vis
                 .append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr("height", this.h)
                 .attr("width", this.w)
-                .attr("class", "dp_bg");
+                .style("fill", fill);
         }
     }
 
@@ -224,16 +234,20 @@ class D3Plot {
                     .scaleLog()
                     .clamp(true)
                     .domain(settings.domain)
-                    .rangeRound(settings.rangeRound)
-                    .nice();
+                    .rangeRound(settings.rangeRound);
+                if (!settings.force_range) {
+                    scale.nice();
+                }
                 break;
             case "linear":
                 scale = d3
                     .scaleLinear()
                     .clamp(true)
                     .domain(settings.domain)
-                    .rangeRound(settings.rangeRound)
-                    .nice();
+                    .rangeRound(settings.rangeRound);
+                if (!settings.force_range) {
+                    scale.nice();
+                }
                 break;
             case "ordinal":
                 scale = d3
@@ -300,6 +314,9 @@ class D3Plot {
             .attr("y1", line_settings[2])
             .attr("y2", line_settings[3])
             .attr("class", settings.gridline_class);
+        if (settings.gridline_stroke) {
+            gridlines.selectAll("line").style("stroke", settings.gridline_stroke);
+        }
 
         return gridlines;
     }
@@ -379,17 +396,17 @@ class D3Plot {
     build_y_axis() {
         // build y-axis based on plot-settings
         this.y_scale = this._build_scale(this.y_axis_settings);
-        this.yAxis = this._print_axis(
-            this.getAxisType(this.y_axis_settings.text_orient),
-            this.y_scale,
-            this.y_axis_settings
-        );
         this.y_primary_gridlines = this._print_gridlines(this.y_scale, this.y_axis_settings, [
             0,
             this.w,
             this.y_scale,
             this.y_scale,
         ]);
+        this.yAxis = this._print_axis(
+            this.getAxisType(this.y_axis_settings.text_orient),
+            this.y_scale,
+            this.y_axis_settings
+        );
     }
 
     getAxisType(val) {
@@ -408,17 +425,17 @@ class D3Plot {
     build_x_axis(axisType) {
         // build x-axis based on plot-settings
         this.x_scale = this._build_scale(this.x_axis_settings);
-        this.xAxis = this._print_axis(
-            this.getAxisType(this.x_axis_settings.text_orient),
-            this.x_scale,
-            this.x_axis_settings
-        );
         this.x_primary_gridlines = this._print_gridlines(this.x_scale, this.x_axis_settings, [
             this.x_scale,
             this.x_scale,
             0,
             this.h,
         ]);
+        this.xAxis = this._print_axis(
+            this.getAxisType(this.x_axis_settings.text_orient),
+            this.x_scale,
+            this.x_axis_settings
+        );
     }
 
     build_line(options, existing) {
@@ -472,12 +489,6 @@ class D3Plot {
                 .attr("class", options.classes);
         }
         return l;
-    }
-
-    isWithinDomain(event) {
-        // check that event is within plot domain
-        var v = d3.pointer(event);
-        return !(v[1] > this.h || v[1] < 0 || v[0] < 0 || v[0] > this.w);
     }
 
     add_menu() {

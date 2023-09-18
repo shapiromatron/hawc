@@ -674,3 +674,8 @@ class EndpointSelectorForm(CopyAsNewSelectorForm):
     label = "Endpoint"
     parent_field = "animal_group__experiment__study_id"
     autocomplete_class = autocomplete.EndpointAutocomplete
+
+
+class MultipleEndpointChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.label

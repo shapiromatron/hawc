@@ -104,7 +104,7 @@ class TestVisual:
         self._test_visual_detail_api(rewrite_data_files, "crossview")
 
     def test_barchart(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "barchart")
+        self._test_visual_detail_api(rewrite_data_files, "rob-barchart")
 
     def test_tagtree(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "tagtree")
@@ -114,6 +114,24 @@ class TestVisual:
 
     def test_exploratory_heatmap(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "exploratory-heatmap")
+
+    def _test_visual_data_api(self, rewrite_data_files: bool, slug: str):
+        client = Client()
+        url = models.Visual.objects.get(slug=slug).get_data_url()
+        response = client.get(url)
+        assert response.status_code == 200
+
+        data = response.json()
+        data_str = json.dumps(data, indent=2, sort_keys=True)
+
+        key = f"api-visual-{slug}-data.json"
+        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
+
+    def test_rob_heatmap_data(self, rewrite_data_files: bool):
+        self._test_visual_data_api(rewrite_data_files, "rob-heatmap")
+
+    def test_barchart_data(self, rewrite_data_files: bool):
+        self._test_visual_data_api(rewrite_data_files, "rob-barchart")
 
 
 @pytest.mark.django_db

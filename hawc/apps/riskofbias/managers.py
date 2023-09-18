@@ -1,8 +1,11 @@
+import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Count, IntegerField, Sum, Value, When
+from django.db.models import Case, Count, IntegerField, QuerySet, Sum, Value, When
 
-from ..common.models import BaseManager
+from ..common.models import BaseManager, pd_strip_tags, sql_display
+from ..study.managers import study_df_annotations, study_df_mapping
+from . import constants
 
 
 class RiskOfBiasDomainManager(BaseManager):
@@ -91,8 +94,63 @@ class RiskOfBiasManager(BaseManager):
         return self.get_qs(assessment.id).filter(filters)
 
 
+class RiskOfBiasScoreQuerySet(QuerySet):
+    def df(self) -> pd.DataFrame:
+        mapping = {
+            # study
+            **study_df_mapping("study-", "riskofbias__study__"),
+            # rob
+            "rob-id": "riskofbias_id",
+            "rob-created": "riskofbias__created",
+            "rob-last_updated": "riskofbias__last_updated",
+            # domain
+            "rob-domain_id": "metric__domain_id",
+            "rob-domain_name": "metric__domain__name",
+            "rob-domain_description": "metric__description",
+            # metric
+            "rob-metric_id": "metric_id",
+            "rob-metric_name": "metric__name",
+            "rob-metric_description": "metric__description",
+            # score
+            "rob-score_id": "id",
+            "rob-score_is_default": "is_default",
+            "rob-score_label": "label",
+            "rob-score": "score",
+            "rob-score_display": Value("-"),
+            "rob-score_symbol": Value("-"),
+            "rob-score_shade": Value("-"),
+            "rob-score_bias_direction": "bias_direction",
+            "rob-score_bias_direction_display": sql_display(
+                "bias_direction", constants.BiasDirections
+            ),
+            "rob-score_notes": "notes",
+        }
+        qs = (
+            self.annotate(**study_df_annotations("riskofbias__study__"))
+            .values_list(*list(mapping.values()))
+            .order_by("riskofbias__study__id", "metric_id", "id")
+        )
+        df = pd.DataFrame(data=qs, columns=list(mapping.keys()))
+        df.loc[:, "rob-score_display"] = df["rob-score"].map(constants.SCORE_CHOICES_MAP)
+        df.loc[:, "rob-score_symbol"] = df["rob-score"].map(constants.SCORE_SYMBOLS)
+        df.loc[:, "rob-score_shade"] = df["rob-score"].map(constants.SCORE_SHADES)
+        pd_strip_tags(
+            df,
+            [
+                "study-summary",
+                "rob-domain_description",
+                "rob-metric_description",
+                "rob-score_notes",
+            ],
+        )
+        return df
+
+
 class RiskOfBiasScoreManager(BaseManager):
     assessment_relation = "riskofbias__study__assessment"
+
+    def get_queryset(self):
+        return RiskOfBiasScoreQuerySet(self.model, using=self._db)
 
 
 class RiskOfBiasScoreOverrideObjectManager(BaseManager):

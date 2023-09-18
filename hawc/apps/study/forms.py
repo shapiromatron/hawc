@@ -188,19 +188,22 @@ class IdentifierStudyForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        db_type = cleaned_data.get("db_type")
+        db_id = cleaned_data.get("db_id")
+        if db_type is None or db_id is None:
+            return cleaned_data
+
         # study with this identifier should not already exist
         existing = models.Study.objects.filter(
             assessment_id=self.assessment,
-            identifiers__database=cleaned_data["db_type"],
-            identifiers__unique_id=str(cleaned_data["db_id"]),
+            identifiers__database=db_type,
+            identifiers__unique_id=db_id,
         ).first()
         if existing is not None:
             raise forms.ValidationError({"db_id": f"Study already exists; see {existing}"})
 
         # validate identifier; cache content if it doesn't yet exist
-        cleaned_data["identifier"], self._identifier_content = validate_external_id(
-            cleaned_data["db_type"], cleaned_data["db_id"]
-        )
+        cleaned_data["identifier"], self._identifier_content = validate_external_id(db_type, db_id)
 
         return cleaned_data
 

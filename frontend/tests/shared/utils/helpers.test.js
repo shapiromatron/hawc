@@ -1,4 +1,4 @@
-import {addOuterTag, markKeywords} from "shared/utils/_helpers";
+import {addOuterTag, escapeRegex, markKeywords} from "shared/utils/_helpers";
 
 import assert from "../../helpers";
 
@@ -57,6 +57,22 @@ describe("shared/utils/helpers", function() {
             assert.equal(
                 markKeywords("wow thebatman is here", settings),
                 'wow <mark class="hawc-mk" title="Negative" style="border-bottom: 1px solid #ee6677; box-shadow: inset 0 -4px 0 #ee6677;">thebatman</mark> is here'
+            );
+        });
+    });
+    describe("escapeRegex", function() {
+        it("escapes special regex characters from text", function() {
+            const regText =
+                "phenylbenzene-1,4-diamine|6-PPDQ|2-anilino-5-[(4-methylpentan-2-yl)amino]cyclohexa-2,5-diene-1,4-dione";
+            assert.equal(
+                escapeRegex(regText),
+                "phenylbenzene-1,4-diamine\\|6-PPDQ\\|2-anilino-5-\\[\\(4-methylpentan-2-yl\\)amino\\]cyclohexa-2,5-diene-1,4-dione"
+            );
+        });
+        it("doesn't escape text without any special characters", function() {
+            assert.equal(
+                escapeRegex("no special characters to escape"),
+                "no special characters to escape"
             );
         });
     });
