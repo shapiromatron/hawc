@@ -45,6 +45,9 @@
         checkbox.prop('checked', hasItems);
         checkbox.on('change', function(){
           inputDiv.toggle(checkbox.prop('checked'));
+          if (checkbox.prop('checked') === false){
+            input.val('');
+          }
         }).trigger('change');
       }
       $('input[data-pf]').each(bindCheckboxToPrefilter)
