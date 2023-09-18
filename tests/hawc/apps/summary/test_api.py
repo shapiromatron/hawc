@@ -243,66 +243,107 @@ class TestVisual:
 
 @pytest.mark.django_db
 class TestDataPivot:
-    def _test_dp(self, rewrite_data_files: bool, slug: str, fn_key: str):
-        client = Client()
+    def _test_dp(self, rewrite_data_files: bool, slug: str, fn_key: str, db_keys):
+        user_anon = APIClient()
+        user_reviewer = APIClient()
+        assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
+        user_team = APIClient()
+        assert user_team.login(username="team@hawcproject.org", password="pw") is True
 
+        # check DataPivot read
         dp = models.DataPivot.objects.get(slug=slug)
         url = dp.get_api_detail()
-        response = client.get(url)
+        response = user_anon.get(url)
         assert response.status_code == 200
 
         data = response.json()
         key = f"api-dp-{fn_key}.json"
         check_api_json_data(data, key, rewrite_data_files)
 
-    def _test_dp_data(self, rewrite_data_files: bool, slug: str, fn_key: str):
-        client = Client()
-
-        dp = models.DataPivot.objects.get(slug=slug)
+        # check DataPivot data read
         url = dp.get_data_url().replace("tsv", "json")
-        response = client.get(url)
+        response = user_anon.get(url)
         assert response.status_code == 200
-
         data = response.json()
         key = f"api-dp-data-{fn_key}.json"
         check_api_json_data(data, key, rewrite_data_files)
 
-    def test_bioassay_endpoint(self, rewrite_data_files: bool):
-        self._test_dp(
-            rewrite_data_files, "animal-bioassay-data-pivot-endpoint", "animal-bioassay-endpoint"
-        )
-        self._test_dp_data(
-            rewrite_data_files, "animal-bioassay-data-pivot-endpoint", "animal-bioassay-endpoint"
-        )
+        # check DataPivotQuery read
+        dpq = models.DataPivotQuery.objects.get(slug=slug)
+        url = reverse("summary:api:data_pivot_query-detail", args=(dpq.pk,))
+        response = user_anon.get(url)
+        assert response.status_code == 200
 
-    def test_bioassay_endpoint_group(self, rewrite_data_files: bool):
+        data = response.json()
+        key = f"api-dp_query-{fn_key}.json"
+        check_api_json_data(data, key, rewrite_data_files)
+
+        # check DataPivotQuery create
+        data["title"] = data["title"] + "-2"
+        data["slug"] = data["slug"] + "-2"
+        data["assessment"] = db_keys.assessment_working
+        if "preferred_units" in data:
+            data.pop("preferred_units")
+        url = reverse("summary:api:data_pivot_query-list")
+        for user in [user_anon, user_reviewer]:
+            response = user.post(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.post(url, data, format="json")
+        assert response.status_code == 201
+        assert response.json()["title"] == data["title"]
+
+        dpq_id = response.json()["id"]
+        url = reverse("summary:api:data_pivot_query-detail", args=(dpq_id,))
+
+        # update data pivot
+        data["title"] = "updated-title"
+        for user in [user_anon, user_reviewer]:
+            response = user.patch(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.patch(url, data, format="json")
+        assert response.status_code == 200
+        assert response.json()["title"] == "updated-title"
+
+        # delete data pivot
+        for user in [user_anon, user_reviewer]:
+            response = user.delete(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.delete(url, data, format="json")
+        assert response.status_code == 204
+
+    def test_bioassay_endpoint(self, rewrite_data_files: bool, db_keys):
         self._test_dp(
-            rewrite_data_files, "animal-bioassay-data-pivot-endpoint", "animal-bioassay-endpoint"
-        )
-        self._test_dp_data(
             rewrite_data_files,
-            "animal-bioassay-data-pivot-endpoint-group",
-            "animal-bioassay-endpoint-group",
+            "animal-bioassay-data-pivot-endpoint",
+            "animal-bioassay-endpoint",
+            db_keys,
         )
 
-    def test_epi(self, rewrite_data_files: bool):
-        self._test_dp(rewrite_data_files, "data-pivot-epi", "epi")
-        self._test_dp_data(rewrite_data_files, "data-pivot-epi", "epi")
-
-    def test_epimeta(self, rewrite_data_files: bool):
-        self._test_dp(rewrite_data_files, "data-pivot-epimeta", "epimeta")
-        self._test_dp_data(rewrite_data_files, "data-pivot-epimeta", "epimeta")
-
-    def test_invitro_endpoint(self, rewrite_data_files: bool):
-        self._test_dp(rewrite_data_files, "data-pivot-invitro-endpoint", "invitro-endpoint")
-        self._test_dp_data(rewrite_data_files, "data-pivot-invitro-endpoint", "invitro-endpoint")
-
-    def test_invitro_endpoint_group(self, rewrite_data_files: bool):
+    def test_bioassay_endpoint_group(self, rewrite_data_files: bool, db_keys):
         self._test_dp(
-            rewrite_data_files, "data-pivot-invitro-endpoint-group", "invitro-endpoint-group"
+            rewrite_data_files,
+            "animal-bioassay-data-pivot-endpoint",
+            "animal-bioassay-endpoint",
+            db_keys,
         )
-        self._test_dp_data(
-            rewrite_data_files, "data-pivot-invitro-endpoint-group", "invitro-endpoint-group"
+
+    def test_epi(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(rewrite_data_files, "data-pivot-epi", "epi", db_keys)
+
+    def test_epimeta(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(rewrite_data_files, "data-pivot-epimeta", "epimeta", db_keys)
+
+    def test_invitro_endpoint(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(
+            rewrite_data_files, "data-pivot-invitro-endpoint", "invitro-endpoint", db_keys
+        )
+
+    def test_invitro_endpoint_group(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(
+            rewrite_data_files,
+            "data-pivot-invitro-endpoint-group",
+            "invitro-endpoint-group",
+            db_keys,
         )
 
 
