@@ -39,10 +39,8 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 
 class VisualSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url")
     visual_type = serializers.CharField(source="get_visual_type_display")
     settings = serializers.JSONField(source="get_settings")
-    data_url = serializers.CharField(source="get_data_url")
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -51,6 +49,7 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["url"] = instance.get_absolute_url()
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
+            ret["data_url"] = instance.get_data_url()
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,
@@ -73,7 +72,7 @@ class VisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        exclude = ("slug", "endpoints")
+        exclude = ("endpoints",)
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
