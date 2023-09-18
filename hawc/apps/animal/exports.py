@@ -633,8 +633,8 @@ class EndpointSummary(FlatFileExporter):
             "endpoint-observation_time",
             "endpoint-response_units",
             "Dose units",
-            "N",
             "Doses",
+            "N",
             "Responses",
             "Doses and responses",
             "Response direction",
@@ -732,8 +732,8 @@ class EndpointSummary(FlatFileExporter):
                 row_copy.extend(
                     [
                         unit,  # 'units'
-                        ", ".join(ns_list),  # Ns
                         ", ".join(doses_list),  # Doses
+                        ", ".join(ns_list),  # Ns
                         ", ".join(responses_list),  # Responses w/ units
                         getDR(doses_list, responses_list, unit),
                         response_direction,
