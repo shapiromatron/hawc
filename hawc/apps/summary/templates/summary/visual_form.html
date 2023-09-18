@@ -79,6 +79,23 @@
           $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
         });
         {% endif %}
+
+        const bindCheckboxToPrefilter = function(){
+            // show/hide prefilter based on checkbox selection
+            const checkbox = $(this),
+            input = $(`#id_prefilters-${checkbox.data('pf')}`),
+            inputDiv = $(`#div_id_prefilters-${checkbox.data('pf')}`),
+            hasItems = input.val().length>0;
+
+            checkbox.prop('checked', hasItems);
+            checkbox.on('change', function(){
+            inputDiv.toggle(checkbox.prop('checked'));
+            if (checkbox.prop('checked') === false){
+                input.val('');
+            }
+            }).trigger('change');
+        }
+        $('input[data-pf]').each(bindCheckboxToPrefilter)
       }
     });
   </script>
