@@ -67,6 +67,8 @@
       }
 
       if (config.visual_type !== 6) {
+        $('input[data-pf]').each(window.app.HAWCUtils.bindCheckboxToPrefilter)
+
         window.app.startup("smartTagsStartup", function (smartTags) {
           new smartTags.SmartTagEditor(
             $('#id_caption'),

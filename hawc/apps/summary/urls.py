@@ -116,7 +116,7 @@ urlpatterns = [
         name="dp_new-prompt",
     ),
     path(
-        "data-pivot/assessment/<int:pk>/create/query/",
+        "data-pivot/assessment/<int:pk>/create/query/<int:study_type>/",
         views.DataPivotQueryNew.as_view(),
         name="dp_new-query",
     ),

@@ -56,7 +56,7 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        fields = ("id", "title", "url", "visual_type", "visual_type", "data_url")
+        exclude = ("endpoints",)
 
 
 class VisualSerializer(serializers.ModelSerializer):
@@ -72,6 +72,7 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["url"] = instance.get_absolute_url()
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
+            ret["data_url"] = instance.get_data_url()
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,
@@ -105,7 +106,7 @@ class VisualSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Visual
-        exclude = ("studies", "endpoints")
+        exclude = ("endpoints",)
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
