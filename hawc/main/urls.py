@@ -10,7 +10,6 @@ import hawc.apps.eco.urls
 import hawc.apps.epi.urls
 import hawc.apps.epimeta.urls
 import hawc.apps.epiv2.urls
-import hawc.apps.form_library.urls
 import hawc.apps.hawc_admin.urls
 import hawc.apps.invitro.urls
 import hawc.apps.lit.urls

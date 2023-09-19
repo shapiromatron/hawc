@@ -8,7 +8,7 @@
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
     <div class="dropdown-menu dropdown-menu-right">
         {% if view.user_can_edit %}
-        <a class="dropdown-item" href="{% url 'form_library:form_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'udf:udf_update' object.pk %}">Update</a>
         {% endif %}
     </div>
 </div>
