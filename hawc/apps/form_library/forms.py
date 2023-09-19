@@ -1,3 +1,5 @@
+from crispy_forms import layout as cfl
+from crispy_forms import bootstrap as cfb
 from django import forms
 from django.urls import reverse, reverse_lazy
 
@@ -15,10 +17,9 @@ class UDFForm(forms.ModelForm):
         validators=[PydanticValidator(Schema)],
         widget=TextareaButton(
             btn_attrs={
-                "data-toggle": "modal",
-                "data-target": "#schema-preview",
                 "hx-post": reverse_lazy("form_library:schema_preview", args=("schema",)),
-                "hx-swap": "none",
+                "hx-target": "#schema-preview-frame",
+                "hx-swap": "innerHTML",
                 "class": "ml-2",
             },
             btn_content="Preview",
@@ -34,7 +35,7 @@ class UDFForm(forms.ModelForm):
 
     class Meta:
         model = UserDefinedForm
-        exclude = ("parent_form", "creator", "created", "last_updated")
+        fields = ("name", "description", "schema", "editors")
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
         }
@@ -43,20 +44,24 @@ class UDFForm(forms.ModelForm):
     def helper(self):
         self.fields["description"].widget.attrs["rows"] = 3
         cancel_url = reverse("form_library:form_list")
-        if self.instance.id:
-            helper = BaseFormHelper(
-                self,
-                legend_text="Update a custom form",
-                cancel_url=cancel_url,
-                submit_text="Submit",
-            )
-        else:
-            helper = BaseFormHelper(
-                self,
-                legend_text="Create a custom form",
-                cancel_url=cancel_url,
-                submit_text="Submit",
-            )
+        form_actions = [
+            cfl.Submit("save", "Save"),
+            cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
+        ]
+        legend_text = "Update a custom form" if self.instance.id else "Create a custom form"
+        helper = BaseFormHelper(self)
+        helper.layout = cfl.Layout(
+            cfl.HTML(f"<legend>{legend_text}</legend>"),
+            cfl.Row("name", "description"),
+            cfl.Row(
+                "schema",
+                cfl.Fieldset(
+                    "Form Preview", cfl.Div(css_id="schema-preview-frame"), css_class="col-md-6"
+                ),
+            ),
+            "editors",
+            cfb.FormActions(*form_actions, css_class="form-actions"),
+        )
         return helper
 
 

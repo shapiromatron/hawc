@@ -43,6 +43,7 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
 class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
     template_name = "form_library/udf_form.html"
     form_class = UDFForm
+    model = models.UserDefinedForm
     success_url = reverse_lazy("form_library:form_list")
     success_message = "Form updated."
 
@@ -56,7 +57,7 @@ class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
 class SchemaPreview(LoginRequiredMixin, FormView):
     """Custom form schema preview view. Utilizes HTMX."""
 
-    template_name = "form_library/schema_modal.html"
+    template_name = "form_library/schema_preview.html"
 
     form_class = SchemaPreviewForm
     http_method_names = ["post"]
