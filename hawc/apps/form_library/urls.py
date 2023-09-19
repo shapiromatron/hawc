@@ -11,16 +11,17 @@ urlpatterns = (
             views.UDFListView.as_view(),
             name="form_list",
         ),
-        path(
-            "<int:pk>/",
-            views.UDFDetailView.as_view(),
-            name="form_detail",
-        ),
-        # Create a Data Extraction form
+        # UDF CRUD
         path(
             "create/",
             views.CreateUDFView.as_view(),
             name="form_create",
+        ),
+        path("<int:pk>/update/", views.UpdateUDFView.as_view(), name="form_update"),
+        path(
+            "<int:pk>/",
+            views.UDFDetailView.as_view(),
+            name="form_detail",
         ),
         re_path(
             r"^schema-preview/(?P<field>schema)/$",

@@ -25,7 +25,6 @@ class UDFDetailView(LoginRequiredMixin, DetailView):
         return super().get_context_data(**kwargs)
 
     def user_can_edit(self):
-        breakpoint()
         return self.object.user_can_edit(self.request.user)
 
 
@@ -40,8 +39,17 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
         kwargs.update(user=self.request.user)
         return kwargs
 
-    def get_success_url(self) -> str:
-        return reverse("portal")
+
+class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
+    template_name = "form_library/udf_form.html"
+    form_class = UDFForm
+    success_url = reverse_lazy("form_library:form_list")
+    success_message = "Form updated."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
 
 @method_decorator(htmx_required, name="dispatch")

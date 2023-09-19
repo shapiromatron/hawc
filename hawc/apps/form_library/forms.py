@@ -43,12 +43,20 @@ class UDFForm(forms.ModelForm):
     def helper(self):
         self.fields["description"].widget.attrs["rows"] = 3
         cancel_url = reverse("form_library:form_list")
-        helper = BaseFormHelper(
-            self,
-            legend_text="Create a custom data extraction form",
-            cancel_url=cancel_url,
-            submit_text="Create Form",
-        )
+        if self.instance.id:
+            helper = BaseFormHelper(
+                self,
+                legend_text="Update a custom form",
+                cancel_url=cancel_url,
+                submit_text="Submit",
+            )
+        else:
+            helper = BaseFormHelper(
+                self,
+                legend_text="Create a custom form",
+                cancel_url=cancel_url,
+                submit_text="Submit",
+            )
         return helper
 
 

@@ -9,9 +9,7 @@
     <div class="dropdown-menu dropdown-menu-right">
         {% if view.user_can_edit %}
         <a class="dropdown-item" href="{% url 'form_library:form_update' object.pk %}">Update</a>
-        <a class="dropdown-item" href="{% url 'form_library:form_delete' object.pk %}">Delete</a>
         {% endif %}
-        <a class="dropdown-item" href="{% url 'form_library:form_clone' object.pk %}">Clone</a>
     </div>
 </div>
 <h3>{{object.name}}</h3>

@@ -1,5 +1,6 @@
 import reversion
 from django.db import models
+from django.urls import reverse
 
 from ..myuser.models import HAWCUser
 
@@ -24,6 +25,12 @@ class UserDefinedForm(models.Model):
     class Meta:
         unique_together = ["creator", "name"]
         ordering = ["-last_updated"]
+
+    def get_absolute_url(self):
+        return reverse("form_library:form_detail", args=(self.pk,))
+
+    def user_can_edit(self, user):
+        return self.creator == user or user in self.editors.all()
 
 
 reversion.register(UserDefinedForm)
