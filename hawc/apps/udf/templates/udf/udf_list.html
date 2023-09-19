@@ -12,8 +12,8 @@
 <h2>User Defined Forms</h2>
 {% if object_list %}
 <table id="mainTbl" class="table table-sm table-striped">
-    {% bs4_colgroup '15,45,15,15,10' %}
-    {% bs4_thead 'Name,Description,Creator,Last Updated,Actions' %}
+    {% bs4_colgroup '20,40,20,20' %}
+    {% bs4_thead 'Name,Description,Creator,Last Updated' %}
     <tbody>
         {% for object in object_list %}
         <tr>
@@ -23,7 +23,6 @@
             <td>{{object.description}}</td>
             <td>{{object.creator}}</td>
             <td>{{object.last_updated|date:"Y-m-d"}}</td>
-            <td></td>
         </tr>
         {% endfor %}
     </tbody>
