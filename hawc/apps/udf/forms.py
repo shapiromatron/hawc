@@ -35,7 +35,7 @@ class UDFForm(forms.ModelForm):
 
     class Meta:
         model = UserDefinedForm
-        fields = ("name", "description", "schema", "editors")
+        fields = ("name", "description", "schema", "editors", "deprecated")
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
         }
@@ -60,6 +60,7 @@ class UDFForm(forms.ModelForm):
                 ),
             ),
             "editors",
+            "deprecated" if self.instance.id else None,
             cfb.FormActions(*form_actions, css_class="form-actions"),
         )
         return helper
