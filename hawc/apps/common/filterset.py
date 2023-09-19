@@ -124,7 +124,7 @@ class ExpandableFilterForm(InlineFilterForm):
 
     helper_class = ExpandableFilterFormHelper
 
-    is_expanded = forms.CharField(initial="false", widget=forms.HiddenInput())
+    is_expanded = forms.CharField(initial="false", widget=forms.HiddenInput(), required=False)
 
     def clean(self):
         """Remove 'is_expanded' from form data before data is used for filtering."""
@@ -171,9 +171,8 @@ class BaseFilterSet(df.FilterSet):
             form = form_class(self.data, prefix=self.form_prefix, **self.form_kwargs)
         else:
             form = form_class(prefix=self.form_prefix, **self.form_kwargs)
-        if getattr(
-            form, "dynamic_fields", None
-        ):  # removes unwanted fields from a filterset if specified
+        # removes unwanted fields from a filterset if specified, not empty, and not N one
+        if getattr(form, "dynamic_fields", None):
             for field in list(form.fields.keys()):
                 if field not in form.dynamic_fields and field != "is_expanded":
                     form.fields.pop(field)

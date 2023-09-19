@@ -41,6 +41,7 @@ from ..epi.exports import OutcomeDataPivot
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
+from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
@@ -284,7 +285,6 @@ class Visual(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
-    prefilters = models.JSONField(default=dict)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
         related_name="visuals",
@@ -303,6 +303,7 @@ class Visual(models.Model):
         choices=constants.SortOrder.choices,
         default=constants.SortOrder.SC,
     )
+    prefilters = models.JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -332,6 +333,9 @@ class Visual(models.Model):
 
     def get_api_detail(self):
         return reverse("summary:api:visual-detail", args=(self.id,))
+
+    def get_data_url(self):
+        return reverse("summary:api:visual-data", args=(self.id,))
 
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
@@ -445,6 +449,12 @@ class Visual(models.Model):
     def get_dose_units():
         return DoseUnits.objects.json_all()
 
+    def get_settings(self) -> dict | None:
+        try:
+            return json.loads(self.settings)
+        except ValueError:
+            return None
+
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -463,32 +473,31 @@ class Visual(models.Model):
             if key.startswith(prefix)
         }
 
-    def get_endpoints(self, request=None):
-        qs = Endpoint.objects.none()
-        filters = {}
-
+    def get_endpoints(self, request=None) -> models.QuerySet[Endpoint]:
         if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
-            if request:
-                ids = request.POST.getlist("endpoints")
-            else:
-                ids = self.endpoints.values_list("id", flat=True)
-
-            filters["id__in"] = ids
-            qs = Endpoint.objects.filter(**filters)
+            ids = (
+                request.POST.getlist("endpoints")
+                if request
+                else self.endpoints.values_list("id", flat=True)
+            )
+            return Endpoint.objects.assessment_qs(self.assessment).filter(id__in=ids)
 
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-            dose_id = (
+            dose_units_id = (
                 tryParseInt(request.POST.get("dose_units"), -1) if request else self.dose_units_id
             )
+            filters = {"animal_group__dosing_regime__doses__dose_units_id": dose_units_id}
+
             prefilters = self.get_request_prefilters(request) if request else self.prefilters
             fs = self.get_filterset(prefilters, self.assessment)
+            form = fs.form
+            fs.set_passthrough_options(form)
+            fs.form.is_valid()
+            return fs.qs.filter(**filters).distinct("id")
 
-            filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
-            qs = fs.qs.filter(**filters).distinct("id")
+        return Endpoint.objects.none()
 
-        return qs
-
-    def get_studies(self, request=None):
+    def get_studies(self, request=None) -> models.QuerySet[Study] | list[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
@@ -503,17 +512,16 @@ class Visual(models.Model):
         ]:
             prefilters = self.get_request_prefilters(request) if request else self.prefilters
             fs = self.get_filterset(prefilters, self.assessment)
+            form = fs.form
+            fs.set_passthrough_options(form)
             fs.form.is_valid()
             cleaned_prefilters = fs.form.cleaned_data
 
-            study_fields = [
-                "published_only",
-                "studies",
-            ]
+            # TODO - fix - we should use a different set of prefilters for studies
+            study_fields = ["published_only", "studies"]
             endpoint_prefilters = {
                 k: v for k, v in cleaned_prefilters.items() if k not in study_fields
             }
-
             if any(value for value in endpoint_prefilters.values()):
                 endpoint_qs = fs.qs
                 filters["id__in"] = set(
@@ -525,10 +533,11 @@ class Visual(models.Model):
                 if f := cleaned_prefilters.get(study_fields[1], []):
                     filters["id__in"] = f
 
-            qs = Study.objects.filter(**filters)
+            qs = Study.objects.assessment_qs(self.assessment).filter(**filters)
 
+        # TODO - remove? handle sort order in visualization?
         if self.sort_order:
-            if self.sort_order == "overall_confidence":
+            if self.sort_order == constants.SortOrder.OC.value:
                 qs = sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
             else:
                 qs = qs.order_by(self.sort_order)
@@ -598,6 +607,31 @@ class Visual(models.Model):
         except ValueError as err:
             raise ValueError(err)
 
+    def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
+        study_ids = list(self.get_studies().values_list("id", flat=True))
+        settings = json.loads(self.settings)
+
+        qs = RiskOfBiasScore.objects.filter(
+            riskofbias__active=True,
+            riskofbias__final=True,
+            riskofbias__study__in=study_ids,
+        )
+
+        # use settings in read-only view; dont use when configuring plot
+        if use_settings:
+            qs = qs.filter(metric__in=settings["included_metrics"]).exclude(
+                id__in=settings.get("excluded_score_ids", [])
+            )
+        return qs
+
+    def data_df(self, use_settings: bool = True) -> pd.DataFrame:
+        if self.visual_type not in [
+            constants.VisualType.ROB_BARCHART,
+            constants.VisualType.ROB_HEATMAP,
+        ]:
+            raise ValueError("Not supported for this visual type")
+        return self._rob_data_qs(use_settings=use_settings).df()
+
 
 class DataPivot(models.Model):
     objects = managers.DataPivotManager()
@@ -612,10 +646,11 @@ class DataPivot(models.Model):
         help_text="The URL (web address) used to describe this object "
         "(no spaces or special-characters).",
     )
-    settings = models.TextField(
-        default="undefined",
-        help_text="Paste content from a settings file from a different "
-        'data-pivot, or keep set to "undefined".',
+    settings = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="To clone settings from an existing data-pivot, copy them into this field, "
+        "otherwise leave blank.",
     )
     caption = models.TextField(blank=True, default="")
     published = models.BooleanField(
@@ -634,6 +669,11 @@ class DataPivot(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, **kw):
+        if self.settings is None:
+            self.settings = {}
+        return super().save(**kw)
 
     @staticmethod
     def get_list_url(assessment_id):
@@ -673,17 +713,9 @@ class DataPivot(models.Model):
     def get_visual_type_display(self):
         return self.visual_type
 
-    def get_settings(self):
-        try:
-            return json.loads(self.settings)
-        except ValueError:
-            return None
-
     @staticmethod
-    def reset_row_overrides(settings):
-        settings_as_json = json.loads(settings)
-        settings_as_json["row_overrides"] = []
-        return json.dumps(settings_as_json)
+    def reset_row_overrides(settings: dict):
+        settings["row_overrides"] = []
 
 
 class DataPivotUpload(DataPivot):
@@ -752,33 +784,18 @@ class DataPivotQuery(DataPivot):
 
         if count == 0:
             err = """
-                Current settings returned 0 results; make your filtering
-                settings less restrictive (check units and/or prefilters).
+                Current settings returned 0 results. Please update your settings to make
+                data filters less restrictive.
             """
             raise ValidationError(err)
 
         if count > self.MAXIMUM_QUERYSET_COUNT:
-            err = """
-                Current settings returned too many results
-                ({} returned; a maximum of {} are allowed);
-                make your filtering settings more restrictive
-                (check units and/or prefilters).
-            """.format(
-                count, self.MAXIMUM_QUERYSET_COUNT
-            )
+            err = f"""
+                Current settings returned too many results ({count} returned; a maximum of
+                {self.MAXIMUM_QUERYSET_COUNT} are allowed). Please update your settings to make
+                data filters more restrictive.
+            """
             raise ValidationError(err)
-
-    def _refine_queryset(self, qs):
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            if self.preferred_units:
-                qs = qs.filter(
-                    animal_group__dosing_regime__doses__dose_units__in=self.preferred_units
-                )
-
-        elif self.evidence_type == constants.StudyType.ECO:
-            qs = qs.filter(design__study__assessment_id=self.assessment_id)
-
-        return qs
 
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == constants.StudyType.BIOASSAY:
@@ -848,8 +865,12 @@ class DataPivotQuery(DataPivot):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
 
     def get_queryset(self):
-        qs = self.get_filterset(self.prefilters, self.assessment).qs
-        qs = self._refine_queryset(qs)
+        fs = self.get_filterset(self.prefilters, self.assessment)
+        form = fs.form
+        fs.set_passthrough_options(form)
+        qs = fs.qs
+        if self.evidence_type == constants.StudyType.BIOASSAY and self.preferred_units:
+            qs = qs.filter(animal_group__dosing_regime__doses__dose_units__in=self.preferred_units)
         return qs.order_by("id")
 
     def get_dataset(self) -> FlatExport:

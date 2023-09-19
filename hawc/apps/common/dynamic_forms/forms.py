@@ -88,7 +88,7 @@ class DynamicFormHelper(BaseFormHelper):
             css_class = field.css_class or "col-12"
             self[index].wrap(cfl.Column, css_class=css_class)
 
-        self[:].wrap_together(cfl.Row, id="row_id_dynamic_form")
+        self[:].wrap_together(cfl.Row)
         self.add_field_wraps()
 
 

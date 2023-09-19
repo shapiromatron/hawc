@@ -13,22 +13,20 @@
   {{ smart_tag_form.media }}
   <script type="text/javascript">
     $(document).ready(function () {
-      let js_units_choices = {{form.js_units_choices|safe}},
-        epi_version = {{assessment.epi_version}},
-        printf = window.app.HAWCUtils.printf;
-
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
           $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
         });
       {% endif %}
 
+      {% if form.fields.preferred_units %}
       window.app.startup("assessmentStartup", function(app){
         new app.DoseUnitsWidget($('form'), {
-          choices: js_units_choices,
+          choices: JSON.parse('{{form.fields.preferred_units.choices|safe}}'),
           el: '#id_preferred_units',
         });
       });
+      {% endif %}
 
       window.app.startup("smartTagsStartup", function(smartTags){
           new smartTags.SmartTagEditor(
@@ -37,12 +35,7 @@
           );
       })
 
-      // determine which fields to display depending on data-type
-      const value = {{form.instance.evidence_type}},
-        aniOnlyDivs = $("#div_id_preferred_units"),
-        aniIvOnlyDivs = $("#div_id_export_style");
-      (value === 0) ? aniOnlyDivs.show() : aniOnlyDivs.hide();
-      (value == 0 || value == 2) ? aniIvOnlyDivs.show() : aniIvOnlyDivs.hide();
+      $('input[data-pf]').each(window.app.HAWCUtils.bindCheckboxToPrefilter)
     });
   </script>
 {% endblock extrajs %}

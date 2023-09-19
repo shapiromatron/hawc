@@ -18,6 +18,7 @@ import hawc.apps.mgmt.urls
 import hawc.apps.riskofbias.urls
 import hawc.apps.study.urls
 import hawc.apps.summary.urls
+import hawc.apps.udf.urls
 import hawc.apps.vocab.urls
 from hawc.apps.assessment import views
 from hawc.apps.common.autocomplete import get_autocomplete
@@ -44,7 +45,7 @@ urlpatterns = [
     path("epidemiology/", include("hawc.apps.epiv2.urls")),
     path("epi-meta/", include("hawc.apps.epimeta.urls")),
     path("in-vitro/", include("hawc.apps.invitro.urls")),
-    path("forms/", include("hawc.apps.form_library.urls")),
+    path("udf/", include("hawc.apps.udf.urls")),
     path("bmd/", include("hawc.apps.bmd.urls")),
     path("lit/", include("hawc.apps.lit.urls")),
     path("summary/", include("hawc.apps.summary.urls")),
@@ -86,5 +87,8 @@ if settings.DEBUG:
     import debug_toolbar
     from django.conf.urls.static import static
 
-    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
+    urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+        path("__reload__/", include("django_browser_reload.urls")),
+    ]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

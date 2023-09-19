@@ -9,6 +9,8 @@ from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
 from ..animal.autocomplete import EndpointAutocomplete
+from ..animal.forms import MultipleEndpointChoiceField
+from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
@@ -59,7 +61,7 @@ class SummaryTableForm(forms.ModelForm):
 
 
 class SummaryTableSelectorForm(forms.Form):
-    table_type = forms.IntegerField(widget=forms.Select(choices=constants.TableType.choices))
+    table_type = forms.TypedChoiceField(coerce=int, choices=constants.TableType.choices)
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent")
@@ -234,29 +236,41 @@ class VisualSelectorForm(forms.Form):
 
 
 class EndpointAggregationForm(VisualForm):
+    endpoints = MultipleEndpointChoiceField(required=True, queryset=Endpoint.objects.none())
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.attrs["novalidate"] = ""
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
+            self.instance.assessment
+        )
+        self.fields["endpoints"].widget.attrs["size"] = 20
+        self.fields["endpoints"].queryset = Endpoint.objects.assessment_qs(
+            self.instance.assessment
+        ).selector()
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "prefilters", "studies", "sort_order")
+        exclude = ("assessment", "visual_type", "settings", "prefilters", "studies", "sort_order")
 
 
 class CrossviewForm(VisualForm):
     def _get_prefilter_form(self, data, **form_kwargs):
         prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
+        prefilter = self.prefilter_cls(
             data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
-        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
+        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
             constants.VisualType.BIOASSAY_CROSSVIEW
         ).value
         self.fields["prefilters"] = DynamicFormField(
@@ -272,13 +286,16 @@ class CrossviewForm(VisualForm):
 class RoBForm(VisualForm):
     def _get_prefilter_form(self, data, **form_kwargs):
         prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
+        prefilter = self.prefilter_cls(
             data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.prefilter = prefilters.VisualTypePrefilter.from_visual_type(
+        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
             constants.VisualType.ROB_BARCHART
         ).value
         self.fields["prefilters"] = DynamicFormField(
@@ -427,7 +444,7 @@ class ExternalSiteForm(VisualForm):
             Embed an external website. The following websites can be linked to:
         </p>
         <ul class="form-text text-muted">
-            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box. For example, <code>https://public.tableau.com/shared/JWH9N8XGN</code>.</li>
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box. For example, <code>https://public.tableau.com/views/PFAS150EpidemiologySQ/EpiOverview</code>.</li>
         </ul>
         <p class="form-text text-muted">
             If you'd like to link to another website, please contact us.
@@ -616,6 +633,8 @@ class DataPivotForm(forms.ModelForm):
                 """,
                 "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
+            if hasattr(self.instance, "evidence_type"):
+                inputs["legend_text"] += f" ({self.instance.get_evidence_type_display()})"
 
         helper = BaseFormHelper(self, **inputs)
 
@@ -678,7 +697,6 @@ class DataPivotQueryForm(DataPivotForm):
         fields = (
             "title",
             "slug",
-            "evidence_type",
             "export_style",
             "preferred_units",
             "settings",
@@ -688,33 +706,45 @@ class DataPivotQueryForm(DataPivotForm):
         )
 
     def _get_prefilter_form(self, data, **form_kwargs):
+        # TODO - refactor here in in other calls; identical code
         prefix = form_kwargs.pop("prefix", None)
-        return self.prefilter(
+        prefilter = self.prefilter_cls(
             data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        ).form
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def __init__(self, *args, **kwargs):
         evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
-
-        if evidence_type is not None:
+        if self.instance.id is None:
             self.instance.evidence_type = evidence_type
-        self.fields["evidence_type"].initial = self.instance.evidence_type
-        self.fields["evidence_type"].disabled = True
 
-        self.prefilter = prefilters.StudyTypePrefilter.from_study_type(
+        self.prefilter_cls = prefilters.StudyTypePrefilter.from_study_type(
             self.instance.evidence_type, self.instance.assessment
         ).value
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
-        self.fields["preferred_units"].required = False
-        self.js_units_choices = json.dumps(
-            [
-                {"id": obj.id, "name": obj.name}
-                for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
-            ]
-        )
+
+        if self.instance.evidence_type == constants.StudyType.BIOASSAY:
+            self.fields["preferred_units"].required = False
+            self.fields["preferred_units"].choices = json.dumps(
+                [
+                    {"id": obj.id, "name": obj.name}
+                    for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
+                ]
+            )
+        else:
+            self.fields.pop("preferred_units")
+
+        if self.instance.evidence_type not in (
+            constants.StudyType.IN_VITRO,
+            constants.StudyType.BIOASSAY,
+        ):
+            self.fields.pop("export_style")
+
         self.helper = self.setHelper()
 
     def save(self, commit=True):
@@ -722,7 +752,7 @@ class DataPivotQueryForm(DataPivotForm):
         return super().save(commit=commit)
 
     def clean_export_style(self):
-        evidence_type = self.cleaned_data["evidence_type"]
+        evidence_type = self.instance.evidence_type
         export_style = self.cleaned_data["export_style"]
         if (
             evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)

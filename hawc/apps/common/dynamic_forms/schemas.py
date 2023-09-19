@@ -4,8 +4,7 @@ from enum import Enum
 from django.forms import HiddenInput, JSONField
 from pydantic import BaseModel, conlist, root_validator, validator
 
-from hawc.apps.common.forms import DynamicFormField
-
+from ..forms import DynamicFormField
 from . import fields, forms
 
 

@@ -584,10 +584,8 @@ class ReferenceExcelUploadForm(forms.Form):
         fn = self.cleaned_data["excel_file"]
 
         # check extension
-        if fn.name[-5:] not in [".xlsx", ".xlsm"] and fn.name[-4:] not in [".xls"]:
-            raise forms.ValidationError(
-                "Must be an Excel file with an " "xlsx, xlsm, or xls file extension."
-            )
+        if fn.name[-5:] != ".xlsx":
+            raise forms.ValidationError("Must be an Excel file with an xlsx extension.")
 
         # check parsing
         try:
@@ -600,8 +598,12 @@ class ReferenceExcelUploadForm(forms.Form):
         if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
             raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
 
+        try:
+            hawc_ids = df["HAWC ID"].astype(int).tolist()
+        except pd.errors.IntCastingNaNError:
+            raise forms.ValidationError("HAWC IDs must be integers.")
+
         # check valid HAWC IDs
-        hawc_ids = df["HAWC ID"].tolist()
         qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)
         if unmatched := (set(hawc_ids) - set(qs.values_list("id", flat=True))):
             raise forms.ValidationError(f"Invalid HAWC IDs: {list(unmatched)}")
