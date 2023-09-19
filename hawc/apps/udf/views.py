@@ -63,20 +63,21 @@ class SchemaPreview(LoginRequiredMixin, FormView):
 
     form_class = SchemaPreviewForm
     http_method_names = ["post"]
+    field_name = "schema"
 
     def get_form_kwargs(self):
         """Get form keyword arguments (the schema)."""
-        return {"data": {"schema": self.request.POST.get(self.kwargs["field"])}}
+        return {"data": {"schema": self.request.POST.get(self.field_name)}}
 
     def get_context_data(self, **kwargs):
         """Get context data used in the template. Add field and modal ID."""
-        kwargs.update(field=self.kwargs["field"], modal_id=f'{self.kwargs["field"]}-preview')
+        kwargs.update(field=self.field_name, modal_id=f"{self.field_name}-preview")
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         """Process a valid dynamic form/schema."""
         dynamic_form = dynamic_forms.Schema.parse_obj(form.cleaned_data["schema"]).to_form(
-            prefix=self.kwargs["field"]
+            prefix=self.field_name
         )
         return self.render_to_response(self.get_context_data(valid=True, form=dynamic_form))
 

@@ -17,7 +17,7 @@ class UDFForm(forms.ModelForm):
         validators=[PydanticValidator(Schema)],
         widget=TextareaButton(
             btn_attrs={
-                "hx-post": reverse_lazy("udf:schema_preview", args=("schema",)),
+                "hx-post": reverse_lazy("udf:schema_preview"),
                 "hx-target": "#schema-preview-frame",
                 "hx-swap": "innerHTML",
                 "class": "ml-2",
