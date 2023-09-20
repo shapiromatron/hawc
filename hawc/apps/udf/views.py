@@ -39,9 +39,6 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
         kwargs.update(user=self.request.user)
         return kwargs
 
-    def get_success_url(self) -> str:
-        return reverse_lazy("portal")
-
 
 class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
     template_name = "udf/udf_form.html"
