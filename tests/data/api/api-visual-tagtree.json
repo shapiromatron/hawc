@@ -9,7 +9,6 @@
   "endpoints": [],
   "id": 6,
   "last_updated": "2020-05-08T15:43:09.448621-04:00",
-  "prefilters": {},
   "published": true,
   "settings": {
     "height": 500,
@@ -21,7 +20,6 @@
     "show_legend": true,
     "width": 1280
   },
-  "slug": "tagtree",
   "sort_order": "short_citation",
   "studies": [],
   "title": "tagtree",

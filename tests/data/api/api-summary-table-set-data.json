@@ -83,6 +83,20 @@
       "study_id": 1
     },
     {
+      "bias_direction": 1,
+      "content_type_id": null,
+      "id": 5,
+      "is_default": true,
+      "metric_id": 1,
+      "object_id": null,
+      "riskofbias_id": 3,
+      "score_id": 5,
+      "score_label": "",
+      "score_notes": "<p>Adequate.</p>",
+      "score_score": 16,
+      "study_id": 1
+    },
+    {
       "bias_direction": 2,
       "content_type_id": null,
       "id": 6,
@@ -93,20 +107,6 @@
       "score_id": 6,
       "score_label": "base",
       "score_notes": "<p>Fine, but subsets are important</p>",
-      "score_score": 16,
-      "study_id": 1
-    },
-    {
-      "bias_direction": 1,
-      "content_type_id": null,
-      "id": 7,
-      "is_default": true,
-      "metric_id": 1,
-      "object_id": null,
-      "riskofbias_id": 3,
-      "score_id": 5,
-      "score_label": "",
-      "score_notes": "<p>Adequate.</p>",
       "score_score": 16,
       "study_id": 1
     }

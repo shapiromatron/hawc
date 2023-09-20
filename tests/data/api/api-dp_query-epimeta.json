@@ -9,9 +9,10 @@
   "id": 3,
   "last_updated": "2020-05-08T23:23:45.812012-04:00",
   "preferred_units": [],
-  "prefilters": "{}",
+  "prefilters": {
+    "published_only": true
+  },
   "published": true,
-  "published_only": true,
   "settings": {
     "barchart": {
       "bar_style": "base",

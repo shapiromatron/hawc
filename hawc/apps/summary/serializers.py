@@ -23,20 +23,12 @@ class DataPivotSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     data_url = serializers.CharField(source="get_data_url", read_only=True)
     download_url = serializers.CharField(source="get_download_url", read_only=True)
+    settings = serializers.JSONField()
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret["visual_type"] = instance.get_visual_type_display()
         return ret
-
-    def validate(self, data):
-        try:
-            json.loads(data["settings"])
-            if "prefilters" in data:
-                json.loads(data["prefilters"])
-        except (ValueError, TypeError):
-            raise ValueError("The 'settings' and 'prefilters' fields must be valid json.")
-        return data
 
     class Meta:
         model = models.DataPivot
@@ -44,6 +36,10 @@ class DataPivotSerializer(serializers.ModelSerializer):
 
 
 class DataPivotQuerySerializer(DataPivotSerializer):
+    preferred_units = serializers.ListField(
+        allow_empty=True, child=serializers.IntegerField(min_value=0)
+    )
+
     class Meta:
         model = models.DataPivotQuery
         fields = "__all__"
@@ -64,6 +60,21 @@ class VisualSerializer(serializers.ModelSerializer):
     data_url = serializers.CharField(source="get_data_url", read_only=True)
     slug = serializers.CharField(write_only=True)
     prefilters = serializers.JSONField(write_only=True)
+
+    def validate(self, data):
+        try:
+            data["prefilters"] = (
+                json.loads(data["prefilters"]) if isinstance(data["prefilters"], str) else None
+            )
+        except (ValueError, TypeError):
+            "'Prefilters' field must be valid JSON."
+        try:
+            json.loads(data["settings"])
+        except ValueError:
+            raise serializers.ValidationError(
+                "The 'settings' field must be a string of valid JSON."
+            )
+        return data
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -95,14 +106,6 @@ class VisualSerializer(serializers.ModelSerializer):
         ret["assessment_name"] = str(instance.assessment)
 
         return ret
-
-    def validate(self, data):
-        try:
-            json.loads(data["settings"])
-            json.loads(data["prefilters"])
-        except (ValueError, TypeError):
-            raise ValueError("The 'settings' and 'prefilters' fields must be valid json.")
-        return data
 
     class Meta:
         model = models.Visual

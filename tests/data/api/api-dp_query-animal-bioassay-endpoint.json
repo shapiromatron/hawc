@@ -11,9 +11,10 @@
   "preferred_units": [
     1
   ],
-  "prefilters": "{}",
+  "prefilters": {
+    "published_only": true
+  },
   "published": true,
-  "published_only": true,
   "settings": {
     "barchart": {
       "bar_style": "base",
