@@ -31,6 +31,7 @@ class UDFDetailView(LoginRequiredMixin, DetailView):
 class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
     template_name = "udf/udf_form.html"
     form_class = UDFForm
+    success_url = reverse_lazy("udf:udf_list")
     success_message = "Form created."
 
     def get_form_kwargs(self):
