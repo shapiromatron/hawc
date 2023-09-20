@@ -70,3 +70,7 @@ class SchemaPreviewForm(forms.Form):
     """Form for previewing a Dynamic Form schema."""
 
     schema = forms.JSONField(validators=[PydanticValidator(Schema)])
+
+
+class ModelBindingForm(forms.ModelForm):
+

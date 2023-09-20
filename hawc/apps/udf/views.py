@@ -4,12 +4,13 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from hawc.apps.common import dynamic_forms
-from hawc.apps.common.views import LoginRequiredMixin, MessageMixin, htmx_required
+from hawc.apps.common.views import LoginRequiredMixin, MessageMixin, htmx_required, BaseCreate
 
 from . import models
 from .forms import SchemaPreviewForm, UDFForm
 
 
+# UDF views
 class UDFListView(LoginRequiredMixin, ListView):
     template_name = "udf/udf_list.html"
     model = models.UserDefinedForm
@@ -85,3 +86,7 @@ class SchemaPreview(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         """Process invalid dynamic form/schema."""
         return self.render_to_response(self.get_context_data(valid=False))
+
+
+# Model binding views
+class CreateModelBindingView(BaseCreate):
