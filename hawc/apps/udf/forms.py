@@ -8,7 +8,7 @@ from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaButton
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
-from .models import UserDefinedForm
+from . import models
 
 
 class UDFForm(forms.ModelForm):
@@ -34,7 +34,7 @@ class UDFForm(forms.ModelForm):
             self.instance.creator = user
 
     class Meta:
-        model = UserDefinedForm
+        model = models.UserDefinedForm
         fields = ("name", "description", "schema", "editors", "deprecated")
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
@@ -73,4 +73,14 @@ class SchemaPreviewForm(forms.Form):
 
 
 class ModelBindingForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user")
+        assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        if self.instance.id is None:
+            self.instance.creator = user
+            self.instance.assessment = assessment
 
+    class Meta:
+        model = models.ModelBinding
+        fields = ("content_type", "form")

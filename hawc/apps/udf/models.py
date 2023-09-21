@@ -42,7 +42,7 @@ class ModelBinding(models.Model):
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_bindings"
     )
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, choices=)
     form = models.ForeignKey(UserDefinedForm, on_delete=models.CASCADE, related_name="models")
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="udf_models"
