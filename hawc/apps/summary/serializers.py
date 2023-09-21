@@ -23,7 +23,6 @@ class DataPivotSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     data_url = serializers.CharField(source="get_data_url", read_only=True)
     download_url = serializers.CharField(source="get_download_url", read_only=True)
-    settings = serializers.JSONField()
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -56,11 +55,6 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 
 class VisualSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url", read_only=True)
-    data_url = serializers.CharField(source="get_data_url", read_only=True)
-    slug = serializers.CharField(write_only=True)
-    prefilters = serializers.JSONField(write_only=True)
-
     def validate(self, data):
         try:
             data["prefilters"] = (

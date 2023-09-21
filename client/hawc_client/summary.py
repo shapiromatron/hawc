@@ -107,7 +107,6 @@ class SummaryClient(BaseClient):
                      presented. This setting may used for comparing
                      percent-response, where dose-units are not needed, or for
                      creating one plot similar, but not identical, dose-units.
-                - published_only (bool): Only present data from studies marked as "published" in HAWC.
                 - published (bool): datapivot is published for public view
                 - settings (str): JSON of object settings
                 - assessment (int): assessment ID
@@ -138,7 +137,6 @@ class SummaryClient(BaseClient):
                      presented. This setting may used for comparing
                      percent-response, where dose-units are not needed, or for
                      creating one plot similar, but not identical, dose-units.
-                - published_only (bool): Only present data from studies marked as "published" in HAWC.
                 - published (bool): datapivot is published for public view
                 - settings (str): JSON of object settings
                 - assessment (int): assessment ID
