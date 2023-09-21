@@ -385,7 +385,7 @@ class TagtreeForm(VisualForm):
         self.fields["required_tags"].widget.attrs.update(size=10)
         self.fields["pruned_tags"].widget.attrs.update(size=10)
 
-        data = json.loads(self.instance.settings)
+        data = self.instance.settings
         if "root_node" in data:
             self.fields["root_node"].initial = data["root_node"]
         if "required_tags" in data:
@@ -404,17 +404,15 @@ class TagtreeForm(VisualForm):
             self.fields["show_counts"].initial = data["show_counts"]
 
     def save(self, commit=True):
-        self.instance.settings = json.dumps(
-            dict(
-                root_node=self.cleaned_data["root_node"],
-                required_tags=self.cleaned_data["required_tags"],
-                pruned_tags=self.cleaned_data["pruned_tags"],
-                hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
-                width=self.cleaned_data["width"],
-                height=self.cleaned_data["height"],
-                show_legend=self.cleaned_data["show_legend"],
-                show_counts=self.cleaned_data["show_counts"],
-            )
+        self.instance.settings = dict(
+            root_node=self.cleaned_data["root_node"],
+            required_tags=self.cleaned_data["required_tags"],
+            pruned_tags=self.cleaned_data["pruned_tags"],
+            hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
+            width=self.cleaned_data["width"],
+            height=self.cleaned_data["height"],
+            show_legend=self.cleaned_data["show_legend"],
+            show_counts=self.cleaned_data["show_counts"],
         )
         return super().save(commit)
 
@@ -463,8 +461,7 @@ class ExternalSiteForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        data = json.loads(self.instance.settings)
+        data = self.instance.settings
         if "external_url" in data:
             self.fields["external_url"].initial = data["external_url"]
         if "filters" in data:
@@ -473,14 +470,12 @@ class ExternalSiteForm(VisualForm):
         self.helper = self.setHelper()
 
     def save(self, commit=True):
-        self.instance.settings = json.dumps(
-            dict(
-                external_url=self.cleaned_data["external_url"],
-                external_url_hostname=self.cleaned_data["external_url_hostname"],
-                external_url_path=self.cleaned_data["external_url_path"],
-                external_url_query_args=self.cleaned_data["external_url_query_args"],
-                filters=json.loads(self.cleaned_data["filters"]),
-            )
+        self.instance.settings = dict(
+            external_url=self.cleaned_data["external_url"],
+            external_url_hostname=self.cleaned_data["external_url_hostname"],
+            external_url_path=self.cleaned_data["external_url_path"],
+            external_url_query_args=self.cleaned_data["external_url_query_args"],
+            filters=json.loads(self.cleaned_data["filters"]),
         )
         return super().save(commit)
 
@@ -566,7 +561,7 @@ class PlotlyVisualForm(VisualForm):
         # we remove <extra> tag; by default it's included in plotly visuals but it doesn't pass
         # our html validation checks
         settings: str = (
-            self.cleaned_data.get("settings", "")
+            json.dumps(self.cleaned_data.get("settings", ""))
             .strip()
             .replace("<extra>", "")
             .replace("</extra>", "")
@@ -583,7 +578,7 @@ class PlotlyVisualForm(VisualForm):
             pio.from_json(settings)
         except ValueError as err:
             raise forms.ValidationError("Invalid Plotly figure") from err
-        return settings
+        return json.loads(settings)
 
 
 def get_visual_form(visual_type):
