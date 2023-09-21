@@ -406,7 +406,7 @@ const EcR = {
 EcRSettings.DASHBOARDS = [
     {
         id: "effect vs. reference",
-        label: "effect vs. reference",
+        label: "Effect vs. Reference",
         upperColor: COLORS.blue,
         x_axis: EcRSettings.AXIS_OPTIONS.effectName.id,
         y_axis: EcRSettings.AXIS_OPTIONS.studyCitation.id,
@@ -427,7 +427,7 @@ EcRSettings.DASHBOARDS = [
     },
     {
         id: "cause vs. reference",
-        label: "cause vs. reference",
+        label: "Cause vs. Reference",
         upperColor: COLORS.green,
         x_axis: EcRSettings.AXIS_OPTIONS.causeName.id,
         y_axis: EcRSettings.AXIS_OPTIONS.studyCitation.id,
@@ -448,7 +448,7 @@ EcRSettings.DASHBOARDS = [
     },
     {
         id: "effect vs cause",
-        label: "effect vs cause",
+        label: "Effect vs. Cause",
         upperColor: COLORS.orange,
         x_axis: EcRSettings.AXIS_OPTIONS.effectName.id,
         y_axis: EcRSettings.AXIS_OPTIONS.causeName.id,

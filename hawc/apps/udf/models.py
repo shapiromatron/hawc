@@ -38,6 +38,10 @@ class UserDefinedForm(models.Model):
         return self.creator == user or user in self.editors.all()
 
 
+    def user_can_edit(self, user):
+        return self.creator == user or user in self.editors.all()
+
+
 class ModelBinding(models.Model):
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_bindings"
