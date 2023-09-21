@@ -17,9 +17,9 @@ class SummaryClient(BaseClient):
                 - slug (str): Visual identifier/URL base
                 - visual_type (int): Constant representing visual type
                 - published (bool): visual is published for public view
-                - settings (str): JSON of object settings
+                - settings (dict): object settings (must be valid JSON)
                 - assessment (int): assessment ID
-                - prefilters (str): JSON of object prefilters
+                - prefilters (dict): object prefilters (must be valid JSON)
                 - caption (str): Visual caption
                 - sort_order (str): how results are sorted
 
@@ -39,9 +39,9 @@ class SummaryClient(BaseClient):
                 - slug (str): Visual identifier/URL base
                 - visual_type (int): Constant representing visual type
                 - published (bool): visual is published for public view
-                - settings (str): JSON of object settings
+                - settings (dict): object settings (must be valid JSON)
                 - assessment (int): assessment ID
-                - prefilters (str): JSON of object prefilters
+                - prefilters (dict): object prefilters (must be valid JSON)
                 - caption (str): Visual caption
                 - sort_order (str): how results are sorted
 

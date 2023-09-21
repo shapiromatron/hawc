@@ -1,5 +1,3 @@
-import json
-
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
@@ -55,21 +53,6 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 
 class VisualSerializer(serializers.ModelSerializer):
-    def validate(self, data):
-        try:
-            data["prefilters"] = (
-                json.loads(data["prefilters"]) if isinstance(data["prefilters"], str) else None
-            )
-        except (ValueError, TypeError):
-            "'Prefilters' field must be valid JSON."
-        try:
-            json.loads(data["settings"])
-        except ValueError:
-            raise serializers.ValidationError(
-                "The 'settings' field must be a string of valid JSON."
-            )
-        return data
-
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
@@ -86,7 +69,6 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
         ret["visual_type"] = instance.get_visual_type_display()
-        ret["settings"] = instance.get_settings()
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
