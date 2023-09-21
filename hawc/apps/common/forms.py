@@ -456,6 +456,46 @@ class ConfirmationField(forms.CharField):
             raise forms.ValidationError(f'The value of "{self.check_value}" is required.')
 
 
+class WidgetButtonMixin:
+    """Mixin that adds a button to be associated with a field."""
+
+    _template_name = "common/widgets/btn.html"
+
+    def __init__(
+        self,
+        btn_attrs=None,
+        btn_content="",
+        btn_stretch=True,
+        btn_append=True,
+        *args,
+        **kwargs,
+    ):
+        """Apply button settings."""
+        self.btn_attrs = {} if btn_attrs is None else btn_attrs.copy()
+        self.btn_content = btn_content
+        self.btn_stretch = btn_stretch
+        self.btn_append = btn_append
+        super().__init__(*args, **kwargs)
+
+    def get_context(self, name, value, attrs):
+        """Add button settings to context."""
+        context = super().get_context(name, value, attrs)
+        context["widget"]["btn_attrs"] = self.btn_attrs
+        context["widget"]["btn_content"] = self.btn_content
+        context["widget"]["btn_stretch"] = self.btn_stretch
+        context["widget"]["btn_append"] = self.btn_append
+        return context
+
+    def render(self, name, value, attrs=None, renderer=None):
+        """Add to the context, then render."""
+        context = self.get_context(name, value, attrs)
+        return self._render(self._template_name, context, renderer)
+
+
+class TextareaButton(WidgetButtonMixin, forms.Textarea):
+    """Custom widget that adds a button associated with a textarea."""
+
+
 class DynamicFormField(forms.JSONField):
     """Field to display dynamic form inline."""
 
