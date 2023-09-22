@@ -1,0 +1,14 @@
+<!-- need is-invalid class since bootstrap doesn't handle input groups correctly: https://stackoverflow.com/a/65571586 -->
+<div class="input-group is-invalid">
+    {% if widget.btn_append %}
+    {% include widget.template_name %}
+    <div class="input-group-append{% if not widget.btn_stretch %} align-self-start{% endif %}">
+        <button type="button" {% include "common/widgets/attrs.html" with attrs=widget.btn_attrs only %}>{{widget.btn_content}}</button>
+    </div>
+    {% else %}
+    <div class="input-group-prepend{% if not widget.btn_stretch %} align-self-start{% endif %}">
+        <button type="button" {% include "common/widgets/attrs.html" with attrs=widget.btn_attrs only %}>{{widget.btn_content}}</button>
+    </div>
+    {% include widget.template_name %}
+    {% endif %}
+</div>

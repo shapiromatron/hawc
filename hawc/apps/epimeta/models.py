@@ -52,7 +52,6 @@ class MetaProtocol(models.Model):
     )
     notes = models.TextField(blank=True)
 
-    COPY_NAME = "meta_protocol"
     BREADCRUMB_PARENT = "study"
 
     class Meta:
@@ -154,7 +153,6 @@ class MetaResult(models.Model):
     )
     notes = models.TextField(blank=True)
 
-    COPY_NAME = "meta_result"
     BREADCRUMB_PARENT = "protocol"
 
     class Meta:
@@ -302,7 +300,6 @@ class SingleResult(models.Model):
     )
     notes = models.TextField(blank=True)
 
-    COPY_NAME = "meta_single_result"
     BREADCRUMB_PARENT = "meta_result"
 
     class Meta:

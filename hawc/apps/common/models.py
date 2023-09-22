@@ -482,10 +482,6 @@ def apply_flavored_help_text(app_name: str):
             model._meta.get_field(field_name).help_text = help_text
 
 
-def get_model_copy_name(instance: models.Model) -> str:
-    return getattr(instance, "COPY_NAME", instance._meta.db_table)
-
-
 def include_related(
     queryset: QuerySet, ancestors: bool = True, descendants: bool = True
 ) -> QuerySet:

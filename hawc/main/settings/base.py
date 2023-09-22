@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
+    "hawc.apps.udf",
 )
 # DB settings
 DATABASES = {
