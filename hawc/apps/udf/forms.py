@@ -73,14 +73,49 @@ class SchemaPreviewForm(forms.Form):
 
 
 class ModelBindingForm(forms.ModelForm):
+    # including assessment field ensures unique_together validation is done
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
-        assessment = kwargs.pop("assessment")
+        self.assessment = kwargs.pop("parent", None)
+        user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        if self.instance.id is None:
+        if self.assessment:
+            self.fields["assessment"].initial = self.assessment
+            self.instance.assessment = self.assessment
             self.instance.creator = user
-            self.instance.assessment = assessment
 
     class Meta:
         model = models.ModelBinding
-        fields = ("content_type", "form")
+        fields = ("assessment", "content_type", "form")
+
+    @property
+    def helper(self):
+        cancel_url = reverse("udf:udf_list")
+        legend_text = "Update a model binding" if self.instance.id else "Create a model binding"
+        helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
+        return helper
+
+
+class TagBindingForm(forms.ModelForm):
+    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("parent", None)
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if self.assessment:
+            self.fields["assessment"].initial = self.assessment
+            self.instance.assessment = self.assessment
+            self.instance.creator = user
+
+    class Meta:
+        model = models.TagBinding
+        fields = ("assessment", "tag", "form")
+
+    @property
+    def helper(self):
+        cancel_url = reverse("udf:udf_list")
+        legend_text = "Update a tag binding" if self.instance.id else "Create a tag binding"
+        helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
+        return helper

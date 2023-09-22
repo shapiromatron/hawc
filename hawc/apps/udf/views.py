@@ -125,12 +125,14 @@ class CreateTagBindingView(BaseCreate):
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.TagBinding
+    form_class = forms.TagBindingForm
 
 
 class UpdateTagBindingView(BaseUpdate):
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.TagBinding
+    form_class = forms.TagBindingForm
 
 
 class TagBindingDetailView(BaseDetail):
