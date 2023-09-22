@@ -649,7 +649,7 @@ class EndpointSummary(FlatFileExporter):
             return [f"{d:g}" for d in doses]
 
         def getNs(groups):
-            return [f"{grp['n'] or ''}" for grp in groups]
+            return [f"{grp['n'] if grp['n'] is not None else ''}" for grp in groups]
 
         def getResponses(groups):
             resps = []
