@@ -5,7 +5,7 @@
 {% include 'common/inline_filter_form.html' %}
 <ul class="list-group list-group-flush my-3">
     {% for ref in object_list %}
-    <li class="list-group-item list-group-item-action conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
+    <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
         {% include 'lit/_reference_with_tags.html' with conflict_resolution=False show_actions=False %}
     </li>
     {% empty %}

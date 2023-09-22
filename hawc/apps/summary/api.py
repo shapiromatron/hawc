@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from ..assessment.api import (
     AssessmentEditViewSet,
@@ -16,7 +17,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import re_digits
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers, table_serializers
@@ -91,7 +92,15 @@ class DataPivotViewSet(AssessmentViewSet):
         return Response(export)
 
 
-class VisualViewSet(AssessmentViewSet):
+class DataPivotQueryViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.DataPivotQuery
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
+    serializer_class = serializers.DataPivotQuerySerializer
+
+
+class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     """
     For list view, return all Visual objects for an assessment, but using the
     simplified collection view.
@@ -99,6 +108,7 @@ class VisualViewSet(AssessmentViewSet):
     For all other views, use the detailed visual view.
     """
 
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Visual
     pagination_class = DisabledPagination
@@ -112,6 +122,22 @@ class VisualViewSet(AssessmentViewSet):
 
     def get_queryset(self):
         return super().get_queryset().select_related("assessment")
+
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def data(self, request, pk):
+        obj = self.get_object()
+        try:
+            df = obj.data_df()
+        except ValueError:
+            return Response(
+                {"error": "Data export not available for this visual type."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+        return FlatExport.api_response(df, obj.slug)
 
 
 class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):

@@ -146,8 +146,11 @@
       "as_barchart": false,
       "axis_label": "Axis label",
       "domain": "-1,120",
+      "draw_background": true,
+      "draw_plot_border": true,
       "filter_logic": "and",
       "font_style": "Arial",
+      "gridline_color": "#FFFFFF",
       "logscale": false,
       "merge_aggressive": true,
       "merge_descriptions": true,
@@ -159,12 +162,17 @@
         "right": 25,
         "top": 25
       },
+      "plot_background_color": "#EEEEEE",
+      "plot_border_color": "#666666",
       "plot_width": 400,
       "show_xticks": true,
       "show_yticks": true,
       "text_background": true,
       "text_background_color": "#eeeeee",
-      "title": "Title"
+      "text_background_extend": false,
+      "title": "Title",
+      "x_axis_force_domain": false,
+      "x_axis_number_ticks": 10
     },
     "reference_lines": [
       {

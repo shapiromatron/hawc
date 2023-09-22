@@ -126,7 +126,6 @@ class Experiment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "experiments"
     BREADCRUMB_PARENT = "study"
 
     def __str__(self):
@@ -277,7 +276,6 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "animal_groups"
     BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):
@@ -449,7 +447,6 @@ class DosingRegime(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "dose_regime"
     BREADCRUMB_PARENT = "dosed_animals"
 
     def __str__(self):
@@ -540,8 +537,6 @@ class DoseGroup(models.Model):
     dose = models.FloatField(validators=[MinValueValidator(0)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    COPY_NAME = "doses"
 
     class Meta:
         ordering = ("dose_units", "dose_group_id")
@@ -767,7 +762,6 @@ class Endpoint(BaseEndpoint):
     )
     additional_fields = models.TextField(default="{}")
 
-    COPY_NAME = "endpoints"
     BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
@@ -1361,8 +1355,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         choices=constants.TreatmentEffect.choices,
         help_text="Expert judgement based report of treatment related effects (add direction if known). Use when statistical analysis not available. In results comments, indicate whether it was author judgment or assessment team judgement",
     )
-
-    COPY_NAME = "groups"
 
     class Meta:
         ordering = ("endpoint", "dose_group_id")

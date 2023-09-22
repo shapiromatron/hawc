@@ -1,7 +1,7 @@
 import django_filters as df
-from django.db.models import Q
+from django.db.models import Q, Subquery
 
-from ..common.filterset import BaseFilterSet, InlineFilterForm
+from ..common.filterset import BaseFilterSet, InlineFilterForm, PaginationFilter
 from ..myuser.models import HAWCUser
 from . import constants, models
 
@@ -32,13 +32,14 @@ class StudyFilterSet(BaseFilterSet):
         help_text="A user with active study evaluation assignments",
         empty_label="All users",
     )
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Study
         form = InlineFilterForm
-        fields = ["query", "data_type", "published", "assigned_user"]
+        fields = ["query", "data_type", "published", "assigned_user", "paginate_by"]
         main_field = "query"
-        appended_fields = ["data_type", "assigned_user", "published"]
+        appended_fields = ["data_type", "assigned_user", "published", "paginate_by"]
 
     def __init__(self, *args, assessment, **kwargs):
         super().__init__(*args, assessment=assessment, **kwargs)
@@ -48,7 +49,11 @@ class StudyFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
+        return self._meta.model.objects.filter(
+            id__in=Subquery(
+                queryset.filter(query).order_by("id").distinct("id").values_list("id", flat=True)
+            )
+        )
 
     def filter_query(self, queryset, name, value):
         query = (

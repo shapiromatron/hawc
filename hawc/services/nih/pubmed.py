@@ -243,10 +243,10 @@ class PubMedParser:
 
         for auth in auths:
             last = auth.find("LastName")
-            initials = auth.find("Initials")
             collective = auth.find("CollectiveName")
-            if last is not None and initials is not None:
-                names.append(normalize_author(f"{last.text} {initials.text}"))
+            if last is not None:
+                initials = cls._try_single_find(auth, "Initials")
+                names.append(normalize_author(f"{last.text} {initials}".strip()))
             elif collective is not None:
                 names.append(collective.text)
             else:

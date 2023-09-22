@@ -4,11 +4,12 @@
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>iris (flowers)</p>",
   "created": "2020-05-08T15:45:29.985823-04:00",
+  "data_url": "/summary/api/visual/7/data/",
   "dose_units": null,
   "endpoints": [],
   "id": 7,
   "last_updated": "2020-05-08T15:45:29.985848-04:00",
-  "prefilters": "{}",
+  "prefilters": {},
   "published": true,
   "settings": {
     "external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",

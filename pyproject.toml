@@ -69,6 +69,7 @@ line-length = 100
 target-version = "py311"
 select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "RUF"]
 ignore = ["E501", "B904", "B007", "S308", "S113", "S314", "S603", "S607", "RUF012"]
+unfixable = ["F401", "F841"]
 
 [tool.ruff.isort]
 known-first-party = ["hawc", "hawc_client"]

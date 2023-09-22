@@ -1,5 +1,6 @@
 import logging
 import math
+from html import unescape
 
 import pandas as pd
 from django.apps import apps
@@ -12,6 +13,7 @@ from django.db import IntegrityError, connection, models, router, transaction
 from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
 from django.db.models.functions import Coalesce, Concat
 from django.template.defaultfilters import slugify as default_slugify
+from django.utils.html import strip_tags
 from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
@@ -451,7 +453,7 @@ def get_distinct_charfield(Cls, assessment_id, field):
 
 def get_distinct_charfield_opts(Cls, assessment_id, field):
     objs = get_distinct_charfield(Cls, assessment_id, field)
-    return [(obj, obj) for obj in sorted(objs)]
+    return [(obj, obj) for obj in sorted(objs) if obj]
 
 
 def apply_flavored_help_text(app_name: str):
@@ -478,10 +480,6 @@ def apply_flavored_help_text(app_name: str):
         model = app_config.get_model(model_name)
         for field_name, help_text in help_texts.items():
             model._meta.get_field(field_name).help_text = help_text
-
-
-def get_model_copy_name(instance: models.Model) -> str:
-    return getattr(instance, "COPY_NAME", instance._meta.db_table)
 
 
 def include_related(
@@ -601,6 +599,17 @@ def to_display_array(series: pd.Series, Choice: type[Choices], delimiter: str = 
         .apply(lambda items: [mapping.get(item, "?") for item in items])
         .str.join(delimiter)
     )
+
+
+def pd_strip_tags(df: pd.DataFrame, columns: list[str]):
+    """Remove tags from text columns a DataFrame; in place
+
+    Args:
+        df (pd.DataFrame): the DataFrame to clean
+        columns (list[str]): column names to remove tags
+    """
+    for col in columns:
+        df.loc[:, col] = df[col].apply(lambda txt: unescape(strip_tags(txt)))
 
 
 class NumericTextField(models.CharField):

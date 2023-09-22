@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Callable, Iterable
+from functools import wraps
 from typing import Any
 from urllib.parse import urlparse
 
@@ -7,10 +8,10 @@ import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import FieldError, PermissionDenied
 from django.db import models, transaction
 from django.forms.models import model_to_dict
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from django.urls import Resolver404, resolve, reverse
@@ -719,7 +720,11 @@ class FilterSetMixin:
         return self._filterset
 
     def get_queryset(self):
-        return self.filterset.qs
+        try:
+            return self.filterset.qs
+        except FieldError:
+            # TODO - remove try/except after https://github.com/carltongibson/django-filter/pull/1598
+            return super().get_queryset().none()
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -775,3 +780,15 @@ class HeatmapBase(BaseList):
                 create_visual_url=create_url if can_edit else None,
             ),
         )
+
+
+def htmx_required(func):
+    """Require request to be have HX-Request header."""
+
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if request.headers.get("HX-Request", "") != "true":
+            return HttpResponseBadRequest("An HTMX request is required")
+        return func(request, *args, **kwargs)
+
+    return wrapper

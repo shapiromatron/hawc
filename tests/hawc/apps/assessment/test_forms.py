@@ -5,7 +5,8 @@ import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from hawc.apps.assessment.forms import AssessmentValueForm, DatasetForm, LogFilterForm
+from hawc.apps.assessment.filterset import LogFilterSet
+from hawc.apps.assessment.forms import AssessmentValueForm, DatasetForm
 from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
 
 IRIS_DATA_CSV = (
@@ -160,13 +161,13 @@ class TestDatasetForm:
 class TestLogFilterForm:
     def test_setup(self):
         assess = Assessment.objects.get(id=1)
-        form = LogFilterForm(data={}, assessment=assess)
+        form = LogFilterSet(data={}, assessment=assess)
         assert form.is_valid()
-        assert len(form.filters()) == 0
+        assert len(form.qs) > 1
 
-        form = LogFilterForm(data=dict(object_id=999), assessment=assess)
+        form = LogFilterSet(data=dict(object_id=999), assessment=assess)
         assert form.is_valid()
-        assert len(form.filters()) == 1
+        assert len(form.qs) == 1
 
 
 @pytest.mark.django_db
