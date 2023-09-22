@@ -40,7 +40,6 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 class VisualSerializer(serializers.ModelSerializer):
     visual_type = serializers.CharField(source="get_visual_type_display")
-    settings = serializers.JSONField(source="get_settings")
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
