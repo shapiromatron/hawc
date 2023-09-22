@@ -71,7 +71,7 @@ class SummaryClient(BaseClient):
             visual_id (int): ID of the visual to read
 
         Returns:
-
+            dict: The result object, if get was successful
         """
         url = f"{self.session.root_url}/summary/api/visual/{visual_id}/"
         return self.session.get(url)
