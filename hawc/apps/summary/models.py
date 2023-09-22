@@ -289,7 +289,7 @@ class Visual(models.Model):
         help_text="Endpoints to be included in visualization",
         blank=True,
     )
-    settings = models.TextField(default="{}")
+    settings = models.JSONField(default=dict)
     caption = models.TextField(blank=True)
     published = models.BooleanField(
         default=False,
@@ -447,12 +447,6 @@ class Visual(models.Model):
     def get_dose_units():
         return DoseUnits.objects.json_all()
 
-    def get_settings(self) -> dict | None:
-        try:
-            return json.loads(self.settings)
-        except ValueError:
-            return None
-
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -580,13 +574,13 @@ class Visual(models.Model):
         if self.visual_type != constants.VisualType.PLOTLY:
             raise ValueError("Incorrect visual type")
         try:
-            return from_json(self.settings)
+            return from_json(json.dumps(self.settings))
         except ValueError as err:
             raise ValueError(err)
 
     def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
         study_ids = list(self.get_studies().values_list("id", flat=True))
-        settings = json.loads(self.settings)
+        settings = self.settings
 
         qs = RiskOfBiasScore.objects.filter(
             riskofbias__active=True,

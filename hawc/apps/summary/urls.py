@@ -7,6 +7,7 @@ router = SimpleRouter()
 router.register(r"assessment", api.SummaryAssessmentViewSet, basename="assessment")
 router.register(r"visual", api.VisualViewSet, basename="visual")
 router.register(r"data_pivot", api.DataPivotViewSet, basename="data_pivot")
+router.register(r"data_pivot_query", api.DataPivotQueryViewSet, basename="data_pivot_query")
 router.register(r"summary-text", api.SummaryTextViewSet, basename="summary-text")
 router.register(r"summary-table", api.SummaryTableViewSet, basename="summary-table")
 
