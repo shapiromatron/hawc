@@ -2,7 +2,7 @@ from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, F, Q, QuerySet, Value, When
+from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
