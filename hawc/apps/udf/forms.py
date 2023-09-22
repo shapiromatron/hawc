@@ -1,6 +1,9 @@
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Case, F, Q, QuerySet, Value, When
+from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
 from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
@@ -8,7 +11,7 @@ from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaButton
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
-from . import models
+from . import constants, models
 
 
 class UDFForm(forms.ModelForm):
@@ -75,6 +78,11 @@ class SchemaPreviewForm(forms.Form):
 class ModelBindingForm(forms.ModelForm):
     # including assessment field ensures unique_together validation is done
     assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+    content_type = forms.ModelChoiceField(
+        queryset=ContentType.objects.annotate(
+            full_name=Concat(F("app_label"), Value("."), F("model"))
+        ).filter(full_name__in=constants.SUPPORTED_MODELS)
+    )
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)

@@ -1,5 +1,2 @@
-from django.db import models
-
-
-class ContentTypeChoices(models.IntegerChoices):
-    ANIMAL_EXPERIMENT = 1  # TODO: get real values
+# Models that are able to be linked to User Defined Forms
+SUPPORTED_MODELS = ["animal.endpoint", "study.study"]
