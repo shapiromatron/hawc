@@ -93,6 +93,28 @@ def check_200(
     return response
 
 
+def check_status_code(
+    client: Client | APIClient, url: str, status_code: int, kw: dict | None = None
+) -> HttpResponse | Response:
+    """Check that a GET request with the given client returns the given status code.
+
+    Args:
+        client (Client | APIClient): A client object
+        url (str): The URL to request
+        kw (dict | None, optional): Any additional kwargs to pass to the client.
+
+    Returns:
+        A response instance
+    """
+    if kw is None:
+        kw = {}
+    if isinstance(client, APIClient):
+        kw.setdefault("format", "json")
+    response = client.get(url, **kw)
+    assert response.status_code == status_code
+    return response
+
+
 def df_to_form_data(key: str, df: pd.DataFrame) -> dict:
     f = BytesIO()
     df.to_excel(f, index=False)
