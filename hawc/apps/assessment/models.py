@@ -300,7 +300,6 @@ class Assessment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "assessments"
     BREADCRUMB_PARENT = None
 
     def get_assessment(self):

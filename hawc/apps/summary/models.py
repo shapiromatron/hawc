@@ -4,7 +4,6 @@ import os
 from operator import methodcaller
 
 import pandas as pd
-from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -34,7 +33,6 @@ from ..common.helper import (
     SerializerHelper,
     tryParseInt,
 )
-from ..common.models import get_model_copy_name
 from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..eco.exports import EcoFlatComplete
 from ..epi.exports import OutcomeDataPivot
@@ -291,7 +289,7 @@ class Visual(models.Model):
         help_text="Endpoints to be included in visualization",
         blank=True,
     )
-    settings = models.TextField(default="{}")
+    settings = models.JSONField(default=dict)
     caption = models.TextField(blank=True)
     published = models.BooleanField(
         default=False,
@@ -449,12 +447,6 @@ class Visual(models.Model):
     def get_dose_units():
         return DoseUnits.objects.json_all()
 
-    def get_settings(self) -> dict | None:
-        try:
-            return json.loads(self.settings)
-        except ValueError:
-            return None
-
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -574,27 +566,6 @@ class Visual(models.Model):
             ],
         }
 
-    def _update_settings_across_assessments(self, cw: dict) -> str:
-        settings = json.loads(self.settings)
-
-        if (
-            self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW
-        ) and "included_metrics" in settings:
-            pass
-
-        if (
-            self.visual_type
-            in [constants.VisualType.ROB_BARCHART, constants.VisualType.ROB_HEATMAP]
-        ) and "included_metrics" in settings:
-            ids = []
-            model_cw = cw[get_model_copy_name(apps.get_model("riskofbias", "RiskOfBiasMetric"))]
-            for id_ in settings["included_metrics"]:
-                if id_ in model_cw:
-                    ids.append(model_cw[id_])
-            settings["included_metrics"] = ids
-
-        return json.dumps(settings)
-
     def get_rob_visual_type_display(self, value):
         rob_name = self.assessment.get_rob_name_display().lower()
         return value.replace("risk of bias", rob_name)
@@ -603,13 +574,13 @@ class Visual(models.Model):
         if self.visual_type != constants.VisualType.PLOTLY:
             raise ValueError("Incorrect visual type")
         try:
-            return from_json(self.settings)
+            return from_json(json.dumps(self.settings))
         except ValueError as err:
             raise ValueError(err)
 
     def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
         study_ids = list(self.get_studies().values_list("id", flat=True))
-        settings = json.loads(self.settings)
+        settings = self.settings
 
         qs = RiskOfBiasScore.objects.filter(
             riskofbias__active=True,
@@ -736,10 +707,6 @@ class DataPivotUpload(DataPivot):
     @property
     def visual_type(self):
         return "Data pivot (file upload)"
-
-    def _update_settings_across_assessments(self, cw: dict) -> str:
-        # no changes required
-        return self.settings
 
     def get_dataset(self) -> FlatExport:
         worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
@@ -892,42 +859,6 @@ class DataPivotQuery(DataPivot):
             return "Data pivot (ecology)"
         else:
             raise ValueError("Unknown type")
-
-    def _update_settings_across_assessments(self, cw: dict) -> str:
-        try:
-            settings = json.loads(self.settings)
-        except json.JSONDecodeError:
-            return self.settings
-
-        if len(settings["row_overrides"]) > 0:
-            if (
-                self.evidence_type == constants.StudyType.BIOASSAY
-                and self.export_style == constants.ExportStyle.EXPORT_GROUP
-            ):
-                Model = apps.get_model("animal", "EndpointGroup")
-            elif (
-                self.evidence_type == constants.StudyType.BIOASSAY
-                and self.export_style == constants.ExportStyle.EXPORT_ENDPOINT
-            ):
-                Model = apps.get_model("animal", "Endpoint")
-            elif (
-                self.evidence_type == constants.StudyType.EPI
-                and self.export_style == constants.ExportStyle.EXPORT_GROUP
-            ):
-                Model = apps.get_model("epi", "ResultGroup")
-            elif (
-                self.evidence_type == constants.StudyType.EPI
-                and self.export_style == constants.ExportStyle.EXPORT_ENDPOINT
-            ):
-                Model = apps.get_model("epi", "Outcome")
-            else:
-                raise NotImplementedError()
-
-            model_cw = cw[get_model_copy_name(Model)]
-            for override in settings["row_overrides"]:
-                override.update(pk=model_cw[override["pk"]])
-
-        return json.dumps(settings)
 
 
 reversion.register(SummaryText)

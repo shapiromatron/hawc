@@ -18,13 +18,27 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
 
 class DataPivotSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url")
-    data_url = serializers.CharField(source="get_data_url")
-    download_url = serializers.CharField(source="get_download_url")
-    visual_type = serializers.CharField(source="get_visual_type_display")
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
+    data_url = serializers.CharField(source="get_data_url", read_only=True)
+    download_url = serializers.CharField(source="get_download_url", read_only=True)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["visual_type"] = instance.get_visual_type_display()
+        return ret
 
     class Meta:
         model = models.DataPivot
+        fields = "__all__"
+
+
+class DataPivotQuerySerializer(DataPivotSerializer):
+    preferred_units = serializers.ListField(
+        allow_empty=True, child=serializers.IntegerField(min_value=0)
+    )
+
+    class Meta:
+        model = models.DataPivotQuery
         fields = "__all__"
 
 
@@ -39,9 +53,6 @@ class CollectionVisualSerializer(serializers.ModelSerializer):
 
 
 class VisualSerializer(serializers.ModelSerializer):
-    visual_type = serializers.CharField(source="get_visual_type_display")
-    settings = serializers.JSONField(source="get_settings")
-
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
@@ -56,6 +67,8 @@ class VisualSerializer(serializers.ModelSerializer):
             constants.VisualType.ROB_BARCHART,
         ]:
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
+
+        ret["visual_type"] = instance.get_visual_type_display()
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
