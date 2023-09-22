@@ -39,7 +39,6 @@ class RiskOfBiasDomain(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "riskofbiasdomains"
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
@@ -106,7 +105,6 @@ class RiskOfBiasMetric(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "riskofbiasmetrics"
     BREADCRUMB_PARENT = "domain"
 
     class Meta:
@@ -201,7 +199,6 @@ class RiskOfBias(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "riskofbiases"
     BREADCRUMB_PARENT = "study"
 
     class Meta:
@@ -372,8 +369,6 @@ class RiskOfBiasScore(models.Model):
     )
     notes = models.TextField(blank=True)
 
-    COPY_NAME = "riskofbiasscores"
-
     class Meta:
         ordering = ("metric", "id")
 
@@ -513,7 +508,6 @@ class RiskOfBiasAssessment(models.Model):
         help_text="Detailed instructions for completing risk of bias assessments.",
     )
 
-    COPY_NAME = "riskofbiasassessments"
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
