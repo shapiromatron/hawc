@@ -1,0 +1,41 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load hawc %}
+
+{% block content %}
+{% if crud == "Read" %}
+<div class="d-flex">
+    <h3>Model/Form binding</h3>
+    {% if obj_perms.edit %}
+    {% actions %}
+    <a class="dropdown-item" href="{% url 'udf:model_update' object.pk %}">Update</a>
+    <a class="dropdown-item" href="{% url 'udf:model_delete' object.pk %}">Delete</a>
+    {% endactions %}
+    {% endif %}
+</div>
+{% endif %}
+<table class="table table-sm table-striped">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Assessment</th>
+            <td>{{object.assessment}}</td>
+        </tr>
+        <tr>
+            <th>Model</th>
+            <td>{{object.content_type}}</td>
+        </tr>
+        <tr>
+            <th>Creator</th>
+            <td>{{object.creator}}</td>
+        </tr>
+        <tr>
+            <th>Form</th>
+            <td><a href="{% url 'udf:form_detail' object.form.pk %}">{{object.form.name}}</a></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
