@@ -38,15 +38,11 @@ class UserDefinedForm(models.Model):
         return self.creator == user or user in self.editors.all()
 
 
-    def user_can_edit(self, user):
-        return self.creator == user or user in self.editors.all()
-
-
 class ModelBinding(models.Model):
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_bindings"
     )
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, choices=)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     form = models.ForeignKey(UserDefinedForm, on_delete=models.CASCADE, related_name="models")
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="udf_models"
@@ -57,6 +53,9 @@ class ModelBinding(models.Model):
     class Meta:
         indexes = (models.Index(fields=["assessment", "content_type"]),)
         unique_together = (("assessment", "content_type"),)
+
+    def get_assessment(self):
+        return self.assessment
 
 
 class TagBinding(models.Model):
@@ -74,6 +73,9 @@ class TagBinding(models.Model):
     class Meta:
         indexes = (models.Index(fields=["assessment", "tag"]),)
         unique_together = (("assessment", "tag"),)
+
+    def get_assessment(self):
+        return self.assessment
 
 
 reversion.register(TagBinding)

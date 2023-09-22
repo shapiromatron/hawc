@@ -3,11 +3,19 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
+from hawc.apps.assessment.models import Assessment
 from hawc.apps.common import dynamic_forms
-from hawc.apps.common.views import BaseCreate, LoginRequiredMixin, MessageMixin, htmx_required
+from hawc.apps.common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseUpdate,
+    LoginRequiredMixin,
+    MessageMixin,
+    htmx_required,
+)
 
-from . import models
-from .forms import SchemaPreviewForm, UDFForm
+from . import forms, models
 
 
 # UDF views
@@ -31,7 +39,7 @@ class UDFDetailView(LoginRequiredMixin, DetailView):
 
 class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
     template_name = "udf/udf_form.html"
-    form_class = UDFForm
+    form_class = forms.UDFForm
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form created."
 
@@ -43,7 +51,7 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
 
 class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
     template_name = "udf/udf_form.html"
-    form_class = UDFForm
+    form_class = forms.UDFForm
     model = models.UserDefinedForm
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form updated."
@@ -60,7 +68,7 @@ class SchemaPreview(LoginRequiredMixin, FormView):
 
     template_name = "udf/schema_preview.html"
 
-    form_class = SchemaPreviewForm
+    form_class = forms.SchemaPreviewForm
     http_method_names = ["post"]
     field_name = "schema"
 
@@ -87,4 +95,51 @@ class SchemaPreview(LoginRequiredMixin, FormView):
 
 # Model binding views
 class CreateModelBindingView(BaseCreate):
-    pass
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+    form_class = forms.ModelBindingForm
+
+
+class UpdateModelBindingView(BaseUpdate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+    form_class = forms.ModelBindingForm
+
+
+class ModelBindingDetailView(BaseDetail):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+
+
+class DeleteModelBindingView(BaseDelete):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+
+
+# Tag binding views
+class CreateTagBindingView(BaseCreate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+
+
+class UpdateTagBindingView(BaseUpdate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+
+
+class TagBindingDetailView(BaseDetail):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+
+
+class DeleteTagBindingView(BaseDelete):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding

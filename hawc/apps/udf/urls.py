@@ -13,21 +13,31 @@ urlpatterns = (
         path("<int:pk>/", views.UDFDetailView.as_view(), name="udf_detail"),
         path("preview/", views.SchemaPreview.as_view(), name="schema_preview"),
         # Model binding views
-        path("binding/create/", views.CreateModelBindingView.as_view(), name="binding_create"),
-        # path(
-        #     "binding/<int:pk>/update/",
-        #     views.UpdateModelBindingView.as_view(),
-        #     name="binding_update",
-        # ),
-        # path("binding/<int:pk>/", views.ModelBindingDetailView.as_view(), name="binding_detail"),
-        # # Tag binding views
-        # path("tag-binding/create/", views.CreateTagBindingView.as_view(), name="binding_create"),
-        # path(
-        #     "tag-binding/<int:pk>/update/",
-        #     views.UpdateTagBindingView.as_view(),
-        #     name="binding_update",
-        # ),
-        # path("tag-binding/<int:pk>/", views.TagBindingDetailView.as_view(), name="binding_detail"),
+        path(
+            "assessment/<int:pk>/create-model/",
+            views.CreateModelBindingView.as_view(),
+            name="model_create",
+        ),
+        path(
+            "model/<int:pk>/update/",
+            views.UpdateModelBindingView.as_view(),
+            name="model_update",
+        ),
+        path("model/<int:pk>/", views.ModelBindingDetailView.as_view(), name="model_detail"),
+        path("model/<int:pk>/delete/", views.DeleteModelBindingView.as_view(), name="model_delete"),
+        # Tag binding views
+        path(
+            "assessment/<int:pk>/tag/create/",
+            views.CreateTagBindingView.as_view(),
+            name="tag_create",
+        ),
+        path(
+            "tag/<int:pk>/update/",
+            views.UpdateTagBindingView.as_view(),
+            name="binding_update",
+        ),
+        path("tag/<int:pk>/", views.TagBindingDetailView.as_view(), name="tag_detail"),
+        path("tag/<int:pk>/delete/", views.DeleteTagBindingView.as_view(), name="tag_delete"),
     ]
     if settings.HAWC_FEATURES.ENABLE_UDF
     else []
