@@ -9,8 +9,8 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
-from django.db.models import Case, CharField, Choices, Q, QuerySet, URLField, Value, When
-from django.db.models.functions import Coalesce
+from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
+from django.db.models.functions import Coalesce, Concat
 from django.template.defaultfilters import slugify as default_slugify
 from treebeard.mp_tree import MP_Node
 
@@ -534,6 +534,17 @@ def sql_display(name: str, Choice: type[Choices]) -> Case:
         *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
         default=Value("?"),
     )
+
+
+def sql_format(format_str: str, *field_params):
+    value_params = format_str.split("{}")
+    replace_num = min(len(value_params) - 1, len(field_params))
+    concat_args = []
+    for i in range(replace_num):
+        concat_args.append(Value(value_params[i]))
+        concat_args.append(field_params[i])
+    concat_args.append(Value("".join(value_params[replace_num:])))
+    return Concat(*concat_args, output_field=TextField())
 
 
 def replace_null(field: str, replacement: str = ""):

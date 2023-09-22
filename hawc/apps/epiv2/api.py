@@ -35,22 +35,6 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         """
         assessment: Assessment = self.get_object()
         published_only = get_published_only(assessment, request)
-        qs = models.DataExtraction.objects.get_qs(assessment).published_only(published_only)
-        export = FlatExport(df=qs.complete_df(), filename=f"epidemiological-export-{assessment.id}")
-        return Response(export)
-
-    @action(
-        detail=True,
-        url_path="export2",
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        renderer_classes=PandasRenderers,
-    )
-    def export2(self, request, pk):
-        """
-        Retrieve epidemiology complete export.
-        """
-        assessment: Assessment = self.get_object()
-        published_only = get_published_only(assessment, request)
         qs = (
             models.DataExtraction.objects.get_qs(assessment)
             .published_only(published_only)

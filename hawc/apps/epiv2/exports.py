@@ -1,6 +1,237 @@
 import pandas as pd
+from django.db.models import (
+    CharField,
+    F,
+    Func,
+    Value,
+)
 
 from hawc.apps.common.helper import FlatFileExporter
+
+from ..common.exports import Exporter, Module
+from ..common.models import sql_display, sql_format, str_m2m, to_display_array
+from ..study.exports import StudyModule
+from . import constants
+
+
+class DesignModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "url": "url",
+            "summary": "summary",
+            "study_name": "study_name",
+            "study_design": "study_design_display",
+            "source": "source_display",
+            "age_profile": "age_profile_string",
+            "age_description": "age_description",
+            "sex": "sex_display",
+            "race": "race",
+            "participant_n": "participant_n",
+            "years_enrolled": "years_enrolled",
+            "years_followup": "years_followup",
+            "countries": "countries__name",
+            "region": "region",
+            "criteria": "criteria",
+            "susceptibility": "susceptibility",
+            "comments": "comments",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def _get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epidemiology/design/{}/", query_prefix + "pk"),
+            "study_design_display": sql_display(
+                query_prefix + "study_design", constants.StudyDesign
+            ),
+            "source_display": sql_display(query_prefix + "source", constants.Source),
+            "age_profile_string": Func(
+                F(query_prefix + "age_profile"),
+                Value(", "),
+                Value(""),
+                function="array_to_string",
+                output_field=CharField(max_length=256),
+            ),
+            "sex_display": sql_display(query_prefix + "sex", constants.Sex),
+            "countries__name": str_m2m(query_prefix + "countries__name"),
+        }
+
+    def prepare_df(self, df):
+        df.loc[:, self.key_prefix + "age_profile"] = to_display_array(
+            df[self.key_prefix + "age_profile"], constants.AgeProfile, ", "
+        )
+        return df
+
+
+class ChemicalModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "name": "name",
+            "DTSXID": "dsstox__dtxsid",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+
+class ExposureModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "name": "name",
+            "measurement_type": "measurement_type_string",
+            "biomonitoring_matrix": "biomonitoring_matrix_display",
+            "biomonitoring_source": "biomonitoring_source_display",
+            "measurement_timing": "measurement_timing",
+            "exposure_route": "exposure_route_display",
+            "measurement_method": "measurement_method",
+            "comments": "comments",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def _get_annotation_map(self, query_prefix):
+        return {
+            "measurement_type_string": Func(
+                F(query_prefix + "measurement_type"),
+                Value(", "),
+                Value(""),
+                function="array_to_string",
+                output_field=CharField(max_length=256),
+            ),
+            "biomonitoring_matrix_display": sql_display(
+                query_prefix + "biomonitoring_matrix",  # todo fix default display "?"
+                constants.BiomonitoringMatrix,
+            ),
+            "biomonitoring_source_display": sql_display(
+                query_prefix + "biomonitoring_source",  # todo fix default display "?"
+                constants.BiomonitoringSource,
+            ),
+            "exposure_route_display": sql_display(
+                query_prefix + "exposure_route", constants.ExposureRoute
+            ),
+        }
+
+
+class ExposureLevelModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "name": "name",
+            "sub_population": "sub_population",
+            "median": "median",
+            "mean": "mean",
+            "variance": "variance",
+            "variance_type": "variance_type_display",
+            "units": "units",
+            "ci_lcl": "ci_lcl",
+            "percentile_25": "percentile_25",
+            "percentile_75": "percentile_75",
+            "ci_ucl": "ci_ucl",
+            "ci_type": "ci_type_display",
+            "negligible_exposure": "negligible_exposure",
+            "data_location": "data_location",
+            "comments": "comments",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def _get_annotation_map(self, query_prefix):
+        return {
+            "variance_type_display": sql_display(
+                query_prefix + "variance_type", constants.VarianceType
+            ),
+            "ci_type_display": sql_display(
+                query_prefix + "ci_type", constants.ConfidenceIntervalType
+            ),
+        }
+
+
+class OutcomeModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "system": "system_display",
+            "effect": "effect",
+            "effect_detail": "effect_detail",
+            "endpoint": "endpoint",
+            "comments": "comments",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def _get_annotation_map(self, query_prefix):
+        return {
+            "system_display": sql_display(query_prefix + "system", constants.HealthOutcomeSystem),
+        }
+
+
+class AdjustmentFactorModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "name": "name",
+            "description": "description",
+            "comments": "comments",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+
+class DataExtractionModule(Module):
+    def _get_value_map(self):
+        return {
+            "pk": "pk",
+            "sub_population": "sub_population",
+            "outcome_measurement_timing": "outcome_measurement_timing",
+            "effect_estimate_type": "effect_estimate_type",
+            "effect_estimate": "effect_estimate",
+            "ci_lcl": "ci_lcl",
+            "ci_ucl": "ci_ucl",
+            "ci_type": "ci_type_display",
+            "units": "units",
+            "variance_type": "variance_type_display",
+            "variance": "variance",
+            "n": "n",
+            "p_value": "p_value",
+            "significant": "significant_display",
+            "group": "group",
+            "exposure_rank": "exposure_rank",
+            "exposure_transform": "exposure_transform",
+            "outcome_transform": "outcome_transform",
+            "confidence": "confidence",
+            "data_location": "data_location",
+            "effect_description": "effect_description",
+            "statistical_method": "statistical_method",
+            "comments": "comments",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def _get_annotation_map(self, query_prefix):
+        return {
+            "ci_type_display": sql_display(
+                query_prefix + "ci_type", constants.ConfidenceIntervalType
+            ),
+            "variance_type_display": sql_display(
+                query_prefix + "variance_type", constants.VarianceType
+            ),
+            "significant_display": sql_display(query_prefix + "significant", constants.Significant),
+        }
+
+
+class EpiExporter(Exporter):
+    modules = [
+        (StudyModule, "study", "design__study"),
+        (DesignModule, "design", "design"),
+        (ChemicalModule, "chemical", "exposure_level__chemical"),
+        (ExposureModule, "exposure", "exposure_level__exposure_measurement"),
+        (ExposureLevelModule, "exposure_level", "exposure_level"),
+        (OutcomeModule, "outcome", "outcome"),
+        (AdjustmentFactorModule, "adjustment_factor", "factors"),
+        (DataExtractionModule, "data_extraction", ""),
+    ]
 
 
 class EpiFlatComplete(FlatFileExporter):
@@ -10,4 +241,4 @@ class EpiFlatComplete(FlatFileExporter):
     """
 
     def build_df(self) -> pd.DataFrame:
-        return self.queryset.complete_df()
+        return EpiExporter().get_df(self.queryset)
