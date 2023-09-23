@@ -55,4 +55,6 @@ class StudyModule(Module):
     def prepare_df(self, df):
         for key in [f"{self.key_prefix}pubmed_id", f"{self.key_prefix}hero_id"]:
             df[key] = pd.to_numeric(df[key], errors="coerce")
+        for key in [f"{self.key_prefix}doi"]:
+            df[key] = df[key].replace("", np.nan)
         return df
