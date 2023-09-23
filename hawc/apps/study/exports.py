@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 from django.db.models import Q
 
 from ..common.exports import Module
@@ -49,3 +51,8 @@ class StudyModule(Module):
             "coi_reported_display": sql_display(query_prefix + "coi_reported", CoiReported),
             "url": sql_format("/study/{}/", query_prefix + "pk"),
         }
+
+    def prepare_df(self, df):
+        for key in [f"{self.key_prefix}pubmed_id", f"{self.key_prefix}hero_id"]:
+            df[key] = pd.to_numeric(df[key], errors="coerce")
+        return df
