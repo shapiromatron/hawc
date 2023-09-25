@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
             model_name="dataextraction",
             name="adverse_direction",
             field=models.CharField(
+                blank=True,
                 choices=[
                     ("Unspecified", "Unspecified"),
                     ("Unknown", "Unknown"),

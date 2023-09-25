@@ -698,6 +698,7 @@ class DataExtraction(models.Model):
         help_text="Briefly describe the statistical analysis method (e.g., logistic regression).",
     )
     adverse_direction = models.CharField(
+        blank=True,
         max_length=32,
         choices=constants.AdverseDirection.choices,
         default=constants.AdverseDirection.UNSPECIFIED,
