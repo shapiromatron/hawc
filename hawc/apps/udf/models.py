@@ -50,12 +50,17 @@ class ModelBinding(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
         indexes = (models.Index(fields=["assessment", "content_type"]),)
         unique_together = (("assessment", "content_type"),)
 
     def get_assessment(self):
         return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("udf:model_detail", args=(self.id,))
 
 
 class TagBinding(models.Model):
@@ -70,12 +75,17 @@ class TagBinding(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
         indexes = (models.Index(fields=["assessment", "tag"]),)
         unique_together = (("assessment", "tag"),)
 
     def get_assessment(self):
         return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("udf:tag_detail", args=(self.id,))
 
 
 reversion.register(TagBinding)

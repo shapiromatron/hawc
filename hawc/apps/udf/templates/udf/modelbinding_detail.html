@@ -1,11 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load hawc %}
+{% load bs4 %}
 
 {% block content %}
 {% if crud == "Read" %}
 <div class="d-flex">
-    <h3>Model/Form binding</h3>
+    <h2>Model/Form binding</h2>
     {% if obj_perms.edit %}
     {% actions %}
     <a class="dropdown-item" href="{% url 'udf:model_update' object.pk %}">Update</a>
@@ -34,7 +34,7 @@
         </tr>
         <tr>
             <th>Form</th>
-            <td><a href="{% url 'udf:form_detail' object.form.pk %}">{{object.form.name}}</a></td>
+            <td><a href="{% url 'udf:udf_detail' object.form.pk %}">{{object.form.name}}</a></td>
         </tr>
     </tbody>
 </table>

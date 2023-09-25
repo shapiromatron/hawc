@@ -311,6 +311,9 @@ class Assessment(models.Model):
     def get_assessment_logs_url(self):
         return reverse("assessment:assessment_logs", args=(self.id,))
 
+    def get_udf_list_url(self):
+        return reverse("udf:binding-list", args=(self.id,))
+
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
 

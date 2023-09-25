@@ -13,6 +13,7 @@ urlpatterns = (
         path("<int:pk>/", views.UDFDetailView.as_view(), name="udf_detail"),
         path("preview/", views.SchemaPreview.as_view(), name="schema_preview"),
         # Model binding views
+        path("assessment/<int:pk>/", views.UDFBindingList.as_view(), name="binding-list"),
         path(
             "assessment/<int:pk>/create-model/",
             views.CreateModelBindingView.as_view(),
@@ -34,7 +35,7 @@ urlpatterns = (
         path(
             "tag/<int:pk>/update/",
             views.UpdateTagBindingView.as_view(),
-            name="binding_update",
+            name="tag_update",
         ),
         path("tag/<int:pk>/", views.TagBindingDetailView.as_view(), name="tag_detail"),
         path("tag/<int:pk>/delete/", views.DeleteTagBindingView.as_view(), name="tag_delete"),

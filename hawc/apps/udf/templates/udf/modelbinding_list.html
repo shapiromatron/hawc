@@ -1,0 +1,41 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+
+{% block content %}
+<h2>Assessment model forms</h2>
+<p class="text-muted">...</p>
+
+<div class="d-flex">
+    <h3>Forms bound to tags:</h3>
+    {% if obj_perms.edit %}
+    {% actions %}
+    <a class="dropdown-item" href="{% url 'udf:tag_create' assessment.pk %}">Create</a>
+    {% endactions %}
+    {% endif %}
+</div>
+<ul>
+    {% for object in tag_object_list %}
+    <li><a href={{object.get_absolute_url}}>{{object}}</a></li>
+    {% empty %}
+    <li><i>No custom forms have been assigned to literature tags.</i></li>
+    {% endfor %}
+</ul>
+
+<div class="d-flex">
+    <h3>Forms bound to data extraction elements:</h3>
+    {% if obj_perms.edit %}
+    {% actions %}
+    <a class="dropdown-item" href="{% url 'udf:model_create' assessment.pk %}">Create</a>
+    {% endactions %}
+    {% endif %}
+</div>
+<ul>
+    {% for object in object_list %}
+    <li><a href={{object.get_absolute_url}}>{{object}}</a></li>
+    {% empty %}
+    <li><i>No custom forms have been bound to data extractions.</i></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

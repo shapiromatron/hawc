@@ -9,6 +9,7 @@ from hawc.apps.common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseList,
     BaseUpdate,
     LoginRequiredMixin,
     MessageMixin,
@@ -93,19 +94,34 @@ class SchemaPreview(LoginRequiredMixin, FormView):
         return self.render_to_response(self.get_context_data(valid=False))
 
 
+class UDFBindingList(BaseList):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+
+    def get_queryset(self):
+        return super().get_queryset().filter(assessment=self.assessment)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update(tag_object_list=models.TagBinding.objects.filter(assessment=self.assessment))
+        return super().get_context_data(**kwargs)
+
+
 # Model binding views
 class CreateModelBindingView(BaseCreate):
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.ModelBinding
     form_class = forms.ModelBindingForm
+    success_message = "Model form binding created."
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
-class UpdateModelBindingView(BaseUpdate):
-    parent_model = Assessment
-    parent_template_name = "assessment"
-    model = models.ModelBinding
-    form_class = forms.ModelBindingForm
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
 
 
 class ModelBindingDetailView(BaseDetail):
@@ -114,10 +130,25 @@ class ModelBindingDetailView(BaseDetail):
     model = models.ModelBinding
 
 
+class UpdateModelBindingView(BaseUpdate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+    form_class = forms.ModelBindingForm
+    success_message = "Model form binding updated."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
 class DeleteModelBindingView(BaseDelete):
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.ModelBinding
+    success_message = "Model form binding deleted."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
 
 
 # Tag binding views
@@ -126,13 +157,15 @@ class CreateTagBindingView(BaseCreate):
     parent_template_name = "assessment"
     model = models.TagBinding
     form_class = forms.TagBindingForm
+    success_message = "Tag form binding created."
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
-class UpdateTagBindingView(BaseUpdate):
-    parent_model = Assessment
-    parent_template_name = "assessment"
-    model = models.TagBinding
-    form_class = forms.TagBindingForm
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
 
 
 class TagBindingDetailView(BaseDetail):
@@ -141,7 +174,22 @@ class TagBindingDetailView(BaseDetail):
     model = models.TagBinding
 
 
+class UpdateTagBindingView(BaseUpdate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+    form_class = forms.TagBindingForm
+    success_message = "Tag form binding updated."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
 class DeleteTagBindingView(BaseDelete):
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.TagBinding
+    success_message = "Tag form binding deleted."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()

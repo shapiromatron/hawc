@@ -11,6 +11,7 @@ from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaButton
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
+from ..assessment.models import Assessment
 from . import constants, models
 
 
@@ -76,8 +77,9 @@ class SchemaPreviewForm(forms.Form):
 
 
 class ModelBindingForm(forms.ModelForm):
-    # including assessment field ensures unique_together validation is done
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+    assessment = forms.ModelChoiceField(
+        queryset=Assessment.objects.all(), disabled=True, widget=forms.HiddenInput
+    )
     content_type = forms.ModelChoiceField(
         queryset=ContentType.objects.annotate(
             full_name=Concat(F("app_label"), Value("."), F("model"))
@@ -88,7 +90,8 @@ class ModelBindingForm(forms.ModelForm):
         self.assessment = kwargs.pop("parent", None)
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        if self.assessment:
+        if self.instance.id is None:
+            # include assessment for unique_together validation
             self.fields["assessment"].initial = self.assessment
             self.instance.assessment = self.assessment
             self.instance.creator = user
@@ -99,23 +102,33 @@ class ModelBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = reverse("udf:udf_list")
+        cancel_url = (
+            self.instance.get_absolute_url()
+            if self.instance.id
+            else self.instance.assessment.get_udf_list_url()
+        )
         legend_text = "Update a model binding" if self.instance.id else "Create a model binding"
         helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper
 
 
 class TagBindingForm(forms.ModelForm):
-    assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
+    assessment = forms.ModelChoiceField(
+        queryset=Assessment.objects.all(), disabled=True, widget=forms.HiddenInput
+    )
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        if self.assessment:
+        if self.instance.id is None:
+            # include assessment for unique_together validation
             self.fields["assessment"].initial = self.assessment
             self.instance.assessment = self.assessment
             self.instance.creator = user
+        qs = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
+        self.fields["tag"].queryset = qs
+        self.fields["tag"].choices = [(el.id, el.get_nested_name()) for el in qs]
 
     class Meta:
         model = models.TagBinding
@@ -123,7 +136,11 @@ class TagBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = reverse("udf:udf_list")
+        cancel_url = (
+            self.instance.get_absolute_url()
+            if self.instance.id
+            else self.instance.assessment.get_udf_list_url()
+        )
         legend_text = "Update a tag binding" if self.instance.id else "Create a tag binding"
         helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper
