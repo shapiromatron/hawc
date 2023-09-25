@@ -697,6 +697,13 @@ class DataExtraction(models.Model):
         blank=True,
         help_text="Briefly describe the statistical analysis method (e.g., logistic regression).",
     )
+    adverse_direction = models.CharField(
+        max_length=32,
+        choices=constants.AdverseDirection.choices,
+        default=constants.AdverseDirection.UNSPECIFIED,
+        verbose_name="Adverse direction",
+        help_text=" Select the direction of effect that would be adverse if observed. This does not mean that the actual results were adverse or were in that direction; this is a guide for interpretation of the results. For example, for a given neuropsychological score, is an increase interpreted as a better or worse score? For some outcomes (e.g., thyroid hormones), an association in either direction could conceivably be adverse.",
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
