@@ -2,9 +2,11 @@ import reversion
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.forms import Form
 from django.urls import reverse
 
 from ..assessment.models import Assessment
+from ..common import dynamic_forms
 from ..lit.models import ReferenceFilterTag
 
 
@@ -56,6 +58,9 @@ class ModelBinding(models.Model):
         indexes = (models.Index(fields=["assessment", "content_type"]),)
         unique_together = (("assessment", "content_type"),)
 
+    def form_instance(self) -> Form:
+        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form()
+
     def get_assessment(self):
         return self.assessment
 
@@ -80,6 +85,9 @@ class TagBinding(models.Model):
     class Meta:
         indexes = (models.Index(fields=["assessment", "tag"]),)
         unique_together = (("assessment", "tag"),)
+
+    def form_instance(self) -> Form:
+        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form()
 
     def get_assessment(self):
         return self.assessment
