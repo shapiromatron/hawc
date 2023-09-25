@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
@@ -50,12 +51,18 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
         return kwargs
 
 
-class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
+class UpdateUDFView(MessageMixin, UpdateView):
     template_name = "udf/udf_form.html"
     form_class = forms.UDFForm
     model = models.UserDefinedForm
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form updated."
+
+    def get_object(self, **kw):
+        obj = super().get_object(**kw)
+        if not obj.user_can_edit(self.request.user):
+            raise PermissionDenied()
+        return obj
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

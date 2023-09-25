@@ -37,7 +37,7 @@ def get_client(role: str = "", api: bool = False) -> Client | APIClient:
     """Return a client with specified user role
 
     Args:
-        role (str): One of the following: {'', 'pm', 'team', 'rev', 'admin'}. If empty, anonymous.
+        role (str): One of the following: {'', 'pm', 'team', 'reviewer', 'admin'}. If empty, anonymous.
         api (bool): Returns rest_framework.test.APIClient if True, else django.test.Client
 
     Returns:
@@ -93,25 +93,11 @@ def check_200(
     return response
 
 
-def check_status_code(
-    client: Client | APIClient, url: str, status_code: int, kw: dict | None = None
-) -> HttpResponse | Response:
-    """Check that a GET request with the given client returns the given status code.
-
-    Args:
-        client (Client | APIClient): A client object
-        url (str): The URL to request
-        kw (dict | None, optional): Any additional kwargs to pass to the client.
-
-    Returns:
-        A response instance
-    """
-    if kw is None:
-        kw = {}
-    if isinstance(client, APIClient):
-        kw.setdefault("format", "json")
+def check_302(client: Client, url: str, redirect_url: str, **kw) -> HttpResponse:
+    """Check that visiting this URL returns a 302 redirect to the specified redirect url."""
     response = client.get(url, **kw)
-    assert response.status_code == status_code
+    assert response.status_code == 302
+    assert response.url.startswith(redirect_url)
     return response
 
 
