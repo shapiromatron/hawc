@@ -1,15 +1,26 @@
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
+from hawc.apps.assessment.models import Assessment
 from hawc.apps.common import dynamic_forms
-from hawc.apps.common.views import LoginRequiredMixin, MessageMixin, htmx_required
+from hawc.apps.common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseList,
+    BaseUpdate,
+    LoginRequiredMixin,
+    MessageMixin,
+    htmx_required,
+)
 
-from . import models
-from .forms import SchemaPreviewForm, UDFForm
+from . import forms, models
 
 
+# UDF views
 class UDFListView(LoginRequiredMixin, ListView):
     template_name = "udf/udf_list.html"
     model = models.UserDefinedForm
@@ -30,7 +41,7 @@ class UDFDetailView(LoginRequiredMixin, DetailView):
 
 class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
     template_name = "udf/udf_form.html"
-    form_class = UDFForm
+    form_class = forms.UDFForm
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form created."
 
@@ -40,12 +51,18 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
         return kwargs
 
 
-class UpdateUDFView(LoginRequiredMixin, MessageMixin, UpdateView):
+class UpdateUDFView(MessageMixin, UpdateView):
     template_name = "udf/udf_form.html"
-    form_class = UDFForm
+    form_class = forms.UDFForm
     model = models.UserDefinedForm
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form updated."
+
+    def get_object(self, **kw):
+        obj = super().get_object(**kw)
+        if not obj.user_can_edit(self.request.user):
+            raise PermissionDenied()
+        return obj
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -59,7 +76,7 @@ class SchemaPreview(LoginRequiredMixin, FormView):
 
     template_name = "udf/schema_preview.html"
 
-    form_class = SchemaPreviewForm
+    form_class = forms.SchemaPreviewForm
     http_method_names = ["post"]
     field_name = "schema"
 
@@ -82,3 +99,104 @@ class SchemaPreview(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         """Process invalid dynamic form/schema."""
         return self.render_to_response(self.get_context_data(valid=False))
+
+
+class UDFBindingList(BaseList):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+
+    def get_queryset(self):
+        return super().get_queryset().filter(assessment=self.assessment)
+
+    def get_context_data(self, **kwargs):
+        kwargs.update(tag_object_list=models.TagBinding.objects.filter(assessment=self.assessment))
+        return super().get_context_data(**kwargs)
+
+
+# Model binding views
+class CreateModelBindingView(BaseCreate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+    form_class = forms.ModelBindingForm
+    success_message = "Model form binding created."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
+class ModelBindingDetailView(BaseDetail):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+
+
+class UpdateModelBindingView(BaseUpdate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+    form_class = forms.ModelBindingForm
+    success_message = "Model form binding updated."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
+class DeleteModelBindingView(BaseDelete):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.ModelBinding
+    success_message = "Model form binding deleted."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
+# Tag binding views
+class CreateTagBindingView(BaseCreate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+    form_class = forms.TagBindingForm
+    success_message = "Tag form binding created."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
+class TagBindingDetailView(BaseDetail):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+
+
+class UpdateTagBindingView(BaseUpdate):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+    form_class = forms.TagBindingForm
+    success_message = "Tag form binding updated."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
+
+
+class DeleteTagBindingView(BaseDelete):
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.TagBinding
+    success_message = "Tag form binding deleted."
+
+    def get_success_url(self):
+        return self.assessment.get_udf_list_url()
