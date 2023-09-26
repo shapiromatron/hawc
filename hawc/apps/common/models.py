@@ -534,7 +534,16 @@ def sql_display(name: str, Choice: type[Choices]) -> Case:
     )
 
 
-def sql_format(format_str: str, *field_params):
+def sql_format(format_str: str, *field_params) -> Concat:
+    """Create an ORM expression to simulate a format string.
+
+    Args:
+        format_str (str): Format string. Any {} present in the string
+        will be replaced by field_params.
+
+    Returns:
+        Concat: An expression that generates a string
+    """
     value_params = format_str.split("{}")
     replace_num = min(len(value_params) - 1, len(field_params))
     concat_args = []

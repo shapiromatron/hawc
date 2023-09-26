@@ -2,14 +2,14 @@ import numpy as np
 import pandas as pd
 from django.db.models import Q
 
-from ..common.exports import Module
+from ..common.exports import ModelExport
 from ..common.models import sql_display, sql_format, str_m2m
 from ..lit.constants import ReferenceDatabase
 from .constants import CoiReported
 
 
-class StudyModule(Module):
-    def _get_value_map(self):
+class StudyExport(ModelExport):
+    def get_value_map(self):
         return {
             "id": "id",
             "hero_id": "hero",
@@ -34,7 +34,7 @@ class StudyModule(Module):
             "published": "published",
         }
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix):
         return {
             "pmid": str_m2m(
                 query_prefix + "identifiers__unique_id",
@@ -53,8 +53,8 @@ class StudyModule(Module):
         }
 
     def prepare_df(self, df):
-        for key in [f"{self.key_prefix}pubmed_id", f"{self.key_prefix}hero_id"]:
+        for key in [self.get_column_name("pubmed_id"), self.get_column_name("hero_id")]:
             df[key] = pd.to_numeric(df[key], errors="coerce")
-        for key in [f"{self.key_prefix}doi"]:
+        for key in [self.get_column_name("doi")]:
             df[key] = df[key].replace("", np.nan)
         return df

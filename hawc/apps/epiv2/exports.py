@@ -8,14 +8,14 @@ from django.db.models import (
 
 from hawc.apps.common.helper import FlatFileExporter
 
-from ..common.exports import Exporter, Module
+from ..common.exports import Exporter, ModelExport
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
-from ..study.exports import StudyModule
+from ..study.exports import StudyExport
 from . import constants
 
 
-class DesignModule(Module):
-    def _get_value_map(self):
+class DesignExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "url": "url",
@@ -39,7 +39,7 @@ class DesignModule(Module):
             "last_updated": "last_updated",
         }
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix):
         return {
             "url": sql_format("/epidemiology/design/{}/", query_prefix + "pk"),
             "study_design_display": sql_display(
@@ -58,14 +58,14 @@ class DesignModule(Module):
         }
 
     def prepare_df(self, df):
-        df.loc[:, self.key_prefix + "age_profile"] = to_display_array(
-            df[self.key_prefix + "age_profile"], constants.AgeProfile, ", "
+        df.loc[:, self.get_column_name("age_profile")] = to_display_array(
+            df[self.get_column_name("age_profile")], constants.AgeProfile, ", "
         )
         return df
 
 
-class ChemicalModule(Module):
-    def _get_value_map(self):
+class ChemicalExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "name": "name",
@@ -75,8 +75,8 @@ class ChemicalModule(Module):
         }
 
 
-class ExposureModule(Module):
-    def _get_value_map(self):
+class ExposureExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "name": "name",
@@ -91,7 +91,7 @@ class ExposureModule(Module):
             "last_updated": "last_updated",
         }
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix):
         return {
             "measurement_type_string": Func(
                 F(query_prefix + "measurement_type"),
@@ -114,8 +114,8 @@ class ExposureModule(Module):
         }
 
 
-class ExposureLevelModule(Module):
-    def _get_value_map(self):
+class ExposureLevelExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "name": "name",
@@ -137,7 +137,7 @@ class ExposureLevelModule(Module):
             "last_updated": "last_updated",
         }
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix):
         return {
             "variance_type_display": sql_display(
                 query_prefix + "variance_type", constants.VarianceType
@@ -148,8 +148,8 @@ class ExposureLevelModule(Module):
         }
 
 
-class OutcomeModule(Module):
-    def _get_value_map(self):
+class OutcomeExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "system": "system_display",
@@ -161,14 +161,14 @@ class OutcomeModule(Module):
             "last_updated": "last_updated",
         }
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix):
         return {
             "system_display": sql_display(query_prefix + "system", constants.HealthOutcomeSystem),
         }
 
 
-class AdjustmentFactorModule(Module):
-    def _get_value_map(self):
+class AdjustmentFactorExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "name": "name",
@@ -179,8 +179,8 @@ class AdjustmentFactorModule(Module):
         }
 
 
-class DataExtractionModule(Module):
-    def _get_value_map(self):
+class DataExtractionExport(ModelExport):
+    def get_value_map(self):
         return {
             "pk": "pk",
             "sub_population": "sub_population",
@@ -209,7 +209,7 @@ class DataExtractionModule(Module):
             "last_updated": "last_updated",
         }
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix):
         return {
             "ci_type_display": sql_display(
                 query_prefix + "ci_type", constants.ConfidenceIntervalType
@@ -221,17 +221,18 @@ class DataExtractionModule(Module):
         }
 
 
-class EpiExporter(Exporter):
-    modules = [
-        (StudyModule, "study", "design__study"),
-        (DesignModule, "design", "design"),
-        (ChemicalModule, "chemical", "exposure_level__chemical"),
-        (ExposureModule, "exposure", "exposure_level__exposure_measurement"),
-        (ExposureLevelModule, "exposure_level", "exposure_level"),
-        (OutcomeModule, "outcome", "outcome"),
-        (AdjustmentFactorModule, "adjustment_factor", "factors"),
-        (DataExtractionModule, "data_extraction", ""),
-    ]
+class EpiV2Exporter(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            StudyExport("study", "design__study"),
+            DesignExport("design", "design"),
+            ChemicalExport("chemical", "exposure_level__chemical"),
+            ExposureExport("exposure", "exposure_level__exposure_measurement"),
+            ExposureLevelExport("exposure_level", "exposure_level"),
+            OutcomeExport("outcome", "outcome"),
+            AdjustmentFactorExport("adjustment_factor", "factors"),
+            DataExtractionExport("data_extraction", ""),
+        ]
 
 
 class EpiFlatComplete(FlatFileExporter):
@@ -241,4 +242,4 @@ class EpiFlatComplete(FlatFileExporter):
     """
 
     def build_df(self) -> pd.DataFrame:
-        return EpiExporter().get_df(self.queryset)
+        return EpiV2Exporter().get_df(self.queryset)

@@ -1,7 +1,10 @@
 import pandas as pd
+from django.db.models import QuerySet
 
 
-class Module:
+class ModelExport:
+    """Model level export module for use in Exporter class."""
+
     def __init__(
         self,
         key_prefix: str = "",
@@ -9,18 +12,26 @@ class Module:
         include: tuple | None = None,
         exclude: tuple | None = None,
     ):
-        # handle include, exclude, prefix?
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
         self.include = (key_prefix + field for field in include) if include else tuple()
         self.exclude = (key_prefix + field for field in exclude) if exclude else tuple()
 
     @property
-    def value_map(self):
+    def value_map(self) -> dict:
+        """Value map of column names to ORM field names.
+
+        This caches the result from get_value_map and applies any prefixes
+        to the column names and ORM field names. It is also filtered down
+        in compliance with any include/exclude parameters.
+
+        Returns:
+            dict: Value map
+        """
         if hasattr(self, "_value_map"):
             return self._value_map
 
-        value_map = self._get_value_map()
+        value_map = self.get_value_map()
         # add key prefix
         if self.key_prefix:
             value_map = {self.key_prefix + k: v for k, v in value_map.items()}
@@ -38,11 +49,20 @@ class Module:
         return self._value_map
 
     @property
-    def annotation_map(self):
+    def annotation_map(self) -> dict:
+        """Annotation map of annotated names to ORM expressions.
+
+        This caches the result from get_annotation_map and applies any
+        query_prefix to the annotated names. It is also filtered down
+        in compliance with any include/exclude parameters.
+
+        Returns:
+            dict: Annotation map
+        """
         if hasattr(self, "_annotation_map"):
             return self._annotation_map
 
-        annotation_map = self._get_annotation_map(self.query_prefix)
+        annotation_map = self.get_annotation_map(self.query_prefix)
         # add query prefix
         if self.query_prefix:
             annotation_map = {self.query_prefix + k: v for k, v in annotation_map.items()}
@@ -55,38 +75,84 @@ class Module:
         self._annotation_map = annotation_map
         return self._annotation_map
 
-    def _get_value_map(self):
+    def get_value_map(self) -> dict:
+        """Value map of column names to ORM field names.
+
+        This should be overridden by any subclass where applicable.
+        Prefixes and include/exclude should not be handled in this method;
+        they are handled by the value_map property.
+
+        Returns:
+            dict: Value map
+        """
         return {}
 
-    def _get_annotation_map(self, query_prefix):
+    def get_annotation_map(self, query_prefix: str) -> dict:
+        """Annotation map of annotated names to ORM expressions.
+
+        This should be overridden by any subclass where applicable.
+        query_prefix for the annotated names and any include/exclude parameters
+        are handled by the annotation_map property.
+        query_prefix should still be used in the custom ORM expression
+        values though, since there is no way to apply that through the
+        annotation_map property.
+
+        Returns:
+            dict: Annotation map
+        """
         return {}
 
-    def _annotate(self, qs):
+    def get_column_name(self, name: str) -> str:
+        """Get column name with key_prefix applied.
+
+        Args:
+            name (str): Column name
+
+        Returns:
+            str: Column name with prefix
+        """
+        return f"{self.key_prefix}{name}"
+
+    def prepare_qs(self, qs: QuerySet) -> QuerySet:
+        """Prepare the queryset for export.
+
+        This includes applying any annotations if they exist.
+
+        Args:
+            qs (QuerySet): Queryset to prepare
+
+        Returns:
+            QuerySet: Prepared queryset
+        """
         if self.annotation_map:
             return qs.annotate(**self.annotation_map)
         return qs
 
-    def _select_related(self, qs):
-        # TODO: regex all keys in value_map, checking for greedy ending in __
-        # then use that group as our select_related field ? how to handle prefetch_related ?
-        # maybe remove this and just do it outside of module (ie in exporter)
-        # if self.query_prefix:
-        #    return qs.select_related(self.query_prefix)
-        return qs
+    def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Prepare the dataframe for export.
 
-    def prepare_queryset(self, qs):
-        qs = self._select_related(qs)
-        qs = self._annotate(qs)
-        return qs
+        This should be overridden by any subclass where applicable.
+        Any data manipulations that couldn't be done by the ORM
+        should be done in this method.
 
-    def prepare_df(self, df):
-        # any manipulation that couldn't be handled by the ORM
-        # if field missing, assume it was excluded
-        # use map? something like set of fields to function?
+        Args:
+            df (pd.DataFrame): Dataframe to manipulate
+
+        Returns:
+            pd.DataFrame: Manipulated dataframe
+        """
         return df
 
-    def get_df(self, qs):
-        qs = self.prepare_queryset(qs)
+    def get_df(self, qs: QuerySet) -> pd.DataFrame:
+        """Get dataframe export from queryset.
+
+        Args:
+            qs (QuerySet): Queryset
+
+        Returns:
+            pd.DataFrame: Dataframe
+        """
+        qs = self.prepare_qs(qs)
         df = pd.DataFrame(
             data=qs.values_list(*self.value_map.values()), columns=list(self.value_map.keys())
         )
@@ -94,12 +160,37 @@ class Module:
 
 
 class Exporter:
-    def __init__(self):
-        self._modules = [module[0](module[1], module[2]) for module in self.modules]
+    """Data export for querysets.
 
-    def get_df(self, qs):
+    This class runs multiple ModelExports on a queryset
+    and outputs a dataframe through the get_df method.
+    """
+
+    def build_modules(self) -> list[ModelExport]:
+        """ModelExport instances to use for exporter.
+
+        This should be overridden by any subclass.
+        A key_prefix and query_prefix should be given to
+        each ModelExport so that the column names don't clash
+        and the ORM correctly navigates relationships.
+
+        Returns:
+            list[ModelExport]: List of ModelExports to build export with
+        """
+        raise NotImplementedError()
+
+    def get_df(self, qs: QuerySet) -> pd.DataFrame:
+        """Get dataframe export from queryset.
+
+        Args:
+            qs (QuerySet): Queryset
+
+        Returns:
+            pd.DataFrame: Dataframe
+        """
+        self._modules = self.build_modules()
         for module in self._modules:
-            qs = module.prepare_queryset(qs)
+            qs = module.prepare_qs(qs)
         values = [value for module in self._modules for value in module.value_map.values()]
         keys = [key for module in self._modules for key in module.value_map.keys()]
         df = pd.DataFrame(data=qs.values_list(*values), columns=keys)
