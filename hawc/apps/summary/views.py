@@ -15,9 +15,16 @@ from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseList, BaseUpdate
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseList,
+    BaseUpdate,
+)
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, serializers
+from . import constants, filterset, forms, models, prefilters, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -277,7 +284,6 @@ class VisualizationList(BaseFilterList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
-
     filterset_class = filterset.VisualFilterSet
 
     @property
@@ -432,6 +438,7 @@ class VisualizationCreate(BaseCreate):
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
@@ -461,14 +468,8 @@ class VisualizationCreate(BaseCreate):
         return context
 
     def get_initial_visual(self, context) -> dict:
-        if context["form"].initial:
-            instance = self.instance
-            instance.id = instance.FAKE_INITIAL_ID
-        else:
-            instance = self.model()
-            instance.id = instance.FAKE_INITIAL_ID
-            instance.assessment = self.assessment
-            instance.visual_type = context["visual_type"]
+        instance = context["form"].instance
+        instance.id = instance.FAKE_INITIAL_ID
         return serializers.VisualSerializer().to_representation(instance)
 
 
@@ -545,6 +546,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
@@ -603,6 +605,7 @@ class DataPivotNewPrompt(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["evidence_type"] = constants.StudyType
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -632,6 +635,20 @@ class DataPivotNew(BaseCreate):
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
+    template_name = "summary/datapivot_form.html"
+
+    def get_evidence_type(self) -> prefilters.StudyType:
+        try:
+            evidence_type = constants.StudyType(self.kwargs["study_type"])
+            _ = prefilters.StudyTypePrefilter.from_study_type(evidence_type, self.assessment).value
+        except (KeyError, ValueError):
+            raise Http404
+        return evidence_type
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["evidence_type"] = self.get_evidence_type()
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -676,7 +693,10 @@ class DataPivotCopyAsNewSelector(BaseUpdate):
         if hasattr(dp, "datapivotupload"):
             url = reverse_lazy("summary:dp_new-file", kwargs={"pk": self.assessment.id})
         else:
-            url = reverse_lazy("summary:dp_new-query", kwargs={"pk": self.assessment.id})
+            url = reverse_lazy(
+                "summary:dp_new-query",
+                kwargs={"pk": self.assessment.id, "study_type": dp.datapivotquery.evidence_type},
+            )
 
         url += f"?initial={dp.pk}"
 
@@ -738,6 +758,10 @@ class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context["config"] = {
+            "data_url": self.object.get_data_url(),
+            "settings": self.object.settings,
+        }
         return context
 
 

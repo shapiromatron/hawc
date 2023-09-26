@@ -3,8 +3,11 @@ Utility toolbelt for testing HAWC.
 """
 
 import json
+from io import BytesIO
 from pathlib import Path
 
+import pandas as pd
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
 from django.test.client import Client
 from rest_framework.response import Response
@@ -34,7 +37,7 @@ def get_client(role: str = "", api: bool = False) -> Client | APIClient:
     """Return a client with specified user role
 
     Args:
-        role (str): One of the following: {'', 'pm', 'team', 'rev', 'admin'}. If empty, anonymous.
+        role (str): One of the following: {'', 'pm', 'team', 'reviewer', 'admin'}. If empty, anonymous.
         api (bool): Returns rest_framework.test.APIClient if True, else django.test.Client
 
     Returns:
@@ -88,3 +91,17 @@ def check_200(
     response = client.get(url, **kw)
     assert response.status_code == 200
     return response
+
+
+def check_302(client: Client, url: str, redirect_url: str, **kw) -> HttpResponse:
+    """Check that visiting this URL returns a 302 redirect to the specified redirect url."""
+    response = client.get(url, **kw)
+    assert response.status_code == 302
+    assert response.url.startswith(redirect_url)
+    return response
+
+
+def df_to_form_data(key: str, df: pd.DataFrame) -> dict:
+    f = BytesIO()
+    df.to_excel(f, index=False)
+    return {key: SimpleUploadedFile("test.xlsx", f.getvalue())}
