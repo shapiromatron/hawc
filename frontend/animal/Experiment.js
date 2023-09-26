@@ -69,7 +69,10 @@ class Experiment {
             .add_tbody_tr("Vehicle", this.data.vehicle)
             .add_tbody_tr("Animal diet", this.data.diet)
             .add_tbody_tr("Guideline compliance", this.data.guideline_compliance)
-            .add_tbody_tr("Comments (eg. description, animal husbandry, etc.)", this.data.description);
+            .add_tbody_tr(
+                "Comments (eg. description, animal husbandry, etc.)",
+                this.data.description
+            );
 
         return tbl.get_tbl();
     }
