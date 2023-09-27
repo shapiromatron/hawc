@@ -119,9 +119,7 @@ class Experiment(models.Model):
     description = models.TextField(
         blank=True,
         verbose_name="Comments",
-        help_text="Add additional comments. In most cases, this field will "
-        "be blank. Note that dosing-regime information and animal "
-        "details are captured in the Animal Group extraction module.",
+        help_text="Additional comments (eg., description, animal husbandry, etc.)",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
