@@ -529,6 +529,7 @@ class DataExtraction(models.Model):
         "outcome_transform",
         "confidence",
         "data_location",
+        "adverse_direction",
     )
 
     class Meta:

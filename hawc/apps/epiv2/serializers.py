@@ -89,6 +89,7 @@ class DataExtractionSerializer(mixins.SameDesignSerializerMixin, serializers.Mod
     ci_type = FlexibleChoiceField(choices=constants.ConfidenceIntervalType.choices)
     variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     significant = FlexibleChoiceField(choices=constants.Significant.choices)
+    adverse_direction = FlexibleChoiceField(choices=constants.AdverseDirection.choices)
 
     outcome_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
