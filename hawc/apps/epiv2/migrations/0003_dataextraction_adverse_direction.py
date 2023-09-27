@@ -16,9 +16,9 @@ class Migration(migrations.Migration):
                 choices=[
                     ("unspecified", "Unspecified"),
                     ("unknown", "Unknown"),
-                    ("up", "⬆"),
-                    ("down", "⬇"),
-                    ("both", "⬆⬇"),
+                    ("up", "↑"),
+                    ("down", "↓"),
+                    ("any", "⇵"),
                 ],
                 default="unspecified",
                 help_text=" Select the direction of effect that would be adverse if observed. This does not mean that the actual results were adverse or were in that direction; this is a guide for interpretation of the results. For example, for a given neuropsychological score, is an increase interpreted as a better or worse score? For some outcomes (e.g., thyroid hormones), an association in either direction could conceivably be adverse.",

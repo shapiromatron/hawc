@@ -168,6 +168,6 @@ class DataTransforms(models.TextChoices):
 class AdverseDirection(models.TextChoices):
     UNSPECIFIED = "unspecified", "Unspecified"
     UNKNOWN = "unknown", "Unknown"
-    UP = "up", "⬆"
-    DOWN = "down", "⬇"
-    BOTH = "both", "⬆⬇"
+    UP = "up", "↑"
+    DOWN = "down", "↓"
+    ANY = "any", "⇵"
