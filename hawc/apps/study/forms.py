@@ -16,6 +16,7 @@ class BaseStudyForm(forms.ModelForm):
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
     )
+    udf = forms.JSONField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = models.Study
@@ -46,6 +47,10 @@ class BaseStudyForm(forms.ModelForm):
             self.instance.assessment = parent
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
+        assessment = self.instance.get_assessment()
+        udf = assessment.get_model_udf(self.Meta.model, label="User defined fields")
+        if udf:
+            self.fields["udf"] = udf
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 

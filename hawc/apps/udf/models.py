@@ -2,11 +2,12 @@ import reversion
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.forms import Form
+from django.forms import Form, JSONField
 from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
+from ..common.forms import DynamicFormField
 from ..lit.models import ReferenceFilterTag
 
 
@@ -33,6 +34,9 @@ class UserDefinedForm(models.Model):
         unique_together = (("creator", "name"),)
         ordering = ("-last_updated",)
 
+    def __str__(self):
+        return f"{self.name}"
+
     def get_absolute_url(self):
         return reverse("udf:udf_detail", args=(self.pk,))
 
@@ -58,8 +62,15 @@ class ModelBinding(models.Model):
         indexes = (models.Index(fields=["assessment", "content_type"]),)
         unique_together = (("assessment", "content_type"),)
 
-    def form_instance(self) -> Form:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form()
+    def __str__(self):
+        return f"{self.assessment}/{self.content_type.model} form"
+
+    def form_instance(self, *args, **kwargs) -> JSONField | DynamicFormField:
+        prefix = kwargs.pop("prefix", "udf")
+        form_kwargs = kwargs.pop("form_kwargs", None)
+        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
+            prefix, form_kwargs, *args, **kwargs
+        )
 
     def get_assessment(self):
         return self.assessment
@@ -86,14 +97,22 @@ class TagBinding(models.Model):
         indexes = (models.Index(fields=["assessment", "tag"]),)
         unique_together = (("assessment", "tag"),)
 
-    def form_instance(self) -> Form:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form()
+    def form_instance(
+        self, prefix="", form_kwargs=None, *args, **kwargs
+    ) -> JSONField | DynamicFormField:
+        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
+            prefix, form_kwargs, *args, **kwargs
+        )
 
     def get_assessment(self):
         return self.assessment
 
     def get_absolute_url(self):
         return reverse("udf:tag_detail", args=(self.id,))
+
+
+# class ModelUDFContent(models.Model):
+#     model_binding = models.ForeignKey(ModelBinding, on_delete=models.CASCADE, related_name=)
 
 
 reversion.register(TagBinding)
