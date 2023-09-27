@@ -1,10 +1,5 @@
 import pandas as pd
-from django.db.models import (
-    CharField,
-    F,
-    Func,
-    Value,
-)
+from django.db.models import CharField, F, Func, Value
 
 from hawc.apps.common.helper import FlatFileExporter
 

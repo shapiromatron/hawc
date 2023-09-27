@@ -545,12 +545,16 @@ def sql_format(format_str: str, *field_params) -> Concat:
         Concat: An expression that generates a string
     """
     value_params = format_str.split("{}")
-    replace_num = min(len(value_params) - 1, len(field_params))
+    if format_str.count("{}") != len(field_params):
+        raise ValueError("field params must be equal to value params.")
+    replace_num = len(field_params)
     concat_args = []
     for i in range(replace_num):
-        concat_args.append(Value(value_params[i]))
+        if value_params[i]:
+            concat_args.append(Value(value_params[i]))
         concat_args.append(field_params[i])
-    concat_args.append(Value("".join(value_params[replace_num:])))
+    if remainder := "".join(value_params[replace_num:]):
+        concat_args.append(Value(remainder))
     return Concat(*concat_args, output_field=TextField())
 
 

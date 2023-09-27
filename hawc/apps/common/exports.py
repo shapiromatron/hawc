@@ -1,6 +1,8 @@
 import pandas as pd
 from django.db.models import QuerySet
 
+from .helper import FlatExport
+
 
 class ModelExport:
     """Model level export module for use in Exporter class."""
@@ -9,9 +11,17 @@ class ModelExport:
         self,
         key_prefix: str = "",
         query_prefix: str = "",
-        include: tuple | None = None,
-        exclude: tuple | None = None,
+        include: tuple[str, ...] | None = None,
+        exclude: tuple[str, ...] | None = None,
     ):
+        """Instantiate an exporter instance for a given django model.
+
+        Args:
+            key_prefix (str, optional): The model name to prepend to data frame columns.
+            query_prefix (str, optional): The model prefix in the ORM.
+            include (tuple | None, optional): If included, only these items are added.
+            exclude (tuple | None, optional): If specified, items are removed from base.
+        """
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
         self.include = (key_prefix + field for field in include) if include else tuple()
@@ -197,3 +207,14 @@ class Exporter:
         for module in self._modules:
             df = module.prepare_df(df)
         return df
+
+    @classmethod
+    def flat_export(cls, qs: QuerySet, filename: str) -> FlatExport:
+        """Return an instance of a FlatExport.
+
+        Args:
+            qs (QuerySet): the initial QuerySet
+            filename (str): the filename for the export
+        """
+        df = cls().get_df(qs)
+        return FlatExport(df=df, filename=filename)
