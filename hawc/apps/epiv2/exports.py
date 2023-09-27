@@ -199,6 +199,8 @@ class DataExtractionExport(ModelExport):
             "data_location": "data_location",
             "effect_description": "effect_description",
             "statistical_method": "statistical_method",
+            "adverse_direction": "adverse_direction",
+            "adverse_direction_display": "adverse_direction_display",
             "comments": "comments",
             "created": "created",
             "last_updated": "last_updated",
@@ -213,6 +215,9 @@ class DataExtractionExport(ModelExport):
                 query_prefix + "variance_type", constants.VarianceType
             ),
             "significant_display": sql_display(query_prefix + "significant", constants.Significant),
+            "adverse_direction_display": sql_display(
+                query_prefix + "adverse_direction", constants.AdverseDirection
+            ),
         }
 
 
