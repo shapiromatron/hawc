@@ -1,5 +1,5 @@
 # web application
-Django~=4.2.3
+Django~=4.2.5
 django-crispy-forms==1.14.0
 django-filter==23.2
 django-redis==5.3.0
