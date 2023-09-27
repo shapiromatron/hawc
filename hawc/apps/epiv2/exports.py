@@ -36,7 +36,7 @@ class DesignExport(ModelExport):
 
     def get_annotation_map(self, query_prefix):
         return {
-            "url": sql_format("/epidemiology/design/{}/", query_prefix + "pk"),
+            "url": sql_format("/epidemiology/design/{}/", query_prefix + "pk"),  # hardcoded URL
             "study_design_display": sql_display(
                 query_prefix + "study_design", constants.StudyDesign
             ),

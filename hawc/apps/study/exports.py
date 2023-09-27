@@ -49,7 +49,7 @@ class StudyExport(ModelExport):
                 filter=Q(**{query_prefix + "identifiers__database": ReferenceDatabase.DOI}),
             ),
             "coi_reported_display": sql_display(query_prefix + "coi_reported", CoiReported),
-            "url": sql_format("/study/{}/", query_prefix + "pk"),
+            "url": sql_format("/study/{}/", query_prefix + "pk"),  # hardcoded URL
         }
 
     def prepare_df(self, df):
