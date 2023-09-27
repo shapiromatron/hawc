@@ -16,7 +16,6 @@ class BaseStudyForm(forms.ModelForm):
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
     )
-    udf = forms.JSONField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = models.Study
@@ -56,6 +55,7 @@ class BaseStudyForm(forms.ModelForm):
 
         self.helper = self.setHelper()
 
+    # TODO: For some reason, form actions div is being 'pushed' outside the form tag
     def setHelper(self, inputs: dict | None = None):
         if inputs is None:
             inputs = {}
