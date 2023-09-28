@@ -249,7 +249,7 @@ class Endpoint extends Observee {
             critical_dose = function(type) {
                 if (self.data[type] < 0) return;
                 var span = $("<span>");
-                new EndpointCriticalDose(self, span, type, true);
+                new EndpointCriticalDose(self, span, type);
                 return span;
             },
             bmd_response = function(type, showURL) {
@@ -257,7 +257,7 @@ class Endpoint extends Observee {
                     return;
                 }
                 var el = $("<div>");
-                new BMDResult(self, el, type, true, showURL);
+                new BMDResult(self, el, type, showURL);
                 return el;
             },
             getTaglist = function(tags, assessment_id) {
