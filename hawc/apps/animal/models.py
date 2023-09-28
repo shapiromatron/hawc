@@ -1235,6 +1235,13 @@ class ConfidenceIntervalsMixin:
                 low = eg["lower_ci"]
                 high = eg["upper_ci"]
 
+            elif data_type == constants.DataType.DICHOTOMOUS:
+                if i == 0:
+                    control_incidence = eg["incidence"]
+                    n_1 = eg["n"]
+                if control_incidence is not None and control_incidence > 0:
+                    incidence = eg["incidence"]
+                    mean = ((incidence - control_incidence) / n_1) * 100
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
