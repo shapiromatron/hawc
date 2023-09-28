@@ -835,6 +835,36 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    def merge_tags(self, user) -> bool:
+        """Merge all user tags and apply to the reference.
+
+        Args:
+            user: THe user requesting the tag change
+
+        Raises:
+            ValueError if no reference user tags are found
+        """
+        tag_pks = list(self.user_tags.values_list("tags", flat=True).distinct().filter(tags__isnull=False))
+        log_message = (
+            f"Update lit.Reference tags #{self.id}: Merge all user tags and apply to reference."
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user.id,
+            message=log_message,
+            content_object=self,
+        )
+        if len(tag_pks) == 0:
+            raise ValueError(f"No user tags found on reference {self.id}")
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        self.user_tags.update(is_resolved=True)
+        self.tags.set(tag_pks)
+        self.last_updated = timezone.now()
+        self.save()
+
     def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
