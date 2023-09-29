@@ -163,3 +163,11 @@ class DataTransforms(models.TextChoices):
     SQUARED = "squared", "squared"
     CUBIC = "cubic", "cubic"
     OTHER = "other", "other"
+
+
+class AdverseDirection(models.TextChoices):
+    UNSPECIFIED = "unspecified", "Unspecified"
+    UNKNOWN = "unknown", "Unknown"
+    UP = "up", "↑"
+    DOWN = "down", "↓"
+    ANY = "any", "⇵"

@@ -32,14 +32,11 @@ class EditEndpoint {
 
         // set NOEL, LOEL, FEL
         const {endpoint} = this;
-        var fields = $("#id_NOEL, #id_LOEL, #id_FEL").html(
-            "<option value=-999>&lt;None&gt;</option>"
+        const options = firstDoses.values.map(
+            (v, i) => `<option value="${i}">${v} ${firstDoses.name}</option>`
         );
-
-        $(".doses").each(function(i, v) {
-            fields.append(`<option value="${i}">${v.textContent}</option>`);
-        });
-
+        options.unshift("<option value=-999>&lt;None&gt;</option>");
+        $("#id_NOEL, #id_LOEL, #id_FEL").html(options);
         $(`#id_NOEL option[value="${endpoint.data.NOEL}"]`).prop("selected", true);
         $(`#id_LOEL option[value="${endpoint.data.LOEL}"]`).prop("selected", true);
         $(`#id_FEL option[value="${endpoint.data.FEL}"]`).prop("selected", true);
