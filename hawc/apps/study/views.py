@@ -1,5 +1,6 @@
 from django.apps import apps
-from django.core.exceptions import PermissionDenied
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -128,6 +129,12 @@ class StudyDetail(BaseDetail):
             "attachments": self.object.get_attachments_dict() if attachments_viewable else None,
         }
         context["internal_communications"] = self.object.get_communications()
+        content_type = ContentType.objects.get_for_model(self.model)
+        try:
+            udf_binding = self.assessment.udf_bindings.get(content_type=content_type)
+            context["udf_content"] = udf_binding.saved_contents.get(object_id=self.object.pk)
+        except ObjectDoesNotExist:
+            context["udf_content"] = None
         return context
 
 

@@ -18,6 +18,12 @@ class TagBindingInline(admin.TabularInline):
     extra = 0
 
 
+class ModelUDFContentInline(admin.TabularInline):
+    model = models.ModelUDFContent
+    extra = 0
+
+
 admin.site.register(models.UserDefinedForm)
 admin.site.register(models.ModelBinding)
 admin.site.register(models.TagBinding)
+admin.site.register(models.ModelUDFContent)

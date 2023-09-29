@@ -118,10 +118,35 @@ class ModelUDFContent(models.Model):
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True)
-    content_object = GenericForeignKey("content_type", "object_id")
+    content_object = GenericForeignKey(
+        "content_type",
+        "object_id",
+    )
     content = models.JSONField(blank=True, default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def get_content_as_list(self):
+        schema = dynamic_forms.Schema.parse_obj(self.model_binding.form.schema)
+
+        items = []
+        for field in schema.fields:
+            field_value = self.content.get(field.name)
+            field_kwargs = field.get_form_field_kwargs()
+            if "choices" in field_kwargs and field_value is not None:
+                choice_map = dict(field_kwargs["choices"])
+                if field.type == "multiple_choice":
+                    value = [choice_map[i] for i in field_value]
+                else:
+                    value = choice_map[field_value]
+            else:
+                value = field_value
+            if value:
+                label = field.get_verbose_name()
+                if isinstance(value, list) and field.type != "multiple_choice":
+                    value = "|".join(map(str, value))
+                items.append((label, value))
+        return items
 
 
 reversion.register(TagBinding)
