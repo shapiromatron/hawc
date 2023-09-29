@@ -1,4 +1,5 @@
-from django.core.exceptions import PermissionDenied
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
@@ -200,3 +201,17 @@ class DeleteTagBindingView(BaseDelete):
 
     def get_success_url(self):
         return self.assessment.get_udf_list_url()
+
+
+class UDFDetailMixin:
+    """Mixin to add saved UDF contents to the context of a BaseDetail view."""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        content_type = ContentType.objects.get_for_model(self.model)
+        try:
+            udf_binding = self.assessment.udf_bindings.get(content_type=content_type)
+            context["udf_content"] = udf_binding.saved_contents.get(object_id=self.object.pk)
+        except ObjectDoesNotExist:
+            context["udf_content"] = None
+        return context
