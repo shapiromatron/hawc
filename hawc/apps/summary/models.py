@@ -512,7 +512,9 @@ class Visual(models.Model):
             # TODO - fix - we should use a different set of prefilters for studies
             study_fields = ["published_only", "studies"]
             endpoint_prefilters = {
-                k: v for k, v in cleaned_prefilters.items() if k not in study_fields
+                k: v
+                for k, v in cleaned_prefilters.items()
+                if k not in study_fields and not k.startswith("cb_")  # skip `checkbox` fields
             }
             if any(value for value in endpoint_prefilters.values()):
                 endpoint_qs = fs.qs
