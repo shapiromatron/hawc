@@ -1,46 +1,235 @@
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
-from . import models
+from . import models, constants
+from ..common.exports import Exporter, ModelExport
+from ..common.models import sql_display, sql_format, str_m2m, to_display_array
+from ..study.exports import StudyExport
+import pandas as pd
+from django.db.models import Q, Case, When
+
+    
+class StudyPopulationExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "design":"design",
+            "age_profile":"age_profile",
+            "source":"source",
+            "countries":"countries__name",
+            "region":"region",
+            "state":"state",
+            "eligible_n":"eligible_n",
+            "invited_n":"invited_n",
+            "participant_n":"participant_n",
+            "inclusion_criteria":"inclusion_criteria",
+            "exclusion_criteria":"exclusion_criteria",
+            "confounding_criteria":"confounding_criteria",
+            "comments":"comments",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+    
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+            "countries__name": str_m2m(query_prefix + "countries__name"),
+            "inclusion_criteria": str_m2m(query_prefix + "spcriteria__criteria__description", filter=Q(**{query_prefix +"spcriteria__criteria_type":constants.CriteriaType.I})),
+            "exclusion_criteria": str_m2m(query_prefix + "spcriteria__criteria__description", filter=Q(**{query_prefix +"spcriteria__criteria_type":constants.CriteriaType.E})),
+            "confounding_criteria": str_m2m(query_prefix + "spcriteria__criteria__description", filter=Q(**{query_prefix +"spcriteria__criteria_type":constants.CriteriaType.C})),
+        }
+
+
+class OutcomeExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "effects":"effects__name",
+            "system":"system",
+            "effect":"effect",
+            "effect_subtype":"effect_subtype",
+            "diagnostic":"diagnostic",
+            "diagnostic_description":"diagnostic_description",
+            "age_of_measurement":"age_of_measurement",
+            "outcome_n":"outcome_n",
+            "summary":"summary",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/outcome/{}/", query_prefix + "id"),  # hardcoded URL
+            "effects__name": str_m2m(query_prefix + "effects__name"),
+        }
+
+class ExposureExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "inhalation":"inhalation",
+            "dermal":"dermal",
+            "oral":"oral",
+            "in_utero":"in_utero",
+            "iv":"iv",
+            "unknown_route":"unknown_route",
+            "measured":"measured",
+            "metric":"metric",
+            "metric_units_id":"metric_units__id",
+            "metric_units_name":"metric_units__name",
+            "metric_description":"metric_description",
+            "analytical_method":"analytical_method",
+            "sampling_period":"sampling_period",
+            "age_of_exposure":"age_of_exposure",
+            "duration":"duration",
+            "n":"n",
+            "exposure_distribution":"exposure_distribution",
+            "description":"description",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+    
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/exposure/{}/", query_prefix + "id"),  # hardcoded URL
+        }
+
+class ComparisonSetExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "description":"description",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/comparison-set/{}/", query_prefix + "id"),  # hardcoded URL
+        }
+
+class ResultMetricExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "name":"metric",
+            "abbreviation":"abbreviation",
+        }
+    
+class ResultExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "name":"name",
+            "metric_description":"metric_description",
+            "metric_units":"metric_units",
+            "data_location":"data_location",
+            "population_description":"population_description",
+            "dose_response":"dose_response",
+            "dose_response_details":"dose_response_details",
+            "prevalence_incidence":"prevalence_incidence",
+            "statistical_power":"statistical_power",
+            "statistical_power_details":"statistical_power_details",
+            "statistical_test_results":"statistical_test_results",
+            "trend_test":"trend_test",
+            "adjustment_factors":"adjustment_factors",
+            "adjustment_factors_considered":"adjustment_factors_considered",
+            "estimate_type":"estimate_type",
+            "variance_type":"variance_type",
+            "ci_units":"ci_units",
+            "comments":"comments",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+    
+    def get_annotation_map(self, query_prefix):
+        return {
+            "adjustment_factors": str_m2m(query_prefix + "resfactors__adjustment_factor__description", filter=Q(**{query_prefix +"resfactors__included_in_final_model":True})),
+            "adjustment_factors_considered": str_m2m(query_prefix + "resfactors__adjustment_factor__description", filter=Q(**{query_prefix +"resfactors__included_in_final_model":False})),
+        }
+
+class GroupExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "group_id":"group_id",
+            "name":"name",
+            "numeric":"numeric",
+            "comparative_name":"comparative_name",
+            "sex":"sex",
+            "ethnicities":"ethnicities",
+            "eligible_n":"eligible_n",
+            "invited_n":"invited_n",
+            "participant_n":"participant_n",
+            "isControl":"isControl",
+            "comments":"comments",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+    
+class GroupResultExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "n":"n",
+            "estimate":"estimate",
+            "variance":"variance",
+            "lower_ci":"lower_ci",
+            "upper_ci":"upper_ci",
+            "lower_range":"lower_range",
+            "upper_range":"upper_range",
+            "lower_bound_interval":"lower_bound_interval",
+            "upper_bound_interval":"upper_bound_interval",
+            "p_value_qualifier":"p_value_qualifier",
+            "p_value":"p_value",
+            "is_main_finding":"is_main_finding",
+            "main_finding_support":"main_finding_support",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "lower_bound_interval": Case(
+         When(**{query_prefix+"lower_ci":None}, then=query_prefix+"lower_range"),
+         default=query_prefix+"lower_ci",
+     ),
+            "upper_bound_interval": Case(
+         When(**{query_prefix+"upper_ci":None}, then=query_prefix+"upper_range"),
+         default=query_prefix+"upper_ci",
+     ),}
+
+class EpiExporter(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            StudyExport("study", "study_population__study"),
+            StudyPopulationExport("sp", "study_population"),
+            OutcomeExport("outcome", ""),
+            ExposureExport("exposure", "results__comparison_set__exposure"),
+            ComparisonSetExport("cs", "results__comparison_set"),
+            ResultMetricExport("metric","results__metric"),
+            ResultExport("result", "results"),
+            GroupExport("group", "results__results__group"),
+            GroupResultExport("result_group", "results__results"),
+        ]
 
 
 class OutcomeComplete(FlatFileExporter):
-    def _get_header_row(self):
-        header = []
-        header.extend(Study.flat_complete_header_row())
-        header.extend(models.StudyPopulation.flat_complete_header_row())
-        header.extend(models.Outcome.flat_complete_header_row())
-        header.extend(models.Exposure.flat_complete_header_row())
-        header.extend(models.ComparisonSet.flat_complete_header_row())
-        header.extend(models.Result.flat_complete_header_row())
-        header.extend(models.Group.flat_complete_header_row())
-        header.extend(models.GroupResult.flat_complete_header_row())
-        return header
+    """
+    Returns a complete export of all data required to rebuild the the
+    epidemiological meta-result study type from scratch.
+    """
 
-    def _get_data_rows(self):
-        rows = []
-        identifiers_df = Study.identifiers_df(self.queryset, "study_population__study_id")
-        for obj in self.queryset:
-            ser = obj.get_json(json_encode=False)
-            row = []
-            row.extend(
-                Study.flat_complete_data_row(ser["study_population"]["study"], identifiers_df)
-            )
-            row.extend(models.StudyPopulation.flat_complete_data_row(ser["study_population"]))
-            row.extend(models.Outcome.flat_complete_data_row(ser))
-            for res in ser["results"]:
-                row_copy = list(row)
-                row_copy.extend(
-                    models.Exposure.flat_complete_data_row(res["comparison_set"]["exposure"])
-                )
-                row_copy.extend(models.ComparisonSet.flat_complete_data_row(res["comparison_set"]))
-                row_copy.extend(models.Result.flat_complete_data_row(res))
-                for rg in res["results"]:
-                    row_copy2 = list(row_copy)
-                    row_copy2.extend(models.Group.flat_complete_data_row(rg["group"]))
-                    row_copy2.extend(models.GroupResult.flat_complete_data_row(rg))
-                    rows.append(row_copy2)
-        return rows
+    def build_df(self) -> pd.DataFrame:
+        return EpiExporter().get_df(self.queryset)
 
 
 class OutcomeDataPivot(FlatFileExporter):
