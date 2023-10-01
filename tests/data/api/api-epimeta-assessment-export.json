@@ -48,6 +48,7 @@
     "study-coi_reported": "Authors report they have no COI",
     "study-contact_author": false,
     "study-doi": null,
+    "study-eco": false,
     "study-editable": true,
     "study-epi": false,
     "study-epi_meta": true,

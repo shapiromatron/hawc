@@ -2,6 +2,7 @@ import pytest
 
 # use concrete implementations to test
 from hawc.apps.animal.models import DoseGroup, Experiment
+from hawc.apps.common.models import sql_format
 from hawc.apps.lit.models import ReferenceFilterTag
 
 _nested_names = [
@@ -40,3 +41,20 @@ class TestBaseManager:
         assert Experiment.objects._get_order_by() == ("id",)
         assert DoseGroup._meta.ordering == ("dose_units", "dose_group_id")
         assert DoseGroup.objects._get_order_by() == ("dose_units", "dose_group_id")
+
+
+def test_sql_format():
+    assert str(sql_format("/left/{}", "foo")) == "Concat(ConcatPair(Value('/left/'), F(foo)))"
+    assert str(sql_format("{}/right", "foo")) == "Concat(ConcatPair(F(foo), Value('/right')))"
+    assert (
+        str(sql_format("/test/{}/here/", "foo"))
+        == "Concat(ConcatPair(Value('/test/'), ConcatPair(F(foo), Value('/here/'))))"
+    )
+    assert (
+        str(sql_format("/a/{}/b/{}/c/", "foo", "bar"))
+        == "Concat(ConcatPair(Value('/a/'), ConcatPair(F(foo), ConcatPair(Value('/b/'), ConcatPair(F(bar), Value('/c/'))))))"
+    )
+
+    for case in ["/too-few/", "{}", "/too-many/{}/{}/"]:
+        with pytest.raises(ValueError):
+            sql_format(case, "foo")

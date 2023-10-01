@@ -240,3 +240,19 @@ class TestStudyViewSet:
             .identifiers.filter(database=1, unique_id=str(10357793))
             .exists()
         )
+
+    def test_chemical_search(self):
+        client = APIClient()
+
+        url = reverse("study:api:study-chemical-search")
+        response = client.get(url)
+        assert response.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 400
+        assert "query" in response.json()
+
+        response = client.get(url + "?query=1746-01-6")
+        assert response.status_code == 200
+        assert len(response.json()) == 1

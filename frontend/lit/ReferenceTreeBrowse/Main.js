@@ -60,28 +60,30 @@ class ReferenceTreeMain extends Component {
 
         return (
             <div className="row">
-                <div className="col-md-12 pb-2">
-                    <TagActions
-                        assessmentId={store.config.assessment_id}
-                        tagId={store.selectedTag ? store.selectedTag.data.pk : undefined}
-                        untagged={store.untaggedReferencesSelected}
-                        canEdit={store.config.canEdit}
-                    />
+                <div className="col-md-12 pb-3">
                     {store.untaggedReferencesSelected === true ? (
                         <h4>Untagged references</h4>
                     ) : store.selectedTag === null ? (
                         <h4>Available references</h4>
                     ) : (
-                        <div className="d-flex align-items-center">
-                            <h4>
+                        <div className="d-flex">
+                            <h4 className="mb-0 align-self-center">
                                 <span>
                                     {selectedReferences && selectedReferences.length > 0
                                         ? `${filteredReferences.length} references tagged:`
                                         : "References tagged:"}
                                 </span>
                             </h4>
-                            <span className="ml-2 refTag">{store.selectedTag.get_full_name()}</span>
+                            <span className="mb-0 ml-2 refTag">
+                                {store.selectedTag.get_full_name()}
+                            </span>
                             <span>{yearText}</span>
+                            <TagActions
+                                assessmentId={store.config.assessment_id}
+                                tagId={store.selectedTag ? store.selectedTag.data.pk : undefined}
+                                untagged={store.untaggedReferencesSelected}
+                                canEdit={store.config.canEdit}
+                            />
                         </div>
                     )}
                 </div>

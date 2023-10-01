@@ -14,16 +14,16 @@ class TestCleanup(PlaywrightTestCase):
         )
         expect(page.locator("text=Cleanup Chemical Z")).to_be_visible()
 
-        page.locator("text=1 animal bioassay endpoints").click()
-        expect(page.locator("text=Cleanup Animal Bioassay Endpoints")).to_be_visible()
+        page.locator("text=Endpoints").click()
+        expect(page.locator("text=Cleanup Endpoints")).to_be_visible()
         page.locator("text=system").click()
 
-        page.locator('input[name="system"]').fill("test")
+        page.locator('textarea[name="system"]').fill("test")
         expect(page.locator("text=test (1)")).not_to_be_visible()
         page.locator("text=Submit bulk edit").click()
         expect(page.locator("text=test (1)")).to_be_visible()
 
-        page.locator('input[name="system"]').fill("N/A")
+        page.locator('textarea[name="system"]').fill("N/A")
         expect(page.locator("text=N/A (1)")).not_to_be_visible()
         page.locator("text=Submit bulk edit").click()
         expect(page.locator("text=N/A (1)")).to_be_visible()

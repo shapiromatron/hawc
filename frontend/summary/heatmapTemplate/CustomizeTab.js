@@ -24,18 +24,18 @@ class CustomizeTab extends Component {
                     <div className="col-md-6">
                         <SelectInput
                             choices={store.axisOptions}
-                            handleSelect={value => store.changeAxis("selectedXAxis", value)}
-                            value={store.selectedXAxis.id}
-                            label="X axis"
+                            handleSelect={value => store.changeAxis("selectedYAxis", value)}
+                            value={store.selectedYAxis.id}
+                            label="Y axis"
                             multiple={false}
                         />
                     </div>
                     <div className="col-md-6">
                         <SelectInput
                             choices={store.axisOptions}
-                            handleSelect={value => store.changeAxis("selectedYAxis", value)}
-                            value={store.selectedYAxis.id}
-                            label="Y axis"
+                            handleSelect={value => store.changeAxis("selectedXAxis", value)}
+                            value={store.selectedXAxis.id}
+                            label="X axis"
                             multiple={false}
                         />
                     </div>

@@ -1,6 +1,4 @@
-import json
 from copy import deepcopy
-from pathlib import Path
 
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
@@ -11,25 +9,35 @@ from rest_framework.test import APIClient
 from hawc.apps.assessment.models import Log
 from hawc.apps.epiv2 import models
 
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_200, check_403, check_api_json_data, get_client
 
 
 @pytest.mark.django_db
 class TestEpiAssessmentViewSet:
-    def test_export(self):
+    def test_export(self, rewrite_data_files):
         url = reverse("epiv2:api:assessment-export", args=(1,))
+        client = get_client(api=True)
 
         # anon get 403
-        client = APIClient()
-        response = client.get(url, format="json")
-        assert response.status_code == 403
+        check_403(client, url)
 
         # pm can get valid response
-        client = APIClient()
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
-        response = client.get(url, format="json")
-        assert response.status_code == 200
-        assert len(response.json()) == 12
+        client = get_client("pm", api=True)
+        response = check_200(client, url + "?unpublished=true")
+        key = "api-epiv2-export-1.json"
+        check_api_json_data(response.json(), key, rewrite_data_files)
+
+    def test_study_export(self, rewrite_data_files):
+        url = reverse("epiv2:api:assessment-study-export", args=(1,))
+
+        # anon get 403
+        check_403(get_client(api=True), url)
+
+        # pm can get valid response
+        response = check_200(get_client("pm", api=True), url + "?unpublished=true")
+        assert len(response.json()) == 1
+        key = "api-epiv2-study-export-1.json"
+        check_api_json_data(response.json(), key, rewrite_data_files)
 
 
 @pytest.mark.django_db
@@ -290,13 +298,8 @@ class TestMetadataViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
 
-        path = Path(DATA_ROOT / fn)
         data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(data, fn, rewrite_data_files)
 
 
 @pytest.mark.django_db
@@ -1031,6 +1034,7 @@ class TestDataExtractionViewSet:
             "data_location": "loc test",
             "effect_description": "description test",
             "statistical_method": "stat method test",
+            "adverse_direction": "up",
             "comments": "comments test",
             "design": design.id,
         }
@@ -1114,6 +1118,12 @@ class TestDataExtractionViewSet:
                 "expected_code": 400,
                 "expected_content": "not a valid choice",
                 "data": self.get_upload_data({"significant": "bad significant"}),
+            },
+            {
+                "desc": "invalid adverse_direction",
+                "expected_code": 400,
+                "expected_content": "not a valid choice",
+                "data": self.get_upload_data({"adverse_direction": "dunno"}),
             },
         )
 

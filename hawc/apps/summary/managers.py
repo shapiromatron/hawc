@@ -23,7 +23,7 @@ class SummaryTableManager(BaseManager):
         """
         Assessment = apps.get_model("assessment", "Assessment")
         return (
-            self.filter(assessment__in=Assessment.objects.get_viewable_assessments(user))
+            self.filter(assessment__in=Assessment.objects.all().user_can_view(user))
             .select_related("assessment")
             .order_by("assessment__name", "title")
         )
@@ -38,7 +38,7 @@ class VisualManager(BaseManager):
         """
         Assessment = apps.get_model("assessment", "Assessment")
         return (
-            self.filter(assessment__in=Assessment.objects.get_viewable_assessments(user))
+            self.filter(assessment__in=Assessment.objects.all().user_can_view(user))
             .select_related("assessment")
             .order_by("assessment__name", "title")
         )
@@ -53,9 +53,7 @@ class DataPivotManager(BaseManager):
         """
         Assessment = apps.get_model("assessment", "Assessment")
         return (
-            self.filter(
-                assessment__in=Assessment.objects.get_viewable_assessments(user, public=True)
-            )
+            self.filter(assessment__in=Assessment.objects.all().user_can_view(user, public=True))
             .select_related("assessment")
             .order_by("assessment__name", "title")
         )

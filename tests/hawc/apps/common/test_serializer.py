@@ -80,24 +80,16 @@ def test_FlexibleChoiceField(db_keys):
         assert text_choice.to_internal_value(valid_input) == "job"
 
     for invalid_input in [99, "bad input"]:
-        try:
+        with pytest.raises(ValidationError):
             numeric_choice.to_internal_value(invalid_input)
-            raise AssertionError()
-        except ValidationError:
-            # This is correct behavior
-            pass
 
     # Should convert raw values to readable ones
     assert numeric_choice.to_representation(0) == "example"
     assert numeric_choice.to_representation(1) == "test"
 
     # Should throw KeyError if given a bad value to convert
-    try:
+    with pytest.raises(KeyError):
         numeric_choice.to_representation(2)
-        raise AssertionError()
-    except KeyError:
-        # This is correct behavior
-        pass
 
 
 @pytest.mark.django_db
@@ -136,12 +128,8 @@ def test_FlexibleDBLinkedChoiceField(db_keys):
 
     # Test bad inputs on the simple "single" case
     for invalid_input in [99, "bad input"]:
-        try:
+        with pytest.raises(ValidationError):
             single_demo.to_internal_value(invalid_input)
-            raise AssertionError()
-        except ValidationError:
-            # This is correct behavior
-            pass
 
     # Test good inputs on the "many" case
     looked_up_list = many_demo.to_internal_value(valid_many_input)
@@ -155,12 +143,9 @@ def test_FlexibleDBLinkedChoiceField(db_keys):
     assert saw_first_metric is True and saw_second_metric is True
 
     # Test bad input on the "many" case
-    try:
-        many_demo.to_internal_value([first_metric.id, second_metric.id * -1])
-        raise AssertionError()
-    except ValidationError:
-        # This is correct behavior
-        pass
+    for invalid__many_input in [[first_metric.id, second_metric.id * -1], "invalid input", False]:
+        with pytest.raises(ValidationError):
+            many_demo.to_internal_value(invalid__many_input)
 
     # Test serialization on the single case
     serialized_metric = single_demo.to_representation(first_metric)

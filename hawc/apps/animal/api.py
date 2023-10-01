@@ -97,8 +97,7 @@ class AnimalAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -124,8 +123,7 @@ class AnimalAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -151,8 +149,9 @@ class AnimalAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(
+            df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}"
+        )
 
     @action(
         detail=True,
@@ -173,8 +172,7 @@ class AnimalAssessmentViewSet(viewsets.GenericViewSet):
                 self.assessment, published_only=not unpublished
             )
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -185,8 +183,7 @@ class AnimalAssessmentViewSet(viewsets.GenericViewSet):
     def ehv_check(self, request, pk):
         _ = self.get_object()
         df = term_check(pk)
-        export = FlatExport(df, f"term-report-{pk}")
-        return Response(export)
+        return FlatExport.api_response(df, f"term-report-{pk}")
 
 
 class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
@@ -320,11 +317,17 @@ class ExperimentCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Experiment
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class AnimalGroupCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.AnimalGroupCleanupFieldsSerializer
     model = models.AnimalGroup
     assessment_filter_args = "experiment__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("experiment__study")
 
 
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
@@ -332,11 +335,17 @@ class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Endpoint
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("animal_group__experiment__study")
+
 
 class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.DosingRegimeCleanupFieldsSerializer
     model = models.DosingRegime
     assessment_filter_args = "dosed_animals__experiment__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("dosed_animals__experiment__study")
 
 
 class DoseUnits(DoseUnitsViewSet):

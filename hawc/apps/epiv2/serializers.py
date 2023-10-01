@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from ..assessment.models import DSSTox
 from ..assessment.serializers import DSSToxSerializer
+from ..common.api import DynamicFieldsMixin
 from ..common.serializers import FlexibleChoiceArrayField, FlexibleChoiceField, IdLookupMixin
 from ..epi.serializers import StudyPopulationCountrySerializer
 from ..study.models import Study
@@ -88,6 +89,7 @@ class DataExtractionSerializer(mixins.SameDesignSerializerMixin, serializers.Mod
     ci_type = FlexibleChoiceField(choices=constants.ConfidenceIntervalType.choices)
     variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     significant = FlexibleChoiceField(choices=constants.Significant.choices)
+    adverse_direction = FlexibleChoiceField(choices=constants.AdverseDirection.choices)
 
     outcome_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
@@ -194,3 +196,87 @@ class DesignSerializer(IdLookupMixin, serializers.ModelSerializer):
             instance.countries.set(countries)
 
         return instance
+
+
+class DesignCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Design
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.study.short_citation
+
+
+class ChemicalCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Chemical
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation
+
+
+class ExposureCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Exposure
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation
+
+
+class ExposureLevelCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.ExposureLevel
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation
+
+
+class OutcomeCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Outcome
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation
+
+
+class AdjustmentFactorCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.AdjustmentFactor
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation
+
+
+class DataExtractionCleanupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    study_short_citation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.DataExtraction
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = ("id", *cleanup_fields)
+
+    def get_study_short_citation(self, obj):
+        return obj.design.study.short_citation

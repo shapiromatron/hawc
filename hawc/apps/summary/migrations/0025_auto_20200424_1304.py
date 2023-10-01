@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                     (4, "literature tagtree"),
                     (5, "embedded external website"),
                     (6, "exploratory heatmap"),
+                    (7, "plotly"),
                 ]
             ),
         ),

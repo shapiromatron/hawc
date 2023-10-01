@@ -34,8 +34,7 @@ class EhvTermViewSet(viewsets.GenericViewSet):
     @action(detail=False, renderer_classes=PandasRenderers)
     def nested(self, request: Request):
         df = models.Term.ehv_dataframe()
-        export = FlatExport(df=df, filename="ehv")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename="ehv")
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
@@ -81,7 +80,7 @@ class EhvTermViewSet(viewsets.GenericViewSet):
         return Response(term.ehv_endpoint_name())
 
     @action(detail=True, methods=("post",), url_path="related-entity")
-    def related_entity(self, request: Request, pk: int = None) -> Response:
+    def related_entity(self, request: Request, pk: int | None = None) -> Response:
         term = self.get_object()
         entity_serializer = serializers.EntitySerializer(data=request.data)
         entity_serializer.is_valid(raise_exception=True)

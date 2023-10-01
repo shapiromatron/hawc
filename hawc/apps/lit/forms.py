@@ -145,13 +145,17 @@ class ImportForm(SearchForm):
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
+            self.fields.pop("source")
 
     @property
     def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing literature search",
+                "help_text": """
+                    Update an existing literature import. After a literature import
+                    has been created, you can no longer edit the source or IDs to import.
+                """,
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
@@ -185,15 +189,16 @@ class ImportForm(SearchForm):
 
     def clean_search_string(self):
         search_string = self.cleaned_data["search_string"]
-
         ids = self.validate_import_search_string(search_string)
-
-        if self.cleaned_data["source"] == constants.ReferenceDatabase.HERO:
+        source = self.cleaned_data.get("source")
+        if source == constants.ReferenceDatabase.HERO:
             content = models.Identifiers.objects.validate_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
-        elif self.cleaned_data["source"] == constants.ReferenceDatabase.PUBMED:
+        elif source == constants.ReferenceDatabase.PUBMED:
             content = models.Identifiers.objects.validate_pubmed_ids(ids)
             self._import_data = dict(ids=ids, content=content)
+        else:
+            raise forms.ValidationError("Invalid  source")
 
         return search_string
 
@@ -327,8 +332,8 @@ class SearchSelectorForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
-            "pk", flat=True
+        assessment_pks = (
+            Assessment.objects.all().user_can_view(self.user).values_list("pk", flat=True)
         )
 
         self.fields["searches"].queryset = (
@@ -540,7 +545,7 @@ class TagsCopyForm(forms.Form):
         self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
             user, exclusion_id=self.assessment.id
         )
 
@@ -579,10 +584,8 @@ class ReferenceExcelUploadForm(forms.Form):
         fn = self.cleaned_data["excel_file"]
 
         # check extension
-        if fn.name[-5:] not in [".xlsx", ".xlsm"] and fn.name[-4:] not in [".xls"]:
-            raise forms.ValidationError(
-                "Must be an Excel file with an " "xlsx, xlsm, or xls file extension."
-            )
+        if fn.name[-5:] != ".xlsx":
+            raise forms.ValidationError("Must be an Excel file with an xlsx extension.")
 
         # check parsing
         try:
@@ -595,8 +598,12 @@ class ReferenceExcelUploadForm(forms.Form):
         if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
             raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
 
+        try:
+            hawc_ids = df["HAWC ID"].astype(int).tolist()
+        except pd.errors.IntCastingNaNError:
+            raise forms.ValidationError("HAWC IDs must be integers.")
+
         # check valid HAWC IDs
-        hawc_ids = df["HAWC ID"].tolist()
         qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)
         if unmatched := (set(hawc_ids) - set(qs.values_list("id", flat=True))):
             raise forms.ValidationError(f"Invalid HAWC IDs: {list(unmatched)}")
@@ -637,7 +644,7 @@ class BulkReferenceStudyExtractForm(forms.Form):
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=StudyTypeChoices.filtered_choices(),
+        choices=StudyTypeChoices.choices,
     )
 
     def clean_references(self):

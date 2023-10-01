@@ -5,10 +5,12 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dataset", api.DatasetViewSet, basename="dataset")
-router.register(r"dsstox", api.DssToxViewSet, basename="dsstox")
-router.register(r"strain", api.StrainViewSet, basename="strain")
+router.register("assessment", api.Assessment, basename="assessment")
+router.register("detail", api.AssessmentDetailViewSet, basename="detail")
+router.register("value", api.AssessmentValueViewSet, basename="value")
+router.register("dataset", api.DatasetViewSet, basename="dataset")
+router.register("dsstox", api.DssToxViewSet, basename="dsstox")
+router.register("strain", api.StrainViewSet, basename="strain")
 
 
 app_name = "assessment"

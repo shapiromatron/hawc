@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
@@ -17,7 +16,6 @@ from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
     AssessmentRootedTagTreeViewSet,
-    CleanupFieldsBaseViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
@@ -26,7 +24,7 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, filterset, models, serializers
+from . import constants, exports, filterset, models, serializers
 
 
 class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
@@ -51,8 +49,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         """
         instance = self.get_object()
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-tags-{self.assessment.id}")
 
     @action(detail=True, methods=("get", "post"), permission_classes=(permissions.AllowAny,))
     def tagtree(self, request, pk, *args, **kwargs):
@@ -122,8 +119,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         qs = instance.references.all()
         df = models.Reference.objects.identifiers_dataframe(qs)
-        export = FlatExport(df=df, filename=f"reference-ids-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-ids-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -151,8 +147,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
             serializer.bulk_create_tags()
 
         df = models.ReferenceTags.objects.as_dataframe(assessment.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-tags-{assessment.id}")
 
     @action(
         detail=True,
@@ -193,31 +188,6 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
             payload = fig.to_dict()
 
         return Response(payload)
-
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        url_path="topic-model",
-    )
-    def topic_model(self, request, pk):
-        assessment = self.get_object()
-        if assessment.literature_settings.has_topic_model:
-            data = assessment.literature_settings.get_topic_tsne_fig_dict()
-        else:
-            data = {"status": "No topic model available"}
-        return Response(data)
-
-    @action(
-        detail=True,
-        methods=("post",),
-        url_path="topic-model-request-refresh",
-        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
-    )
-    def topic_model_request_refresh(self, request, pk):
-        assessment = self.get_object()
-        assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
-        assessment.literature_settings.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,
@@ -300,8 +270,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Reference.objects.heatmap_dataframe(instance.id)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"df-{instance.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"df-{instance.id}")
 
     @transaction.atomic
     @action(
@@ -372,8 +341,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         except (BadZipFile, ValueError):
             raise ParseError({"file": "Unable to parse excel file"})
 
-        export = FlatExport(df=df, filename=file_.name)
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=file_.name)
 
 
 class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -390,12 +358,6 @@ class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
 class ReferenceFilterTagViewSet(AssessmentRootedTagTreeViewSet):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
-
-
-class ReferenceCleanupViewSet(CleanupFieldsBaseViewSet):
-    serializer_class = serializers.ReferenceCleanupFieldsSerializer
-    model = models.Reference
-    assessment_filter_args = "assessment"
 
 
 class ReferenceViewSet(
@@ -450,3 +412,19 @@ class ReferenceViewSet(
         )
         instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
         return Response({"status": "ok"})
+
+    @action(
+        detail=False,
+        url_path=r"search/type/(?P<db_id>[\d])/id/(?P<id>.*)",
+        renderer_classes=PandasRenderers,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def id_search(self, request, id: str, db_id: int):
+        db_id = int(db_id)
+        if db_id not in constants.ReferenceDatabase:
+            raise ValidationError({"type": f"Must be in {constants.ReferenceDatabase.choices}"})
+        qs = self.get_queryset().filter(identifiers__unique_id=id, identifiers__database=db_id)
+        return FlatExport.api_response(
+            df=qs.global_df(),
+            filename=f"global-reference-data-{id}",
+        )

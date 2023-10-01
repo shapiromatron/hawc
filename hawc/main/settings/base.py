@@ -8,7 +8,6 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
-from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -126,12 +125,8 @@ INSTALLED_APPS = (
     "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
+    "hawc.apps.udf",
 )
-
-# TODO - remove with django==4.1
-if HAWC_FEATURES.FIPS_MODE is True:
-    fips.patch_md5()
-
 # DB settings
 DATABASES = {
     "default": {
@@ -202,6 +197,7 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
 LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
+DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DISABLED_LOGIN_HOSTS", "").split("|")
 
 # Static files
 STATIC_URL = "/static/"

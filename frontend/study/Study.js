@@ -46,7 +46,7 @@ class Study {
     }
 
     has_riskofbias() {
-        return this.riskofbias.length > 0;
+        return this.riskofbias && this.riskofbias.length > 0;
     }
 
     build_breadcrumbs() {
@@ -147,7 +147,7 @@ class Study {
         this.render($content, modal.getModal());
 
         modal
-            .addHeader(title)
+            .addHeader([title, HAWCUtils.unpublished(this.data.published, window.isEditable)])
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});

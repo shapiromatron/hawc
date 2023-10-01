@@ -287,14 +287,6 @@ class ContentTypeAdmin(ReadOnlyAdmin):
     search_fields = ("app_label", "model")
 
 
-@admin.register(models.Blog)
-class BlogAdmin(admin.ModelAdmin):
-    list_display = ("subject", "published", "created", "last_updated")
-    list_filter = ("published",)
-    search_fields = ("subject", "content")
-    readonly_fields = ("rendered_content",)
-
-
 @admin.register(models.DSSTox)
 class DSSXToxAdmin(admin.ModelAdmin):
     list_display = (

@@ -5,72 +5,66 @@
 {% load hastext %}
 
 {% block content %}
-  <h2 class="d-inline-block">{{object}}</h2>
-  {% if crud == "Read" %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
-
-        <!-- assessment editing -->
-        {% if obj_perms.edit %}
-          <span class="dropdown-header">Assessment Editing</span>
-          {% if obj_perms.edit_assessment %}
-          <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
-          <a class="dropdown-item" href="{% url 'assessment:modules_update' object.pk %}">Update modules</a>
-          {% if feature_flags.ENABLE_ASSESSMENT_VALUES %}
-          <a class="dropdown-item" href="{{ object.get_details_form_url }}">Update additional details</a>
-          {% endif %}
-          <a class="dropdown-item" href="{% url 'assessment:delete' object.pk %}">Delete assessment</a>
-          {% endif %}
-          <a class="dropdown-item" href="{{ object.get_clear_cache_url }}">Clear assessment cache</a>
-          <a class="dropdown-item" href="{{ object.get_assessment_logs_url }}">Change logs</a>
-          <button class="dropdown-item" hx-get="{% url 'assessment:attachment-create' object.pk %}"
-          hx-trigger="click" hx-target="#attach_table" hx-swap="outerHTML">
-          Add an attachment</button>
-          <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
-          {% if feature_flags.ENABLE_ASSESSMENT_VALUES %}
-          <a class="dropdown-item" href="{% url 'assessment:values-create' object.pk %}">Add a value</a>
-          {% endif %}
-          <div class="dropdown-divider"></div>
-        {% else %}
-          {% if obj_perms.edit_assessment %}
-            {% comment "User has permission but assessment is locked" %}{% endcomment %}
+  <div class="d-flex">
+    <h2>{{object}}</h2>
+    {% if crud == "Read" %}
+      {% actions %}
+          <!-- assessment editing -->
+          {% if obj_perms.edit %}
             <span class="dropdown-header">Assessment Editing</span>
+            {% if obj_perms.edit_assessment %}
             <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
-            <div class="dropdown-divider"></div>
-          {% endif %}
-        {% endif %}
-
-        <!-- application settings -->
-        <span class="dropdown-header">Application settings</span>
-        {% if assessment.enable_risk_of_bias %}
-        <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a>
-        {% endif %}
-
-        {% if assessment.enable_bmd %}
-        <a class="dropdown-item" href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a>
-        {% endif %}
-
-        {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
-        <a class="dropdown-item" href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a>
-        {% endif%}
-
-        <!-- data cleanup -->
-        {% if assessment.enable_data_extraction and obj_perms.edit_assessment or assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">Data cleanup views</span>
-            {% if assessment.enable_data_extraction %}
-            <a class="dropdown-item" href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a>
-            {% endif%}
-            {% if assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-            <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
+            <a class="dropdown-item" href="{% url 'assessment:modules_update' object.pk %}">Update modules</a>
+            <a class="dropdown-item" href="{{ object.get_details_form_url }}">Update additional details</a>
+            <a class="dropdown-item" href="{% url 'assessment:delete' object.pk %}">Delete assessment</a>
             {% endif %}
-            <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
-        {% endif %}
+            {% if feature_flags.ENABLE_UDF %}
+            <a class="dropdown-item" href="{{ object.get_udf_list_url }}">User defined models</a>
+            {% endif %}
+            <a class="dropdown-item" href="{{ object.get_clear_cache_url }}">Clear assessment cache</a>
+            <a class="dropdown-item" href="{{ object.get_assessment_logs_url }}">Change logs</a>
+            <a class="dropdown-item" hx-get="{% url 'assessment:attachment-create' object.pk %}" hx-trigger="click" hx-target="#attach_table" hx-swap="outerHTML" href="/">Add an attachment</a>
+            <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
+            <a class="dropdown-item" href="{% url 'assessment:values-create' object.pk %}">Add a value</a>
+            <div class="dropdown-divider"></div>
+          {% else %}
+            {% if obj_perms.edit_assessment %}
+              {% comment "User has permission but assessment is locked" %}{% endcomment %}
+              <span class="dropdown-header">Assessment Editing</span>
+              <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
+              <div class="dropdown-divider"></div>
+            {% endif %}
+          {% endif %}
 
-      </div>
-    </div>
-  {% endif %}
+          <!-- application settings -->
+          <span class="dropdown-header">Application settings</span>
+          {% if assessment.enable_risk_of_bias %}
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a>
+          {% endif %}
+
+          {% if assessment.enable_bmd %}
+          <a class="dropdown-item" href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a>
+          {% endif %}
+
+          {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
+          <a class="dropdown-item" href="{% url 'invitro:endpointcategory_update' object.pk %}">In vitro endpoint categories</a>
+          {% endif%}
+
+          <!-- data cleanup -->
+          {% if assessment.enable_data_extraction and obj_perms.edit_assessment or assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
+          <div class="dropdown-divider"></div>
+          <span class="dropdown-header">Data cleanup views</span>
+              {% if assessment.enable_data_extraction %}
+              <a class="dropdown-item" href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a>
+              {% endif%}
+              {% if assessment.enable_risk_of_bias %}
+              <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
+              {% endif %}
+              <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
+          {% endif %}
+      {% endactions %}
+    {% endif %}
+  </div>
 
   <table id="assessment_table" class="table table-sm table-striped">
     {% bs4_colgroup '25,75' %}

@@ -35,7 +35,6 @@ class Experiment(models.Model):
         "cas",
         "chemical_source",
         "vehicle",
-        "description",
         "guideline_compliance",
     )
 
@@ -120,14 +119,11 @@ class Experiment(models.Model):
     description = models.TextField(
         blank=True,
         verbose_name="Comments",
-        help_text="Add additional comments. In most cases, this field will "
-        "be blank. Note that dosing-regime information and animal "
-        "details are captured in the Animal Group extraction module.",
+        help_text="Additional comments (eg., description, animal husbandry, etc.)",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "experiments"
     BREADCRUMB_PARENT = "study"
 
     def __str__(self):
@@ -202,7 +198,6 @@ class AnimalGroup(models.Model):
         "animal_source",
         "lifestage_exposed",
         "lifestage_assessed",
-        "comments",
         "diet",
     )
 
@@ -236,7 +231,7 @@ class AnimalGroup(models.Model):
         help_text="Definitions: <strong>Developmental</strong>: Prenatal and perinatal exposure in dams "
         "or postnatal exposure in offspring until sexual maturity (~6 weeks "
         "in rats and mice). Include studies with pre-mating exposure <em>if the "
-        "endpoint focus is developmental</em>. <strong>Adult</strong>: Exposure in sexually "
+        "endpoint focus is developmental</em>. <strong>Juvenile</strong>: Exposure between weaned and sexual maturity. <strong>Adult</strong>: Exposure in sexually "
         "mature males or females. <strong>Adult (gestation)</strong>: Exposure in dams during"
         "pregnancy. <strong>Multi-lifestage</strong>: includes both developmental and adult "
         "(i.e., multi-generational studies, exposure that start before sexual "
@@ -248,7 +243,7 @@ class AnimalGroup(models.Model):
         help_text="Definitions: <b>Developmental</b>: Prenatal and perinatal exposure in dams or "
         + "postnatal exposure in offspring until sexual maturity (~6 weeks in rats and "
         + "mice). Include studies with pre-mating exposure if the endpoint focus is "
-        + "developmental. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult "
+        + "developmental. <b>Juvenile</b>: Exposure between weaned and sexual maturity. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult "
         + "(gestation)</b>: Exposure in dams during pregnancy. <b>Multi-lifestage</b>: includes both "
         + "developmental and adult (i.e., multi-generational studies, exposure that start "
         + "before sexual maturity and continue to adulthood)",
@@ -279,7 +274,6 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "animal_groups"
     BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):
@@ -380,10 +374,7 @@ class AnimalGroup(models.Model):
 class DosingRegime(models.Model):
     objects = managers.DosingRegimeManager()
 
-    TEXT_CLEANUP_FIELDS = (
-        "description",
-        "duration_exposure_text",
-    )
+    TEXT_CLEANUP_FIELDS = ("duration_exposure_text",)
 
     dosed_animals = models.OneToOneField(
         AnimalGroup, related_name="dosed_animals", on_delete=models.SET_NULL, blank=True, null=True
@@ -454,7 +445,6 @@ class DosingRegime(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "dose_regime"
     BREADCRUMB_PARENT = "dosed_animals"
 
     def __str__(self):
@@ -546,8 +536,6 @@ class DoseGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "doses"
-
     class Meta:
         ordering = ("dose_units", "dose_group_id")
 
@@ -584,9 +572,6 @@ class Endpoint(BaseEndpoint):
         "response_units",
         "statistical_test",
         "diagnostic",
-        "trend_value",
-        "results_notes",
-        "endpoint_notes",
         "litter_effect_notes",
     )
     TERM_FIELD_MAPPING = {
@@ -736,7 +721,7 @@ class Endpoint(BaseEndpoint):
         default=constants.TrendResult.NR, choices=constants.TrendResult.choices
     )
     diagnostic = models.TextField(
-        verbose_name="Endpoint Name in Study",
+        verbose_name="Diagnostic (as reported)",
         blank=True,
         help_text="List the endpoint/adverse outcome name as used in the study. "
         "This will help during QA/QC of the extraction to the original "
@@ -775,7 +760,6 @@ class Endpoint(BaseEndpoint):
     )
     additional_fields = models.TextField(default="{}")
 
-    COPY_NAME = "endpoints"
     BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
@@ -816,6 +800,7 @@ class Endpoint(BaseEndpoint):
             "effect": "effect",
             "effect_subtype": "effect subtype",
             "name": "endpoint name",
+            "diagnostic": "diagnostic",
             "observation_time_text": "observation time",
         }
         qs = (
@@ -884,7 +869,7 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
-            return "|".join(sorted(set(el for el in els if el is not None)))
+            return "|".join(sorted(set(el for el in els if el is not None and el != "")))
 
         # get all studies,even if no endpoint data is extracted
         filters: dict[str, Any] = {"assessment_id": assessment_id, "bioassay": True}
@@ -910,6 +895,7 @@ class Endpoint(BaseEndpoint):
             "system": unique_items,
             "organ": unique_items,
             "effect": unique_items,
+            "diagnostic": unique_items,
         }
         if "overall study evaluation" in df2:
             aggregates["overall study evaluation"] = unique_items
@@ -1247,6 +1233,14 @@ class ConfidenceIntervalsMixin:
                 low = eg["lower_ci"]
                 high = eg["upper_ci"]
 
+            elif data_type == constants.DataType.DICHOTOMOUS:
+                if i == 0:
+                    i_0 = eg["incidence"]
+                    n_0 = eg["n"]
+                if i_0 is not None and i_0 > 0:
+                    i_1 = eg["incidence"]
+                    n_1 = eg["n"]
+                    mean = ((i_1 / n_1) - (i_0 / n_0)) / (i_0 / n_0) * 100
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
@@ -1367,8 +1361,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         choices=constants.TreatmentEffect.choices,
         help_text="Expert judgement based report of treatment related effects (add direction if known). Use when statistical analysis not available. In results comments, indicate whether it was author judgment or assessment team judgement",
     )
-
-    COPY_NAME = "groups"
 
     class Meta:
         ordering = ("endpoint", "dose_group_id")

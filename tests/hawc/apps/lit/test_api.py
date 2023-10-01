@@ -53,7 +53,6 @@ class TestLiteratureAssessmentViewSet:
             ),
             reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
-            reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
@@ -788,3 +787,18 @@ class TestReferenceViewSet:
         data = {"user_tag_id": -1}
         response = client.post(url, data, format="json")
         assert response.status_code == 404
+
+    def test_id_search(self):
+        client = APIClient()
+        url = reverse(
+            "lit:api:reference-id-search", args=[constants.ReferenceDatabase.PUBMED, 15907334]
+        )
+
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 200
+        assert len(response.json()) == 1

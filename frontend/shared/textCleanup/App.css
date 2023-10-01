@@ -65,19 +65,3 @@
 .detail-item input {
     margin: 0 0 2px 3px;
 }
-
-.bulk-element.field {
-    font-size: 1.1em;
-    padding: 8px 5px;
-    margin: 5px;
-}
-
-.bulk-element.form-group input {
-    width: 85%;
-    padding: 5px;
-    margin: 5px;
-}
-
-.bulk-element.button {
-    width: 20%;
-}

@@ -26,7 +26,7 @@ class RobApproach(IntegerChoices):
 
 
 @transaction.atomic
-def load_approach(assessment_id: int, approach: RobApproach, user_id: int = None):
+def load_approach(assessment_id: int, approach: RobApproach, user_id: int | None = None):
     """
     Construct default risk of bias domains/metrics for an assessment.
     """
@@ -70,7 +70,9 @@ def load_approach(assessment_id: int, approach: RobApproach, user_id: int = None
 
 
 @transaction.atomic
-def clone_approach(dest_assessment: Assessment, src_assessment: Assessment, user_id: int = None):
+def clone_approach(
+    dest_assessment: Assessment, src_assessment: Assessment, user_id: int | None = None
+):
     """
     Clone approach from one assessment to another.
     """

@@ -22,9 +22,7 @@ def fwd(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ("assessment", "0035_update_assessmentvalue"),
-    ]
+    dependencies = [("assessment", "0035_update_assessmentvalue"), ("summary", "0028_summarytable")]
 
     operations = [
         migrations.AddField(

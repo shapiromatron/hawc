@@ -6,10 +6,25 @@ from . import api, views
 router = SimpleRouter()
 router.register("terms", api.TermViewSet, basename="terms")
 router.register("assessment", api.AssessmentViewSet, basename="assessment")
+router.register("design-cleanup", api.DesignCleanupViewSet, basename="design-cleanup")
+router.register("cause-cleanup", api.CauseCleanupViewSet, basename="cause-cleanup")
+router.register("effect-cleanup", api.EffectCleanupViewSet, basename="effect-cleanup")
+router.register("result-cleanup", api.ResultCleanupViewSet, basename="result-cleanup")
 
 app_name = "eco"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
+    # Heatmap views
+    path(
+        "assessment/<int:pk>/heatmap-study-design/",
+        views.HeatmapStudyDesign.as_view(),
+        name="heatmap_study_design",
+    ),
+    path(
+        "assessment/<int:pk>/heatmap-results/",
+        views.HeatmapResults.as_view(),
+        name="heatmap_results",
+    ),
     path("terms/", views.NestedTermList.as_view(), name="term_list"),
     path(
         "study/<int:pk>/design/create/",
@@ -135,5 +150,10 @@ urlpatterns = [
         views.ResultViewSet.as_view(),
         {"action": "delete"},
         name="result-delete",
+    ),
+    path(
+        "assessment/<int:pk>/results/",
+        views.ResultFilterList.as_view(),
+        name="result_list",
     ),
 ]

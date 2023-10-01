@@ -17,6 +17,7 @@ from django.views.generic import View
 
 from ..assessment.models import Assessment
 from ..assessment.permissions import AssessmentPermissions
+from .exceptions import AssessmentNotFound
 from .views import create_object_log
 
 
@@ -58,39 +59,49 @@ def is_htmx(request) -> bool:
 
 
 # Permissions function checks for @action decorator
-def allow_any(user, item: Item) -> bool:
+def allow_any(user, item: Item | None) -> bool:
     """Allow any request"""
     return True
 
 
-def can_view(user, item: Item) -> bool:
+def deny_all(user, item: Item | None) -> bool:
+    """Deny all requests"""
+    return False
+
+
+def staff_only(user, item: Item | None) -> bool:
+    """Staff only requests"""
+    return user.is_staff
+
+
+def can_view(user, item: Item | None) -> bool:
     """Can a user view this hawc item? Equivalent to a reviewer on non-public assessments"""
-    return item.permissions(user)["view"]
+    return item.permissions(user)["view"] if item else False
 
 
-def can_edit(user, item: Item) -> bool:
+def can_edit(user, item: Item | None) -> bool:
     """Can a user edit this item? Equivalent to assessment team-member or higher"""
-    return item.permissions(user)["edit"]
+    return item.permissions(user)["edit"] if item else False
 
 
-def can_edit_assessment(user, item: Item) -> bool:
+def can_edit_assessment(user, item: Item | None) -> bool:
     """Can a user edit this item? Equivalent to project-manager or higher"""
-    return item.permissions(user)["edit_assessment"]
+    return item.permissions(user)["edit_assessment"] if item else False
 
 
-def action(permission: Callable, htmx_only: bool = True, methods: Iterable[str] | None = None):
+def action(
+    permission: Callable = deny_all, htmx_only: bool = True, methods: Iterable[str] = ("get",)
+):
     """Decorator for an HtmxViewSet action method
 
-    Influenced by django-rest framework's action decorator on viewsets; permissions checking that
+    Influenced by django-rest framework's ViewSet action decorator; permissions checking that
     the user making the request can make this request, and the request is valid.
 
     Args:
-        permission (Callable): A permssion function that returns True/False
+        permission (Callable, optional, default deny all): A permission function; returns True/False
         htmx_only (bool, optional, default True): Accept only htmx requests
-        methods (Optional[Iterable[str]]): Accepted http methods; defaults to {"get"} if undefined.
+        methods (Iterable[str]): Accepted http methods; defaults to ("get",)
     """
-    if methods is None:
-        methods = {"get"}
 
     def actual_decorator(func):
         @wraps(func)
@@ -102,7 +113,7 @@ def action(permission: Callable, htmx_only: bool = True, methods: Iterable[str] 
             if request.method.lower() not in methods:
                 return HttpResponseNotAllowed("Invalid HTTP method")
             # check permissions
-            if not permission(request.user, request.item):
+            if not permission(request.user, getattr(request, "item", None)):
                 raise PermissionDenied()
             return func(view, request, *args, **kwargs)
 
@@ -140,7 +151,10 @@ class HtmxViewSet(View):
             parent = get_object_or_404(self.parent_model, pk=self.kwargs.get(self.pk_url_kwarg))
         else:
             object = get_object_or_404(self.model, pk=self.kwargs.get(self.pk_url_kwarg))
-        assessment: Assessment = parent.get_assessment() if parent else object.get_assessment()
+        try:
+            assessment: Assessment = parent.get_assessment() if parent else object.get_assessment()
+        except AssessmentNotFound:
+            raise PermissionDenied()
         return Item(object=object, parent=parent, assessment=assessment)
 
     def get_context_data(self, **kwargs):

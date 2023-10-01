@@ -79,8 +79,7 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -106,8 +105,7 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Result.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
 
 
 class Criteria(EditPermissionsCheckMixin, AssessmentEditViewSet):
@@ -540,17 +538,26 @@ class OutcomeCleanup(CleanupFieldsBaseViewSet):
     model = models.Outcome
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
+
 
 class StudyPopulationCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.StudyPopulationCleanupFieldsSerializer
     model = models.StudyPopulation
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class ExposureCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ExposureCleanupFieldsSerializer
     model = models.Exposure
     assessment_filter_args = "study_population__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
 
 
 class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

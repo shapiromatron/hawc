@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Assessment endpoints ({{page_obj.paginator.count}} found)</h2>
-{% include 'common/filter_list.html' with plural_object_name='endpoints' %}
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '12,14,15,24,7,7,7,7,7' %}
     {% bs4_thead header_names %}
@@ -13,20 +13,18 @@
         <tr>
             <td>
                 <a
-                    href="{% url 'study:detail' object.animal_group.experiment.study.pk %}">{{object.animal_group.experiment.study.short_citation}}</a>
+                    href="{{object.animal_group.experiment.study.get_absolute_url}}">{{object.animal_group.experiment.study.short_citation}}</a>
             </td>
             <td>
                 <a
-                    href="{% url 'animal:experiment_detail' object.animal_group.experiment.pk %}">{{object.animal_group.experiment.name}}</a>
+                    href="{{object.animal_group.experiment.get_absolute_url }}">{{object.animal_group.experiment.name}}</a>
             </td>
             <td>
-                <a href="{% url 'animal:animal_group_detail' object.animal_group.pk %}">{{object.animal_group.name}}</a>
+                <a href="{{object.animal_group.get_absolute_url}}">{{object.animal_group.name}}</a>
             </td>
-            <td>
-                <span class="previewModalParent">
-                    <a href="{% url 'animal:endpoint_detail' object.pk %}">{{object.name}}</a>
-                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
-                </span>
+            <td class="previewModalParent">
+                <i data-id={{object.pk}} class="float-right fa fa-fixed fa-external-link previewModalIcon mr-2" title="preview"></i>
+                <a href="{{object.get_absolute_url}}">{{object.name}}</a>
             </td>
             <td>{{object.units_name|default:"-"}}</td>
             <td>{{object.noel_value|default:"-"}}</td>
