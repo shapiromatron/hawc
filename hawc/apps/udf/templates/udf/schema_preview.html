@@ -1,0 +1,7 @@
+{% load crispy_forms_tags %}
+
+{% if valid %}
+{% crispy form %}
+{% else %}
+{% include "common/widgets/error.html" with message="Unable to load preview; invalid schema." %}
+{% endif %}

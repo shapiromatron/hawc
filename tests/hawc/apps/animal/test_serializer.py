@@ -136,6 +136,14 @@ class TestDosingRegimeSerializer:
                 ],
                 "route_of_exposure": "OR",
             },
+            # partial data
+            {
+                "doses": [
+                    {"dose_group_id": 1, "dose": 0.0, "dose_units_id": 1},
+                    {"dose_group_id": 2, "dose": 1.0},
+                ],
+                "route_of_exposure": "OR",
+            },
         ]
         for data in datasets:
             serializer = DosingRegimeSerializer(data=data)

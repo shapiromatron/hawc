@@ -114,7 +114,6 @@ class Study(Reference):
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
 
-    COPY_NAME = "studies"
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:

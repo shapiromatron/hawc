@@ -5,7 +5,7 @@ const ActionsButton = props => {
     return (
         <div
             style={{minWidth: 85}}
-            className={`dropdown btn-group ml-auto align-self-start ${props.containerClasses}`}>
+            className={`dropdown btn-group ml-auto align-self-start flex-shrink-0 ${props.containerClasses}`}>
             <a
                 className={`btn dropdown-toggle ${props.dropdownClasses}`}
                 data-toggle="dropdown"

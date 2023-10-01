@@ -272,6 +272,7 @@ class TestDesignChildren:
             "factors": adjust_factor.id,
             "variance_type": 0,
             "ci_type": "Rng",
+            "adverse_direction": "unspecified",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/data_extraction_row.html")
@@ -316,6 +317,7 @@ class TestDesignChildren:
             "factors": adjust_factor.id,
             "variance_type": 1,
             "ci_type": "P95",
+            "adverse_direction": "unspecified",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/data_extraction_row.html")

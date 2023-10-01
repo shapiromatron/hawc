@@ -40,8 +40,8 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
             .published_only(published_only)
             .complete()
         )
-        exporter = exports.EpiFlatComplete(qs, filename=f"{assessment}-epi")
-        return Response(exporter.build_export())
+        exporter = exports.EpiV2Exporter.flat_export(qs, filename=f"{assessment}-epi")
+        return Response(exporter)
 
     @action(
         detail=True,
@@ -62,8 +62,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         )
 
         df = models.Design.objects.study_df(qs)
-        export = FlatExport(df=df, filename=f"epi-study-{assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-study-{assessment.id}")
 
 
 class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):

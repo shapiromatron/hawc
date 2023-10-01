@@ -49,8 +49,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         """
         instance = self.get_object()
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-tags-{self.assessment.id}")
 
     @action(detail=True, methods=("get", "post"), permission_classes=(permissions.AllowAny,))
     def tagtree(self, request, pk, *args, **kwargs):
@@ -120,8 +119,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         qs = instance.references.all()
         df = models.Reference.objects.identifiers_dataframe(qs)
-        export = FlatExport(df=df, filename=f"reference-ids-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-ids-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -149,8 +147,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
             serializer.bulk_create_tags()
 
         df = models.ReferenceTags.objects.as_dataframe(assessment.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-tags-{assessment.id}")
 
     @action(
         detail=True,
@@ -273,8 +270,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         if df is None:
             df = models.Reference.objects.heatmap_dataframe(instance.id)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"df-{instance.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"df-{instance.id}")
 
     @transaction.atomic
     @action(
@@ -345,8 +341,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         except (BadZipFile, ValueError):
             raise ParseError({"file": "Unable to parse excel file"})
 
-        export = FlatExport(df=df, filename=file_.name)
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=file_.name)
 
 
 class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):

@@ -8377,6 +8377,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: reference, p-trend <0.001
     created: 2022-01-10 21:18:05.442039+00:00
     last_updated: 2022-01-10 21:22:42.511191+00:00
@@ -8406,6 +8407,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.446161+00:00
     last_updated: 2022-01-13 17:31:45.166735+00:00
@@ -8435,6 +8437,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.449764+00:00
     last_updated: 2022-01-13 17:31:45.330298+00:00
@@ -8464,6 +8467,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.453394+00:00
     last_updated: 2022-01-13 17:31:45.373797+00:00
@@ -8491,6 +8495,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: reference, p-trend=0.001
     created: 2022-01-10 21:18:05.457140+00:00
     last_updated: 2022-01-10 21:22:42.527813+00:00
@@ -8518,6 +8523,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.460901+00:00
     last_updated: 2022-01-13 17:31:45.412605+00:00
@@ -8545,6 +8551,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.464462+00:00
     last_updated: 2022-01-13 17:31:45.446933+00:00
@@ -8572,6 +8579,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.468642+00:00
     last_updated: 2022-01-13 17:31:45.496401+00:00
@@ -8599,6 +8607,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: test
     created: 2022-01-10 21:44:55.946716+00:00
     last_updated: 2022-01-13 17:32:54.027252+00:00
@@ -8626,6 +8635,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: preferred outcome
     created: 2022-01-10 21:44:55.951328+00:00
     last_updated: 2022-01-13 17:32:54.031518+00:00
@@ -8653,6 +8663,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: a different endpoint the same PFAS
     created: 2022-01-10 21:44:55.955074+00:00
     last_updated: 2022-01-13 17:32:54.035581+00:00
@@ -8680,6 +8691,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: testing another PFAS
     created: 2022-01-10 21:44:55.958967+00:00
     last_updated: 2022-01-13 17:32:54.039436+00:00
@@ -9284,16 +9296,16 @@
     assessment: 1
     visual_type: 2
     dose_units: null
-    prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
+    prefilters:
+      studies:
+      - 1
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}
     caption: ''
     published: false
     sort_order: short_citation
     created: 2020-02-27 20:32:30.901597+00:00
     last_updated: 2020-02-27 20:33:06.585979+00:00
     endpoints: []
-    studies:
-    - 1
 - model: summary.visual
   pk: 2
   fields:
@@ -9302,16 +9314,16 @@
     assessment: 1
     visual_type: 3
     dose_units: null
-    prefilters: '{}'
-    settings: '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}'
+    prefilters:
+      studies:
+      - 1
+    settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}
     caption: ''
     published: false
     sort_order: short_citation
     created: 2020-02-27 20:34:17.606164+00:00
     last_updated: 2020-02-27 20:34:17.606186+00:00
     endpoints: []
-    studies:
-    - 1
 - model: summary.visual
   pk: 3
   fields:
@@ -9320,16 +9332,16 @@
     assessment: 2
     visual_type: 2
     dose_units: null
-    prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
+    prefilters:
+      studies:
+      - 7
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
     created: 2020-05-08 19:35:41.634588+00:00
     last_updated: 2020-05-08 19:36:41.324440+00:00
     endpoints: []
-    studies:
-    - 7
 - model: summary.visual
   pk: 4
   fields:
@@ -9338,35 +9350,35 @@
     assessment: 2
     visual_type: 1
     dose_units: 1
-    prefilters: '{"animal_group__experiment__study__published": true}'
-    settings: '{"title":"Title","xAxisLabel":"Dose (<add units>)","yAxisLabel":"%
+    prefilters:
+      published_only: true
+    settings: {"title":"Title","xAxisLabel":"Dose (<add units>)","yAxisLabel":"%
       change from control (continuous), % incidence (dichotomous)","width":1100,"height":600,"inner_width":940,"inner_height":520,"padding_left":75,"padding_top":45,"dose_isLog":true,"dose_range":"","response_range":"","title_x":0,"title_y":0,"xlabel_x":0,"xlabel_y":0,"ylabel_x":0,"ylabel_y":0,"filters":[{"name":"study","headerName":"Study","allValues":true,"values":null,"columns":1,"x":null,"y":null}],"reflines_dose":[{"value":null,"title":"","style":"base"}],"refranges_dose":[{"lower":null,"upper":null,"title":"","style":"base"}],"reflines_response":[{"value":null,"title":"","style":"base"}],"refranges_response":[{"lower":null,"upper":null,"title":"","style":"base"}],"labels":[{"caption":"","style":"base","max_width":null,"x":null,"y":null}],"colorBase":"#cccccc","colorHover":"#ff4040","colorSelected":"#6495ed","colorFilters":[],"colorFilterLegend":true,"colorFilterLegendLabel":"Color
-      filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}'
+      filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}
     caption: <p>example</p>
     published: true
     sort_order: short_citation
     created: 2020-05-08 19:37:19.255703+00:00
     last_updated: 2020-05-08 19:37:19.255730+00:00
     endpoints: []
-    studies: []
 - model: summary.visual
   pk: 5
   fields:
-    title: barchart
-    slug: barchart
+    title: rob-barchart
+    slug: rob-barchart
     assessment: 2
     visual_type: 3
     dose_units: null
-    prefilters: '{}'
-    settings: '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}'
+    prefilters:
+      studies:
+      - 7
+    settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
     created: 2020-05-08 19:37:44.283008+00:00
     last_updated: 2020-05-08 19:38:48.445082+00:00
     endpoints: []
-    studies:
-    - 7
 - model: summary.visual
   pk: 6
   fields:
@@ -9375,15 +9387,14 @@
     assessment: 2
     visual_type: 4
     dose_units: null
-    prefilters: '{}'
-    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}'
+    prefilters: {}
+    settings: {"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
     created: 2020-05-08 19:43:09.448597+00:00
     last_updated: 2020-05-08 19:43:09.448621+00:00
     endpoints: []
-    studies: []
 - model: summary.visual
   pk: 7
   fields:
@@ -9392,18 +9403,17 @@
     assessment: 2
     visual_type: 5
     dose_units: null
-    prefilters: '{}'
-    settings: '{"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
+    prefilters: {}
+    settings: {"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
       "external_url_hostname": "https://public.tableau.com", "external_url_path":
       "/views/Iris_15675445278420/Iris-Actual", "external_url_query_args": [":showVizHome=no",
-      ":embed=y"], "filters": []}'
+      ":embed=y"], "filters": []}
     caption: <p>iris (flowers)</p>
     published: true
     sort_order: short_citation
     created: 2020-05-08 19:45:29.985823+00:00
     last_updated: 2020-05-08 19:45:29.985848+00:00
     endpoints: []
-    studies: []
 - model: summary.visual
   pk: 8
   fields:
@@ -9412,8 +9422,8 @@
     assessment: 2
     visual_type: 6
     dose_units: null
-    prefilters: '{}'
-    settings: '{"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
+    prefilters: {}
+    settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
       "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter":
       "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_tooltip":
       true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter":
@@ -9422,14 +9432,13 @@
       "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column":
       "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation",
       "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":
-      "and"}'
+      "and"}
     caption: ''
     published: true
     sort_order: short_citation
     created: 2020-11-25 14:25:27.528283+00:00
     last_updated: 2020-11-25 14:29:33.991892+00:00
     endpoints: []
-    studies: []
 - model: summary.visual
   pk: 9
   fields:
@@ -9438,15 +9447,14 @@
     assessment: 2
     visual_type: 7
     dose_units: null
-    prefilters: '{}'
-    settings: '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}'
+    prefilters: {}
+    settings: {"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}
     caption: ''
     published: true
     sort_order: short_citation
     created: 2023-05-19 14:25:27.528283+00:00
     last_updated: 2023-05-19 14:25:27.528283+00:00
     endpoints: []
-    studies: []
 - model: summary.visual
   pk: 10
   fields:
@@ -9455,8 +9463,8 @@
     assessment: 2
     visual_type: 0
     dose_units: 1
-    prefilters: '{}'
-    settings: '{}'
+    prefilters: {}
+    settings: {}
     caption: ''
     published: true
     sort_order: short_citation
@@ -9464,7 +9472,6 @@
     last_updated: 2020-11-25 18:35:00.094667+00:00
     endpoints:
     - 3
-    studies: []
 - model: summary.visual
   pk: 11
   fields:
@@ -9473,8 +9480,10 @@
     assessment: 2
     visual_type: 2
     dose_units: null
-    prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}'
+    prefilters:
+      studies:
+      - 7
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}
     caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
       an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
       a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
@@ -9490,17 +9499,15 @@
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
     endpoints: []
-    studies:
-    - 7
 - model: summary.datapivot
   pk: 1
   fields:
     assessment: 2
     title: data pivot - animal bioassay - endpoint group
     slug: animal-bioassay-data-pivot-endpoint-group
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 45, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 45, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 0}, "legend": {"show": true,
+      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 257, "top": -51, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "percent control
       mean", "symbol_style": "base", "line_style": "---", "rect_style": "---"}, {"line_index": 0, "label": "percent control low", "line_style": "base", "symbol_style":
       "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "percent control low", "high_field_name": "percent control high", "header_name": "percent
@@ -9596,7 +9603,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>caption</p>
     published: true
     created: 2020-05-08 17:48:36.143248+00:00
@@ -9607,9 +9614,9 @@
     assessment: 2
     title: data pivot - animal bioassay - endpoint
     slug: animal-bioassay-data-pivot-endpoint
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 50, "right": 100, "bottom": 50, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 50, "right": 100, "bottom": 50, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": true, "show_xticks": true, "show_yticks": true, "domain": "0.1,10000", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 0}, "legend": {"show": true,
+      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 419, "top": -60, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "Dose 1", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}, {"symbol_index": 1, "label": "Dose 2", "symbol_style": "base", "line_style": "---", "rect_style": "---"},
       {"symbol_index": 2, "label": "Dose 3", "symbol_style": "base", "line_style": "---", "rect_style": "---"}, {"symbol_index": 3, "label": "Dose 4", "symbol_style":
@@ -9710,7 +9717,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: ''
     published: true
     created: 2020-05-08 17:52:21.928839+00:00
@@ -9721,9 +9728,9 @@
     assessment: 2
     title: data pivot - epimeta
     slug: data-pivot-epimeta
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 55, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 55, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 0}, "legend": {"show": true,
+      false, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 0}, "legend": {"show": true,
       "left": 324, "top": -57, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "estimate", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}, {"line_index": 0, "label": "lower CI", "line_style": "base", "symbol_style": "---", "rect_style": "---"}]},
       "dataline_settings": [{"low_field_name": "lower CI", "high_field_name": "upper CI", "header_name": "lower CI", "marker_style": "base", "conditional_formatting":
@@ -9820,7 +9827,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: ''
     published: true
     created: 2020-05-09 03:22:01.190725+00:00
@@ -9831,9 +9838,9 @@
     assessment: 2
     title: data pivot - epi
     slug: data-pivot-epi
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "#", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "1,30", "filter_logic": "and", "font_style": "Arial", "merge_descriptions": true,
-      "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true, "left":
+      "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true, "left":
       322, "top": -32, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "estimate", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting":
@@ -9929,7 +9936,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>Example.</p>
     published: true
     created: 2020-05-11 02:26:51.725098+00:00
@@ -9940,9 +9947,9 @@
     assessment: 2
     title: data pivot - invitro - endpoint
     slug: data-pivot-invitro-endpoint
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": true, "show_xticks": true, "show_yticks": true, "domain": ".1,1000", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true,
+      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true,
       "left": 310, "top": -33, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"line_index": 0, "label": "dose range", "line_style":
       "base", "symbol_style": "base", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "minimum dose", "high_field_name": "maximum dose", "header_name":
       "minimum dose", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "Dose 1", "header_name": "Dose 1", "marker_style":
@@ -10038,7 +10045,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:10:29.880052+00:00
@@ -10049,9 +10056,9 @@
     assessment: 2
     title: data pivot - invitro - endpoint group
     slug: data-pivot-invitro-endpoint-group
-    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+    settings: {"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding": {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
       "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain": "-1,120", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
-      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true,
+      true, "merge_aggressive": true, "text_background": true, "text_background_color": "#eeeeee", "as_barchart": false, "x_axis_number_ticks": 10, "x_axis_force_domain": false, "text_background_extend": false, "draw_background": true, "plot_background_color": "#EEEEEE", "gridline_color": "#FFFFFF", "draw_plot_border": true, "plot_border_color": "#666666", "merge_until": 3}, "legend": {"show": true,
       "left": 344, "top": -29, "columns": 1, "style": {"border_color": "#666666", "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "dose", "symbol_style":
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "dose", "header_name": "dose", "marker_style": "base", "dpe": "---", "conditional_formatting":
@@ -10147,7 +10154,7 @@
       "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity":
       0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke":
       "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c",
-      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}'
+      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:12:54.866928+00:00
@@ -10159,8 +10166,8 @@
     evidence_type: 0
     export_style: 1
     preferred_units: '["1"]'
-    prefilters: '{}'
-    published_only: true
+    prefilters:
+      published_only: true
 - model: summary.datapivotquery
   pk: 1
   fields:
@@ -10168,8 +10175,8 @@
     evidence_type: 0
     export_style: 0
     preferred_units: '["1"]'
-    prefilters: '{}'
-    published_only: true
+    prefilters:
+      published_only: true
 - model: summary.datapivotquery
   pk: 4
   fields:
@@ -10177,8 +10184,8 @@
     evidence_type: 1
     export_style: 0
     preferred_units: '[]'
-    prefilters: '{}'
-    published_only: true
+    prefilters:
+      published_only: true
 - model: summary.datapivotquery
   pk: 3
   fields:
@@ -10186,8 +10193,8 @@
     evidence_type: 4
     export_style: 0
     preferred_units: '[]'
-    prefilters: '{}'
-    published_only: true
+    prefilters:
+      published_only: true
 - model: summary.datapivotquery
   pk: 5
   fields:
@@ -10195,8 +10202,8 @@
     evidence_type: 2
     export_style: 1
     preferred_units: '[]'
-    prefilters: '{}'
-    published_only: true
+    prefilters:
+      published_only: true
 - model: summary.datapivotquery
   pk: 6
   fields:
@@ -10204,8 +10211,8 @@
     evidence_type: 2
     export_style: 0
     preferred_units: '[]'
-    prefilters: '{}'
-    published_only: true
+    prefilters:
+      published_only: true
 - model: mgmt.task
   pk: 1
   fields:
@@ -10252,6 +10259,47 @@
     due_date: null
     started: null
     completed: null
+- model: udf.UserDefinedForm
+  pk: 1
+  fields:
+    name: demo form
+    description: a demo form
+    schema: {
+      fields: [
+        {name: "field1", type: "char"},
+        {name: "field2", type: "integer"},
+      ]
+    }
+    creator:
+    - pm@hawcproject.org
+    editors:
+    - - team@hawcproject.org
+    parent: null
+    deprecated: false
+    created: 2023-09-17 04:10:29.880052+00:00
+    last_updated: 2023-09-17 04:15:33.309627+00:00
+- model: udf.ModelBinding
+  pk: 1
+  fields:
+    assessment: 1
+    content_type:
+    - animal
+    - endpoint
+    form: 1
+    creator:
+    - pm@hawcproject.org
+    created: 2023-09-17 04:10:29.880052+00:00
+    last_updated: 2023-09-17 04:15:33.309627+00:00
+- model: udf.TagBinding
+  pk: 1
+  fields:
+    assessment: 1
+    tag: 2
+    form: 1
+    creator:
+    - pm@hawcproject.org
+    created: 2023-09-17 04:10:29.880052+00:00
+    last_updated: 2023-09-17 04:15:33.309627+00:00
 - model: reversion.revision
   pk: 1
   fields:

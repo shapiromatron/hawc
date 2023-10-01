@@ -1,3 +1,3 @@
-FROM nginx:1.20-alpine
+FROM nginx:stable-alpine
 
 COPY ./wait-for.sh /wait-for.sh

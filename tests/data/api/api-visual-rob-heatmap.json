@@ -4,11 +4,16 @@
   "assessment_rob_name": "Risk of bias",
   "caption": "<p>caption</p>",
   "created": "2020-05-08T15:35:41.634588-04:00",
+  "data_url": "/summary/api/visual/3/data/",
   "dose_units": null,
   "endpoints": [],
   "id": 3,
   "last_updated": "2020-05-08T15:36:41.324440-04:00",
-  "prefilters": "{}",
+  "prefilters": {
+    "studies": [
+      7
+    ]
+  },
   "published": true,
   "rob_settings": {
     "assessment_id": 2,

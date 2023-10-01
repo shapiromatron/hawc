@@ -535,8 +535,9 @@ class DatasetViewSet(AssessmentViewSet):
         revision = instance.get_latest_revision()
         if not revision.data_exists():
             raise Http404()
-        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
-        return Response(export)
+        return FlatExport.api_response(
+            df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem
+        )
 
     @action(
         detail=True,
@@ -549,8 +550,9 @@ class DatasetViewSet(AssessmentViewSet):
         revision = instance.revisions.filter(version=version).first()
         if revision is None or not revision.data_exists():
             raise Http404()
-        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
-        return Response(export)
+        return FlatExport.api_response(
+            df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem
+        )
 
 
 class DssToxViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
