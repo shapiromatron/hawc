@@ -7,7 +7,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("lit", "0019_remove_literatureassessment_topic_tsne_data_and_more"),
+        ("lit", "0020_userreferencetag_user_reference_tag"),
     ]
 
     operations = [

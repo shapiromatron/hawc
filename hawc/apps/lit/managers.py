@@ -560,25 +560,18 @@ class ReferenceQuerySet(models.QuerySet):
         ).values_list(*mapping.values())
         return pd.DataFrame(list(qs), columns=list(mapping.keys()))
 
-    def full_text_search(self, search_text, filters: Q | None = None):
+    def full_text_search(self, search_text: str):
         """Filter queryset using a full text search.
 
         Args:
             search_text: Text to use in the full text search filter.
-            filters: Additional filters to combine with the FTS with an OR. Can be used to add
-                identifiers to the search, which are not a part of the Reference model. Defaults to
-                None.
 
         Returns:
             Queryset: The filtered ReferenceQueryset
         """
-        query = Q(search=SearchQuery(search_text, search_type="websearch"))
-        if filters is None:
-            filters = query
-        else:
-            filters |= query
-
-        return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(filters)
+        return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
+            search=SearchQuery(search_text, search_type="websearch", config="english")
+        )
 
 
 class ReferenceManager(BaseManager):

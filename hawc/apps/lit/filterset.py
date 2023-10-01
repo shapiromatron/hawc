@@ -25,7 +25,7 @@ class ReferenceFilterSet(BaseFilterSet):
     ref_search = df.CharFilter(
         method="filter_search",
         label="Title/Author/Year",
-        help_text="Filter citations (author, year, title, ID)",
+        help_text="Filter citations (authors, year, title)",
     )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
@@ -127,7 +127,7 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.filter(query)
 
     def filter_search(self, queryset, name, value):
-        return queryset.full_text_search(value, filters=Q(identifiers__unique_id=value))
+        return queryset.full_text_search(value)
 
     def filter_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)

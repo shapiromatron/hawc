@@ -138,7 +138,3 @@ class TestRefFilterList:
         n_results = b"References (1 found)"
         title = b"Psycho-physiological effects of the terrorist sarin attack on the Tokyo subway system."
         assert (n_results in resp.content) and (title in resp.content)
-
-        # search by identifier
-        resp = c.get(url + "?ref_search=10.1093%2Fmilmed%2F166.suppl_2.23")
-        assert (n_results in resp.content) and (title in resp.content)
