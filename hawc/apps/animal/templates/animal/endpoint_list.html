@@ -6,7 +6,9 @@
 <div class="d-flex mb-2">
     <h2 class="mb-0">Assessment endpoints ({{page_obj.paginator.count}} found)</h2>
     {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
-    <a href="{% url 'animal:api:assessment-endpoint-export' assessment.id %}?format=xlsx" class="btn btn-sm btn-primary align-self-center flex-shrink-0 ml-3"><i class="fa fa-download" aria-hidden="true"></i>&nbsp; Download {{page_obj.paginator.count}} endpoint(s)</a>
+    {% actions %}
+    <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+    {% endactions %}
     {% endif %}
 </div>
 {% include 'common/inline_filter_form.html' %}
