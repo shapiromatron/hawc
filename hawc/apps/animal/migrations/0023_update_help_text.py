@@ -251,7 +251,7 @@ class Migration(migrations.Migration):
             name="description",
             field=models.TextField(
                 blank=True,
-                help_text="Add additional comments. In most cases, this field will be blank. Note that dosing-regime information and animal details are captured in the Animal Group extraction module.",
+                help_text="Additional comments (eg., description, animal husbandry, etc.)",
                 verbose_name="Comments",
             ),
         ),

@@ -119,9 +119,7 @@ class Experiment(models.Model):
     description = models.TextField(
         blank=True,
         verbose_name="Comments",
-        help_text="Add additional comments. In most cases, this field will "
-        "be blank. Note that dosing-regime information and animal "
-        "details are captured in the Animal Group extraction module.",
+        help_text="Additional comments (eg., description, animal husbandry, etc.)",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -1235,6 +1233,14 @@ class ConfidenceIntervalsMixin:
                 low = eg["lower_ci"]
                 high = eg["upper_ci"]
 
+            elif data_type == constants.DataType.DICHOTOMOUS:
+                if i == 0:
+                    i_0 = eg.get("incidence", 0)
+                    n_0 = eg["n"]
+                if i_0 is not None and i_0 > 0:
+                    i_1 = eg["incidence"]
+                    n_1 = eg["n"]
+                    mean = ((i_1 / n_1) - (i_0 / n_0)) / (i_0 / n_0) * 100
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
