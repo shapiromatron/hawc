@@ -1,5 +1,3 @@
-import json
-
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
@@ -11,10 +9,22 @@ from . import constants, models
 
 
 class CollectionDataPivotSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source="get_absolute_url")
+    visual_type = serializers.CharField(source="get_visual_type_display")
+
+    class Meta:
+        model = models.DataPivot
+        fields = ("id", "title", "url", "visual_type")
+
+
+class DataPivotSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
+    data_url = serializers.CharField(source="get_data_url", read_only=True)
+    download_url = serializers.CharField(source="get_download_url", read_only=True)
+
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["url"] = instance.get_absolute_url()
-        ret["visual_type"] = instance.visual_type
+        ret["visual_type"] = instance.get_visual_type_display()
         return ret
 
     class Meta:
@@ -22,50 +32,43 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class DataPivotSerializer(CollectionDataPivotSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["data_url"] = instance.get_data_url()
-        ret["download_url"] = instance.get_download_url()
-        return ret
+class DataPivotQuerySerializer(DataPivotSerializer):
+    preferred_units = serializers.ListField(
+        allow_empty=True, child=serializers.IntegerField(min_value=0)
+    )
+
+    class Meta:
+        model = models.DataPivotQuery
+        fields = "__all__"
 
 
 class CollectionVisualSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        if instance.id != instance.FAKE_INITIAL_ID:
-            ret["url"] = instance.get_absolute_url()
-        ret["visual_type"] = instance.get_rob_visual_type_display(
-            instance.get_visual_type_display()
-        )
-        try:
-            settings = json.loads(instance.settings)
-        except json.JSONDecodeError:
-            settings = {}
-        ret["settings"] = settings
-        return ret
+    url = serializers.CharField(source="get_absolute_url")
+    visual_type = serializers.CharField(source="get_visual_type_display")
+    data_url = serializers.CharField(source="get_data_url")
 
     class Meta:
         model = models.Visual
-        exclude = (
-            "endpoints",
-            "studies",
-        )
+        exclude = ("endpoints",)
 
 
-class VisualSerializer(CollectionVisualSerializer):
+class VisualSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
         if instance.id != instance.FAKE_INITIAL_ID:
+            ret["url"] = instance.get_absolute_url()
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
+            ret["data_url"] = instance.get_data_url()
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,
             constants.VisualType.ROB_BARCHART,
         ]:
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
+
+        ret["visual_type"] = instance.get_visual_type_display()
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
@@ -79,6 +82,10 @@ class VisualSerializer(CollectionVisualSerializer):
         ret["assessment_name"] = str(instance.assessment)
 
         return ret
+
+    class Meta:
+        model = models.Visual
+        exclude = ("endpoints",)
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):

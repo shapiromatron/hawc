@@ -110,55 +110,6 @@ class Design(models.Model):
     def __str__(self):
         return f"{self.summary}"
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "design-pk",
-            "design-url",
-            "design-summary",
-            "design-study_name",
-            "design-study_design",
-            "design-source",
-            "design-age_profile",
-            "design-age_description",
-            "design-sex",
-            "design-race",
-            "design-participant_n",
-            "design-years_enrolled",
-            "design-years_followup",
-            "design-countries",
-            "design-region",
-            "design-criteria",
-            "design-susceptibility",
-            "design-comments",
-            "design-created",
-            "design-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.get_absolute_url(),
-            self.summary,
-            self.study_name,
-            self.get_study_design_display(),
-            self.get_source_display(),
-            self.get_age_profile_display(),
-            self.age_description,
-            self.get_sex_display(),
-            self.race,
-            self.participant_n,
-            self.years_enrolled,
-            self.years_followup,
-            "|".join(el.name for el in self.countries.all()),
-            self.region,
-            self.criteria,
-            self.susceptibility,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
-
 
 class Chemical(models.Model):
     objects = managers.ChemicalManager()
@@ -198,25 +149,6 @@ class Chemical(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "chemical-pk",
-            "chemical-name",
-            "chemical-DTSXID",
-            "chemical-created",
-            "chemical-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            self.dsstox.dtxsid if self.dsstox else None,
-            self.created,
-            self.last_updated,
-        )
 
 
 class Exposure(models.Model):
@@ -281,37 +213,6 @@ class Exposure(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "exposure-pk",
-            "exposure-name",
-            "exposure-measurement_type",
-            "exposure-biomonitoring_matrix",
-            "exposure-biomonitoring_source",
-            "exposure-measurement_timing",
-            "exposure-exposure_route",
-            "exposure-measurement_method",
-            "exposure-comments",
-            "exposure-created",
-            "exposure-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            ", ".join(self.measurement_type),
-            self.get_biomonitoring_matrix_display(),
-            self.get_biomonitoring_source_display(),
-            self.measurement_timing,
-            self.get_exposure_route_display(),
-            self.measurement_method,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
 
 
 class ExposureLevel(models.Model):
@@ -423,51 +324,6 @@ class ExposureLevel(models.Model):
         self.save()
         return self
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "exposure_level-pk",
-            "exposure_level-name",
-            "exposure_level-sub_population",
-            "exposure_level-median",
-            "exposure_level-mean",
-            "exposure_level-variance",
-            "exposure_level-variance_type",
-            "exposure_level-units",
-            "exposure_level-ci_lcl",
-            "exposure_level-percentile_25",
-            "exposure_level-percentile_75",
-            "exposure_level-ci_ucl",
-            "exposure_level-ci_type",
-            "exposure_level-negligible_exposure",
-            "exposure_level-data_location",
-            "exposure_level-comments",
-            "exposure_level-created",
-            "exposure_level-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            self.sub_population,
-            self.median,
-            self.mean,
-            self.variance,
-            self.get_variance_type_display(),
-            self.units,
-            self.ci_lcl,
-            self.percentile_25,
-            self.percentile_75,
-            self.ci_ucl,
-            self.get_ci_type_display(),
-            self.negligible_exposure,
-            self.data_location,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
-
 
 class Outcome(models.Model):
     objects = managers.OutcomeManager()
@@ -520,31 +376,6 @@ class Outcome(models.Model):
         self.save()
         return self
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "outcome-pk",
-            "outcome-system",
-            "outcome-effect",
-            "outcome-effect_detail",
-            "outcome-endpoint",
-            "outcome-comments",
-            "outcome-created",
-            "outcome-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.get_system_display(),
-            self.effect,
-            self.effect_detail,
-            self.endpoint,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
-
 
 class AdjustmentFactor(models.Model):
     objects = managers.AdjustmentFactorManager()
@@ -584,27 +415,6 @@ class AdjustmentFactor(models.Model):
         self.name = f"{self.name} (2)"
         self.save()
         return self
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "adjustment_factor-pk",
-            "adjustment_factor-name",
-            "adjustment_factor-description",
-            "adjustment_factor-comments",
-            "adjustment_factor-created",
-            "adjustment_factor-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.name,
-            self.description,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
 
 
 class DataExtraction(models.Model):
@@ -697,6 +507,13 @@ class DataExtraction(models.Model):
         blank=True,
         help_text="Briefly describe the statistical analysis method (e.g., logistic regression).",
     )
+    adverse_direction = models.CharField(
+        max_length=12,
+        choices=constants.AdverseDirection.choices,
+        default=constants.AdverseDirection.UNSPECIFIED,
+        verbose_name="Adverse direction",
+        help_text=" Select the direction of effect that would be adverse if observed. This does not mean that the actual results were adverse or were in that direction; this is a guide for interpretation of the results. For example, for a given neuropsychological score, is an increase interpreted as a better or worse score? For some outcomes (e.g., thyroid hormones), an association in either direction could conceivably be adverse.",
+    )
     comments = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -712,6 +529,7 @@ class DataExtraction(models.Model):
         "outcome_transform",
         "confidence",
         "data_location",
+        "adverse_direction",
     )
 
     class Meta:
@@ -737,65 +555,6 @@ class DataExtraction(models.Model):
         self.id = None
         self.save()
         return self
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "data_extraction-pk",
-            "data_extraction-sub_population",
-            "data_extraction-outcome_measurement_timing",
-            "data_extraction-effect_estimate_type",
-            "data_extraction-effect_estimate",
-            "data_extraction-ci_lcl",
-            "data_extraction-ci_ucl",
-            "data_extraction-ci_type",
-            "data_extraction-units",
-            "data_extraction-variance_type",
-            "data_extraction-variance",
-            "data_extraction-n",
-            "data_extraction-p_value",
-            "data_extraction-significant",
-            "data_extraction-group",
-            "data_extraction-exposure_rank",
-            "data_extraction-exposure_transform",
-            "data_extraction-outcome_transform",
-            "data_extraction-confidence",
-            "data_extraction-data_location",
-            "data_extraction-effect_description",
-            "data_extraction-statistical_method",
-            "data_extraction-comments",
-            "data_extraction-created",
-            "data_extraction-last_updated",
-        )
-
-    def flat_complete_data_row(self):
-        return (
-            self.pk,
-            self.sub_population,
-            self.outcome_measurement_timing,
-            self.effect_estimate_type,
-            self.effect_estimate,
-            self.ci_lcl,
-            self.ci_ucl,
-            self.get_ci_type_display(),
-            self.units,
-            self.get_variance_type_display(),
-            self.variance,
-            self.n,
-            self.p_value,
-            self.get_significant_display(),
-            self.group,
-            self.exposure_rank,
-            self.exposure_transform,
-            self.outcome_transform,
-            self.confidence,
-            self.data_location,
-            self.effect_description,
-            self.statistical_method,
-            self.comments,
-            self.created,
-            self.last_updated,
-        )
 
 
 reversion.register(Design, follow=("countries",))

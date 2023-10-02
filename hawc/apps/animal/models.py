@@ -119,14 +119,11 @@ class Experiment(models.Model):
     description = models.TextField(
         blank=True,
         verbose_name="Comments",
-        help_text="Add additional comments. In most cases, this field will "
-        "be blank. Note that dosing-regime information and animal "
-        "details are captured in the Animal Group extraction module.",
+        help_text="Additional comments (eg., description, animal husbandry, etc.)",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "experiments"
     BREADCRUMB_PARENT = "study"
 
     def __str__(self):
@@ -277,7 +274,6 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "animal_groups"
     BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):
@@ -449,7 +445,6 @@ class DosingRegime(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "dose_regime"
     BREADCRUMB_PARENT = "dosed_animals"
 
     def __str__(self):
@@ -540,8 +535,6 @@ class DoseGroup(models.Model):
     dose = models.FloatField(validators=[MinValueValidator(0)])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    COPY_NAME = "doses"
 
     class Meta:
         ordering = ("dose_units", "dose_group_id")
@@ -767,7 +760,6 @@ class Endpoint(BaseEndpoint):
     )
     additional_fields = models.TextField(default="{}")
 
-    COPY_NAME = "endpoints"
     BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
@@ -1241,6 +1233,14 @@ class ConfidenceIntervalsMixin:
                 low = eg["lower_ci"]
                 high = eg["upper_ci"]
 
+            elif data_type == constants.DataType.DICHOTOMOUS:
+                if i == 0:
+                    i_0 = eg.get("incidence", 0)
+                    n_0 = eg["n"]
+                if i_0 is not None and i_0 > 0:
+                    i_1 = eg["incidence"]
+                    n_1 = eg["n"]
+                    mean = ((i_1 / n_1) - (i_0 / n_0)) / (i_0 / n_0) * 100
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
@@ -1361,8 +1361,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         choices=constants.TreatmentEffect.choices,
         help_text="Expert judgement based report of treatment related effects (add direction if known). Use when statistical analysis not available. In results comments, indicate whether it was author judgment or assessment team judgement",
     )
-
-    COPY_NAME = "groups"
 
     class Meta:
         ordering = ("endpoint", "dose_group_id")

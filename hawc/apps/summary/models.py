@@ -4,7 +4,6 @@ import os
 from operator import methodcaller
 
 import pandas as pd
-from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -34,21 +33,16 @@ from ..common.helper import (
     SerializerHelper,
     tryParseInt,
 )
-from ..common.models import get_model_copy_name
 from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..eco.exports import EcoFlatComplete
-from ..eco.models import Result
 from ..epi.exports import OutcomeDataPivot
-from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
-from ..epimeta.models import MetaResult
 from ..epiv2.exports import EpiFlatComplete
-from ..epiv2.models import DataExtraction
 from ..invitro import exports as ivexports
-from ..invitro.models import IVEndpoint
+from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
-from . import constants, managers
+from . import constants, managers, prefilters
 
 logger = logging.getLogger(__name__)
 
@@ -289,20 +283,13 @@ class Visual(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
-    prefilters = models.TextField(default="{}")
     endpoints = models.ManyToManyField(
         BaseEndpoint,
         related_name="visuals",
         help_text="Endpoints to be included in visualization",
         blank=True,
     )
-    studies = models.ManyToManyField(
-        Study,
-        related_name="visuals",
-        help_text="Studies to be included in visualization",
-        blank=True,
-    )
-    settings = models.TextField(default="{}")
+    settings = models.JSONField(default=dict)
     caption = models.TextField(blank=True)
     published = models.BooleanField(
         default=False,
@@ -314,6 +301,7 @@ class Visual(models.Model):
         choices=constants.SortOrder.choices,
         default=constants.SortOrder.SC,
     )
+    prefilters = models.JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -343,6 +331,9 @@ class Visual(models.Model):
 
     def get_api_detail(self):
         return reverse("summary:api:visual-detail", args=(self.id,))
+
+    def get_data_url(self):
+        return reverse("summary:api:visual-data", args=(self.id,))
 
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
@@ -459,79 +450,88 @@ class Visual(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
-    def get_endpoints(self, request=None):
-        qs = Endpoint.objects.none()
-        filters = {"assessment_id": self.assessment_id}
+    def get_filterset_class(self):
+        return prefilters.VisualTypePrefilter.from_visual_type(self.visual_type).value
 
+    def get_filterset(self, data, assessment, **kwargs):
+        return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
+
+    def get_request_prefilters(self, request):
+        # find all keys that start with "prefilters-" prefix
+        prefix = "prefilters-"
+        return {
+            key[len(prefix) :]: value
+            for key, value in request.POST.lists()
+            if key.startswith(prefix)
+        }
+
+    def get_endpoints(self, request=None) -> models.QuerySet[Endpoint]:
         if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
-            if request:
-                ids = request.POST.getlist("endpoints")
-            else:
-                ids = self.endpoints.values_list("id", flat=True)
-
-            filters["id__in"] = ids
-            qs = Endpoint.objects.filter(**filters)
+            ids = (
+                request.POST.getlist("endpoints")
+                if request
+                else self.endpoints.values_list("id", flat=True)
+            )
+            return Endpoint.objects.assessment_qs(self.assessment).filter(id__in=ids)
 
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-            if request:
-                dose_id = tryParseInt(request.POST.get("dose_units"), -1)
-                Prefilter.setFiltersFromForm(
-                    self.assessment, filters, request.POST, self.visual_type
-                )
+            dose_units_id = (
+                tryParseInt(request.POST.get("dose_units"), -1) if request else self.dose_units_id
+            )
+            filters = {"animal_group__dosing_regime__doses__dose_units_id": dose_units_id}
 
-            else:
-                dose_id = self.dose_units_id
-                Prefilter.setFiltersFromObj(filters, self.prefilters)
+            prefilters = self.get_request_prefilters(request) if request else self.prefilters
+            fs = self.get_filterset(prefilters, self.assessment)
+            form = fs.form
+            fs.set_passthrough_options(form)
+            fs.form.is_valid()
+            return fs.qs.filter(**filters).distinct("id")
 
-            filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
-            qs = Endpoint.objects.filter(**filters).distinct("id")
+        return Endpoint.objects.none()
 
-        return qs
-
-    def get_studies(self, request=None):
+    def get_studies(self, request=None) -> models.QuerySet[Study] | list[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
         to the model.
         """
         qs = Study.objects.none()
-        filters = {"assessment_id": self.assessment_id}
+        filters = {}
 
         if self.visual_type in [
             constants.VisualType.ROB_HEATMAP,
             constants.VisualType.ROB_BARCHART,
         ]:
-            if request:
-                efilters = {"assessment_id": self.assessment_id}
-                Prefilter.setFiltersFromForm(
-                    self.assessment, efilters, request.POST, self.visual_type
+            prefilters = self.get_request_prefilters(request) if request else self.prefilters
+            fs = self.get_filterset(prefilters, self.assessment)
+            form = fs.form
+            fs.set_passthrough_options(form)
+            fs.form.is_valid()
+            cleaned_prefilters = fs.form.cleaned_data
+
+            # TODO - fix - we should use a different set of prefilters for studies
+            study_fields = ["published_only", "studies"]
+            endpoint_prefilters = {
+                k: v
+                for k, v in cleaned_prefilters.items()
+                if k not in study_fields and not k.startswith("cb_")  # skip `checkbox` fields
+            }
+            if any(value for value in endpoint_prefilters.values()):
+                endpoint_qs = fs.qs
+                filters["id__in"] = set(
+                    endpoint_qs.values_list("animal_group__experiment__study_id", flat=True)
                 )
-                if len(efilters) > 1:
-                    filters["id__in"] = set(
-                        Endpoint.objects.filter(**efilters).values_list(
-                            "animal_group__experiment__study_id", flat=True
-                        )
-                    )
-                else:
-                    filters["id__in"] = request.POST.getlist("studies")
-
-                qs = Study.objects.filter(**filters)
-
             else:
-                if self.prefilters != "{}":
-                    efilters = {"assessment_id": self.assessment_id}
-                    Prefilter.setFiltersFromObj(efilters, self.prefilters)
-                    filters["id__in"] = set(
-                        Endpoint.objects.filter(**efilters).values_list(
-                            "animal_group__experiment__study_id", flat=True
-                        )
-                    )
-                    qs = Study.objects.filter(**filters)
-                else:
-                    qs = self.studies.all()
+                if f := cleaned_prefilters.pop(study_fields[0], False):
+                    filters["published"] = f
+                if f := cleaned_prefilters.get(study_fields[1], []):
+                    filters["id__in"] = f
 
+            qs = Study.objects.assessment_qs(self.assessment).filter(**filters)
+
+        # TODO - remove? handle sort order in visualization?
         if self.sort_order:
-            if self.sort_order == "overall_confidence":
+            if self.sort_order == constants.SortOrder.OC.value:
                 qs = sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
             else:
                 qs = qs.order_by(self.sort_order)
@@ -552,6 +552,7 @@ class Visual(models.Model):
 
         return {
             "assessment": self.assessment_id,
+            "assessment_rob_name": self.assessment.get_rob_name_display(),
             "title": request.POST.get("title"),
             "slug": request.POST.get("slug"),
             "caption": request.POST.get("caption"),
@@ -567,27 +568,6 @@ class Visual(models.Model):
             ],
         }
 
-    def _update_settings_across_assessments(self, cw: dict) -> str:
-        settings = json.loads(self.settings)
-
-        if (
-            self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW
-        ) and "included_metrics" in settings:
-            pass
-
-        if (
-            self.visual_type
-            in [constants.VisualType.ROB_BARCHART, constants.VisualType.ROB_HEATMAP]
-        ) and "included_metrics" in settings:
-            ids = []
-            model_cw = cw[get_model_copy_name(apps.get_model("riskofbias", "RiskOfBiasMetric"))]
-            for id_ in settings["included_metrics"]:
-                if id_ in model_cw:
-                    ids.append(model_cw[id_])
-            settings["included_metrics"] = ids
-
-        return json.dumps(settings)
-
     def get_rob_visual_type_display(self, value):
         rob_name = self.assessment.get_rob_name_display().lower()
         return value.replace("risk of bias", rob_name)
@@ -596,9 +576,34 @@ class Visual(models.Model):
         if self.visual_type != constants.VisualType.PLOTLY:
             raise ValueError("Incorrect visual type")
         try:
-            return from_json(self.settings)
+            return from_json(json.dumps(self.settings))
         except ValueError as err:
             raise ValueError(err)
+
+    def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
+        study_ids = list(self.get_studies().values_list("id", flat=True))
+        settings = self.settings
+
+        qs = RiskOfBiasScore.objects.filter(
+            riskofbias__active=True,
+            riskofbias__final=True,
+            riskofbias__study__in=study_ids,
+        )
+
+        # use settings in read-only view; dont use when configuring plot
+        if use_settings:
+            qs = qs.filter(metric__in=settings["included_metrics"]).exclude(
+                id__in=settings.get("excluded_score_ids", [])
+            )
+        return qs
+
+    def data_df(self, use_settings: bool = True) -> pd.DataFrame:
+        if self.visual_type not in [
+            constants.VisualType.ROB_BARCHART,
+            constants.VisualType.ROB_HEATMAP,
+        ]:
+            raise ValueError("Not supported for this visual type")
+        return self._rob_data_qs(use_settings=use_settings).df()
 
 
 class DataPivot(models.Model):
@@ -705,10 +710,6 @@ class DataPivotUpload(DataPivot):
     def visual_type(self):
         return "Data pivot (file upload)"
 
-    def _update_settings_across_assessments(self, cw: dict) -> str:
-        # no changes required
-        return self.settings
-
     def get_dataset(self) -> FlatExport:
         worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
         df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
@@ -745,13 +746,7 @@ class DataPivotQuery(DataPivot):
         "percent-response, where dose-units are not needed, or for "
         "creating one plot similar, but not identical, dose-units.",
     )
-    prefilters = models.TextField(default="{}")
-    published_only = models.BooleanField(
-        default=True,
-        verbose_name="Published studies only",
-        help_text="Only present data from studies which have been marked as "
-        '"published" in HAWC.',
-    )
+    prefilters = models.JSONField(default=dict)
 
     def clean(self):
         count = self.get_queryset().count()
@@ -770,63 +765,6 @@ class DataPivotQuery(DataPivot):
                 data filters more restrictive.
             """
             raise ValidationError(err)
-
-    def _get_dataset_filters(self):
-        filters = {}
-        epi_version = self.assessment.epi_version
-
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["animal_group__experiment__study__published"] = True
-            if self.preferred_units:
-                filters["animal_group__dosing_regime__doses__dose_units__in"] = self.preferred_units
-
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["study_population__study__published"] = True
-
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
-            filters["design__study__assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["design__study__published"] = True
-
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            filters["protocol__study__assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["protocol__study__published"] = True
-
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            filters["assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["experiment__study__published"] = True
-
-        elif self.evidence_type == constants.StudyType.ECO:
-            filters["design__study__assessment_id"] = self.assessment_id
-            if self.published_only:
-                filters["design__study__published"] = True
-
-        Prefilter.setFiltersFromObj(filters, self.prefilters)
-        return filters
-
-    def _get_dataset_queryset(self, filters):
-        epi_version = self.assessment.epi_version
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            qs = Endpoint.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V1:
-            qs = Outcome.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.EPI and epi_version == EpiVersion.V2:
-            qs = DataExtraction.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            qs = MetaResult.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            qs = IVEndpoint.objects.filter(**filters)
-        elif self.evidence_type == constants.StudyType.ECO:
-            qs = Result.objects.filter(**filters)
-        else:
-            raise ValueError("Invalid data type")
-        return qs.order_by("id")
 
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == constants.StudyType.BIOASSAY:
@@ -887,9 +825,22 @@ class DataPivotQuery(DataPivot):
 
         return exporter
 
+    def get_filterset_class(self):
+        return prefilters.StudyTypePrefilter.from_study_type(
+            self.evidence_type, self.assessment
+        ).value
+
+    def get_filterset(self, data, assessment, **kwargs):
+        return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
+
     def get_queryset(self):
-        filters = self._get_dataset_filters()
-        return self._get_dataset_queryset(filters)
+        fs = self.get_filterset(self.prefilters, self.assessment)
+        form = fs.form
+        fs.set_passthrough_options(form)
+        qs = fs.qs
+        if self.evidence_type == constants.StudyType.BIOASSAY and self.preferred_units:
+            qs = qs.filter(animal_group__dosing_regime__doses__dose_units__in=self.preferred_units)
+        return qs.order_by("id")
 
     def get_dataset(self) -> FlatExport:
         qs = self.get_queryset()
@@ -910,110 +861,6 @@ class DataPivotQuery(DataPivot):
             return "Data pivot (ecology)"
         else:
             raise ValueError("Unknown type")
-
-    def _update_settings_across_assessments(self, cw: dict) -> str:
-        try:
-            settings = json.loads(self.settings)
-        except json.JSONDecodeError:
-            return self.settings
-
-        if len(settings["row_overrides"]) > 0:
-            if (
-                self.evidence_type == constants.StudyType.BIOASSAY
-                and self.export_style == constants.ExportStyle.EXPORT_GROUP
-            ):
-                Model = apps.get_model("animal", "EndpointGroup")
-            elif (
-                self.evidence_type == constants.StudyType.BIOASSAY
-                and self.export_style == constants.ExportStyle.EXPORT_ENDPOINT
-            ):
-                Model = apps.get_model("animal", "Endpoint")
-            elif (
-                self.evidence_type == constants.StudyType.EPI
-                and self.export_style == constants.ExportStyle.EXPORT_GROUP
-            ):
-                Model = apps.get_model("epi", "ResultGroup")
-            elif (
-                self.evidence_type == constants.StudyType.EPI
-                and self.export_style == constants.ExportStyle.EXPORT_ENDPOINT
-            ):
-                Model = apps.get_model("epi", "Outcome")
-            else:
-                raise NotImplementedError()
-
-            model_cw = cw[get_model_copy_name(Model)]
-            for override in settings["row_overrides"]:
-                override.update(pk=model_cw[override["pk"]])
-
-        return json.dumps(settings)
-
-
-class Prefilter:
-    """
-    Helper-object to deal with DataPivot and Visual prefilters fields.
-    """
-
-    @staticmethod
-    def setFiltersFromForm(assessment, filters, d, visual_type):
-        evidence_type = d.get("evidence_type")
-        epi_version = assessment.epi_version
-
-        if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-            evidence_type = constants.StudyType.BIOASSAY
-
-        if d.get("prefilter_system"):
-            filters["system__in"] = d.getlist("systems")
-
-        if d.get("prefilter_organ"):
-            filters["organ__in"] = d.getlist("organs")
-
-        if d.get("prefilter_effect"):
-            filters["effect__in"] = d.getlist("effects")
-
-        if d.get("prefilter_effect_subtype"):
-            filters["effect_subtype__in"] = d.getlist("effect_subtypes")
-
-        if d.get("prefilter_effect_tag"):
-            filters["effects__in"] = d.getlist("effect_tags")
-
-        if d.get("prefilter_episystem"):
-            filters["system__in"] = d.getlist("episystems")
-
-        if d.get("prefilter_epieffect"):
-            filters["effect__in"] = d.getlist("epieffects")
-
-        if d.get("prefilter_study"):
-            studies = d.getlist("studies", [])
-            if evidence_type == constants.StudyType.BIOASSAY:
-                filters["animal_group__experiment__study__in"] = studies
-            elif evidence_type == constants.StudyType.EPI and epi_version == 1:
-                filters["study_population__study__in"] = studies
-            elif evidence_type == constants.StudyType.EPI and epi_version == 2:
-                filters["design__study__in"] = studies
-            elif evidence_type == constants.StudyType.IN_VITRO:
-                filters["experiment__study__in"] = studies
-            elif evidence_type == constants.StudyType.EPI_META:
-                filters["protocol__study__in"] = studies
-            else:
-                raise ValueError("Unknown evidence type")
-
-        if d.get("published_only"):
-            if evidence_type == constants.StudyType.BIOASSAY:
-                filters["animal_group__experiment__study__published"] = True
-            elif evidence_type == constants.StudyType.EPI and epi_version == 1:
-                filters["study_population__study__published"] = True
-            elif evidence_type == constants.StudyType.EPI and epi_version == 2:
-                filters["design__study__published"] = True
-            elif evidence_type == constants.StudyType.IN_VITRO:
-                filters["experiment__study__published"] = True
-            elif evidence_type == constants.StudyType.EPI_META:
-                filters["protocol__study__published"] = True
-            else:
-                raise ValueError("Unknown evidence type")
-
-    @staticmethod
-    def setFiltersFromObj(filters, prefilters):
-        filters.update(json.loads(prefilters))
 
 
 reversion.register(SummaryText)
