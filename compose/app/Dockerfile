@@ -30,6 +30,7 @@ COPY ./dist /app/build/dist
 WORKDIR /app/build
 RUN pip install -U pip && \
     pip install -r /app/build/requirements/production.txt --no-cache-dir && \
+    pip uninstall -y pip setuptools && \
     rm -rf /app/build && \
     chown -R app:app /app
 
