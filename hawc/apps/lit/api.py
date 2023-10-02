@@ -406,7 +406,7 @@ class ReferenceViewSet(
         assessment = instance.assessment
         if not assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
-        try: 
+        try:
             instance.merge_tags(self.request.user)
         except ValueError:
             return Response({"reference": "Reference has no user tags to merge."}, status=400)

@@ -71,7 +71,7 @@
                         {% if tag in diff.intersection %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
                         {% else %}
-                                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
+                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
                         {% endif %}
                     {% endfor %}
                     {% for tag in diff.difference %}

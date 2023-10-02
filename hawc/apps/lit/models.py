@@ -835,7 +835,7 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
-    def merge_tags(self, user) -> bool:
+    def merge_tags(self, user):
         """Merge all user tags and apply to the reference.
 
         Args:
@@ -844,7 +844,9 @@ class Reference(models.Model):
         Raises:
             ValueError if no reference user tags are found
         """
-        tag_pks = list(self.user_tags.values_list("tags", flat=True).distinct().filter(tags__isnull=False))
+        tag_pks = list(
+            self.user_tags.values_list("tags", flat=True).distinct().filter(tags__isnull=False)
+        )
         log_message = (
             f"Update lit.Reference tags #{self.id}: Merge all user tags and apply to reference."
         )
