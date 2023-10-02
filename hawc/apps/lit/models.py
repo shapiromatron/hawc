@@ -10,6 +10,7 @@ from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
 from django.urls import reverse
@@ -834,6 +835,14 @@ class Reference(models.Model):
     )
 
     BREADCRUMB_PARENT = "assessment"
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                constants.REFERENCE_SEARCH_VECTOR,
+                name="search_vector_idx",
+            )
+        ]
 
     def merge_tags(self, user):
         """Merge all user tags and apply to the reference.
