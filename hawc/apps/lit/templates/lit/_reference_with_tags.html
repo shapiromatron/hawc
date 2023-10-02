@@ -42,12 +42,14 @@
         </div>
         {% endif %}{% endwith %}
         {% if conflict_resolution %}
-        <form class="d-inline-block"
-                    hx-post="{% url 'lit:api:reference-merge-tags' ref.pk %}">
-                    <button class="approve btn btn-sm btn-success mr-2 align-center">
-                        <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Apply All Tags Below
-                    </button>
-                </form>
+        <div class="d-flex align-flex-end">
+            <form class="ml-auto"
+                hx-post="{% url 'lit:api:reference-merge-tags' ref.pk %}">
+                <button class="approve btn btn-sm btn-success mr-2 align-center">
+                    <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Apply All Tags Below
+                </button>
+            </form>
+        </div>
         {% endif %}
         {% for user_tag in ref.user_tags.all %}
         <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
