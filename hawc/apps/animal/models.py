@@ -1235,7 +1235,7 @@ class ConfidenceIntervalsMixin:
 
             elif data_type == constants.DataType.DICHOTOMOUS:
                 if i == 0:
-                    i_0 = eg["incidence"]
+                    i_0 = eg.get("incidence", 0)
                     n_0 = eg["n"]
                 if i_0 is not None and i_0 > 0:
                     i_1 = eg["incidence"]
