@@ -11,8 +11,8 @@
     {% endif %}
     <div>
         <div class="ref_authors ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
-        <div class="ref_title m-0">{{ref.title}}</div>
-        <p className="ref_small">{{ref.journal}}</p>
+        <div class="ref_title mb-1">{{ref.title}}</div>
+        <p class="ref_small">{{ref.journal}}</p>
         <div class="d-flex my-1">
             {% for id in ref.identifiers.all %}
             {% if id.get_url %}
