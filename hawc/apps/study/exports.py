@@ -3,6 +3,7 @@ import pandas as pd
 from django.db.models import Q
 
 from ..common.exports import ModelExport
+from ..common.helper import cleanHTML
 from ..common.models import sql_display, sql_format, str_m2m
 from ..lit.constants import ReferenceDatabase
 from .constants import CoiReported
@@ -57,4 +58,7 @@ class StudyExport(ModelExport):
             df[key] = pd.to_numeric(df[key], errors="coerce")
         for key in [self.get_column_name("doi")]:
             df[key] = df[key].replace("", np.nan)
+        df.loc[:, self.get_column_name("summary")] = df[self.get_column_name("summary")].apply(
+            cleanHTML
+        )
         return df
