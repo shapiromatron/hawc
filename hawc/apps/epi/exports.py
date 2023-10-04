@@ -11,6 +11,24 @@ from ..study.exports import StudyExport
 from . import constants, models
 
 
+def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
+    mean = low = high = None
+
+    if mu_1 and mu_2 and mu_1 != 0:
+        mean = (mu_2 - mu_1) / mu_1 * 100.0
+        if sd_1 and sd_2 and n_1 and n_2:
+            sd = math.sqrt(
+                pow(mu_1, -2)
+                * ((pow(sd_2, 2) / n_2) + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2)))
+            )
+            ci = (1.96 * sd) * 100
+            rng = sorted([mean - ci, mean + ci])
+            low = rng[0]
+            high = rng[1]
+
+    return mean, low, high
+
+
 class StudyPopulationExport(ModelExport):
     def get_value_map(self):
         return {
@@ -439,24 +457,6 @@ class EpiDataPivotExporter(Exporter):
                 ),
             ),
         ]
-
-
-def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
-    mean = low = high = None
-
-    if mu_1 and mu_2 and mu_1 != 0:
-        mean = (mu_2 - mu_1) / mu_1 * 100.0
-        if sd_1 and sd_2 and n_1 and n_2:
-            sd = math.sqrt(
-                pow(mu_1, -2)
-                * ((pow(sd_2, 2) / n_2) + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2)))
-            )
-            ci = (1.96 * sd) * 100
-            rng = sorted([mean - ci, mean + ci])
-            low = rng[0]
-            high = rng[1]
-
-    return mean, low, high
 
 
 class OutcomeDataPivot(FlatFileExporter):
