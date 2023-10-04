@@ -45,6 +45,26 @@ def parse_article(content: dict) -> dict:
     )
 
 
+def fake() -> dict:
+    return dict(
+        success=[
+            {
+                "json": {},
+                "HEROID": 865309,
+                "PMID": None,
+                "doi": "10.",
+                "title": "Reference Title",
+                "abstract": "",
+                "source": "56-64.",
+                "year": 2013,
+                "authors": ["Author 1", "Author 2"],
+                "authors_short": "authors et al.",
+            }
+        ],
+        failure=[],
+    )
+
+
 class HEROFetch:
     """
     Handler to search and retrieve literature from US EPA's HERO database.
@@ -55,7 +75,6 @@ class HEROFetch:
     """
 
     default_settings = {"recordsperpage": 100}
-    FAKE_IMPORTS = settings.HAWC_FEATURES.FAKE_IMPORTS
 
     def __init__(self, id_list: list[int], **kwargs):
         if id_list is None:
@@ -69,24 +88,9 @@ class HEROFetch:
             self.settings[k] = v
 
     def get_content(self):
-        if self.FAKE_IMPORTS:
-            return dict(
-                success=[
-                    {
-                        "json": {},
-                        "HEROID": 3299187,
-                        "PMID": None,
-                        "doi": "10.",
-                        "title": "Reference Title",
-                        "abstract": "",
-                        "source": "56-64.",
-                        "year": 2013,
-                        "authors": ["Author 1", "Author 2"],
-                        "authors_short": "authors et al.",
-                    }
-                ],
-                failure=[],
-            )
+        if settings.HAWC_FEATURES.FAKE_IMPORTS:
+            return fake()
+
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
             request_ids = self.ids[recstart : recstart + self.settings["recordsperpage"]]
