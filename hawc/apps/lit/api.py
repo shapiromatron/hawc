@@ -402,9 +402,6 @@ class ReferenceViewSet(
     )
     def merge_tags(self, request, pk):
         instance = self.get_object()
-        assessment = instance.assessment
-        if not assessment.user_can_edit_object(self.request.user):
-            raise PermissionDenied()
         instance.merge_tags(self.request.user)
         return Response({"status": "success"})
 

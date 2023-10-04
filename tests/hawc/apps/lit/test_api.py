@@ -12,7 +12,7 @@ from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 from hawc.apps.myuser.models import HAWCUser
 
-from ..test_utils import check_details_of_last_log_entry
+from ..test_utils import check_200, check_403, check_details_of_last_log_entry, get_client
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
@@ -766,6 +766,17 @@ class TestReferenceViewSet:
         response = client.post(url, data, format="json")
         assert response.status_code == 400
         assert response.json() == {"tags": "Array of tags must be valid primary keys"}
+
+    def test_merge_tag_permissions(self):
+        team = get_client("team", api=True)
+        reviewer = get_client("reviewer", api=True)
+        url = reverse("lit:api:reference-merge-tags", args=[11])
+
+        response = reviewer.post(url)
+        assert response.status_code == 403
+
+        response = team.post(url)
+        assert response.status_code == 200
 
     def test_conflict_invalid(self, db_keys):
         client = APIClient()
