@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from itertools import chain
 
 import requests
+from django.conf import settings as feature_settings
 
 from ..utils.authors import get_author_short_text, normalize_author
 
@@ -33,6 +34,8 @@ def connect(api_key: str):
 class PubMedUtility:
     """Register tools with this utility class to import PubMed settings."""
 
+    FAKE_IMPORTS = feature_settings.HAWC_FEATURES.FAKE_IMPORTS
+
     def _register_instance(self):
         if settings.api_key != PubMedSettings.PLACEHOLDER:
             self.settings["api_key"] = settings.api_key
@@ -53,6 +56,9 @@ class PubMedSearch(PubMedUtility):
             self.settings[k] = v
 
     def _get_id_count(self):
+        if self.FAKE_IMPORTS:
+            self.id_count = 0
+            return
         data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
         r = requests.post(PubMedSearch.base_url, data=data)
         if r.status_code == 200:
@@ -68,6 +74,9 @@ class PubMedSearch(PubMedUtility):
         return [int(id.text) for id in ET.fromstring(tree).find("IdList").findall("Id")]
 
     def _fetch_ids(self):
+        if self.FAKE_IMPORTS:
+            self.ids = []
+            return
         ids = []
         data = self.settings.copy()
         if self.id_count is None:
@@ -119,6 +128,21 @@ class PubMedFetch(PubMedUtility):
         rng = list(range(0, len(self.ids), self.settings["retmax"]))
         self.request_count = len(rng)
         for retstart in rng:
+            if self.FAKE_IMPORTS:
+                self.content = [
+                    {
+                        "xml": "",
+                        "PMID": 33924247,
+                        "title": "Reference Title",
+                        "abstract": "",
+                        "citation": "citation",
+                        "year": 2021,
+                        "doi": "10.",
+                        "authors": ["author 1", "author 2"],
+                        "authors_short": "Author 1 and Author 2",
+                    }
+                ]
+                break
             data["id"] = self.ids[retstart : retstart + self.settings["retmax"]]
             resp = requests.post(PubMedFetch.base_url, data=data)
             if resp.status_code == 200:

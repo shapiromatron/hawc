@@ -28,6 +28,8 @@ class DssSubstance(NamedTuple):
         Returns:
             DssSubstance: a substance
         """
+        if settings.HAWC_FEATURES.FAKE_IMPORTS:
+            return cls(dtxsid="", content={})
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
         if settings.CCTE_API_KEY is None and settings.IS_TESTING is False:
