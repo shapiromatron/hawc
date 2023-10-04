@@ -11,8 +11,8 @@
     {% endif %}
     <div>
         <div class="ref_authors ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
-        <div class="ref_title m-0">{{ref.title}}</div>
-        <p className="ref_small">{{ref.journal}}</p>
+        <div class="ref_title mb-1">{{ref.title}}</div>
+        <p class="ref_small">{{ref.journal}}</p>
         <div class="d-flex my-1">
             {% for id in ref.identifiers.all %}
             {% if id.get_url %}
@@ -41,6 +41,17 @@
             {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
         </div>
         {% endif %}{% endwith %}
+        {% if conflict_resolution %}
+        <div class="d-flex align-flex-end">
+            <form class="ml-auto"
+                hx-post="{% url 'lit:api:reference-merge-tags' ref.pk %}">
+                <button class="approve btn btn-sm btn-success mr-2 align-center">
+                    <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve All
+                    <i class="fa fa-fw fa-question-circle px-1" data-toggle="popover" data-content="Accept and merge all tag additions and removals from individual user reviews. Tags are only removed if removed by all users."></i>
+                </button>
+            </form>
+        </div>
+        {% endif %}
         {% for user_tag in ref.user_tags.all %}
         <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
             <div>
