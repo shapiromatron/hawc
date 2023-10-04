@@ -12,7 +12,7 @@ from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 from hawc.apps.myuser.models import HAWCUser
 
-from ..test_utils import check_200, check_403, check_details_of_last_log_entry, get_client
+from ..test_utils import check_details_of_last_log_entry, get_client
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
