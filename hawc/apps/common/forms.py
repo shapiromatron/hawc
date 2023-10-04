@@ -159,6 +159,17 @@ class BaseFormHelper(cf.FormHelper):
         )
         self.layout.insert(len(self.layout) - 1, note)
 
+    def add_field_wraps(self):
+        """Wrap django fields with crispy field wrappers.
+
+        This should be performed after wrapping fields in rows and
+        columns, since it can add additional wraps around a django
+        field that can beyond the row/column containers.
+        """
+        for field_name, field in self.form.fields.items():
+            if hasattr(field, "crispy_field_class"):
+                self[field_name].wrap(field.crispy_field_class)
+
 
 class InlineFilterFormHelper(BaseFormHelper):
     """Helper class for creating an inline filtering form with a primary field."""

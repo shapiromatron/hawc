@@ -1,4 +1,5 @@
 import reversion
+from crispy_forms.utils import render_crispy_form
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -106,12 +107,12 @@ class TagBinding(models.Model):
             prefix, form_kwargs, *args, **kwargs
         )
 
-    def get_form_html(self, **kwargs) -> SafeText:
-        return (
-            dynamic_forms.Schema.parse_obj(self.form.schema)
-            .to_form(prefix=self.tag_id, **kwargs)
-            .helper.render_layout()
+    def get_form_html(self, csrf_token, **kwargs) -> SafeText:
+        form = dynamic_forms.Schema.parse_obj(self.form.schema).to_form(
+            prefix=self.tag_id, **kwargs
         )
+        # TODO: this will add the csrf token once for each dynamic form. too many times?
+        return render_crispy_form(form, helper=form.helper, context={"csrf_token": csrf_token})
 
     def get_assessment(self):
         return self.assessment

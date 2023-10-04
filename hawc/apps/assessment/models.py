@@ -328,11 +328,11 @@ class Assessment(models.Model):
         except ObjectDoesNotExist:
             return None
 
-    def get_tag_udfs(self) -> dict[int, safestring.SafeText] | None:
+    def get_tag_udfs(self, **kwargs) -> dict[int, safestring.SafeText] | None:
         tag_bindings = self.udf_tag_bindings.all()
         if tag_bindings.count() == 0:
             return None
-        return {tag_binding.tag_id: tag_binding.get_form_html() for tag_binding in tag_bindings}
+        return {tag_binding.tag_id: tag_binding.get_form_html(**kwargs) for tag_binding in tag_bindings}
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
