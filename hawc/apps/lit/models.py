@@ -844,6 +844,40 @@ class Reference(models.Model):
             )
         ]
 
+    @transaction.atomic
+    def merge_tags(self, user):
+        """Merge all unresolved user tags and apply to the reference.
+
+        Args:
+            user: The user requesting the tag change
+        """
+
+        # if there are no unresolved user tags, do nothing
+        n_user_tags = self.user_tags.filter(is_resolved=False).count()
+        if n_user_tags == 0:
+            return
+
+        tag_pks = list(
+            self.user_tags.filter(is_resolved=False)
+            .values_list("tags", flat=True)
+            .distinct()
+            .filter(tags__isnull=False)
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user.id,
+            message=f"lit.Reference {self.id}: merge all user tags {tag_pks}.",
+            content_object=self,
+        )
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        self.user_tags.update(is_resolved=True)
+        self.tags.set(tag_pks)
+        self.last_updated = timezone.now()
+        self.save()
+
     def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 

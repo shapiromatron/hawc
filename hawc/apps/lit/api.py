@@ -400,6 +400,14 @@ class ReferenceViewSet(
     @action(
         detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
+    def merge_tags(self, request, pk):
+        instance = self.get_object()
+        instance.merge_tags(self.request.user)
+        return Response({"status": "success"})
+
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
     def resolve_conflict(self, request, pk):
         instance = self.get_object()
         assessment = instance.assessment
