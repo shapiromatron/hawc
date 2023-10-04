@@ -329,10 +329,18 @@ class Assessment(models.Model):
             return None
 
     def get_tag_udfs(self, **kwargs) -> dict[int, safestring.SafeText] | None:
-        tag_bindings = self.udf_tag_bindings.all()
+        key = f"assessment-{self.pk}-tag-forms"
+        forms = cache.get(key)
+        if forms is not None:
+            return forms
+        tag_bindings = self.udf_tag_bindings.select_related("form")
         if tag_bindings.count() == 0:
             return None
-        return {tag_binding.tag_id: tag_binding.get_form_html(**kwargs) for tag_binding in tag_bindings}
+        forms = {
+            tag_binding.tag_id: tag_binding.get_form_html(**kwargs) for tag_binding in tag_bindings
+        }
+        cache.set(key, forms)
+        return forms
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
