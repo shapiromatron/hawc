@@ -285,9 +285,9 @@ class CentralTendencyExport(ModelExport):
     def get_value_map(self):
         return {
             "estimate": "estimate",
-            "estimate_type": "estimate_type",
+            "estimate_type": "estimate_type_display",
             "variance": "variance",
-            "variance_type": "variance_type",
+            "variance_type": "variance_type_display",
             "lower_bound_interval": "lower_bound_interval",
             "upper_bound_interval": "upper_bound_interval",
             "lower_ci": "lower_ci",
@@ -298,6 +298,12 @@ class CentralTendencyExport(ModelExport):
 
     def get_annotation_map(self, query_prefix):
         return {
+            "estimate_type_display": sql_display(
+                query_prefix + "estimate_type", constants.EstimateType
+            ),
+            "variance_type_display": sql_display(
+                query_prefix + "variance_type", constants.VarianceType
+            ),
             "lower_bound_interval": Case(
                 When(**{query_prefix + "lower_ci": None}, then=query_prefix + "lower_range"),
                 default=query_prefix + "lower_ci",
@@ -453,7 +459,7 @@ def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
     return mean, low, high
 
 
-class OutcomeDataPivot2(FlatFileExporter):
+class OutcomeDataPivot(FlatFileExporter):
     def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
         def _get_stdev(x: pd.Series):
             return models.GroupResult.stdev(
@@ -489,7 +495,14 @@ class OutcomeDataPivot2(FlatFileExporter):
                         ],
                         index=[row["result_group-id"]],
                     )
-                return pd.DataFrame()
+                return pd.DataFrame(
+                    [],
+                    columns=[
+                        "percent control mean",
+                        "percent control low",
+                        "percent control high",
+                    ],
+                )
 
             rgs = _df1.groupby("result_group-id", group_keys=False)
             return rgs.apply(_apply_result_groups)
@@ -632,7 +645,7 @@ class OutcomeDataPivot2(FlatFileExporter):
         return df
 
 
-class OutcomeDataPivot(FlatFileExporter):
+class OutcomeDataPivot2(FlatFileExporter):
     def _get_header_row(self):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
