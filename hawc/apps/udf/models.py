@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.forms import JSONField
 from django.urls import reverse
+from django.utils.safestring import SafeText
 
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
@@ -103,6 +104,13 @@ class TagBinding(models.Model):
     ) -> JSONField | DynamicFormField:
         return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
             prefix, form_kwargs, *args, **kwargs
+        )
+
+    def get_form_html(self, **kwargs) -> SafeText:
+        return (
+            dynamic_forms.Schema.parse_obj(self.form.schema)
+            .to_form(prefix=self.tag_id, **kwargs)
+            .helper.render_layout()
         )
 
     def get_assessment(self):

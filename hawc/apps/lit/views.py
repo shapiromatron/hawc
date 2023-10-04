@@ -264,6 +264,7 @@ class TagReferences(BaseFilterList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        udfs = self.assessment.get_tag_udfs()
         context.update(
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
         )
