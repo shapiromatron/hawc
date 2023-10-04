@@ -47,10 +47,7 @@
                 hx-post="{% url 'lit:api:reference-merge-tags' ref.pk %}">
                 <button class="approve btn btn-sm btn-success mr-2 align-center">
                     <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve All
-                    <span class="badge badge-light ml-2" data-toggle="popover"
-                        data-content="Accept and merge all tag additions and removals from individual user reviews. Tags are only removed if removed by all users.">
-                        <i class="fa fa-fw fa-question"></i>
-                    </span>
+                    <i class="fa fa-fw fa-question-circle px-1" data-toggle="popover" data-content="Accept and merge all tag additions and removals from individual user reviews. Tags are only removed if removed by all users."></i>
                 </button>
             </form>
         </div>
