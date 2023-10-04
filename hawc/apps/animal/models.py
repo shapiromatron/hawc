@@ -1237,10 +1237,11 @@ class ConfidenceIntervalsMixin:
                 if i == 0:
                     i_0 = eg.get("incidence", 0)
                     n_0 = eg["n"]
-                if i_0 is not None and i_0 > 0:
+                if i_0 and n_0:
                     i_1 = eg["incidence"]
                     n_1 = eg["n"]
-                    mean = ((i_1 / n_1) - (i_0 / n_0)) / (i_0 / n_0) * 100
+                    if n_1:
+                        mean = ((i_1 / n_1) - (i_0 / n_0)) / (i_0 / n_0) * 100
             eg.update(percentControlMean=mean, percentControlLow=low, percentControlHigh=high)
 
     @staticmethod
