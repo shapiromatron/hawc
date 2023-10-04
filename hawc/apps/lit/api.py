@@ -401,17 +401,12 @@ class ReferenceViewSet(
         detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
     )
     def merge_tags(self, request, pk):
-        response = {"status": "fail"}
         instance = self.get_object()
         assessment = instance.assessment
         if not assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
-        try:
-            instance.merge_tags(self.request.user)
-        except ValueError:
-            return Response({"reference": "Reference has no user tags to merge."}, status=400)
-        response["status"] = "success"
-        return Response(response)
+        instance.merge_tags(self.request.user)
+        return Response({"status": "success"})
 
     @action(
         detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT

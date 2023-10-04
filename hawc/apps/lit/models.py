@@ -844,29 +844,31 @@ class Reference(models.Model):
             )
         ]
 
+    @transaction.atomic
     def merge_tags(self, user):
-        """Merge all user tags and apply to the reference.
+        """Merge all unresolved user tags and apply to the reference.
 
         Args:
-            user: THe user requesting the tag change
-
-        Raises:
-            ValueError if no reference user tags are found
+            user: The user requesting the tag change
         """
+
+        # if there are no unresolved user tags, do nothing
+        n_user_tags = self.user_tags.filter(is_resolved=False).count()
+        if n_user_tags == 0:
+            return
+
         tag_pks = list(
-            self.user_tags.values_list("tags", flat=True).distinct().filter(tags__isnull=False)
-        )
-        log_message = (
-            f"Update lit.Reference tags #{self.id}: Merge all user tags and apply to reference."
+            self.user_tags.filter(is_resolved=False)
+            .values_list("tags", flat=True)
+            .distinct()
+            .filter(tags__isnull=False)
         )
         Log.objects.create(
             assessment_id=self.assessment_id,
             user_id=user.id,
-            message=log_message,
+            message=f"lit.Reference {self.id}: merge all user tags {tag_pks}.",
             content_object=self,
         )
-        if len(tag_pks) == 0:
-            raise ValueError(f"No user tags found on reference {self.id}")
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.tags.set(tag_pks)
         user_tag.save()
