@@ -55,10 +55,11 @@ class StudyExport(ModelExport):
 
     def prepare_df(self, df):
         for key in [self.get_column_name("pubmed_id"), self.get_column_name("hero_id")]:
-            df[key] = pd.to_numeric(df[key], errors="coerce")
+            if key in df.columns:
+                df[key] = pd.to_numeric(df[key], errors="coerce")
         for key in [self.get_column_name("doi")]:
-            df[key] = df[key].replace("", np.nan)
-        df.loc[:, self.get_column_name("summary")] = df[self.get_column_name("summary")].apply(
-            cleanHTML
-        )
+            if key in df.columns:
+                df[key] = df[key].replace("", np.nan)
+        if (key := self.get_column_name("summary")) in df.columns:
+            df.loc[:, key] = df[key].apply(cleanHTML)
         return df
