@@ -2,6 +2,8 @@ import pandas as pd
 from django.conf import settings
 from django.db.models import QuerySet
 
+from .helper import FlatExport
+
 
 class ModelExport:
     """Model level export module for use in Exporter class."""
@@ -206,3 +208,13 @@ class Exporter:
         for module in self._modules:
             df = module.prepare_df(df)
         return df
+
+    @classmethod
+    def flat_export(cls, qs: QuerySet, filename: str) -> FlatExport:
+        """Return an instance of a FlatExport.
+        Args:
+            qs (QuerySet): the initial QuerySet
+            filename (str): the filename for the export
+        """
+        df = cls().get_df(qs)
+        return FlatExport(df=df, filename=filename)
