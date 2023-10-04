@@ -467,7 +467,7 @@ class OutcomeDataPivot(FlatFileExporter):
             )
 
         def _apply_results(_df1: pd.DataFrame):
-            controls = _df1.loc[_df1["group-isControl"] is True]
+            controls = _df1.loc[_df1["group-isControl"] == True]  # noqa: E712
             control = _df1.iloc[0] if controls.empty else controls.iloc[0]
             n_1 = control["result_group-n"]
             mu_1 = control["result_group-estimate"]
