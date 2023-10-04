@@ -264,10 +264,8 @@ class TagReferences(BaseFilterList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        udfs = self.assessment.get_tag_udfs(csrf_token=context["config"]["data"]["csrf"])
         context.update(
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Update tags"),
-            udfs=udfs,
         )
         return context
 
@@ -401,6 +399,7 @@ class TagReferences(BaseFilterList):
                 tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
                 refs=references,
                 csrf=get_token(self.request),
+                udfs=self.assessment.get_tag_udfs(),
             ),
         )
 
