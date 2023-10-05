@@ -21,7 +21,7 @@ class HeatmapTemplateStore {
     @observable selectedTableFields = [];
 
     @observable showNull = false;
-    @observable showCounts = true;
+    @observable showCounts = 1;
     @observable upperColor = null;
 
     constructor(config) {
@@ -38,8 +38,8 @@ class HeatmapTemplateStore {
     @action.bound changeShowNull(bool) {
         this.showNull = bool;
     }
-    @action.bound changeShowCounts(bool) {
-        this.showCounts = bool;
+    @action.bound changeShowCounts(value) {
+        this.showCounts = value;
     }
     @action.bound changeUpperColor(color) {
         this.upperColor = color;

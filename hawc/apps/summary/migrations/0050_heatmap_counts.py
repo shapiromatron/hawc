@@ -7,7 +7,7 @@ def settings_json(apps, schema_editor):
     Visual = apps.get_model("summary", "Visual")
     changed = []
     for visual in Visual.objects.filter(visual_type=6):
-        visual.settings["show_counts"] = True
+        visual.settings["show_counts"] = 1
         changed.append(visual)
     if changed:
         Visual.objects.bulk_update(changed, ["settings"])

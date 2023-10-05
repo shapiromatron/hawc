@@ -75,6 +75,7 @@ class FilterWidget extends Component {
             numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length,
             isSelected = _itemState[item],
             showCounts = settings.show_counts;
+
         return (
             <div
                 key={index}
@@ -100,11 +101,14 @@ class FilterWidget extends Component {
                                 display: "inline-flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                backgroundColor: colorScale(numItems),
-                                color: h.getTextContrastColor(colorScale(numItems)),
+                                backgroundColor: showCounts < 3 ? colorScale(numItems) : null,
+                                color:
+                                    showCounts < 3
+                                        ? h.getTextContrastColor(colorScale(numItems))
+                                        : null,
                                 height: "1.5em",
                             }}>
-                            {showCounts ? <span>{numItems}</span> : null}
+                            {showCounts === 1 ? <span>{numItems}</span> : null}
                         </div>
                         <div style={{flex: "1 1 auto"}}>{item == "" ? h.nullString : item}</div>
                     </div>

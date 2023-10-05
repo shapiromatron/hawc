@@ -7,6 +7,7 @@ import FloatInput from "shared/components/FloatInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
+import ValueDisplaySelect from "../../summary/heatmap/ValueDisplaySelect";
 import AxisLabelTable from "./AxisLabelTable";
 import {MissingData, RefreshRequired} from "./common";
 import DetailTable from "./DetailTable";
@@ -310,12 +311,9 @@ class VisualCustomizationPanel extends Component {
                                 />
                             </div>
                             <div className="col-md-3">
-                                <CheckboxInput
-                                    label="Show value counts"
-                                    name="show_counts"
-                                    onChange={e => changeSettings(e.target.name, e.target.checked)}
-                                    checked={settings.show_counts}
-                                    helpText={"Show count information in heatmap and filters"}
+                                <ValueDisplaySelect
+                                    onChange={value => changeSettings("show_counts", value)}
+                                    value={settings.show_counts}
                                 />
                             </div>
                         </div>

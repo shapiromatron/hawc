@@ -5,6 +5,8 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
+import ValueDisplaySelect from "../summary/heatmap/ValueDisplaySelect";
+
 @inject("store")
 @observer
 class CustomizeTab extends Component {
@@ -73,12 +75,9 @@ class CustomizeTab extends Component {
                         />
                     </div>
                     <div className="col-md-4">
-                        <CheckboxInput
-                            label="Show value counts"
-                            name="show_counts"
-                            onChange={e => store.changeShowCounts(e.target.checked)}
-                            checked={store.showCounts}
-                            helpText={"Show count information in heatmap and filters."}
+                        <ValueDisplaySelect
+                            onChange={store.changeShowCounts}
+                            value={store.showCounts}
                         />
                     </div>
                     <div className="col-md-4">
