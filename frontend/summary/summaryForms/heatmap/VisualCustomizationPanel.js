@@ -306,6 +306,7 @@ class VisualCustomizationPanel extends Component {
                                     name="show_null"
                                     onChange={e => changeSettings(e.target.name, e.target.checked)}
                                     checked={settings.show_null}
+                                    helpText={"Display data with <null> values in selected axes"}
                                 />
                             </div>
                             <div className="col-md-3">
@@ -314,6 +315,7 @@ class VisualCustomizationPanel extends Component {
                                     name="show_counts"
                                     onChange={e => changeSettings(e.target.name, e.target.checked)}
                                     checked={settings.show_counts}
+                                    helpText={"Show count information in heatmap and filters"}
                                 />
                             </div>
                         </div>

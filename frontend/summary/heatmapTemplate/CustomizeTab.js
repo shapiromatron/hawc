@@ -78,6 +78,7 @@ class CustomizeTab extends Component {
                             name="show_counts"
                             onChange={e => store.changeShowCounts(e.target.checked)}
                             checked={store.showCounts}
+                            helpText={"Show count information in heatmap and filters."}
                         />
                     </div>
                     <div className="col-md-4">

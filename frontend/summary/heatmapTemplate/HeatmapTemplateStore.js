@@ -99,7 +99,7 @@ class HeatmapTemplateStore {
             padding: {top: 30, left: 30, bottom: 30, right: 30},
             show_axis_border: true,
             show_grid: true,
-            show_counts: this.showCount,
+            show_counts: this.showCounts,
             show_tooltip: true,
             show_totals: true,
             show_null: this.showNull,
