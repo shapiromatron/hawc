@@ -45,26 +45,6 @@ def parse_article(content: dict) -> dict:
     )
 
 
-def fake() -> dict:
-    return dict(
-        success=[
-            {
-                "json": {},
-                "HEROID": 865309,
-                "PMID": None,
-                "doi": "10.",
-                "title": "Reference Title",
-                "abstract": "",
-                "source": "56-64.",
-                "year": 2013,
-                "authors": ["Author 1", "Author 2"],
-                "authors_short": "authors et al.",
-            }
-        ],
-        failure=[],
-    )
-
-
 class HEROFetch:
     """
     Handler to search and retrieve literature from US EPA's HERO database.
@@ -87,9 +67,34 @@ class HEROFetch:
         for k, v in kwargs.items():
             self.settings[k] = v
 
+    def fake_content(self) -> dict:
+        return dict(
+            success=[
+                [
+                    {
+                        "json": {},
+                        "HEROID": id,
+                        "PMID": None,
+                        "doi": "10.",
+                        "title": "Reference Title",
+                        "abstract": "",
+                        "source": "56-64.",
+                        "year": 2023,
+                        "authors": ["Author 1", "Author 2"],
+                        "authors_short": "authors et al.",
+                    }
+                    for id in self.ids
+                ]
+            ],
+            failure=[],
+        )
+
     def get_content(self):
         if settings.HAWC_FEATURES.FAKE_IMPORTS:
-            return fake()
+            data = self.fake_content()
+            self.content = data["success"]
+            self.failures = data["failure"]
+            return data
 
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
