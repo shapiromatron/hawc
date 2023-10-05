@@ -132,6 +132,7 @@ class ExploreHeatmap extends BaseVisual {
             padding: settings.padding,
             show_axis_border: settings.show_axis_border,
             show_grid: settings.show_grid,
+            show_counts: settings.show_counts,
             show_tooltip: settings.show_tooltip,
             show_totals: settings.show_totals,
             show_null: settings.show_null,

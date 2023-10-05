@@ -69,11 +69,13 @@ class FilterWidget extends Component {
     }
 
     renderItem(widget, item, index, _itemState, action) {
-        const {toggleItemSelection, colorScale, maxValue} = this.props.store,
+        const {toggleItemSelection, colorScale, maxValue, settings} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
             numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length,
-            isSelected = _itemState[item];
+            isSelected = _itemState[item],
+            showCounts = settings.show_counts;
+
         return (
             <div
                 key={index}
@@ -99,11 +101,14 @@ class FilterWidget extends Component {
                                 display: "inline-flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                backgroundColor: colorScale(numItems),
-                                color: h.getTextContrastColor(colorScale(numItems)),
+                                backgroundColor: showCounts <= 2 ? colorScale(numItems) : null,
+                                color:
+                                    showCounts <= 2
+                                        ? h.getTextContrastColor(colorScale(numItems))
+                                        : null,
                                 height: "1.5em",
                             }}>
-                            <span>{numItems}</span>
+                            {showCounts == 1 ? <span>{numItems}</span> : null}
                         </div>
                         <div style={{flex: "1 1 auto"}}>{item == "" ? h.nullString : item}</div>
                     </div>
