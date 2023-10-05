@@ -579,8 +579,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 "outcome-diagnostic": "diagnostic",
                 "outcome-age_of_measurement": "age of outcome measurement",
                 "outcome-effects": "tags",
-            },
-            errors="raise",
+            }
         )
         df = df.rename(
             columns={
@@ -618,9 +617,6 @@ class OutcomeDataPivot(FlatFileExporter):
                 "group-name": "exposure group name",
                 "group-comparative_name": "exposure group comparison name",
                 "group-numeric": "exposure group numeric",
-                # "Reference/Exposure group", # format string
-                # "Result, summary numerical", # format string
-                # "key", # copy of result_group-id
                 "result_group-id": "result group id",
                 "result_group-n": "N",
                 "result_group-estimate": "estimate",
@@ -631,15 +627,10 @@ class OutcomeDataPivot(FlatFileExporter):
                 "result_group-lower_bound_interval": "lower bound interval",
                 "result_group-upper_bound_interval": "upper bound interval",
                 "result_group-variance": "variance",
-                # "result_group-p_value_text":"statistical significance", # add this; its computed
                 "result_group-p_value": "statistical significance (numeric)",
                 "result_group-is_main_finding": "main finding",
                 "result_group-main_finding_support": "main finding support",
-                # "percent control mean", # some function
-                # "percent control low", # some function
-                # "percent control high", # some function
-            },
-            errors="raise",
+            }
         )
 
         return df
