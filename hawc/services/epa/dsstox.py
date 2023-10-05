@@ -16,9 +16,9 @@ class DssSubstance(NamedTuple):
     content: dict
 
     @classmethod
-    def create_fake(cls) -> Self:
+    def create_fake(cls, dtxsid: str) -> Self:
         return cls(
-            dtxsid="DTXSID6026296",
+            dtxsid=dtxsid,
             content={
                 "id": "FD70373DEB12FD6675FDFD64FDFDFD0E3AFD53FD74784AFD5AFD1136FD",
                 "casrn": "7732-18-5",
@@ -47,7 +47,7 @@ class DssSubstance(NamedTuple):
             DssSubstance: a substance
         """
         if settings.HAWC_FEATURES.FAKE_IMPORTS:
-            return cls.create_fake()
+            return cls.create_fake(dtxsid)
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
         if settings.CCTE_API_KEY is None and settings.IS_TESTING is False:

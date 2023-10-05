@@ -1,4 +1,5 @@
 import logging
+import random
 import re
 import xml.etree.ElementTree as ET
 from itertools import chain
@@ -46,18 +47,14 @@ class PubMedSearch(PubMedUtility):
     default_settings = dict(retmax=5000, db="pubmed")
 
     def __init__(self, term, **kwargs):
-        self.id_count = None
+        self.id_count: int | None = None
         self.settings = PubMedSearch.default_settings.copy()
         self._register_instance()
         self.settings["term"] = term
         for k, v in kwargs.items():
             self.settings[k] = v
 
-    def _get_id_count(self):
-        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
-            self.id_count = 1
-            return
-
+    def _get_id_count(self) -> int:
         data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
         r = requests.post(PubMedSearch.base_url, data=data)
         if r.status_code == 200:
@@ -73,10 +70,6 @@ class PubMedSearch(PubMedUtility):
         return [int(id.text) for id in ET.fromstring(tree).find("IdList").findall("Id")]
 
     def _fetch_ids(self):
-        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
-            self.ids = [8675309]
-            return
-
         ids = []
         data = self.settings.copy()
         if self.id_count is None:
@@ -93,9 +86,14 @@ class PubMedSearch(PubMedUtility):
         self.ids = ids
 
     def get_ids_count(self) -> int:
+        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            return 1
         return self._get_id_count()
 
     def get_ids(self) -> list[int]:
+        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            return [random.randrange(100_000_000, 999_9999_999)]  # noqa: S311
+
         self._fetch_ids()
         return self.ids
 
@@ -127,7 +125,7 @@ class PubMedFetch(PubMedUtility):
         return [
             {
                 "xml": "",
-                "PMID": 6875309,
+                "PMID": id,
                 "title": "Reference Title",
                 "abstract": "",
                 "citation": "citation",
@@ -136,6 +134,7 @@ class PubMedFetch(PubMedUtility):
                 "authors": ["author 1", "author 2"],
                 "authors_short": "Author 1 and Author 2",
             }
+            for id in self.ids
         ]
 
     def get_content(self) -> list[dict]:
