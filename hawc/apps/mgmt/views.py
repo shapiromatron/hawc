@@ -9,7 +9,7 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit
-from ..common.views import BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
+from ..common.views import BaseDetail, BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
 from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
@@ -177,6 +177,24 @@ class AssessmentTaskList(BaseFilterList):
         context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
         context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
         return context
+
+
+class AssessmentTimeSeries(BaseDetail):
+    model = Assessment
+    template_name = "mgmt/assessment_time_series.html"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+
+class AssessmentTimeSpent(BaseDetail):
+    model = Assessment
+    template_name = "mgmt/assessment_time_spent.html"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+
+class AssessmentGrowth(BaseDetail):
+    model = Assessment
+    template_name = "mgmt/assessment_growth.html"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
 
 class TaskViewSet(HtmxViewSet):

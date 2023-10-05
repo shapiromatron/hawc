@@ -1,0 +1,20 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+
+{% block content %}
+<div class="d-flex">
+    <h2>Assessment Growth for {{ assessment.name }}</h2>
+    {% actions %}
+    <a class="dropdown-item" href="{% url 'mgmt:assessment-time-series' assessment.pk %}">Time Series</a>
+    <a class="dropdown-item" href="{% url 'mgmt:assessment-time-spent' assessment.pk %}">Time Spent</a>
+    {% endactions %}
+</div>
+
+<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatem, dolores neque? Deserunt cumque doloribus nisi,
+    accusamus, illum facere ea magnam explicabo eveniet enim repellendus commodi corporis maiores fuga iure accusantium!
+</p>
+<h3>Assessment growth</h3>
+<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsam voluptatibus mollitia deleniti accusantium quisquam,
+    odio id minima modi ab. Quasi mollitia consectetur odit laudantium eaque rerum, autem hic animi corrupti!</p>
+{% endblock %}
