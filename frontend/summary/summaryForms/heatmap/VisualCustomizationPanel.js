@@ -308,6 +308,14 @@ class VisualCustomizationPanel extends Component {
                                     checked={settings.show_null}
                                 />
                             </div>
+                            <div className="col-md-3">
+                                <CheckboxInput
+                                    label="Show value counts"
+                                    name="show_counts"
+                                    onChange={e => changeSettings(e.target.name, e.target.checked)}
+                                    checked={settings.show_counts}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

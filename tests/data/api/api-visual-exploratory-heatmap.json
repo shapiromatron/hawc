@@ -47,6 +47,7 @@
       "top": 30
     },
     "show_axis_border": true,
+    "show_counts": true,
     "show_grid": true,
     "show_null": true,
     "show_tooltip": true,

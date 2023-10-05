@@ -21,6 +21,7 @@ class HeatmapTemplateStore {
     @observable selectedTableFields = [];
 
     @observable showNull = false;
+    @observable showCounts = true;
     @observable upperColor = null;
 
     constructor(config) {
@@ -36,6 +37,9 @@ class HeatmapTemplateStore {
 
     @action.bound changeShowNull(bool) {
         this.showNull = bool;
+    }
+    @action.bound changeShowCounts(bool) {
+        this.showCounts = bool;
     }
     @action.bound changeUpperColor(color) {
         this.upperColor = color;
@@ -95,6 +99,7 @@ class HeatmapTemplateStore {
             padding: {top: 30, left: 30, bottom: 30, right: 30},
             show_axis_border: true,
             show_grid: true,
+            show_counts: this.showCount,
             show_tooltip: true,
             show_totals: true,
             show_null: this.showNull,

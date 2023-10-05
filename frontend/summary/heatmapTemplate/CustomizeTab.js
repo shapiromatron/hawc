@@ -63,7 +63,7 @@ class CustomizeTab extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <CheckboxInput
                             label="Show null field values"
                             name="show_null"
@@ -72,7 +72,15 @@ class CustomizeTab extends Component {
                             helpText={"Display data with <null> values in selected axes."}
                         />
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-4">
+                        <CheckboxInput
+                            label="Show value counts"
+                            name="show_counts"
+                            onChange={e => store.changeShowCounts(e.target.checked)}
+                            checked={store.showCounts}
+                        />
+                    </div>
+                    <div className="col-md-4">
                         <TextInput
                             label="Color"
                             name="upperColor"
