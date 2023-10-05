@@ -101,14 +101,14 @@ class FilterWidget extends Component {
                                 display: "inline-flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                backgroundColor: showCounts < 3 ? colorScale(numItems) : null,
+                                backgroundColor: showCounts <= 2 ? colorScale(numItems) : null,
                                 color:
-                                    showCounts < 3
+                                    showCounts <= 2
                                         ? h.getTextContrastColor(colorScale(numItems))
                                         : null,
                                 height: "1.5em",
                             }}>
-                            {showCounts === 1 ? <span>{numItems}</span> : null}
+                            {showCounts == 1 ? <span>{numItems}</span> : null}
                         </div>
                         <div style={{flex: "1 1 auto"}}>{item == "" ? h.nullString : item}</div>
                     </div>

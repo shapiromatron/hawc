@@ -616,7 +616,7 @@ class ExploreHeatmapPlot {
                             : _.includes(filterIndices, d.index)
                             ? maxValue
                             : d.rows.length / 3;
-                return showCounts < 3
+                return showCounts <= 2
                     ? colorScale(value)
                     : value === 0
                     ? "white"
@@ -685,7 +685,7 @@ class ExploreHeatmapPlot {
                     .transition(t)
                     .style("fill", textColor)
                     .style("display", d => (d.rows.length == 0 ? "none" : null))
-                    .text(d => (showCounts < 2 ? d.rows.length : "＋"));
+                    .text(d => (showCounts == 1 ? d.rows.length : "＋"));
 
                 this.bind_tooltip(g, "cell");
             });
