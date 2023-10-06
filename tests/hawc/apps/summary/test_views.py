@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 from hawc.apps.summary.models import DataPivotQuery
+
 from ..test_utils import check_200, get_client
 
 

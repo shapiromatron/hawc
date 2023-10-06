@@ -148,9 +148,10 @@ def test_smoke_get():
     main = 1
     slug_search = "manual-import"
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception) as e:
         url = reverse("lit:search_query", args=(main, slug_search))
         client.get(url)
+        assert str(e.value) == "Search funtionality disabled"
 
     urls = [
         reverse("lit:overview", args=(main,)),
