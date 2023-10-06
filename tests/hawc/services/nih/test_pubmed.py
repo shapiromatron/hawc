@@ -52,6 +52,14 @@ class TestPubMedSearch:
         search.get_ids()
         assert len(search.ids) >= 212
 
+    def test_fake(self, settings):
+        settings.HAWC_FEATURES.FAKE_IMPORTS = True
+        search = pubmed.PubMedSearch(term="foo")
+        search.get_ids_count()
+        search.get_ids()
+        assert len(search.ids) == 1
+        settings.HAWC_FEATURES.FAKE_IMPORTS = False
+
     def _results_check(self, search):
         assert search.id_count == 6
         results_list = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
@@ -179,6 +187,16 @@ class TestPubMedFetch:
             "year": 1993,
         }
         assert obj == expected
+
+    def test_fake(self, settings):
+        settings.HAWC_FEATURES.FAKE_IMPORTS = True
+        ids = [12345, 123456]
+        fetch = pubmed.PubMedFetch(id_list=ids)
+        fetch.get_content()
+        assert len(fetch.content) == 2
+        actual_ids = [f["PMID"] for f in fetch.content]
+        assert ids == actual_ids
+        settings.HAWC_FEATURES.FAKE_IMPORTS = False
 
     def _results_check(self, fetch, ids):
         assert len(fetch.content) == 6
