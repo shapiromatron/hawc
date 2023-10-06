@@ -68,24 +68,28 @@
                     <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}}</i>
                 </div>
             </div>
-            {% if conflict_resolution %}
-                {% with user_tag.consensus_diff as diff %}
-                    {% for tag in ref.tags.all %}
-                        {% if tag in diff.intersection %}
+            {% with user_tag.consensus_diff as diff %}
+                {% for tag in ref.tags.all %}
+                    {% if tag in diff.intersection %}
+                        {% if conflict_resolution %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
                         {% else %}
+                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
+                        {% endif %}
+                    {% else %}
+                        {% if not user_tag.is_resolved %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
                         {% endif %}
-                    {% endfor %}
-                    {% for tag in diff.difference %}
-                        {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
-                    {% endfor %}
-                {% endwith %}
-            {% else %}
-                {% for tag in user_tag.tags.all %}
+                    {% endif %}
+                {% endfor %}
+                {% for tag in diff.difference %}
                     {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
                 {% endfor %}
-            {% endif %}
+                {% if diff.intersection|length is 0 and diff.difference|length is 0 and user_tag.is_resolved %} 
+                    <p>No tags selected</p>
+                {% endif %}
+            {% endwith %}
+            
         </div>
         {% endfor %}
     </div>

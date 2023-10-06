@@ -74,6 +74,32 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Tagged by me",
         help_text="All references that you have tagged",
     )
+    addition_tags = df.ModelMultipleChoiceFilter(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        method="filter_tag_additions",
+        conjoined=True,
+        label="Canditate Tag Additions",
+        help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, a reference user tag must include all selected tags.",
+    )
+    include_additiontag_descendants = df.BooleanFilter(
+        method=filter_noop,
+        widget=CheckboxInput(),
+        label="Include tag descendants",
+        help_text="Applies to tags selected above. By default, only references with the specific selected candidate tag(s) are shown; checking this box includes references that are tagged with any descendant of the selected tag",
+    )
+    deletion_tags = df.ModelMultipleChoiceFilter(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        method="filter_tag_deletions",
+        conjoined=True,
+        label="Canditate Tag Deletions",
+        help_text="Select a tag to view references where that tag has been removed by a user (i.e., the tag exists as a consensus tag but not as a user tag). If multiple tags are selected, a reference must include all selected tags, and a user tag must not contain any of the selected tags.",
+    )
+    include_deletiontag_descendants = df.BooleanFilter(
+        method=filter_noop,
+        widget=CheckboxInput(),
+        label="Include tag descendants",
+        help_text="Applies to tags selected above. By default, only references with the specific selected tag(s) up for deletion are shown; checking this box includes references that are tagged with any descendant of the selected tag",
+    )
     order_by = ArrowOrderingFilter(
         initial="-year",
         fields=(
@@ -112,6 +138,10 @@ class ReferenceFilterSet(BaseFilterSet):
             "my_tags",
             "include_mytag_descendants",
             "anything_tagged_me",
+            "addition_tags",
+            "include_additiontag_descendants",
+            "deletion_tags",
+            "include_deletiontag_descendants",
             "order_by",
             "paginate_by",
             "partially_tagged",
@@ -188,6 +218,42 @@ class ReferenceFilterSet(BaseFilterSet):
         ).filter(my_tag_count__gt=0)
         return queryset.distinct()
 
+    def filter_tag_additions(self, queryset, name, value):
+        include_descendants = self.data.get("include_additiontag_descendants", False)
+        for tag in value:
+            tag_ids = (
+                list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                if include_descendants
+                else [tag.id]
+            )
+            queryset = queryset.annotate(
+                addtag_count=Count(
+                    "user_tags",
+                    filter=Q(user_tags__tags__in=tag_ids)
+                    & ~Q(tags__in=tag_ids)
+                    & Q(user_tags__is_resolved=False),
+                )
+            ).filter(addtag_count__gt=0)
+        return queryset.distinct()
+
+    def filter_tag_deletions(self, queryset, name, value):
+        include_descendants = self.data.get("include_deletiontag_descendants", False)
+        for tag in value:
+            tag_ids = (
+                list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                if include_descendants
+                else [tag.id]
+            )
+            queryset = queryset.annotate(
+                deltag_count=Count(
+                    "user_tags",
+                    filter=~Q(user_tags__tags__in=tag_ids)
+                    & Q(tags__in=tag_ids)
+                    & Q(user_tags__is_resolved=False),
+                )
+            ).filter(deltag_count__gt=0)
+        return queryset.distinct()
+
     def filter_partially_tagged(self, queryset, name, value):
         if not value:
             return queryset
@@ -215,21 +281,23 @@ class ReferenceFilterSet(BaseFilterSet):
             "anything_tagged_me",
             "include_mytag_descendants",
             "include_descendants",
+            "addition_tags",
+            "include_additiontag_descendants",
+            "deletion_tags",
+            "include_deletiontag_descendants",
             "needs_tagging",
         ]:
             if field in form.fields:
                 form.fields[field].hover_help = True
-        if "tags" in form.fields:
-            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            form.fields["tags"].queryset = tags
-            form.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
-            form.fields["tags"].widget.attrs["size"] = 8
-        if "my_tags" in form.fields:
-            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            form.fields["my_tags"].queryset = tags
-            form.fields["my_tags"].label_from_instance = lambda tag: tag.get_nested_name()
-            form.fields["my_tags"].widget.attrs["size"] = 8
-            form.fields["tags"].label = "Consensus Tags"
+
+        for field in "tags", "my_tags", "addition_tags", "deletion_tags":
+            if field in form.fields:
+                tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+                form.fields[field].queryset = tags
+                form.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
+                form.fields[field].widget.attrs["size"] = 8
+                if field == "my_tags":
+                    form.fields["tags"].label = "Consensus Tags"
         if "search" in form.fields:
             form.fields["search"].queryset = models.Search.objects.filter(
                 assessment=self.assessment

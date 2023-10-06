@@ -424,6 +424,10 @@ class ConflictResolution(BaseFilterList):
                 "my_tags",
                 "include_mytag_descendants",
                 "anything_tagged_me",
+                "addition_tags",
+                "include_additiontag_descendants",
+                "deletion_tags",
+                "include_deletiontag_descendants",
             ],
             grid_layout={
                 "rows": [
@@ -442,7 +446,7 @@ class ConflictResolution(BaseFilterList):
                     {
                         "columns": [
                             {
-                                "width": 6,
+                                "width": 3,
                                 "rows": [
                                     {
                                         "columns": [
@@ -454,13 +458,35 @@ class ConflictResolution(BaseFilterList):
                                 ],
                             },
                             {
-                                "width": 6,
+                                "width": 3,
                                 "rows": [
                                     {
                                         "columns": [
                                             {"width": 12},
                                             {"width": 6},
                                             {"width": 6},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 3,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12},
+                                            {"width": 12},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 3,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
