@@ -10,8 +10,8 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
-from django.db.models import Case, CharField, Choices, Q, QuerySet, URLField, Value, When
-from django.db.models.functions import Coalesce
+from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
+from django.db.models.functions import Coalesce, Concat
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.html import strip_tags
 from treebeard.mp_tree import MP_Node
@@ -532,6 +532,30 @@ def sql_display(name: str, Choice: type[Choices]) -> Case:
         *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
         default=Value("?"),
     )
+
+
+def sql_format(format_str: str, *field_params) -> Concat:
+    """Create an ORM expression to simulate a format string.
+
+    Args:
+        format_str (str): Format string. Any {} present in the string
+        will be replaced by field_params.
+
+    Returns:
+        Concat: An expression that generates a string
+    """
+    value_params = format_str.split("{}")
+    if format_str.count("{}") != len(field_params):
+        raise ValueError("field params must be equal to value params.")
+    replace_num = len(field_params)
+    concat_args = []
+    for i in range(replace_num):
+        if value_params[i]:
+            concat_args.append(Value(value_params[i]))
+        concat_args.append(field_params[i])
+    if remainder := "".join(value_params[replace_num:]):
+        concat_args.append(Value(remainder))
+    return Concat(*concat_args, output_field=TextField())
 
 
 def replace_null(field: str, replacement: str = ""):

@@ -14,9 +14,11 @@ class FeatureFlags(BaseModel):
     THIS_IS_AN_EXAMPLE: bool = True
     DEFAULT_LITERATURE_CONFLICT_RESOLUTION: bool = False
     ALLOW_RIS_IMPORTS: bool = True
+    FAKE_IMPORTS: bool = False
     ANONYMOUS_ACCOUNT_CREATION: bool = True
     ENABLE_BMDS_33 = False
     ENABLE_PLOTLY_VISUAL: bool = False
+    ENABLE_FILTER_DOWNLOADS: bool = False
     ENABLE_UDF: bool = False
 
     @classmethod
