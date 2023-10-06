@@ -20,6 +20,7 @@ class Store {
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
+        // TODO: add saved udf data to Reference obj
         this.references = Reference.array(config.refs, this.tagtree, false);
         // set first reference
         if (this.references.length > 0) {
@@ -35,6 +36,16 @@ class Store {
         this.referenceUserTags = reference.userTags
             ? reference.userTags.slice(0)
             : reference.tags.slice(0);
+        this.setUDF();
+    }
+    @action.bound setUDF() {
+        var udf_html = "";
+        // TODO: for now, we are just adding all UDFs to the page, regardless of selected tags
+        // TODO: update udf when tags are selected/deselected
+        for (const udf of Object.values(this.config.udfs)) {
+            udf_html += udf;
+        }
+        this.currentUDF = udf_html;
     }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);

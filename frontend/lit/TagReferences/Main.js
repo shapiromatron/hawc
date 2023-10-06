@@ -50,6 +50,15 @@ ReferenceListItem.propTypes = {
 
 @inject("store")
 @observer
+class ReferenceUDF extends Component {
+    render() {
+        const {currentUDF} = this.props;
+        return <div dangerouslySetInnerHTML={{__html: currentUDF}} />;
+    }
+}
+
+@inject("store")
+@observer
 class TagReferencesMain extends Component {
     constructor(props) {
         super(props);
@@ -62,7 +71,7 @@ class TagReferencesMain extends Component {
     }
     render() {
         const {store} = this.props,
-            {hasReference, reference, referenceTags, referenceUserTags} = store,
+            {hasReference, reference, referenceTags, referenceUserTags, currentUDF} = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
 
         return (
@@ -212,6 +221,7 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
+                            <ReferenceUDF currentUDF={currentUDF} />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>

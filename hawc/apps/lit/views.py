@@ -258,7 +258,7 @@ class TagReferences(BaseFilterList):
         return (
             super()
             .get_queryset()
-            .select_related("study")
+            .select_related("study", "saved_tag_contents")
             .prefetch_related("searches", "identifiers", "tags")
         )
 
@@ -387,6 +387,7 @@ class TagReferences(BaseFilterList):
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
+        udf_content = context["object_list"].values("saved_tag_contents__content")
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
@@ -400,6 +401,7 @@ class TagReferences(BaseFilterList):
                 refs=references,
                 csrf=get_token(self.request),
                 udfs=self.assessment.get_tag_udfs(),
+                udf_content=udf_content,
             ),
         )
 
