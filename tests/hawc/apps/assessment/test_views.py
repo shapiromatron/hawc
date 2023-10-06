@@ -11,6 +11,8 @@ from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_200, get_client
+
 
 def has_redis():
     return "RedisCache" in settings.CACHES["default"]["BACKEND"]
@@ -305,3 +307,46 @@ class TestRasterizeCss:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["template"].startswith('<defs><style type="text/css">')
+
+
+@pytest.mark.django_db
+def test_smoke_get():
+    client = get_client("admin")
+    main = 1
+    log_content_type = 16
+    log_obj_id = 1
+    urls = [
+        reverse("assessment:full_list", args=()),
+        reverse("assessment:public_list", args=()),
+        reverse("assessment:detail", args=(main,)),
+        reverse("assessment:update", args=(main,)),
+        reverse("assessment:modules_update", args=(main,)),
+        reverse("assessment:delete", args=(main,)),
+        reverse("assessment:downloads", args=(main,)),
+        reverse("assessment:assessment_logs", args=(main,)),
+        reverse("assessment:details-create", args=(main,)),
+        reverse("assessment:details-update", args=(main,)),
+        reverse("assessment:values-create", args=(main,)),
+        reverse("assessment:values-detail", args=(main,)),
+        reverse("assessment:values-update", args=(main,)),
+        reverse("assessment:values-delete", args=(main,)),
+        reverse("assessment:log_object_list", args=(log_content_type, log_obj_id)),
+        reverse("assessment:log_detail", args=(main,)),
+        reverse("assessment:dataset_create", args=(main,)),
+        reverse("assessment:dataset_detail", args=(main,)),
+        reverse("assessment:dataset_update", args=(main,)),
+        reverse("assessment:dataset_delete", args=(main,)),
+        reverse("assessment:species_create", args=(main,)),
+        reverse("assessment:strain_create", args=(main,)),
+        reverse("assessment:dose_units_create", args=(main,)),
+        reverse("assessment:dtxsid_create", args=()),
+        reverse("assessment:endpoint_list", args=(main,)),
+        reverse("assessment:clean_extracted_data", args=(main,)),
+        reverse("assessment:effect_tag_create", args=(main,)),
+        reverse("assessment:content_types", args=()),
+        reverse("assessment:close_window", args=()),
+        reverse("assessment:clean_study_metrics", args=(main,)),
+        reverse("assessment:bulk-publish", args=(main,)),
+    ]
+    for url in urls:
+        check_200(client, url)

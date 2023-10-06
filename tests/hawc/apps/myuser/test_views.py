@@ -14,6 +14,7 @@ from hawc.apps.myuser.views import ExternalAuth
 
 from ..test_utils import check_200, get_client
 
+
 class UserCreationTests(TestCase):
     def test_validation_errors(self):
         # assert various errors are present
@@ -227,6 +228,7 @@ class ExternalAuthTests(TestCase):
         bad_email = "another_user@hawcproject.org"
         response = self._login(bad_email, external_id)
         assert response.status_code == 302 and response.url == forbidden_url
+
 
 @pytest.mark.django_db
 def test_smoke_get():
