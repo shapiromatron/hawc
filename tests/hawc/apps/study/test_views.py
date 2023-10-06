@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
+from ..test_utils import check_200, get_client
 
 @pytest.mark.django_db
 def test_study_read_success(db_keys):
@@ -145,3 +146,23 @@ def test_uf_crud_failure(db_keys):
             assert response.status_code == 403
             response = c.post(view)
             assert response.status_code in [403, 405]
+
+@pytest.mark.django_db
+def test_smoke_get():
+    client = get_client("pm")
+
+    url_redirect = reverse("study:rob_redirect", args=(1,))
+    assert client.get(url_redirect).status_code == 301
+    url_toggle_lock = reverse("study:toggle-lock", args=(1,))
+    assert client.get(url_toggle_lock).status_code == 302
+
+    urls = [
+        reverse("study:new_ref", args=(1,)),
+        reverse("study:create_from_identifier", args=(1,)),
+        reverse("study:attachment_create", args=(1,)),
+        reverse("study:list", args=(1,)),
+        reverse("study:detail", args=(1,)),
+        reverse("study:delete", args=(1,)),
+    ]
+    for url in urls:
+        check_200(client, url)

@@ -10,6 +10,8 @@ from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 from hawc.apps.lit.models import Reference
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_200, get_client
+
 
 @pytest.mark.django_db
 class TestViewPermissions:
@@ -138,3 +140,48 @@ class TestRefFilterList:
         n_results = b"References (1 found)"
         title = b"Psycho-physiological effects of the terrorist sarin attack on the Tokyo subway system."
         assert (n_results in resp.content) and (title in resp.content)
+
+@pytest.mark.django_db
+def test_smoke_get():
+    client = get_client("pm")
+    slug_search="manual-import"
+
+    with pytest.raises(Exception):
+        url = reverse("lit:search_query", args=(1,slug_search))
+        client.get(url)
+
+    urls = [
+        reverse("lit:overview", args=(1,)),
+        # crud tags
+        reverse("lit:tags_update", args=(1,)),
+        reverse("lit:literature_assessment_update", args=(1,)),
+        # reference-level details
+        reverse("lit:ref_detail", args=(1,)),
+        reverse("lit:ref_edit", args=(1,)),
+        reverse("lit:ref_delete", args=(1,)),
+        reverse("lit:tag-status", args=(1,)),
+        reverse("lit:tag", args=(1,)),
+        reverse("lit:bulk_tag", args=(1,)),
+        reverse("lit:ref_list", args=(1,)),
+        reverse("lit:ref_list_extract", args=(1,)),
+        reverse("lit:ref_visual", args=(1,)),
+        reverse("lit:ref_search", args=(1,)),
+        reverse("lit:ref_upload", args=(1,)),
+        # crud searches
+        reverse("lit:search_new", args=(1,)),
+        reverse("lit:copy_search", args=(1,)),
+        reverse("lit:search_detail", args=(1,slug_search)),
+        reverse("lit:search_update", args=(1,slug_search)),
+        reverse("lit:search_delete", args=(1,slug_search)),
+        # crud import
+        reverse("lit:import_new", args=(1,)),
+        reverse("lit:import_ris_new", args=(1,)),
+        # edit tags
+        reverse("lit:search_tags", args=(1,slug_search,)),
+        reverse("lit:search_tags_visual", args=(1,slug_search,)),
+        reverse("lit:ris_export_instructions", args=()),
+        reverse("lit:tag-conflicts", args=(1,)),
+        reverse("lit:user-tag-list", args=(1,)),
+    ]
+    for url in urls:
+        check_200(client, url)
