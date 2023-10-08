@@ -36,18 +36,8 @@ urlpatterns = [
         name="task-update",
     ),
     path(
-        "assessment/<int:pk>/analytics/change",
-        views.AssessmentTimeSeries.as_view(),
-        name="assessment-time-series",
-    ),
-    path(
-        "assessment/<int:pk>/analytics/time",
-        views.AssessmentTimeSpent.as_view(),
-        name="assessment-time-spent",
-    ),
-    path(
-        "assessment/<int:pk>/analytics/size",
-        views.AssessmentGrowth.as_view(),
-        name="assessment-growth",
+        "assessment/<int:pk>/analytics/",
+        views.AssessmentAnalytics.as_view(),
+        name="assessment-analytics",
     ),
 ]

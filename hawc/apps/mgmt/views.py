@@ -8,7 +8,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
-from ..common.htmx import HtmxViewSet, action, can_edit
+from ..common.htmx import HtmxGetMixin, HtmxViewSet, action, can_edit
 from ..common.views import BaseDetail, BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
 from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
@@ -179,22 +179,22 @@ class AssessmentTaskList(BaseFilterList):
         return context
 
 
-class AssessmentTimeSeries(BaseDetail):
+class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
     model = Assessment
-    template_name = "mgmt/assessment_time_series.html"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    actions: set[str] = {"index", "time_series", "time_spent", "growth"}
 
+    def index(self, request: HttpRequest, context: dict):
+        return render(request, "mgmt/analytics.html", context)
 
-class AssessmentTimeSpent(BaseDetail):
-    model = Assessment
-    template_name = "mgmt/assessment_time_spent.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    def time_series(self, request: HttpRequest, context: dict):
+        return render(request, "mgmt/analytics/time_series.html", context)
 
+    def time_spent(self, request: HttpRequest, context: dict):
+        return render(request, "mgmt/analytics/time_spent.html", context)
 
-class AssessmentGrowth(BaseDetail):
-    model = Assessment
-    template_name = "mgmt/assessment_growth.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    def growth(self, request: HttpRequest, context: dict):
+        return render(request, "mgmt/analytics/growth.html", context)
 
 
 class TaskViewSet(HtmxViewSet):

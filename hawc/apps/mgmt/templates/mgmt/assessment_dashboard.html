@@ -8,9 +8,7 @@
   {% actions %}
     <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
     <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
-    <a class="dropdown-item" href="{% url 'mgmt:assessment-time-series' assessment.pk %}">Time Series</a>
-    <a class="dropdown-item" href="{% url 'mgmt:assessment-time-spent' assessment.pk %}">Time Spent</a>
-    <a class="dropdown-item" href="{% url 'mgmt:assessment-growth' assessment.pk %}">Assessemnt Growth</a>
+    <a class="dropdown-item" href="{% url 'mgmt:assessment-analytics' assessment.pk %}">Analytics</a>
   {% endactions %}
 </div>
 {% if object_list %}

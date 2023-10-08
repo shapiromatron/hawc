@@ -209,3 +209,20 @@ class HtmxView(View):
     def dispatch(self, request, *args, **kwargs):
         handler = self.get_handler(request)
         return handler(request, *args, **kwargs)
+
+
+class HtmxGetMixin:
+    actions: set[str]
+    default_action: str = "index"
+
+    def get_handler(self, request: HttpRequest):
+        request.action = request.GET.get("action", "")
+        if request.action not in self.actions:
+            request.action = self.default_action
+        return getattr(self, request.action, self.http_method_not_allowed)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        handler = self.get_handler(request)
+        return handler(request, context)

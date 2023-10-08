@@ -1,0 +1,37 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+
+{% block content %}
+<div class="d-flex">
+  <h2>Assessment Analytics</h2>
+</div>
+<ul class="nav nav-tabs" hx-trigger="click" hx-swap="innerHTML">
+  <li class="nav-item">
+    <button class="nav-link active" data-toggle="pill" data-target="#about">Home</button>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" hx-get="?action=growth" data-toggle="pill" hx-target="#growth" data-target="#growth">Growth</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" hx-get="?action=time_series" data-toggle="pill" hx-target="#time_series" data-target="#time_series">Time Series</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" hx-get="?action=time_spent" data-toggle="pill" hx-target="#time_spent" data-target="#time_spent">Time Spent</a>
+  </li>
+</ul>
+<div class="tab-content mx-2 mt-2">
+  <div class="tab-pane fade show active" id="about" role="tabpanel">
+    ...
+  </div>
+  <div class="tab-pane fade" id="growth" role="tabpanel">
+    <p class="text-muted">Loading...</p>
+  </div>
+  <div class="tab-pane fade" id="time_series" role="tabpanel">
+    <p class="text-muted">Loading...</p>
+  </div>
+  <div class="tab-pane fade" id="time_spent" role="tabpanel">
+    <p class="text-muted">Loading...</p>
+  </div>
+</div>
+{% endblock %}
