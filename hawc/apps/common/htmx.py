@@ -194,3 +194,18 @@ class HtmxViewSet(View):
     def str_response(self, text: str = "") -> HttpResponse:
         """Return a string-based response; by default an empty string"""
         return HttpResponse(text)
+
+
+class HtmxView(View):
+    actions: set[str]
+    default_action: str = "index"
+
+    def get_handler(self, request: HttpRequest):
+        request.action = request.GET.get("action", "")
+        if request.action not in self.actions:
+            request.action = self.default_action
+        return getattr(self, request.action, self.http_method_not_allowed)
+
+    def dispatch(self, request, *args, **kwargs):
+        handler = self.get_handler(request)
+        return handler(request, *args, **kwargs)
