@@ -78,7 +78,7 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tag_additions",
         conjoined=True,
-        label="Canditate Tag Additions",
+        label="Candidate Tag Additions",
         help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, a reference user tag must include all selected tags.",
     )
     include_additiontag_descendants = df.BooleanFilter(
@@ -91,7 +91,7 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tag_deletions",
         conjoined=True,
-        label="Canditate Tag Deletions",
+        label="Candidate Tag Deletions",
         help_text="Select a tag to view references where that tag has been removed by a user (i.e., the tag exists as a consensus tag but not as a user tag). If multiple tags are selected, a reference must include all selected tags, and a user tag must not contain any of the selected tags.",
     )
     include_deletiontag_descendants = df.BooleanFilter(
