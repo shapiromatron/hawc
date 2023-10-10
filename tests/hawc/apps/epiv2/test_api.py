@@ -1057,6 +1057,7 @@ class TestDataExtractionViewSet:
             "data_location": "loc test",
             "effect_description": "description test",
             "statistical_method": "stat method test",
+            "adverse_direction": "up",
             "comments": "comments test",
             "design": design.id,
         }
@@ -1140,6 +1141,12 @@ class TestDataExtractionViewSet:
                 "expected_code": 400,
                 "expected_content": "not a valid choice",
                 "data": self.get_upload_data({"significant": "bad significant"}),
+            },
+            {
+                "desc": "invalid adverse_direction",
+                "expected_code": 400,
+                "expected_content": "not a valid choice",
+                "data": self.get_upload_data({"adverse_direction": "dunno"}),
             },
         )
 

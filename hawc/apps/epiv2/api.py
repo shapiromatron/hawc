@@ -42,8 +42,8 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
             .published_only(published_only)
             .complete()
         )
-        exporter = exports.EpiFlatComplete(qs, filename=f"{assessment}-epi")
-        return Response(exporter.build_export())
+        exporter = exports.EpiV2Exporter.flat_export(qs, filename=f"{assessment}-epi")
+        return Response(exporter)
 
     @action(
         detail=True,

@@ -25,11 +25,13 @@ class ReferenceFilterSet(BaseFilterSet):
     ref_search = df.CharFilter(
         method="filter_search",
         label="Title/Author/Year",
-        help_text="Filter citations (author, year, title, ID)",
+        help_text="Filter citations (authors, year, title)",
     )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
+    authors = df.CharFilter(method="filter_authors", label="Authors")
+    year = df.NumberFilter(label="Year")
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         null_value="untagged",
@@ -99,10 +101,10 @@ class ReferenceFilterSet(BaseFilterSet):
         fields = [
             "id",
             "db_id",
-            "year",
             "journal",
             "ref_search",
             "authors",
+            "year",
             "search",
             "tags",
             "include_descendants",
@@ -125,15 +127,7 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.filter(query)
 
     def filter_search(self, queryset, name, value):
-        query = (
-            Q(title__icontains=value)
-            | Q(abstract__icontains=value)
-            | Q(authors_short__unaccent__icontains=value)
-            | Q(authors__unaccent__icontains=value)
-            | Q(year__icontains=value)
-            | Q(identifiers__unique_id=value)
-        )
-        return queryset.filter(query)
+        return queryset.full_text_search(value)
 
     def filter_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)

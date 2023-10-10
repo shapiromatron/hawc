@@ -1,9 +1,11 @@
 import logging
+import random
 import re
 import xml.etree.ElementTree as ET
 from itertools import chain
 
 import requests
+from django.conf import settings as hawc_settings
 
 from ..utils.authors import get_author_short_text, normalize_author
 
@@ -45,14 +47,18 @@ class PubMedSearch(PubMedUtility):
     default_settings = dict(retmax=5000, db="pubmed")
 
     def __init__(self, term, **kwargs):
-        self.id_count = None
+        self.id_count: int | None = None
         self.settings = PubMedSearch.default_settings.copy()
         self._register_instance()
         self.settings["term"] = term
         for k, v in kwargs.items():
             self.settings[k] = v
 
-    def _get_id_count(self):
+    def _get_id_count(self) -> int:
+        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            self.id_count = 1
+            return self.id_count
+
         data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
         r = requests.post(PubMedSearch.base_url, data=data)
         if r.status_code == 200:
@@ -68,6 +74,10 @@ class PubMedSearch(PubMedUtility):
         return [int(id.text) for id in ET.fromstring(tree).find("IdList").findall("Id")]
 
     def _fetch_ids(self):
+        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            self.ids = [random.randrange(100_000_000, 999_9999_999)]  # noqa: S311
+            return
+
         ids = []
         data = self.settings.copy()
         if self.id_count is None:
@@ -114,11 +124,31 @@ class PubMedFetch(PubMedUtility):
         for k, v in kwargs.items():
             self.settings[k] = v
 
+    def fake(self) -> list[dict]:
+        return [
+            {
+                "xml": "",
+                "PMID": id,
+                "title": "Reference Title",
+                "abstract": "",
+                "citation": "citation",
+                "year": 2021,
+                "doi": "10.",
+                "authors": ["author 1", "author 2"],
+                "authors_short": "Author 1 and Author 2",
+            }
+            for id in self.ids
+        ]
+
     def get_content(self) -> list[dict]:
         data = self.settings.copy()
         rng = list(range(0, len(self.ids), self.settings["retmax"]))
         self.request_count = len(rng)
         for retstart in rng:
+            if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+                self.content = self.fake()
+                break
+
             data["id"] = self.ids[retstart : retstart + self.settings["retmax"]]
             resp = requests.post(PubMedFetch.base_url, data=data)
             if resp.status_code == 200:

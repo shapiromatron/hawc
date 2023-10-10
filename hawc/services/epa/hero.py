@@ -3,6 +3,7 @@ import logging
 from typing import Any
 
 import requests
+from django.conf import settings
 
 from hawc.services.utils.doi import try_get_doi
 
@@ -66,7 +67,29 @@ class HEROFetch:
         for k, v in kwargs.items():
             self.settings[k] = v
 
+    def fake_content(self) -> list[dict]:
+        return [
+            {
+                "json": {},
+                "HEROID": id,
+                "PMID": None,
+                "doi": None,
+                "title": "Reference Title",
+                "abstract": "",
+                "source": "123-456.",
+                "year": 2023,
+                "authors": ["Author 1", "Author 2"],
+                "authors_short": "authors et al.",
+            }
+            for id in self.ids
+        ]
+
     def get_content(self):
+        if settings.HAWC_FEATURES.FAKE_IMPORTS:
+            self.content = self.fake_content()
+            self.failures = []
+            return dict(success=self.content, failure=self.failures)
+
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
             request_ids = self.ids[recstart : recstart + self.settings["recordsperpage"]]

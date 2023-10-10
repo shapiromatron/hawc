@@ -2,6 +2,7 @@ from pprint import pformat
 from textwrap import dedent
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import REDIRECT_FIELD_NAME, login
 from django.contrib.auth.views import (
@@ -13,7 +14,7 @@ from django.contrib.auth.views import (
     RedirectURLMixin,
 )
 from django.core.mail import mail_admins
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -31,6 +32,19 @@ from . import forms, models
 
 def get_profile_breadcrumb() -> Breadcrumb:
     return Breadcrumb(name="User profile", url=reverse("user:settings"))
+
+
+def check_disabled_login(request: HttpRequest) -> HttpResponseRedirect | None:
+    hostname = request.get_host()
+    if hostname in settings.DISABLED_LOGIN_HOSTS:
+        url = reverse("home")
+        messages.add_message(
+            request,
+            level=messages.ERROR,
+            message=f"Cannot login on this domain: {hostname}.",
+            extra_tags="alert alert-warning",
+        )
+        return HttpResponseRedirect(url)
 
 
 class HawcUserCreate(CreateView):
@@ -69,6 +83,8 @@ class HawcLoginView(LoginView):
             if next_url:
                 url = url_query(url, {REDIRECT_FIELD_NAME: next_url})
             return HttpResponseRedirect(url)
+        if redirect := check_disabled_login(request):
+            return redirect
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -243,6 +259,8 @@ class ExternalAuth(RedirectURLMixin, View):
         return redirect_to if url_is_safe else settings.LOGIN_REDIRECT_URL
 
     def get(self, request, *args, **kwargs):
+        if redirect := check_disabled_login(request):
+            return redirect
         # Get user metadata from request
         try:
             metadata = self.get_user_metadata(request)

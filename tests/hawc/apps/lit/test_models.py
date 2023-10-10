@@ -89,6 +89,27 @@ class TestReference:
         assert ref.has_user_tag_conflicts() is True
         assert list(ref.tags.values_list("id", flat=True)) == tags
 
+    def test_merge_tags(self):
+        pm = HAWCUser.objects.get(email="pm@hawcproject.org")
+        tm = HAWCUser.objects.get(email="team@hawcproject.org")
+        ref = Reference.objects.get(id=10)
+
+        # check pre state
+        assert ref.tags.count() == 0
+        assert ref.user_tags.filter(is_resolved=False).count() == 2
+        assert len(ref.user_tags.filter(is_resolved=False, user=pm).values_list("tags__id")) == 1
+        assert len(ref.user_tags.filter(is_resolved=False, user=tm).values_list("tags__id")) == 1
+
+        # perform action
+        ref.merge_tags(pm)
+
+        # check post state
+        ref.refresh_from_db()
+        assert ref.tags.count() == 2
+        assert ref.user_tags.filter(is_resolved=True).count() == 2
+        assert len(ref.user_tags.filter(is_resolved=True, user=pm).values_list("tags__id")) == 2
+        assert len(ref.user_tags.filter(is_resolved=True, user=tm).values_list("tags__id")) == 1
+
 
 @pytest.mark.vcr
 @pytest.mark.django_db

@@ -1568,13 +1568,9 @@ class TestExposureApi:
 @pytest.mark.django_db
 class TestMetadataApi:
     def test_permissions(self):
-        # Disable non-assesssment-specific list view of metadata
-        try:
+        # Disable non-assessment-specific list view of metadata
+        with pytest.raises(NoReverseMatch):
             url = reverse("epi:api:metadata-list")
-            raise AssertionError()
-        except NoReverseMatch:
-            # This is correct behavior
-            pass
 
         client = APIClient()
 

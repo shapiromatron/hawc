@@ -179,7 +179,7 @@ class TestEpiV2(PlaywrightTestCase):
         # Check that changes are reflected on detail page
         page.locator("#epiv2-page-cancel").click()
         expect(page).to_have_url(re.compile(r"/epidemiology/design/\d+/"))
-        expect(page.locator("text=460")).to_be_visible()
+        expect(page.get_by_role("cell", name="460")).to_be_visible()
         expect(page.locator("text=water >> nth=0")).to_be_visible()
         expect(page.locator("text=adult serum >> nth=0")).to_be_visible()
         expect(page.locator("text=water adult serum >> nth=0")).to_be_visible()
