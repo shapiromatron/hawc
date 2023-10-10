@@ -9,29 +9,38 @@ class EpiV2Client(BaseClient):
     Client class for epidemiology v2 requests.
     """
 
-    """
-    def metadata(self, assessment_id: int) -> dict:
-        Retrieves field choices for all epi models.
+    def metadata(self) -> dict:
+        """
+        Retrieves field choices for all epiv2 models.
 
         Returns:
             dict: Model metadata
-        url = f"{self.session.root_url}/epi/api/metadata/{assessment_id}/"
+        """
+        url = f"{self.session.root_url}/epidemiology/api/metadata/"
         return self.session.get(url).json()
 
-    def data(self, assessment_id: int) -> pd.DataFrame:
-        Retrieves epidemiology data for the given assessment.
+    def data(
+        self, assessment_id: int, retrieve_unpublished_data: bool = False
+    ) -> pd.DataFrame:
+        """
+        Retrieves flat epidemiology v2 data export for the given assessment.
 
         Args:
             assessment_id (int): Assessment ID
 
         Returns:
             pd.DataFrame: Epidemiology data
-        url = f"{self.session.root_url}/epi/api/assessment/{assessment_id}/export/"
+        """
+        url = f"{self.session.root_url}/epidemiology/api/assessment/{assessment_id}/export/"
+        if retrieve_unpublished_data:
+            url += "?unpublished=true"
+
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
-        """
 
-    def get_designs_for_assessment(self, assessment_id: int, page: int = 1) -> pd.DataFrame:
+    def get_designs_for_assessment(
+        self, assessment_id: int, page: int = 1
+    ) -> pd.DataFrame:
         """
         Retrieves all of the designs for the given assessment.
 

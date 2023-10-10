@@ -3,6 +3,7 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
+import hawc.apps.epiv2.constants as epiv2constants
 import hawc.apps.epiv2.models as epiv2models
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment import constants
@@ -21,6 +22,7 @@ from hawc.apps.epi.models import (
 )
 from hawc.apps.lit.models import Reference
 from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.study import constants as studyconstants
 from hawc.apps.study.models import Study
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
@@ -830,6 +832,61 @@ class TestClient(LiveServerTestCase, TestCase):
             deletion_response = client_delete_method(primary_key)
             assert deletion_response.status_code == 204
             assert not model_class.objects.filter(id=primary_key).exists()
+
+    def test_epiv2_metadata(self):
+        """
+        Test metadata retrieval for epi v2
+        """
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        epi_client = client.epiv2
+
+        metadata = epi_client.metadata()
+        assert type(metadata) is dict
+
+        # spotcheck a few items in the returned metadata
+        things_to_check = [
+            {"model": "study", "props": {"coi_reported": studyconstants.CoiReported}},
+            {
+                "model": "design",
+                "props": {
+                    "study_design": epiv2constants.StudyDesign,
+                    "source": epiv2constants.Source,
+                },
+            },
+            {
+                "model": "exposure_level",
+                "props": {
+                    "variance_type": epiv2constants.VarianceType,
+                    "ci_type": epiv2constants.ConfidenceIntervalType,
+                },
+            },
+        ]
+
+        for thing_to_check in things_to_check:
+            model_name = thing_to_check.get("model")
+            assert model_name in metadata
+            metadata_details = metadata.get(model_name)
+            props = thing_to_check.get("props")
+            for prop_name in props:
+                assert prop_name in metadata_details
+                metadata_vals = metadata_details.get(prop_name)
+                legal_vals_to_check = props.get(prop_name)
+
+                for legal_val_to_check in legal_vals_to_check:
+                    assert str(legal_val_to_check.value) in metadata_vals
+                    metadata_display = metadata_vals.get(str(legal_val_to_check.value))
+                    assert metadata_display == legal_val_to_check.label
+
+    def test_epiv2_data_export(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        epi_client = client.epiv2
+
+        df = epi_client.data(
+            assessment_id=self.db_keys.assessment_working, retrieve_unpublished_data=True
+        )
+        assert isinstance(df, pd.DataFrame) and df.shape == (12, 116)
 
     #######################
     # EpiMetaClient tests #
