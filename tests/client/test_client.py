@@ -740,17 +740,17 @@ class TestClient(LiveServerTestCase, TestCase):
         adjustment_factor_result = epi_client.create_adjustment_factor(adjustment_factor_payload)
         common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
 
-        adjustment_factor_id = adjustment_factor_result["id"]
+        adj_factor_id = adjustment_factor_result["id"]
 
         # update
         adjustment_factor_payload["name"] = "modified name"
         adjustment_factor_result = epi_client.update_adjustment_factor(
-            adjustment_factor_id, adjustment_factor_payload
+            adj_factor_id, adjustment_factor_payload
         )
         common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
 
         # read
-        adjustment_factor_result = epi_client.get_adjustment_factor(adjustment_factor_id)
+        adjustment_factor_result = epi_client.get_adjustment_factor(adj_factor_id)
         common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
 
         ###
@@ -777,8 +777,9 @@ class TestClient(LiveServerTestCase, TestCase):
             "exposure_rank": 1,
             "exposure_transform": "DE expo transform",
             "outcome_transform": "DE outcome transform",
-            "factors": adjustment_factor_id,
+            "factors": adj_factor_id,
             "confidence": "DE confidence",
+            "adverse_direction": "up",
             "data_location": "DE loc",
             "effect_description": "DE effect desc",
             "statistical_method": "DE stat method",
@@ -806,29 +807,17 @@ class TestClient(LiveServerTestCase, TestCase):
         ### all
         ###
         # delete
-        # tuple of tuples, each sub-tuple is:
-        # [0] a primary key
-        # [1] the client method to use to delete it
-        # [2] the model class
-
         deletions = (
             (data_extraction_id, epi_client.delete_data_extraction, epiv2models.DataExtraction),
             (exposure_level_id, epi_client.delete_exposure_level, epiv2models.ExposureLevel),
             (outcome_id, epi_client.delete_outcome, epiv2models.Outcome),
-            (
-                adjustment_factor_id,
-                epi_client.delete_adjustment_factor,
-                epiv2models.AdjustmentFactor,
-            ),
+            (adj_factor_id, epi_client.delete_adjustment_factor, epiv2models.AdjustmentFactor),
             (chemical_id, epi_client.delete_chemical, epiv2models.Chemical),
             (exposure_id, epi_client.delete_exposure, epiv2models.Exposure),
             (design_id, epi_client.delete_design, epiv2models.Design),
         )
 
-        for deletion in deletions:
-            primary_key = deletion[0]
-            client_delete_method = deletion[1]
-            model_class = deletion[2]
+        for primary_key, client_delete_method, model_class in deletions:
             deletion_response = client_delete_method(primary_key)
             assert deletion_response.status_code == 204
             assert not model_class.objects.filter(id=primary_key).exists()

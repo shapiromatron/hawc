@@ -27,6 +27,7 @@ class EpiV2Client(BaseClient):
 
         Args:
             assessment_id (int): Assessment ID
+            retrieve_unpublished_data (bool): include unpublished data in returned DataFrame
 
         Returns:
             pd.DataFrame: Epidemiology data
@@ -120,7 +121,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             design_id (int): design ID
-
             data: fields to update in the design
                 See "create_design" docstring for example fields.
 
@@ -179,7 +179,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             chemical_id (int): chemical ID
-
             data: fields to update in the chemical
                 See "create_chemical" docstring for example fields.
 
@@ -244,7 +243,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             exposure_id (int): exposure ID
-
             data: fields to update in the exposure
                 See "create_exposure" docstring for example fields.
 
@@ -318,7 +316,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             exposure_level_id (int): exposure level ID
-
             data: fields to update in the exposure level
                 See "create_exposure_level" docstring for example fields.
 
@@ -380,7 +377,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             outcome_id (int): outcome ID
-
             data: fields to update in the outcome
                 See "create_outcome" docstring for example fields.
 
@@ -440,7 +436,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             adjustment_factor_id (int): adjustment factor ID
-
             data: fields to update in the adjustment factor
                 See "create_adjustment_factor" docstring for example fields.
 
@@ -505,6 +500,7 @@ class EpiV2Client(BaseClient):
                 exposure_transform (str): exposure transform (predefined choices: 'log10', 'squared', 'other', etc.)
                 outcome_transform (str): outcome transform (predefined choices: 'log10', 'squared', 'other', etc.)
                 confidence (str): overall confidence rating for the endpoint being extracted (free-text)
+                adverse_direction (str): direction of effect that would be adverse if observed (predefined choices: 'unknown', 'up', 'any', etc.)
                 data_location (str): e.g. table number (free-text)
                 effect_description (str): description of the effect estimate with units, including comparison being made. (free-text)
                 statistical_method (str): brief description of the statistical analysis method (free-text)
@@ -522,7 +518,6 @@ class EpiV2Client(BaseClient):
 
         Args:
             data_extraction_id (int): data extraction ID
-
             data: fields to update in the data extraction
                 See "create_data_extraction" docstring for example fields.
 
