@@ -472,8 +472,7 @@ class Assessment(AssessmentEditViewSet):
     def logs(self, request: Request, pk: int, type: str):
         instance = self.get_object()
         serializer = AssessmentAuditSerializer.from_drf(data=dict(assessment=instance, type=type))
-        export = serializer.export()
-        return Response(export)
+        return serializer.export()
 
     @action(
         detail=False,
