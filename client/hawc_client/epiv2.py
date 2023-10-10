@@ -19,9 +19,7 @@ class EpiV2Client(BaseClient):
         url = f"{self.session.root_url}/epidemiology/api/metadata/"
         return self.session.get(url).json()
 
-    def data(
-        self, assessment_id: int, retrieve_unpublished_data: bool = False
-    ) -> pd.DataFrame:
+    def data(self, assessment_id: int, retrieve_unpublished_data: bool = False) -> pd.DataFrame:
         """
         Retrieves flat epidemiology v2 data export for the given assessment.
 
@@ -39,9 +37,7 @@ class EpiV2Client(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def get_designs_for_assessment(
-        self, assessment_id: int, page: int = 1
-    ) -> pd.DataFrame:
+    def get_designs_for_assessment(self, assessment_id: int, page: int = 1) -> pd.DataFrame:
         """
         Retrieves all of the designs for the given assessment.
 
