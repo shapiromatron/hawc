@@ -197,6 +197,13 @@ class HtmxViewSet(View):
 
 
 class HtmxView(View):
+    """Build a generic HtmxView which returns a index full page and multiple fragments.
+
+    If a valid "action" is specified via a GET parameter, a partial is returned, otherwise
+    the default_action ("index") is returned. It is generally assumed that the default_action
+    is a full page, while all other pages are fragments.
+    """
+
     actions: set[str]
     default_action: str = "index"
 
@@ -212,6 +219,15 @@ class HtmxView(View):
 
 
 class HtmxGetMixin:
+    """Returns a either a full template or partial based on GET parameter in request.
+
+    If a valid "action" is specified via a GET parameter, a partial is returned, otherwise
+    the default_action ("index") is returned. It is generally assumed that the default_action
+    is a full page, while all other pages are fragments.
+
+    The default context is provided for all actions.
+    """
+
     actions: set[str]
     default_action: str = "index"
 
