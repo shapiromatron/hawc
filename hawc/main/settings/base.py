@@ -64,6 +64,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "hawc.apps.common.context_processors.from_settings",
             ),
+            "builtins": ["hawc.apps.common.templatetags.bs4", "hawc.apps.common.templatetags.hawc"],
         },
     },
 ]
