@@ -102,3 +102,35 @@ def plotly(fig: Figure | None, **kw) -> str:
     <script>document.addEventListener("{event}", {func}, false);</script>"""
         )
     )
+
+
+@register.simple_tag
+def render_modal(modal_id, modal_title=""):
+    modal_btn = f"""
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{modal_id}">
+        Launch demo modal
+    </button>
+    """
+    modal_html = f"""
+    {modal_btn}
+    <div id="{modal_id}" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{ modal_id }-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="{ modal_id }-label">{modal_title}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Modal Body goes in here
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    """
+    return mark_safe(modal_html)
