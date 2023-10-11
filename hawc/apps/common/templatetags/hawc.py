@@ -1,7 +1,6 @@
 """
 HAWC helper methods
 """
-import re
 from typing import Any
 
 from django import template
@@ -53,6 +52,7 @@ def url_or_span(text: str, url: str | None = None):
 def external_url(href: str, text: str) -> str:
     return mark_safe(new_window_a(href, text))
 
+
 @register.simple_tag
 def crud_url(app, model, action, id):
     """
@@ -61,6 +61,7 @@ def crud_url(app, model, action, id):
     """
     return reverse(f"{app}:{model}-{action}", args=[id])
 
+
 @register.filter
 def hastext(html: str) -> bool:
     """Returns True if text exists after stripping all tags"""
@@ -68,9 +69,11 @@ def hastext(html: str) -> bool:
         return False
     return len(strip_tags(str(html)).strip()) > 0
 
+
 @register.filter
 def percentage(value):
     return f"{value:.0%}"
+
 
 @register.simple_tag
 def split(string, delimiter=","):
@@ -78,22 +81,28 @@ def split(string, delimiter=","):
     return [item.strip() for item in string.split(delimiter)]
 
 
-class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
+@register.simple_tag(takes_context=True)
+def url_replace(context, *args, **kwargs):
+    """
+    Add new parameters to a get URL, or removes if None.
 
+    Example usage:
+    <a href="?{% url_replace page=paginator.next_page_number %}">
 
-@register.filter
-def add_class(value, css_class):
-    """http://djangosnippets.org/snippets/2253/
-    Example call: {{field.name|add_class:"col-md-4"}}"""
-    string = str(value)
-    match = class_re.search(string)
-    if match:
-        m = re.search(
-            rf"^{css_class}$|^{css_class}\s|\s{css_class}\s|\s{css_class}$",
-            match.group(1),
-        )
-        if not m:
-            return mark_safe(class_re.sub(match.group(1) + " " + css_class, string))
-    else:
-        return mark_safe(string.replace(">", f' class="{css_class}">'))
-    return value
+    Source: http://stackoverflow.com/questions/2047622/
+
+    """
+    dict_ = context["request"].GET.copy()
+
+    def handle_replace(dict_, key, value):
+        dict_[key] = value
+        if value is None:
+            dict_.pop(key)
+
+    for arg in args:
+        for key, value in arg.items():
+            handle_replace(dict_, key, value)
+    for key, value in kwargs.items():
+        handle_replace(dict_, key, value)
+
+    return dict_.urlencode()
