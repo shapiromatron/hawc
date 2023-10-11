@@ -72,6 +72,11 @@ def hastext(html: str) -> bool:
 def percentage(value):
     return f"{value:.0%}"
 
+@register.simple_tag
+def split(string, delimiter=","):
+    """Splits a string into a list"""
+    return [item.strip() for item in string.split(delimiter)]
+
 
 class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
 
