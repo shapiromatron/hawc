@@ -68,6 +68,10 @@ def hastext(html: str) -> bool:
         return False
     return len(strip_tags(str(html)).strip()) > 0
 
+@register.filter
+def percentage(value):
+    return f"{value:.0%}"
+
 
 class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
 
