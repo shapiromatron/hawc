@@ -375,9 +375,9 @@ class ReferenceViewSet(
     def get_queryset(self):
         qs = super().get_queryset()
         if self.action in ("tag", "resolve_conflict"):
-            qs = qs.select_related("assessment__literature_settings").prefetch_related(
-                "user_tags__tags", "tags"
-            )
+            qs = qs.select_related(
+                "assessment__literature_settings", "assessment__udf_tag_bindings__form__schema"
+            ).prefetch_related("user_tags__tags", "tags", "saved_udf_contents")
         return qs
 
     @action(
@@ -390,7 +390,8 @@ class ReferenceViewSet(
         if assessment.user_can_edit_object(self.request.user):
             try:
                 tags = [int(tag) for tag in self.request.data.get("tags", [])]
-                resolved = instance.update_tags(request.user, tags)
+                udf_data = self.request.data.get("udf_data")
+                resolved = instance.update_tags(request.user, tags, udf_data)
             except ValueError:
                 return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
             response["status"] = "success"

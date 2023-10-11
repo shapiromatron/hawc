@@ -324,7 +324,7 @@ class Assessment(models.Model):
         """
         content_type = ContentType.objects.get_for_model(model)
         try:
-            return self.udf_bindings.get(content_type=content_type).form_instance(*args, **kwargs)
+            return self.udf_bindings.get(content_type=content_type).form_field(*args, **kwargs)
         except ObjectDoesNotExist:
             return None
 

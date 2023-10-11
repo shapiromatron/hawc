@@ -19,6 +19,9 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from hawc.apps.common import dynamic_forms
+from hawc.apps.udf.models import TagBinding, TagUDFContent
+
 from ...constants import ColorblindColors
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -835,7 +838,7 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
-    def update_tags(self, user, tag_pks: list[int]) -> bool:
+    def update_tags(self, user, tag_pks: list[int], udf_data: dict | None = None) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
@@ -854,6 +857,21 @@ class Reference(models.Model):
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
         user_tag.save()
+
+        # save udf data if applicable
+        if udf_data is not None:
+            for tag_pk in tag_pks:
+                try:
+                    # Get form from tag binding (TODO: make sure these are prefetched)
+                    binding = TagBinding.objects.get(assessment=self.assessment_id, tag=tag_pk)
+                    # use tag_pk prefix (same as form creation)
+                    form = binding.form_instance(prefix=tag_pk, data=udf_data.get(tag_pk))
+                    if form.is_valid():
+                        TagUDFContent.objects.update_or_create(
+                            reference=self.id, tag_binding=binding.id, content=form.cleaned_data
+                        )
+                except TagBinding.DoesNotExist:
+                    pass
 
         # determine if we should save the reference-level tags
         update_reference_tags = False

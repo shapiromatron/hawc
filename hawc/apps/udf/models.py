@@ -68,7 +68,7 @@ class ModelBinding(models.Model):
     def __str__(self):
         return f"{self.assessment}/{self.content_type.model} form"
 
-    def form_instance(self, *args, **kwargs) -> JSONField | DynamicFormField:
+    def form_field(self, *args, **kwargs) -> JSONField | DynamicFormField:
         prefix = kwargs.pop("prefix", "udf")
         form_kwargs = kwargs.pop("form_kwargs", None)
         return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
@@ -100,12 +100,15 @@ class TagBinding(models.Model):
         indexes = (models.Index(fields=["assessment", "tag"]),)
         unique_together = (("assessment", "tag"),)
 
-    def form_instance(
+    def form_field(
         self, prefix="", form_kwargs=None, *args, **kwargs
     ) -> JSONField | DynamicFormField:
         return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
             prefix, form_kwargs, *args, **kwargs
         )
+
+    def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
+        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form(*args, **kwargs)
 
     def get_form_html(self, **kwargs) -> SafeText:
         form = dynamic_forms.Schema.parse_obj(self.form.schema).to_form(
