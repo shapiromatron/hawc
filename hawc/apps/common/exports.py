@@ -1,4 +1,5 @@
 import pandas as pd
+from django.conf import settings
 from django.db.models import QuerySet
 
 from .helper import FlatExport
@@ -11,21 +12,13 @@ class ModelExport:
         self,
         key_prefix: str = "",
         query_prefix: str = "",
-        include: tuple[str, ...] | None = None,
-        exclude: tuple[str, ...] | None = None,
+        include: tuple | None = None,
+        exclude: tuple | None = None,
     ):
-        """Instantiate an exporter instance for a given django model.
-
-        Args:
-            key_prefix (str, optional): The model name to prepend to data frame columns.
-            query_prefix (str, optional): The model prefix in the ORM.
-            include (tuple | None, optional): If included, only these items are added.
-            exclude (tuple | None, optional): If specified, items are removed from base.
-        """
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
-        self.include = (key_prefix + field for field in include) if include else tuple()
-        self.exclude = (key_prefix + field for field in exclude) if exclude else tuple()
+        self.include = tuple(self.key_prefix + field for field in include) if include else tuple()
+        self.exclude = tuple(self.key_prefix + field for field in exclude) if exclude else tuple()
 
     @property
     def value_map(self) -> dict:
@@ -153,6 +146,14 @@ class ModelExport:
         """
         return df
 
+    def format_time(self, df: pd.DataFrame) -> pd.DataFrame:
+        for key in [self.get_column_name("created"), self.get_column_name("last_updated")]:
+            if key in df.columns:
+                df.loc[:, key] = df[key].apply(
+                    lambda x: x.tz_convert(settings.TIME_ZONE).isoformat()
+                )
+        return df
+
     def get_df(self, qs: QuerySet) -> pd.DataFrame:
         """Get dataframe export from queryset.
 
@@ -211,7 +212,6 @@ class Exporter:
     @classmethod
     def flat_export(cls, qs: QuerySet, filename: str) -> FlatExport:
         """Return an instance of a FlatExport.
-
         Args:
             qs (QuerySet): the initial QuerySet
             filename (str): the filename for the export
