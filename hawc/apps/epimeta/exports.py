@@ -3,6 +3,7 @@ import pandas as pd
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m
+from ..epi.exports import ResultMetricExport
 from ..study.exports import StudyExport
 from . import constants
 
@@ -101,15 +102,6 @@ class EpiMetaExporter(Exporter):
             MetaResultExport("meta_result", ""),
             SingleResultExport("single_result", "single_results"),
         ]
-
-
-class ResultMetricExport(ModelExport):
-    def get_value_map(self):
-        return {
-            "id": "id",
-            "name": "metric",
-            "abbreviation": "abbreviation",
-        }
 
 
 class EpiMetaDataPivotExporter(Exporter):
