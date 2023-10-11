@@ -33,10 +33,10 @@ rob-domain_description	Study evaluation/risk of bias domain description
 rob-metric_id	Study evaluation/risk of bias metric identifier
 rob-metric_name	Study evaluation/risk of bias metric name
 rob-metric_description	Study evaluation/risk of bias metric description
-rob-score_id	Study evaluation/risk of bias metric response id for a unique study/metric pair
-rob-score_is_default	If multiple responses exist for a study/metric pair, should this one be treated as the default response
-rob-score_label	If multiple responses exist for a study/metric pair, a label for this response
-rob-score_score	If a qualitative judgment is made, an integer representation of the judgment value
-rob-score_description	If a qualitative judgment is made, a text label of the judgment value
-rob-score_bias_direction	Expected direction of bias, if used. 0= (not entered/unknown), 1=⬆ (away from null), 2=⬇ (towards null)
-rob-score_notes	Reviewer notes to describe the study evaluation for a study/metric pair
+rob_score-id	Study evaluation/risk of bias metric response id for a unique study/metric pair
+rob_score-is_default	If multiple responses exist for a study/metric pair, should this one be treated as the default response
+rob_score-label	If multiple responses exist for a study/metric pair, a label for this response
+rob_score-score	If a qualitative judgment is made, an integer representation of the judgment value
+rob_score-description	If a qualitative judgment is made, a text label of the judgment value
+rob_score-bias_direction	Expected direction of bias, if used. 0= (not entered/unknown), 1=⬆ (away from null), 2=⬇ (towards null)
+rob_score-notes	Reviewer notes to describe the study evaluation for a study/metric pair

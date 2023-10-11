@@ -12,8 +12,8 @@ class ModelExport:
         self,
         key_prefix: str = "",
         query_prefix: str = "",
-        include: tuple | None = None,
-        exclude: tuple | None = None,
+        include: tuple[str, ...] | None = None,
+        exclude: tuple[str, ...] | None = None,
     ):
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
@@ -210,6 +210,10 @@ class Exporter:
         return df
 
     @classmethod
+    def build_metadata(cls, df: pd.DataFrame) -> pd.DataFrame | None:
+        return None
+
+    @classmethod
     def flat_export(cls, qs: QuerySet, filename: str) -> FlatExport:
         """Return an instance of a FlatExport.
         Args:
@@ -217,4 +221,4 @@ class Exporter:
             filename (str): the filename for the export
         """
         df = cls().get_df(qs)
-        return FlatExport(df=df, filename=filename)
+        return FlatExport(df=df, filename=filename, metadata=cls.build_metadata(df))
