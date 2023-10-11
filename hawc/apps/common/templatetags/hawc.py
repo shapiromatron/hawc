@@ -52,6 +52,14 @@ def url_or_span(text: str, url: str | None = None):
 def external_url(href: str, text: str) -> str:
     return mark_safe(new_window_a(href, text))
 
+@register.simple_tag
+def crud_url(app, model, action, id):
+    """
+    Creates a url via reverse using the appropriate app, model, action, and id
+
+    """
+    return reverse(f"{app}:{model}-{action}", args=[id])
+
 
 class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
 
