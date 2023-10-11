@@ -1,5 +1,5 @@
 import django_filters as df
-from django.db.models import Count, Q
+from django.db.models import Count, F, Q, Value
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
@@ -37,7 +37,6 @@ class ReferenceFilterSet(BaseFilterSet):
         null_value="untagged",
         null_label="[Untagged]",
         method="filter_tags",
-        conjoined=True,
         label="Tags",
         help_text="Select a tag to view references with that specific tag. Choose [Untagged] to view references without any tags. If multiple tags are selected, references must include all selected tags.",
     )
@@ -58,7 +57,6 @@ class ReferenceFilterSet(BaseFilterSet):
         null_value="untagged",
         null_label="[Untagged]",
         method="filter_my_tags",
-        conjoined=True,
         label="My Tags",
         help_text="Select a tag to view references you have applied that specific tag to. Choose [Untagged] to view references that you have not tagged. If multiple tags are selected, references must include all selected tags.",
     )
@@ -77,9 +75,8 @@ class ReferenceFilterSet(BaseFilterSet):
     addition_tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tag_additions",
-        conjoined=True,
         label="Candidate Tag Additions",
-        help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, a reference user tag must include all selected tags.",
+        help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, the reference must not have any as consensus tags, and all tags must be candidate tags for the reference.",
     )
     include_additiontag_descendants = df.BooleanFilter(
         method=filter_noop,
@@ -90,9 +87,8 @@ class ReferenceFilterSet(BaseFilterSet):
     deletion_tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tag_deletions",
-        conjoined=True,
         label="Candidate Tag Deletions",
-        help_text="Select a tag to view references where that tag has been removed by a user (i.e., the tag exists as a consensus tag but not as a user tag). If multiple tags are selected, a reference must include all selected tags, and a user tag must not contain any of the selected tags.",
+        help_text="Select a tag to view references where that tag has been removed by a user (i.e., the tag exists as a consensus tag but not as a user tag). If multiple tags are selected, a reference must include all selected tags, and have at least one user tag without each tag.",
     )
     include_deletiontag_descendants = df.BooleanFilter(
         method=filter_noop,
@@ -219,39 +215,51 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.distinct()
 
     def filter_tag_additions(self, queryset, name, value):
+        if not value:
+            return queryset
         include_descendants = self.data.get("include_additiontag_descendants", False)
+        queryset = queryset.annotate(addtag_count=Value(0))
         for tag in value:
             tag_ids = (
                 list(tag.get_tree(parent=tag).values_list("id", flat=True))
                 if include_descendants
                 else [tag.id]
             )
-            queryset = queryset.annotate(
-                addtag_count=Count(
-                    "user_tags",
-                    filter=Q(user_tags__tags__in=tag_ids)
-                    & ~Q(tags__in=tag_ids)
-                    & Q(user_tags__is_resolved=False),
+            for tag_id in tag_ids:
+                queryset = queryset.annotate(
+                    addtag_count=F("addtag_count")
+                    + Count(
+                        "user_tags",
+                        filter=Q(user_tags__is_resolved=False)
+                        & Q(user_tags__tags=tag_id)
+                        & ~Q(tags=tag_id),
+                    )
                 )
-            ).filter(addtag_count__gt=0)
+            queryset = queryset.filter(addtag_count__gt=0)
         return queryset.distinct()
 
     def filter_tag_deletions(self, queryset, name, value):
+        if not value:
+            return queryset
         include_descendants = self.data.get("include_deletiontag_descendants", False)
+        queryset = queryset.annotate(deltag_count=Value(0))
         for tag in value:
             tag_ids = (
                 list(tag.get_tree(parent=tag).values_list("id", flat=True))
                 if include_descendants
                 else [tag.id]
             )
-            queryset = queryset.annotate(
-                deltag_count=Count(
-                    "user_tags",
-                    filter=~Q(user_tags__tags__in=tag_ids)
-                    & Q(tags__in=tag_ids)
-                    & Q(user_tags__is_resolved=False),
+            for tag_id in tag_ids:
+                queryset = queryset.annotate(
+                    deltag_count=F("deltag_count")
+                    + Count(
+                        "user_tags",
+                        filter=~Q(user_tags__tags=tag_id)
+                        & Q(tags=tag_id)
+                        & Q(user_tags__is_resolved=False),
+                    )
                 )
-            ).filter(deltag_count__gt=0)
+            queryset = queryset.filter(deltag_count__gt=0)
         return queryset.distinct()
 
     def filter_partially_tagged(self, queryset, name, value):

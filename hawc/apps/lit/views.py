@@ -451,8 +451,8 @@ class ConflictResolution(BaseFilterList):
                                     {
                                         "columns": [
                                             {"width": 12},
-                                            {"width": 6},
-                                            {"width": 6},
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
@@ -463,8 +463,8 @@ class ConflictResolution(BaseFilterList):
                                     {
                                         "columns": [
                                             {"width": 12},
-                                            {"width": 6},
-                                            {"width": 6},
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
@@ -500,16 +500,19 @@ class ConflictResolution(BaseFilterList):
     paginate_by = 50
 
     def get_queryset(self):
-        return (
+        qs = (
             super()
             .get_queryset()
             .annotate(
-                n_unapplied_reviews=Count("user_tags__user", filter=Q(user_tags__is_resolved=False))
+                n_unapplied_reviews=Count(
+                    "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
+                )
             )
             .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
