@@ -1,4 +1,4 @@
-from hawc.apps.common.templatetags.hastext import hastext
+from hawc.apps.common.templatetags.hawc import hastext
 
 
 class TestHasText:

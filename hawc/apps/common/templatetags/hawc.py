@@ -8,6 +8,7 @@ from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.urls import reverse
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
 from ..helper import new_window_a
@@ -59,6 +60,13 @@ def crud_url(app, model, action, id):
 
     """
     return reverse(f"{app}:{model}-{action}", args=[id])
+
+@register.filter
+def hastext(html: str) -> bool:
+    """Returns True if text exists after stripping all tags"""
+    if html is None:
+        return False
+    return len(strip_tags(str(html)).strip()) > 0
 
 
 class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
