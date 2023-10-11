@@ -1,6 +1,7 @@
 """
 HAWC helper methods
 """
+import re
 from typing import Any
 
 from django import template
@@ -50,3 +51,24 @@ def url_or_span(text: str, url: str | None = None):
 @register.simple_tag
 def external_url(href: str, text: str) -> str:
     return mark_safe(new_window_a(href, text))
+
+
+class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
+
+
+@register.filter
+def add_class(value, css_class):
+    """http://djangosnippets.org/snippets/2253/
+    Example call: {{field.name|add_class:"col-md-4"}}"""
+    string = str(value)
+    match = class_re.search(string)
+    if match:
+        m = re.search(
+            rf"^{css_class}$|^{css_class}\s|\s{css_class}\s|\s{css_class}$",
+            match.group(1),
+        )
+        if not m:
+            return mark_safe(class_re.sub(match.group(1) + " " + css_class, string))
+    else:
+        return mark_safe(string.replace(">", f' class="{css_class}">'))
+    return value
