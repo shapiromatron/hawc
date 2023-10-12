@@ -1,6 +1,6 @@
 import pandas as pd
-from django.conf import settings
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from .helper import FlatExport
 
@@ -12,8 +12,8 @@ class ModelExport:
         self,
         key_prefix: str = "",
         query_prefix: str = "",
-        include: tuple | None = None,
-        exclude: tuple | None = None,
+        include: tuple[str, ...] | None = None,
+        exclude: tuple[str, ...] | None = None,
     ):
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
@@ -147,11 +147,12 @@ class ModelExport:
         return df
 
     def format_time(self, df: pd.DataFrame) -> pd.DataFrame:
+        if df.shape[0] == 0:
+            return df
+        tz = timezone.get_default_timezone()
         for key in [self.get_column_name("created"), self.get_column_name("last_updated")]:
             if key in df.columns:
-                df.loc[:, key] = df[key].apply(
-                    lambda x: x.tz_convert(settings.TIME_ZONE).isoformat()
-                )
+                df.loc[:, key] = df[key].dt.tz_convert(tz).dt.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
         return df
 
     def get_df(self, qs: QuerySet) -> pd.DataFrame:
