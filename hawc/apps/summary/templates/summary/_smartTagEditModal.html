@@ -1,23 +1,18 @@
+{% extends 'common/modal_template.html' %}
 {% load crispy_forms_tags %}
 
-<div id="smartTagModal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Insert HAWC Smart-tag</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="smartTagForm">
-                    {% crispy form %}
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary smartTagSave">Insert</button>
-                <button type="button" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            </div>
-        </div>
+{% block modal_title %}
+    Insert HAWC Smart-tag
+{% endblock %}
+
+{% block modal_body %}
+    <div id="smartTagForm">
+        {% crispy form %}
     </div>
-</div>
+{% endblock %}
+
+{% block modal_footer %}
+<button type="button" class="btn btn-primary smartTagSave">Insert</button>
+<button type="button" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Cancel</button>
+{% endblock %}
+
