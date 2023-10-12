@@ -45,7 +45,7 @@ valid_html_attrs = {
 valid_css_properties = {"color", "background-color"}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
-    ".ca",
+    "canada.ca",
     ".edu",
     ".gov",
     ".who.int",
