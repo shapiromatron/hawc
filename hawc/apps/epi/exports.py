@@ -477,11 +477,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 row = _df2.iloc[0]
                 if control["result-estimate_type"] in ["median", "mean"] and control[
                     "result-variance_type"
-                ] in [
-                    "SD",
-                    "SE",
-                    "SEM",
-                ]:
+                ] in ["SD", "SE", "SEM"]:
                     n_2 = row["result_group-n"]
                     mu_2 = row["result_group-estimate"]
                     sd_2 = _get_stdev(row)
