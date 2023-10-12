@@ -75,9 +75,6 @@ class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     filterset_fields = ("study",)
 
-    def get_queryset(self, *args, **kwargs):
-        return super().get_queryset()
-
 
 class MetadataViewSet(viewsets.ViewSet):
     def list(self, request):
