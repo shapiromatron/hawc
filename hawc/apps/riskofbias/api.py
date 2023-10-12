@@ -53,13 +53,16 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         """
         self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasFlat(
-            self.get_queryset().none(),
+        qs = models.RiskOfBiasScore.objects.filter(
+            riskofbias__active=True,
+            riskofbias__final=True,
+            riskofbias__study__assessment=self.assessment,
+        ).order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
+        exporter = exports.RiskOfBiasExporter.flat_export(
+            qs,
             filename=f"{self.assessment}-{rob_name}",
-            assessment_id=self.assessment.id,
         )
-
-        return Response(exporter.build_export())
+        return Response(exporter)
 
     @action(
         detail=True,
@@ -73,12 +76,15 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         """
         self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset().none(),
+        qs = models.RiskOfBiasScore.objects.filter(
+            riskofbias__active=True,
+            riskofbias__study__assessment=self.assessment,
+        ).order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
+        exporter = exports.RiskOfBiasCompleteExporter.flat_export(
+            qs,
             filename=f"{self.assessment}-{rob_name}-complete",
-            assessment_id=self.assessment.id,
         )
-        return Response(exporter.build_export())
+        return Response(exporter)
 
     @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))
     def bulk_rob_copy(self, request):
