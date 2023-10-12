@@ -19,7 +19,6 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from hawc.apps.common import dynamic_forms
 from hawc.apps.udf.models import TagBinding, TagUDFContent
 
 from ...constants import ColorblindColors
@@ -862,7 +861,7 @@ class Reference(models.Model):
         if udf_data is not None:
             for tag_pk in tag_pks:
                 try:
-                    # Get form from tag binding (TODO: make sure these are prefetched)
+                    # Get form from tag binding
                     binding = TagBinding.objects.get(assessment=self.assessment_id, tag=tag_pk)
                     # use tag_pk prefix (same as form creation)
                     form = binding.form_instance(prefix=tag_pk, data=udf_data.get(tag_pk))
@@ -922,6 +921,11 @@ class Reference(models.Model):
     def __str__(self):
         return self.ref_short_citation
 
+    def get_tag_udf_contents(self):
+        values = self.saved_tag_contents.values("content", "tag_binding__tag")
+        # key is tag id, value is the saved udf content
+        return {value["tag_binding__tag"]: value["content"] for value in values}
+
     def to_dict(self):
         d = {}
         fields = (
@@ -947,6 +951,7 @@ class Reference(models.Model):
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
+        d["tag_udf_contents"] = self.get_tag_udf_contents()
 
         d["tags"] = [tag.id for tag in self.tags.all()]
         return d

@@ -20,7 +20,6 @@ class Store {
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
-        // TODO: add saved udf data to Reference obj
         this.references = Reference.array(config.refs, this.tagtree, false);
         // set first reference
         if (this.references.length > 0) {

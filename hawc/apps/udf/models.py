@@ -11,7 +11,6 @@ from django.utils.safestring import SafeText
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
 from ..common.forms import DynamicFormField
-from ..lit.models import Reference, ReferenceFilterTag
 
 
 class UserDefinedForm(models.Model):
@@ -86,7 +85,9 @@ class TagBinding(models.Model):
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_tag_bindings"
     )
-    tag = models.ForeignKey(ReferenceFilterTag, on_delete=models.CASCADE, related_name="udf_forms")
+    tag = models.ForeignKey(
+        "lit.ReferenceFilterTag", on_delete=models.CASCADE, related_name="udf_forms"
+    )
     form = models.ForeignKey(UserDefinedForm, on_delete=models.CASCADE, related_name="tags")
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="udf_tags"
@@ -162,7 +163,7 @@ class ModelUDFContent(models.Model):
 
 class TagUDFContent(models.Model):
     reference = models.ForeignKey(
-        Reference, on_delete=models.CASCADE, related_name="saved_tag_contents"
+        "lit.Reference", on_delete=models.CASCADE, related_name="saved_tag_contents"
     )
     tag_binding = models.ForeignKey(TagBinding, on_delete=models.PROTECT)
     content = models.JSONField(blank=True, default=dict)

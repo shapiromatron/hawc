@@ -221,7 +221,8 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
-                            <ReferenceUDF currentUDF={currentUDF} />
+                            <ReferenceUDF currentUDF={currentUDF}
+                            intitialValues={reference.tag_udf_contents} />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>
