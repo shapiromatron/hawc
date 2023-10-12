@@ -1,3 +1,5 @@
+from itertools import chain
+
 import pytest
 
 from hawc.apps.animal import models
@@ -205,6 +207,44 @@ class TestConfidenceIntervalsMixin:
         uppers = list(map(lambda d: d["upper_ci"], data))
         assert pytest.approx([0.0092, 0.6554, 0.0009, 0.9538], abs=0.001) == lowers
         assert pytest.approx([0.3474, 0.9960, 0.0461, 0.9991], abs=0.001) == uppers
+
+    def test_percentControl(self):
+        # test continuous
+        for egs, expected in [
+            # success
+            (
+                [{"n": 10, "response": 2, "stdev": 0.1}, {"n": 10, "response": 3, "stdev": 0.1}],
+                [(0, -4.4, 4.4), (50, 44.4, 55.6)],
+            ),
+        ]:
+            models.ConfidenceIntervalsMixin.percentControl("C", egs)
+            actual = [
+                (eg["percentControlMean"], eg["percentControlLow"], eg["percentControlHigh"])
+                for eg in egs
+            ]
+            assert pytest.approx(list(chain.from_iterable(expected)), abs=0.1) == list(
+                chain.from_iterable(actual)
+            )
+
+        # test dichotomous
+        for egs, expected in [
+            # success
+            ([{"n": 10, "incidence": 1}, {"n": 10, "incidence": 2}], [0, 100]),
+            ([{"n": 10, "incidence": 2}, {"n": 10, "incidence": 1}], [0, -50]),
+            ([{"n": 50, "incidence": 30}, {"n": 50, "incidence": 31}], [0, 3.33]),
+            # cannot calculate w/ control
+            ([{"n": None, "incidence": None}, {"n": None, "incidence": None}], [None, None]),
+            ([{"n": 10, "incidence": None}, {"n": 10, "incidence": 1}], [None, None]),
+            ([{"n": 10, "incidence": 0}, {"n": 10, "incidence": 1}], [None, None]),
+            ([{"n": None, "incidence": 1}, {"n": 10, "incidence": 1}], [None, None]),
+            ([{"n": 0, "incidence": 1}, {"n": 10, "incidence": 1}], [None, None]),
+            # cannot calculate w/ incidence
+            ([{"n": 10, "incidence": 1}, {"n": None, "incidence": 1}], [0, None]),
+            ([{"n": 10, "incidence": 1}, {"n": 0, "incidence": 1}], [0, None]),
+        ]:
+            models.ConfidenceIntervalsMixin.percentControl("D", egs)
+            actual = [eg["percentControlMean"] for eg in egs]
+            assert pytest.approx(expected, abs=0.01) == actual
 
 
 @pytest.mark.django_db
