@@ -76,7 +76,7 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tag_additions",
         label="Candidate Tag Additions",
-        help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, the reference must not have any as consensus tags, and all tags must be candidate tags for the reference.",
+        help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, all tags must be 'candidate additions', i.e., all tags are candidate/user tags for the reference but not yet consensus tags.",
     )
     include_additiontag_descendants = df.BooleanFilter(
         method=filter_noop,
@@ -88,13 +88,13 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset=models.ReferenceFilterTag.objects.all(),
         method="filter_tag_deletions",
         label="Candidate Tag Deletions",
-        help_text="Select a tag to view references where that tag has been removed by a user (i.e., the tag exists as a consensus tag but not as a user tag). If multiple tags are selected, a reference must include all selected tags, and have at least one user tag without each tag.",
+        help_text="Select a tag to view references where that tag is a candidate deletion. If multiple tags are selected, all tags must be candidate deletions, i.e., all selected tags must be consensus tags on the reference and have been selected for removal by a user.",
     )
     include_deletiontag_descendants = df.BooleanFilter(
         method=filter_noop,
         widget=CheckboxInput(),
         label="Include tag descendants",
-        help_text="Applies to tags selected above. By default, only references with the specific selected tag(s) up for deletion are shown; checking this box includes references that are tagged with any descendant of the selected tag",
+        help_text="Applies to tags selected above. By default, only references with the specific selected tag(s) as candidate deletions are shown; checking this box includes references with candidate deletions of any descendant of the selected tag",
     )
     order_by = ArrowOrderingFilter(
         initial="-year",

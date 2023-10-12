@@ -500,7 +500,7 @@ class ConflictResolution(BaseFilterList):
     paginate_by = 50
 
     def get_queryset(self):
-        qs = (
+        return (
             super()
             .get_queryset()
             .annotate(
@@ -512,7 +512,6 @@ class ConflictResolution(BaseFilterList):
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
-        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
