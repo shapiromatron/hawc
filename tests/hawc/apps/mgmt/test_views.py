@@ -3,6 +3,10 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
+from hawc.apps.mgmt.views import AssessmentAnalytics
+
+from ..test_utils import check_200, check_403, get_client
+
 
 @pytest.mark.django_db
 class TestTaskDashboard:
@@ -70,3 +74,28 @@ class TestTaskDashboard:
         response = c.post(url, data=dict(status=20))
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/fragments/task_cell.html")
+
+
+@pytest.mark.django_db
+class TestAnalytics:
+    def test_permissions(self):
+        url = reverse("mgmt:assessment-analytics", args=(1,))
+        client = get_client()
+        check_403(client, url)
+
+        client = get_client("pm")
+        check_200(client, url)
+
+    def test_actions(self):
+        url = reverse("mgmt:assessment-analytics", args=(1,))
+        client = get_client("pm")
+        templates = {
+            "index": "mgmt/analytics.html",
+            "time_series": "mgmt/analytics/time_series.html",
+            "time_spent": "mgmt/analytics/time_spent.html",
+            "growth": "mgmt/analytics/growth.html",
+        }
+        assert set(AssessmentAnalytics.actions) == set(templates.keys())
+        for action, expected_template in templates.items():
+            resp = check_200(client, url + f"?action={action}")
+            assert resp.templates[0].name == expected_template
