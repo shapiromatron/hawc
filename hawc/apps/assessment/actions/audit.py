@@ -3,6 +3,7 @@ from enum import StrEnum
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
+from rest_framework.response import Response
 from reversion.models import Version
 
 from ...common.helper import FlatExport
@@ -246,7 +247,7 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         qs = getattr(self, method)()
         return qs.select_related("content_type", "revision")
 
-    def export(self) -> FlatExport:
+    def export(self) -> Response:
         qs = self.get_queryset()
         df = pd.DataFrame(
             qs.values_list(
