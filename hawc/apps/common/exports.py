@@ -1,5 +1,4 @@
 import pandas as pd
-from django.conf import settings
 from django.db.models import QuerySet
 from django.utils import timezone
 
@@ -13,8 +12,8 @@ class ModelExport:
         self,
         key_prefix: str = "",
         query_prefix: str = "",
-        include: tuple | None = None,
-        exclude: tuple | None = None,
+        include: tuple[str, ...] | None = None,
+        exclude: tuple[str, ...] | None = None,
     ):
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
