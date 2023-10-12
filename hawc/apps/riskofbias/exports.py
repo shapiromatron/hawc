@@ -35,18 +35,18 @@ class RiskOfBiasExport(ModelExport):
 class DomainExport(ModelExport):
     def get_value_map(self):
         return {
-            "domain_id": "id",
-            "domain_name": "name",
-            "domain_description": "description",
+            "id": "id",
+            "name": "name",
+            "description": "description",
         }
 
 
 class MetricExport(ModelExport):
     def get_value_map(self):
         return {
-            "metric_id": "id",
-            "metric_name": "name",
-            "metric_description": "description",
+            "id": "id",
+            "name": "name",
+            "description": "description",
         }
 
 
@@ -77,8 +77,8 @@ class RiskOfBiasExporter(Exporter):
             RiskOfBiasExport(
                 "rob", "riskofbias", exclude=("active", "final", "author_id", "author_name")
             ),
-            DomainExport("rob", "metric__domain"),
-            MetricExport("rob", "metric"),
+            DomainExport("rob_domain", "metric__domain"),
+            MetricExport("rob_metric", "metric"),
             RiskOfBiasScoreExport("rob_score", ""),
         ]
 
@@ -93,8 +93,8 @@ class RiskOfBiasCompleteExporter(Exporter):
         return [
             StudyExport("study", "riskofbias__study"),
             RiskOfBiasExport("rob", "riskofbias"),
-            DomainExport("rob", "metric__domain"),
-            MetricExport("rob", "metric"),
+            DomainExport("rob_domain", "metric__domain"),
+            MetricExport("rob_metric", "metric"),
             RiskOfBiasScoreExport("rob_score", ""),
         ]
 
