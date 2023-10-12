@@ -1,8 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load get_at_index %}
-{% load crispy_forms_tags %}
-
 {% block content %}
     <div class="d-flex">
         <h2>{{object}}&nbsp;{% if object.final %}[final]{% else %}[individual review]{% endif %}</h2>
