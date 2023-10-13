@@ -1,7 +1,5 @@
 {% extends './visual_form.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
     {% crispy form %}
     {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
