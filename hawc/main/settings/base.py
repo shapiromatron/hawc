@@ -65,9 +65,9 @@ TEMPLATES = [
                 "hawc.apps.common.context_processors.from_settings",
             ),
             "builtins": [
+                "crispy_forms.templatetags.crispy_forms_tags",
                 "hawc.apps.common.templatetags.bs4",
                 "hawc.apps.common.templatetags.hawc",
-                "crispy_forms.templatetags.crispy_forms_tags",
             ],
         },
     },
