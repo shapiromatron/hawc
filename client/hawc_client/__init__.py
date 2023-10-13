@@ -4,6 +4,7 @@ from .assessment import AssessmentClient
 from .client import BaseClient
 from .epi import EpiClient
 from .epimeta import EpiMetaClient
+from .epiv2 import EpiV2Client
 from .exceptions import HawcClientException, HawcServerException
 from .invitro import InvitroClient
 from .literature import LiteratureClient
@@ -39,6 +40,7 @@ class HawcClient(BaseClient):
         self.assessment = AssessmentClient(self.session)
         self.epi = EpiClient(self.session)
         self.epimeta = EpiMetaClient(self.session)
+        self.epiv2 = EpiV2Client(self.session)
         self.invitro = InvitroClient(self.session)
         self.lit = LiteratureClient(self.session)
         self.riskofbias = RiskOfBiasClient(self.session)

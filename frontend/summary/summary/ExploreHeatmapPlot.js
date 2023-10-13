@@ -606,7 +606,8 @@ class ExploreHeatmapPlot {
 
     update_plot = data => {
         const self = this,
-            {tableDataFilters, maxValue, colorScale} = this.store,
+            {tableDataFilters, maxValue, colorScale, settings} = this.store,
+            showCounts = settings.show_counts,
             cellColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
                     value =
@@ -615,7 +616,11 @@ class ExploreHeatmapPlot {
                             : _.includes(filterIndices, d.index)
                             ? maxValue
                             : d.rows.length / 3;
-                return colorScale(value);
+                return showCounts <= 2
+                    ? colorScale(value)
+                    : value === 0
+                    ? "white"
+                    : colorScale(maxValue / 3);
             },
             totalColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index);
@@ -680,7 +685,7 @@ class ExploreHeatmapPlot {
                     .transition(t)
                     .style("fill", textColor)
                     .style("display", d => (d.rows.length == 0 ? "none" : null))
-                    .text(d => d.rows.length);
+                    .text(d => (showCounts == 1 ? d.rows.length : "＋"));
 
                 this.bind_tooltip(g, "cell");
             });
