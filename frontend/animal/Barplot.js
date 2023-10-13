@@ -315,7 +315,7 @@ class Barplot extends D3Plot {
         if (this.endpoint.isDichotomous()) {
             return;
         }
-        const hline_width = this.w * 0.02,
+        const hline_width = this.w * 0.01,
             x = this.x_scale,
             y = this.y_scale,
             bars = this.values.filter(v => $.isNumeric(v.low) && $.isNumeric(v.high));

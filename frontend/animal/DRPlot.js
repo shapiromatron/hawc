@@ -385,7 +385,7 @@ class DRPlot extends D3Plot {
     add_dr_error_bars(update) {
         var x = this.x_scale,
             y = this.y_scale,
-            hline_width = x.range()[1] * 0.02;
+            hline_width = x.range()[1] * 0.01;
         this.hline_width = hline_width;
 
         try {

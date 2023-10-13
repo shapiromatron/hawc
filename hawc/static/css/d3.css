@@ -55,7 +55,7 @@ svg {
 
 .dr_err_bars {
     stroke: #2f516e;
-    stroke-width: 2px;
+    stroke-width: 1.5px;
 }
 
 .reference_line {
@@ -65,12 +65,9 @@ svg {
 
 /* dose-response data points */
 .dose_points {
-    fill: #a8b2d3;
-    stroke: black;
-    stroke-width: 1.5px;
-}
-.dose_points:hover {
-    fill: yellow;
+    fill: #a8b0c7;
+    stroke: white;
+    stroke-width: 1px;
 }
 
 /* critical dose points */
