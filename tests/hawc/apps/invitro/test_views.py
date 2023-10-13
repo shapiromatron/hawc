@@ -5,7 +5,7 @@ from ..test_utils import check_200, get_client
 
 
 @pytest.mark.django_db
-def test_smoke_get(db_keys):
+def test_get_200(db_keys):
     client = get_client("admin")
     main = db_keys.assessment_working
     endpoint_assessment = 5

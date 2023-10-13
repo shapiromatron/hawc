@@ -150,7 +150,7 @@ def test_uf_crud_failure(db_keys):
 
 
 @pytest.mark.django_db
-def test_smoke_get():
+def test_get_200():
     client = get_client("pm")
     main = 1
 

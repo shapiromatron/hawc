@@ -310,14 +310,14 @@ class TestRasterizeCss:
 
 
 @pytest.mark.django_db
-def test_smoke_get():
+def test_get_200():
     client = get_client("admin")
     main = 1
     log_content_type = 16
     log_obj_id = 1
     urls = [
-        reverse("assessment:full_list", args=()),
-        reverse("assessment:public_list", args=()),
+        reverse("assessment:full_list"),
+        reverse("assessment:public_list"),
         reverse("assessment:detail", args=(main,)),
         reverse("assessment:update", args=(main,)),
         reverse("assessment:modules_update", args=(main,)),
@@ -339,12 +339,12 @@ def test_smoke_get():
         reverse("assessment:species_create", args=(main,)),
         reverse("assessment:strain_create", args=(main,)),
         reverse("assessment:dose_units_create", args=(main,)),
-        reverse("assessment:dtxsid_create", args=()),
+        reverse("assessment:dtxsid_create"),
         reverse("assessment:endpoint_list", args=(main,)),
         reverse("assessment:clean_extracted_data", args=(main,)),
         reverse("assessment:effect_tag_create", args=(main,)),
-        reverse("assessment:content_types", args=()),
-        reverse("assessment:close_window", args=()),
+        reverse("assessment:content_types"),
+        reverse("assessment:close_window"),
         reverse("assessment:clean_study_metrics", args=(main,)),
         reverse("assessment:bulk-publish", args=(main,)),
     ]

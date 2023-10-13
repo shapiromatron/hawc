@@ -32,7 +32,7 @@ class TestDataPivotNew:
 
 
 @pytest.mark.django_db
-def test_smoke_get():
+def test_get_200():
     client = get_client("admin")
     main = 1
     secondary = 2
@@ -54,21 +54,9 @@ def test_smoke_get():
         reverse("summary:create", args=(main,)),
         reverse("summary:tables_list", args=(main,)),
         reverse("summary:tables_create_selector", args=(main,)),
-        reverse(
-            "summary:tables_create",
-            args=(
-                main,
-                table_type,
-            ),
-        ),
+        reverse("summary:tables_create", args=(main, table_type)),
         reverse("summary:tables_copy", args=(main,)),
-        reverse(
-            "summary:tables_detail",
-            args=(
-                main,
-                slug_summary,
-            ),
-        ),
+        reverse("summary:tables_detail", args=(main, slug_summary)),
         reverse("summary:tables_update", args=(main, slug_summary)),
         reverse("summary:tables_delete", args=(main, slug_summary)),
         # visualizations
@@ -91,7 +79,7 @@ def test_smoke_get():
         reverse("summary:dp_file-update", args=(secondary, slug_dp)),
         reverse("summary:dp_delete", args=(secondary, slug_dp)),
         # help text
-        reverse("summary:dataset_interactivity", args=()),
+        reverse("summary:dataset_interactivity"),
     ]
     for url in urls:
         check_200(client, url)

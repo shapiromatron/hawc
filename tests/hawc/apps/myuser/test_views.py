@@ -231,7 +231,7 @@ class ExternalAuthTests(TestCase):
 
 
 @pytest.mark.django_db
-def test_smoke_get():
+def test_get_200():
     client = get_client("pm")
 
     url = reverse("user:accept-license")

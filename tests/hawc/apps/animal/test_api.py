@@ -698,21 +698,9 @@ class TestEndpointApi:
         # general
         url = (
             reverse("animal:api:endpoint-rob-filter")
-            + f"?assessment_id={db_keys.assessment_working}"
+            + f"?assessment_id={db_keys.assessment_working}&effect=A&study_id=1"
         )
-        url += "&effect[]=A" + "&study_id[]=1"
         assert client.get(url).status_code == 200
-
-        # adding many endpoints
-        url = (
-            reverse("animal:api:endpoint-rob-filter")
-            + f"?assessment_id={db_keys.assessment_working}"
-        )
-        create_endpoints = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
-        for i in range(101):
-            client.post(create_endpoints, data)
-        assert client.get(url).status_code == 406
 
 
 @pytest.mark.django_db

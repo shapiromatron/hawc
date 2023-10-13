@@ -5,7 +5,7 @@ from ..test_utils import check_200, get_client
 
 
 @pytest.mark.django_db
-def test_smoke_get():
+def test_get_200():
     client = get_client("admin")
     main = 1
     urls = [
