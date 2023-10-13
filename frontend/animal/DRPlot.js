@@ -617,14 +617,7 @@ class DRPlot extends D3Plot {
                             x1: x(d.bmdl_line.x),
                             x2: x(d.bmdl_line.x),
                             y1: y.range()[0],
-                            y2: y(d.bmdl_line.y),
-                            stroke: d.stroke,
-                        },
-                        {
-                            x1: x.range()[0],
-                            x2: x(d.bmdl_line.x),
-                            y1: y(d.bmdl_line.y),
-                            y2: y(d.bmdl_line.y),
+                            y2: y(d.bmd_line.y),
                             stroke: d.stroke,
                         },
                     ];

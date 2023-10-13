@@ -22,9 +22,11 @@ class EndpointPlotContainer {
     }
 
     add_bmd_line(selected_model, line_class) {
-        if (this.plot.add_bmd_line) {
-            this.plot.add_bmd_line(selected_model, line_class);
-        }
+        this.plot_style.forEach(plot => {
+            if (typeof plot.add_bmd_line == "function") {
+                plot.add_bmd_line(selected_model, line_class);
+            }
+        });
     }
 
     toggle_views() {
