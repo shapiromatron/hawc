@@ -9,9 +9,10 @@ import rasterize from "./rasterize";
 
 // Generic parent for all d3.js visualizations
 class D3Plot {
-    add_title(x, y) {
+    add_title(x, y, opt) {
         x = x || this.w / 2;
         y = y || -this.padding.top / 2;
+        opt = opt || {wrapWidth: 800};
 
         if (this.title) {
             this.title.remove();
@@ -24,7 +25,7 @@ class D3Plot {
             .attr("class", "dr_title")
             .html(this.title_str)
             .each(function() {
-                HAWCUtils.wrapText(this, 325);
+                HAWCUtils.wrapText(this, opt.wrapWidth);
             });
     }
 

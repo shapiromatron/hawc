@@ -24,12 +24,10 @@ class Barplot extends D3Plot {
         this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(true, "A barchart of response with confidence intervals");
-        this.add_title();
+        this.add_title(null, null, {wrapWidth: 325});
         this.add_axes();
         this.add_bars();
-        if (!this.endpoint.isDichotomous()) {
-            this.add_error_bars();
-        }
+        this.add_error_bars();
         this.build_x_label();
         this.build_y_label();
         this.add_final_rectangle();
@@ -50,7 +48,7 @@ class Barplot extends D3Plot {
         this.add_menu_button({
             id: "toggle_y_axis",
             cls: "btn btn-sm",
-            title: "Change y-axis scale (shortcut: click the y-axis label)",
+            title: "Change y-axis scale",
             text: "",
             icon: "fa fa-arrows-v",
             on_click: () => this.toggle_y_axis(),
@@ -154,15 +152,14 @@ class Barplot extends D3Plot {
                 .map((v, i) => {
                     let val, label, cls;
 
-                    if (data_type == "C") {
+                    if (["C", "P"].includes(data_type)) {
                         val = v.response;
                         label = "";
-                    } else if (data_type == "P") {
-                        val = v.response;
-                        label = e.get_pd_string(v);
-                    } else {
+                    } else if (this.endpoint.isDichotomous()) {
                         val = v.incidence / v.n;
                         label = "";
+                    } else {
+                        console.error("Unknown data_type");
                     }
 
                     cls = "dose_bars";
@@ -252,7 +249,6 @@ class Barplot extends D3Plot {
             .style("font-size", "18px")
             .style("font-weight", "bold")
             .style("cursor", "pointer")
-
             .text(d => d.label);
 
         this.labels
@@ -262,7 +258,6 @@ class Barplot extends D3Plot {
     }
 
     x_axis_change_chart_update() {
-        // TODO - fix bug; not working? http://127.0.0.1:8000/ani/endpoint/25/
         this.xAxis.scale(this.x_scale);
         this.vis
             .selectAll(".x_axis")
@@ -317,7 +312,10 @@ class Barplot extends D3Plot {
     }
 
     add_error_bars() {
-        var hline_width = this.w * 0.02,
+        if (this.endpoint.isDichotomous()) {
+            return;
+        }
+        const hline_width = this.w * 0.02,
             x = this.x_scale,
             y = this.y_scale,
             bars = this.values.filter(v => $.isNumeric(v.low) && $.isNumeric(v.high));

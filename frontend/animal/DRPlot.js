@@ -63,7 +63,7 @@ class DRPlot extends D3Plot {
         this.render_bmd_lines();
         this.build_x_label();
         this.build_y_label();
-        this.add_title();
+        this.add_title(null, null, {wrapWidth: 325});
         this.add_legend();
         this.customize_menu();
         this.trigger_resize();
@@ -678,6 +678,10 @@ class DRPlot extends D3Plot {
     }
 
     remove_bmd_lines() {
+        // only attempt if vis exists
+        if (!this.vis) {
+            return;
+        }
         this.vis.selectAll("g.bmd").remove();
     }
 }

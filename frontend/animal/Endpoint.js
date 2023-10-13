@@ -216,7 +216,7 @@ class Endpoint extends Observee {
     }
 
     isDichotomous() {
-        return this.data.data_type.startsWith("D");
+        return ["D", "DC"].includes(this.data.data_type);
     }
 
     _calculate_stdev(eg) {
