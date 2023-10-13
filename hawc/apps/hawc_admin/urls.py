@@ -51,48 +51,7 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
                     name="openapi",
                 ),
                 # dashboard
-                path(
-                    f"{admin_url}/dashboard/",
-                    views.Dashboard.as_view(),
-                    {"action": "index"},
-                    name="admin_dashboard",
-                ),
-                path(
-                    f"{admin_url}/dashboard/growth/",
-                    views.Dashboard.as_view(),
-                    {"action": "growth"},
-                    name="admin_dashboard_growth",
-                ),
-                path(
-                    f"{admin_url}/dashboard/users/",
-                    views.Dashboard.as_view(),
-                    {"action": "users"},
-                    name="admin_dashboard_users",
-                ),
-                path(
-                    f"{admin_url}/dashboard/assessments/",
-                    views.Dashboard.as_view(),
-                    {"action": "assessment_growth"},
-                    name="admin_dashboard_assessments",
-                ),
-                path(
-                    f"{admin_url}/dashboard/assessment-profile/",
-                    views.Dashboard.as_view(),
-                    {"action": "assessment_profile"},
-                    name="admin_dashboard_assessment_profile",
-                ),
-                path(
-                    f"{admin_url}/dashboard/assessment-size/",
-                    views.Dashboard.as_view(),
-                    {"action": "assessment_size"},
-                    name="admin_dashboard_assessment_size",
-                ),
-                path(
-                    f"{admin_url}/dashboard/daily-changes/",
-                    views.Dashboard.as_view(),
-                    {"action": "daily_changes"},
-                    name="admin_dashboard_changes",
-                ),
+                path(f"{admin_url}/dashboard/", views.Dashboard.as_view(), name="admin_dashboard"),
                 # media preview
                 path(
                     f"{admin_url}/media-preview/",

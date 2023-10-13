@@ -7,9 +7,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 
-from ..common.htmx import action, staff_only
+from ..common.htmx import HtmxView, action, staff_only
 from . import methods
 
 logger = logging.getLogger(__name__)
@@ -21,18 +21,22 @@ class Swagger(TemplateView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class Dashboard(View):
-    def dispatch(self, request, *args, **kwargs):
-        request.action = self.kwargs["action"]
-        handler = getattr(self, request.action, self.http_method_not_allowed)
-        return handler(request, *args, **kwargs)
+class Dashboard(HtmxView):
+    actions = {
+        "assessment_size",
+        "assessment_growth",
+        "assessment_profile",
+        "growth",
+        "users",
+        "daily_changes",
+    }
 
     @action(permission=staff_only, htmx_only=False)
     def index(self, request: HttpRequest, *args, **kwargs):
         return render(request, "admin/dashboard.html", {})
 
     @action(permission=staff_only, methods=("get", "post"))
-    def growth(self, request, *args, **kwargs):
+    def growth(self, request: HttpRequest, *args, **kwargs):
         form = methods.GrowthForm(data=request.POST) if request.POST else methods.GrowthForm()
         df = fig = None
         if form.is_valid():
