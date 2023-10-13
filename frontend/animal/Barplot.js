@@ -381,7 +381,7 @@ class Barplot extends D3Plot {
             });
         }
         legend_settings.item_height = 20;
-        legend_settings.box_w = 110;
+        legend_settings.box_w = 65;
         legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
         legend_settings.box_padding = 5;
         legend_settings.dot_r = 5;

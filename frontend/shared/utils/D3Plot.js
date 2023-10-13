@@ -49,20 +49,8 @@ class D3Plot {
     }
 
     build_legend(settings) {
-        var plot = this,
-            buffer = settings.box_padding, //shortcut reference
-            drag = d3.drag().on("drag", function(event, d) {
-                var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                    p = d3.select(this),
-                    m = regexp.exec(p.attr("transform"));
-
-                if (m !== null && m.length === 3) {
-                    var x = parseFloat(m[1]) + event.dx,
-                        y = parseFloat(m[2]) + event.dy;
-                    p.attr("transform", `translate(${x},${y})`);
-                    plot.set_legend_location(y, x);
-                }
-            });
+        var buffer = settings.box_padding, //shortcut reference
+            onDrag = HAWCUtils.updateDragLocationTransform(() => {});
 
         if (this.legend) {
             this.legend.node().remove();
@@ -74,7 +62,7 @@ class D3Plot {
             .attr("transform", `translate(${settings.box_l},${settings.box_t})`)
             .attr("cursor", "pointer")
             .attr("data-buffer", buffer)
-            .call(drag);
+            .call(onDrag);
 
         this.set_legend_location(settings.box_t, settings.box_l);
 

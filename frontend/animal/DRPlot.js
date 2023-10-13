@@ -306,18 +306,14 @@ class DRPlot extends D3Plot {
                     significance_level: v.significance_level,
                 };
             })
-            .filter(function(d) {
-                return d.isReported;
-            })
+            .filter(d => d.isReported)
             .value();
 
         if (values.length > 2) values[0].x_log = values[1].x_log / 10;
 
         sigs_data = _.chain(values)
-            .filter(function(d) {
-                return d.significance_level > 0;
-            })
-            .map(function(v) {
+            .filter(d => d.significance_level > 0)
+            .map(v => {
                 return {
                     x: v.x,
                     significance_level: v.significance_level,
@@ -332,24 +328,16 @@ class DRPlot extends D3Plot {
             y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
             sigs_data,
-            max_x: d3.max(ep.groups, function(datum) {
-                return datum.dose;
-            }),
+            max_x: d3.max(ep.groups, d => d.dose),
         });
 
         this._setPlottableDoseValues();
 
         if (ep.groups.length > 0) {
-            var max_upper = d3.max(values, function(d) {
-                    return d.y_upper || d.y;
-                }),
-                max_sig = d3.max(sigs_data, function(d) {
-                    return d.y;
-                });
+            var max_upper = d3.max(values, d => d.y_upper || d.y),
+                max_sig = d3.max(sigs_data, d => d.y);
 
-            this.min_y = d3.min(values, function(d) {
-                return d.y_lower || d.y;
-            });
+            this.min_y = d3.min(values, d => d.y_lower || d.y);
             this.max_y = d3.max([max_upper, max_sig]);
         }
     }
@@ -553,7 +541,7 @@ class DRPlot extends D3Plot {
             });
 
         legend_settings.item_height = 20;
-        legend_settings.box_w = 110;
+        legend_settings.box_w = 65;
         legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
 
         legend_settings.box_padding = 5;
