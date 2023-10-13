@@ -90,35 +90,3 @@ class DynamicFormHelper(BaseFormHelper):
 
         self[:].wrap_together(cfl.Row)
         self.add_field_wraps()
-
-
-class DynamicFormWidget(forms.Widget):
-    """Widget to display dynamic form inline."""
-
-    template_name = "common/widgets/dynamic_form.html"
-
-    def __init__(self, prefix, form_class, form_kwargs=None, *args, **kwargs):
-        """Create dynamic form widget."""
-        super().__init__(*args, **kwargs)
-        self.prefix = prefix
-        self.form_class = form_class
-        if form_kwargs is None:
-            form_kwargs = {}
-        self.form_kwargs = {"prefix": prefix, **form_kwargs}
-
-    def add_prefix(self, field_name):
-        """Add prefix in the same way Django forms add prefixes."""
-        return f"{self.prefix}-{field_name}"
-
-    def format_value(self, value):
-        """Value used in rendering."""
-        value = json.loads(value)
-        if value:
-            value = {self.add_prefix(k): v for k, v in value.items()}
-        return self.form_class(data=value, **self.form_kwargs)
-
-    def value_from_datadict(self, data, files, name):
-        """Parse value from POST request."""
-        form = self.form_class(data=data, **self.form_kwargs)
-        form.full_clean()
-        return form.cleaned_data
