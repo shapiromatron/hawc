@@ -33,7 +33,7 @@ let getColWidths = function(numBmrs) {
     },
     binModels = function(models) {
         return _.chain(models)
-            .groupBy("model_id")
+            .groupBy("model_index")
             .values()
             .value();
     };

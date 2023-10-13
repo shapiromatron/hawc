@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0024_add_external_websites"),
     ]
@@ -22,6 +21,7 @@ class Migration(migrations.Migration):
                     (4, "literature tagtree"),
                     (5, "embedded external website"),
                     (6, "exploratory heatmap"),
+                    (7, "plotly"),
                 ]
             ),
         ),

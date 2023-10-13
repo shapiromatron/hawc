@@ -1,16 +1,19 @@
 import logging
 import math
+from html import unescape
 
-import django
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
-from django.db import IntegrityError, connection, models, transaction
-from django.db.models import Q, QuerySet, URLField
+from django.db import IntegrityError, connection, models, router, transaction
+from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
+from django.db.models.functions import Coalesce, Concat
 from django.template.defaultfilters import slugify as default_slugify
+from django.utils.html import strip_tags
 from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
@@ -104,17 +107,12 @@ class NonUniqueTagBase(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk and not self.slug:
             self.slug = self.slugify(self.name)
-            if django.VERSION >= (1, 2):
-                from django.db import router
-
-                using = kwargs.get("using") or router.db_for_write(type(self), instance=self)
-                # Make sure we write to the same db for all attempted writes,
-                # with a multi-master setup, theoretically we could try to
-                # write and rollback on different DBs
-                kwargs["using"] = using
-                trans_kwargs = {"using": using}
-            else:
-                trans_kwargs = {}
+            using = kwargs.get("using") or router.db_for_write(type(self), instance=self)
+            # Make sure we write to the same db for all attempted writes,
+            # with a multi-master setup, theoretically we could try to
+            # write and rollback on different DBs
+            kwargs["using"] = using
+            trans_kwargs = {"using": using}
             i = 0
             while True:
                 i += 1
@@ -137,7 +135,6 @@ class NonUniqueTagBase(models.Model):
 
 
 class AssessmentRootMixin:
-
     cache_template_taglist = NotImplementedAttribute
     cache_template_tagtree = NotImplementedAttribute
 
@@ -172,7 +169,6 @@ class AssessmentRootMixin:
         last_depth = -math.inf
         names: list[str] = []
         for node in qs:
-
             if node.depth == 1:
                 node.nested_name = node.name
             else:
@@ -252,7 +248,7 @@ class AssessmentRootMixin:
                     f'{name} "{orphan.name}" {orphan.id} is orphaned [path={orphan.path}]. Deleting.'
                 )
                 cursor.execute(
-                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s",
+                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s",  # noqa: S608
                     [orphan.id],
                 )
             cursor.close()
@@ -457,7 +453,7 @@ def get_distinct_charfield(Cls, assessment_id, field):
 
 def get_distinct_charfield_opts(Cls, assessment_id, field):
     objs = get_distinct_charfield(Cls, assessment_id, field)
-    return [(obj, obj) for obj in sorted(objs)]
+    return [(obj, obj) for obj in sorted(objs) if obj]
 
 
 def apply_flavored_help_text(app_name: str):
@@ -486,8 +482,147 @@ def apply_flavored_help_text(app_name: str):
             model._meta.get_field(field_name).help_text = help_text
 
 
-def get_model_copy_name(instance: models.Model) -> str:
-    return getattr(instance, "COPY_NAME", instance._meta.db_table)
+def include_related(
+    queryset: QuerySet, ancestors: bool = True, descendants: bool = True
+) -> QuerySet:
+    """Update treebeard.MP_Node QuerySet to include related objects.
+
+    Args:
+        queryset (QuerySet): A treebeard.MP_Node QuerySet
+        ancestors (bool, optional): Include direct ancestors of items in QuerySet
+        descendants (bool, optional): Include descendants of items in QuerySet
+
+    Returns:
+        A QuerySet containing items from the original queryset and any additional items
+    """
+    if not ancestors and not descendants:
+        return queryset
+
+    paths = list(queryset.values_list("path", "depth"))
+    if len(paths) == 0:
+        return queryset
+
+    filters = Q()
+    steplen = queryset.model.steplen
+    if ancestors:
+        parent_paths = []
+        for path, depth in paths:
+            for d in range(depth - 1):
+                parent_paths.append(path[: ((d + 1) * steplen)])
+        filters |= Q(path__in=parent_paths)
+
+    if descendants:
+        items = "|".join(p for p, _ in paths)
+        filters |= Q(path__regex=f"^({items}).+")
+
+    return queryset | queryset.model.objects.filter(filters)
+
+
+def sql_display(name: str, Choice: type[Choices]) -> Case:
+    """Create a annotation to return the display name via SQL
+
+    Args:
+        name (str): the field name
+        Choice (type[Choices]): a choice field
+
+    Returns:
+        Case: the case statement for use in an annotation
+    """
+    return Case(
+        *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
+        default=Value("?"),
+    )
+
+
+def sql_format(format_str: str, *field_params) -> Concat:
+    """Create an ORM expression to simulate a format string.
+
+    Args:
+        format_str (str): Format string. Any {} present in the string
+        will be replaced by field_params.
+
+    Returns:
+        Concat: An expression that generates a string
+    """
+    value_params = format_str.split("{}")
+    if format_str.count("{}") != len(field_params):
+        raise ValueError("field params must be equal to value params.")
+    replace_num = len(field_params)
+    concat_args = []
+    for i in range(replace_num):
+        if value_params[i]:
+            concat_args.append(Value(value_params[i]))
+        concat_args.append(field_params[i])
+    if remainder := "".join(value_params[replace_num:]):
+        concat_args.append(Value(remainder))
+    return Concat(*concat_args, output_field=TextField())
+
+
+def replace_null(field: str, replacement: str = ""):
+    """Replace null values with a replacement string
+
+    Args:
+        field (str): The field to replace
+        replacement (str, optional): The replacement string. Defaults to "".
+    """
+    return Coalesce(field, Value(replacement), output_field=CharField())
+
+
+def str_m2m(field: str, delimiter: str = "|", default: str = "", **kw):
+    """Generate a delimited string aggregation of a m2m field.
+
+    The resulting aggregation must be saved to an annotation on the QuerySet;
+    you cannot use directly on a values_list (but you can use after annotation).
+
+    Args:
+        field (str): The field name to aggregate
+        delimiter (str, optional): The field to use; defaults to "|".
+        default (str, optional): The default value to use; defaults to "".
+    """
+    return StringAgg(field, delimiter=delimiter, distinct=True, default=Value(default), **kw)
+
+
+def to_display(series: pd.Series, Choice: type[Choices]) -> pd.Series:
+    """Return a new series of display values from django choices
+
+    Args:
+        series (pd.Series): the series with db values
+        Choice (type[Choices]): a Choices instance
+
+    Returns:
+        pd.Series: a series of display values
+    """
+    return series.map({k: v for k, v in Choice.choices}).fillna("?")
+
+
+def to_display_array(series: pd.Series, Choice: type[Choices], delimiter: str = "|") -> pd.Series:
+    """Return a new series of delimited display values from django choices
+
+    Args:
+        series (pd.Series): the series with db values
+        Choice (type[Choices]): a Choices instance
+        delimiter (str, optional): delimiter to use. Defaults to "|".
+
+    Returns:
+        pd.Series: a series of delimited display values
+    """
+    mapping = {k: v for k, v in Choice.choices}
+    return (
+        series.str.split(pat=delimiter)
+        .apply(lambda items: [mapping.get(item, "?") for item in items])
+        .str.join(delimiter)
+    )
+
+
+def pd_strip_tags(df: pd.DataFrame, columns: list[str]):
+    """Remove tags from text columns a DataFrame; in place
+
+    Args:
+        df (pd.DataFrame): the DataFrame to clean
+        columns (list[str]): column names to remove tags
+    """
+    for col in columns:
+        df.loc[:, col] = df[col].apply(lambda txt: unescape(strip_tags(txt)))
 
 
 class NumericTextField(models.CharField):

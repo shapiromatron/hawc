@@ -8,7 +8,6 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
-from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -20,19 +19,18 @@ DEBUG = False
 
 # Basic setup
 WSGI_APPLICATION = "hawc.main.wsgi.application"
-SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
+SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"  # noqa: S105
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_I18N = False
-USE_L10N = True
 USE_TZ = True
 
 ADMINS: list[tuple[str, str]] = []
 _admin_names = os.getenv("DJANGO_ADMIN_NAMES", "")
 _admin_emails = os.getenv("DJANGO_ADMIN_EMAILS", "")
 if len(_admin_names) > 0 and len(_admin_emails) > 0:
-    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|")))
+    ADMINS = list(zip(_admin_names.split("|"), _admin_emails.split("|"), strict=True))
 MANAGERS = ADMINS
 
 # add randomness to admin url
@@ -66,6 +64,11 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "hawc.apps.common.context_processors.from_settings",
             ),
+            "builtins": [
+                "crispy_forms.templatetags.crispy_forms_tags",
+                "hawc.apps.common.templatetags.bs4",
+                "hawc.apps.common.templatetags.hawc",
+            ],
         },
     },
 ]
@@ -117,6 +120,7 @@ INSTALLED_APPS = (
     "hawc.apps.riskofbias",
     "hawc.apps.study",
     "hawc.apps.animal",
+    "hawc.apps.eco",
     "hawc.apps.epi",
     "hawc.apps.epimeta",
     "hawc.apps.invitro",
@@ -126,15 +130,8 @@ INSTALLED_APPS = (
     "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
+    "hawc.apps.udf",
 )
-
-# TODO - remove with django==4.1
-if HAWC_FEATURES.FIPS_MODE is True:
-    fips.patch_md5()
-
-if HAWC_FEATURES.ENABLE_ECO:
-    INSTALLED_APPS = INSTALLED_APPS + ("hawc.apps.eco",)
-
 # DB settings
 DATABASES = {
     "default": {
@@ -190,11 +187,14 @@ AUTHENTICATION_BACKENDS = [
     "hawc.apps.common.auth.TokenBackend",
 ]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
+CSRF_TRUSTED_ORIGINS = os.getenv("HAWC_CSRF_TRUSTED_ORIGINS", "https://").split("|")
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
 SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
+TURNSTYLE_SITE = os.environ.get("TURNSTYLE_SITE", "")
+TURNSTYLE_KEY = os.environ.get("TURNSTYLE_KEY", "")
 INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
 
 # Server URL settings
@@ -202,6 +202,7 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
 LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
+DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DISABLED_LOGIN_HOSTS", "").split("|")
 
 # Static files
 STATIC_URL = "/static/"
@@ -296,9 +297,8 @@ GTM_ID = os.getenv("GTM_ID")
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
 
-# BMD modeling settings
-BMDS_SUBMISSION_URL = os.getenv("BMDS_SUBMISSION_URL", "http://example.com/api/dfile/")
-BMDS_TOKEN = os.getenv("BMDS_TOKEN", "token")
+# CCTE API key
+CCTE_API_KEY = os.getenv("CCTE_API_KEY")
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

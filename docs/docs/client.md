@@ -45,6 +45,13 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### [2023-2](https://pypi.org/project/hawc-client/2023.2/) (April 2023)
+
+* Add new `login` parameter to `client.set_authentication_token`, and returns  boolean instead of a dict.
+    - If `login` is False (default), a token based API session is created. This is consistent with previous behavior.
+    - If `login` is True, a django cookie-based session is set instead of a token-based API session. This may be used if using the client to browse the website, however CSRF tokens will be required for API and form requests.
+* Added ``client.lit.reference_user_tags`` - retrieves all user tag for all references for an assessment.
+
 #### [2023-1](https://pypi.org/project/hawc-client/2023.1/) (January 2023)
 
 * Added ``client.riskofbias.compare_metrics`` - align metrics when copying across assessments via fuzzy text matching
@@ -59,42 +66,6 @@ Client tutorials for common operations are below:
     * When invert is True, returns a list of studies, with child data nested
 * Added ``client.riskofbias.metrics`` to return a dataframe of metrics for an assessment
 * Added ``client.riskofbias.reviews`` to return a list of reviews for an assessment
-
-### Distributing HAWC clients
-
-The Python HAWC client can be packaged for easy distribution.
-
-```bash
-# install dependencies
-pip install twine wheel
-
-# change to client path
-cd client
-
-# build packages; these can be distributed directly
-make build
-
-# or can be uploaded to pypi
-make upload-testpypi
-make upload-pypi
-```
-
-## R HAWC client
-
-An R client is also available. To install and use:
-
-```R
-devtools::install_github('shapiromatron/hawc', subdir='client/r/rhawc')
-library(rhawc)
-
-client <- HawcClient("https://hawcproject.org")
-client$authenticate("me@me.com", getPass::getPass())
-
-# get all references for an assessment
-client$lit_references(assessment_id=123)
-```
-
-Please note that the Python client is considered the reference implementation for a HAWC client and will include the latest features; the R client may be a little behind. A high-level notebook we use for testing is available to see how the R client works: [R tutorial](https://github.com/shapiromatron/hawc/blob/master/scripts/client/r-client.ipynb). For more detailed trainings, see the Python notebook tutorials above.
 
 ## API access
 

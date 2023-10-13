@@ -24,7 +24,7 @@ from ..common.views import (
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from ..study.views import StudyRead
+from ..study.views import StudyDetail
 from . import filterset, forms, models
 
 
@@ -56,11 +56,11 @@ class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     form_class = forms.ExperimentForm
 
 
-class ExperimentRead(BaseDetail):
+class ExperimentDetail(BaseDetail):
     model = models.Experiment
 
 
-class ExperimentCopyAsNewSelector(CopyAsNewSelectorMixin, StudyRead):
+class ExperimentCopyAsNewSelector(CopyAsNewSelectorMixin, StudyDetail):
     copy_model = models.Experiment
     form_class = forms.ExperimentSelectorForm
 
@@ -171,7 +171,7 @@ class AnimalGroupCreate(BaseCreate):
         return context
 
 
-class AnimalGroupRead(BaseDetail):
+class AnimalGroupDetail(BaseDetail):
     model = models.AnimalGroup
 
     def get_context_data(self, **kwargs):
@@ -186,7 +186,7 @@ class AnimalGroupRead(BaseDetail):
                 "animal_group__strain",
             )
             .prefetch_related(
-                "bmd_models",
+                "bmd_sessions",
                 "effects",
                 "groups",
                 "animal_group__parents",
@@ -205,7 +205,7 @@ class AnimalGroupRead(BaseDetail):
         return context
 
 
-class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentRead):
+class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentDetail):
     copy_model = models.AnimalGroup
     form_class = forms.AnimalGroupSelectorForm
 
@@ -243,7 +243,7 @@ class AnimalGroupDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointCopyAsNewSelector(CopyAsNewSelectorMixin, AnimalGroupRead):
+class EndpointCopyAsNewSelector(CopyAsNewSelectorMixin, AnimalGroupDetail):
     copy_model = models.Endpoint
     form_class = forms.EndpointSelectorForm
 
@@ -412,7 +412,9 @@ class EndpointFilterList(BaseFilterList):
     def get_queryset(self):
         qs = super().get_queryset()
         form = self.filterset.form
-        dose_units = form.cleaned_data["dose_units"] or form.fields["dose_units"].queryset.first()
+        dose_units = (
+            form.cleaned_data.get("dose_units") or form.fields["dose_units"].queryset.first()
+        )
         return qs.select_related("animal_group__experiment__study").annotate_dose_values(dose_units)
 
     def get_context_data(self, **kwargs):
@@ -437,14 +439,7 @@ class EndpointListV2(BaseList):
         )
 
 
-class EndpointTags(EndpointFilterList):
-    # List of Endpoints associated with an assessment and tag
-
-    def get_base_queryset(self):
-        return self.model.objects.tag_qs(self.assessment.pk, self.kwargs["tag_slug"])
-
-
-class EndpointRead(BaseDetail):
+class EndpointDetail(BaseDetail):
     queryset = models.Endpoint.objects.select_related(
         "animal_group",
         "animal_group__dosing_regime",

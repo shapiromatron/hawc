@@ -16,9 +16,8 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestEpiAssessmentViewset:
+class TestEpiAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
-
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
@@ -1569,13 +1568,9 @@ class TestExposureApi:
 @pytest.mark.django_db
 class TestMetadataApi:
     def test_permissions(self):
-        # Disable non-assesssment-specific list view of metadata
-        try:
+        # Disable non-assessment-specific list view of metadata
+        with pytest.raises(NoReverseMatch):
             url = reverse("epi:api:metadata-list")
-            assert False
-        except NoReverseMatch:
-            # This is correct behavior
-            pass
 
         client = APIClient()
 
@@ -1664,7 +1659,7 @@ def generic_test_scenarios(client, url, scenarios):
             assert response.status_code == scenario["expected_code"]
 
         if "expected_keys" in scenario:
-            assert (scenario["expected_keys"]).issubset((response.data.keys()))
+            assert (scenario["expected_keys"]).issubset(response.data.keys())
 
         if "expected_content" in scenario:
             assert str(response.data).lower().find(scenario["expected_content"].lower()) != -1

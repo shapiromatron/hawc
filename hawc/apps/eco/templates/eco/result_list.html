@@ -1,0 +1,39 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<div class="d-flex mb-2">
+    <h2 class="mb-0">Results ({{page_obj.paginator.count}} found)</h2>
+    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+    {% actions %}
+        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+    {% endactions %}
+    {% endif %}
+</div>
+{% include 'common/inline_filter_form.html' %}
+<table class="table table-sm table-striped">
+    {% bs4_colgroup '15,10,10,10,15,15,10,15' %}
+    {% bs4_thead 'Study,Design,Cause,Effect,Result,Modifying Factors,Derived Value,Comments' %}
+    <tbody id="result-tbody">
+        {% for object in result_list %}
+        <tr>
+            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a></td>
+            <td><a href="{{object.design.get_absolute_url}}">{{object.design.name}}</a></td>
+            <td>{{object.cause.name}}</td>
+            <td>{{object.effect.name }}</td>
+            <td>{{object.name}}</td>
+            <td>
+                {% split object.modifying_factors as factors %}
+                {% for factor in factors %}
+                <span class="badge badge-secondary">{{factor}}</span>
+                {% endfor %}
+            </td>
+            <td>{{object.derived_value|floatformat:3 }}</td>
+            <td>{{object.comments}}</td>
+        </tr>
+        {% empty %}
+            {% bs4_fullrow 'No results available.' %}
+        {% endfor %}
+    </tbody>
+</table>
+{% include "includes/paginator.html" with plural_object_name="results" %}
+{% endblock content %}

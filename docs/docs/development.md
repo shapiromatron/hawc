@@ -5,21 +5,20 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.9
+- [Python](https://www.python.org/) == 3.11
 - [Node.js](https://nodejs.org)
-- [Yarn](https://yarnpkg.com/)
-- [PostgreSQL](https://www.postgresql.org/) == 12
+- [Yarn](https://yarnpkg.com/) < 2
+- [PostgreSQL](https://www.postgresql.org/) >= 12
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
-- Python code must comply with code formatters and linters: black, flake8, and isort
+- Python code must comply with code formatters and linters: black and ruff
 - Javascript code must comply with eslint formatters
 - All unit-test (currently in python-only) must pass; please write test when contributing new code
 
 See the `Useful utilities` below for more details on how to automatically lint/format your code.
 
 ## Environment setup
-
 
 HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
 
@@ -50,9 +49,9 @@ For Windows, use anaconda or miniconda to get requirements can be used to get de
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.9 postgresql=12
+conda install python=3.11 postgresql
 conda install -c conda-forge nodejs
-conda install -c conda-forge yarn
+conda install -c conda-forge yarn=1.22.19
 
 :: clone repository; we'll put in dev but you can put anywhere
 mkdir %HOMEPATH%\dev
@@ -93,7 +92,8 @@ source ./venv/bin/activate
 # update python/js packages; sync app state with database
 make sync-dev
 
-# run development webserver
+# run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 
@@ -126,7 +126,8 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 :: update python/js packages; sync app state with database
 make sync-dev
 
-:: run development webserver
+:: run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 
@@ -387,6 +388,8 @@ py.test -sv tests/integration/test_login.py --pdb
 [Visual Studio Code]( https://code.visualstudio.com/) is the recommended editor for this project. Recommended extensions include:
 
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+- [Black formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
+- [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
 
@@ -397,6 +400,9 @@ When using the recommended settings below, your python and javascript code shoul
     "[dockerfile]": {
         "editor.formatOnSave": false
     },
+    "[css]": {
+        "editor.formatOnSave": false,
+    },
     "[javascript]": {
         "editor.formatOnSave": false,
     },
@@ -405,12 +411,17 @@ When using the recommended settings below, your python and javascript code shoul
         "editor.quickSuggestions": false
     },
     "[python]": {
-        "editor.formatOnPaste": false,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true
+        },
     },
     "editor.codeActionsOnSave": {
+        "source.fixAll": false,
         "source.fixAll.eslint": true
     },
-    "editor.formatOnPaste": true,
+    "editor.formatOnPaste": false,
     "editor.formatOnSave": false,
     "editor.rulers": [100, 120],
     "editor.tabSize": 4,
@@ -426,10 +437,8 @@ When using the recommended settings below, your python and javascript code shoul
         "reportUnknownMemberType": "information",
     },
     "python.analysis.typeCheckingMode": "basic",
-    "python.autoUpdateLanguageServer": true,
-    "python.formatting.provider": "black",
     "python.languageServer": "Pylance",
-    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Enabled": false,
     "search.exclude": {
         "**/node_modules": true,
         "**/.git": true,

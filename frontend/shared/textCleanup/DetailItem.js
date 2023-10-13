@@ -16,12 +16,9 @@ class DetailItem extends Component {
                             id={item.id}
                             className="detail-item"
                             onClick={() => {
-                                const key = store.model.modal_key,
-                                    modalClass = getModalClass(key);
-                                if (modalClass) {
-                                    modalClass.displayAsModal(item.id);
-                                } else {
-                                    console.error("Modal class not found", key);
+                                const key = store.model.modal_key;
+                                if (key) {
+                                    getModalClass(key).displayAsModal(item.id);
                                 }
                             }}>
                             {item[field] || "<empty>"}

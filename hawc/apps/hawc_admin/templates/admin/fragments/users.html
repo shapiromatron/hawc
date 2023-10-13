@@ -1,18 +1,10 @@
 <h2>Active users</h2>
-<div id="active" style="max-width: 800px"></div>
+{% plotly active event="htmx" resizable=True %}
 
 <h2>Days since login</h2>
-<div id="growth1" style="max-width: 800px"></div>
-<div id="growth2" style="max-width: 800px"></div>
+{% plotly growth.0 event="htmx" resizable=True %}
+{% plotly growth.1 event="htmx" resizable=True %}
 
 <h2>Days since last login</h2>
-<div id="login1" style="max-width: 800px"></div>
-<div id="login2" style="max-width: 800px"></div>
-
-<script>
-    Plotly.newPlot(document.getElementById("active"), {{ active.to_json | safe }});
-    Plotly.newPlot(document.getElementById("growth1"), {{ growth.0.to_json | safe }});
-    Plotly.newPlot(document.getElementById("growth2"), {{ growth.1.to_json | safe }});
-    Plotly.newPlot(document.getElementById("login1"), {{ logins.0.to_json | safe }});
-    Plotly.newPlot(document.getElementById("login2"), {{ logins.1.to_json | safe }});
-</script>
+{% plotly logins.0 event="htmx" resizable=True %}
+{% plotly logins.1 event="htmx" resizable=True %}

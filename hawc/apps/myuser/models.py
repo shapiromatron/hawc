@@ -14,7 +14,6 @@ from . import managers
 
 
 class HAWCUser(AbstractBaseUser, PermissionsMixin):
-
     objects = managers.HAWCMgr()
 
     email = models.EmailField(max_length=254, unique=True, db_index=True)
@@ -57,7 +56,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def get_assessments(self):
         Assessment = apps.get_model("assessment", "Assessment")
-        return Assessment.objects.get_viewable_assessments(self)
+        return Assessment.objects.all().user_can_view(self)
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
@@ -104,9 +103,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(HAWCUser, on_delete=models.CASCADE, related_name="profile")
     HERO_access = models.BooleanField(
         default=False,
-        verbose_name="HERO access",
-        help_text="All HERO links will redirect to the login-only HERO access "
-        "page, allowing for full article text.",
+        verbose_name="Has Authenticated HERO access",
+        help_text="Open HERO links using HERO Net (requires authentication), instead of public HERO (no authentication required).",
     )
 
     def __str__(self):

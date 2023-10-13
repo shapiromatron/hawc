@@ -42,6 +42,7 @@ class GenericTableStore {
     @observable editMode = false;
     @observable settings = null;
     @observable editingCellIndex = null;
+    @observable showConfigurationModal = false;
     @observable showCellModal = false;
     @observable stagedCell = null;
     @observable quickEditCell = null;
@@ -60,8 +61,16 @@ class GenericTableStore {
         }
     }
 
+    @action.bound setConfigurationModal(bool) {
+        this.showConfigurationModal = bool;
+    }
+
     @action.bound toggleShowColumnEdit() {
         this.showColumnEdit = !this.showColumnEdit;
+    }
+
+    @action.bound setConfiguration(name, value) {
+        this.settings[name] = value;
     }
 
     @action.bound selectCellEdit(cell, quick) {

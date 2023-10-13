@@ -119,6 +119,8 @@ const helpers = {
         // ff = float format
         if (number === 0) {
             return number.toString();
+        } else if (number === -9999) {
+            return "-";
         } else if (Math.abs(number) > 0.001 && Math.abs(number) < 1e9) {
             // local print "0" for anything smaller than this
             return number.toLocaleString();
@@ -170,6 +172,9 @@ const helpers = {
     },
     getBulkUrl(host, base, ids = null) {
         return `${host}${base}&ids=${ids}`;
+    },
+    getUrlWithParameters(path, params) {
+        return `${path}?${new URLSearchParams(params).toString()}`;
     },
     datetimeFormat(dt) {
         return moment(dt).format("MMMM Do YYYY, h:mm:ss a");

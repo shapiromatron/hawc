@@ -4,11 +4,12 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.SummaryAssessmentViewset, basename="assessment")
-router.register(r"visual", api.VisualViewset, basename="visual")
-router.register(r"data_pivot", api.DataPivotViewset, basename="data_pivot")
-router.register(r"summary-text", api.SummaryTextViewset, basename="summary-text")
-router.register(r"summary-table", api.SummaryTableViewset, basename="summary-table")
+router.register(r"assessment", api.SummaryAssessmentViewSet, basename="assessment")
+router.register(r"visual", api.VisualViewSet, basename="visual")
+router.register(r"data_pivot", api.DataPivotViewSet, basename="data_pivot")
+router.register(r"data_pivot_query", api.DataPivotQueryViewSet, basename="data_pivot_query")
+router.register(r"summary-text", api.SummaryTextViewSet, basename="summary-text")
+router.register(r"summary-table", api.SummaryTableViewSet, basename="summary-table")
 
 app_name = "summary"
 urlpatterns = [
@@ -115,7 +116,7 @@ urlpatterns = [
         name="dp_new-prompt",
     ),
     path(
-        "data-pivot/assessment/<int:pk>/create/query/",
+        "data-pivot/assessment/<int:pk>/create/query/<int:study_type>/",
         views.DataPivotQueryNew.as_view(),
         name="dp_new-query",
     ),

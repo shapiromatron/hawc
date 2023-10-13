@@ -26,7 +26,6 @@ def update_backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bmd", "0007_selected_units"),
     ]
@@ -37,9 +36,9 @@ class Migration(migrations.Migration):
             name="version",
             field=models.CharField(
                 choices=[
-                    ("BMDS2601", "BMDS v2.6.0.1"),
-                    ("BMDS270", "BMDS v2.7.0"),
-                    ("BMDS330", "BMDS v3.3.0"),
+                    ("BMDS2601", "BMDS 2.6.0.1"),
+                    ("BMDS270", "BMDS 2.7"),
+                    ("BMDS330", "BMDS 3.3 (2022.10)"),
                 ],
                 default="BMDS330",
                 max_length=10,
@@ -51,9 +50,9 @@ class Migration(migrations.Migration):
             name="version",
             field=models.CharField(
                 choices=[
-                    ("BMDS2601", "BMDS v2.6.0.1"),
-                    ("BMDS270", "BMDS v2.7.0"),
-                    ("BMDS330", "BMDS v3.3.0"),
+                    ("BMDS2601", "BMDS 2.6.0.1"),
+                    ("BMDS270", "BMDS 2.7"),
+                    ("BMDS330", "BMDS 3.3 (2022.10)"),
                 ],
                 max_length=10,
             ),

@@ -13,7 +13,7 @@ from ..common.views import (
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from ..study.views import StudyRead
+from ..study.views import StudyDetail
 from . import filterset, forms, models
 
 
@@ -66,7 +66,7 @@ class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
         return kwargs
 
 
-class StudyPopulationCopyAsNewSelector(CopyAsNewSelectorMixin, StudyRead):
+class StudyPopulationCopyAsNewSelector(CopyAsNewSelectorMixin, StudyDetail):
     copy_model = models.StudyPopulation
     form_class = forms.StudyPopulationSelectorForm
 

@@ -36,7 +36,6 @@ def remove_legend_settings(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0036_ept_summary_judgment_other"),
     ]

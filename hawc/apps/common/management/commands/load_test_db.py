@@ -5,18 +5,14 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from sklearn.datasets import load_iris
 
 from hawc.apps.common.signals import ignore_signals
 
 
 def load_iris_dataset() -> pd.DataFrame:
-    """Load iris dataset from sklearn datasets"""
-    ds = load_iris(as_frame=True)
-    df = ds.frame
-    df.target = df.target.map({i: v for i, v in enumerate(ds.target_names)})
-    df.columns = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
-    return df
+    return pd.read_csv(
+        settings.PROJECT_ROOT / "tests/data/private-data/assessment/dataset-revision/iris.csv"
+    )
 
 
 class Command(BaseCommand):
@@ -55,7 +51,6 @@ class Command(BaseCommand):
                 df.to_excel(fn, index=False)
 
     def handle(self, *args, **options):
-
         if not any(_ in settings.DATABASES["default"]["NAME"] for _ in ["fixture", "test"]):
             raise CommandError("Must be using a test database to execute.")
 

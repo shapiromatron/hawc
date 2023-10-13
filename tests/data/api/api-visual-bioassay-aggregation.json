@@ -4,6 +4,7 @@
   "assessment_rob_name": "Risk of bias",
   "caption": "",
   "created": "2020-11-25T13:32:07.260499-05:00",
+  "data_url": "/summary/api/visual/10/data/",
   "dose_units": 1,
   "endpoints": [
     {
@@ -135,6 +136,7 @@
             "coi_reported": "Authors disclosed COI",
             "contact_author": true,
             "created": "2020-05-08T13:03:52.391195-04:00",
+            "eco": false,
             "editable": true,
             "epi": false,
             "epi_meta": false,
@@ -360,7 +362,7 @@
   ],
   "id": 10,
   "last_updated": "2020-11-25T13:35:00.094667-05:00",
-  "prefilters": "{}",
+  "prefilters": {},
   "published": true,
   "settings": {},
   "slug": "bioassay-aggregation",

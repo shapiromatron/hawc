@@ -1,22 +1,39 @@
 import json
 from datetime import datetime, timedelta
-from typing import Any, NamedTuple, Union
+from typing import Any, NamedTuple
 
+import pandas as pd
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q, QuerySet
+from django.db.models import Case, Q, QuerySet, Value, When
 from reversion.models import Version
 
-from ..common.helper import HAWCDjangoJSONEncoder
-from ..common.models import BaseManager
+from ..common.helper import HAWCDjangoJSONEncoder, map_enum
+from ..common.models import BaseManager, replace_null, str_m2m
+from . import constants
 
 
-class AssessmentManager(BaseManager):
-    assessment_relation = "id"
+def published(prefix: str = "") -> Case:
+    public = f"{prefix}public_on__isnull"
+    hidden = f"{prefix}hide_from_public_page"
+    return Case(
+        When(**{public: True}, then=Value(constants.PublishedStatus.PRIVATE)),
+        When(
+            Q(**{public: False}) & Q(**{hidden: False}),
+            then=Value(constants.PublishedStatus.PUBLIC),
+        ),
+        When(
+            Q(**{public: False}) & Q(**{hidden: True}),
+            then=Value(constants.PublishedStatus.UNLISTED),
+        ),
+        default=Value("???"),
+    )
 
-    def get_public_assessments(self):
-        return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by("name")
 
-    def get_viewable_assessments(self, user, exclusion_id=None, public=False):
+class AssessmentQuerySet(QuerySet):
+    def public(self):
+        return self.filter(public_on__isnull=False, hide_from_public_page=False)
+
+    def user_can_view(self, user, exclusion_id=None, public=False):
         """
         Return queryset of all assessments which that user is able to view,
         optionally excluding assessment exclusion_id,
@@ -31,18 +48,6 @@ class AssessmentManager(BaseManager):
             filters |= Q(public_on__isnull=False) & Q(hide_from_public_page=False)
         return self.filter(filters).exclude(id=exclusion_id).distinct()
 
-    def get_editable_assessments(self, user, exclusion_id=None):
-        """
-        Return queryset of all assessments which that user is able to edit,
-        optionally excluding assessment exclusion_id,
-        not including public assessments
-        """
-        return (
-            self.filter(Q(project_manager=user) | Q(team_members=user))
-            .exclude(id=exclusion_id)
-            .distinct()
-        )
-
     def recent_public(self, n: int = 5) -> QuerySet:
         """Get recent public, published assessments
 
@@ -55,6 +60,48 @@ class AssessmentManager(BaseManager):
         return self.filter(public_on__isnull=False, hide_from_public_page=False).order_by(
             "-public_on"
         )[:n]
+
+    def with_published(self) -> QuerySet:
+        return self.annotate(published=published())
+
+    def with_role(self, user) -> QuerySet:
+        return self.annotate(
+            user_role=Case(
+                When(project_manager=user, then=Value(constants.AssessmentRole.PROJECT_MANAGER)),
+                When(team_members=user, then=Value(constants.AssessmentRole.TEAM_MEMBER)),
+                When(reviewers=user, then=Value(constants.AssessmentRole.REVIEWER)),
+                default=Value(constants.AssessmentRole.NO_ROLE),
+            )
+        )
+
+    def global_chemical_report(self) -> pd.DataFrame:
+        mapping = {
+            "id": "id",
+            "name": "name",
+            "year": "year",
+            "assessment_objective": "assessment_objective",
+            "creator_email": replace_null("creator__email"),
+            "cas": "cas",
+            "dtxsids": "dtxsids_str",
+            "published": "published",
+            "public_on": "public_on",
+            "hide_from_public_page": "hide_from_public_page",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+        data = (
+            self.with_published()
+            .annotate(dtxsids_str=str_m2m("dtxsids__dtxsid"))
+            .values_list(*list(mapping.values()))
+        )
+        return pd.DataFrame(data=data, columns=list(mapping.keys()))
+
+
+class AssessmentManager(BaseManager):
+    assessment_relation = "id"
+
+    def get_queryset(self):
+        return AssessmentQuerySet(self.model, using=self._db)
 
 
 class AttachmentManager(BaseManager):
@@ -145,6 +192,62 @@ class DatasetManager(BaseManager):
     assessment_relation = "assessment"
 
 
+class AssessmentValueManager(BaseManager):
+    assessment_relation = "assessment"
+
+    def get_df(self) -> pd.DataFrame:
+        """Get a dataframe of Assessment Values from given Queryset of Values."""
+        mapping: dict[str, str] = {
+            "assessment_id": "assessment_id",
+            "assessment__name": "assessment_name",
+            "assessment__created": "assessment_created",
+            "assessment__last_updated": "assessment_last_updated",
+            "assessment__details__project_type": "project_type",
+            "assessment__details__project_status": "project_status",
+            "assessment__details__project_url": "project_url",
+            "assessment__details__peer_review_status": "peer_review_status",
+            "assessment__details__qa_id": "qa_id",
+            "assessment__details__qa_url": "qa_url",
+            "assessment__details__report_id": "report_id",
+            "assessment__details__report_url": "report_url",
+            "assessment__details__extra": "assessment_extra",
+            "evaluation_type": "evaluation_type",
+            "id": "value_id",
+            "system": "system",
+            "value_type": "value_type",
+            "value": "value",
+            "value_unit": "value_unit",
+            "basis": "basis",
+            "pod_value": "pod_value",
+            "pod_unit": "pod_unit",
+            "species_studied": "species_studied",
+            "duration": "duration",
+            "study_id": "study_id",
+            "study__short_citation": "study_citation",
+            "confidence": "confidence",
+            "uncertainty": "uncertainty",
+            "tumor_type": "tumor_type",
+            "extrapolation_method": "extrapolation_method",
+            "evidence": "evidence",
+            "comments": "comments",
+            "extra": "extra",
+        }
+        data = self.select_related("assessment__details").values_list(*list(mapping.keys()))
+        df = pd.DataFrame(data=data, columns=list(mapping.values())).sort_values(
+            ["assessment_id", "value_id"]
+        )
+        map_enum(df, "project_status", constants.Status, replace=True)
+        map_enum(df, "peer_review_status", constants.PeerReviewType, replace=True)
+        map_enum(df, "evaluation_type", constants.EvaluationType, replace=True)
+        map_enum(df, "value_type", constants.ValueType, replace=True)
+        map_enum(df, "confidence", constants.Confidence, replace=True)
+        return df
+
+
+class AssessmentDetailManager(BaseManager):
+    assessment_relation = "assessment"
+
+
 class Event(NamedTuple):
     """A potentially collapsed changed event between Logs and Reversions"""
 
@@ -195,9 +298,7 @@ class EventPair:
 class LogManager(BaseManager):
     assessment_relation = "assessment"
 
-    def get_object_audit(
-        self, content_type: Union[ContentType, int], object_id: int
-    ) -> list[Event]:
+    def get_object_audit(self, content_type: ContentType | int, object_id: int) -> list[Event]:
         """
         Combines information from HAWC's internal logs and reversion logs for a more complete audit.
         Matching is attempted between these two log types to account for same operations.

@@ -6,7 +6,9 @@ from plotly.subplots import make_subplots
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
-from . import models
+from ..common.serializers import FlexibleChoiceField
+from ..study.models import Study
+from . import constants, models
 
 
 class DSSToxSerializer(serializers.ModelSerializer):
@@ -19,8 +21,16 @@ class DSSToxSerializer(serializers.ModelSerializer):
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
-    rob_name = serializers.CharField(source="get_rob_name_display")
-    dtxsids = DSSToxSerializer(many=True)
+    rob_name = serializers.CharField(source="get_rob_name_display", read_only=True)
+    dtxsids = DSSToxSerializer(many=True, read_only=True)
+    dtxsids_ids = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        many=True,
+        source="dtxsids",
+        queryset=models.DSSTox.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -40,6 +50,47 @@ class AssessmentMiniSerializer(serializers.ModelSerializer):
         fields = ("id", "url", "enable_risk_of_bias", "name")
 
 
+class AssessmentDetailSerializer(serializers.ModelSerializer):
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="assessment",
+        queryset=models.Assessment.objects.all(),
+        required=True,
+        allow_null=False,
+    )
+    assessment = AssessmentMiniSerializer(read_only=True)
+    project_status = FlexibleChoiceField(choices=constants.Status.choices)
+    peer_review_status = FlexibleChoiceField(choices=constants.PeerReviewType.choices)
+
+    class Meta:
+        model = models.AssessmentDetail
+        exclude = ("created", "last_updated")
+
+
+class AssessmentValueSerializer(serializers.ModelSerializer):
+    assessment_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="assessment",
+        queryset=models.Assessment.objects.all(),
+        required=True,
+        allow_null=False,
+    )
+    assessment = AssessmentMiniSerializer(read_only=True)
+    study_id = serializers.PrimaryKeyRelatedField(
+        source="study",
+        queryset=Study.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+    evaluation_type = FlexibleChoiceField(choices=constants.EvaluationType.choices)
+    value_type = FlexibleChoiceField(choices=constants.ValueType.choices)
+    uncertainty = FlexibleChoiceField(choices=constants.UncertaintyChoices.choices)
+
+    class Meta:
+        model = models.AssessmentValue
+        exclude = ("created", "last_updated")
+
+
 class EffectTagsSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         raise ParseError("Not implemented!")
@@ -57,59 +108,6 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DoseUnits
         fields = "__all__"
-
-
-class AssessmentRootedSerializer(serializers.ModelSerializer):
-
-    NO_PARENT = -1
-
-    def get_parent(self, assessment_id, validated_data, canSelectRoot):
-        parent_id = validated_data.pop("parent", self.NO_PARENT)
-
-        parent = None
-        if parent_id == self.NO_PARENT and canSelectRoot:
-            parent = self.Meta.model.get_assessment_root(assessment_id)
-        elif parent_id > 0:
-            checkParent = self.Meta.model.objects.filter(id=parent_id).first()
-            if (
-                checkParent
-                and checkParent.get_root().name
-                == self.Meta.model.get_assessment_root_name(assessment_id)
-            ):
-                parent = checkParent
-
-        return parent
-
-    def create(self, validated_data):
-        assessment = self.root.context["view"].assessment
-        parent = self.get_parent(assessment.id, validated_data, canSelectRoot=False)
-        parent_id = parent.id if parent else None
-
-        return self.Meta.model.create_tag(assessment.id, parent_id=parent_id, **validated_data)
-
-    def update(self, instance, validated_data):
-        assessment = self.root.context["view"].assessment
-        parent = self.get_parent(assessment.id, validated_data, canSelectRoot=True)
-
-        for attr, value in list(validated_data.items()):
-            setattr(instance, attr, value)
-        instance.save()
-
-        # check the following before moving:
-        #   1) parent exists
-        #   2) parent != self
-        #   3) new parent != old parent
-        #   4) new parent != descendant of self
-        if (
-            parent
-            and instance.id != parent.id
-            and parent.id != instance.get_parent().id
-            and parent.id not in instance.get_descendants().values_list("id", flat=True)
-        ):
-
-            instance.move(parent, pos="last-child")
-
-        return instance
 
 
 class GrowthPlotSerializer(serializers.Serializer):

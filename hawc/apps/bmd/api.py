@@ -1,42 +1,61 @@
+from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentViewset
-from . import models, serializers, tasks
+from ..assessment.api import BaseAssessmentViewSet
+from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.serializers import UnusedSerializer
+from . import models, serializers
 
 
-class Session(AssessmentViewset):
+class Session(BaseAssessmentViewSet):
+    http_method_names = ["get", "patch"]
     assessment_filter_args = "endpoint__assessment"
     model = models.Session
-    lookup_value_regex = r"\d+"
+    serializer_class = UnusedSerializer
 
-    def get_serializer_class(self):
-        if self.action == "execute":
-            return serializers.SessionUpdateSerializer
-        elif self.action == "selected_model":
-            return serializers.SelectedModelUpdateSerializer
-        else:
-            return serializers.SessionSerializer
+    def get_queryset(self):
+        return self.model.objects.all().select_related("endpoint")
 
-    @action(detail=True, methods=["post"])
-    def execute(self, request, pk=None):
+    def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        tasks.execute.delay(instance.id)
-        return Response({"started": True})
+        if instance.version.startswith("BMDS2"):
+            serializer = serializers.SessionBmd2Serializer(instance)
+        else:
+            serializer = serializers.SessionBmd3Serializer(instance)
+        return Response(serializer.data)
 
-    @action(detail=True, methods=["get"])
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.version.startswith("BMDS2"):
+            raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
+        serializer = serializers.SessionBmd3UpdateSerializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        action = request.data.get("action")
+        if action == "execute":
+            serializer.save_and_execute()
+        elif action == "select":
+            serializer.select()
+        return Response({"status": "success", "id": instance.id})
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="execute-status",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
     def execute_status(self, request, pk=None):
-        # ping until execution is complete
-        session = self.get_object()
-        return Response({"finished": session.is_finished})
-
-    @action(detail=True, methods=("post",))
-    def selected_model(self, request, pk=None):
-        session = self.get_object()
-        serializer = self.get_serializer(data=request.data, context={"session": session})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"status": True})
+        instance = self.get_object()
+        if instance.version.startswith("BMDS2"):
+            raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
+        SerializerClass = (
+            serializers.SessionBmd3Serializer
+            if instance.is_finished
+            else serializers.SessionBmd3StatusSerializer
+        )
+        serializer = SerializerClass(instance)
+        return Response(serializer.data)

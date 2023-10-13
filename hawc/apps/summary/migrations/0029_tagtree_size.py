@@ -47,7 +47,6 @@ def remove_tagtree_size(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0028_summarytable"),
     ]

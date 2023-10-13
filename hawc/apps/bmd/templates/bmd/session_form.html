@@ -1,13 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
-    <a class="btn btn-primary float-right" href="{{object.get_absolute_url}}">Cancel</a>
+    <a class="btn btn-light float-right" href="{{object.get_absolute_url}}">Cancel</a>
     <h2>{{object}}</h2>
     <div id="main"></div>
-{% endblock %}
-
-{% block extrajs %}
-  {{ config|json_script:"config" }}
 {% endblock %}

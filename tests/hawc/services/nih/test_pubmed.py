@@ -46,11 +46,19 @@ class TestPubMedSearch:
 
     def test_complex_query(self):
         """Ensure complicated search term executes and returns results."""
-        term = """(monomethyl OR MEP OR mono-n-butyl OR MBP OR mono (3-carboxypropyl) OR mcpp OR monobenzyl OR mbzp OR mono-isobutyl OR mibp OR mono (2-ethylhexyl) OR mono (2-ethyl-5-oxohexyl) OR meoph OR mono (2-ethyl-5-carboxypentyl) OR mecpp OR mepp OR mono (2-ethyl-5-hydroxyhexyl) OR mehp OR mono (2-ethyl-5-oxyhexyl) OR mono (2-ethyl-4-hydroxyhexyl) OR mono (2-ethyl-4-oxyhexyl) OR mono (2-carboxymethyl) OR mmhp OR mehp OR dehp OR 2-ethylhexanol OR (phthalic acid)) AND (liver OR hepato* OR hepat*) AND ((cell proliferation) OR (cell growth) OR (dna replication) OR (dna synthesis) OR (replicative dna synthesis) OR mitosis OR (cell division) OR (growth response) OR hyperplasia OR hepatomegaly) AND (mouse OR rat OR hamster OR rodent OR murine OR Mus musculus or Rattus)"""  # noqa
+        term = """(monomethyl OR MEP OR mono-n-butyl OR MBP OR mono (3-carboxypropyl) OR mcpp OR monobenzyl OR mbzp OR mono-isobutyl OR mibp OR mono (2-ethylhexyl) OR mono (2-ethyl-5-oxohexyl) OR meoph OR mono (2-ethyl-5-carboxypentyl) OR mecpp OR mepp OR mono (2-ethyl-5-hydroxyhexyl) OR mehp OR mono (2-ethyl-5-oxyhexyl) OR mono (2-ethyl-4-hydroxyhexyl) OR mono (2-ethyl-4-oxyhexyl) OR mono (2-carboxymethyl) OR mmhp OR mehp OR dehp OR 2-ethylhexanol OR (phthalic acid)) AND (liver OR hepato* OR hepat*) AND ((cell proliferation) OR (cell growth) OR (dna replication) OR (dna synthesis) OR (replicative dna synthesis) OR mitosis OR (cell division) OR (growth response) OR hyperplasia OR hepatomegaly) AND (mouse OR rat OR hamster OR rodent OR murine OR Mus musculus or Rattus)"""
         search = pubmed.PubMedSearch(term=term)
         search.get_ids_count()
         search.get_ids()
         assert len(search.ids) >= 212
+
+    def test_fake(self, settings):
+        settings.HAWC_FEATURES.FAKE_IMPORTS = True
+        search = pubmed.PubMedSearch(term="foo")
+        search.get_ids_count()
+        search.get_ids()
+        assert len(search.ids) == 1
+        settings.HAWC_FEATURES.FAKE_IMPORTS = False
 
     def _results_check(self, search):
         assert search.id_count == 6
@@ -103,7 +111,7 @@ class TestPubMedFetch:
         ids = (21813367,)
         fetch = pubmed.PubMedFetch(id_list=ids)
         fetch.get_content()
-        abstract_text = """<span class="abstract_label">BACKGROUND: </span>People living or working in eastern Ohio and western West Virginia have been exposed to perfluorooctanoic acid (PFOA) released by DuPont Washington Works facilities.<br><span class="abstract_label">OBJECTIVES: </span>Our objective was to estimate historical PFOA exposures and serum concentrations experienced by 45,276 non-occupationally exposed participants in the C8 Health Project who consented to share their residential histories and a 2005-2006 serum PFOA measurement.<br><span class="abstract_label">METHODS: </span>We estimated annual PFOA exposure rates for each individual based on predicted calibrated water concentrations and predicted air concentrations using an environmental fate and transport model, individual residential histories, and maps of public water supply networks. We coupled individual exposure estimates with a one-compartment absorption, distribution, metabolism, and excretion (ADME) model to estimate time-dependent serum concentrations.<br><span class="abstract_label">RESULTS: </span>For all participants (n = 45,276), predicted and observed median serum concentrations in 2005-2006 are 14.2 and 24.3 ppb, respectively [Spearman's rank correlation coefficient (r(s)) = 0.67]. For participants who provided daily public well water consumption rate and who had the same residence and workplace in one of six municipal water districts for 5 years before the serum sample (n = 1,074), predicted and observed median serum concentrations in 2005-2006 are 32.2 and 40.0 ppb, respectively (r(s) = 0.82).<br><span class="abstract_label">CONCLUSIONS: </span>Serum PFOA concentrations predicted by linked exposure and ADME models correlated well with observed 2005-2006 human serum concentrations for C8 Health Project participants. These individualized retrospective exposure and serum estimates are being used in a variety of epidemiologic studies being conducted in this region."""  # NOQA
+        abstract_text = """<span class="abstract_label">BACKGROUND: </span>People living or working in eastern Ohio and western West Virginia have been exposed to perfluorooctanoic acid (PFOA) released by DuPont Washington Works facilities.<br><span class="abstract_label">OBJECTIVES: </span>Our objective was to estimate historical PFOA exposures and serum concentrations experienced by 45,276 non-occupationally exposed participants in the C8 Health Project who consented to share their residential histories and a 2005-2006 serum PFOA measurement.<br><span class="abstract_label">METHODS: </span>We estimated annual PFOA exposure rates for each individual based on predicted calibrated water concentrations and predicted air concentrations using an environmental fate and transport model, individual residential histories, and maps of public water supply networks. We coupled individual exposure estimates with a one-compartment absorption, distribution, metabolism, and excretion (ADME) model to estimate time-dependent serum concentrations.<br><span class="abstract_label">RESULTS: </span>For all participants (n = 45,276), predicted and observed median serum concentrations in 2005-2006 are 14.2 and 24.3 ppb, respectively [Spearman's rank correlation coefficient (r(s)) = 0.67]. For participants who provided daily public well water consumption rate and who had the same residence and workplace in one of six municipal water districts for 5 years before the serum sample (n = 1,074), predicted and observed median serum concentrations in 2005-2006 are 32.2 and 40.0 ppb, respectively (r(s) = 0.82).<br><span class="abstract_label">CONCLUSIONS: </span>Serum PFOA concentrations predicted by linked exposure and ADME models correlated well with observed 2005-2006 human serum concentrations for C8 Health Project participants. These individualized retrospective exposure and serum estimates are being used in a variety of epidemiologic studies being conducted in this region."""
         assert fetch.content[0]["abstract"] == abstract_text
 
     def test_abstract_with_child_text(self):
@@ -115,7 +123,7 @@ class TestPubMedFetch:
         ids = (29186030,)
         fetch = pubmed.PubMedFetch(id_list=ids)
         fetch.get_content()
-        abstract_text = """CYP353D1v2 is a cytochrome P450 related to imidacloprid resistance in Laodelphax striatellus. This work was conducted to examine the ability of CYP353D1v2 to metabolize other insecticides. Carbon monoxide difference spectra analysis indicates that CYP353D1v2 was successfully expressed in insect cell Sf9. The catalytic activity of CYP353D1v2 relating to degrading buprofezin, chlorpyrifos, and deltamethrin was tested by measuring substrate depletion and analyzing the formation of metabolites. The results showed the nicotinamide-adenine dinucleotide phosphate (NADPH)-dependent depletion of buprofezin (eluting at 8.7 min) and parallel formation of an unknown metabolite (eluting 9.5 min). However, CYP353D1v2 is unable to metabolize deltamethrin and chlorpyrifos. The recombinant CYP353D1v2 protein efficiently catalyzed the model substrate p-nitroanisole with a maximum velocity of 9.24 nmol/min/mg of protein and a Michaelis constant of Km = 6.21 µM. In addition, imidacloprid was metabolized in vitro by the recombinant CYP353D1v2 microsomes (catalytic constant Kcat) 0.064 pmol/min/pmol P450, Km = 6.41 µM. The mass spectrum of UPLC-MS analysis shows that the metabolite was a product of buprofezin, which was buprofezin sulfone. This result provided direct evidence that L. striatellus cytochrome P450 CYP353D1v2 is capable of metabolizing imidacloprid and buprofezin."""  # NOQA
+        abstract_text = """CYP353D1v2 is a cytochrome P450 related to imidacloprid resistance in Laodelphax striatellus. This work was conducted to examine the ability of CYP353D1v2 to metabolize other insecticides. Carbon monoxide difference spectra analysis indicates that CYP353D1v2 was successfully expressed in insect cell Sf9. The catalytic activity of CYP353D1v2 relating to degrading buprofezin, chlorpyrifos, and deltamethrin was tested by measuring substrate depletion and analyzing the formation of metabolites. The results showed the nicotinamide-adenine dinucleotide phosphate (NADPH)-dependent depletion of buprofezin (eluting at 8.7 min) and parallel formation of an unknown metabolite (eluting 9.5 min). However, CYP353D1v2 is unable to metabolize deltamethrin and chlorpyrifos. The recombinant CYP353D1v2 protein efficiently catalyzed the model substrate p-nitroanisole with a maximum velocity of 9.24 nmol/min/mg of protein and a Michaelis constant of Km = 6.21 µM. In addition, imidacloprid was metabolized in vitro by the recombinant CYP353D1v2 microsomes (catalytic constant Kcat) 0.064 pmol/min/pmol P450, Km = 6.41 µM. The mass spectrum of UPLC-MS analysis shows that the metabolite was a product of buprofezin, which was buprofezin sulfone. This result provided direct evidence that L. striatellus cytochrome P450 CYP353D1v2 is capable of metabolizing imidacloprid and buprofezin."""
         assert fetch.content[0]["abstract"] == abstract_text
 
     def test_title_with_child_text(self):
@@ -179,6 +187,16 @@ class TestPubMedFetch:
             "year": 1993,
         }
         assert obj == expected
+
+    def test_fake(self, settings):
+        settings.HAWC_FEATURES.FAKE_IMPORTS = True
+        ids = [12345, 123456]
+        fetch = pubmed.PubMedFetch(id_list=ids)
+        fetch.get_content()
+        assert len(fetch.content) == 2
+        actual_ids = [f["PMID"] for f in fetch.content]
+        assert ids == actual_ids
+        settings.HAWC_FEATURES.FAKE_IMPORTS = False
 
     def _results_check(self, fetch, ids):
         assert len(fetch.content) == 6

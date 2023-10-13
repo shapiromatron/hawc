@@ -23,7 +23,6 @@ def build_lit_assessments(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0015_flavor_options"),
         ("lit", "0012_reference_authors_list"),

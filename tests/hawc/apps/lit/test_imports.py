@@ -110,7 +110,7 @@ class TestPubmed:
         assert i_pks.count() == initial_identifiers + 22
         assert (
             models.Reference.objects.filter(identifiers__in=i_pks).count()
-            == initial_identifiers + 22
+            == initial_identifiers + 23
         )
 
 
@@ -194,8 +194,7 @@ class TestHero:
         response = client.post(url, data)
 
         assertFormError(
-            response,
-            "form",
+            response.context["form"],
             "search_string",
             "The following HERO ID(s) could not be imported: 99999999",
         )
@@ -296,8 +295,7 @@ class TestHero:
         response = client.post(url, data)
 
         assertFormError(
-            response,
-            "form",
+            response.context["form"],
             "search_string",
             f"The following HERO ID(s) could not be imported: {ids}",
         )

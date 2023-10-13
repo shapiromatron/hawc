@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 import pandas as pd
 from pydantic import BaseModel, Field, conint
 
@@ -25,8 +23,8 @@ class Column(BaseModel):
     label: str
     attribute: AttributeChoices
     width: int = 1
-    metric_id: Optional[int]
-    dose_unit: Optional[str]
+    metric_id: int | None
+    dose_unit: str | None
     key: str
 
     def get_free_html(self, selection: pd.Series) -> BaseCell:
@@ -55,7 +53,7 @@ class Column(BaseModel):
         text = selection[self.attribute.value]
         return GenericCell(quill_text=tag_wrapper(text, "p"))
 
-    def get_cell(self, selection: Union[pd.DataFrame, pd.Series]) -> BaseCell:
+    def get_cell(self, selection: pd.DataFrame | pd.Series) -> BaseCell:
         return getattr(self, f"get_{self.attribute.value}", self._get_default)(selection)
 
 

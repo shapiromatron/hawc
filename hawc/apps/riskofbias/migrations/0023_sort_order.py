@@ -29,7 +29,6 @@ def set_default_sort_order(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("riskofbias", "0022_new_rob_scores"),
     ]

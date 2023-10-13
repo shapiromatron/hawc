@@ -4,9 +4,14 @@ import logging
 
 from hawc.constants import AuthProvider
 
-from .dev import *  # noqa
+from .dev import *
 
 DEBUG = True
+
+# enable feature flags for tests
+HAWC_FEATURES.ENABLE_BMDS_33 = True
+HAWC_FEATURES.ENABLE_UDF = True
+HAWC_FEATURES.ENABLE_ANALYTICS = True
 
 # remove toolbar for integration tests
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]

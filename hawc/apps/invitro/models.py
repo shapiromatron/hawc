@@ -54,7 +54,6 @@ class IVChemical(models.Model):
         "purity",
     )
 
-    COPY_NAME = "ivchemicals"
     BREADCRUMB_PARENT = "study"
 
     def __str__(self):
@@ -96,7 +95,6 @@ class IVCellType(models.Model):
     tissue = models.CharField(max_length=64)
     source = models.CharField(max_length=128, verbose_name="Source of cell cultures")
 
-    COPY_NAME = "ivcelltypes"
     BREADCRUMB_PARENT = "study"
 
     def __str__(self):
@@ -173,7 +171,6 @@ class IVExperiment(models.Model):
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="ivexperiments"
     )
 
-    COPY_NAME = "ivexperiments"
     BREADCRUMB_PARENT = "study"
 
     def __str__(self):
@@ -221,8 +218,6 @@ class IVEndpointCategory(AssessmentRootedTagTree):
     @classmethod
     def get_choices(cls, assessment_id):
         return [cat.get_choice_representation() for cat in cls.get_assessment_qs(assessment_id)]
-
-    COPY_NAME = "ivendpoint_category"
 
 
 class IVEndpoint(BaseEndpoint):
@@ -306,7 +301,6 @@ class IVEndpoint(BaseEndpoint):
     result_notes = models.TextField(blank=True, help_text="Qualitative description of the results")
     additional_fields = models.TextField(default="{}")
 
-    COPY_NAME = "ivendpoints"
     BREADCRUMB_PARENT = "experiment"
 
     class Meta:
@@ -392,8 +386,6 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
         blank=True,
     )
 
-    COPY_NAME = "ivendpoint_groups"
-
     @property
     def difference_control_symbol(self):
         return self.DIFFERENCE_CONTROL_SYMBOLS[self.difference_control]
@@ -408,8 +400,6 @@ class IVBenchmark(models.Model):
     endpoint = models.ForeignKey(IVEndpoint, on_delete=models.CASCADE, related_name="benchmarks")
     benchmark = models.CharField(max_length=32)
     value = models.FloatField()
-
-    COPY_NAME = "benchmarks"
 
 
 reversion.register(IVChemical)

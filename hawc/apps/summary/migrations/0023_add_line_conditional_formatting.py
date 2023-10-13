@@ -17,7 +17,6 @@ def add_line_conditional_formatting(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0022_add_new_visual"),
     ]

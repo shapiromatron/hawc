@@ -24,4 +24,5 @@ def from_settings(request):
         flavor=settings.HAWC_FLAVOR,
         has_admin=settings.INCLUDE_ADMIN,
         GTM_ID=settings.GTM_ID,
+        feature_flags=settings.HAWC_FEATURES,
     )

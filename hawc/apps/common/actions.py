@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Optional, Type, Union
+from typing import Any, ClassVar
 
 import pandas as pd
 import pydantic
@@ -9,7 +9,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-DataModel = Type[pydantic.BaseModel]
+DataModel = type[pydantic.BaseModel]
 
 
 class BaseApiAction:
@@ -24,7 +24,7 @@ class BaseApiAction:
 
     input_model: ClassVar[DataModel]  # should be defined
 
-    def __init__(self, data: Optional[dict] = None):
+    def __init__(self, data: dict | None = None):
         self.data: dict = data or {}
         self.errors: dict[str, list] = defaultdict(list)
         self.inputs = None
@@ -114,7 +114,7 @@ class BaseApiAction:
         """
         return True, ""
 
-    def evaluate(self) -> Union[dict[str, Any], pd.DataFrame]:
+    def evaluate(self) -> dict[str, Any] | pd.DataFrame:
         """
         Perform the desired action of the request action. Returns a response type compatible
         with the desired action

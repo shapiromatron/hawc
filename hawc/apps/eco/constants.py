@@ -1,4 +1,4 @@
-from django.db.models import IntegerChoices
+from django.db.models import IntegerChoices, TextChoices
 
 
 class VocabCategories(IntegerChoices):
@@ -22,4 +22,9 @@ class ChangeTrajectory(IntegerChoices):
     DECREASE = 1, "Decrease"
     CHANGE = 2, "Change"
     NOCHANGE = 3, "No change"
+    MULTIPLE = 4, "Multiple"
     OTHER = 10, "Other"
+
+
+class TypeChoices(TextChoices):
+    CE = "CE", "cause/effect"

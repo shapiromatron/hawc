@@ -3,6 +3,7 @@ import "./sorts";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
+import DataTableWrapper from "shared/components/DataTableWrapper";
 import h from "shared/utils/helpers";
 import Tablesort from "tablesort";
 
@@ -14,14 +15,17 @@ class DataTable extends React.Component {
         };
     }
     componentDidMount() {
-        setTimeout(() => {
-            const table = document.getElementById(this.state.tableId);
-            if (table) {
-                new Tablesort(table);
-            }
-        }, 1000);
+        const {tablesort} = this.props;
+        if (tablesort) {
+            setTimeout(() => {
+                const table = document.getElementById(this.state.tableId);
+                if (table) {
+                    new Tablesort(table);
+                }
+            }, 1000);
+        }
     }
-    render() {
+    renderTable() {
         const rows = this.props.dataset,
             {tableId} = this.state,
             columns = _.map(rows[0], (val, key) => key),
@@ -54,10 +58,24 @@ class DataTable extends React.Component {
             </table>
         );
     }
+    render() {
+        const {datatables} = this.props;
+        return datatables ? (
+            <DataTableWrapper>{this.renderTable()}</DataTableWrapper>
+        ) : (
+            this.renderTable()
+        );
+    }
 }
 DataTable.propTypes = {
     dataset: PropTypes.array.isRequired,
     renderers: PropTypes.object,
+    tablesort: PropTypes.bool,
+    datatables: PropTypes.bool,
+};
+DataTable.defaultProps = {
+    tablesort: true,
+    datatables: false,
 };
 
 export default DataTable;

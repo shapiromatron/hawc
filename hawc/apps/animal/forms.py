@@ -52,7 +52,6 @@ class ExperimentForm(ModelForm):
 
     @property
     def helper(self):
-
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
@@ -147,7 +146,8 @@ class AnimalGroupForm(ModelForm):
         else:
             le_choices = [
                 (self.instance.lifestage_exposed, self.instance.lifestage_exposed),
-            ] + constants.Lifestage.choices
+                *constants.Lifestage.choices,
+            ]
         self.fields["lifestage_exposed"].widget = forms.Select(choices=le_choices)
 
         if self.instance.lifestage_assessed in lifestage_dict:
@@ -155,7 +155,8 @@ class AnimalGroupForm(ModelForm):
         else:
             la_choices = [
                 (self.instance.lifestage_assessed, self.instance.lifestage_assessed),
-            ] + constants.Lifestage.choices
+                *constants.Lifestage.choices,
+            ]
         self.fields["lifestage_assessed"].widget = forms.Select(choices=la_choices)
 
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
@@ -330,7 +331,6 @@ class BaseDoseGroupFormSet(BaseModelFormSet):
 
 
 def dosegroup_formset_factory(groups, num_dose_groups):
-
     data = {
         "form-TOTAL_FORMS": str(len(groups)),
         "form-INITIAL_FORMS": 0,
@@ -434,7 +434,6 @@ class EndpointForm(ModelForm):
 
     @property
     def helper(self):
-
         vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
         if vocab_enabled:
             vocab = f"""&nbsp;The <a href="{reverse('vocab:ehv-browse')}">Environmental
@@ -675,3 +674,8 @@ class EndpointSelectorForm(CopyAsNewSelectorForm):
     label = "Endpoint"
     parent_field = "animal_group__experiment__study_id"
     autocomplete_class = autocomplete.EndpointAutocomplete
+
+
+class MultipleEndpointChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.label

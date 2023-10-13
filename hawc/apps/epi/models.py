@@ -35,8 +35,6 @@ class Criteria(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "criterias"
-
     class Meta:
         ordering = ("description",)
         unique_together = ("assessment", "description")
@@ -71,8 +69,6 @@ class AdjustmentFactor(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "factors"
-
     class Meta:
         unique_together = ("assessment", "description")
         ordering = ("description",)
@@ -104,14 +100,12 @@ class StudyPopulationCriteria(models.Model):
     )
     criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
 
-    COPY_NAME = "spcriterias"
-
 
 class StudyPopulation(models.Model):
     objects = managers.StudyPopulationManager()
 
     CRITERIA_HELP_TEXTS = {
-        "inclusion_criteria": "What criteria were used to determine an individual’s eligibility? Ex. at least 18 years old; born in the country of study; singleton pregnancy",
+        "inclusion_criteria": "What criteria were used to determine an individual`s eligibility? Ex. at least 18 years old; born in the country of study; singleton pregnancy",
         "exclusion_criteria": "What criteria were used to exclude an individual from participation?  Ex. pre-existing medical conditions, pregnancy, use of medication",
         "confounding_criteria": OPTIONAL_NOTE,
     }
@@ -149,7 +143,7 @@ class StudyPopulation(models.Model):
     age_profile = models.CharField(
         max_length=128,
         blank=True,
-        help_text="State study population’s age category, with quantitative information (mean, median, SE, range) in parentheses where available. "
+        help_text="State study population`s age category, with quantitative information (mean, median, SE, range) in parentheses where available. "
         + "Ex. Pregnancy (mean 31 years; SD 4 years); Newborn; Adulthood "
         + formatHelpTextNotes(
             'Use age categories "Fetal" (in utero), "Newborn" (at birth), "Neonatal" (0-4 weeks), '
@@ -201,7 +195,7 @@ class StudyPopulation(models.Model):
         help_text="Copy-paste text describing study population selection <br/>"
         + 'Ex. "Data and biospecimens were obtained from the Maternal Infant Research on Environmental Chemicals (MIREC) Study, '
         + "a trans-Canada cohort study of 2,001 pregnant women. Study participants were recruited from 10 Canadian cities between "
-        + "2008 and 2011. Briefly, women were eligible for inclusion if the fetus was at <14 weeks’ gestation at the time of recruitment "
+        + "2008 and 2011. Briefly, women were eligible for inclusion if the fetus was at <14 weeks` gestation at the time of recruitment "
         + "and they were ≥18 years of age, able to communicate in French or English, and planning on delivering at a local hospital. "
         + "Women with known fetal or chromosomal anomalies in the current pregnancy and women with a history of medical complications "
         + "(including renal disease, epilepsy, hepatitis, heart disease, pulmonary disease, cancer, hematological disorders, threatened "
@@ -210,7 +204,6 @@ class StudyPopulation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "study_populations"
     BREADCRUMB_PARENT = "study"
 
     @staticmethod
@@ -341,7 +334,7 @@ class Outcome(BaseEndpoint):
         max_length=32,
         blank=True,
         verbose_name="Age at outcome measurement",
-        help_text="State study population’s age category at outcome measurement, with quantitative information "
+        help_text="State study population`s age category at outcome measurement, with quantitative information "
         + "(mean, median, SE, range) in parentheses where available.<br/>"
         + "Ex. Pregnancy (mean 31 years;  SD 4 years); Newborn; Adulthood "
         + formatHelpTextNotes(
@@ -360,7 +353,6 @@ class Outcome(BaseEndpoint):
         help_text="Provide additional outcome or extraction details if necessary. Ex. No association (data not shown)",
     )
 
-    COPY_NAME = "outcomes"
     BREADCRUMB_PARENT = "study_population"
 
     class Meta:
@@ -445,7 +437,7 @@ class ComparisonSet(models.Model):
         + "characteristics of exposed group.</b> Each group is a collection of people, and all groups in this collection "
         + "are comparable to one another. You may create a comparison set which contains two groups: cases and controls. "
         + "Alternatively, for cohort-based studies, you may create a comparison set with four different groups, one for "
-        + "each quartile of exposure based on exposure measurements. Ex. PFNA (Ln) (Tertiles) – newborn boys"
+        + "each quartile of exposure based on exposure measurements. Ex. PFNA (Ln) (Tertiles) - newborn boys"
         + formatHelpTextNotes(
             "Common identifying characteristics: cases, controls, newborns, boys, girls, men, women, pregnant women"
         ),
@@ -464,8 +456,6 @@ class ComparisonSet(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    COPY_NAME = "comparison_sets"
 
     @property
     def BREADCRUMB_PARENT(self) -> str:
@@ -583,7 +573,6 @@ class Group(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "groups"
     BREADCRUMB_PARENT = "comparison_set"
 
     class Meta:
@@ -762,7 +751,6 @@ class Exposure(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "exposures"
     BREADCRUMB_PARENT = "study_population"
 
     class Meta:
@@ -895,15 +883,13 @@ class CentralTendency(models.Model):
     def upper_bound_interval(self):
         return self.upper_range if self.upper_ci is None else self.upper_ci
 
-    COPY_NAME = "central_tendencies"
-
     class Meta:
         ordering = ("estimate_type",)
         verbose_name = "Central Tendency"
         verbose_name_plural = "Central Tendencies"
 
     def __str__(self):
-        return "{CT id=%s, exposure=%s}" % (self.id, self.exposure)
+        return f"{{CT id={self.id}, exposure={self.exposure}}}"
 
     @staticmethod
     def flat_complete_header_row():
@@ -973,8 +959,6 @@ class GroupNumericalDescriptions(models.Model):
         choices=constants.UpperLimit.choices, default=constants.UpperLimit.NONE
     )
 
-    COPY_NAME = "group_descriptions"
-
     class Meta:
         verbose_name_plural = "Group Numerical Descriptions"
 
@@ -983,6 +967,9 @@ class GroupNumericalDescriptions(models.Model):
 
     def get_assessment(self):
         return self.group.get_assessment()
+
+    def get_absolute_url(self):
+        return self.group.get_absolute_url()
 
 
 class ResultMetric(models.Model):
@@ -1024,8 +1011,6 @@ class ResultAdjustmentFactor(models.Model):
     result = models.ForeignKey("Result", on_delete=models.CASCADE, related_name="resfactors")
     included_in_final_model = models.BooleanField(default=True)
 
-    COPY_NAME = "rfactors"
-
 
 class Result(models.Model):
     objects = managers.ResultManager()
@@ -1033,7 +1018,7 @@ class Result(models.Model):
     name = models.CharField(
         max_length=256,
         help_text="Name the result, following the format <b>Effect Exposure (If log-transformed) (continuous, quartiles, tertiles, etc.) "
-        + "– subgroup</b>. Ex. Hyperthyroidism PFHxS (ln) (continuous) – women"
+        + "- subgroup</b>. Ex. Hyperthyroidism PFHxS (ln) (continuous) - women"
         + HAWC_VIS_NOTE,
     )
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, related_name="results")
@@ -1124,7 +1109,6 @@ class Result(models.Model):
 
     resulttags = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
 
-    COPY_NAME = "results"
     BREADCRUMB_PARENT = "outcome"
 
     class Meta:
@@ -1420,8 +1404,6 @@ class GroupResult(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "groupresults"
-
     class Meta:
         ordering = ("result", "group__group_id")
 
@@ -1578,7 +1560,6 @@ class GroupResult(models.Model):
         n_1, mu_1, sd_1 = get_control_group(rgs)
 
         for i, rg in enumerate(rgs):
-
             mean = low = high = None
 
             if estimate_type in ["median", "mean"] and variance_type in [
@@ -1586,7 +1567,6 @@ class GroupResult(models.Model):
                 "SE",
                 "SEM",
             ]:
-
                 n_2 = rg["n"]
                 mu_2 = rg["estimate"]
                 sd_2 = rg.get("stdev")

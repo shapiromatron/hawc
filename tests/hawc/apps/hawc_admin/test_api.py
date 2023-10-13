@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from django.conf import settings
 from django.urls import reverse
@@ -10,11 +11,12 @@ from rest_framework.test import APIClient
 def media_file():
     fn = Path(settings.MEDIA_ROOT) / "test.txt"
     if not fn.exists():
+        fn.parent.mkdir(parents=True, exist_ok=True)
         fn.write_text("hello\n")
 
 
 @pytest.mark.django_db
-class TestAdminDashboardViewset:
+class TestAdminDashboardViewSet:
     def test_permissions(self):
         client = APIClient()
 
@@ -42,7 +44,7 @@ class TestAdminDashboardViewset:
 
 
 @pytest.mark.django_db
-class TestAdminDiagnosticViewset:
+class TestAdminDiagnosticViewSet:
     def test_throttle(self):
         client = APIClient()
 
@@ -62,3 +64,19 @@ class TestAdminDiagnosticViewset:
         # success- throttled (>5/min)
         resp = client.get(url)
         assert resp.status_code == 429
+
+
+@pytest.mark.django_db
+class TestReportsViewSet:
+    def test_assessment_values(self):
+        client = APIClient()
+        url = reverse("api:admin_reports-values")
+
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        df = pd.read_json(resp.content.decode())
+        assert df.shape == (3, 33)

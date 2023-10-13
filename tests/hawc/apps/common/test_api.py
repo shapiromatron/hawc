@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.test import APIClient
 
-from hawc.apps.common.api import user_can_edit_object
+from hawc.apps.assessment.api import user_can_edit_object
 from hawc.apps.common.diagnostics import worker_healthcheck
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
@@ -21,7 +21,7 @@ def has_redis():
 @pytest.mark.django_db
 class TestCleanupFieldsBaseViewSet:
     """
-    Test the CleanupFieldBaseViewset.
+    Test the CleanupFieldBaseViewSet.
 
     We'll test the `StudyCleanupFieldsView` since it's a fully parameterized implementation of
     this base class.
@@ -173,7 +173,7 @@ def test_user_can_edit_object(db_keys):
 
 
 @pytest.mark.django_db
-class TestHealthcheckViewset:
+class TestHealthcheckViewSet:
     def test_web(self):
         client = APIClient()
         url = reverse("common:api:healthcheck-web")

@@ -2,14 +2,17 @@ import itertools
 import json
 import re
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView, TemplateView
+from django.views.generic import RedirectView, TemplateView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
+from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import (
@@ -19,10 +22,9 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
-    TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, serializers
+from . import constants, filterset, forms, models, prefilters, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -49,7 +51,7 @@ class SummaryTextList(BaseList):
 
     def get_queryset(self):
         rt = self.model.get_assessment_root_node(self.assessment.id)
-        return self.model.objects.filter(pk__in=[rt.pk])
+        return super().get_queryset().filter(pk__in=[rt.pk])
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -94,7 +96,9 @@ class GetSummaryTableMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class SummaryTableList(BaseFilterList):
@@ -102,6 +106,17 @@ class SummaryTableList(BaseFilterList):
     model = models.SummaryTable
     filterset_class = filterset.SummaryTableFilterSet
     breadcrumb_active_name = "Summary tables"
+
+    def get_filterset_form_kwargs(self):
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
+            return dict(
+                main_field="title",
+                appended_fields=["type", "published"],
+            )
+        else:
+            return dict(
+                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+            )
 
 
 class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
@@ -155,7 +170,11 @@ class SummaryTableCreate(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["table_type"] = self.kwargs["table_type"]
+        try:
+            table_type = constants.TableType(self.kwargs["table_type"])
+        except ValueError:
+            raise Http404()
+        kwargs["table_type"] = table_type
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -179,13 +198,11 @@ class SummaryTableCreate(BaseCreate):
         )
 
 
-class SummaryTableCopy(TeamMemberOrHigherMixin, FormView):
+class SummaryTableCopy(BaseUpdate):
     template_name = "summary/copy_selector.html"
     model = Assessment
     form_class = forms.SummaryTableCopySelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -258,13 +275,16 @@ class GetVisualizationObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
-        return super().get_object(object=obj)
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
-class VisualizationList(BaseList):
+class VisualizationList(BaseFilterList):
     parent_model = Assessment
     model = models.Visual
     breadcrumb_active_name = "Visualizations"
+    filterset_class = filterset.VisualFilterSet
 
     @property
     def visual_fs(self):
@@ -298,7 +318,10 @@ class VisualizationList(BaseList):
     def form(self):
         if not hasattr(self, "_form"):
             fs = filterset.VisualFilterSet(
-                data=self.request.GET, request=self.request, assessment=self.assessment
+                data=self.request.GET,
+                request=self.request,
+                assessment=self.assessment,
+                form_kwargs=self.get_filterset_form_kwargs(),
             )
             form = fs.form
             # combine type choices for both visual and data pivot
@@ -311,7 +334,6 @@ class VisualizationList(BaseList):
                 for choice, _ in self.data_pivot_fs.form.fields["type"].choices
                 if choice != ""
             ]
-            fs.pop_published(form)
             self._form = form
         return self._form
 
@@ -327,6 +349,17 @@ class VisualizationList(BaseList):
         else:
             items = list(itertools.chain(self.visual_fs.qs, self.data_pivot_fs.qs))
         return sorted(items, key=lambda d: d.title.lower())
+
+    def get_filterset_form_kwargs(self):
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
+            return dict(
+                main_field="title",
+                appended_fields=["type", "published"],
+            )
+        else:
+            return dict(
+                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+            )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -354,6 +387,12 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         return context
+
+    def get_template_names(self):
+        if self.object.visual_type == constants.VisualType.PLOTLY:
+            return "summary/visual_detail_plotly.html"
+        else:
+            return super().get_template_names()
 
 
 class VisualizationCreateSelector(BaseDetail):
@@ -399,9 +438,16 @@ class VisualizationCreate(BaseCreate):
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -422,14 +468,8 @@ class VisualizationCreate(BaseCreate):
         return context
 
     def get_initial_visual(self, context) -> dict:
-        if context["form"].initial:
-            instance = self.instance
-            instance.id = instance.FAKE_INITIAL_ID
-        else:
-            instance = self.model()
-            instance.id = instance.FAKE_INITIAL_ID
-            instance.assessment = self.assessment
-            instance.visual_type = context["visual_type"]
+        instance = context["form"].instance
+        instance.id = instance.FAKE_INITIAL_ID
         return serializers.VisualSerializer().to_representation(instance)
 
 
@@ -449,6 +489,7 @@ class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_context_data(self, **kwargs):
         kwargs.update(
@@ -463,13 +504,11 @@ class VisualizationCopySelector(BaseDetail):
         return context
 
 
-class VisualizationCopy(TeamMemberOrHigherMixin, FormView):
+class VisualizationCopy(BaseUpdate):
     template_name = "summary/copy_selector.html"
     model = Assessment
     form_class = forms.VisualSelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs["pk"])
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -507,9 +546,16 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in {
+            constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
+            constants.VisualType.PLOTLY,
         }:
+            if (
+                visual_type == constants.VisualType.PLOTLY
+                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+            ):
+                raise PermissionDenied()
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -559,6 +605,7 @@ class DataPivotNewPrompt(BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["evidence_type"] = constants.StudyType
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -588,6 +635,20 @@ class DataPivotNew(BaseCreate):
 class DataPivotQueryNew(DataPivotNew):
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
+    template_name = "summary/datapivot_form.html"
+
+    def get_evidence_type(self) -> prefilters.StudyType:
+        try:
+            evidence_type = constants.StudyType(self.kwargs["study_type"])
+            _ = prefilters.StudyTypePrefilter.from_study_type(evidence_type, self.assessment).value
+        except (KeyError, ValueError):
+            raise Http404
+        return evidence_type
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["evidence_type"] = self.get_evidence_type()
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -613,14 +674,12 @@ class DataPivotFileNew(DataPivotNew):
         return context
 
 
-class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
+class DataPivotCopyAsNewSelector(BaseUpdate):
     # Select an existing assessed outcome as a template for a new one
     model = Assessment
     template_name = "summary/copy_selector.html"
     form_class = forms.DataPivotSelectorForm
-
-    def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -634,7 +693,10 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         if hasattr(dp, "datapivotupload"):
             url = reverse_lazy("summary:dp_new-file", kwargs={"pk": self.assessment.id})
         else:
-            url = reverse_lazy("summary:dp_new-query", kwargs={"pk": self.assessment.id})
+            url = reverse_lazy(
+                "summary:dp_new-query",
+                kwargs={"pk": self.assessment.id, "study_type": dp.datapivotquery.evidence_type},
+            )
 
         url += f"?initial={dp.pk}"
 
@@ -658,11 +720,10 @@ class GetDataPivotObjectMixin:
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        if hasattr(obj, "datapivotquery"):
-            obj = obj.datapivotquery
-        else:
-            obj = obj.datapivotupload
-        return super().get_object(object=obj)
+        obj = obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
+        obj = super().get_object(object=obj)
+        check_published_status(self.request.user, obj.published, self.assessment)
+        return obj
 
 
 class DataPivotByIdDetail(RedirectView):
@@ -697,6 +758,10 @@ class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context["config"] = {
+            "data_url": self.object.get_data_url(),
+            "settings": self.object.settings,
+        }
         return context
 
 

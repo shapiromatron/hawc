@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
+from ..assessment.views import check_published_status
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
@@ -22,6 +23,20 @@ class StudyFilterList(BaseFilterList):
 
     def get_queryset(self):
         return super().get_queryset().distinct().prefetch_related("identifiers")
+
+    def get_filterset_form_kwargs(self):
+        if self.assessment.user_is_team_member_or_higher(self.request.user):
+            return dict(
+                main_field="query",
+                appended_fields=["data_type", "published", "paginate_by"],
+                dynamic_fields=["query", "data_type", "published", "paginate_by"],
+            )
+        else:
+            return dict(
+                main_field="query",
+                appended_fields=["data_type", "paginate_by"],
+                dynamic_fields=["query", "data_type", "paginate_by"],
+            )
 
 
 class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
@@ -74,6 +89,11 @@ class ReferenceStudyCreate(EnsurePreparationStartedMixin, BaseCreate):
     model = models.Study
     form_class = forms.ReferenceStudyForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["manual_entry_warning"] = True
+        return context
+
     def post_object_save(self, form):
         search = apps.get_model("lit", "Search").objects.get_manually_added(self.assessment)
         self.object.searches.add(search)
@@ -89,13 +109,19 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
     def get_success_url(self):
         return reverse_lazy("study:update", args=(self.object.id,))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["manual_entry_warning"] = False
+        return context
 
-class StudyRead(BaseDetail):
+
+class StudyDetail(BaseDetail):
     model = models.Study
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        attachments_viewable = self.assessment.user_is_part_of_team(self.request.user)
+        check_published_status(self.request.user, self.object.published, self.assessment)
+        attachments_viewable = self.assessment.user_is_reviewer_or_higher(self.request.user)
         context["config"] = {
             "studyContent": self.object.get_json(json_encode=False),
             "attachments_viewable": attachments_viewable,
@@ -130,7 +156,7 @@ class StudyDelete(BaseDelete):
         return reverse_lazy("study:list", kwargs={"pk": self.assessment.pk})
 
 
-class StudyRoBRedirect(StudyRead):
+class StudyRoBRedirect(StudyDetail):
     # permanent redirect of RoB results; link is required to work based on
     # older OHAT reports which use this legacy URL route.
 
@@ -163,12 +189,12 @@ class AttachmentDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
-class AttachmentRead(BaseDetail):
+class AttachmentDetail(BaseDetail):
     model = models.Attachment
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_is_part_of_team(self.request.user):
+        if self.assessment.user_is_reviewer_or_higher(self.request.user):
             return HttpResponseRedirect(self.object.attachment.url)
         else:
             raise PermissionDenied

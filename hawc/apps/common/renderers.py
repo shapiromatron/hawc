@@ -3,12 +3,15 @@ from io import BytesIO, StringIO
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from django.conf import settings
 from django.utils.text import slugify
 from matplotlib.axes import Axes
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
 from openpyxl.utils.exceptions import IllegalCharacterError
 from rest_framework import status
-from rest_framework.renderers import BaseRenderer
+from rest_framework.renderers import BaseRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 
 from .helper import FlatExport, ReportExport, rename_duplicate_columns
@@ -61,7 +64,6 @@ class PandasBaseRenderer(BaseRenderer):
     """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
-
         # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
         method = renderer_context["request"].method if "request" in renderer_context else None
@@ -101,7 +103,7 @@ class PandasCsvRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return export.df.to_csv(index=False, line_terminator="\n")
+        return export.df.to_csv(index=False, lineterminator="\n")
 
 
 class PandasTsvRenderer(PandasBaseRenderer):
@@ -114,7 +116,7 @@ class PandasTsvRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return export.df.to_csv(index=False, sep="\t", line_terminator="\n")
+        return export.df.to_csv(index=False, sep="\t", lineterminator="\n")
 
 
 class PandasJsonRenderer(PandasBaseRenderer):
@@ -129,6 +131,25 @@ class PandasJsonRenderer(PandasBaseRenderer):
         if export.df.columns.has_duplicates:
             rename_duplicate_columns(export.df)
         return export.df.to_json(orient="records")
+
+
+class PandasBrowsableAPIRenderer(BrowsableAPIRenderer):
+    """
+    Renders dataframe using the DRF browser.
+
+    This can be useful in debugging to view the django debug toolbar
+    for database query performance.
+    """
+
+    def get_content(self, renderer, data, accepted_media_type, renderer_context):
+        # handle OPTIONS
+        if isinstance(data, dict):
+            return json.dumps(data, indent=4)
+
+        # handle dataframe
+        if data.df.columns.has_duplicates:
+            rename_duplicate_columns(data.df)
+        return data.df.to_json(orient="records", indent=4)
 
 
 class PandasXlsxRenderer(PandasBaseRenderer):
@@ -164,17 +185,41 @@ class PandasXlsxRenderer(PandasBaseRenderer):
             f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
         ) as writer:
             try:
-                df.to_excel(writer, index=False)
+                df.to_excel(writer, sheet_name="data", index=False, freeze_panes=(1, 0))
             except IllegalCharacterError:
                 self._clean_df(df)
-                df.to_excel(writer, index=False)
+                df.to_excel(writer, sheet_name="data", index=False, freeze_panes=(1, 0))
+
+            if isinstance(export.metadata, pd.DataFrame):
+                export.metadata.to_excel(
+                    writer, sheet_name="metadata", index=False, freeze_panes=(1, 0)
+                )
+
+            # enable filters
+            for ws in writer.book.worksheets:
+                # enable filters
+                ws.auto_filter.ref = ws.dimensions
+                # fill header
+                for row in ws.iter_rows(min_row=1, max_row=1):
+                    for cell in row:
+                        cell.fill = PatternFill("solid", fgColor="1F497D")
+                        cell.font = Font(color="FFFFFF")
+                        cell.alignment = Alignment(horizontal="left")
+                # resize columns
+                for idx in range(1, len(df.columns) + 1):
+                    ws.column_dimensions[get_column_letter(idx)].width = 10
+
         return f.getvalue()
 
 
-PandasRenderers = (
+PandasRenderers = [
     PandasJsonRenderer,
     PandasHtmlRenderer,
     PandasCsvRenderer,
     PandasTsvRenderer,
     PandasXlsxRenderer,
-)
+]
+
+if settings.DEBUG:
+    # insert at position 1 to keep JSON the default renderer
+    PandasRenderers.insert(1, PandasBrowsableAPIRenderer)

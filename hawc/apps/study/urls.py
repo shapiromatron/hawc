@@ -19,13 +19,13 @@ urlpatterns = [
         views.IdentifierStudyCreate.as_view(),
         name="create_from_identifier",
     ),
-    path("<int:pk>/", views.StudyRead.as_view(), name="detail"),
+    path("<int:pk>/", views.StudyDetail.as_view(), name="detail"),
     path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),
     path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),
     path("<int:pk>/delete/", views.StudyDelete.as_view(), name="delete"),
     path("<int:pk>/risk-of-bias/", views.StudyRoBRedirect.as_view(), name="rob_redirect"),
     # attachment
-    path("attachment/<int:pk>/", views.AttachmentRead.as_view(), name="attachment_detail"),
+    path("attachment/<int:pk>/", views.AttachmentDetail.as_view(), name="attachment_detail"),
     path("<int:pk>/attachment/add/", views.AttachmentCreate.as_view(), name="attachment_create"),
     path("attachment/<int:pk>/delete/", views.AttachmentDelete.as_view(), name="attachment_delete"),
 ]

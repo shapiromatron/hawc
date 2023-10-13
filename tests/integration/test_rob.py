@@ -12,9 +12,9 @@ class TestRoB(PlaywrightTestCase):
         self.login_and_goto_url(
             page, f"{self.live_server_url}/rob/assessment/1/", "pm@hawcproject.org"
         )
-        expect(page.locator('li:has-text("example domain")')).to_be_visible()
-        expect(page.locator('li:has-text("final domain")')).to_have_count(2)
-        expect(page.locator('li:has-text("example metric")')).to_be_visible()
+        expect(page.locator("text=These are instructions")).to_be_visible()
+        page.get_by_role("tab", name="Overview").click()
+        expect(page.locator("text=Requirements by Study Type")).to_be_visible()
 
         # /rob/assessment/:id/study-assignments/
         page.goto(self.live_server_url + "/rob/assessment/1/study-assignments/")

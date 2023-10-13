@@ -16,60 +16,66 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestRiskOfBiasAssessmentViewset:
-    def test_permissions(self, db_keys):
+class TestRiskOfBiasAssessmentViewSet:
+    def test_full_export(self, rewrite_data_files: bool, db_keys):
+        # permission check
+        anon_client = APIClient()
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
-        anon_client = APIClient()
+        tm_client = APIClient()
+        assert tm_client.login(username="team@hawcproject.org", password="pw") is True
 
-        urls = [
-            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_working,)),
-            reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,)),
-        ]
-        for url in urls:
-            assert anon_client.get(url).status_code == 403
-            assert rev_client.get(url).status_code == 200
+        url = reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,))
+        assert anon_client.get(url).status_code == 403
+        assert rev_client.get(url).status_code == 403
+        assert tm_client.get(url).status_code == 200
 
-    def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = Path(DATA_ROOT / "api-rob-assessment-full-export.json")
         url = (
             reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
         )
 
-        client = APIClient()
-        resp = client.get(url)
+        # check data
+        resp = tm_client.get(url)
         assert resp.status_code == 200
-
         data = resp.json()
-
         if rewrite_data_files:
             Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
         assert data == json.loads(fn.read_text())
 
     def test_export(self, rewrite_data_files: bool, db_keys):
+        # permission check
+        anon_client = APIClient()
+        rev_client = APIClient()
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
+        tm_client = APIClient()
+        assert tm_client.login(username="team@hawcproject.org", password="pw") is True
+
+        url = reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,))
+        assert anon_client.get(url).status_code == 403
+        assert rev_client.get(url).status_code == 403
+        assert tm_client.get(url).status_code == 200
+
+        # data check
         fn = Path(DATA_ROOT / "api-rob-assessment-export.json")
         url = (
             reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
             + "?format=json"
         )
 
-        client = APIClient()
-        resp = client.get(url)
+        resp = anon_client.get(url)
         assert resp.status_code == 200
-
         data = resp.json()
-
         if rewrite_data_files:
             Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-
         assert data == json.loads(fn.read_text())
 
     def test_PandasXlsxRenderer(self, db_keys):
         """
         Make sure that our pandas xlsx serializer effectively returns JSON when needed.
 
-        We add this test to this viewset because it's related to a full Viewset lifecycle and
+        We add this test to this viewset because it's related to a full ViewSet lifecycle and
         not just the logic in a Renderer; thus it's essentially an integration test for this
         renderer type; test was added based on security scan.
         """
@@ -439,7 +445,7 @@ class TestBulkRobCleanupApis:
 
         resp = c.get(url, format="json")
         assert resp.status_code == 200
-        assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi"}
+        assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi", "eco"}
 
     def test_metrics_list(self, db_keys):
         c = APIClient()
@@ -492,26 +498,6 @@ class TestBulkRobCleanupApis:
             "score_shade": "#00CC00",
             "score_symbol": "++",
         }
-
-        # TODO: evaluate how to correctly add header
-
-        # # patch
-        # url = reverse("riskofbias:api:scores-list") + assessment_query + f"&ids={data['id']}"
-        # resp = c.patch(
-        #     url,
-        #     {"score": 16, "notes": "<p>More content here.</p>"},
-        #     headers={"X-CUSTOM-BULK-OPERATION": "true"},
-        #     format="json",
-        # )
-        # assert resp.status_code == 201
-
-        # # ensure patch went through
-        # resp = c.get(detail_url, format="json")
-        # data = resp.json()
-        # assert resp.status_code == 200
-        # assert data["id"] == 1
-        # assert data["score"] == 16
-        # assert data["notes"] == "<p>More content here.</p>"
 
 
 @pytest.mark.django_db

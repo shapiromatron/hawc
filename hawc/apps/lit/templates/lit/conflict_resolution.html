@@ -1,0 +1,25 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<h2>Resolve Tag Conflicts</h2>
+{% include 'common/inline_filter_form.html' %}
+<ul class="list-group list-group-flush my-3">
+    {% for ref in object_list %}
+    <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}"
+        id="ref-form-{{ref.pk}}" hx-target="#ref-form-{{ref.pk}}" hx-swap="delete swap:1s">
+        {% include 'lit/_reference_with_tags.html' with conflict_resolution=True show_actions=True %}
+    </li>
+    {% empty %}
+    <li class="list-group-item">
+        <div class="alert alert-success">
+            <i class='fa fa-fw fa-check mr-1'></i>&nbsp;Conflict resolution complete! No conflicts to resolve.
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% include "includes/paginator.html" with plural_object_name="conflicts" %}
+{% endblock content %}
+
+{% block extrajs %}
+{% include "common/helptext_popup_js.html" %}
+{% endblock extrajs %}

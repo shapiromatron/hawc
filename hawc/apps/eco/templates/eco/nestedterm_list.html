@@ -1,0 +1,24 @@
+{% extends 'crumbless.html' %}
+
+{% load cache %}
+
+{% block content %}
+<a class="btn btn-primary float-right" href="{% url 'eco:api:terms-nested' %}?format=xlsx">Download</a>
+<h2 class="mt-3">Ecological cause/effect term list</h2>
+{% include 'common/inline_filter_form.html' %}
+<p class="text-muted">
+Show matched terms, as well as the matched term's ancestors and descendants. If you find a term you'd like to use in data entry, on the data entry page, you can enter either the name of the term, or the Term ID (the grey number beside the text).
+</p>
+<ul class="list-unstyled">
+{% for object in object_list %}
+<li>
+    <span class="badge badge-primary">Depth {{ object.depth}}</span>&ensp;{{object.nested_text}}&ensp;<span class="badge badge-secondary">{{object.id}}</span>
+</li>
+{% empty %}
+<li>No terms found!</li>
+{% endfor %}
+</ul>
+
+{% include "includes/paginator.html" with plural_object_name="terms" %}
+
+{% endblock content %}

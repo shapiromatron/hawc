@@ -46,7 +46,6 @@ def unchange_legend_settings(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0038_ept_summary_judgment_plausibility"),
     ]

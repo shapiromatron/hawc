@@ -6,7 +6,7 @@ from hawc.apps.vocab.models import Term
 
 
 @pytest.mark.django_db
-class TestEhvTermViewset:
+class TestEhvTermViewSet:
     def test_permissions(self):
         url = reverse("vocab:api:ehv-system")
         anon_client = APIClient()
@@ -72,7 +72,7 @@ class TestEhvTermViewset:
 
 
 @pytest.mark.django_db
-class TestTermViewset:
+class TestTermViewSet:
     def test_bulk_permissions(self):
         url = reverse("vocab:api:term-bulk-create")
         # non superusers do not have permission

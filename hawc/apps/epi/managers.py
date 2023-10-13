@@ -57,7 +57,7 @@ class GroupManager(BaseManager):
     def assessment_qs(self, assessment_id):
         return self.filter(
             Q(comparison_set__study_population__study__assessment=assessment_id)
-            | Q(comparison_set__outcome__assessment=assessment_id)  # noqa
+            | Q(comparison_set__outcome__assessment=assessment_id)
         )
 
 
@@ -69,7 +69,7 @@ class GroupNumericalDescriptionsManager(BaseManager):
     def assessment_qs(self, assessment_id):
         return self.filter(
             Q(group__comparison_set__study_population__study__assessment=assessment_id)
-            | Q(group__comparison_set__outcome__assessment=assessment_id)  # noqa
+            | Q(group__comparison_set__outcome__assessment=assessment_id)
         )
 
 

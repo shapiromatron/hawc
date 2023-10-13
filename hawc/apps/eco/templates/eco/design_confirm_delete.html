@@ -1,0 +1,6 @@
+{% extends 'eco/design_detail.html' %}
+
+{% block content %}
+  {% include "hawc/_delete_block.html" with name="study design" notes="This will remove all content associated with this design." %}
+  {{ block.super }}
+{% endblock content %}

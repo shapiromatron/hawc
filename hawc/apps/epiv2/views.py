@@ -1,10 +1,36 @@
 from django.http import HttpRequest
 from django.shortcuts import render
 
+from ..assessment.models import Assessment
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseUpdate,
+    HeatmapBase,
+)
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
+
+
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "epidemiology-v2-study-design"
+    heatmap_data_url = "epiv2:api:assessment-study-export"
+    heatmap_view_title = "Epidemiology study design"
+
+
+class HeatmapResult(HeatmapBase):
+    heatmap_data_class = "epidemiology-v2-result-summary"
+    heatmap_data_url = "epiv2:api:assessment-export"
+    heatmap_view_title = "Epidemiology data extraction"
+
+
+class OutcomeView(BaseFilterList):
+    parent_model = Assessment
+    model = models.Outcome
+    filterset_class = filterset.OutcomeFilterSet
 
 
 # Design (Study Population)
@@ -50,7 +76,7 @@ class DesignDelete(BaseDelete):
 
 
 # Design viewset
-class DesignViewset(HtmxViewSet):
+class DesignViewSet(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
     model = models.Design
@@ -73,7 +99,7 @@ class DesignViewset(HtmxViewSet):
         return render(request, template, context)
 
 
-class DesignChildViewset(HtmxViewSet):
+class DesignChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = None  # required
@@ -129,42 +155,42 @@ class DesignChildViewset(HtmxViewSet):
 
 
 # Chemical viewset
-class ChemicalViewset(DesignChildViewset):
+class ChemicalViewSet(DesignChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm
     detail_fragment = "epiv2/fragments/chemical_row.html"
 
 
 # Exposure viewset
-class ExposureViewset(DesignChildViewset):
+class ExposureViewSet(DesignChildViewSet):
     model = models.Exposure
     form_class = forms.ExposureForm
     detail_fragment = "epiv2/fragments/exposure_row.html"
 
 
 # Chemical viewset
-class ExposureLevelViewset(DesignChildViewset):
+class ExposureLevelViewSet(DesignChildViewSet):
     model = models.ExposureLevel
     form_class = forms.ExposureLevelForm
     detail_fragment = "epiv2/fragments/exposurelevel_row.html"
 
 
 # Outcome viewset
-class OutcomeViewset(DesignChildViewset):
+class OutcomeViewSet(DesignChildViewSet):
     model = models.Outcome
     form_class = forms.OutcomeForm
     detail_fragment = "epiv2/fragments/outcome_row.html"
 
 
 # Adjustment factor viewset
-class AdjustmentFactorViewset(DesignChildViewset):
+class AdjustmentFactorViewSet(DesignChildViewSet):
     model = models.AdjustmentFactor
     form_class = forms.AdjustmentFactorForm
     detail_fragment = "epiv2/fragments/adjustment_factor_row.html"
 
 
 # Data extraction viewset
-class DataExtractionViewset(DesignChildViewset):
+class DataExtractionViewSet(DesignChildViewSet):
     model = models.DataExtraction
     form_class = forms.DataExtractionForm
     detail_fragment = "epiv2/fragments/data_extraction_row.html"

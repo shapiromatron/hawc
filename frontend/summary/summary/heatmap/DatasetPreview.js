@@ -18,7 +18,6 @@ class DatasetPreview extends Component {
                 numColumns: _.keys(firstRow).length,
                 columnNames: _.keys(firstRow),
             },
-            rowsToShow = 50,
             actionItems = [
                 <ActionLink
                     key={0}
@@ -42,8 +41,10 @@ class DatasetPreview extends Component {
 
         return (
             <div>
-                <ActionsButton items={actionItems} />
-                <h4 className="d-inline-block">Dataset overview</h4>
+                <div className="d-flex">
+                    <h4>Dataset overview</h4>
+                    <ActionsButton items={actionItems} />
+                </div>
                 <ul>
                     <li>
                         <b>Number of rows:</b>&nbsp;{summary.numRows}
@@ -66,14 +67,13 @@ class DatasetPreview extends Component {
                 ) : null}
                 <h4>
                     {summary.numRows > 0
-                        ? `Showing the first ${rowsToShow} rows ...`
+                        ? "Data preview"
                         : "No data available, select a different dataset ..."}
                 </h4>
                 {summary.numRows > 0 ? (
-                    <DataTable dataset={_.slice(dataset, 0, rowsToShow)} />
-                ) : null}
-                {summary.numRows > rowsToShow ? (
-                    <p>An additional {summary.numRows - rowsToShow} rows are not shown...</p>
+                    <div className="overflow-auto">
+                        <DataTable dataset={dataset} tablesort={false} datatables={true} />
+                    </div>
                 ) : null}
             </div>
         );

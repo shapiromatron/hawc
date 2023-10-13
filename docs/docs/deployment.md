@@ -91,8 +91,26 @@ export HAWC_FEATURE_FLAGS='{"THIS_IS_AN_EXAMPLE":true}'
 
 Fields include:
 
-- `ENABLE_ECO`: If true, the experimental ecological data extraction module is enabled. Defaults to false.
-- `FIPS_MODE`: If true, allow deployment on OS with [FIPS mode enabled](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/assembly_installing-a-rhel-8-system-with-fips-mode-enabled_security-hardening). Defaults to false.
+- `THIS_IS_AN_EXAMPLE`: Does nothing; used to test configuration.
+- `DEFAULT_LITERATURE_CONFLICT_RESOLUTION`: If true, when a new assessment is created, conflict resolution is enabled. If false, its disabled. Defaults to false.
 - `ALLOW_RIS_IMPORTS`: If true, RIS imports are available when working on assessments. If false, the button is not there, but it's still possible for users to import via RIS if the can find the correct URL. Defaults to true.
 - `ANONYMOUS_ACCOUNT_CREATION`: If true, anonymous users can create accounts. If false, only staff can create new accounts via the admin. Defaults to true.
-- `THIS_IS_AN_EXAMPLE`: Does nothing; used to test configuration.
+- `ENABLE_BMDS_33`: If true, enable BMD execution using 3.x versions, currently under  development. Defaults to false.
+
+### Application monitoring
+
+Application performance and monitoring can be optionally enabled using [Sentry](https://sentry.io/). To enable, add these two environment variables:
+
+- `HAWC_SENTRY_DSN` - site key, used for sentry data ingestion
+- `HAWC_SENTRY_SETTINGS`: JSON string of settings to pass to [client](https://docs.sentry.io/platforms/python/guides/django/configuration/options/), for example: `{"traces_sample_rate": 0.1, "send_default_pii": false}`
+
+By default, sentry integration is disabled.
+
+### Human verification
+
+To prevent bots from attempting to login to the server, you can optionally enable [Turnstyle](https://www.cloudflare.com/products/turnstile/). To enable, set these two additional environment variables:
+
+- `TURNSTYLE_SITE`: site key, this is used by the client to interact (public)
+- `TURNSTYLE_KEY`: secret key, used by the server to verify the response (private)
+
+By default. human verification is disabled.

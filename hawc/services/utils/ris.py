@@ -1,7 +1,6 @@
 import logging
 import re
 from copy import copy
-from typing import Optional
 
 import rispy
 
@@ -27,13 +26,13 @@ class RisImporter:
             [content for content in reader]
             f.seek(0)
             return True
-        except IOError as err:
+        except OSError as err:
             logger.warning(err)
             return False
 
     def __init__(self, f, encoding="utf-8"):
         if isinstance(f, str):
-            f = open(f, "r", encoding=encoding)
+            f = open(f, encoding=encoding)
         else:
             f = f
         reader = rispy.load(f, mapping=self.get_mapping(), encoding=encoding)
@@ -134,7 +133,7 @@ class ReferenceParser:
             )
         return self._formatted
 
-    def get_year(self, value: Optional[str]) -> Optional[int]:
+    def get_year(self, value: str | None) -> int | None:
         if value is None or value.strip() == "":
             return None
         try:
@@ -142,7 +141,7 @@ class ReferenceParser:
         except ValueError:
             raise ValueError(f"Invalid year: {value}")
 
-    def get_doi(self, val) -> Optional[str]:
+    def get_doi(self, val) -> str | None:
         doi = self.content.get("doi", None)
         if doi and len(doi) > 256:
             raise ValueError(f"DOI too long: {doi}")
@@ -160,7 +159,7 @@ class ReferenceParser:
                 return self.content.get(fld)
         return default
 
-    def _get_pmid(self) -> Optional[int]:
+    def _get_pmid(self) -> int | None:
         # get PMID if specified in that field
         if "pubmed_id" in self.content:
             pubmed_id = self.content["pubmed_id"]

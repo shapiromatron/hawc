@@ -3,10 +3,11 @@ import logging
 
 import pandas as pd
 from django.apps import apps
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.search import SearchQuery
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -16,7 +17,9 @@ from hawc.services.utils.doi import get_doi_from_identifier
 
 from ...services.epa import hero
 from ...services.nih import pubmed
-from ..common.models import BaseManager
+from ..assessment.managers import published
+from ..common.models import BaseManager, replace_null, str_m2m
+from ..study.managers import study_df_annotations
 from . import constants
 
 logger = logging.getLogger(__name__)
@@ -47,6 +50,9 @@ class _ReferenceFilterTagManager(_TaggableManager):
         tag_pks = [int(tag) for tag in tag_pks]
         full_taglist = self.through.tag_model().get_descendants_pks(self.instance.assessment_id)
         selected_tags = set(tag_pks).intersection(full_taglist)
+
+        if len(selected_tags) < len(tag_pks):
+            raise ValueError("At least one of the given tags belongs to a different assessment.")
 
         tagrefs = []
         for tag_id in selected_tags:
@@ -496,9 +502,79 @@ class ReferenceQuerySet(models.QuerySet):
         )
         return self.exclude(query).distinct("pk")
 
+    def unresolved_user_tags(self, user_id: int) -> dict[int, list[int]]:
+        # Return a dictionary of reference_id: list[tag_ids] items for all references in a queryset
+        # TODO - update to annotate queryset with Django 4.1?
+        # https://docs.djangoproject.com/en/4.1/ref/contrib/postgres/expressions/#arraysubquery-expressions
+        UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+        user_qs = (
+            UserReferenceTag.objects.filter(reference__in=self, user=user_id, is_resolved=False)
+            .annotate(tag_ids=ArrayAgg("tags__id"))
+            .values_list("reference_id", "tag_ids")
+        )
+        # ArrayAgg can return [None] if some cases; filter to remove
+        return {
+            reference_id: [tag for tag in tag_ids if tag is not None]
+            for reference_id, tag_ids in user_qs
+        }
+
+    def global_df(self) -> pd.DataFrame:
+        mapping = {
+            "ID": "id",
+            "PubMed ID": "pmid",
+            "HERO ID": "hero",
+            "DOI": "doi",
+            "Title": "title",
+            "Author": "authors_short",
+            "Year": "year",
+            "Created": "created",
+            "Last updated": "last_updated",
+            "Tags count": "num_tags",
+            "Assessment ID": "assessment",
+            "Assessment name": "assessment__name",
+            "Assessment year": "assessment__year",
+            "Assessment DTXSIDs": "assessment__dtxsids_str",
+            "Assessment CAS": "assessment__cas",
+            "Assessment published": "published",
+            "Assessment creator": replace_null("assessment__creator__email"),
+            "Assessment created": "assessment__created",
+            "Assessment last updated": "assessment__last_updated",
+            "Study citation": replace_null("study__short_citation", "N/A"),
+            "Study published": "study__published",
+            "Study riskofbias count": "num_robs",
+            "Study bioassay": "study__bioassay",
+            "Study epi": "study__epi",
+            "Study epi meta": "study__epi_meta",
+            "Study in vitro": "study__in_vitro",
+            "Study ecology": "study__eco",
+            "Study created": "study__created",
+            "Study last updated": "study__last_updated",
+        }
+
+        qs = self.annotate(
+            **study_df_annotations(),
+            num_tags=Count("tags"),
+            num_robs=Count("study__riskofbiases", Q(study__riskofbiases__final=True)),
+            assessment__dtxsids_str=str_m2m("assessment__dtxsids"),
+            published=published("assessment__"),
+        ).values_list(*mapping.values())
+        return pd.DataFrame(list(qs), columns=list(mapping.keys()))
+
+    def full_text_search(self, search_text: str):
+        """Filter queryset using a full text search.
+
+        Args:
+            search_text: Text to use in the full text search filter.
+
+        Returns:
+            Queryset: The filtered ReferenceQueryset
+        """
+        return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
+            search=SearchQuery(search_text, search_type="websearch", config="english")
+        )
+
 
 class ReferenceManager(BaseManager):
-
     assessment_relation = "assessment"
 
     def get_queryset(self):
@@ -578,13 +654,13 @@ class ReferenceManager(BaseManager):
 
         return refs
 
-    def get_overview_details(self, assessment):
+    def get_overview_details(self, assessment) -> dict[str, int]:
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
         total = refs.count()
         total_tagged = refs.annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0).count()
         total_untagged = total - total_tagged
-        total_searched = refs.filter(searches__search_type="s").distinct().count()
+        total_searched = refs.all().filter(searches__search_type="s").distinct().count()
         total_imported = total - total_searched
         overview = {
             "total_references": total,
@@ -593,6 +669,29 @@ class ReferenceManager(BaseManager):
             "total_searched": total_searched,
             "total_imported": total_imported,
         }
+        if assessment.literature_settings.conflict_resolution:
+            UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+            user_refs = UserReferenceTag.objects.filter(reference__in=refs)
+            overview.update(
+                needs_tagging=(
+                    refs.annotate(
+                        user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+                    )
+                    .filter(user_tag_count__lt=2)
+                    .count()
+                ),
+                conflicts=(
+                    refs.annotate(
+                        n_unapplied_reviews=Count(
+                            "user_tags", filter=Q(user_tags__is_resolved=False)
+                        )
+                    )
+                    .filter(n_unapplied_reviews__gt=1)
+                    .count()
+                ),
+                total_reviews=user_refs.count(),
+                total_users=user_refs.distinct("user_id").count(),
+            )
         return overview
 
     def get_pubmed_references(self, search, identifiers):
@@ -649,33 +748,6 @@ class ReferenceManager(BaseManager):
         else:
             return self.none()
 
-    def process_excel(self, df, assessment_id):
-        """
-        Expects a data-frame with two columns - HAWC ID and Full text URL
-        """
-        errors = []
-
-        def fn(d):
-            if d["HAWC ID"] in cw and d["Full text URL"] != cw[d["HAWC ID"]]:
-                try:
-                    validator(d["Full text URL"])
-                    self.filter(id=d["HAWC ID"]).update(full_text_url=d["Full text URL"])
-                except ValidationError:
-                    errors.append(f"HAWC ID {d['HAWC ID']}, invalid URL: {d['Full text URL']}")
-
-        cw = {}
-        validator = URLValidator()
-        existing = (
-            self.get_qs(assessment_id)
-            .filter(id__in=df["HAWC ID"].unique())
-            .values_list("id", "full_text_url")
-        )
-        for obj in existing:
-            cw[obj[0]] = obj[1]
-        df.apply(fn, axis=1)
-
-        return errors
-
     def update_from_ris_identifiers(self, search, identifiers):
         """
         Create or update Reference from list of lists of identifiers.
@@ -683,7 +755,6 @@ class ReferenceManager(BaseManager):
         """
         assessment_id = search.assessment_id
         for idents in identifiers:
-
             # check if existing reference is found
             ref = self.get_qs(assessment_id).filter(identifiers__in=idents).first()
 
@@ -874,3 +945,7 @@ class ReferenceTagsManager(BaseManager):
             message=json.dumps({"count": number_deleted, "data": deleted_data}),
         )
         return number_deleted, log.id
+
+
+class UserReferenceTagsManager(BaseManager):
+    assessment_relation = "content_object__reference__assessment"

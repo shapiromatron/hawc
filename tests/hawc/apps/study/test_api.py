@@ -9,7 +9,7 @@ from ..test_utils import check_details_of_last_log_entry
 
 
 @pytest.mark.django_db
-class TestStudyViewset:
+class TestStudyViewSet:
     def test_detail(self, db_keys):
         client = Client()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -59,6 +59,7 @@ class TestStudyViewset:
             "epi": True,
             "epi_meta": False,
             "in_vitro": False,
+            "eco": True,
             "short_citation": "Foo et al.",
             "full_citation": "Foo et al. 2010",
             "coi_reported": "---",
@@ -239,3 +240,19 @@ class TestStudyViewset:
             .identifiers.filter(database=1, unique_id=str(10357793))
             .exists()
         )
+
+    def test_chemical_search(self):
+        client = APIClient()
+
+        url = reverse("study:api:study-chemical-search")
+        response = client.get(url)
+        assert response.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 400
+        assert "query" in response.json()
+
+        response = client.get(url + "?query=1746-01-6")
+        assert response.status_code == 200
+        assert len(response.json()) == 1

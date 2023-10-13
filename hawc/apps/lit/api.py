@@ -5,36 +5,32 @@ import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
-from django.utils import timezone
-from rest_framework import exceptions, mixins, status, viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
 from ..assessment.api import (
     METHODS_NO_PUT,
     AssessmentLevelPermissions,
-    AssessmentRootedTagTreeViewset,
+    AssessmentRootedTagTreeViewSet,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    OncePerMinuteThrottle,
-    PaginationWithCount,
-)
+from ..common.api import OncePerMinuteThrottle, PaginationWithCount
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
-from . import exports, models, serializers
+from . import constants, exports, filterset, models, serializers
 
 
-class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
-    parent_model = Assessment
+class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     filterset_class = None
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
@@ -42,17 +38,20 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def tags(self, request, pk):
         """
         Show literature tags for entire assessment.
         """
         instance = self.get_object()
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-tags-{self.assessment.id}")
 
-    @action(detail=True, methods=("get", "post"))
+    @action(detail=True, methods=("get", "post"), permission_classes=(permissions.AllowAny,))
     def tagtree(self, request, pk, *args, **kwargs):
         """
         Get/Update literature tags for an assessment in tree-based structure
@@ -72,9 +71,15 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             create_object_log(
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
+        else:
+            raise ValueError()
         return Response(serializer.data)
 
-    @action(detail=True, pagination_class=PaginationWithCount)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        pagination_class=PaginationWithCount,
+    )
     def references(self, request, pk):
         """
         Get references for an assessment
@@ -101,7 +106,12 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             serializer = serializers.ReferenceSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-    @action(detail=True, renderer_classes=PandasRenderers, url_path="reference-ids")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+        url_path="reference-ids",
+    )
     def reference_ids(self, request, pk):
         """
         Get literature reference ids for all assessment references
@@ -109,33 +119,41 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
         qs = instance.references.all()
         df = models.Reference.objects.identifiers_dataframe(qs)
-        export = FlatExport(df=df, filename=f"reference-ids-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"reference-ids-{self.assessment.id}")
 
     @action(
         detail=True,
         methods=("get", "post"),
         url_path="reference-tags",
+        permission_classes=(permissions.AllowAny,),
         renderer_classes=PandasRenderers,
     )
     def reference_tags(self, request, pk):
         """
         Apply reference tags for all references in an assessment.
         """
-        instance = self.get_object()
+        assessment = self.get_object()
 
+        if self.request.method == "GET":
+            if not assessment.user_can_view_object(request.user):
+                raise exceptions.PermissionDenied()
         if self.request.method == "POST":
+            if not assessment.user_can_edit_object(request.user):
+                raise exceptions.PermissionDenied()
             serializer = serializers.BulkReferenceTagSerializer(
-                data=request.data, context={"assessment": instance}
+                data=request.data, context={"assessment": assessment}
             )
             serializer.is_valid(raise_exception=True)
             serializer.bulk_create_tags()
 
-        df = models.ReferenceTags.objects.as_dataframe(instance.id)
-        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
-        return Response(export)
+        df = models.ReferenceTags.objects.as_dataframe(assessment.id)
+        return FlatExport.api_response(df=df, filename=f"reference-tags-{assessment.id}")
 
-    @action(detail=True, url_path="reference-year-histogram")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        url_path="reference-year-histogram",
+    )
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
         # get all the years for a given assessment
@@ -146,7 +164,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         )
         payload = {}
         if len(years) > 0:
-
             df = pd.DataFrame(years, columns=["Year"])
             nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
 
@@ -166,52 +183,83 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
                 bargap=0.1,
                 plot_bgcolor="white",
                 autosize=True,
-                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
+                margin=dict(l=0, r=0, t=30, b=0),
             )
             payload = fig.to_dict()
 
         return Response(payload)
 
-    @action(detail=True, url_path="topic-model")
-    def topic_model(self, request, pk):
-        assessment = self.get_object()
-        if assessment.literature_settings.has_topic_model:
-            data = assessment.literature_settings.get_topic_tsne_fig_dict()
-        else:
-            data = {"status": "No topic model available"}
-        return Response(data)
-
-    @action(detail=True, methods=("post",), url_path="topic-model-request-refresh")
-    def topic_model_request_refresh(self, request, pk):
-        assessment = self.get_object()
-        if not assessment.user_can_edit_object(request.user):
-            raise exceptions.PermissionDenied()
-        assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
-        assessment.literature_settings.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
     @action(
         detail=True,
-        url_path="references-download",
+        url_path="reference-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
-    def references_download(self, request, pk):
+    def reference_export(self, request, pk):
         """
         Get all references in an assessment.
         """
         assessment = self.get_object()
-        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
-        exporter = exports.ReferenceFlatComplete(
+        queryset = (
             models.Reference.objects.get_qs(assessment)
-            .prefetch_related("identifiers")
-            .order_by("id"),
-            filename=f"references-{assessment}",
+            .prefetch_related("identifiers", "tags")
+            .order_by("id")
+        )
+        fs = filterset.ReferenceExportFilterSet(
+            data=request.query_params,
+            queryset=queryset,
+            request=request,
+        )
+        if not fs.is_valid():
+            raise ValidationError(fs.errors)
+
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        Exporter = (
+            exports.TableBuilderFormat
+            if request.query_params.get("export_format") == "table-builder"
+            else exports.ReferenceFlatComplete
+        )
+        export = Exporter(
+            queryset=fs.qs,
+            filename=f"references-{assessment.name}",
             assessment=assessment,
             tags=tags,
         )
+        return Response(export.build_export())
+
+    @action(
+        detail=True,
+        url_path="user-tag-export",
+        renderer_classes=PandasRenderers,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    )
+    def user_tag_export(self, request, pk):
+        """
+        Get all references in an assessment, including all user tag data.
+        """
+        assessment = self.get_object()
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+        qs = (
+            models.UserReferenceTag.objects.filter(reference__assessment=assessment.id)
+            .select_related("reference", "user")
+            .prefetch_related("tags", "reference__identifiers")
+            .order_by("reference_id", "id")
+        )
+        exporter = exports.ReferenceFlatComplete(
+            qs,
+            filename=f"references-user-tags-{assessment.name}",
+            assessment=assessment,
+            tags=tags,
+            user_tags=True,
+        )
         return Response(exporter.build_export())
 
-    @action(detail=True, renderer_classes=PandasRenderers, url_path="tag-heatmap")
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+        url_path="tag-heatmap",
+    )
     def tag_heatmap(self, request, pk):
         """
         Get tags formatted in a long format desireable for heatmaps.
@@ -222,8 +270,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         if df is None:
             df = models.Reference.objects.heatmap_dataframe(instance.id)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"df-{instance.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"df-{instance.id}")
 
     @transaction.atomic
     @action(
@@ -231,6 +278,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="replace-hero",
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
     )
     def replace_hero(self, request, pk):
         """Replace old HERO ID with new HERO ID for selected references
@@ -255,6 +303,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="update-reference-metadata-from-hero",
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
     )
     def update_reference_metadata_from_hero(self, request, pk):
         """
@@ -271,6 +320,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @action(
         detail=True,
         methods=("post",),
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
         parser_classes=(FileUploadParser,),
         renderer_classes=PandasRenderers,
         url_path="excel-to-json",
@@ -291,72 +341,26 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         except (BadZipFile, ValueError):
             raise ParseError({"file": "Unable to parse excel file"})
 
-        export = FlatExport(df=df, filename=file_.name)
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=file_.name)
 
 
-class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, renderer_classes=PandasRenderers)
-    def references(self, request, pk):
-        """
-        Return all references for a given Search
-        """
-        instance = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            instance.references.all(),
-            filename=f"{instance.assessment}-search-{instance.slug}",
-            assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
-            include_parent_tag=False,
-        )
-        return Response(exporter.build_export())
 
-
-class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
+class ReferenceFilterTagViewSet(AssessmentRootedTagTreeViewSet):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
-    @action(detail=True, renderer_classes=PandasRenderers)
-    def references(self, request, pk):
-        """
-        Return all references for a selected tag, including tag-descendants.
-        """
-        tag = self.get_object()
-        serializer = serializers.ReferenceTagExportSerializer(data=request.query_params)
-        if serializer.is_valid():
-            qs = (
-                models.Reference.objects.all()
-                .with_tag(tag=tag, descendants=serializer.include_descendants())
-                .order_by("id")
-            )
-            ExportClass = serializer.get_exporter()
-            exporter = ExportClass(
-                queryset=qs,
-                filename=f"{self.assessment}-{tag.slug}",
-                assessment=self.assessment,
-                tags=self.model.get_all_tags(self.assessment.id),
-                include_parent_tag=False,
-            )
-            return Response(exporter.build_export())
-        else:
-            return Response(serializer.errors, status=400)
 
-
-class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
-    serializer_class = serializers.ReferenceCleanupFieldsSerializer
-    model = models.Reference
-    assessment_filter_args = "assessment"
-
-
-class ReferenceViewset(
+class ReferenceViewSet(
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
@@ -365,17 +369,70 @@ class ReferenceViewset(
     http_method_names = METHODS_NO_PUT
     serializer_class = serializers.ReferenceSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     queryset = models.Reference.objects.all()
 
-    @action(detail=True, methods=("post",))
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.action in ("tag", "resolve_conflict"):
+            qs = qs.select_related("assessment__literature_settings").prefetch_related(
+                "user_tags__tags", "tags"
+            )
+        return qs
+
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
     def tag(self, request, pk):
         response = {"status": "fail"}
-        ref = self.get_object()
-        assessment = ref.assessment
+        instance = self.get_object()
+        assessment = instance.assessment
         if assessment.user_can_edit_object(self.request.user):
-            tag_pks = self.request.POST.getlist("tags[]", [])
-            ref.tags.set(tag_pks)
-            ref.last_updated = timezone.now()
-            ref.save()
+            try:
+                tags = [int(tag) for tag in self.request.data.get("tags", [])]
+                resolved = instance.update_tags(request.user, tags)
+            except ValueError:
+                return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
             response["status"] = "success"
+            response["resolved"] = resolved
         return Response(response)
+
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
+    def merge_tags(self, request, pk):
+        instance = self.get_object()
+        instance.merge_tags(self.request.user)
+        return Response({"status": "success"})
+
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
+    def resolve_conflict(self, request, pk):
+        instance = self.get_object()
+        assessment = instance.assessment
+        if not assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        user_reference_tag = get_object_or_404(
+            models.UserReferenceTag,
+            reference_id=instance.id,
+            id=int(request.POST.get("user_tag_id", -1)),
+        )
+        instance.resolve_user_tag_conflicts(self.request.user.id, user_reference_tag)
+        return Response({"status": "ok"})
+
+    @action(
+        detail=False,
+        url_path=r"search/type/(?P<db_id>[\d])/id/(?P<id>.*)",
+        renderer_classes=PandasRenderers,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def id_search(self, request, id: str, db_id: int):
+        db_id = int(db_id)
+        if db_id not in constants.ReferenceDatabase:
+            raise ValidationError({"type": f"Must be in {constants.ReferenceDatabase.choices}"})
+        qs = self.get_queryset().filter(identifiers__unique_id=id, identifiers__database=db_id)
+        return FlatExport.api_response(
+            df=qs.global_df(),
+            filename=f"global-reference-data-{id}",
+        )

@@ -11,7 +11,6 @@ from . import autocomplete, models
 
 
 class MetaProtocolForm(forms.ModelForm):
-
     CREATE_LEGEND = "Create a new meta-protocol"
 
     CREATE_HELP_TEXT = """
@@ -85,7 +84,6 @@ class MetaProtocolForm(forms.ModelForm):
 
 
 class MetaResultForm(forms.ModelForm):
-
     CREATE_LEGEND = "Create a new meta-result"
 
     CREATE_HELP_TEXT = """

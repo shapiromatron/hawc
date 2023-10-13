@@ -1,0 +1,14 @@
+
+{% optional_table_row "Project type" object.project_type %}
+{% optional_table_row "Project status" object.get_project_status_display %}
+{% url_or_span object.project_url object.project_url as content %}
+{% optional_table_row "Project URL" content %}
+{% url_or_span object.report_id object.report_url as content %}
+{% optional_table_row "Report identifier" content %}
+{% optional_table_row "Peer review status" object.get_peer_review_status_display %}
+{% for key, value in object.extra.items %}
+<tr>
+    <th>{{key}}</th>
+    <td>{{value}}</td>
+</tr>
+{% endfor %}

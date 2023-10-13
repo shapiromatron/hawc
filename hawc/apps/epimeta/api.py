@@ -2,51 +2,53 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
+from ..assessment.api import AssessmentLevelPermissions, AssessmentViewSet
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.api import LegacyAssessmentAdapterMixin
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class EpiMetaAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
-    parent_model = Assessment
-    model = models.MetaResult
+class EpiMetaAssessmentViewSet(viewsets.GenericViewSet):
+    model = Assessment
+    queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
+    def get_meta_result_queryset(self):
+        perms = self.assessment.user_permissions(self.request.user)
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return models.MetaResult.objects.published(self.assessment)
+        return models.MetaResult.objects.get_qs(self.assessment)
 
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
         """
-        Retrieve epidemiology metadata for assessment.
+        Retrieve epidemiology meta-analysis data for an assessment.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.get_object()
         exporter = exports.MetaResultFlatComplete(
-            self.get_queryset(), filename=f"{self.assessment}-epi-meta"
+            self.get_meta_result_queryset(), filename=f"{self.assessment}-epi-meta"
         )
         return Response(exporter.build_export())
 
 
-class MetaProtocol(AssessmentViewset):
+class MetaProtocol(AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.MetaProtocol
     serializer_class = serializers.MetaProtocolSerializer
 
 
-class MetaResult(AssessmentViewset):
+class MetaResult(AssessmentViewSet):
     assessment_filter_args = "protocol__study__assessment"
     model = models.MetaResult
     serializer_class = serializers.MetaResultSerializer

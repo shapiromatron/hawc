@@ -21,5 +21,5 @@ def parse_request_logs(logs: str) -> pd.DataFrame:
     data = [list(*regex.findall(line)) for line in logs.strip().splitlines()]
     cols = "message timestamp verb path status_code content_length ip user_id assessment_id".split()
     df = pd.DataFrame(data=data, columns=cols).apply(pd.to_numeric, errors="ignore")
-    df.loc[:, "timestamp"] = pd.to_datetime(df.timestamp)
+    df = df.assign(timestamp=pd.to_datetime(df.timestamp))
     return df

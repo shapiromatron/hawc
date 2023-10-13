@@ -64,7 +64,7 @@ class SelectInput extends Component {
             {errors} = this.props;
 
         if (this.props.fieldOnly) {
-            return this.renderField("react-select", fieldId);
+            return this.renderField(fieldId);
         }
         return (
             <div className="form-group">

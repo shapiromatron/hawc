@@ -21,6 +21,14 @@ class IVExperimentManager(BaseManager):
 class IVEndpointManager(BaseManager):
     assessment_relation = "assessment"
 
+    def get_effect_choices(self, assessment_id):
+        return (
+            self.get_qs(assessment_id)
+            .order_by("effect")
+            .distinct("effect")
+            .values_list("effect", "effect")
+        )
+
     def published(self, assessment_id=None):
         return self.get_qs(assessment_id).filter(experiment__study__published=True)
 

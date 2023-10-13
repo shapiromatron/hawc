@@ -1,12 +1,11 @@
 import html
 import json
 import urllib.parse
-from typing import Optional
 
 from hawc.apps.lit.constants import DOI_EXTRACT
 
 
-def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
+def try_get_doi(text: str, full_text: bool = False) -> str | None:
     """Try to extract a DOI out of text.
 
     Args:
@@ -34,7 +33,7 @@ def try_get_doi(text: str, full_text: bool = False) -> Optional[str]:
     return doi.lower() if doi else None
 
 
-def get_doi_from_identifier(ident) -> Optional[str]:
+def get_doi_from_identifier(ident) -> str | None:
     try:
         data = json.loads(ident.content)
     except json.JSONDecodeError:

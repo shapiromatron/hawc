@@ -598,64 +598,52 @@ class DRPlot extends D3Plot {
 
     render_bmd_lines() {
         this.remove_bmd_lines();
-        var doseUnits = this.endpoint.doseUnits.activeUnit.id,
+        const doseUnits = this.endpoint.doseUnits.activeUnit.id,
             lines = this.bmd.filter(d => d.dose_units_id === doseUnits),
             x = this.x_scale,
-            xs = this.x_scale.ticks(100),
             y = this.y_scale,
-            liner = d3
+            lineFunc = d3
                 .line()
                 .curve(d3.curveLinear)
                 .x(d => x(d.x))
-                .y(d => y(d.y));
-
-        var bmds = _.chain(lines)
-            .filter(d => d.bmd_line !== undefined)
-            .map(function(d) {
-                return [
-                    {
-                        x1: x(d.bmd_line.x),
-                        x2: x(d.bmd_line.x),
-                        y1: y.range()[0],
-                        y2: y(d.bmd_line.y),
-                        stroke: d.stroke,
-                    },
-                    {
-                        x1: x.range()[0],
-                        x2: x(d.bmd_line.x),
-                        y1: y(d.bmd_line.y),
-                        y2: y(d.bmd_line.y),
-                        stroke: d.stroke,
-                    },
-                ];
-            })
-            .flattenDeep()
-            .value();
-
-        var bmdls = _.chain(lines)
-            .filter(d => d.bmdl_line !== undefined)
-            .map(function(d) {
-                return [
-                    {
-                        x1: x(d.bmdl_line.x),
-                        x2: x(d.bmdl_line.x),
-                        y1: y.range()[0],
-                        y2: y(d.bmdl_line.y),
-                        stroke: d.stroke,
-                    },
-                    {
-                        x1: x.range()[0],
-                        x2: x(d.bmdl_line.x),
-                        y1: y(d.bmdl_line.y),
-                        y2: y(d.bmdl_line.y),
-                        stroke: d.stroke,
-                    },
-                ];
-            })
-            .flattenDeep()
-            .value();
-
-        var g = this.vis.append("g").attr("class", "bmd");
+                .y(d => y(d.y)),
+            bmd_lines = _.chain(lines)
+                .filter(d => d.bmd_line !== undefined)
+                .map(d => {
+                    return [
+                        {
+                            x1: x(d.bmd_line.x),
+                            x2: x(d.bmd_line.x),
+                            y1: y.range()[0],
+                            y2: y(d.bmd_line.y),
+                            stroke: d.stroke,
+                        },
+                        {
+                            x1: x.range()[0],
+                            x2: x(d.bmd_line.x),
+                            y1: y(d.bmd_line.y),
+                            y2: y(d.bmd_line.y),
+                            stroke: d.stroke,
+                        },
+                        {
+                            x1: x(d.bmdl_line.x),
+                            x2: x(d.bmdl_line.x),
+                            y1: y.range()[0],
+                            y2: y(d.bmdl_line.y),
+                            stroke: d.stroke,
+                        },
+                        {
+                            x1: x.range()[0],
+                            x2: x(d.bmdl_line.x),
+                            y1: y(d.bmdl_line.y),
+                            y2: y(d.bmdl_line.y),
+                            stroke: d.stroke,
+                        },
+                    ];
+                })
+                .flattenDeep()
+                .value(),
+            g = this.vis.append("g").attr("class", "bmd");
 
         // add lines
         g.selectAll("path")
@@ -663,24 +651,20 @@ class DRPlot extends D3Plot {
             .enter()
             .append("path")
             .attr("class", "bmd_line")
-            .attr("d", d => liner(d.getData(xs)))
+            .attr("d", d => {
+                if (d.dr_data) {
+                    return lineFunc(d.dr_data);
+                } else if (d.getData) {
+                    return lineFunc(d.getData(this.x_scale.ticks(100)));
+                } else {
+                    console.error("Failed BMD line");
+                }
+            })
             .attr("stroke", d => d.stroke);
 
-        // add bmd lines
+        // add bmd/bmdl lines
         g.selectAll("line.bmd")
-            .data(bmds)
-            .enter()
-            .append("line")
-            .attr("class", "bmd_line")
-            .attr("x1", d => d.x1)
-            .attr("x2", d => d.x2)
-            .attr("y1", d => d.y1)
-            .attr("y2", d => d.y2)
-            .attr("stroke", d => d.stroke);
-
-        // add bmdl lines
-        g.selectAll("line.bmd")
-            .data(bmdls)
+            .data(bmd_lines)
             .enter()
             .append("line")
             .attr("class", "bmd_line")

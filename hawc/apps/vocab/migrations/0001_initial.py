@@ -7,7 +7,6 @@ import hawc.apps.vocab.constants
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = []

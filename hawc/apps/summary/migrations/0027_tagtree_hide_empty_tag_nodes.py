@@ -34,7 +34,6 @@ def remove_hide_empty_tag_nodes(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0026_rob_heatmap_excludes"),
     ]

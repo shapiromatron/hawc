@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import AutocompleteSelectableText from "shared/components/AutocompleteSelectableText";
 import AutocompleteTerm from "shared/components/AutocompleteTerm";
+import HelpTextPopup from "shared/components/HelpTextPopup";
 import h from "shared/utils/helpers";
 
 import {NO_VOCAB_HELP_TEXT} from "../../vocab/constants";
@@ -24,6 +25,7 @@ class TermSelector extends Component {
                 name,
                 label,
                 helpText,
+                popupHelpText,
                 termIdField,
                 termTextField,
                 parentIdField,
@@ -65,6 +67,7 @@ class TermSelector extends Component {
                     </div>
                 ) : null}
                 <label htmlFor={this.randomId}>{label}</label>
+                {popupHelpText ? <HelpTextPopup content={popupHelpText} title={label} /> : null}
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
                         url={termUrlLookup[termIdField]}
@@ -126,7 +129,11 @@ class TermSelector extends Component {
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
-                <p className="form-text text-muted">{helpText}</p>
+                {helpText ? (
+                    <small
+                        className="form-text text-muted"
+                        dangerouslySetInnerHTML={{__html: helpText}}></small>
+                ) : null}
                 {debug ? (
                     <ul>
                         <li>termId: {currentId}</li>
@@ -141,7 +148,8 @@ class TermSelector extends Component {
 TermSelector.propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    helpText: PropTypes.string.isRequired,
+    helpText: PropTypes.string,
+    popupHelpText: PropTypes.string,
     termIdField: PropTypes.string.isRequired,
     termTextField: PropTypes.string.isRequired,
     parentIdField: PropTypes.string,

@@ -1,16 +1,11 @@
 <div hx-target="this" hx-swap="outerHTML">
     <h2>Assessment profile</h2>
-    <form hx-post="{% url 'admin_dashboard_assessment_profile' %}" hx-trigger="change">
+    <form hx-post="{% url 'admin_dashboard' %}?action=assessment_profile" hx-trigger="change">
         {{ form.as_p }}
         {% csrf_token %}
     </form>
     {% if fig %}
-    <div id="fig"></div>
-    <span id="fig-below"></span>
-    <script>
-        Plotly.newPlot(document.getElementById("fig"), {{ fig.to_json | safe }});
-        document.getElementById("fig-below").focus();
-    </script>
+    <div>{% plotly fig event="htmx" resizable=True %}</div>
     {% else %}
     <p>No selected assessment or invalid assessment id.</p>
     {% endif %}

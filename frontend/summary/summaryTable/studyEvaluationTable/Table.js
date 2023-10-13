@@ -391,7 +391,7 @@ class Table extends Component {
 
         return onClick == null ? null : (
             <p className="previewModalIcon float-right">
-                <i className="fa fa-eye" onClick={onClick}></i>
+                <i className="fa fa-external-link" onClick={onClick}></i>
             </p>
         );
     }

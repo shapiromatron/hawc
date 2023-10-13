@@ -10,24 +10,12 @@ import OutputModal from "../components/OutputModal";
 @observer
 class Modals extends React.Component {
     render() {
-        const {store} = this.props,
-            {config} = store;
+        const {store} = this.props;
 
         return (
             <div>
-                <ModelOptionModal
-                    model={store.selectedModelOption}
-                    editMode={config.editMode}
-                    handleSave={values => store.updateModel(values)}
-                    handleDelete={store.deleteModel}
-                />
-                <BMROptionModal
-                    bmr={store.selectedBmr}
-                    allOptions={store.allBmrOptions}
-                    editMode={config.editMode}
-                    handleSave={values => store.updateBmr(values)}
-                    handleDelete={store.deleteBmr}
-                />
+                <ModelOptionModal model={store.selectedModelOption} />
+                <BMROptionModal bmr={store.selectedBmr} allOptions={store.allBmrOptions} />
                 <OutputModal models={store.selectedOutputs} />
             </div>
         );

@@ -1,8 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load add_class %}
-{% load crispy_forms_tags %}
-
 {% block content %}
 <div class="row pl-1">
   <div class="col-md-12">
@@ -10,7 +7,7 @@
   </div>
   <div id="main" class="container-fluid col-md-12"></div>
 </div>
-{% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
+{% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
 
 {% block extrajs %}

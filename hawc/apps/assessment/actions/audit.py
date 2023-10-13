@@ -1,9 +1,9 @@
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
+from rest_framework.response import Response
 from reversion.models import Version
 
 from ...common.helper import FlatExport
@@ -12,7 +12,7 @@ from ..constants import EpiVersion
 from ..models import Assessment
 
 
-def versions_by_content_type(app_label: str, model: str, qs: Optional[QuerySet] = None) -> QuerySet:
+def versions_by_content_type(app_label: str, model: str, qs: QuerySet | None = None) -> QuerySet:
     if qs is None:
         qs = Version.objects.all()
     ct = ContentType.objects.get(app_label=app_label, model=model)
@@ -20,7 +20,7 @@ def versions_by_content_type(app_label: str, model: str, qs: Optional[QuerySet] 
 
 
 def versions_by_related_field(
-    related_field: str, related_values: list, qs: Optional[QuerySet] = None
+    related_field: str, related_values: list, qs: QuerySet | None = None
 ) -> QuerySet:
     qs = Version.objects.all() if qs is None else qs
     ored_values = "|".join([str(id) for id in related_values])
@@ -30,7 +30,7 @@ def versions_by_related_field(
     return qs.filter(serialized_data__iregex=data_regex)
 
 
-class AuditType(str, Enum):
+class AuditType(StrEnum):
     ASSESSMENT = "assessment"
     ANIMAL = "animal"
     EPI = "epi"
@@ -240,13 +240,14 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         return domain_qs | metric_qs | score_qs
 
     def get_queryset(self):
-        audit_type = self.type
-        if audit_type == AuditType.EPI:
+        audit_type = self.type.value
+        if audit_type == "epi":
             audit_type = "epiv1" if self.assessment.epi_version == EpiVersion.V1 else "epiv2"
-        qs = getattr(self, f"get_{audit_type}_queryset")()
+        method = f"get_{audit_type}_queryset"
+        qs = getattr(self, method)()
         return qs.select_related("content_type", "revision")
 
-    def export(self) -> FlatExport:
+    def export(self) -> Response:
         qs = self.get_queryset()
         df = pd.DataFrame(
             qs.values_list(
@@ -259,5 +260,4 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
             ),
             columns=["app", "model", "pk", "serialized_data", "user", "date_revised"],
         )
-        export = FlatExport(df=df, filename=f"{self.assessment}-{self.type}-audit-logs")
-        return export
+        return FlatExport.api_response(df=df, filename=f"{self.assessment}-{self.type}-audit-logs")

@@ -5,9 +5,6 @@
  a:visited {
     color: #005ea2;
  }
- p {
-    margin-bottom: 0rem;
- }
 
 /* this rule was disabled in the epa style; re-enable to header */
 header.l-header * {
@@ -35,6 +32,9 @@ header.l-header * {
 }
 .hawc-header a {
     text-decoration: none;
+}
+.unstyled-action-button {
+    color: var(--epa-primary);
 }
 
 /* override environment banner position */
@@ -88,4 +88,9 @@ a.dropdown-toggle:not([href])::after {
 /* bootstrap popover header */
 .popover-header {
     margin-top: 0;
+}
+
+/* fix conflict: uswds + datatables.net  */
+.dataTables_filter [type="search"]{
+    float: none;
 }

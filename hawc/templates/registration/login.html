@@ -1,5 +1,4 @@
 {% extends "crumbless.html" %}
-{% load crispy_forms_tags %}
 
 {% block title %}Login | HAWC{% endblock %}
 
@@ -8,6 +7,9 @@
 {% endblock content %}
 
 {% block extrajs %}
+  {% if form.enable_turnstyle %}
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  {% endif %}
   <script type="text/javascript">
     document.getElementById('id_username').focus();
   </script>

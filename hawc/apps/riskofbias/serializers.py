@@ -138,7 +138,7 @@ class StudyScoreSerializer(RiskOfBiasScoreSerializer):
         ret["url_edit"] = instance.riskofbias.get_edit_url()
         ret["study_name"] = instance.riskofbias.study.short_citation
         ret["study_id"] = instance.riskofbias.study.id
-        ret["study_types"] = instance.riskofbias.study.get_study_type()
+        ret["study_types"] = instance.riskofbias.study.get_study_types()
         return ret
 
 
@@ -257,7 +257,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
             # store the actual metric object we want to create
             metrics_dict = {obj.id: obj for obj in required_metrics}
-            for score, initial_score in zip(data["scores"], scores):
+            for score, initial_score in zip(data["scores"], scores, strict=True):
                 score["metric"] = metrics_dict[initial_score["metric_id"]]
 
             override_options = models.RiskOfBias(study=study).get_override_options()
@@ -270,7 +270,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Cannot update; scores to not match instances")
 
             for initial_score_data, update_score in zip(
-                self.initial_data["scores"], data["scores"]
+                self.initial_data["scores"], data["scores"], strict=True
             ):
                 update_score["id"] = initial_score_data["id"]
 
@@ -283,7 +283,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         # add cache to prevent lookups
         content_types = {}
 
-        for initial_score_data, update_score in zip(self.initial_data["scores"], data["scores"]):
+        for initial_score_data, update_score in zip(
+            self.initial_data["scores"], data["scores"], strict=True
+        ):
             overridden_objects = []
             if "overridden_objects" in initial_score_data:
                 for obj in initial_score_data["overridden_objects"]:
@@ -319,7 +321,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-
         rob = models.RiskOfBias.objects.create(
             study=validated_data["study"],
             final=validated_data["final"],

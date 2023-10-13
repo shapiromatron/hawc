@@ -61,7 +61,6 @@ class TestEndpointManager:
             models.Endpoint.objects.update_terms(data, assessment)
 
     def _test_updated_terms(self, endpoint):
-
         field_to_value = {
             "name_term_id": 5,
             "effect_subtype_term_id": 4,

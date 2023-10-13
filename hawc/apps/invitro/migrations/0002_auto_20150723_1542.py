@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("invitro", "0001_initial"),
         ("animal", "0010_auto_20150723_1536"),

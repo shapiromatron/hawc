@@ -1,15 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">{{object}}</h2>
-  {% if obj_perms.edit_assessment %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
+  <div class="d-flex">
+    <h2>{{object}}</h2>
+    {% if obj_perms.edit_assessment %}
+      {% actions %}
         <a class="dropdown-item" href="{% url 'bmd:assess_settings_update' assessment.pk %}">Update settings</a>
-      </div>
-    </div>
-  {% endif %}
+      {% endactions %}
+    {% endif %}
+  </div>
 
   <p>BMD assessment-settings can only be modified by project managers.</p>
 
@@ -23,10 +22,6 @@
       <tr><th>Last updated</th><td>{{object.last_updated}}</td></tr>
     </tbody>
   </table>
-
-  <h3>BMD decision logic</h3>
-  {% include "bmd/_logic_settings_detail_list.html" with object_list=assessment.bmd_logic_fields.all %}
-
 {% endblock %}
 
 {% block extrajs %}

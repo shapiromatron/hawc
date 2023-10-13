@@ -1,19 +1,35 @@
-[tool.black]
-line-length = 100
-target-version = ['py36', 'py37', 'py38']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | build
-  | venv
-)/
-'''
+[project]
+name = "hawc-client"
+license = {file = "LICENSE"}
+authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
+dynamic = ["version", "description"]
+readme = "README.md"
+keywords = [
+  "data visualization",
+  "epidemiology",
+  "risk assessment",
+  "systematic review",
+  "toxicology",
+]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.9"
+dependencies = [
+  "rapidfuzz",
+  "requests",
+  "pandas",
+  "tqdm",
+]
 
-[tool.isort]
-atomic = true
-include_trailing_comma = true
-known_first_party = ["hawc_client"]
-line_length = 100
-multi_line_output = 3
+[project.urls]
+"Bug Tracker" = "https://github.com/shapiromatron/hawc/issues"
+Documentation = "https://hawc.readthedocs.io/client/"
+"Source Code" = "https://github.com/shapiromatron/hawc"
+
+[build-system]
+requires = ["flit_core ~=3.9"]
+build-backend = "flit_core.buildapi"

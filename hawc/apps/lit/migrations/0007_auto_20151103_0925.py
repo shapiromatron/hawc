@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import json
 
 from django.db import migrations, models
@@ -31,7 +28,6 @@ def typeConvertPubmedResultsToInt(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0006_auto_20151021_1626"),
     ]

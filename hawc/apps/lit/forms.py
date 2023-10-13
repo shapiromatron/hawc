@@ -1,10 +1,9 @@
 import logging
 from io import StringIO
-from typing import Union
 
-import numpy as np
 import pandas as pd
 from django import forms
+from django.core.validators import URLValidator
 from django.db import transaction
 from django.urls import reverse, reverse_lazy
 
@@ -17,6 +16,7 @@ from ..common.forms import (
     addPopupLink,
     check_unique_for_assessment,
 )
+from ..study.constants import StudyTypeChoices
 from ..study.models import Study
 from . import constants, models
 
@@ -34,22 +34,48 @@ class LiteratureAssessmentForm(forms.ModelForm):
 
     class Meta:
         model = models.LiteratureAssessment
-        fields = ("extraction_tag",)
+        fields = (
+            "conflict_resolution",
+            "extraction_tag",
+            "screening_instructions",
+            "name_list_1",
+            "color_list_1",
+            "keyword_list_1",
+            "name_list_2",
+            "color_list_2",
+            "keyword_list_2",
+            "name_list_3",
+            "color_list_3",
+            "keyword_list_3",
+        )
+        field_classes = {
+            "screening_instructions": QuillField,
+        }
+        widgets = {
+            "color_list_1": forms.TextInput(attrs={"type": "color"}),
+            "color_list_2": forms.TextInput(attrs={"type": "color"}),
+            "color_list_3": forms.TextInput(attrs={"type": "color"}),
+        }
 
     def setHelper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": "Update literature assessment settings",
                 "help_text": "Update literature settings for this assessment",
-                "cancel_url": reverse_lazy("lit:tags_update", args=(self.instance.assessment_id,)),
+                "cancel_url": reverse_lazy("lit:overview", args=(self.instance.assessment_id,)),
             }
 
         helper = BaseFormHelper(self, **inputs)
+        for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
+            self.fields[fld].widget.attrs["rows"] = 3
+        helper.add_row("conflict_resolution", 2, "col-md-6")
+        helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
+        helper.add_row("name_list_3", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         return helper
 
 
 class SearchForm(forms.ModelForm):
-
     title_str = "Literature Search"
     help_text = (
         "Create a new literature search. Note that upon creation, "
@@ -115,17 +141,21 @@ class ImportForm(SearchForm):
         if self.instance.id is None:
             self.fields[
                 "search_string"
-            ].help_text = "Enter a comma-separated list of database IDs for import."  # noqa
+            ].help_text = "Enter a comma-separated list of database IDs for import."
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
+            self.fields.pop("source")
 
     @property
     def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing literature search",
+                "help_text": """
+                    Update an existing literature import. After a literature import
+                    has been created, you can no longer edit the source or IDs to import.
+                """,
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
@@ -159,15 +189,16 @@ class ImportForm(SearchForm):
 
     def clean_search_string(self):
         search_string = self.cleaned_data["search_string"]
-
         ids = self.validate_import_search_string(search_string)
-
-        if self.cleaned_data["source"] == constants.ReferenceDatabase.HERO:
+        source = self.cleaned_data.get("source")
+        if source == constants.ReferenceDatabase.HERO:
             content = models.Identifiers.objects.validate_hero_ids(ids)
             self._import_data = dict(ids=ids, content=content)
-        elif self.cleaned_data["source"] == constants.ReferenceDatabase.PUBMED:
+        elif source == constants.ReferenceDatabase.PUBMED:
             content = models.Identifiers.objects.validate_pubmed_ids(ids)
             self._import_data = dict(ids=ids, content=content)
+        else:
+            raise forms.ValidationError("Invalid  source")
 
         return search_string
 
@@ -181,7 +212,6 @@ class ImportForm(SearchForm):
 
 
 class RisImportForm(SearchForm):
-
     RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
     NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
@@ -195,7 +225,7 @@ class RisImportForm(SearchForm):
             self.fields[
                 "import_file"
             ].help_text = """Unicode RIS export file
-                ({0} for EndNote RIS library preparation)""".format(
+                ({} for EndNote RIS library preparation)""".format(
                 addPopupLink(reverse_lazy("lit:ris_export_instructions"), "view instructions")
             )
         else:
@@ -269,7 +299,6 @@ class RisImportForm(SearchForm):
         """
         cleaned_data = super().clean()
         if "import_file" in cleaned_data and not self._errors:
-
             # convert BytesIO file to StringIO file
             with StringIO() as f:
                 f.write(cleaned_data["import_file"].read().decode("utf-8-sig"))
@@ -294,24 +323,24 @@ class SearchModelChoiceField(forms.ModelChoiceField):
 
 
 class SearchSelectorForm(forms.Form):
-
     searches = SearchModelChoiceField(
         queryset=models.Search.objects.all().select_related("assessment"), empty_label=None
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
-            "pk", flat=True
+        assessment_pks = (
+            Assessment.objects.all().user_can_view(self.user).values_list("pk", flat=True)
         )
 
         self.fields["searches"].queryset = (
             self.fields["searches"]
             .queryset.filter(assessment__in=assessment_pks)
             .exclude(title="Manual import")
-            .order_by("assessment_id")
+            .order_by("assessment_id", "title")
         )
 
     @property
@@ -340,8 +369,8 @@ class SearchSelectorForm(forms.Form):
 
 
 def validate_external_id(
-    db_type: int, db_id: Union[str, int]
-) -> tuple[Union[models.Identifiers, None], Union[list, dict, None]]:
+    db_type: int, db_id: str | int
+) -> tuple[models.Identifiers | None, list | dict | None]:
     """
     Validates an external ID.
     If the identifier already exists it is returned as the first part of a tuple.
@@ -380,7 +409,7 @@ def validate_external_id(
         raise ValueError(f"Unknown database type {db_type}.")
 
 
-def create_external_id(db_type: int, content: Union[list, dict]) -> models.Identifiers:
+def create_external_id(db_type: int, content: list | dict) -> models.Identifiers:
     """
     Creates an identifier with the given content.
     This works in tandem with validate_external_id, using the content returned from that method call.
@@ -411,7 +440,6 @@ def create_external_id(db_type: int, content: Union[list, dict]) -> models.Ident
 
 
 class ReferenceForm(forms.ModelForm):
-
     doi_id = forms.CharField(
         max_length=64,
         label="DOI",
@@ -455,7 +483,7 @@ class ReferenceForm(forms.ModelForm):
 
         inputs = {
             "legend_text": "Update reference details",
-            "help_text": "Update reference information which was fetched from database or reference upload.",  # noqa
+            "help_text": "Update reference information which was fetched from database or reference upload.",
             "cancel_url": self.instance.get_absolute_url(),
         }
 
@@ -508,29 +536,16 @@ class ReferenceForm(forms.ModelForm):
         return instance
 
 
-class ReferenceFilterTagForm(forms.ModelForm):
-    class Meta:
-        model = models.ReferenceFilterTag
-        fields = "__all__"
-
-
-class TagReferenceForm(forms.ModelForm):
-    class Meta:
-        model = models.Reference
-        fields = ("tags",)
-
-
 class TagsCopyForm(forms.Form):
-
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
     confirmation = ConfirmationField()
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("assessment", None)
+        self.assessment = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
             user, exclusion_id=self.assessment.id
         )
 
@@ -543,51 +558,84 @@ class TagsCopyForm(forms.Form):
 
 
 class ReferenceExcelUploadForm(forms.Form):
-
     excel_file = forms.FileField(
         required=True,
-        help_text="Upload an Excel file which contains at least two columns: "
-        'a "HAWC ID" column for the reference identifier, and a '
-        '"Full text URL" column which contains the URL for the '
-        "full text.",
+        help_text='Upload an Excel file with two columns: a "HAWC ID" column for the HAWC reference ID, and "Full text URL" column which contains a full text URL.',
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
         inputs = {
-            "legend_text": "Upload full-text URLs",
-            "help_text": "Using an Excel file, upload full-text URLs for multiple references",
+            "legend_text": "Upload full text URLs",
+            "help_text": "Using an Excel file, upload full text URLs for multiple references",
             "cancel_url": reverse_lazy("lit:overview", args=[self.assessment.id]),
         }
         helper = BaseFormHelper(self, **inputs)
         return helper
 
+    EXCEL_FORMAT_ERROR = 'Invalid Excel format. The first worksheet in the workbook must contain two columns- "HAWC ID" and "Full text URL", case sensitive.'
+
     def clean_excel_file(self):
         fn = self.cleaned_data["excel_file"]
-        if fn.name[-5:] not in [".xlsx", ".xlsm"] and fn.name[-4:] not in [".xls"]:
-            raise forms.ValidationError(
-                "Must be an Excel file with an " "xlsx, xlsm, or xls file extension."
-            )
 
+        # check extension
+        if fn.name[-5:] != ".xlsx":
+            raise forms.ValidationError("Must be an Excel file with an xlsx extension.")
+
+        # check parsing
         try:
             df = pd.read_excel(fn.file)
-            df = df[["HAWC ID", "Full text URL"]]
-            df["Full text URL"].fillna("", inplace=True)
-            assert df["HAWC ID"].dtype == np.int64
-            assert df["Full text URL"].dtype == np.object0
-            self.cleaned_data["df"] = df
         except Exception as e:
             logger.warning(e)
-            raise forms.ValidationError(
-                "Invalid Excel format. The first worksheet in the workbook "
-                'must contain at least two columns- "HAWC ID", and '
-                '"Full text URL", case sensitive.'
-            )
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+
+        # check column names
+        if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+
+        try:
+            hawc_ids = df["HAWC ID"].astype(int).tolist()
+        except pd.errors.IntCastingNaNError:
+            raise forms.ValidationError("HAWC IDs must be integers.")
+
+        # check valid HAWC IDs
+        qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)
+        if unmatched := (set(hawc_ids) - set(qs.values_list("id", flat=True))):
+            raise forms.ValidationError(f"Invalid HAWC IDs: {list(unmatched)}")
+
+        # check valid URLs
+        url_errors = []
+        validator = URLValidator()
+        for _, (id, url) in df.iterrows():
+            try:
+                validator(url)
+            except forms.ValidationError:
+                url_errors.append(f"{url} [{id}]")
+        if len(url_errors) > 0:
+            raise forms.ValidationError(f"Invalid URLs: {', '.join(url_errors)}")
+
+        self.cleaned_data.update(df=df, qs=qs)
         return fn
+
+    def save(self):
+        df = self.cleaned_data["df"]
+        qs = self.cleaned_data["qs"]
+        qs_items = {el.id: el for el in qs}
+        updates: list[models.Reference] = []
+        for _, (id, url) in df.iterrows():
+            ref = qs_items[id]
+            ref.full_text_url = url
+            updates.append(ref)
+        logger.info(
+            f"Bulk updated {len(updates)} full text URLs for references in assessment {self.assessment.id}"
+        )
+        if updates:
+            models.Reference.objects.bulk_update(updates, ["full_text_url"])
 
 
 class BulkReferenceStudyExtractForm(forms.Form):
@@ -596,12 +644,7 @@ class BulkReferenceStudyExtractForm(forms.Form):
     )
     study_type = forms.TypedMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
-        choices=[
-            ("bioassay", "Animal bioassay"),
-            ("in_vitro", "In vitro"),
-            ("epi", "Epidemiology"),
-            ("epi_meta", "Epidemiology meta-analysis"),
-        ],
+        choices=StudyTypeChoices.choices,
     )
 
     def clean_references(self):
@@ -615,13 +658,14 @@ class BulkReferenceStudyExtractForm(forms.Form):
         return data
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance", None)
         self.assessment = kwargs.pop("assessment")
         self.reference_qs = kwargs.pop("reference_qs")
         super().__init__(*args, **kwargs)
         self.fields["references"].queryset = self.reference_qs
 
     @transaction.atomic
-    def bulk_create_studies(self):
+    def save(self):
         references = self.cleaned_data["references"]
         study_type = self.cleaned_data["study_type"]
         for reference in references:

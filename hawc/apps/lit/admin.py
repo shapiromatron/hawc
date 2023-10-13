@@ -8,20 +8,19 @@ from . import forms, models
 @admin.register(models.LiteratureAssessment)
 class LiteratureAssessmentAdmin(admin.ModelAdmin):
     form = forms.LiteratureAssessmentForm
-    readonly_fields = ("assessment", "topic_tsne_refresh_requested", "topic_tsne_last_refresh")
+    readonly_fields = ("assessment",)
     list_display = (
-        "assessment",
+        "assessment_id",
+        "conflict_resolution",
         "extraction_tag",
-        "topic_tsne_data",
-        "topic_tsne_refresh_requested",
-        "topic_tsne_last_refresh",
     )
-    list_select_related = ("assessment", "extraction_tag")
+    list_filter = ("conflict_resolution",)
+    list_select_related = ("extraction_tag",)
 
 
 @admin.register(models.ReferenceFilterTag)
 class ReferenceFilterTagAdmin(TreeAdmin):
-    pass
+    readonly_fields = ("path", "depth", "numchild")
 
 
 @admin.register(models.Search)
@@ -91,3 +90,12 @@ class ReferenceAdmin(admin.ModelAdmin):
     list_filter = ("year", ("assessment", admin.RelatedOnlyFieldListFilter))
     raw_id_fields = ("searches", "identifiers")
     search_fields = ("title", "authors", "year")
+
+
+@admin.register(models.UserReferenceTag)
+class UserReferenceTagAdmin(admin.ModelAdmin):
+    raw_id_fields = ("reference",)
+    list_display = ("id", "user", "reference", "created", "last_updated")
+    list_filter = ("last_updated",)
+    list_select_related = ("user", "reference")
+    readonly_fields = ("created", "last_updated")

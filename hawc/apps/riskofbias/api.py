@@ -1,7 +1,6 @@
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -10,24 +9,21 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
-    AssessmentViewset,
-    DisabledPagination,
-    InAssessmentFilter,
-    get_assessment_id_param,
-)
-from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import (
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
-    LegacyAssessmentAdapterMixin,
+    InAssessmentFilter,
+    get_assessment_from_query,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
+from ..assessment.models import Assessment, TimeSpentEditing
+from ..common.api import DisabledPagination
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.validators import validate_exact_ids
-from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
@@ -37,25 +33,25 @@ from .actions.rob_clone import BulkRobCopyAction
 logger = logging.getLogger(__name__)
 
 
-class RiskOfBiasAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
-    parent_model = Assessment
-    model = Study
+class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
+    model = Assessment
+    queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment.id)
-
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        """
+        Get all final risk of bias/study evaluations for an assessment.
+        """
+        self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
             self.get_queryset().none(),
@@ -65,10 +61,17 @@ class RiskOfBiasAssessmentViewset(
 
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="full-export",
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+        renderer_classes=PandasRenderers,
+    )
     def full_export(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        """
+        Get all risk of bias/study evaluations for an assessment, including individual reviews.
+        """
+        self.get_object()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset().none(),
@@ -84,10 +87,11 @@ class RiskOfBiasAssessmentViewset(
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
 
-    @action(detail=True, url_path="settings")
+    @action(
+        detail=True, url_path="settings", action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT
+    )
     def rob_settings(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.get_object()
         ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
         return Response(ser.data)
 
@@ -154,7 +158,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class RiskOfBias(AssessmentEditViewset):
+class RiskOfBias(AssessmentEditViewSet):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
@@ -208,21 +212,23 @@ class RiskOfBias(AssessmentEditViewset):
 
         return super().create(request, *args, **kwargs)
 
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get"], action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def override_options(self, request, pk=None):
         object_ = self.get_object()
         return Response(object_.get_override_options())
 
-    @action(detail=False, methods=("post",))
+    @action(detail=False, methods=("post",), permission_classes=[])
     def create_v2(self, request):
+        # perms checked in serializer
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(data=request.data, **kw)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=("patch",))
+    @action(detail=True, methods=("patch",), permission_classes=[])
     def update_v2(self, request, *args, **kwargs):
+        # perms checked in serializer
         instance = self.get_object()
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(
@@ -233,7 +239,7 @@ class RiskOfBias(AssessmentEditViewset):
         return Response(serializer.data)
 
 
-class AssessmentMetricViewset(AssessmentViewset):
+class AssessmentMetricViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
@@ -243,7 +249,7 @@ class AssessmentMetricViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentMetricScoreViewset(AssessmentViewset):
+class AssessmentMetricScoreViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
@@ -253,16 +259,15 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(AssessmentEditViewset):
+class AssessmentScoreViewSet(AssessmentEditViewSet):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
     list_actions = ["list", "v2"]
 
-    def get_assessment(self, request, *args, **kwargs):
-        assessment_id = get_assessment_id_param(request)
-        return get_object_or_404(self.parent_model, pk=assessment_id)
+    def get_assessment(self, request, *args, **kwargs):  # TODO - remove - is this used?
+        return get_assessment_from_query(request)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("overridden_objects__content_object")
@@ -282,7 +287,7 @@ class AssessmentScoreViewset(AssessmentEditViewset):
         super().perform_destroy(instance)
 
 
-class ScoreCleanupViewset(CleanupFieldsBaseViewSet):
+class ScoreCleanupViewSet(CleanupFieldsBaseViewSet):
     model = models.RiskOfBiasScore
     serializer_class = serializers.RiskOfBiasScoreCleanupSerializer
     assessment_filter_args = "metric__domain__assessment"

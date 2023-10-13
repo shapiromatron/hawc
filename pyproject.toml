@@ -1,24 +1,38 @@
+[project]
+name = "hawc"
+license = {file = "LICENSE"}
+authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
+readme = "README.rst"
+dynamic = ["version", "description"]
+keywords = [
+  "data visualization",
+  "epidemiology",
+  "risk assessment",
+  "systematic review",
+  "toxicology",
+]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.11"
+
+[project.scripts]
+manage = "hawc:manage"
+"manage.py" = "hawc:manage"
+
+[project.urls]
+Documentation = "https://hawc.readthedocs.io/"
+Source = "https://github.com/shapiromatron/hawc"
+
+[build-system]
+requires = ["flit_core ~=3.9"]
+build-backend = "flit_core.buildapi"
+
 [tool.black]
 line-length = 100
-target-version = ['py36', 'py37', 'py38']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | bin
-  | build
-  | compose
-  | data
-  | dist
-  | docs
-  | frontend
-  | public
-  | requirements
-  | scripts/private
-  | venv
-)/
-'''
+target-version = ['py311']
+extend-exclude = '(data|docs|frontend|public|scripts/private)'
 
 [tool.coverage.run]
 omit = [
@@ -32,11 +46,44 @@ omit = [
   "*/bmds/*",
 ]
 
-[tool.isort]
-atomic = true
-include_trailing_comma = true
-known_first_party = ["hawc", "hawc_client"]
-known_third_party = ["bmds"]
-line_length = 100
-multi_line_output = 3
-skip = ["build/", "frontend/", "scripts/private/", "venv/"]
+[tool.flit.sdist]
+include = [
+  "hawc/static/bundles/**/*",
+  "hawc/gitcommit.json",
+  "hawc/webpack-stats.json",
+]
+exclude = [
+  ".github",
+  "bin",
+  "client",
+  "compose",
+  "docs",
+  "frontend",
+  "scripts",
+  "tests",
+  "vendor",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "RUF"]
+ignore = ["E501", "B904", "B007", "S308", "S113", "S314", "S603", "S607", "RUF012"]
+unfixable = ["F401", "F841"]
+
+[tool.ruff.isort]
+known-first-party = ["hawc", "hawc_client"]
+
+[tool.ruff.per-file-ignores]
+"test_*.py" = ["S101", "S106"]
+"scripts/*.py" = ["T201"]
+"**/management/**.py" = ["T201"]
+"**/migrations/**.py" = ["T201"]
+
+[tool.pytest.ini_options]
+addopts = "--ds=hawc.main.settings.unittest --reuse-db --nomigrations"
+testpaths = [
+  "tests/hawc",
+  "tests/integration",
+  "tests/client",
+]

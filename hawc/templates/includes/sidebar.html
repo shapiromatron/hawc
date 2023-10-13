@@ -17,7 +17,7 @@
 
             {% if assessment.enable_project_management and user.is_authenticated %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a>
+                <a class="{{a_class}}" href="{% url 'mgmt:task-dashboard' assessment.pk %}">Management dashboard</a>
             </li>
             {% endif %}
 
@@ -37,13 +37,17 @@
             </li>
             {% endif %}
 
+            {% if assessment.enable_summary_tables %}
             <li class="{{li_class}}">
                 <a class="{{a_class}}" href="{% url 'summary:tables_list' assessment.pk %}">Summary tables</a>
             </li>
+            {% endif %}
 
+            {% if assessment.enable_visuals %}
             <li class="{{li_class}}">
                 <a class="{{a_class}}" href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
             </li>
+            {% endif %}
 
             {% if assessment.enable_summary_text %}
             <li class="{{li_class}}">
@@ -51,9 +55,11 @@
             </li>
             {% endif %}
 
+            {% if assessment.enable_downloads %}
             <li class="{{li_class}}">
                 <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">Downloads</a>
             </li>
+            {% endif %}
         </ul>
     </li>
     {% endif %}

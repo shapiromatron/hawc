@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0014_endpoint_observation_time_text"),
     ]

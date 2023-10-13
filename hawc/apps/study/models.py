@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Optional
 
 import pandas as pd
 from django.apps import apps
@@ -36,6 +35,7 @@ class Study(Reference):
         "epi",
         "epi_meta",
         "in_vitro",
+        "eco",
     }
 
     bioassay = models.BooleanField(
@@ -54,6 +54,9 @@ class Study(Reference):
         help_text="Study contains epidemiology meta-analysis/pooled analysis data",
     )
     in_vitro = models.BooleanField(default=False, help_text="Study contains in-vitro data")
+    eco = models.BooleanField(
+        verbose_name="Ecology", default=False, help_text="Study contains ecology data"
+    )
     short_citation = models.CharField(
         max_length=256,
         help_text="How the study should be identified (i.e. Smith et al. (2012), etc.)",
@@ -111,7 +114,6 @@ class Study(Reference):
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
 
-    COPY_NAME = "studies"
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
@@ -188,7 +190,7 @@ class Study(Reference):
             )
         )
 
-    def get_study_type(self):
+    def get_study_types(self) -> list[str]:
         types = []
         for field in self.STUDY_TYPE_FIELDS:
             if getattr(self, field):
@@ -212,6 +214,7 @@ class Study(Reference):
             "study-epi",
             "study-epi_meta",
             "study-in_vitro",
+            "study-eco",
             "study-study_identifier",
             "study-contact_author",
             "study-ask_author",
@@ -221,7 +224,7 @@ class Study(Reference):
         )
 
     @staticmethod
-    def flat_complete_data_row(ser, identifiers_df: Optional[pd.DataFrame] = None) -> tuple:
+    def flat_complete_data_row(ser, identifiers_df: pd.DataFrame | None = None) -> tuple:
         try:
             ident_row = (
                 identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
@@ -244,6 +247,7 @@ class Study(Reference):
             ser["epi"],
             ser["epi_meta"],
             ser["in_vitro"],
+            ser["eco"],
             ser["study_identifier"],
             ser["contact_author"],
             ser["ask_author"],
@@ -352,6 +356,9 @@ class Study(Reference):
     def toggle_editable(self):
         self.editable = not self.editable
         self.save()
+
+    def data_types(self) -> list[bool]:
+        return [self.bioassay, self.epi, self.epi_meta, self.in_vitro, self.eco]
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):

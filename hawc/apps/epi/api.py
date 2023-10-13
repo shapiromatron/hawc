@@ -8,49 +8,59 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
+from ..assessment.api import (
+    AssessmentEditViewSet,
+    AssessmentLevelPermissions,
+    CleanupFieldsBaseViewSet,
+    EditPermissionsCheckMixin,
+)
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    ReadWriteSerializerMixin,
-)
-from ..common.api.viewsets import EditPermissionsCheckMixin
+from ..common.api import ReadWriteSerializerMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata
 
 
-class EpiAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
-    parent_model = Assessment
-    model = models.Outcome
+class EpiAssessmentViewSet(viewsets.GenericViewSet):
+    model = Assessment
+    queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
+    def get_outcome_queryset(self):
+        perms = self.assessment.user_permissions(self.request.user)
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return models.Outcome.objects.published(self.assessment)
+        return models.Outcome.objects.get_qs(self.assessment)
 
-    @action(detail=True, url_path="export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def export(self, request, pk):
         """
         Retrieve epidemiology data for assessment.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
-        exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
+        self.get_object()
+        exporter = exports.OutcomeComplete(
+            self.get_outcome_queryset(), filename=f"{self.assessment}-epi"
+        )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="study-heatmap",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def study_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the study level (one row per study).
@@ -58,22 +68,25 @@ class EpiAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-epi-study-heatmap-pub-{unpublished}"
         df = cache.get(key)
         if df is None:
             df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
 
-    @action(detail=True, url_path="result-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="result-heatmap",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def result_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the result level (one row per result).
@@ -81,30 +94,28 @@ class EpiAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-epi-result-heatmap-pub-{unpublished}"
         df = cache.get(key)
         if df is None:
             df = models.Result.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
 
 
-class Criteria(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Criteria(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
 
-class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
+class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
@@ -257,7 +268,7 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewset):
+class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study_population"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
@@ -344,21 +355,21 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
         self.process_ct_creation(serializer.instance, False)
 
 
-class Outcome(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Outcome(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment", "study_population"]
     assessment_filter_args = "assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
-class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewset):
+class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["group"]
     assessment_filter_args = "result__outcome__assessment"
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
 
-class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["outcome", "comparison_set"]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
@@ -497,23 +508,27 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
         self.process_adjustment_factor_association(serializer, serializer.instance.id, False)
 
 
-class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study_population", "outcome"]
-    assessment_filter_args = "assessment"  # todo: fix
+    assessment_filter_args = "study_population__study__assessment"
     model = models.ComparisonSet
-    serializer_class = serializers.ComparisonSetSerializer
+
+    def get_serializer_class(self):
+        if self.action in ["list"]:
+            return serializers.ComparisonSetLinkSerializer
+        return serializers.ComparisonSetSerializer
 
 
-class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
+class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["group"]
-    # assessment_filter_args = "group__assessment"
+    assessment_filter_args = "group__comparison_set__study_population__study__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
-class Group(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Group(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["comparison_set"]
-    assessment_filter_args = "assessment"  # todo: fix
+    assessment_filter_args = "comparison_set__study_population__study__assessment"
     model = models.Group
     serializer_class = serializers.GroupSerializer
 
@@ -523,17 +538,26 @@ class OutcomeCleanup(CleanupFieldsBaseViewSet):
     model = models.Outcome
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
+
 
 class StudyPopulationCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.StudyPopulationCleanupFieldsSerializer
     model = models.StudyPopulation
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class ExposureCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ExposureCleanupFieldsSerializer
     model = models.Exposure
     assessment_filter_args = "study_population__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
 
 
 class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

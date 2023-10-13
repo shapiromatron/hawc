@@ -1,15 +1,22 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load add_class %}
-{% load get_at_index %}
-{% load crispy_forms_tags %}
-
 {% block content %}
-    <h2>{{object}}&nbsp;{% if object.final %}[final]{% else %}[individual review]{% endif %}</h2>
-    {% if object.final and not object.study_reviews_complete %}
-        <h4 class="alert alert-danger">All other {{assessment.get_rob_name_display|lower}} reviews for
-            {{object.study}} must be complete in order to complete the final review.
-        </h4>
+    <div class="d-flex">
+        <h2>{{object}}&nbsp;{% if object.final %}[final]{% else %}[individual review]{% endif %}</h2>
+        {% actions %}
+            <a class="dropdown-item" data-toggle="collapse" href="#robInstructions" role="button" aria-expanded="false" aria-controls="robInstructions">Toggle instructions</a>
+        {% endactions %}
+    </div>
+    <div class="collapse" id="robInstructions">{{assessment.rob_settings.help_text|safe}}</div>
+    {% if not object.study.get_study_types %}
+        {% alert warning %}
+        This study currently has no type(s) selected. If you'd like to perform study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
+        {% endalert %}
+    {% elif object.final and not object.study_reviews_complete %}
+        {% alert danger %}
+        All other {{assessment.get_rob_name_display|lower}} reviews for this study must be complete
+        in order to complete the final review.
+        {% endalert %}
     {% else %}
         <div id='main'></div>
     {% endif %}

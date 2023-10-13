@@ -22,8 +22,10 @@ from reversion import revisions as reversion
 
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
 from ..common.models import get_private_data_storage
+from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
 from ..vocab.constants import VocabularyNamespace
@@ -90,7 +92,11 @@ class DSSTox(models.Model):
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
     def get_img_url(self) -> str:
-        return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
+        # TODO - always use api-ccte.epa.gov when API key is no longer required
+        if not settings.CCTE_API_KEY:
+            return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
+        else:
+            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}?x-api-key={settings.CCTE_API_KEY}"
 
 
 class Assessment(models.Model):
@@ -144,11 +150,10 @@ class Assessment(models.Model):
         """,
     )
     assessment_objective = models.TextField(
-        help_text="Describe the assessment objective(s), research questions, "
-        "or clarification on the purpose of the assessment.",
+        help_text="Describe the assessment objective(s), research questions, and purpose of this HAWC assessment. If a related peer-reviewed paper or journal article is available describing this work, please add a citation and hyperlink.",
     )
     authors = models.TextField(
-        verbose_name="Assessment authors",
+        verbose_name="Assessment authors/organization",
         help_text="""A publicly visible description of the assessment authors (if the assessment is made public). This could be an organization, a group, or the individual scientists involved.""",
     )
     creator = models.ForeignKey(
@@ -227,11 +232,23 @@ class Assessment(models.Model):
         "available in the HAWC database, using the US EPA's Benchmark "
         "Dose Modeling Software (BMDS).",
     )
+    enable_summary_tables = models.BooleanField(
+        default=True,
+        help_text="Create summary tables of data and/or study evaluations extracted in HAWC, or build custom user defined tables. Show the summary tables link on the assessment sidebar.",
+    )
+    enable_visuals = models.BooleanField(
+        default=True,
+        help_text="Create visualizations of data and/or study evaluations extracted in HAWC, or using data uploaded from a tabular dataset. Show the visuals link on the assessment sidebar.",
+    )
     enable_summary_text = models.BooleanField(
         default=True,
         help_text="Create custom-text to describe methodology and results of the "
         "assessment; insert tables, figures, and visualizations to using "
         '"smart-tags" which link to other data in HAWC.',
+    )
+    enable_downloads = models.BooleanField(
+        default=True,
+        help_text="Show the downloads link on the assessment sidebar.",
     )
     conflicts_of_interest = models.TextField(
         blank=True,
@@ -273,7 +290,8 @@ class Assessment(models.Model):
     epi_version = models.PositiveSmallIntegerField(
         choices=constants.EpiVersion.choices,
         default=constants.EpiVersion.V2,
-        help_text="Data extraction schema used for epidemiology studies",
+        verbose_name="Epidemiology schema version",
+        help_text="Data extraction schema version used for epidemiology studies",
     )
     admin_notes = models.TextField(
         blank=True,
@@ -282,7 +300,6 @@ class Assessment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "assessments"
     BREADCRUMB_PARENT = None
 
     def get_assessment(self):
@@ -294,8 +311,18 @@ class Assessment(models.Model):
     def get_assessment_logs_url(self):
         return reverse("assessment:assessment_logs", args=(self.id,))
 
+    def get_udf_list_url(self):
+        return reverse("udf:binding-list", args=(self.id,))
+
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
+
+    def get_details_form_url(self):
+        return (
+            reverse("assessment:details-update", args=(self.details.id,))
+            if hasattr(self, "details")
+            else reverse("assessment:details-create", args=(self.id,))
+        )
 
     class Meta:
         ordering = ("-created",)
@@ -314,28 +341,32 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.to_dict(user)
 
-    def user_can_view_object(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
-    def user_can_edit_object(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: AssessmentPermissions = None) -> bool:
+    def user_can_edit_assessment(self, user, perms: AssessmentPermissions | None = None) -> bool:
         if perms is None:
             perms = self.get_permissions()
-        return perms.can_edit_assessment(user)
+        return perms.project_manager_or_higher(user)
 
-    def user_is_part_of_team(self, user) -> bool:
+    def user_is_reviewer_or_higher(self, user) -> bool:
         perms = self.get_permissions()
-        return perms.part_of_team(user)
+        return perms.reviewer_or_higher(user)
 
     def user_is_team_member_or_higher(self, user) -> bool:
         perms = self.get_permissions()
         return perms.team_member_or_higher(user)
+
+    def user_is_project_manager_or_higher(self, user) -> bool:
+        perms = self.get_permissions()
+        return perms.project_manager_or_higher(user)
 
     def get_vocabulary_display(self) -> str:
         # override default method
@@ -418,8 +449,8 @@ class Assessment(models.Model):
             HAWCUser.objects.filter(
                 models.Q(assessment_pms=self.id) | models.Q(assessment_teams=self.id)
             )
-            .order_by("id")
-            .distinct("id")
+            .order_by("last_name", "id")
+            .distinct("id", "last_name")
         )
 
     def get_communications(self) -> str:
@@ -427,6 +458,260 @@ class Assessment(models.Model):
 
     def set_communications(self, text: str):
         Communication.set_message(self, text)
+
+    def _has_data(self, app: str, model: str, filter: str = "study__assessment") -> bool:
+        """Check if associated model has any data for this assessment in HAWC
+
+        Args:
+            app (str): the application name
+            model (str): the model name
+            filter (str): the filter to apply to check for status
+
+        Returns:
+            bool: True if data exists, False otherwise
+        """
+        return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
+
+    @property
+    def has_lit_data(self) -> bool:
+        return self._has_data("lit", "Reference", filter="assessment")
+
+    @property
+    def has_rob_data(self) -> bool:
+        return self._has_data("riskofbias", "RiskOfBias")
+
+    @property
+    def has_animal_data(self) -> bool:
+        return self._has_data("animal", "Experiment")
+
+    @property
+    def has_epi_data(self) -> bool:
+        if self.epi_version == constants.EpiVersion.V1:
+            return self._has_data("epi", "StudyPopulation")
+        elif self.epi_version == constants.EpiVersion.V2:
+            return self._has_data("epiv2", "Design")
+        else:
+            raise ValueError("Unknown epi version")
+
+    @property
+    def has_epimeta_data(self) -> bool:
+        return self._has_data("epimeta", "MetaProtocol")
+
+    @property
+    def has_invitro_data(self) -> bool:
+        return self._has_data("invitro", "IVExperiment")
+
+    @property
+    def has_eco_data(self) -> bool:
+        return self._has_data("eco", "Design")
+
+
+class AssessmentDetail(models.Model):
+    objects = managers.AssessmentDetailManager()
+    assessment = models.OneToOneField(Assessment, models.CASCADE, related_name="details")
+    project_type = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="If part of a product line, the name of the project type",
+    )
+    project_status = models.PositiveSmallIntegerField(
+        choices=constants.Status.choices,
+        default=constants.Status.SCOPING,
+        help_text="High-level project management milestones for this assessment",
+    )
+    project_url = models.URLField(
+        blank=True,
+        validators=[validate_hyperlink],
+        verbose_name="External Project URL",
+        help_text="The URL to an external project page, if one exists",
+    )
+    peer_review_status = models.PositiveSmallIntegerField(
+        verbose_name="Peer Review Status",
+        choices=constants.PeerReviewType.choices,
+        help_text="Define the current status of peer review of this assessment, if any",
+        default=constants.PeerReviewType.NONE,
+    )
+    qa_id = models.CharField(
+        max_length=16,
+        blank=True,
+        verbose_name="Quality Assurance (QA) tracking identifier",
+        help_text="Quality Assurance (QA) tracking identifier, if one exists.",
+    )
+    qa_url = models.URLField(
+        blank=True,
+        verbose_name="Quality Assurance (QA) URL",
+        help_text="Quality Assurance Website, if any",
+        validators=[validate_hyperlink],
+    )
+    report_id = models.CharField(
+        max_length=128,
+        blank=True,
+        verbose_name="Report identifier",
+        help_text="A external report number or identifier (e.g., a DOI, publication number)",
+    )
+    report_url = models.URLField(
+        blank=True,
+        validators=[validate_hyperlink],
+        verbose_name="External Document URL",
+        help_text="The URL to the final document or publication, if one exists",
+    )
+    extra = models.JSONField(
+        default=dict,
+        validators=[FlatJSON.validate],
+        blank=True,
+        verbose_name="Additional fields",
+        help_text="Any additional custom fields; " + FlatJSON.HELP_TEXT,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
+
+    def __str__(self):
+        return f"{self.assessment}: Details"
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("assessment:detail", args=(self.assessment_id,))
+
+
+class AssessmentValue(models.Model):
+    objects = managers.AssessmentValueManager()
+
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
+    evaluation_type = models.PositiveSmallIntegerField(
+        choices=constants.EvaluationType.choices,
+        default=constants.EvaluationType.CANCER,
+        help_text="Substance evaluation conducted",
+    )
+    system = models.CharField(
+        verbose_name="System or health effect basis",
+        max_length=128,
+        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
+    )
+    value_type = models.PositiveSmallIntegerField(
+        choices=constants.ValueType.choices,
+        help_text="Type of derived value",
+    )
+    value = models.FloatField(
+        help_text="The derived value",
+    )
+    value_unit = models.CharField(verbose_name="Value units", max_length=32)
+    adaf = models.BooleanField(
+        verbose_name="Apply ADAF?",
+        default=False,
+        help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
+    )
+    confidence = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="Confidence in the toxicity value",
+    )
+    duration = models.CharField(
+        max_length=128,
+        blank=True,
+        verbose_name="Value duration",
+        help_text="Duration associated with the value (e.g., Chronic, Subchronic)",
+    )
+    basis = models.TextField(
+        blank=True,
+        help_text="Describe the justification for deriving this value. Information should include the endpoint of concern from the principal study (e.g., decreased embryo/fetal survival) with the appropriate references included (Smith et al. 2023)",
+    )
+    pod_type = models.CharField(
+        verbose_name="POD Type",
+        max_length=32,
+        blank=True,
+        help_text="Point of departure type, for example, NOAEL, LOAEL, BMDL (10% extra risk)",
+    )
+    pod_value = models.FloatField(
+        verbose_name="POD Value",
+        blank=True,
+        null=True,
+        help_text="The Point of Departure (POD)",
+    )
+    pod_unit = models.CharField(
+        verbose_name="POD units",
+        max_length=32,
+        blank=True,
+        help_text="Units for the Point of Departure (POD)",
+    )
+    uncertainty = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=constants.UncertaintyChoices.choices,
+        verbose_name="Uncertainty factor",
+        help_text="Composite uncertainty factor applied to POD to derive the final value",
+    )
+    species_studied = models.TextField(
+        blank=True,
+        verbose_name="Species and strain",
+        help_text="Provide information about the animal(s) studied, including species and strain information",
+    )
+    study = models.ForeignKey(
+        "study.Study",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name="Key study",
+        help_text="Link to Key Study in HAWC. If it does not exist or there are multiple studies, leave blank and explain in comments",
+    )
+    evidence = models.TextField(
+        verbose_name="Evidence characterization",
+        blank=True,
+        help_text="Describe the overall characterization of the evidence (e.g., cancer or noncancer descriptors) and the basis for this determination (e.g., based on strong and consistent evidence in animals and humans)",
+    )
+    tumor_type = models.CharField(
+        max_length=128,
+        verbose_name="Tumor/Cancer type",
+        blank=True,
+        help_text="Describe the specific types of cancer found within the specific organ system (e.g., tumor site)",
+    )
+    extrapolation_method = models.TextField(
+        blank=True,
+        help_text="Describe the statistical method(s) used to derive the cancer toxicity values (e.g., Time-to-tumor dose-response model with linear extrapolation from the POD (BMDL10(HED)) associated with 10% extra cancer risk)",
+    )
+    comments = models.TextField(
+        blank=True, help_text="General comments related to the derivation of this value"
+    )
+    extra = models.JSONField(
+        default=dict,
+        blank=True,
+        validators=[FlatJSON.validate],
+        verbose_name="Additional fields",
+        help_text="Any additional custom fields; " + FlatJSON.HELP_TEXT,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
+
+    class Meta:
+        verbose_name_plural = "values"
+
+    @property
+    def show_cancer_fields(self):
+        return self.evaluation_type in [
+            constants.EvaluationType.CANCER,
+            constants.EvaluationType.BOTH,
+        ]
+
+    @property
+    def show_noncancer_fields(self):
+        return self.evaluation_type in [
+            constants.EvaluationType.NONCANCER,
+            constants.EvaluationType.BOTH,
+        ]
+
+    def __str__(self):
+        return f"Values for {self.assessment}"
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("assessment:values-detail", args=[self.pk])
 
 
 class Attachment(models.Model):
@@ -464,6 +749,8 @@ class Attachment(models.Model):
         }
 
     def get_assessment(self):
+        if self.content_object is None:
+            raise AssessmentNotFound()
         return self.content_object.get_assessment()
 
 
@@ -717,7 +1004,7 @@ class Dataset(models.Model):
     def get_new_version_value(self) -> int:
         try:
             return self.get_latest_revision().version + 1
-        except models.ObjectDoesNotExist:
+        except (ValueError, models.ObjectDoesNotExist):
             return 1
 
     def get_latest_df(self) -> pd.DataFrame:
@@ -786,7 +1073,7 @@ class DatasetRevision(models.Model):
             return False
 
     @classmethod
-    def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
+    def try_read_df(cls, data, suffix: str, worksheet_name: str | None = None) -> pd.DataFrame:
         """
         Try to load and return a pandas dataframe.
 
@@ -825,7 +1112,6 @@ class DatasetRevision(models.Model):
 
 
 class Job(models.Model):
-
     JOB_TO_FUNC = {
         constants.JobType.TEST: jobs.test,
     }
@@ -975,21 +1261,6 @@ class Log(models.Model):
         )
 
 
-class Blog(models.Model):
-    subject = models.CharField(max_length=128)
-    content = models.TextField()
-    rendered_content = models.TextField(editable=False)
-    published = models.BooleanField(default=False)
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("-created",)
-
-    def __str__(self) -> str:
-        return self.subject
-
-
 class ContentTypeChoices(models.IntegerChoices):
     HOMEPAGE = 1
     ABOUT = 2
@@ -1045,6 +1316,8 @@ class Content(models.Model):
 
 reversion.register(DSSTox)
 reversion.register(Assessment)
+reversion.register(AssessmentDetail)
+reversion.register(AssessmentValue)
 reversion.register(Attachment)
 reversion.register(EffectTag)
 reversion.register(Species)
@@ -1054,5 +1327,4 @@ reversion.register(Dataset)
 reversion.register(DatasetRevision)
 reversion.register(Job)
 reversion.register(Communication)
-reversion.register(Blog)
 reversion.register(Content)

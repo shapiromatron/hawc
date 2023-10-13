@@ -24,7 +24,6 @@ def check_sort(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0020_job"),
     ]

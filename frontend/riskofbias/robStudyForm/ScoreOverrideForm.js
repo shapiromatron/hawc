@@ -75,7 +75,7 @@ class ScoreOverrideForm extends Component {
 
         return (
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-lg-4">
                     <OverrideObjectTypeSelector
                         choices={overrideDataTypeChoices}
                         value={overrideDataTypeValue}
@@ -85,7 +85,7 @@ class ScoreOverrideForm extends Component {
                         }}
                     />
                 </div>
-                <div className="col-md-6">
+                <div className="col-lg-8">
                     <OverrideObjectsSelector
                         choices={overrideObjectChoices}
                         value={overrideOptionValues}

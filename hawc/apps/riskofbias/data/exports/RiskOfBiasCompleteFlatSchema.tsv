@@ -1,0 +1,42 @@
+Header	Description
+study-id	HAWC study identifier
+study-hero_id	US EPA HERO reference identifier, if exists
+study-pubmed_id	NIH PubMed identifier, if exists
+study-doi	Digital Object Idientifer, if exists
+study-url	HAWC study URL
+study-short_citation	How the study should be identified (i.e. Smith et al. (2012), etc.)
+study-full_citation	Complete study citation, in desired format.
+study-coi_reported	Was a conflict of interest reported by the study authors?
+study-coi_details	Details related to potential or disclosed conflict(s) of interest.  When available, cut and paste the COI declaration with quotations. Provide details when a COI is inferred.
+study-funding_source	When reported, cut and paste the funding source information with quotations, e.g., "The study was sponsored by Hoechst AG and Dow Europe".
+study-bioassay	Study contains animal bioassay data
+study-epi	Study contains epidemiology data
+study-epi_meta	Study contains epidemiology meta-analysis/pooled analysis data
+study-in_vitro	Study contains in-vitro data
+study-eco	Study contains ecology data
+study-study_identifier	Reference descriptor for assessment-tracking purposes (for example, "{Author, year, #EndNoteNumber}")
+study-contact_author	Was the author contacted for clarification of methods, results, or to request additional data?
+study-ask_author	Details on correspondence between data-extractor and author (if author contacted).  Redact confidential or personal information (e.g., email address).
+study-summary	This field is often left blank, but used to add comments on data extraction or other general comments. This field is displayed if an assessment is made public.
+study-editable	Project-managers and team-members are allowed to edit this study.
+study-published	If True, this study, study evaluation, and extraction details may be visible to reviewers and/or the public (if assessment-permissions allow this level of visibility). Team-members and project-management can view both published and unpublished studies.
+rob-id	Study evaluation/risk of bias review unique identifier
+rob-active	If the study evaluation/risk of bias is currently considered active
+rob-final	If the study evaluation/risk of bias is a final evaluation or an individual evaluation
+rob-author_id	The study evaluation/risk of bias author HAWC identifier
+rob-author_name	The study evaluation/risk of bias author name
+rob-created	The date the review was created
+rob-last_updated	The date the review was last updated
+rob-domain_id	Study evaluation/risk of bias domain identifier
+rob-domain_name	Study evaluation/risk of bias domain name
+rob-domain_description	Study evaluation/risk of bias domain description
+rob-metric_id	Study evaluation/risk of bias metric identifier
+rob-metric_name	Study evaluation/risk of bias metric name
+rob-metric_description	Study evaluation/risk of bias metric description
+rob-score_id	Study evaluation/risk of bias metric response id for a unique study/metric pair
+rob-score_is_default	If multiple responses exist for a study/metric pair, should this one be treated as the default response
+rob-score_label	If multiple responses exist for a study/metric pair, a label for this response
+rob-score_score	If a qualitative judgment is made, an integer representation of the judgment value
+rob-score_description	If a qualitative judgment is made, a text label of the judgment value
+rob-score_bias_direction	Expected direction of bias, if used. 0= (not entered/unknown), 1=⬆ (away from null), 2=⬇ (towards null)
+rob-score_notes	Reviewer notes to describe the study evaluation for a study/metric pair

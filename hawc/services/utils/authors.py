@@ -35,8 +35,8 @@ def get_author_short_text(authors: list[str]) -> str:
     elif n_authors == 1:
         return str(authors[0])
     elif n_authors == 2:
-        return "{0} and {1}".format(*authors)
+        return "{} and {}".format(*authors)
     elif n_authors == 3:
-        return "{0}, {1}, and {2}".format(*authors)
+        return "{}, {}, and {}".format(*authors)
     else:  # >3 authors
         return f"{authors[0]} et al."

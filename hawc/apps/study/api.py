@@ -1,33 +1,32 @@
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
-    DisabledPagination,
+    CleanupFieldsBaseViewSet,
     InAssessmentFilter,
-    get_assessment_id_param,
+    get_assessment_from_query,
 )
-from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
-from ..common.helper import re_digits
+from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.api import DisabledPagination
+from ..common.helper import FlatExport, re_digits
+from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
+from ..lit.models import Reference
 from ..riskofbias.serializers import RiskOfBiasSerializer
-from . import models, serializers
+from . import filterset, models, serializers
 
 
-class Study(
-    mixins.CreateModelMixin,
-    viewsets.ReadOnlyModelViewSet,
-):
+class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     list_actions = ["list", "rob_scores"]
     lookup_value_regex = re_digits
@@ -51,13 +50,12 @@ class Study(
                 "riskofbiases__scores__overridden_objects__content_object",
             ).select_related("assessment")
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_scores(self, request):
-        assessment_id = get_assessment_id_param(request)
-        scores = self.model.objects.rob_scores(assessment_id)
+        scores = self.model.objects.rob_scores(self.assessment.pk)
         return Response(scores)
 
-    @action(detail=False)
+    @action(detail=False, permission_classes=[])
     def types(self, request):
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
@@ -76,18 +74,22 @@ class Study(
             self.request.user.id,
         )
 
-    @action(detail=True, url_path="all-rob")
+    @action(
+        detail=True,
+        url_path="all-rob",
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    )
     def rob(self, request, pk: int):
         study = self.get_object()
-        if not self.assessment.user_is_team_member_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
         serializer = RiskOfBiasSerializer(study.get_active_robs(), many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=("post",), url_path="create-from-identifier")
+    @action(
+        detail=False, methods=("post",), url_path="create-from-identifier", permission_classes=[]
+    )
     def create_from_identifier(self, request):
         # check permissions
-        assessment = get_object_or_404(Assessment, id=request.data.get("assessment_id", -1))
+        assessment = get_assessment_from_query(request)
         if not assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
         # validate and create
@@ -95,6 +97,21 @@ class Study(
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=False,
+        renderer_classes=PandasRenderers,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def chemical_search(self, request):
+        """Global search by chemical, across all studies."""
+        fs = filterset.StudyByChemicalFilterSet(request.GET, queryset=self.get_queryset())
+        if not (query := fs.data.get("query")):
+            raise ValidationError({"query": "No query parameters provided"})
+        return FlatExport.api_response(
+            df=Reference.objects.filter(id__in=fs.qs.values_list("id")).global_df(),
+            filename=f"global-study-data-{query}",
+        )
 
 
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):

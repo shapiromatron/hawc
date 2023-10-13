@@ -1,0 +1,17 @@
+<tr hx-target="this" hx-swap="outerHTML" id="result-{{object.id}}">
+    <td>{{object.name}}</td>
+    <td>{{object.cause.name}}</td>
+    <td>{{object.effect.name }}</td>
+    <td>{{object.get_relationship_direction_display}}</td>
+    <td>
+        {% split object.modifying_factors as factors %}
+        {% for factor in factors %}
+        <span class="badge badge-secondary">{{factor}}</span>
+        {% endfor %}
+    </td>
+    <td>{{object.derived_value }}</td>
+    {% include "eco/fragments/_object_row.html" with model="result" %}
+</tr>
+{% if action == 'create' or action == 'clone' %}
+<tr style="display: none" id="result-empty-row" hx-target="this"></tr>
+{% endif %}

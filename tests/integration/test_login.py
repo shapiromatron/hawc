@@ -13,8 +13,8 @@ class TestLogin(PlaywrightTestCase):
         page = self.page
         page.goto(self.live_server_url)
 
-        expect(page.locator("a >> text=Login")).to_be_visible()
-        page.locator("a >> text=Login").click()
+        expect(page.locator(".navbar a >> text=Login")).to_be_visible()
+        page.locator(".navbar a >> text=Login").click()
         expect(page).to_have_url(re.compile(r"/user/login/"))
 
         # invalid password check

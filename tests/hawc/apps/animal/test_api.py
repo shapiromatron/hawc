@@ -15,9 +15,8 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestAssessmentViewset:
+class TestAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
-
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
@@ -32,6 +31,8 @@ class TestAssessmentViewset:
         assert data == json.loads(path.read_text())
 
     def test_permissions(self, db_keys):
+        admin_client = APIClient()
+        assert admin_client.login(username="admin@hawcproject.org", password="pw") is True
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
@@ -39,6 +40,7 @@ class TestAssessmentViewset:
         urls = [
             reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_working,)),
+            reverse("animal:api:assessment-study-heatmap", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_working,)),
             reverse(
                 "animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_working,)
@@ -48,6 +50,7 @@ class TestAssessmentViewset:
         for url in urls:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
+            assert admin_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-full-export.json"
@@ -98,7 +101,6 @@ class TestAssessmentViewset:
         self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
-
         # published
         fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
         url = (
@@ -190,13 +192,13 @@ class TestExperimentCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "type"}.issubset((response.data.keys()))
+        assert {"name", "type"}.issubset(response.data.keys())
 
         # payload needs to include name and type
         data = {"study_id": db_keys.study_working}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "type"}.issubset((response.data.keys()))
+        assert {"name", "type"}.issubset(response.data.keys())
 
         # payload needs study id
         data = {
@@ -273,6 +275,11 @@ class TestExperimentCreateApi:
         assert len(models.Experiment.objects.filter(name="Experiment name")) == 2
         check_details_of_last_log_entry(response.data["id"], "Created animal.experiment")
 
+        # queryset
+        url = url + f"?assessment_id={db_keys.assessment_working}"
+        resp = client.get(url)
+        assert resp.status_code == 200
+
 
 @pytest.mark.django_db
 class TestAnimalGroupCreateApi:
@@ -307,13 +314,13 @@ class TestAnimalGroupCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "species", "strain", "sex"}.issubset((response.data.keys()))
+        assert {"name", "species", "strain", "sex"}.issubset(response.data.keys())
 
         # payload needs to include name, species, strain, and sex
         data = {"experiment_id": 1}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name", "species", "strain", "sex"}.issubset((response.data.keys()))
+        assert {"name", "species", "strain", "sex"}.issubset(response.data.keys())
 
         # payload needs experiment id
         data = {"name": "Animal group name", "species": 1, "strain": 1, "sex": "M"}
@@ -490,13 +497,13 @@ class TestEndpointCreateApi:
         data = {}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name"}.issubset((response.data.keys()))
+        assert {"name"}.issubset(response.data.keys())
 
         # payload needs to include name
         data = {"animal_group_id": 1}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert {"name"}.issubset((response.data.keys()))
+        assert {"name"}.issubset(response.data.keys())
 
         # payload needs animal group id
         data = {"name": "Endpoint name"}
@@ -675,6 +682,45 @@ class TestEndpointApi:
         assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 200
+
+    def test_endpoint_effects(self, db_keys):
+        url = (
+            reverse("animal:api:endpoint-effects") + f"?assessment_id={db_keys.assessment_working}"
+        )
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        assert client.get(url).status_code == 200
+
+    def test_endpoint_rob_filter(self, db_keys):
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        # general
+        url = (
+            reverse("animal:api:endpoint-rob-filter")
+            + f"?assessment_id={db_keys.assessment_working}&effect=A&study_id=1"
+        )
+        assert client.get(url).status_code == 200
+
+
+@pytest.mark.django_db
+class TestCleanupFieldsView:
+    def test_permissions(self, db_keys):
+        client = APIClient()
+        anon_client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        urls = [
+            f"/ani/api/experiment-cleanup/?assessment_id={db_keys.assessment_working}",
+            f"/ani/api/animal_group-cleanup/?assessment_id={db_keys.assessment_working}",
+            f"/ani/api/endpoint-cleanup/?assessment_id={db_keys.assessment_working}",
+            f"/ani/api/dosingregime-cleanup/?assessment_id={db_keys.assessment_working}",
+        ]
+
+        for url in urls:
+            resp = client.get(url)
+            assert resp.status_code == 200
+            assert anon_client.get(url).status_code == 403
 
 
 @pytest.mark.django_db

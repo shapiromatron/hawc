@@ -2,6 +2,7 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import DataTableWrapper from "shared/components/DataTableWrapper";
 
 import TableCell from "./TableCell";
 import TableCellEdit from "./TableCellEdit";
@@ -10,9 +11,20 @@ import TableCellEdit from "./TableCellEdit";
 class Table extends Component {
     render() {
         const {store, forceReadOnly} = this.props,
+            {editMode} = store,
+            {interactive} = store.settings,
+            useDt = interactive && !(editMode && !forceReadOnly);
+        return useDt ? (
+            <DataTableWrapper>{this.renderTable()}</DataTableWrapper>
+        ) : (
+            this.renderTable()
+        );
+    }
+    renderTable() {
+        const {store, forceReadOnly} = this.props,
             {bodyRowIndexes, headerRowIndexes, cellsByRow} = store,
-            Cell = store.editMode && !forceReadOnly ? TableCellEdit : TableCell;
-
+            editMode = store.editMode && !forceReadOnly,
+            Cell = editMode ? TableCellEdit : TableCell;
         return (
             <table className="summaryTable table table-bordered table-sm">
                 <colgroup>

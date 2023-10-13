@@ -9,70 +9,76 @@ from rest_framework.response import Response
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
-    AssessmentViewset,
-    DoseUnitsViewset,
-    get_assessment_from_query,
-    get_assessment_id_param,
-)
-from ..assessment.models import Assessment
-from ..common.api import (
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    user_can_edit_object,
+    DoseUnitsViewSet,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
-from ..common.views import AssessmentPermissionsMixin, create_object_log
+from ..common.views import create_object_log
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
 
 
-class AnimalAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
-    parent_model = Assessment
-    model = models.Endpoint
+class AnimalAssessmentViewSet(viewsets.GenericViewSet):
+    model = models.Assessment
+    queryset = models.Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
-    def get_queryset(self):
-        perms = self.get_obj_perms()
+    def get_endpoint_queryset(self):
+        perms = self.assessment.user_permissions(self.request.user)
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return models.Endpoint.objects.published(self.assessment)
+        return models.Endpoint.objects.get_qs(self.assessment)
 
-    @action(detail=True, url_path="full-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="full-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_queryset(),
+            self.get_endpoint_queryset(),
             filename=f"{self.assessment}-bioassay-complete",
             assessment=self.assessment,
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="endpoint-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="endpoint-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         exporter = exports.EndpointSummary(
-            self.get_queryset(),
+            self.get_endpoint_queryset(),
             filename=f"{self.assessment}-bioassay-summary",
             assessment=self.assessment,
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="study-heatmap",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def study_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the study-level (one row per study).
@@ -80,22 +86,25 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
         df = cache.get(key)
         if df is None:
             df = models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
 
-    @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="endpoint-heatmap",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoint_heatmap(self, request, pk):
         """
         Return heatmap data for assessment, at the endpoint level (one row per endpoint).
@@ -103,22 +112,25 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
         df = cache.get(key)
         if df is None:
             df = models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
 
-    @action(detail=True, url_path="endpoint-doses-heatmap", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="endpoint-doses-heatmap",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoint_doses_heatmap(self, request, pk):
         """
         Return heatmap data with doses for assessment, at the {endpoint + dose unit} level.
@@ -126,29 +138,32 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
         df = cache.get(key)
         if df is None:
             df = models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(
+            df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}"
+        )
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def endpoints(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_view()
+        self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
         df = cache.get(key)
@@ -157,22 +172,25 @@ class AnimalAssessmentViewset(
                 self.assessment, published_only=not unpublished
             )
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
 
-    @action(detail=True, url_path="ehv-check", renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        url_path="ehv-check",
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+        renderer_classes=PandasRenderers,
+    )
     def ehv_check(self, request, pk):
-        self.set_legacy_attr(pk)
-        self.permission_check_user_can_edit()
+        _ = self.get_object()
         df = term_check(pk)
-        export = FlatExport(df, f"term-report-{pk}")
-        return Response(export)
+        return FlatExport.api_response(df, f"term-report-{pk}")
 
 
-class Experiment(mixins.CreateModelMixin, AssessmentViewset):
+class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
+    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return (
@@ -184,8 +202,6 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
 
     @transaction.atomic
     def perform_create(self, serializer):
-        # permissions check
-        user_can_edit_object(serializer.study, self.request.user, raise_exception=True)
         super().perform_create(serializer)
         create_object_log(
             "Created",
@@ -195,10 +211,11 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
         )
 
 
-class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
+class AnimalGroup(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
+    permission_classes = (AssessmentLevelPermissions,)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -237,11 +254,12 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
+class Endpoint(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
-    list_actions = ["list", "effects", "rob_filter"]
+    list_actions = ["list", "effects", "rob_filter", "update_terms"]
+    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()
@@ -256,19 +274,16 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
             self.request.user.id,
         )
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def effects(self, request):
-        assessment_id = get_assessment_id_param(self.request)
-        effects = models.Endpoint.objects.get_effects(assessment_id)
+        effects = models.Endpoint.objects.get_effects(self.assessment.id)
         return Response(effects)
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def rob_filter(self, request):
-
         params = request.query_params
-        assessment_id = get_assessment_id_param(request)
 
-        query = Q(assessment_id=assessment_id)
+        query = Q(assessment=self.assessment)
 
         effects = params.get("effect[]")
         if effects:
@@ -286,16 +301,14 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=("post",))
+    @action(
+        detail=False, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
     def update_terms(self, request):
-        # check assessment level permissions
-        assessment = get_assessment_from_query(request)
-        if not assessment.user_can_edit_object(request.user):
-            self.permission_denied(request)
         # update endpoint terms (all other validation done in manager)
-        updated_endpoints = self.model.objects.update_terms(request.data, assessment)
+        updated_endpoints = self.model.objects.update_terms(request.data, self.assessment)
         serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
-        assessment.bust_cache()
+        self.assessment.bust_cache()
         return Response(serializer.data)
 
 
@@ -304,11 +317,17 @@ class ExperimentCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Experiment
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class AnimalGroupCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.AnimalGroupCleanupFieldsSerializer
     model = models.AnimalGroup
     assessment_filter_args = "experiment__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("experiment__study")
 
 
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
@@ -316,14 +335,20 @@ class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Endpoint
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("animal_group__experiment__study")
+
 
 class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.DosingRegimeCleanupFieldsSerializer
     model = models.DosingRegime
     assessment_filter_args = "dosed_animals__experiment__study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("dosed_animals__experiment__study")
 
-class DoseUnits(DoseUnitsViewset):
+
+class DoseUnits(DoseUnitsViewSet):
     pass
 
 

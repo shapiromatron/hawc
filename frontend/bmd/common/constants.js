@@ -1,5 +1,6 @@
 import _ from "lodash";
-import {gammaCDF, normalCDF} from "shared/utils/math";
+
+import {gammaCDF, normalCDF} from "/shared/utils/math";
 
 const BmrHeaderMap = {
         Extra: "%",

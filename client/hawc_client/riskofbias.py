@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pandas as pd
 
 from .client import BaseClient
@@ -11,7 +9,7 @@ class RiskOfBiasClient(BaseClient):
     Client class for risk of bias requests.
     """
 
-    def data(self, assessment_id: int) -> pd.DataFrame:
+    def export(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves risk of bias data for the given assessment.
         This includes only final reviews.
@@ -26,7 +24,7 @@ class RiskOfBiasClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def full_data(self, assessment_id: int) -> pd.DataFrame:
+    def full_export(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves full risk of bias data for the given assessment.
         This includes user-level reviews.
@@ -89,7 +87,7 @@ class RiskOfBiasClient(BaseClient):
         src_dst_metric_ids: list[tuple[int, int]],
         copy_mode: int,
         author_mode: int,
-        dst_author_id: Optional[int] = None,
+        dst_author_id: int | None = None,
     ):
         """
         Copy final scores from a subset of studies from one assessment as the scores in a

@@ -1,10 +1,11 @@
 import logging
+import random
 import re
 import xml.etree.ElementTree as ET
 from itertools import chain
-from typing import Optional
 
 import requests
+from django.conf import settings as hawc_settings
 
 from ..utils.authors import get_author_short_text, normalize_author
 
@@ -46,14 +47,18 @@ class PubMedSearch(PubMedUtility):
     default_settings = dict(retmax=5000, db="pubmed")
 
     def __init__(self, term, **kwargs):
-        self.id_count = None
+        self.id_count: int | None = None
         self.settings = PubMedSearch.default_settings.copy()
         self._register_instance()
         self.settings["term"] = term
         for k, v in kwargs.items():
             self.settings[k] = v
 
-    def _get_id_count(self):
+    def _get_id_count(self) -> int:
+        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            self.id_count = 1
+            return self.id_count
+
         data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
         r = requests.post(PubMedSearch.base_url, data=data)
         if r.status_code == 200:
@@ -69,6 +74,10 @@ class PubMedSearch(PubMedUtility):
         return [int(id.text) for id in ET.fromstring(tree).find("IdList").findall("Id")]
 
     def _fetch_ids(self):
+        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            self.ids = [random.randrange(100_000_000, 999_9999_999)]  # noqa: S311
+            return
+
         ids = []
         data = self.settings.copy()
         if self.id_count is None:
@@ -115,11 +124,31 @@ class PubMedFetch(PubMedUtility):
         for k, v in kwargs.items():
             self.settings[k] = v
 
+    def fake(self) -> list[dict]:
+        return [
+            {
+                "xml": "",
+                "PMID": id,
+                "title": "Reference Title",
+                "abstract": "",
+                "citation": "citation",
+                "year": 2021,
+                "doi": "10.",
+                "authors": ["author 1", "author 2"],
+                "authors_short": "Author 1 and Author 2",
+            }
+            for id in self.ids
+        ]
+
     def get_content(self) -> list[dict]:
         data = self.settings.copy()
         rng = list(range(0, len(self.ids), self.settings["retmax"]))
         self.request_count = len(rng)
         for retstart in rng:
+            if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+                self.content = self.fake()
+                break
+
             data["id"] = self.ids[retstart : retstart + self.settings["retmax"]]
             resp = requests.post(PubMedFetch.base_url, data=data)
             if resp.status_code == 200:
@@ -138,7 +167,6 @@ class PubMedFetch(PubMedUtility):
 
 
 class PubMedParser:
-
     ARTICLE = 0
     BOOK = 1
 
@@ -149,7 +177,7 @@ class PubMedParser:
     ABSTRACT_BOOK_SEARCH_STRING = "BookDocument/Abstract/AbstractText"
 
     @classmethod
-    def parse(cls, tree: ET.Element) -> Optional[dict]:
+    def parse(cls, tree: ET.Element) -> dict | None:
         if tree.tag == "PubmedArticle":
             return cls._parse_article(tree)
         elif tree.tag == "PubmedBookArticle":
@@ -232,7 +260,7 @@ class PubMedParser:
     @classmethod
     def _authors_info(cls, tree: ET.Element, dtype) -> dict:
         names = []
-
+        auths = []
         if dtype == cls.ARTICLE:
             auths = tree.findall("MedlineCitation/Article/AuthorList/Author")
         elif dtype == cls.BOOK:
@@ -240,19 +268,20 @@ class PubMedParser:
                 tree.findall('BookDocument/Book/AuthorList[@Type="authors"]/Author'),
                 tree.findall('BookDocument/AuthorList[@Type="authors"]/Author'),
             )
+        else:
+            logger.error(f"Unknown dtype: {dtype}")
 
         for auth in auths:
-            try:
-                names.append(
-                    normalize_author(f"{auth.find('LastName').text} {auth.find('Initials').text}")
-                )
-            except Exception:
-                pass
-
-            try:
-                names.append(auth.find("CollectiveName").text)
-            except Exception:
-                pass
+            last = auth.find("LastName")
+            collective = auth.find("CollectiveName")
+            if last is not None:
+                initials = cls._try_single_find(auth, "Initials")
+                names.append(normalize_author(f"{last.text} {initials}".strip()))
+            elif collective is not None:
+                names.append(collective.text)
+            else:
+                text = ET.tostring(auth, encoding="unicode")
+                logger.error(f"Error parsing authors: {text}")
 
         return {"authors": names, "authors_short": get_author_short_text(names)}
 
@@ -280,7 +309,7 @@ class PubMedParser:
         return f"{title}({year}). {location}: {publisher}."
 
     @classmethod
-    def _get_year(cls, tree: ET.Element, dtype) -> Optional[int]:
+    def _get_year(cls, tree: ET.Element, dtype) -> int | None:
         if dtype == cls.ARTICLE:
             year = tree.find("MedlineCitation/Article/Journal/JournalIssue/PubDate/Year")
             if year is not None:
@@ -288,7 +317,7 @@ class PubMedParser:
 
             medline_date = tree.find(
                 "MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate"
-            )  # noqa
+            )
             if medline_date is not None:
                 year = re.search(r"(\d+){4}", medline_date.text)
                 if year is not None:
@@ -307,7 +336,7 @@ class PubMedParser:
             return None
 
     @classmethod
-    def _get_doi(cls, tree: ET.Element, search_string) -> Optional[str]:
+    def _get_doi(cls, tree: ET.Element, search_string) -> str | None:
         doi = tree.find(search_string)
         if doi is not None:
             return doi.text.lower()

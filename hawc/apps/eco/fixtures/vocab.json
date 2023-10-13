@@ -103,11 +103,11 @@
 {"pk": 101, "model": "eco.Vocab", "fields": {"category": 10, "value": "Chi square"}},
 {"pk": 102, "model": "eco.Vocab", "fields": {"category": 10, "value": "Not applicable"}},
 
-{"pk": 103,"model": "eco.Vocab","fields": {"category": 11, "value": "Temperate"}},
-{"pk": 104,"model": "eco.Vocab","fields": {"category": 11, "value": "Tropical/subtropical"}},
-{"pk": 105,"model": "eco.Vocab","fields": {"category": 11, "value": "Dry"}},
-{"pk": 106,"model": "eco.Vocab","fields": {"category": 11, "value": "Arctic/subarctic"}},
-{"pk": 107,"model": "eco.Vocab","fields": {"category": 11, "value": "Alpine"}},
+{"pk": 103,"model": "eco.Vocab","fields": {"category": 11, "value": "A-Tropical/equatorial"}},
+{"pk": 104,"model": "eco.Vocab","fields": {"category": 11, "value": "B-Arid"}},
+{"pk": 105,"model": "eco.Vocab","fields": {"category": 11, "value": "C-Warm Temperate"}},
+{"pk": 106,"model": "eco.Vocab","fields": {"category": 11, "value": "D-Snow/continental"}},
+{"pk": 107,"model": "eco.Vocab","fields": {"category": 11, "value": "E-Polar"}},
 {"pk": 108,"model": "eco.Vocab","fields": {"category": 11, "value": "Not specified"}},
 {"pk": 109,"model": "eco.Vocab","fields": {"category": 11, "value": "Other"}},
 

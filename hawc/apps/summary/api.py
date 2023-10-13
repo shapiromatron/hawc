@@ -5,17 +5,19 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
-    AssessmentViewset,
-    DisabledPagination,
+    AssessmentViewSet,
+    EditPermissionsCheckMixin,
     InAssessmentFilter,
 )
+from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.api import EditPermissionsCheckMixin
-from ..common.helper import re_digits
+from ..common.api import DisabledPagination
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers, table_serializers
@@ -27,27 +29,30 @@ class UnpublishedFilter(BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
-
         if not hasattr(view, "assessment"):
             self.instance = get_object_or_404(queryset.model, **view.kwargs)
             view.assessment = self.instance.get_assessment()
 
-        if not view.assessment.user_is_part_of_team(request.user):
+        if not view.assessment.user_is_reviewer_or_higher(request.user):
             queryset = queryset.filter(published=True)
         return queryset
 
 
-class SummaryAssessmentViewset(viewsets.GenericViewSet):
-    parent_model = Assessment
+class SummaryAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    action_perms = {}
     serializer_class = UnusedSerializer
     lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
 
-    @action(detail=True, url_path="visual-heatmap-datasets")
+    @action(
+        detail=True,
+        url_path="visual-heatmap-datasets",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
     def heatmap_datasets(self, request, pk):
         """Returns a list of the heatmap datasets available for an assessment."""
         instance = self.get_object()
@@ -55,7 +60,7 @@ class SummaryAssessmentViewset(viewsets.GenericViewSet):
         return Response(datasets)
 
 
-class DataPivotViewset(AssessmentViewset):
+class DataPivotViewSet(AssessmentViewSet):
     """
     For list view, return simplified data-pivot view.
 
@@ -76,14 +81,26 @@ class DataPivotViewset(AssessmentViewset):
             cls = serializers.CollectionDataPivotSerializer
         return cls
 
-    @action(detail=True, renderer_classes=PandasRenderers)
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
     def data(self, request, pk):
         obj = self.get_object()
         export = obj.get_dataset()
         return Response(export)
 
 
-class VisualViewset(AssessmentViewset):
+class DataPivotQueryViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.DataPivotQuery
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
+    serializer_class = serializers.DataPivotQuerySerializer
+
+
+class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     """
     For list view, return all Visual objects for an assessment, but using the
     simplified collection view.
@@ -91,6 +108,7 @@ class VisualViewset(AssessmentViewset):
     For all other views, use the detailed visual view.
     """
 
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Visual
     pagination_class = DisabledPagination
@@ -105,8 +123,24 @@ class VisualViewset(AssessmentViewset):
     def get_queryset(self):
         return super().get_queryset().select_related("assessment")
 
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def data(self, request, pk):
+        obj = self.get_object()
+        try:
+            df = obj.data_df()
+        except ValueError:
+            return Response(
+                {"error": "Data export not available for this visual type."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+        return FlatExport.api_response(df, obj.slug)
 
-class SummaryTextViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+
+class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.SummaryText
@@ -118,20 +152,24 @@ class SummaryTextViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
         return self.model.objects.all()
 
 
-class SummaryTableViewset(AssessmentEditViewset):
+class SummaryTableViewSet(AssessmentEditViewSet):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
     serializer_class = serializers.SummaryTableSerializer
     list_actions = ["list", "data"]
 
-    @action(detail=True, renderer_classes=(DocxRenderer,))
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=(DocxRenderer,),
+    )
     def docx(self, request, pk):
         obj = self.get_object()
         report = obj.to_docx(base_url=request._current_scheme_host)
         return Response(report)
 
-    @action(detail=False)
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def data(self, request):
         ser = table_serializers.SummaryTableDataSerializer(
             data=request.query_params.dict(), context=self.get_serializer_context()

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import django.core.validators
 from django.db import migrations, models
 
@@ -12,7 +9,6 @@ def setPurityQualifier(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0003_auto_20150629_1327"),
     ]

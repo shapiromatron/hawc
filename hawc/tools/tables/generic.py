@@ -10,11 +10,13 @@ class GenericCell(BaseCell):
 
 
 class GenericTable(BaseTable):
+    interactive: bool = False
     cells: list[GenericCell]
 
     @classmethod
     def get_default_props(cls):
         return {
+            "interactive": False,
             "column_widths": [10, 10],
             "cells": [
                 {

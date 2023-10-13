@@ -3,7 +3,6 @@ import logging
 from django.apps import apps
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from myst_parser.main import to_html
 
 from ..common.helper import SerializerHelper
 from . import models
@@ -19,7 +18,6 @@ def default_configuration(sender, instance, created, **kwargs):
     is created.
     """
     if created:
-
         logger.info("Creating default literature inclusion/exclusion tags")
         apps.get_model("lit", "ReferenceFilterTag").build_default(instance)
         apps.get_model("lit", "LiteratureAssessment").build_default(instance)
@@ -31,7 +29,6 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model("riskofbias", "RiskOfBiasAssessment").build_default(instance)
 
         logger.info("Creating new BMD settings assessment creation")
-        apps.get_model("bmd", "LogicField").build_defaults(instance)
         apps.get_model("bmd", "AssessmentSettings").build_default(instance)
 
         logger.info("Creating default summary text")
@@ -68,11 +65,3 @@ def null_to_dict(sender, instance, **kwargs):
 def run_task(sender, instance, created, **kwargs):
     if created:
         run_job.apply_async(task_id=instance.task_id)
-
-
-@receiver(pre_save, sender=models.Blog)
-def render_content(sender, instance, *args, **kwargs):
-    try:
-        instance.rendered_content = to_html(instance.content)
-    except Exception:
-        instance.rendered_content = "<h2>Error - myst_parser Parsing error</h2>"

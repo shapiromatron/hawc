@@ -1,30 +1,28 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load bs4 %}
-
 {% block content %}
-<h2 class="d-inline-block">Available studies ({{page_obj.paginator.count}} found)</h2>
-{% if obj_perms.edit and crud == "Read" %}
-<div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-        <span class="dropdown-header">Study editing</span>
-        <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Create new</a>
-        <a class="dropdown-item" href="{% url 'study:create_from_identifier' assessment.pk %}">Create from
-            identifier</a>
-        {% if assessment.enable_risk_of_bias %}
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">{{assessment.get_rob_name_display}}</span>
-        <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a>
-        <a class="dropdown-item" href="{% url 'riskofbias:rob_assignments' assessment.pk %}">View assignments</a>
-        {% endif %}
-    </div>
+<div class="d-flex">
+    <h2>Available studies ({{page_obj.paginator.count}} found)</h2>
+    {% if obj_perms.edit and crud == "Read" %}
+        {% actions %}
+            <span class="dropdown-header">Study editing</span>
+            <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Create new</a>
+            <a class="dropdown-item" href="{% url 'study:create_from_identifier' assessment.pk %}">Create from identifier</a>
+            {% if assessment.enable_risk_of_bias %}
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">{{assessment.get_rob_name_display}}</span>
+            <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a>
+            <a class="dropdown-item" href="{% url 'riskofbias:rob_assignments' assessment.pk %}">View assignments</a>
+            {% endif %}
+        {% endactions %}
+    {% endif %}
 </div>
-{% endif %}
-{% include 'common/filter_list.html' with plural_object_name='studies' %}
+
+{% include 'common/inline_filter_form.html' %}
+
 <table id="mainTbl" class="table table-sm table-striped">
-    {% bs4_colgroup '25,45,7,8,8,7' %}
-    {% bs4_thead 'Short citation,Full citation,Bioassay,Epidemiology,Epi. meta-analysis,In vitro' %}
+    {% bs4_colgroup '25,40,7,7,7,7,7' %}
+    {% bs4_thead 'Short citation,Full citation,Bioassay,Epidemiology,Epi. meta-analysis,In vitro,Ecology' %}
     <tbody>
         {% for object in object_list %}
         <tr>
@@ -46,19 +44,15 @@
                 {% endwith %}
                 {% endfor %}
             </td>
-            {% for type in object.STUDY_TYPE_FIELDS %}
-            <td class="{% cycle object.bioassay object.epi object.epi_meta object.in_vitro as data_type %}">
-                {% if data_type %}
-                <i class="fa fa-check"></i>
-                {% else %}
-                <i class="fa fa-minus"></i>
-                {% endif %}
+            {% for data_type in object.data_types %}
+            <td>
+                <i class="{{data_type|yesno:'fa fa-check,fa fa-minus'}}"></i>
             </td>
             {% endfor %}
         </tr>
         {% empty %}
         <tr>
-            <td colspan="6">
+            <td colspan="7">
                 No studies available
             </td>
         </tr>

@@ -1,42 +1,38 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load hawc %}
-
 {% block content %}
 
   {% if crud == "Read" %}
+  <div class="d-flex">
+    <h2>{{object}}</h2>
     {% if obj_perms.edit %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
-        <span class="dropdown-header">Endpoint Editing</span>
-        <a class="dropdown-item" href="{{ object.get_update_url }}">Update endpoint</a>
-        <a class="dropdown-item" href="{% audit_url object %}">Change logs</a>
-        <a class="dropdown-item" href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a>
-        {% if assessment.enable_bmd and object.bmd_modeling_possible %}
-          <div class="dropdown-divider"></div>
-          <span class="dropdown-header">BMD Modeling</span>
-          {% if bmd_session %}
-            <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
-            <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
-          {% elif assessment.bmd_settings.can_create_sessions %}
-            <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
+      {% actions %}
+          <span class="dropdown-header">Endpoint Editing</span>
+          <a class="dropdown-item" href="{{ object.get_update_url }}">Update endpoint</a>
+          <a class="dropdown-item" href="{% audit_url object %}">Change logs</a>
+          <a class="dropdown-item" href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a>
+          {% if assessment.enable_bmd and object.bmd_modeling_possible %}
+            {% if bmd_session or assessment.bmd_settings.can_create_sessions %}
+              <div class="dropdown-divider"></div>
+              <span class="dropdown-header">BMD Modeling</span>
+              {% if bmd_session %}
+                <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
+                <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
+              {% elif assessment.bmd_settings.can_create_sessions %}
+                <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
+              {% endif %}
+            {% endif %}
           {% endif %}
-        {% endif %}
-      </div>
-    </div>
+      {% endactions %}
     {% elif assessment.enable_bmd and object.bmd_modeling_possible and bmd_session %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
-        <span class="dropdown-header">BMD Modeling</span>
-        <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
-        <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
-      </div>
-    </div>
+      {% actions %}
+          <span class="dropdown-header">BMD Modeling</span>
+          <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
+          <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
+      {% endactions %}
     {% endif %}
+  </div>
   {% endif %}
-  <h2 class="d-inline-block">{{object}}</h2>
 
   <!-- Endpoint details -->
   <div class="row">

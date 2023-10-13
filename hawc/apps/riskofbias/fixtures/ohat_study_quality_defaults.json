@@ -4,119 +4,181 @@
     {
       "name": "Selection",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
-          "name": "Was administered dose or exposure level adequately randomized?",
-          "description": "Randomization requires that each human subject or animal had an equal chance of being assigned to any study group including controls (e.g., use of random number table or computer generated randomization).",
-          "required_animal": true,
-          "required_epi": true,
-          "responses": 1
-        },
-        {
-          "name": "Was allocation to study groups adequately concealed?",
-          "description": "Allocation concealment requires that research personnel do not know which administered dose or exposure level is assigned at the start of a study. Human studies also require that allocation be concealed from human subjects prior to entering the study. <br><br>Note: <br><ol><li>a question under performance bias addresses blinding of personnel and human subjects to treatment during the study;</li><li>a question under detection bias addresses blinding of outcome assessors.</li></ol>",
-          "required_animal": true,
-          "required_epi": true,
-          "responses": 1
-        },
-        {
+          "key": "OHAT-1",
           "name": "Did selection of study participants result in appropriate comparison groups?",
+          "short_name": "",
           "description": "Comparison group appropriateness refers to having similar baseline characteristics between the groups aside from the exposures and outcomes under study.",
+          "responses": 1,
           "required_animal": false,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        },
+        {
+          "key": "OHAT-2",
+          "name": "Was allocation to study groups adequately concealed?",
+          "short_name": "",
+          "description": "Allocation concealment requires that research personnel do not know which administered dose or exposure level is assigned at the start of a study. Human studies also require that allocation be concealed from human subjects prior to entering the study. <br><br>Note: <br><ol><li>a question under performance bias addresses blinding of personnel and human subjects to treatment during the study;</li><li>a question under detection bias addresses blinding of outcome assessors.</li></ol>",
+          "responses": 1,
+          "required_animal": true,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
+        },
+        {
+          "key": "OHAT-3",
+          "name": "Was administered dose or exposure level adequately randomized?",
+          "short_name": "",
+          "description": "Randomization requires that each human subject or animal had an equal chance of being assigned to any study group including controls (e.g., use of random number table or computer generated randomization).",
+          "responses": 1,
+          "required_animal": true,
+          "required_epi": true,
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     },
     {
       "name": "Confounding",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
+          "key": "OHAT-4",
           "name": "Did the study design or analysis account for important confounding and modifying variables?",
+          "short_name": "",
           "description": "",
+          "responses": 1,
           "required_animal": false,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     },
     {
       "name": "Performance",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
+          "key": "OHAT-5",
           "name": "Were experimental conditions identical across study groups?",
+          "short_name": "",
           "description": "",
+          "responses": 1,
           "required_animal": true,
           "required_epi": false,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         },
         {
+          "key": "OHAT-6",
           "name": "Were the research personnel and human subjects blinded to the study group during the study?",
+          "short_name": "",
           "description": "Blinding requires that study scientists do not know which administered dose or exposure level the human subject or animal is being given (i.e., study group). Human studies also require blinding of the human subjects when possible.",
+          "responses": 1,
           "required_animal": true,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     },
     {
       "name": "Attrition",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
-          "name": "Were outcome data incomplete due to attrition or exclusion from analysis?",
+          "key": "OHAT-7",
+          "name": "Were outcome data complete with respect to attrition or exclusion from analysis?",
+          "short_name": "",
           "description": "Attrition rates are required to be similar and uniformly low across groups with respect to withdrawal or exclusion from analysis",
+          "responses": 1,
           "required_animal": true,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     },
     {
       "name": "Detection",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
+          "key": "OHAT-8",
           "name": "Can we be confident in the exposure characterization?",
+          "short_name": "",
           "description": "Confidence requires valid, reliable, and sensitive methods to measure exposure applied consistently across groups.",
+          "responses": 1,
           "required_animal": true,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         },
         {
+          "key": "OHAT-9",
           "name": "Can we be confident in the outcome assessment?",
+          "short_name": "",
           "description": "Confidence requires valid, reliable, and sensitive methods to assess the outcome and the methods should be applied consistently across groups.",
+          "responses": 1,
           "required_animal": true,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     },
     {
       "name": "Selective Reporting",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
+          "key": "OHAT-10",
           "name": "Were all measured outcomes reported?",
+          "short_name": "",
           "description": "",
+          "responses": 1,
           "required_animal": true,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     },
     {
       "name": "Other",
       "description": "",
+      "is_overall_confidence": false,
       "metrics": [
         {
+          "key": "OHAT-11",
           "name": "Were there any other potential threats to internal validity?",
+          "short_name": "",
           "description": "<p>On a project specific basis, additional questions for other potential threats to internal validity can be added and applied to study designs as appropriate.</p><br><p>Examples may include appropriateness of statistical methods, adherence to the study-protocol, etc.</p>",
+          "responses": 1,
           "required_animal": true,
           "required_epi": true,
-          "responses": 1
+          "required_invitro": false,
+          "hide_description": false,
+          "use_short_name": false
         }
       ]
     }

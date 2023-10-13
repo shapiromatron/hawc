@@ -1,11 +1,13 @@
 import re
 
+from django.contrib.postgres.search import SearchVector
 from django.db import models
 
 EXTERNAL_LINK = 0
 
 
 class ReferenceDatabase(models.IntegerChoices):
+    MANUAL = 0, "Manually added"
     PUBMED = 1, "PubMed"
     HERO = 2, "HERO"
     RIS = 3, "RIS (EndNote/Reference Manager)"
@@ -31,3 +33,7 @@ class SearchType(models.TextChoices):
 DOI_EXACT = re.compile(r"^10\.\d{4,9}/[^\s]+$")
 DOI_EXTRACT = re.compile(r"10\.\d{4,9}/[^\s]+")
 DOI_EXAMPLE = "10.1234/s123456"
+
+REFERENCE_SEARCH_VECTOR = SearchVector(
+    "abstract", "title", "authors", "authors_short", "year", "journal", config="english"
+)

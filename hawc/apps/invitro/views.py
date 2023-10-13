@@ -1,7 +1,7 @@
 from django.middleware.csrf import get_token
 from django.urls import reverse
-from django.views.generic import DetailView
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
@@ -13,8 +13,6 @@ from ..common.views import (
     BaseFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
-    ProjectManagerOrHigherMixin,
-    WebappMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -103,12 +101,10 @@ class CellTypeDelete(BaseDelete):
 
 
 # Endpoint categories
-class EndpointCategoryUpdate(WebappMixin, ProjectManagerOrHigherMixin, DetailView):
+class EndpointCategoryUpdate(BaseDetail):
     model = Assessment
     template_name = "invitro/ivendpointecategory_form.html"
-
-    def get_assessment(self, request, *args, **kwargs):
-        return self.get_object()
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

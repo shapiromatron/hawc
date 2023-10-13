@@ -73,7 +73,6 @@ class TestCsrfRefererCheckMiddleware:
     EXTERNAL_URL = "https://external-url.com"
 
     def test_passthrough(self):
-
         rf = RequestFactory()
         success = b"passthrough"
         middleware = CsrfRefererCheckMiddleware(lambda request: HttpResponse(success))

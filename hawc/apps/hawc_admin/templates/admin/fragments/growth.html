@@ -1,17 +1,8 @@
 <div hx-target="this" hx-swap="outerHTML">
-    <form hx-post="{% url 'admin_dashboard_growth' %}" hx-trigger="change">
+    <form hx-post="{% url 'admin_dashboard' %}?action=growth" hx-trigger="change">
         {{ form.as_p }}
         {% csrf_token %}
     </form>
-    {% if fig %}
-        <div id="fig" style="max-width: 800px"></div>
-    {% endif %}
-    {% if df is not None %}
-        {{ df.to_html|safe }}
-    {% endif %}
+    {% if fig %}{% plotly fig event="htmx" resizable=True %}{% endif %}
+    {% if df is not None %}{{ df.to_html|safe }}{% endif %}
 </div>
-{% if fig %}
-<script>
-    Plotly.newPlot(document.getElementById("fig"), {{fig|safe}});
-</script>
-{% endif %}

@@ -1,7 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
   <div id="gcForm">
     {% crispy form %}
@@ -28,7 +26,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).on('ready', function(){
+    window.addEventListener("DOMContentLoaded", function(){
       new window.app.DynamicFormset($('#gFormset'), 'form', {oneFormRequired: true});
       $('#gFormset').insertBefore($('#gcForm .form-actions'));
     });

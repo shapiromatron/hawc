@@ -1,8 +1,10 @@
+"""A client for the Health Assessment Workspace Collaborative (HAWC)."""
 from .animal import AnimalClient
 from .assessment import AssessmentClient
 from .client import BaseClient
 from .epi import EpiClient
 from .epimeta import EpiMetaClient
+from .epiv2 import EpiV2Client
 from .exceptions import HawcClientException, HawcServerException
 from .invitro import InvitroClient
 from .literature import LiteratureClient
@@ -12,7 +14,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2023.1"
+__version__ = "2023.2"
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
@@ -38,6 +40,7 @@ class HawcClient(BaseClient):
         self.assessment = AssessmentClient(self.session)
         self.epi = EpiClient(self.session)
         self.epimeta = EpiMetaClient(self.session)
+        self.epiv2 = EpiV2Client(self.session)
         self.invitro = InvitroClient(self.session)
         self.lit = LiteratureClient(self.session)
         self.riskofbias = RiskOfBiasClient(self.session)
@@ -55,11 +58,18 @@ class HawcClient(BaseClient):
         """
         self.session.authenticate(email, password)
 
-    def set_authentication_token(self, token: str) -> dict:
+    def set_authentication_token(self, token: str, login: bool = False) -> bool:
         """
-        Set authentication token (browser session specific)
+        Set authentication token for hawc client session.
 
         Args:
             token (str): authentication token from your user profile
+            login (bool, default False): if True, creates a django cookie-based session for HAWC
+                similar to a standard web-browser. If False (default), creates a token-
+                based django session for using the API. Requests using cookie-based sessions
+                require CSRF tokens, so form functionality will be limited.
+
+        Returns
+            bool: Returns true if session is valid
         """
-        return self.session.set_authentication_token(token)
+        return self.session.set_authentication_token(token, login)

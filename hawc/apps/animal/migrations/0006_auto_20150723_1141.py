@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0005_auto_20150723_1136"),
     ]

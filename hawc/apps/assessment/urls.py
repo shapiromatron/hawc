@@ -5,10 +5,12 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
-router.register(r"strain", api.StrainViewset, basename="strain")
+router.register("assessment", api.Assessment, basename="assessment")
+router.register("detail", api.AssessmentDetailViewSet, basename="detail")
+router.register("value", api.AssessmentValueViewSet, basename="value")
+router.register("dataset", api.DatasetViewSet, basename="dataset")
+router.register("dsstox", api.DssToxViewSet, basename="dsstox")
+router.register("strain", api.StrainViewSet, basename="strain")
 
 
 app_name = "assessment"
@@ -17,7 +19,7 @@ urlpatterns = [
     path("all/", views.AssessmentFullList.as_view(), name="full_list"),
     path("public/", views.AssessmentPublicList.as_view(), name="public_list"),
     path("new/", views.AssessmentCreate.as_view(), name="new"),
-    path("<int:pk>/", views.AssessmentRead.as_view(), name="detail"),
+    path("<int:pk>/", views.AssessmentDetail.as_view(), name="detail"),
     path("<int:pk>/update/", views.AssessmentUpdate.as_view(), name="update"),
     path(
         "<int:pk>/enabled-modules/update/",
@@ -36,6 +38,22 @@ urlpatterns = [
         name="assessment_logs",
     ),
     path("<int:pk>/clear-cache/", views.AssessmentClearCache.as_view(), name="clear_cache"),
+    # assessment details
+    path(
+        "details/<int:pk>/new/",
+        views.AssessmentDetailCreate.as_view(),
+        name="details-create",
+    ),
+    path(
+        "details/<int:pk>/update/",
+        views.AssessmentDetailUpdate.as_view(),
+        name="details-update",
+    ),
+    # assessment values
+    path("values/<int:pk>/new/", views.AssessmentValueCreate.as_view(), name="values-create"),
+    path("values/<int:pk>/", views.AssessmentValueDetail.as_view(), name="values-detail"),
+    path("values/<int:pk>/update/", views.AssessmentValueUpdate.as_view(), name="values-update"),
+    path("values/<int:pk>/delete/", views.AssessmentValueDelete.as_view(), name="values-delete"),
     # log object
     path(
         "log/<int:content_type>/<int:object_id>/",
@@ -50,31 +68,31 @@ urlpatterns = [
     # attachment objects
     path(
         "attachment/<int:pk>/create/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "create"},
         name="attachment-create",
     ),
     path(
         "attachment/<int:pk>/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "read"},
         name="attachment-detail",
     ),
     path(
         "attachment/<int:pk>/update/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "update"},
         name="attachment-update",
     ),
     path(
         "attachment/<int:pk>/delete/",
-        views.AttachmentViewset.as_view(),
+        views.AttachmentViewSet.as_view(),
         {"action": "delete"},
         name="attachment-delete",
     ),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),
-    path("dataset/<int:pk>/", views.DatasetRead.as_view(), name="dataset_detail"),
+    path("dataset/<int:pk>/", views.DatasetDetail.as_view(), name="dataset_detail"),
     path("dataset/<int:pk>/update/", views.DatasetUpdate.as_view(), name="dataset_update"),
     path("dataset/<int:pk>/delete/", views.DatasetDelete.as_view(), name="dataset_delete"),
     # species

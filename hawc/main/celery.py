@@ -17,7 +17,6 @@ app.autodiscover_tasks()
 @app.task(bind=True)
 def debug_task(self):
     logger.info("Running the debug_task task.")
-    print(f"Request: {self.request!r}")
 
 
 app.conf.beat_schedule = {
@@ -35,11 +34,6 @@ app.conf.beat_schedule = {
         "task": "hawc.apps.common.tasks.create_initial_revisions",
         "schedule": timedelta(days=1),
         "options": {"expires": timedelta(days=1).total_seconds()},
-    },
-    "lit-schedule_topic_model_reruns-10-min": {
-        "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
-        "schedule": timedelta(minutes=10),
-        "options": {"expires": timedelta(minutes=10).total_seconds()},
     },
     "lit-update_pubmed_content-1-day": {
         "task": "hawc.apps.lit.tasks.update_pubmed_content",
@@ -69,12 +63,3 @@ app.conf.beat_schedule = {
         "options": {"expires": timedelta(days=1).total_seconds()},
     },
 }
-
-# optional; only if service is available and service is real
-has_bmds_service_url = "example" not in os.environ.get("BMDS_SUBMISSION_URL", "example")
-if has_bmds_service_url:
-    app.conf.beat_schedule["bmds2-healthcheck"] = {
-        "task": "hawc.apps.bmd.tasks.bmds2_healthcheck",
-        "schedule": timedelta(hours=12),
-        "options": {"expires": timedelta(hours=12).total_seconds()},
-    }

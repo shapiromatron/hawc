@@ -25,6 +25,7 @@ class Keys:
         self.assessment_final = 2
         self.assessment_client = 3
         self.assessment_keys = [1, 2]
+        self.assessment_conflict_resolution = 4
 
         self.dataset_final = 2
         self.dataset_working = 1
@@ -35,6 +36,10 @@ class Keys:
 
         self.reference_linked = 1
         self.reference_unlinked = 3
+
+        self.reference_untagged = 9
+        self.reference_tag_conflict = 10
+        self.reference_tagged = 11
 
         self.animal_group_working = 1
         self.endpoint_working = 1
@@ -47,14 +52,7 @@ class Keys:
         self.pm_user = UserCredential("pm@hawcproject.org", "pw")
         self.pm_user_id = 2
 
-        self.job_assessment = "204faaa7-fdfa-4426-a09f-f0d1af9db33d"
-        self.job_global = "08ca9f23-5368-4ed6-9b18-29625add9aa8"
-
-        self.log_assessment = 1
-        self.log_global = 2
-
-        self.blog_published = 2
-        self.blog_unpublished = 1
+        self.eco_design = 1
 
         self.epiv2_design = 1
 
@@ -86,7 +84,7 @@ def set_db_keys(request):
 @pytest.fixture(scope="session")
 def vcr_config():
     return {
-        "filter_headers": [("authorization", "<omitted>")],
+        "filter_headers": [("authorization", "<omitted>"), ("x-api-key", "<omitted>")],
         "filter_post_data_parameters": [("api_key", "<omitted>")],
         "ignore_localhost": True,
     }

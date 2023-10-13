@@ -188,7 +188,21 @@ class LiteratureClient(BaseClient):
         Returns:
             pd.DataFrame: References data
         """
-        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/references-download/"
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-export/"
+        response_json = self.session.get(url).json()
+        return pd.DataFrame(response_json)
+
+    def reference_user_tags(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves all user tag for all references for an assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: References user tag data
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/user-tag-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 

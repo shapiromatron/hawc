@@ -11,9 +11,9 @@ class TableMaker:
     def __init__(
         self,
         colWidths: list[float],
-        styles: dict = None,
+        styles: dict | None = None,
         numHeaders: int = 1,
-        tblStyle: str = None,
+        tblStyle: str | None = None,
         firstRowCaption: bool = True,
     ):
         """
@@ -56,7 +56,6 @@ class TableMaker:
 
         # apply caption-style to the first cell in first-row
         if self.firstRowCaption:
-
             cell = tbl.cell(0, 0)
 
             cellPr = cell._tc.get_or_add_tcPr()

@@ -11,6 +11,8 @@ from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_200, get_client
+
 
 def has_redis():
     return "RedisCache" in settings.CACHES["default"]["BACKEND"]
@@ -58,14 +60,57 @@ class TestAssessmentClearCache:
 
 
 @pytest.mark.django_db
+class TestHomePage:
+    def test_functionality(self):
+        # anon
+        anon_client = Client()
+        url = reverse("home")
+        response = anon_client.get(url)
+        assert response.status_code == 200
+
+        # auth
+        rev_client = Client()
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
+        response = rev_client.get(url)
+        assert response.status_code == 302
+
+        # external
+        settings.EXTERNAL_HOME = "."
+        response = anon_client.get(url)
+        assert urlparse(response.url).path == "."
+        assert response.status_code == 302
+        settings.EXTERNAL_HOME = ""
+
+
+@pytest.mark.django_db
 class TestAboutPage:
     def test_counts(self):
         client = Client()
         url = reverse("about")
         response = client.get(url)
         assert "counts" in response.context
-        assert response.context["counts"]["assessments"] == 3
+        assert response.context["counts"]["assessments"] == 4
         assert response.context["counts"]["users"] == 5
+
+    def test_settings_external(self):
+        client = Client()
+        url = reverse("about")
+        settings.EXTERNAL_ABOUT = "."
+        resp = client.get(url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == "."
+        settings.EXTERNAL_ABOUT = ""
+
+    def test_settings_hawc_flavor(self):
+        client = Client()
+        url = reverse("about")
+        settings.HAWC_FLAVOR = "EPA"
+        assert client.get(url).status_code == 200
+
+        settings.HAWC_FLAVOR = "INVALID"
+        with pytest.raises(ValueError):
+            client.get(url)
+        settings.HAWC_FLAVOR = "PRIME"
 
 
 @pytest.mark.django_db
@@ -131,6 +176,21 @@ class TestAssessmentCreate:
 
 
 @pytest.mark.django_db
+class TestResourcesPage:
+    def test_functionality(self):
+        client = Client()
+        url = reverse("resources")
+        assert client.get(url).status_code == 200
+
+        # external
+        settings.EXTERNAL_RESOURCES = "."
+        resp = client.get(url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == "."
+        settings.EXTERNAL_RESOURCES = ""
+
+
+@pytest.mark.django_db
 class TestContactUsPage:
     def test_login_required(self):
         contact_url = reverse("contact")
@@ -146,6 +206,16 @@ class TestContactUsPage:
         client.login(username="pm@hawcproject.org", password="pw")
         resp = client.get(contact_url)
         assert resp.status_code == 200
+
+    def test_external(self):
+        settings.EXTERNAL_CONTACT_US = "."
+        contact_url = reverse("contact")
+        client = Client()
+
+        resp = client.get(contact_url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == "."
+        settings.EXTERNAL_CONTACT_US = ""
 
     def test_referrer(self):
         contact_url = reverse("contact")
@@ -237,3 +307,46 @@ class TestRasterizeCss:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["template"].startswith('<defs><style type="text/css">')
+
+
+@pytest.mark.django_db
+def test_get_200():
+    client = get_client("admin")
+    main = 1
+    log_content_type = 16
+    log_obj_id = 1
+    urls = [
+        reverse("assessment:full_list"),
+        reverse("assessment:public_list"),
+        reverse("assessment:detail", args=(main,)),
+        reverse("assessment:update", args=(main,)),
+        reverse("assessment:modules_update", args=(main,)),
+        reverse("assessment:delete", args=(main,)),
+        reverse("assessment:downloads", args=(main,)),
+        reverse("assessment:assessment_logs", args=(main,)),
+        reverse("assessment:details-create", args=(main,)),
+        reverse("assessment:details-update", args=(main,)),
+        reverse("assessment:values-create", args=(main,)),
+        reverse("assessment:values-detail", args=(main,)),
+        reverse("assessment:values-update", args=(main,)),
+        reverse("assessment:values-delete", args=(main,)),
+        reverse("assessment:log_object_list", args=(log_content_type, log_obj_id)),
+        reverse("assessment:log_detail", args=(main,)),
+        reverse("assessment:dataset_create", args=(main,)),
+        reverse("assessment:dataset_detail", args=(main,)),
+        reverse("assessment:dataset_update", args=(main,)),
+        reverse("assessment:dataset_delete", args=(main,)),
+        reverse("assessment:species_create", args=(main,)),
+        reverse("assessment:strain_create", args=(main,)),
+        reverse("assessment:dose_units_create", args=(main,)),
+        reverse("assessment:dtxsid_create"),
+        reverse("assessment:endpoint_list", args=(main,)),
+        reverse("assessment:clean_extracted_data", args=(main,)),
+        reverse("assessment:effect_tag_create", args=(main,)),
+        reverse("assessment:content_types"),
+        reverse("assessment:close_window"),
+        reverse("assessment:clean_study_metrics", args=(main,)),
+        reverse("assessment:bulk-publish", args=(main,)),
+    ]
+    for url in urls:
+        check_200(client, url)

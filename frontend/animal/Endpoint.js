@@ -120,10 +120,6 @@ class Endpoint extends Observee {
             .then(data => cb(new Endpoint(data)));
     }
 
-    static getTagURL(assessment, slug) {
-        return `/ani/assessment/${assessment}/endpoints/tags/${slug}/`;
-    }
-
     static displayAsModal(id, opts) {
         Endpoint.get_object(id, d => d.displayAsModal(opts));
     }
@@ -257,7 +253,7 @@ class Endpoint extends Observee {
             critical_dose = function(type) {
                 if (self.data[type] < 0) return;
                 var span = $("<span>");
-                new EndpointCriticalDose(self, span, type, true);
+                new EndpointCriticalDose(self, span, type);
                 return span;
             },
             bmd_response = function(type, showURL) {
@@ -265,7 +261,7 @@ class Endpoint extends Observee {
                     return;
                 }
                 var el = $("<div>");
-                new BMDResult(self, el, type, true, showURL);
+                new BMDResult(self, el, type, showURL);
                 return el;
             },
             getTaglist = function(tags, assessment_id) {
@@ -275,7 +271,10 @@ class Endpoint extends Observee {
                 var div = $("<div>");
                 div.append(
                     tags.map(v => {
-                        const url = Endpoint.getTagURL(assessment_id, v.slug);
+                        const url = h.getUrlWithParameters(
+                            `/ani/assessment/${assessment_id}/endpoints/`,
+                            {tags: v.name}
+                        );
                         return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
                     })
                 );
@@ -291,7 +290,7 @@ class Endpoint extends Observee {
             .add_tbody_tr("Organ", this.data.organ)
             .add_tbody_tr("Effect", this.data.effect)
             .add_tbody_tr("Effect subtype", this.data.effect_subtype)
-            .add_tbody_tr("Diagnostic description", this.data.diagnostic)
+            .add_tbody_tr("Diagnostic (as reported)", this.data.diagnostic)
             .add_tbody_tr("Observation time", this.data.observation_time_text)
             .add_tbody_tr("Additional tags", getTaglist(this.data.effects, this.data.assessment))
             .add_tbody_tr("Data reported?", HAWCUtils.booleanCheckbox(this.data.data_reported))

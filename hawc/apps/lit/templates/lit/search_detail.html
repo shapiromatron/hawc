@@ -1,21 +1,20 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">{{object}}</h2>
-  {% if crud == "Read" %}
-    <div class="dropdown btn-group float-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-      <div class="dropdown-menu dropdown-menu-right">
+  <div class="d-flex">
+    <h2>{{object}}</h2>
+    {% if crud == "Read" %}
+      {% actions %}
         {% if obj_perms.edit %}
           {% if not object.is_manual_import %}
             <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
             <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
           {% endif %}
         {% endif %}
-        <a class="dropdown-item" href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a>
-      </div>
-    </div>
-  {% endif %}
+        <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.id %}?format=xlsx&searches={{object.id}}">Download to Excel</a>
+      {% endactions %}
+    {% endif %}
+  </div>
   <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">
@@ -63,7 +62,7 @@
         <th>Reference details</th>
         <td>
           <a class="btn btn-primary" href="{% url 'lit:search_tags' assessment.pk object.slug %}">View by tag</a>
-          <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualization</a>
+          <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualize</a>
         </td>
       </tr>
     </tbody>

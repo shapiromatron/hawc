@@ -12,18 +12,13 @@ urlpatterns = [
     # BMD assessment-level settings
     path(
         "assessment/<int:pk>/settings/",
-        views.AssessSettingsRead.as_view(),
+        views.AssessmentSettingsDetail.as_view(),
         name="assess_settings_detail",
     ),
     path(
         "assessment/<int:pk>/settings/update/",
         views.AssessSettingsUpdate.as_view(),
         name="assess_settings_update",
-    ),
-    path(
-        "assessment/<int:pk>/logic/update/",
-        views.AssessLogicUpdate.as_view(),
-        name="assess_logic_update",
     ),
     # BMD create/read/update views
     path(

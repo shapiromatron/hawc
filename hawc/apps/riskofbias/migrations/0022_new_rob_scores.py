@@ -36,7 +36,6 @@ def rollback_changes(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("riskofbias", "0021_riskofbiasscore_bias_direction"),
     ]
@@ -70,6 +69,10 @@ class Migration(migrations.Migration):
                     (51, "Major concerns"),
                     (52, "Some concerns"),
                     (53, "Minor concerns"),
+                    (54, "Critical concerns"),
+                    (55, "Major concerns"),
+                    (56, "Some concerns"),
+                    (57, "Minor concerns"),
                 ],
             ),
         ),

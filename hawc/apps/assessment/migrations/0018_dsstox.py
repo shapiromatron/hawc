@@ -7,7 +7,6 @@ def casrn_to_dtxsid(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0017_dataset"),
     ]

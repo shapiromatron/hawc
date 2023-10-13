@@ -30,7 +30,6 @@ def strip_terms(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0028_add_vocabulary"),
     ]

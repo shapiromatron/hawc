@@ -66,8 +66,7 @@ class PaginatedReferenceList extends Component {
         }
         return (
             <>
-                <div>
-                    &nbsp;
+                <div className="d-flex">
                     <TagActions
                         assessmentId={settings.assessment_id}
                         tagId={settings.tag_id}

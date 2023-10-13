@@ -20,31 +20,41 @@ const termUrlLookup = {
         endpoint_name: "Endpoint/Adverse outcome*",
     },
     helpText = {
-        system: `The affected biological system. Please use a controlled vocabulary term if
-            possible and if enabled for your assessment. Multi-system and Whole Body are options
-            for wide-spread effects. If the Endpoint is measured in Blood, Urine or biological
-            media other than the affected system, it should be captured in the Effect Subtype field. `,
-        organ: `Please use a controlled vocabulary term if possible and if enabled for your
-            assessment. Tissue should be used for same tissues affected in multiple organs/regions
-            (e.g., epithelial, mesothelium). Region (e.g., head, abdomen, limb) are common for
-            developmental endpoints. Multi-organ and Whole Body are options for wide-spread effects.`,
-        effect: `Please use a controlled vocabulary term if possible and if enabled for your assessment
-            (eg., Malformation, Neoplastic [Non-Neoplastic] Lesions, Organ Weight, Abnormal Appearance).`,
-        effect_subtype: `The method used for the measuring the Effect (e.g., Histopathology,
-            Clinical Observation, Clinical Chemistry, Hematology). For Developmental Malformation
-            effects, values may be Skeletal Structural Abnormality, Skeletal Ossification
-            Abnormality, External Abnormality, or Visceral Abnormality. For Organ Weights,
-            may be Absolute or Relative (absolute can be inferred when it's not explicitly
-            stated). When a determination cannot be made, use [Null] or leave empty.`,
-        endpoint_name: `
-            Short-text used to describe the data in this form. Please use a controlled vocabulary
-            term if possible and if enabled for your assessment. A separate field,
-            "Endpoint Name in Study", captures the name of endpoint as reported. If no preferred
-            term matches the data extracted, type in the desired description. Do not add units — units
-            are summarized in a separate extraction field.  If the endpoint is a repeated measure,
-            indicate the time in parentheses, e.g., running wheel activity (6 wk), using the
-            abbreviated format: seconds = sec, minutes = min, hours = h, days = d, weeks = wk,
-            months = mon, years = y.`,
+        system_popup: `The health effect category/biological system an endpoint/outcome or group of
+        related endpoints/outcomes within a health effect category. "Multi-system" is an option for
+        widespread effects. If the Endpoint is measured in Blood, Urine, or biological media other
+        than the affected system, extract the media term in the Effect Subtype field.`,
+        system: `The health effect category/biological system an endpoint/outcome or group of
+        related endpoints/outcomes within a health effect category. Please use a controlled
+        vocabulary term if possible.`,
+        organ_popup: `Tissue should be used for same tissues affected in multiple organs/regions
+        (e.g., epithelial, mesothelium). Region (e.g., head, abdomen, limb) are common for
+        developmental endpoints. Multi-organ and Whole Body are options for widespread effects`,
+        organ: `May also be tissue or region for developmental endpoints. Please use a controlled
+        vocabulary term if possible.`,
+        effect_popup: `A group of related outcomes considered as a health effect category and/or
+        unit of analysis typically considered together during evidence synthesis.`,
+        effect: `Related outcomes (e.g., unit of analysis) considered together during evidence
+        synthesis. Please use a controlled vocabulary term if possible.`,
+        effect_subtype_popup: `An outcome or measurement within an effect.`,
+        effect_subtype: `Please use a controlled vocabulary term if possible.`,
+        endpoint_name_popup: `An observable or measurable biological change used as an index of a
+        potential health effect of an exposure. Endpoint may also be referred to as effect, outcome,
+        or event. Search for the best match based on the author reported term. Use the
+        field "Diagnostic (as reported)" to capture as reported by study authors. If no existing
+        term matches, deselect use EHV for endpoint and enter the name as reported. Do not
+        include units. If an endpoint is a repeated measure, indicate the time in parentheses,
+        [e.g., running wheel activity (6 wk)], using the abbreviated format: seconds = sec,
+        minutes = min, hours = h, days = d, weeks = wk, months = mon, years = y.`,
+        endpoint_name_ehv: `An observable or measurable biological change used as an index of a
+        potential health effect of an exposure. Endpoint may also be referred to as effect or
+        outcome. For a searchable list of Environment Health Vocabulary terms, see the
+        <a href="/vocab/ehv/">EHV.</a> Enter the term ID and all relationships to this term
+        will automatically populate. Please use a controlled vocabulary term if possible.`,
+        endpoint_name_no_ehv: `An observable or measurable biological change used as an index of a
+        potential health effect of an exposure. Endpoint may also be referred to as effect or
+        outcome. For a searchable list of Environment Health Vocabulary terms, see the
+        <a href="/vocab/ehv/">EHV</a>. Please use a controlled vocabulary term if possible.`,
     };
 
 export {helpText, label, termUrlLookup, textUrlLookup};

@@ -1,40 +1,18 @@
-{% if object_list %}
+{% if object_list or obj_perms.edit %}
+  <h3>Animal bioassay experiments</h3>
   <table class="table table-sm table-striped">
-    <colgroup>
-        {%if with_study %}
-          <col style="width:15%"></col>
-          <col style="width:15%"></col>
-          <col style="width:15%"></col>
-          <col style="width:55%"></col>
-        {% else %}
-          <col style="width:15%"></col>
-          <col style="width:15%"></col>
-          <col style="width:70%"></col>
-        {% endif %}
-    </colgroup>
-    <thead>
-      <tr>
-        {%if with_study %}
-          <th>Study</th>
-        {% endif %}
-        <th>Name</th>
-        <th>Type</th>
-        <th>Comments</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '25,25,50' %}
+    {% bs4_thead 'Name,Type,Comments' %}
     <tbody>
       {% for object in object_list %}
         <tr>
-          {%if with_study %}
-            <td><a href="{% url 'study:detail' object.study.pk %}">{{object.study}}</a></td>
-          {% endif %}
           <td><a href="{% url 'animal:experiment_detail' object.pk %}">{{object}}</a></td>
           <td>{{object.get_type_display}}</td>
           <td>{{object.description|safe}}</td>
         </tr>
+      {% empty %}
+        {% bs4_fullrow 'No experiments available.' %}
       {% endfor %}
     </tbody>
   </table>
-{% else %}
-  <p>No experiments available.</p>
 {% endif %}

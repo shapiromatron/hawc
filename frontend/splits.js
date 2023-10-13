@@ -34,9 +34,6 @@ const startup = (name, cb) => {
         case "litStartup":
             import("./lit/index.js").then(app => cb(app.default));
             break;
-        case "mgmtStartup":
-            import("./mgmt/index.js").then(app => cb(app.default));
-            break;
         case "nestedTagEditorStartup":
             import("./shared/nestedTagEditor/index.js").then(app => cb(app.default));
             break;
@@ -60,6 +57,9 @@ const startup = (name, cb) => {
             break;
         case "summaryTableViewStartup":
             import("./summary/summaryTable/viewing/index.js").then(app => cb(app.default));
+            break;
+        case "summaryInteractivityStartup":
+            import("./summary/interactivity/index.js").then(app => cb(app.default));
             break;
         case "summaryTextStartup":
             import("./summary/summaryText/index.js").then(app => cb(app.default));

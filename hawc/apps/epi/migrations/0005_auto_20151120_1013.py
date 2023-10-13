@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import migrations, models
 
 """
@@ -36,7 +33,6 @@ def revert_variances(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("epi", "0004_auto_20151105_1056"),
     ]

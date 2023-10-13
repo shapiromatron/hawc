@@ -8,31 +8,46 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      User-Agent:
-      - python-requests/2.26.0
-    method: GET
-    uri: https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id=DTXSID123456789
-  response:
-    body:
-      string: '[ ]'
-    headers:
-      Connection:
-      - Keep-Alive
       Content-Type:
       - application/json
+      User-Agent:
+      - python-requests/2.27.1
+      x-api-key:
+      - <omitted>
+    method: GET
+    uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID123456789
+  response:
+    body:
+      string: "{\n  \"title\" : \"Not found \",\n  \"status\" : 404,\n  \"detail\"
+        : \"dtxsid with value DTXSID123456789 not found.\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/problem+json
       Date:
-      - Wed, 19 Jan 2022 23:29:49 GMT
-      Keep-Alive:
-      - timeout=5, max=87
-      Server:
-      - nginx/1.21.1
+      - Wed, 24 May 2023 16:35:45 GMT
       Strict-Transport-Security:
-      - "max-age=63072000; includeSubDomains\xE2\x80\x9C"
+      - max-age=31536000
       Transfer-Encoding:
       - chunked
-      Vary:
-      - Origin,Access-Control-Request-Method,Access-Control-Request-Headers
+      Via:
+      - 1.1 8fc9659fc06389e49927f68638e9bc94.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 8Xivizp0UefZiPaA5Q1hx2cMr8-lbEruuYDH3iXDhrg1l935CtXKmw==
+      X-Amz-Cf-Pop:
+      - IAD89-C1
+      X-Cache:
+      - Error from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Vcap-Request-Id:
+      - 323654c1-b9c7-4196-688b-be5cee4c0eed
+      X-XSS-Protection:
+      - 1; mode=block
     status:
-      code: 202
-      message: ''
+      code: 404
+      message: Not Found
 version: 1

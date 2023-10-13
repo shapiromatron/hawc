@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 import pandas as pd
 
 from .client import BaseClient
@@ -10,7 +8,7 @@ class StudyClient(BaseClient):
     Client class for study requests.
     """
 
-    def create(self, reference_id: int, data: Optional[dict] = None) -> dict:
+    def create(self, reference_id: int, data: dict | None = None) -> dict:
         """
         Creates a study using a given reference ID.
 
@@ -60,7 +58,7 @@ class StudyClient(BaseClient):
         return pd.DataFrame(response_json)
 
     def create_from_identifier(
-        self, db_type: str, db_id: Union[str, int], assessment_id: int, **kwargs
+        self, db_type: str, db_id: str | int, assessment_id: int, **kwargs
     ) -> dict:
         """
         Creates a study using the given identifier.

@@ -1,30 +1,48 @@
-from django.urls import include, path
-from rest_framework.routers import SimpleRouter
+from django.conf import settings
+from django.urls import path
 
-from . import api, views
-
-router = SimpleRouter()
-router.register(r"task", api.TaskViewSet, basename="task")
+from . import views
 
 app_name = "mgmt"
 urlpatterns = [
-    path("api/", include((router.urls, "api"))),
     # user task-list
-    path("my-assignments/", views.UserAssignments.as_view(), name="user_assignments"),
+    path("tasks/", views.UserTaskList.as_view(), name="user-task-list"),
     path(
-        "my-assignments/<int:pk>/",
-        views.UserAssessmentAssignments.as_view(),
-        name="user_assessment_assignments",
+        "assessment/<int:pk>/tasks/",
+        views.UserAssessmentTaskList.as_view(),
+        name="user-assessment-task-list",
     ),
     # assessment-level views
     path(
         "assessment/<int:pk>/",
-        views.TaskDashboard.as_view(),
-        name="assessment_dashboard",
+        views.AssessmentTaskDashboard.as_view(),
+        name="task-dashboard",
     ),
     path(
         "assessment/<int:pk>/details/",
-        views.TaskDetail.as_view(),
-        name="assessment_tasks",
+        views.AssessmentTaskList.as_view(),
+        name="task-list",
+    ),
+    # task htmx ViewSet
+    path(
+        "task/<int:pk>/",
+        views.TaskViewSet.as_view(),
+        {"action": "read"},
+        name="task-detail",
+    ),
+    path(
+        "taskv/<int:pk>/update/",
+        views.TaskViewSet.as_view(),
+        {"action": "update"},
+        name="task-update",
     ),
 ]
+
+if settings.HAWC_FEATURES.ENABLE_ANALYTICS:
+    urlpatterns += [
+        path(
+            "assessment/<int:pk>/analytics/",
+            views.AssessmentAnalytics.as_view(),
+            name="assessment-analytics",
+        ),
+    ]

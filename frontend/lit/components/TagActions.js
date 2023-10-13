@@ -9,7 +9,7 @@ const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
             <ActionLink
                 key={0}
                 label="Tag untagged references"
-                href={`/lit/assessment/${assessmentId}/tag/untagged/`}
+                href={`/lit/assessment/${assessmentId}/tag/?untagged=on`}
             />
         );
     }
@@ -18,12 +18,12 @@ const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
             <ActionLink
                 key={1}
                 label="Download references"
-                href={`/lit/api/tags/${tagId}/references/?format=xlsx`}
+                href={`/lit/api/assessment/${assessmentId}/reference-export/?tag=${tagId}&include_descendants=on&format=xlsx`}
             />,
             <ActionLink
                 key={2}
                 label="Download references (table-builder format)"
-                href={`/lit/api/tags/${tagId}/references/?format=xlsx&exporter=table-builder`}
+                href={`/lit/api/assessment/${assessmentId}/reference-export/?tag=${tagId}&include_descendants=on&format=xlsx&export_format=table-builder`}
             />,
         ];
         if (canEdit) {
@@ -31,7 +31,7 @@ const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
                 <ActionLink
                     key={3}
                     label="Tag references with this tag (but not descendants)"
-                    href={`/lit/tag/${tagId}/tag/`}
+                    href={`/lit/assessment/${assessmentId}/tag/?tags=${tagId}`}
                 />
             );
         }
@@ -46,7 +46,7 @@ class TagActions extends Component {
         if (links.length == 0) {
             return null;
         }
-        return <ActionsButton containerClasses="btn-primary" items={links} />;
+        return <ActionsButton items={links} />;
     }
 }
 

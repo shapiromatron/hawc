@@ -4,11 +4,10 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
-router.register(r"reference", api.ReferenceViewset, basename="reference")
-router.register(r"search", api.SearchViewset, basename="search")
-router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
-router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="reference-cleanup")
+router.register(r"assessment", api.LiteratureAssessmentViewSet, basename="assessment")
+router.register(r"reference", api.ReferenceViewSet, basename="reference")
+router.register(r"search", api.SearchViewSet, basename="search")
+router.register(r"tags", api.ReferenceFilterTagViewSet, basename="tags")
 
 app_name = "lit"
 urlpatterns = [
@@ -35,15 +34,14 @@ urlpatterns = [
     path("reference/<int:pk>/update/", views.RefEdit.as_view(), name="ref_edit"),
     path("reference/<int:pk>/delete/", views.RefDelete.as_view(), name="ref_delete"),
     path(
-        "reference/<int:pk>/tag/",
-        views.TagByReference.as_view(),
-        name="reference_tags_edit",
+        "reference/<int:pk>/tag-status/",
+        views.ReferenceTagStatus.as_view(),
+        name="tag-status",
     ),
-    path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
     path(
-        "assessment/<int:pk>/tag/untagged/",
-        views.TagByUntagged.as_view(),
-        name="tag_untagged",
+        "assessment/<int:pk>/tag/",
+        views.TagReferences.as_view(),
+        name="tag",
     ),
     path(
         "assessment/<int:pk>/tag/bulk/",
@@ -64,11 +62,6 @@ urlpatterns = [
         "assessment/<int:pk>/references/visualization/",
         views.RefVisualization.as_view(),
         name="ref_visual",
-    ),
-    path(
-        "assessment/<int:pk>/references/topic-model/",
-        views.RefTopicModel.as_view(),
-        name="topic_model",
     ),
     path(
         "assessment/<int:pk>/references/search/",
@@ -124,11 +117,6 @@ urlpatterns = [
     ),
     # Edit tags
     path(
-        "assessment/<int:pk>/search/<slug:slug>/tag/",
-        views.TagBySearch.as_view(),
-        name="search_tags_edit",
-    ),
-    path(
         "assessment/<int:pk>/search/<slug:slug>/tags/",
         views.SearchRefList.as_view(),
         name="search_tags",
@@ -142,6 +130,16 @@ urlpatterns = [
         "ris-export-instructions/",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
+    ),
+    path(
+        "assessment/<int:pk>/reference-tag-conflicts/",
+        views.ConflictResolution.as_view(),
+        name="tag-conflicts",
+    ),
+    path(
+        "assessment/<int:pk>/user-tags/",
+        views.UserTagList.as_view(),
+        name="user-tag-list",
     ),
     path("api/", include((router.urls, "api"))),
 ]

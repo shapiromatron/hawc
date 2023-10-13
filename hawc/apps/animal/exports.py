@@ -1,5 +1,4 @@
 from copy import copy
-from typing import Optional
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
@@ -9,7 +8,6 @@ from . import constants, models
 
 
 def get_gen_species_strain_sex(e, withN=False):
-
     gen = e["animal_group"]["generation"]
     if len(gen) > 0:
         gen += " "
@@ -179,7 +177,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return f"{values} {cls._get_dose_units(doses)}"
 
     @classmethod
-    def _get_dose(cls, doses: list[dict], idx: int) -> Optional[float]:
+    def _get_dose(cls, doses: list[dict], idx: int) -> float | None:
         for dose in doses:
             if dose["dose_group_id"] == idx:
                 return float(dose["dose"])
@@ -277,7 +275,6 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return headers
 
     def _get_data_rows(self):
-
         preferred_units = self.kwargs.get("preferred_units", None)
 
         rows = []
@@ -461,7 +458,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         for bmd in bmds:
             # return first match
             if bmd["dose_units_id"] in preferred_units and bmd["model"] is not None:
-                return [bmd["model"]["output"]["BMD"], bmd["model"]["output"]["BMDL"]]
+                return [bmd["bmd"], bmd["bmdl"]]
         return [None, None]
 
     @staticmethod
@@ -475,7 +472,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return False
 
     @staticmethod
-    def _dose_low_high(dose_list: list[Optional[float]]) -> tuple[Optional[float], Optional[float]]:
+    def _dose_low_high(dose_list: list[float | None]) -> tuple[float | None, float | None]:
         """
         Finds the lowest and highest non-zero dose from a given list of doses,
         ignoring None values. If there are no valid doses, returns None for both
@@ -500,7 +497,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             return (None, None)
 
     def _get_data_rows(self):
-
         preferred_units = self.kwargs.get("preferred_units", None)
 
         rows = []
@@ -638,6 +634,7 @@ class EndpointSummary(FlatFileExporter):
             "endpoint-response_units",
             "Dose units",
             "Doses",
+            "N",
             "Responses",
             "Doses and responses",
             "Response direction",
@@ -648,9 +645,11 @@ class EndpointSummary(FlatFileExporter):
             return set(sorted([d["dose_units"]["name"] for d in doses]))
 
         def getDoses(doses, unit):
-
             doses = [d["dose"] for d in doses if d["dose_units"]["name"] == unit]
             return [f"{d:g}" for d in doses]
+
+        def getNs(groups):
+            return [f"{grp['n'] if grp['n'] is not None else ''}" for grp in groups]
 
         def getResponses(groups):
             resps = []
@@ -725,6 +724,7 @@ class EndpointSummary(FlatFileExporter):
             ]
 
             responses_list = getResponses(ser["groups"])
+            ns_list = getNs(ser["groups"])
             response_direction = getResponseDirection(ser["groups"], ser["data_type"])
             for unit in units:
                 row_copy = copy(row)
@@ -733,6 +733,7 @@ class EndpointSummary(FlatFileExporter):
                     [
                         unit,  # 'units'
                         ", ".join(doses_list),  # Doses
+                        ", ".join(ns_list),  # Ns
                         ", ".join(responses_list),  # Responses w/ units
                         getDR(doses_list, responses_list, unit),
                         response_direction,

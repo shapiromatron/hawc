@@ -24,7 +24,6 @@ from . import autocomplete, models
 
 
 class CriteriaForm(forms.ModelForm):
-
     CREATE_LEGEND = "Create new study criteria"
 
     CREATE_HELP_TEXT = """
@@ -61,7 +60,6 @@ class CriteriaForm(forms.ModelForm):
 
 
 class StudyPopulationForm(forms.ModelForm):
-
     CREATE_LEGEND = "Create new study-population"
 
     CREATE_HELP_TEXT = ""
@@ -200,7 +198,6 @@ class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
 
 
 class AdjustmentFactorForm(forms.ModelForm):
-
     CREATE_LEGEND = "Create new adjustment factor"
 
     CREATE_HELP_TEXT = """
@@ -237,7 +234,6 @@ class AdjustmentFactorForm(forms.ModelForm):
 
 
 class ExposureForm(forms.ModelForm):
-
     HELP_TEXT_CREATE = """Create a new exposure."""
     HELP_TEXT_UPDATE = """Update an existing exposure."""
 
@@ -317,7 +313,6 @@ class ExposureSelectorForm(CopyAsNewSelectorForm):
 
 
 class OutcomeForm(forms.ModelForm):
-
     HELP_TEXT_CREATE = """Create a new outcome. An
         outcome is an response measured in an epidemiological study,
         associated with an exposure-metric. The overall outcome is
@@ -398,7 +393,6 @@ class OutcomeSelectorForm(CopyAsNewSelectorForm):
 
 
 class ComparisonSet(forms.ModelForm):
-
     HELP_TEXT_CREATE = ""
     HELP_TEXT_UPDATE = """Update an existing comparison set."""
 
@@ -470,7 +464,6 @@ class GroupForm(forms.ModelForm):
 
 
 class SingleGroupForm(GroupForm):
-
     HELP_TEXT_UPDATE = "Update an existing group and numerical group descriptions."
 
     @property
@@ -568,7 +561,6 @@ GroupNumericalDescriptionsFormset = modelformset_factory(
 
 
 class ResultForm(forms.ModelForm):
-
     HELP_TEXT_CREATE = """Describe results found for measured outcome."""
     HELP_TEXT_UPDATE = """Update results found for measured outcome."""
     ADJUSTMENT_FIELDS = ["factors_applied", "factors_considered"]

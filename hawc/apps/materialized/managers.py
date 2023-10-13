@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -75,7 +75,6 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
         return endpoint_scores
 
     def outcome_scores(self, outcome_ids: list[int]) -> dict[tuple[int, int], dict]:
-
         Outcome = apps.get_model("epi", "Outcome")
 
         outcomes = Outcome.objects.filter(pk__in=outcome_ids).select_related("study_population")
@@ -94,7 +93,6 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
         return outcome_scores
 
     def result_scores(self, result_ids: list[int]) -> dict[tuple[int, int], dict]:
-
         Result = apps.get_model("epi", "Result")
         Outcome = apps.get_model("epi", "Outcome")
         Exposure = apps.get_model("epi", "Exposure")
@@ -123,7 +121,7 @@ class FinalRiskOfBiasScoreManager(models.Manager):
     def get_queryset(self):
         return FinalRiskOfBiasScoreQuerySet(self.model, using=self._db)
 
-    def overall_endpoint_scores(self, assessment_id: int) -> Optional[pd.DataFrame]:
+    def overall_endpoint_scores(self, assessment_id: int) -> pd.DataFrame | None:
         qs = self.filter(
             study__assessment_id=assessment_id, metric__domain__is_overall_confidence=True
         )
@@ -142,7 +140,7 @@ class FinalRiskOfBiasScoreManager(models.Manager):
 
         return pd.DataFrame(data=rows, columns=("endpoint id", "overall study evaluation"))
 
-    def overall_result_scores(self, assessment_id: int) -> Optional[pd.DataFrame]:
+    def overall_result_scores(self, assessment_id: int) -> pd.DataFrame | None:
         qs = self.filter(
             study__assessment_id=assessment_id, metric__domain__is_overall_confidence=True
         )

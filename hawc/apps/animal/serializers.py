@@ -4,10 +4,10 @@ import json
 from django.db import transaction
 from rest_framework import serializers
 
+from ..assessment.api import user_can_edit_object
 from ..assessment.models import DoseUnits, DSSTox
 from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
-from ..bmd.serializers import ModelSerializer
-from ..common.api import DynamicFieldsMixin, user_can_edit_object
+from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
@@ -30,6 +30,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Validate parent object
         self.study = get_matching_instance(Study, self.initial_data, "study_id")
+        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
         # add additional checks from forms.ExperimentForm
         form = forms.ExperimentForm(data=data, parent=self.study)
@@ -56,26 +57,16 @@ class ExperimentSerializer(serializers.ModelSerializer):
 
 class DosesSerializer(serializers.ModelSerializer):
     dose_regime = serializers.PrimaryKeyRelatedField(read_only=True)
+    dose_units_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="dose_units",
+        queryset=DoseUnits.objects.all(),
+    )
 
     class Meta:
         model = models.DoseGroup
         fields = "__all__"
         depth = 1
-
-    def validate(self, data):
-        if hasattr(self, "initial_data"):
-            if "dose_regime_id" in self.initial_data:
-                # make sure instance exists
-                dosing_regime = get_matching_instance(
-                    models.DosingRegime, self.initial_data, "dosing_regime_id"
-                )
-                data["dosing_regime_id"] = dosing_regime.id
-
-            if "dose_units_id" in self.initial_data:
-                dose_units = get_matching_instance(DoseUnits, self.initial_data, "dose_units_id")
-                data["dose_units_id"] = dose_units.id
-
-        return data
 
 
 class AnimalGroupRelationSerializer(serializers.ModelSerializer):
@@ -90,7 +81,7 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
 
 
 class DosingRegimeSerializer(serializers.ModelSerializer):
-    doses = DosesSerializer(many=True)
+    doses = DosesSerializer(many=True, required=True)
     dosed_animals = AnimalGroupRelationSerializer(required=False)
 
     def to_representation(self, instance):
@@ -101,32 +92,22 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-        # validate dose-groups too
-        dose_serializers = []
-        doses = self.initial_data.get("doses", [])
-        for dose in doses:
-            dose_serializer = DosesSerializer(data=dose)
-            dose_serializer.is_valid(raise_exception=True)
-            dose_serializers.append(dose_serializer)
-        self.dose_serializers = dose_serializers
-
-        # validate that we have the same number of `dose_group_id`
-        dose_groups = set([d["dose_group_id"] for d in doses])
-        units = set([d["dose_units_id"] for d in doses])
-
-        if len(dose_groups) == 0:
+        if len(data["doses"]) == 0:
             raise serializers.ValidationError("Must have at least one dose-group.")
+
+        dose_groups: set[int] = set([d["dose_group_id"] for d in data["doses"]])
+        units: set[int] = set([d["dose_units"].id for d in data["doses"]])
 
         expected_dose_groups = list(range(max(dose_groups) + 1))
         if dose_groups != set(expected_dose_groups):
             raise serializers.ValidationError(f"Expected `dose_group_id` in {expected_dose_groups}")
 
         expected_doses = len(dose_groups) * len(units)
-        if len(doses) != expected_doses:
+        if len(data["doses"]) != expected_doses:
             raise serializers.ValidationError(f"Expected {expected_doses} dose-groups.")
 
         expected_set = set(itertools.product(dose_groups, units))
-        actual_set = set((d["dose_group_id"], d["dose_units_id"]) for d in doses)
+        actual_set = set((d["dose_group_id"], d["dose_units"].id) for d in data["doses"])
         if expected_set != actual_set:
             raise serializers.ValidationError("Missing or duplicate dose-groups")
 
@@ -136,10 +117,11 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data.pop("doses", None)
+        doses = validated_data.pop("doses", None)
         dosing_regime = models.DosingRegime.objects.create(**validated_data)
-        for dose_serializer in self.dose_serializers:
-            dose_serializer.save(dose_regime_id=dosing_regime.id)
+        for dose in doses:
+            dose["dose_regime"] = dosing_regime
+            models.DoseGroup.objects.create(**dose)
         return dosing_regime
 
     class Meta:
@@ -236,7 +218,6 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-
         errors = forms.EndpointGroupForm.clean_endpoint_group(
             self.context["endpoint_data"].get("data_type", "C"),
             self.context["endpoint_data"].get("variance_type", 0),
@@ -288,24 +269,10 @@ class EndpointSerializer(serializers.ModelSerializer):
         models.EndpointGroup.get_incidence_summary(ret["data_type"], ret["groups"])
         models.Endpoint.setMaximumPercentControlChange(ret)
 
-        selected_models = instance.bmd_models.all()
-        bmds = []
-        if selected_models.count() > 0:
-            for sm in selected_models:
-                model_data = ModelSerializer().to_representation(sm.model) if sm.model_id else None
-                bmds.append(
-                    {
-                        "dose_units_id": sm.dose_units_id,
-                        "notes": sm.notes,
-                        "model": model_data,
-                        "session_url": model_data["url"]
-                        if model_data
-                        else instance.bmd_sessions.filter(dose_units_id=sm.dose_units_id)
-                        .latest()
-                        .get_absolute_url(),
-                    }
-                )
-        ret["bmds"] = bmds
+        ret["bmds"] = [
+            session.get_selected_model() for session in instance.bmd_sessions.filter(active=True)
+        ]
+
         return ret
 
     def _validate_term_and_text(self, data, term_field: str, text_field: str, term_type_str: str):
@@ -413,8 +380,8 @@ class ExperimentCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSer
 
     class Meta:
         model = models.Experiment
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.study.short_citation
@@ -425,8 +392,8 @@ class AnimalGroupCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSe
 
     class Meta:
         model = models.AnimalGroup
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.experiment.study.short_citation
@@ -437,8 +404,8 @@ class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
 
     class Meta:
         model = models.Endpoint
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",) + tuple(model.TERM_FIELD_MAPPING.values())
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id", *tuple(model.TERM_FIELD_MAPPING.values()))
 
     def get_study_short_citation(self, obj):
         return obj.animal_group.experiment.study.short_citation
@@ -449,8 +416,8 @@ class DosingRegimeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelS
 
     class Meta:
         model = models.DosingRegime
-        cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        cleanup_fields = ("study_short_citation", *model.TEXT_CLEANUP_FIELDS)
+        fields = (*cleanup_fields, "id")
 
     def get_study_short_citation(self, obj):
         return obj.dosed_animals.experiment.study.short_citation

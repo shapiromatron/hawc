@@ -3,7 +3,7 @@ import plotly.express as px
 from django import forms
 from django.db.models import Count
 from django.db.models.functions import Trunc
-from plotly.graph_objects import Figure
+from plotly.graph_objs._figure import Figure
 
 from hawc.apps.animal.models import Endpoint
 from hawc.apps.assessment.models import Assessment

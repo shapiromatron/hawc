@@ -1,6 +1,6 @@
 import json
 import math
-from typing import Generator, Optional
+from collections.abc import Generator
 
 from requests import Response, Session
 from tqdm import tqdm
@@ -39,7 +39,7 @@ class HawcSession:
         elif response.status_code >= 500 and response.status_code < 600:
             raise HawcServerException(response.status_code, "no additional information provided")
 
-    def get(self, url: str, params: Optional[dict] = None) -> Response:
+    def get(self, url: str, params: dict | None = None) -> Response:
         """
         Sends a GET request using the session instance
 
@@ -54,7 +54,7 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def delete(self, url: str, params: Optional[dict] = None) -> Response:
+    def delete(self, url: str, params: dict | None = None) -> Response:
         """
         Sends a DELETE request using the session instance
 
@@ -69,7 +69,7 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def post(self, url: str, data: Optional[dict] = None) -> Response:
+    def post(self, url: str, data: dict | None = None) -> Response:
         """
         Sends a POST request using the session instance
 
@@ -84,7 +84,7 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def patch(self, url: str, data: Optional[dict] = None) -> Response:
+    def patch(self, url: str, data: dict | None = None) -> Response:
         """
         Sends a PATCH request using the session instance
 
@@ -114,18 +114,31 @@ class HawcSession:
         token = response.json()["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
-    def set_authentication_token(self, token: str) -> dict:
+    def set_authentication_token(self, token: str, login: bool = False) -> bool:
         """
-        Set authentication token (browser session specific)
+        Set authentication token for hawc client session.
 
         Args:
             token (str): authentication token from your user profile
+            login (bool, default False): if True, creates a django cookie-based session for HAWC
+                similar to a standard web-browser. If False (default), creates a token-
+                based django session for using the API. Requests using cookie-based sessions
+                require CSRF tokens, so form functionality will be limited.
+
+        Returns
+            bool: Returns true if session is valid
         """
+        params = {}
+        if login:
+            params["login"] = 1
         self._session.headers.update(Authorization=f"Token {token}")
         url = f"{self.root_url}/user/api/validate-token/"
-        return self.get(url).json()
+        response = self.get(url, params).json()
+        if login:
+            self._session.headers.pop("Authorization")
+        return response["valid"]
 
-    def iter_pages(self, url: str, params: dict = None) -> Generator:
+    def iter_pages(self, url: str, params: dict | None = None) -> Generator:
         """
         Generator that crawls paginated HAWC responses.
 

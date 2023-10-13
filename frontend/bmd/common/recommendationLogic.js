@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import h from "shared/utils/helpers";
+
+import h from "/shared/utils/helpers";
 
 import {CONTINUOUS, DICHOTOMOUS, DICHOTOMOUS_CANCER} from "./constants";
 
@@ -341,13 +342,13 @@ const applyRecommendationLogic = function(logics, models, endpoint, doseUnitsId)
     });
 
     // apply model recommendations, with each bmr being independent.
-    let bmr_ids = _.chain(models)
-        .map("bmr_id")
+    let bmr_indexes = _.chain(models)
+        .map("bmr_index")
         .uniq()
         .value();
 
-    bmr_ids.forEach(bmr_id => {
-        let subset = _.filter(models, {bmr_id, logic_bin: 0}),
+    bmr_indexes.forEach(bmr_index => {
+        let subset = _.filter(models, {bmr_index, logic_bin: 0}),
             bmdls = _.chain(subset)
                 .map(d => d.output.BMDL)
                 .filter(d => _.isNumber(d) && d > 0)

@@ -26,7 +26,13 @@ def daily_changes():
     df["year"] = df.date.dt.year
     df["yr-wk"] = df.year.astype(str) + "-" + df.weekofyear.astype(str)
     lines = px.line(
-        df, x="date", y="n", title="changes per day", markers=True, hover_data=["weekday"]
+        df,
+        x="date",
+        y="n",
+        title="changes per day",
+        markers=True,
+        hover_data=["weekday"],
+        range_y=[0, df.n.quantile(0.99)],
     )
     lines_data = df.loc[:, "n"].describe().to_frame()
 
@@ -49,6 +55,7 @@ def daily_changes():
                 "Sunday",
             ]
         },
+        range_y=[0, df.n.quantile(0.99)],
     )
     boxplot_data = df.pivot(columns="weekday", values="n").describe()
     df_punchcard = (

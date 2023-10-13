@@ -11,31 +11,43 @@ class Breadcrumbs extends Component {
             hasModel = store.selectedModel !== null,
             hasField = store.selectedField !== null;
 
+        const items = [{text: "Cleanup", action: store.clearModel, active: false}];
+        if (hasModel) {
+            if (hasField) {
+                items.push({
+                    text: h.titleCase(store.selectedModel.title),
+                    action: store.clearField,
+                    active: false,
+                });
+                items.push({
+                    text: `Cleanup ${h.titleCase(store.selectedField)}`,
+                    action: null,
+                    active: true,
+                });
+            } else {
+                items.push({
+                    text: `${h.titleCase(store.selectedModel.title)} Field Selection`,
+                    action: null,
+                    active: true,
+                });
+            }
+        } else {
+            items.push({text: "Model selection", action: null, active: true});
+        }
+
         return (
             <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                    <a href="#" onClick={store.clearModel}>
-                        Cleanup
-                    </a>
-                </li>
-
-                {hasModel ? (
-                    <li className="breadcrumb-item">
-                        <a href="#" onClick={store.clearField}>
-                            {h.titleCase(store.selectedModel.title)}
+                {items.map((item, i) => {
+                    return (
+                        <a
+                            key={i}
+                            href="#"
+                            className={`breadcrumb-item ${item.active ? "active" : ""}`}
+                            onClick={item.action}>
+                            {item.text}
                         </a>
-                    </li>
-                ) : (
-                    <li className="breadcrumb-item active">Model selection</li>
-                )}
-
-                {hasField ? (
-                    <li className="breadcrumb-item active">
-                        Cleanup {h.titleCase(store.selectedField)}
-                    </li>
-                ) : hasModel ? (
-                    <li className="breadcrumb-item active">Field selection</li>
-                ) : null}
+                    );
+                })}
             </ol>
         );
     }

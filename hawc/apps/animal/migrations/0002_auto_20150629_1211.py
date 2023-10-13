@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
-
 import django.core.validators
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0001_initial"),
     ]

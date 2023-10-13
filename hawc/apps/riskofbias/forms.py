@@ -77,6 +77,19 @@ class RoBMetricForm(forms.ModelForm):
             self.instance.domain = domain
         self.fields["responses"].label = "Judgment choices"
 
+    def clean_key(self):
+        key = self.cleaned_data["key"]
+        if key:
+            qs = models.RiskOfBiasMetric.objects.filter(
+                domain__assessment=self.instance.domain.assessment_id,
+                key=key,
+            )
+            if self.instance.id:
+                qs = qs.exclude(id=self.instance.id)
+            if qs.exists():
+                raise forms.ValidationError("Key is not unique for assessment.")
+        return key
+
     @property
     def helper(self):
         inputs = {
@@ -92,7 +105,7 @@ class RoBMetricForm(forms.ModelForm):
             inputs["legend_text"] = f"Create new {rob_name} metric"
             inputs["help_text"] = f"Create a new {rob_name} metric."
         helper = BaseFormHelper(self, **inputs)
-        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("name", 3, ["col-md-6", "col-md-3", "col-md-3"])
         helper.add_row("description", 2, ["col-md-8", "col-md-4"])
         helper.add_row("required_animal", 3, "col-md-4")
         return helper
@@ -125,11 +138,12 @@ class RiskOfBiasCopyForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
             self.user, exclusion_id=self.assessment.id
         )
 
@@ -138,8 +152,8 @@ class RiskOfBiasCopyForm(forms.Form):
         rob_name = self.assessment.get_rob_name_display().lower()
         helper = BaseFormHelper(
             self,
-            legend_text=f"Copy {rob_name} approach from another assessment",  # noqa
-            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
+            legend_text=f"Copy {rob_name} approach from another assessment",
+            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",
             cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
             submit_text="Copy from assessment",
         )
@@ -159,6 +173,7 @@ class RiskOfBiasLoadApproachForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)

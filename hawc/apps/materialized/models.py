@@ -55,7 +55,6 @@ class MaterializedViewModel(models.Model):
 
 
 class FinalRiskOfBiasScore(MaterializedViewModel):
-
     sql = sql.FinalRiskOfBiasScore
 
     objects = managers.FinalRiskOfBiasScoreManager()

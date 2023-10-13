@@ -8,7 +8,6 @@ import hawc.apps.common.models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

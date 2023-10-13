@@ -9,7 +9,6 @@ def load_fixture(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0026_content"),
     ]

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from collections import defaultdict
 
 from django.db import migrations
@@ -42,7 +41,6 @@ def set_doi_lowercase(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0015_unaccent"),
     ]

@@ -1,6 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
+{% load riskofbias %}
 
 {% block content %}
   {% crispy form %}
@@ -12,56 +12,68 @@
     <div id="detail-1" >
       <p><b>Available judgments:</b></p>
       <ul>
-        <li>Definitely low risk of bias (++)</li>
-        <li>Probably low risk of bias (+)</li>
-        <li>Probably high risk of bias (-)</li>
-        <li>Not reported (NR)</li>
-        <li>Definitely high risk of bias (--)</li>
-        <li>Not applicable (N/A)</li>
+        {% score_option 17 %}
+        {% score_option 16 %}
+        {% score_option 15 %}
+        {% score_option 14 %}
+        {% score_option 12 %}
+        {% score_option 10 %}
       </ul>
     </div>
     <div id="detail-2" >
       <p><b>Available judgments:</b></p>
       <ul>
-        <li>Good (++)</li>
-        <li>Adequate (+)</li>
-        <li>Deficient (-)</li>
-        <li>Critically deficient (--)</li>
-        <li>Not reported (NR)</li>
-        <li>Not applicable (N/A)</li>
+        {% score_option 27 %}
+        {% score_option 26 %}
+        {% score_option 25 %}
+        {% score_option 24 %}
+        {% score_option 22 %}
+        {% score_option 20 %}
       </ul>
     </div>
     <div id="detail-3" >
       <p><b>Available judgments:</b></p>
       <ul>
-        <li>High confidence (++)</li>
-        <li>Medium confidence (+)</li>
-        <li>Low confidence (-)</li>
-        <li>Uninformative (--)</li>
-        <li>Not reported (NR)</li>
-        <li>Not applicable (N/A)</li>
+        {% score_option 37 %}
+        {% score_option 36 %}
+        {% score_option 35 %}
+        {% score_option 34 %}
+        {% score_option 22 %}
+        {% score_option 20 %}
       </ul>
     </div>
     <div id="detail-4" >
       <p><b>Available judgments:</b></p>
       <ul>
-        <li>Yes (Y)</li>
-        <li>No (N)</li>
-        <li>Not reported (NR)</li>
-        <li>Not applicable (N/A)</li>
+        {% score_option 40 %}
+        {% score_option 41 %}
+        {% score_option 22 %}
+        {% score_option 20 %}
       </ul>
     </div>
     <div id="detail-5">
       <p><b>Available judgments:</b></p>
       <ul>
-        <li>Minor concerns (+++)</li>
-        <li>Some concerns (++)</li>
-        <li>Major concerns (+)</li>
-        <li>Critical concerns (0)</li>
-        <li>Not reported (NR)</li>
-        <li>Not applicable (N/A)</li>
+        {% score_option 53 %}
+        {% score_option 52 %}
+        {% score_option 51 %}
+        {% score_option 50 %}
+        {% score_option 22 %}
+        {% score_option 20 %}
       </ul>
     </div>
+    <div id="detail-6">
+      <p><b>Available judgments:</b></p>
+      <ul>
+        {% score_option 57 %}
+        {% score_option 56 %}
+        {% score_option 55 %}
+        {% score_option 54 %}
+        {% score_option 22 %}
+        {% score_option 20 %}
+      </ul>
+    </div>
+  </div>
   </div>
 {% endblock %}
 

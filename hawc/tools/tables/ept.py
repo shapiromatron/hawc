@@ -48,7 +48,6 @@ class SummaryJudgementChoices(IntEnum):
 
 
 class SummaryJudgementCell(BaseCell):
-
     judgement: SummaryJudgementChoices
     custom_judgement_icon: str = ""
     custom_judgement_label: str = ""
@@ -136,13 +135,13 @@ class FactorLabel(Enum):
     UpCoherence = "Coherence"
     UpEffect = "Large or concerning magnitude of effect"
     UpPlausible = "Mechanistic evidence providing plausibility"
-    UpConfidence = "Most studies are medium or high confidence"
+    UpConfidence = "All or most studies are medium or high confidence"
     UpOther = ""
     DownConsistency = "Unexplained inconsistency"
     DownImprecision = "Imprecision"
     DownCoherence = "Lack of expected coherence"
     DownImplausible = "Evidence demonstrating implausibility"
-    DownConfidence = "Most studies are low confidence"
+    DownConfidence = "All or most studies are low confidence"
     DownInterpretation = "Interpretation limitations"
     DownSignificance = "Concerns about biological significance"
     DownMeasures = "Indirect outcome measures"
@@ -234,7 +233,7 @@ class FactorsCell(BaseCell):
 
 
 class CertainFactorsCell(FactorsCell):
-    column: int = 3
+    column: int = 2
 
     @property
     def factor_types(self):
@@ -242,7 +241,7 @@ class CertainFactorsCell(FactorsCell):
 
 
 class UncertainFactorsCell(FactorsCell):
-    column: int = 2
+    column: int = 3
 
     @property
     def factor_types(self):
@@ -326,8 +325,8 @@ class EvidenceRow(BaseCellGroup):
         self.cells = [
             self.evidence,
             self.summary,
-            self.uncertain_factors,
             self.certain_factors,
+            self.uncertain_factors,
             self.judgement,
         ]
 
@@ -438,10 +437,10 @@ class EvidenceProfileTable(BaseTable):
                 True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 2, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
+                True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
             ),
             GenericCell.parse_args(
-                True, 1, 3, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
+                True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
             ),
             GenericCell.parse_args(
                 True, 1, 4, 1, 1, tag_wrapper("Evidence Synthesis Judgment(s)", "p", "strong")

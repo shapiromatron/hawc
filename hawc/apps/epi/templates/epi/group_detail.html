@@ -1,16 +1,15 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h2 class="d-inline-block">{{object.name}}</h2>
-    {% if obj_perms.edit and crud == "Read" %}
-      <div class="dropdown btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <span class="dropdown-header">Group editing</span>
-            <a class="dropdown-item" href="{% url 'epi:g_update' object.pk %}">Update</a>
-        </div>
-      </div>
-    {% endif %}
+    <div class="d-flex">
+      <h2>{{object.name}}</h2>
+      {% if obj_perms.edit and crud == "Read" %}
+        {% actions %}
+          <span class="dropdown-header">Group editing</span>
+          <a class="dropdown-item" href="{% url 'epi:g_update' object.pk %}">Update</a>
+        {% endactions %}
+      {% endif %}
+    </div>
     <div id="objContainer"></div>
 {% endblock %}
 

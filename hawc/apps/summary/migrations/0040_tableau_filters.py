@@ -34,7 +34,6 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0039_update_rob_legend"),
     ]

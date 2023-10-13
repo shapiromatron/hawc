@@ -46,7 +46,7 @@ class Study {
     }
 
     has_riskofbias() {
-        return this.riskofbias.length > 0;
+        return this.riskofbias && this.riskofbias.length > 0;
     }
 
     build_breadcrumbs() {
@@ -86,7 +86,7 @@ class Study {
         );
         if (this.data.full_text_url)
             tbl.add_tbody_tr(
-                "Full-text link",
+                "Full text URL",
                 `<a href=${this.data.full_text_url}>${this.data.full_text_url}</a>`
             );
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
@@ -128,7 +128,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li>
+                `<li class="pb-2">
                     <a target="_blank" href="${v.url}">${v.filename}</a>
                     <a class="btn btn-sm btn-danger float-right" title="Delete" href="${v.url_delete}">
                         <i class="fa fa-trash"></i>
@@ -147,7 +147,7 @@ class Study {
         this.render($content, modal.getModal());
 
         modal
-            .addHeader(title)
+            .addHeader([title, HAWCUtils.unpublished(this.data.published, window.isEditable)])
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
@@ -191,6 +191,7 @@ class Study {
             HAWCUtils.booleanCheckbox(this.data.epi),
             HAWCUtils.booleanCheckbox(this.data.epi_meta),
             HAWCUtils.booleanCheckbox(this.data.in_vitro),
+            HAWCUtils.booleanCheckbox(this.data.eco),
         ];
     }
 
@@ -208,6 +209,7 @@ Study.typeNames = {
     epi: "Epidemiology",
     epi_meta: "Epidemiology meta-analysis/pooled analysis",
     in_vitro: "In vitro",
+    eco: "Ecology",
 };
 
 export default Study;

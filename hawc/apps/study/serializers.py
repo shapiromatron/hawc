@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
@@ -27,12 +25,12 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Study
         fields = "__all__"
+        read_only_fields = ("identifiers", "searches")
 
 
 class SimpleStudySerializer(StudySerializer):
     def validate(self, data):
         if "reference_id" in self.initial_data:
-
             ref_id = self.initial_data.get("reference_id")
 
             try:
@@ -85,9 +83,7 @@ class VerboseStudySerializer(StudySerializer):
     identifiers = IdentifiersSerializer(many=True)
     tags = ReferenceTagsSerializer()
 
-    def _get_identifier(
-        self, identifiers: list, key: str, to_int: bool
-    ) -> Optional[Union[int, str]]:
+    def _get_identifier(self, identifiers: list, key: str, to_int: bool) -> int | str | None:
         for identifier in identifiers:
             if identifier["database"] == key:
                 value = identifier["unique_id"]
@@ -169,10 +165,26 @@ class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializ
     class Meta:
         model = models.Study
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = (
-            "id",
-            "short_citation",
-        ) + cleanup_fields
+        fields = ("id", "short_citation", *cleanup_fields)
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)
+
+
+class GlobalStudySerializer(serializers.ModelSerializer):
+    assessment_creator = serializers.EmailField(source="assessment.creator.email")
+    assessment_name = serializers.CharField(source="assessment.name")
+    assessment_status = serializers.CharField()
+
+    class Meta:
+        model = models.Study
+        fields = [
+            "id",
+            "title",
+            "short_citation",
+            "published",
+            "assessment_id",
+            "assessment_name",
+            "assessment_creator",
+            "assessment_status",
+        ]
