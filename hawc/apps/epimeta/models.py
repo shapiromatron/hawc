@@ -69,42 +69,6 @@ class MetaProtocol(models.Model):
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "meta_protocol-pk",
-            "meta_protocol-url",
-            "meta_protocol-name",
-            "meta_protocol-protocol_type",
-            "meta_protocol-lit_search_strategy",
-            "meta_protocol-lit_search_notes",
-            "meta_protocol-lit_search_start_date",
-            "meta_protocol-lit_search_end_date",
-            "meta_protocol-total_references",
-            "meta_protocol-inclusion_criteria",
-            "meta_protocol-exclusion_criteria",
-            "meta_protocol-total_studies_identified",
-            "meta_protocol-notes",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["protocol_type"],
-            ser["lit_search_strategy"],
-            ser["lit_search_notes"],
-            ser["lit_search_start_date"],
-            ser["lit_search_end_date"],
-            ser["total_references"],
-            "|".join(ser["inclusion_criteria"]),
-            "|".join(ser["exclusion_criteria"]),
-            ser["total_studies_identified"],
-            ser["notes"],
-        )
-
     def get_study(self):
         return self.study
 
@@ -191,54 +155,6 @@ class MetaResult(models.Model):
         else:
             return results
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "meta_result-pk",
-            "meta_result-url",
-            "meta_result-label",
-            "meta_result-data_location",
-            "meta_result-health_outcome",
-            "meta_result-health_outcome_notes",
-            "meta_result-exposure_name",
-            "meta_result-exposure_details",
-            "meta_result-number_studies",
-            "meta_result-statistical_metric",
-            "meta_result-statistical_notes",
-            "meta_result-n",
-            "meta_result-estimate",
-            "meta_result-lower_ci",
-            "meta_result-upper_ci",
-            "meta_result-ci_units",
-            "meta_result-heterogeneity",
-            "meta_result-adjustment_factors",
-            "meta_result-notes",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["label"],
-            ser["data_location"],
-            ser["health_outcome"],
-            ser["health_outcome_notes"],
-            ser["exposure_name"],
-            ser["exposure_details"],
-            ser["number_studies"],
-            ser["metric"]["metric"],
-            ser["statistical_notes"],
-            ser["n"],
-            ser["estimate"],
-            ser["lower_ci"],
-            ser["upper_ci"],
-            ser["ci_units"],
-            ser["heterogeneity"],
-            "|".join(ser["adjustment_factors"]),
-            ser["notes"],
-        )
-
     def get_study(self):
         if self.protocol is not None:
             return self.protocol.get_study()
@@ -316,42 +232,6 @@ class SingleResult(models.Model):
         if self.lower_ci and self.upper_ci:
             txt += f" ({self.lower_ci}, {self.upper_ci})"
         return txt
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "single_result-pk",
-            "single_result-study",
-            "single_result-exposure_name",
-            "single_result-weight",
-            "single_result-n",
-            "single_result-estimate",
-            "single_result-lower_ci",
-            "single_result-upper_ci",
-            "single_result-ci_units",
-            "single_result-notes",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        study = None
-        try:
-            study = ser["study"]["id"]
-        except TypeError:
-            pass
-
-        return (
-            ser["id"],
-            study,
-            ser["exposure_name"],
-            ser["weight"],
-            ser["n"],
-            ser["estimate"],
-            ser["lower_ci"],
-            ser["upper_ci"],
-            ser["ci_units"],
-            ser["notes"],
-        )
 
     def get_study(self):
         if self.meta_result is not None:
