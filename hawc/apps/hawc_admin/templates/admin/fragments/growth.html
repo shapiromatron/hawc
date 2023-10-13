@@ -1,7 +1,7 @@
 {% load bs4 %}
 
 <div hx-target="this" hx-swap="outerHTML">
-    <form hx-post="{% url 'admin_dashboard' %}?action=growth" hx-trigger="change">
+    <form hx-get="{% url 'admin_dashboard' %}?action=growth" hx-trigger="change">
         {{ form.as_p }}
         {% csrf_token %}
     </form>
