@@ -595,29 +595,37 @@ class DRPlot extends D3Plot {
             bmd_lines = _.chain(lines)
                 .filter(d => d.bmd_line !== undefined)
                 .map(d => {
-                    return [
-                        {
-                            x1: x(d.bmd_line.x),
-                            x2: x(d.bmd_line.x),
-                            y1: y.range()[0],
-                            y2: y(d.bmd_line.y),
-                            stroke: d.stroke,
-                        },
-                        {
-                            x1: x.range()[0],
-                            x2: x(d.bmd_line.x),
-                            y1: y(d.bmd_line.y),
-                            y2: y(d.bmd_line.y),
-                            stroke: d.stroke,
-                        },
-                        {
+                    const data = [];
+                    if (d.bmd_line) {
+                        data.push(
+                            ...[
+                                {
+                                    x1: x(d.bmd_line.x),
+                                    x2: x(d.bmd_line.x),
+                                    y1: y.range()[0],
+                                    y2: y(d.bmd_line.y),
+                                    stroke: d.stroke,
+                                },
+                                {
+                                    x1: x.range()[0],
+                                    x2: x(d.bmd_line.x),
+                                    y1: y(d.bmd_line.y),
+                                    y2: y(d.bmd_line.y),
+                                    stroke: d.stroke,
+                                },
+                            ]
+                        );
+                    }
+                    if (d.bmdl_line) {
+                        data.push({
                             x1: x(d.bmdl_line.x),
                             x2: x(d.bmdl_line.x),
                             y1: y.range()[0],
                             y2: y(d.bmd_line.y),
                             stroke: d.stroke,
-                        },
-                    ];
+                        });
+                    }
+                    return data;
                 })
                 .flattenDeep()
                 .value(),
