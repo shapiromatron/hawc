@@ -16,7 +16,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestEpiAssessmentViewset:
+class TestEpiAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
         client = APIClient()
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
@@ -1568,13 +1568,9 @@ class TestExposureApi:
 @pytest.mark.django_db
 class TestMetadataApi:
     def test_permissions(self):
-        # Disable non-assesssment-specific list view of metadata
-        try:
+        # Disable non-assessment-specific list view of metadata
+        with pytest.raises(NoReverseMatch):
             url = reverse("epi:api:metadata-list")
-            raise AssertionError()
-        except NoReverseMatch:
-            # This is correct behavior
-            pass
 
         client = APIClient()
 

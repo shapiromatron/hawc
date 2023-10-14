@@ -1,6 +1,5 @@
 from crispy_forms import layout as cfl
 from django import forms
-from django.conf import settings
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
@@ -10,10 +9,6 @@ from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
 from . import models
-
-
-def eco_enabled() -> bool:
-    return settings.HAWC_FEATURES.ENABLE_ECO
 
 
 class BaseStudyForm(forms.ModelForm):
@@ -51,8 +46,6 @@ class BaseStudyForm(forms.ModelForm):
             self.instance.assessment = parent
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
-        if not eco_enabled():
-            self.fields.pop("eco")
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
@@ -75,12 +68,7 @@ class BaseStudyForm(forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        if eco_enabled():
-            helper.add_row(
-                "bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"]
-            )
-        else:
-            helper.add_row("bioassay", 4, "col-md-3")
+        helper.add_row("bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"])
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
@@ -200,19 +188,22 @@ class IdentifierStudyForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        db_type = cleaned_data.get("db_type")
+        db_id = cleaned_data.get("db_id")
+        if db_type is None or db_id is None:
+            return cleaned_data
+
         # study with this identifier should not already exist
         existing = models.Study.objects.filter(
             assessment_id=self.assessment,
-            identifiers__database=cleaned_data["db_type"],
-            identifiers__unique_id=str(cleaned_data["db_id"]),
+            identifiers__database=db_type,
+            identifiers__unique_id=db_id,
         ).first()
         if existing is not None:
             raise forms.ValidationError({"db_id": f"Study already exists; see {existing}"})
 
         # validate identifier; cache content if it doesn't yet exist
-        cleaned_data["identifier"], self._identifier_content = validate_external_id(
-            cleaned_data["db_type"], cleaned_data["db_id"]
-        )
+        cleaned_data["identifier"], self._identifier_content = validate_external_id(db_type, db_id)
 
         return cleaned_data
 

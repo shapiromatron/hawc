@@ -1,20 +1,15 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div class="row pl-1">
-    <div class="col-md-12">
-        <h2 class="d-inline-block">Summary text</h2>
-        <div class="dropdown btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-          <div class="dropdown-menu dropdown-menu-right">
-            {% if obj_perms.edit %}
-            <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
-            {% endif %}
-          </div>
-        </div>
-    </div>
-    <div id="main" class="container-fluid col-md-12"></div>
+  <div class="d-flex">
+    <h2>Summary text</h2>
+    {% if obj_perms.edit %}
+      {% actions %}
+        <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+      {% endactions %}
+    {% endif %}
   </div>
+  <div id="main" class="container-fluid col-md-12"></div>
 {% endblock %}
 
 {% block extrajs %}

@@ -8,299 +8,83 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Type:
+      - application/json
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.27.1
+      x-api-key:
+      - <omitted>
     method: GET
-    uri: https://comptox.epa.gov/dashboard-api/ccdapp2/chemical-detail/search/by-dsstoxsid?id=DTXSID7020970
+    uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020970
   response:
     body:
-      string: "{\n  \"createdDate\" : null,\n  \"lastModifiedDate\" : null,\n  \"createdBy\"
-        : null,\n  \"dsstoxSubstanceId\" : \"DTXSID7020970\",\n  \"dsstoxCompoundId\"
-        : \"DTXCID30970\",\n  \"casrn\" : \"1836-75-5\",\n  \"compoundId\" : 970,\n
-        \ \"genericSubstanceId\" : 20970,\n  \"trireleaseIdentifier\" : \"001836755\",\n
-        \ \"pubchemCid\" : 15787,\n  \"preferredName\" : \"Nitrofen\",\n  \"acdIupacName\"
-        : \"2,4-Dichloro-1-(4-nitrophenoxy)benzene\",\n  \"wikipediaName\" : \"Nitrofen\",\n
-        \ \"meshName\" : \"nitrofen\",\n  \"label\" : \"Nitrofen\",\n  \"inchiKeySkeleton\"
-        : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n  \"inchiKey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n
-        \ \"inchiString\" : \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
-        \ \"inchiSkeleton\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n  \"mixtures\" : \"1\",\n
-        \ \"msReadyMappings\" : [ {\n    \"dtxcid\" : \"DTXCID30970\",\n    \"count\"
-        : 3\n  } ],\n  \"similarCompounds\" : null,\n  \"tanimoto\" : null,\n  \"molFormula\"
-        : \"C12H7Cl2NO3\",\n  \"smiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
-        \ \"scrubchemLink\" : \"\\\"https://www.scrubchem.org/Home/Results?CIDs=15787\\\"\",\n
-        \ \"monoisotopicMass\" : 282.9802985,\n  \"molWeight\" : 284.09,\n  \"isMarkush\"
-        : false,\n  \"irisLink\" : null,\n  \"citation\" : null,\n  \"qcLevel\" :
-        1,\n  \"qcLevelDesc\" : \"Level 1: Expert curated, highest confidence in accuracy
-        and consistency of unique chemical identifiers\",\n  \"qcNotes\" : null,\n
-        \ \"safetyUrl\" : \"https://pubchem.ncbi.nlm.nih.gov/compound/15787#datasheet=LCSS&section=GHS-\",\n
-        \ \"hasStructureImage\" : true,\n  \"relatedSubstanceCount\" : null,\n  \"relatedStructureCount\"
-        : null,\n  \"presenceInLists\" : [ {\n    \"label\" : \"Federal\",\n    \"name\"
-        : \"federal\",\n    \"shortDescription\" : \"Lists defined by the US federal
-        government\",\n    \"lists\" : [ {\n      \"label\" : \"EPA ToxCast Screening
-        Library (ph2 subset)\",\n      \"name\" : \"TOXCAST_ph2\",\n      \"shortDescription\"
-        : \"TOXCAST_ph2 is the ph2 subset of TOXCAST, added in Phase II of the ToxCast
-        program to increase chemical diversity and coverage of chemicals of concern
-        to EPA programs.\"\n    }, {\n      \"label\" : \"EPA: Toxics Release Inventory
-        \",\n      \"name\" : \"TRIRELEASE\",\n      \"shortDescription\" : \"Chemicals
-        covered by the TRI Program cause one or more of the following: 1) Cancer or
-        other chronic human health effects; 2) Significant adverse acute human health
-        effects; 3) Significant adverse environmental effects\\r\\n\"\n    }, {\n
-        \     \"label\" : \"EPA|ENDOCRINE: Integrated pathway model for the Estrogen
-        Receptor\",\n      \"name\" : \"ERMODEL\",\n      \"shortDescription\" : \"Dataset
-        associated with \\\"Integrated Model of Chemical Perturbations of a Biological
-        Pathway Using 18 In Vitro High-Throughput Screening Assays for the Estrogen
-        Receptor\\\" by Judson et al. \"\n    }, {\n      \"label\" : \"PESTICIDES|EPA:
-        Pesticide Chemical Search Database\",\n      \"name\" : \"EPAPCS\",\n      \"shortDescription\"
-        : \"The entries in this list have been classified in the U.S. as pesticidal
-        \u201Cactive ingredients\u201D (conventional, antimicrobial, or biopesticidal
-        agents), and were sourced from the Pesticide Chemical Search database.\"\n
-        \   }, {\n      \"label\" : \"List of Adverse Outcome Pathway Stressors\",\n
-        \     \"name\" : \"AOPSTRESSORS\",\n      \"shortDescription\" : \"List of
-        Adverse Outcome Pathway Stressors from the AOP Database\"\n    }, {\n      \"label\"
-        : \"EPA|CHEMINV: EPA Chemical Inventory for ToxCast (20170203)\",\n      \"name\"
-        : \"CHEMINV\",\n      \"shortDescription\" : \"CHEMINV is full list of unique
-        DSSTox substances mapped to historical chemical inventory of physical samples
-        registered by EPA's ToxCast Chemical Contractor (Evotec) since launch of ToxCast
-        program in 2007. \"\n    }, {\n      \"label\" : \"TOX21SL: Tox21 Screening
-        Library\",\n      \"name\" : \"TOX21SL\",\n      \"shortDescription\" : \"TOX21SL
-        is list of unique substances comprising the screening library for the Tox21
-        program, a multi-federal agency collaborative among the US EPA, NIH/NTP, NIH/NCATS,
-        and the US FDA.\"\n    }, {\n      \"label\" : \"EPA; Chemicals mapped to
-        HERO  \",\n      \"name\" : \"HEROMAP\",\n      \"shortDescription\" : \"The
-        Health and Environmental Research Online (HERO) database provides an easy
-        way to access and influence the scientific literature behind EPA science assessments.\"\n
-        \   }, {\n      \"label\" : \"LIST: Chemicals in biosolids (2020)\",\n      \"name\"
-        : \"BIOSOLIDS2020\",\n      \"shortDescription\" : \"Chemicals detected in
-        biosolids (nutrient-rich organic materials produced from wastewater treatment
-        facilities)\"\n    }, {\n      \"label\" : \"EPA|ENDOCRINE: EDSP Universe
-        of Chemicals\",\n      \"name\" : \"EDSPUoC\",\n      \"shortDescription\"
-        : \"This list of EDSP-related chemicals on the EPA CompTox Dashboard is not
-        a complete listing from the EDSP Universe of Chemicals.\"\n    }, {\n      \"label\"
-        : \"TSCA Active Inventory non-confidential portion (updated March 20th 2020).\",\n
-        \     \"name\" : \"TSCA_ACTIVE_NCTI_0320\",\n      \"shortDescription\" :
-        \"TSCA Active Inventory non-confidential portion (updated March 20th 2020).
-        The content of the list will change over time as both the non-confidential
-        active TSCA inventory is updated and more substances are curated.\"\n    },
-        {\n      \"label\" : \"EPA|CPDAT: Chemical and Products Database\",\n      \"name\"
-        : \"CPDAT\",\n      \"shortDescription\" : \"Chemicals contained in the EPA's
-        Chemical and Products Database\"\n    }, {\n      \"label\" : \"LIST:Hazardous
-        Substances Data Bank\",\n      \"name\" : \"HSDB2019\",\n      \"shortDescription\"
-        : \"Toxicology data focused on the toxicology of potentially hazardous chemicals.From
-        the National Library of Medicine.\"\n    }, {\n      \"label\" : \"LIST: Chemicals
-        in biosolids (2019)\",\n      \"name\" : \"BIOSOLIDS2019\",\n      \"shortDescription\"
-        : \"Chemicals detected in biosolids (nutrient-rich organic materials produced
-        from wastewater treatment facilities)\"\n    }, {\n      \"label\" : \"EPA|CHEMINV:
-        ToxCast/Tox21 Chemical inventory available as DMSO solutions (20181123)\",\n
-        \     \"name\" : \"EPACHEMINV_AVAIL\",\n      \"shortDescription\" : \"EPACHEMINV_AVAIL
-        is list of unique DSSTox substances available as DMSO solutions for ToxCast
-        and Tox21 partner projects, managed by EPA Chemical Contract Services.\"\n
-        \   }, {\n      \"label\" : \"EPA: Mechanism of Action (MoA) for aquatic toxicity\",\n
-        \     \"name\" : \"EPAMOA\",\n      \"shortDescription\" : \"MOAtox: A Comprehensive
-        Mode of Action and Acute Aquatic Toxicity Database for Predictive Model Development\"\n
-        \   }, {\n      \"label\" : \"EPA: Toxicity Values Version 5 (Aug 2018)\",\n
-        \     \"name\" : \"TOXVAL_V5\",\n      \"shortDescription\" : \"The Toxicity
-        Values database is delivered via the Hazard Tab in the CompTox Chemicals Dashboard.\"\n
-        \   }, {\n      \"label\" : \"TOXCAST: EPA ToxCast  Screening Assay Version
-        3\",\n      \"name\" : \"TOXCAST_V3\",\n      \"shortDescription\" : \"InvitroDB
-        is the list of chemicals with corresponding assay data in EPA's ToxCast Database
-        (V3 public release, October 2018) \"\n    }, {\n      \"label\" : \"EPA: High
-        Production Volume List \",\n      \"name\" : \"EPAHPV\",\n      \"shortDescription\"
-        : \"The United States High Production Volume (USHPV) database contains information
-        about chemicals that are included in the High Production Volume (HPV) Challenge
-        Program.\"\n    }, {\n      \"label\" : \"Navigation Panel to Biosolid Lists\",\n
-        \     \"name\" : \"BIOSOLIDS\",\n      \"shortDescription\" : \"Biosolids
-        lists change over time and are versioned iteratively. This panel navigates
-        between the various versions.\"\n    }, {\n      \"label\" : \"LIST: Chemicals
-        in biosolids (2021)\",\n      \"name\" : \"BIOSOLIDS2021\",\n      \"shortDescription\"
-        : \"Chemicals detected in biosolids (nutrient-rich organic materials produced
-        from wastewater treatment facilities)\"\n    }, {\n      \"label\" : \"EPA:
-        PPRTV Chemical Report\",\n      \"name\" : \"PPRTVWEB\",\n      \"shortDescription\"
-        : \"The Provisional Peer-Reviewed Toxicity Values (PPRTVs) currently represent
-        the second tier of human health toxicity values for the EPA Superfund and
-        Resource Conservation and Recovery Act (RCRA) hazardous waste programs.\"\n
-        \   }, {\n      \"label\" : \"WATER: EPA Drinking Water Treatability Database\",\n
-        \     \"name\" : \"TDB2020\",\n      \"shortDescription\" : \"The Drinking
-        Water Treatability Database (TDB) presents referenced information on the control
-        of contaminants in drinking water.\"\n    }, {\n      \"label\" : \"LIST:
-        National Health and Nutrition Examination Survey (NHANES) data\",\n      \"name\"
-        : \"NHANES2019\",\n      \"shortDescription\" : \"U.S. Centers for Disease
-        Control and Prevention (CDC) conducts the National Health and Nutrition Examination
-        Survey (NHANES) data\"\n    }, {\n      \"label\" : \"EPA ToxCast Screening
-        Library\",\n      \"name\" : \"TOXCAST\",\n      \"shortDescription\" : \"TOXCAST
-        is the complete list of chemicals having undergone some level of screening
-        in EPA's ToxCast research program since 2007 (last updated 4/11/2017); sublists
-        included.\"\n    }, {\n      \"label\" : \"EPA ToxCast Screening Library (Phase
-        III subset)\",\n      \"name\" : \"TOXCAST_PhaseIII\",\n      \"shortDescription\"
-        : \"TOXCAST_PhaseIII is the full set of chemicals available for screening
-        in Phase III of the ToxCast program, consisting of the majority of chemicals
-        screened in Phase II and newly added ph3 chemicals.\"\n    }, {\n      \"label\"
-        : \"EPA ToxCast Screening Library (Phase II subset)\",\n      \"name\" : \"TOXCAST_PhaseII\",\n
-        \     \"shortDescription\" : \"TOXCAST_PhaseII is the full set of chemicals
-        screened in Phase II of the ToxCast program, consisting of TOXCAST_ph1v2,
-        ph2 and e1k sublists.\"\n    }, {\n      \"label\" : \"NIOSH: International
-        Chemical Safety Cards\",\n      \"name\" : \"NIOSHICSC\",\n      \"shortDescription\"
-        : \"The International Chemical Safety Cards (ICSC) summarize essential health
-        and safety information on chemicals.\"\n    }, {\n      \"label\" : \"EPA
-        Regional Screening Levels Data Chemicals List\",\n      \"name\" : \"ORNLRSL\",\n
-        \     \"shortDescription\" : \"Chemicals associated with the Regional Screening
-        Levels (RSLs) Generic Tables\"\n    }, {\n      \"label\" : \"CATEGORY|EPA|PESTICIDES:
-        Office of Pesticide Programs Information Network\",\n      \"name\" : \"OPPIN\",\n
-        \     \"shortDescription\" : \"Office of Pesticide Programs integrated system,
-        the Office of Pesticide Programs Information Network (OPPIN).\"\n    }, {\n
-        \     \"label\" : \"Consolidated List of Lists under EPCRA/CERCLA/CAA \xA7112(r)
-        (June 2019 Version)\",\n      \"name\" : \"EPCRALISTS\",\n      \"shortDescription\"
-        : \"The List of Lists is a consolidated list of chemicals subject to: Emergency
-        Planning and Community Right-to-Know Act (EPCRA), Comprehensive Environmental
-        Response, Compensation and Liability Act (CERCLA), and Section 112(r) of the
-        Clean Air Act (CAA). \"\n    }, {\n      \"label\" : \"EPA|ECOTOX: Ecotoxicology
-        knowledgebase\",\n      \"name\" : \"ECOTOX_v2\",\n      \"shortDescription\"
-        : \"ECOTOXicology knowledgebase (ECOTOX) is a comprehensive, publicly available
-        knowledgebase providing single chemical environmental toxicity data on aquatic
-        life, terrestrial plants and wildlife.\"\n    } ]\n  }, {\n    \"label\" :
-        \"US State\",\n    \"name\" : \"state\",\n    \"shortDescription\" : \"Lists
-        defined by a US state governement\",\n    \"lists\" : [ {\n      \"label\"
-        : \"LIST: Minnesota Department of Health  Chemicals of High Concern and Priority
-        Chemicals\",\n      \"name\" : \"MNDOHTOXFREE\",\n      \"shortDescription\"
-        : \"The Minnesota Department of Health Toxic Free Kids Program Chemicals of
-        High Concern list.\"\n    }, {\n      \"label\" : \"California Office of Environmental
-        Health Hazard Assessment \",\n      \"name\" : \"OEHHA\",\n      \"shortDescription\"
-        : \"The OEHHA Chemical Database is a compilation of health hazard information
-        including reference exposure levels, California public health goals, child-specific
-        reference doses, Propos. 65 safe harbor numbers, soil-screening levels, and
-        fish advisories\\r\\n\"\n    } ]\n  }, {\n    \"label\" : \"International\",\n
-        \   \"name\" : \"international\",\n    \"shortDescription\" : \"Lists defined
-        by an international government \",\n    \"lists\" : [ {\n      \"label\" :
-        \"NORMAN: REACH Chemicals List Provided to NORMAN Network\",\n      \"name\"
-        : \"REACH2017\",\n      \"shortDescription\" : \"This REACH list of 57760
-        REACH chemicals from the <a href='https://www.norman-network.com/?q=suspect-list-exchange'
-        target='_blank'>NORMAN Suspect List Exchange</a>\"\n    } ]\n  }, {\n    \"label\"
-        : \"Other\",\n    \"name\" : \"other\",\n    \"shortDescription\" : \"All
-        lists not falling into one of the defined categories\",\n    \"lists\" : [
-        {\n      \"label\" : \"ARTICLE: Collaborative Estrogen Receptor Activity Prediction
-        Project (COMPARA)\",\n      \"name\" : \"COMPARA\",\n      \"shortDescription\"
-        : \"COMPARA: A list related to the publication (in review), the \\\"Collaborative
-        Modeling Project for Androgen Receptor Activity (CoMPARA)\\\" which follows
-        on from the Collaborative Estrogen Receptor Activity Prediction Project (CERAPP)\"\n
-        \   }, {\n      \"label\" : \"MASSPECDB: MassBank.EU Collection: Special Cases
-        \",\n      \"name\" : \"MASSBANKEUSP\",\n      \"shortDescription\" : \"The
-        MassBank.EU list contains curated chemicals (Schymanski/Williams) associated
-        with the literature/tentative/unknown/SI spectra available on MassBank.EU
-        that are not available as part of the full MassBank collection of reference
-        standard spectra. \"\n    }, {\n      \"label\" : \"NORMAN: University of
-        Athens Target List\",\n      \"name\" : \"UATHTARGETS\",\n      \"shortDescription\"
-        : \"A list of target substances measured at the Department of Chemistry, University
-        of Athens. Provided by Nikiforos Alygizakis and Nikos Thomaidis. \"\n    },
-        {\n      \"label\" : \"MASSPECDB: MassBank Reference Spectra Collection\",\n
-        \     \"name\" : \"MASSBANKREF\",\n      \"shortDescription\" : \"This MassBank
-        list contains chemicals associated with the full MassBank collection of reference
-        standard spectra available on MassBank.EU, mapped to DTXSID by InChIKey. \"\n
-        \   }, {\n      \"label\" : \"WATER: STOFF-IDENT Database of Water-Relevant
-        Substances\",\n      \"name\" : \"STOFFIDENT\",\n      \"shortDescription\"
-        : \"STOFF-IDENT is a database of water relevant substances collated from various
-        sources within the STOFF-IDENT and FOR-IDENT projects, hosted by LfU, HSWT
-        and TUM. The database at https://www.lfu.bayern.de/stoffident/#!home has additional
-        functionality. \"\n    }, {\n      \"label\" : \"NORMAN|MASSPECDB: Hydrogen
-        Deuterium Exchange Standard Set - No Exchange\",\n      \"name\" : \"HDXNOEX\",\n
-        \     \"shortDescription\" : \"Environmental standard set used to investigate
-        hydrogen deuterium exchange in small molecule high resolution mass spectrometry
-        (Ruttkies, Schymanski et al. in prep.)\\r\\n\"\n    }, {\n      \"label\"
-        : \"METABOLITES: HBM4EU CECscreen: Screening List for Chemicals of Emerging
-        Concern\",\n      \"name\" : \"CECSCREEN\",\n      \"shortDescription\" :
-        \"HBM4EU CECscreen is a suspect screening list for Chemicals of Emerging Concern
-        (CECs) plus metadata and predicted Phase 1 metabolites\"\n    }, {\n      \"label\"
-        : \"CATEGORY: Flame Retardants\",\n      \"name\" : \"FLAMERETARD\",\n      \"shortDescription\"
-        : \"List of Flame Retardants including all polybrominated diphenyl ethers
-        (PBDEs)\"\n    }, {\n      \"label\" : \"NORMAN: Norman Network Suspect Screening
-        List (SUSDAT)\",\n      \"name\" : \"SUSDAT\",\n      \"shortDescription\"
-        : \"Merged NORMAN Suspect List \u201CSusDat\u201D from the NORMAN Suspect
-        Exchange.\"\n    }, {\n      \"label\" : \"CATEGORY|WIKILIST: Herbicides from
-        Wikipedia\",\n      \"name\" : \"WIKIHERBICIDES\",\n      \"shortDescription\"
-        : \"A list of herbicides compiled from the Wikipedia Category page for Herbicides.\"\n
-        \   }, {\n      \"label\" : \"PPDB: Pesticide Properties DataBase\",\n      \"name\"
-        : \"PPDB\",\n      \"shortDescription\" : \"The PPDB is a comprehensive relational
-        database of pesticide chemical identity, physicochemical, human health and
-        ecotoxicological data developed by the Agriculture & Environment Research
-        Unit (AERU) at the University of Hertfordshire.\"\n    }, {\n      \"label\"
-        : \"GHS Skin and Eye\",\n      \"name\" : \"GHSEYESKIN\",\n      \"shortDescription\"
-        : \"Chemical substances associated with skin sensitization, skin irritation,
-        and eye irritation GHS (global harmonization system) data aggregated from
-        international sources.\"\n    }, {\n      \"label\" : \"WATER|NORMAN: GC-HRMS
-        target list of the Slovak Water Research Institute\",\n      \"name\" : \"WRIGCHRMS\",\n
-        \     \"shortDescription\" : \"GC-HRMS target list of the Slovak Water Research
-        Institute (WRI).\"\n    }, {\n      \"label\" : \"ARTICLE: Collaborative Estrogen
-        Receptor Activity Prediction Project (CERAPP)\",\n      \"name\" : \"CERAPP\",\n
-        \     \"shortDescription\" : \"CERAPP uses predictive computational models
-        trained on HTS data to evaluate thousands of chemicals for ER-related activity.\"\n
-        \   }, {\n      \"label\" : \"EPA|LIST: Article \\\"Workflow for Defining
-        Reference Chemicals for Assessing Performance of In Vitro Assays\\\"\",\n
-        \     \"name\" : \"REFCHEMDB\",\n      \"shortDescription\" : \"List of chemicals
-        associated with the article \\\"Workflow for Defining Reference Chemicals
-        for Assessing Performance of In Vitro Assays\\\"\"\n    }, {\n      \"label\"
-        : \"NORMAN: Environmental Institute GC-EI-MS suspect list\",\n      \"name\"
-        : \"EISUSGCEIMS\",\n      \"shortDescription\" : \"GC-EI-MS suspect list of
-        Environmental Institute.\"\n    }, {\n      \"label\" : \"NORMAN: SOLUTIONS
-        Predicted Transformation Products\",\n      \"name\" : \"SOLNSLMCTPS\",\n
-        \     \"shortDescription\" : \"Predicted Transformation Products from the
-        <a href='https://www.solutions-project.eu/' target='_blank'>SOLUTIONS</a>
-        project.\"\n    }, {\n      \"label\" : \"WATER|NORMAN: Extended Drinking
-        Water Suspect Screening List from KWR\",\n      \"name\" : \"KWRSJERPS2\",\n
-        \     \"shortDescription\" : \"Suspect list from \\\"Data-driven prioritization
-        of chemicals for various water types using suspect screening LC-HRMS\\\" by
-        Sjerps et al.\"\n    }, {\n      \"label\" : \"ARTICLE; Bench-Mark Dose Human
-        Health Assessment List (Wignall et al., 2014)\",\n      \"name\" : \"BMDHHA\",\n
-        \     \"shortDescription\" : \"Chemicals associated with the article \\\"Standardizing
-        Benchmark Dose Calculations to Improve Science-Based Decisions in Human Health
-        Assessments\\\" by Wignall et al., 2014\"\n    }, {\n      \"label\" : \"MASSPECDB:
-        Thermo's mzCloud Database\",\n      \"name\" : \"MZCLOUD\",\n      \"shortDescription\"
-        : \"mzCloud is a state of the art mass spectral database that assists analysts
-        in identifying compounds in areas such as life sciences, metabolomics, pharmaceutical
-        research, toxicology, forensic investigations and environmental analysis.\\r\\n\"\n
-        \   }, {\n      \"label\" : \"MASSPECDB: National Environmental Methods Index
-        \",\n      \"name\" : \"NEMILIST\",\n      \"shortDescription\" : \"The National
-        Environment Methods Index (NEMI) is a searchable database of environmental
-        methods, protocols, statistical and analytical methods.\"\n    }, {\n      \"label\"
-        : \"NORMAN: KEMI List of Substances on the Market\",\n      \"name\" : \"KEMIMARKET\",\n
-        \     \"shortDescription\" : \"The KEMI Market List contains chemicals expected
-        to be on the market. Complied by Stellan Fischer, KEMI (Swedish Chemicals
-        Agency) from various regulatory databases, including hazard and exposure scores
-        to support the identification of unknowns. \"\n    }, {\n      \"label\" :
-        \"LIST: Wikipedia Chemicals\",\n      \"name\" : \"WIKIPEDIA\",\n      \"shortDescription\"
-        : \"Wikipedia includes data for thousands of chemicals. ChemBoxes and DrugBoxes
-        includes data such as CAS Registry Numbers, SMILES and InChIs. \"\n    },
-        {\n      \"label\" : \"NEURO: DNT Screening Library\",\n      \"name\" : \"DNTSCREEN\",\n
-        \     \"shortDescription\" : \"DNTSCREEN is a list of chemicals that is being
-        used in medium- and high-throughput in vitro and zebrafish assays.\"\n    },
-        {\n      \"label\" : \"LIST: Linear Solvation Energy Relationship Database\",\n
-        \     \"name\" : \"LSERDDB\",\n      \"shortDescription\" : \"LSERD is a free
-        online platform, which enables the prediction of partition coefficients based
-        on the linear solvation energy relationship approach.\"\n    }, {\n      \"label\"
-        : \"LIST: BLOODEXPOSOME\",\n      \"name\" : \"BLOODEXPOSOME\",\n      \"shortDescription\"
-        : \"Chemicals identified as part of the blood exposome\"\n    } ]\n  } ],\n
-        \ \"_links\" : {\n    \"self\" : {\n      \"href\" : \"http://ccte-api-ccd.epa.gov/ccdapp2/chemical-detail/61d3304d35d7d16c4c5eb1f9\"\n
-        \   },\n    \"chemical-detail\" : {\n      \"href\" : \"http://ccte-api-ccd.epa.gov/ccdapp2/chemical-detail/61d3304d35d7d16c4c5eb1f9\"\n
-        \   }\n  }\n}"
+      string: "{\n  \"dtxsid\" : \"DTXSID7020970\",\n  \"dtxcid\" : \"DTXCID30970\",\n
+        \ \"toxcastSelect\" : \"163/1029\",\n  \"casrn\" : \"1836-75-5\",\n  \"compoundId\"
+        : 970,\n  \"genericSubstanceId\" : 20970,\n  \"preferredName\" : \"Nitrofen\",\n
+        \ \"activeAssays\" : 163,\n  \"cpdataCount\" : null,\n  \"molFormula\" : \"C12H7Cl2NO3\",\n
+        \ \"monoisotopicMass\" : 282.9802985,\n  \"percentAssays\" : 16.0,\n  \"pubchemCount\"
+        : 116,\n  \"pubmedCount\" : 341.0,\n  \"sourcesCount\" : 201,\n  \"qcLevel\"
+        : 1,\n  \"qcLevelDesc\" : \"Level 1: Expert curated, highest confidence in
+        accuracy and consistency of unique chemical identifiers\",\n  \"stereo\" :
+        \"0\",\n  \"isotope\" : 0,\n  \"multicomponent\" : 0,\n  \"totalAssays\" :
+        1029,\n  \"pubchemCid\" : 15787,\n  \"relatedSubstanceCount\" : null,\n  \"relatedStructureCount\"
+        : null,\n  \"hasStructureImage\" : 1,\n  \"iupacName\" : \"2,4-Dichloro-1-(4-nitrophenoxy)benzene\",\n
+        \ \"smiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"inchiString\"
+        : \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
+        \ \"averageMass\" : 284.09,\n  \"inchikey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n
+        \ \"qcNotes\" : null,\n  \"qsarReadySmiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
+        \ \"msReadySmiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
+        \ \"irisLink\" : null,\n  \"pprtvLink\" : \"Nitrofentechnicalgrade\",\n  \"wikipediaArticle\"
+        : \"Nitrofen\",\n  \"descriptorStringTsv\" : \"0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t1\\t1\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\",\n
+        \ \"isMarkush\" : 0,\n  \"hrDiphniaLc50\" : 1.63682E-6,\n  \"henrysLawAtm\"
+        : 6.79835E-5,\n  \"flashPointDegcTestPred\" : 184.658,\n  \"devtoxTestPred\"
+        : 0.697,\n  \"density\" : 1.452,\n  \"boilingPointDegcTestPred\" : 359.215,\n
+        \ \"boilingPointDegcOperaPred\" : 358.785,\n  \"biodegradationHalfLifeDays\"
+        : 3.71673,\n  \"bioconcentrationFactorTestPred\" : 899.498,\n  \"bioconcentrationFactorOperaPred\"
+        : 739.33,\n  \"atmosphericHydroxylationRate\" : 2.58539E-12,\n  \"amesMutagenicityTestPred\"
+        : 0.751,\n  \"pkaaOperaPred\" : null,\n  \"pkabOperaPred\" : null,\n  \"expocatMedianPrediction\"
+        : \"2.23E-07\",\n  \"expocat\" : \"Y\",\n  \"nhanes\" : \"Y\",\n  \"toxvalData\"
+        : \"Y\",\n  \"waterSolubilityTest\" : 1.86209E-6,\n  \"waterSolubilityOpera\"
+        : 3.53106E-6,\n  \"viscosityCpCpTestPred\" : null,\n  \"vaporPressureMmhgTestPred\"
+        : 4.48745E-7,\n  \"vaporPressureMmhgOperaPred\" : 1.71599E-6,\n  \"thermalConductivity\"
+        : 133.645,\n  \"tetrahymenaPyriformis\" : 3.22107E-6,\n  \"surfaceTension\"
+        : null,\n  \"soilAdsorptionCoefficient\" : 10030.7,\n  \"oralRatLd50Mol\"
+        : 0.00961612,\n  \"operaKmDaysOperaPred\" : 7.23919,\n  \"octanolWaterPartition\"
+        : 4.6398,\n  \"octanolAirPartitionCoeff\" : 8.61388,\n  \"meltingPointDegcTestPred\"
+        : 99.224,\n  \"meltingPointDegcOperaPred\" : 70.1221,\n  \"hrFatheadMinnow\"
+        : 1.06905E-6,\n  \"id\" : \"FDFD541B510CFD2C5064FD1FFDFD06FD40FD111324FDFD7D29FD0F74FD4EFD\"\n}"
     headers:
-      Cache-Control:
-      - max-age=315360000
+      Age:
+      - '258'
       Connection:
-      - Keep-Alive
+      - keep-alive
       Content-Type:
-      - application/hal+json
+      - application/json
       Date:
-      - Wed, 19 Jan 2022 23:29:50 GMT
-      Expires:
-      - Thu, 31 Dec 2037 23:55:55 GMT
-      Keep-Alive:
-      - timeout=5, max=98
-      Server:
-      - nginx/1.21.1
+      - Wed, 24 May 2023 16:31:28 GMT
       Strict-Transport-Security:
-      - "max-age=63072000; includeSubDomains\xE2\x80\x9C"
+      - max-age=31536000
       Transfer-Encoding:
       - chunked
       Vary:
-      - Origin,Access-Control-Request-Method,Access-Control-Request-Headers
+      - Accept-Encoding
+      Via:
+      - 1.1 85fc1201a1918facbeb30836e7391660.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - fMhlkEWHJoOpWEiJ9owPyGHGyW1NCjy8LNcbmiXcVHybTros7r-gFQ==
+      X-Amz-Cf-Pop:
+      - IAD89-C1
+      X-Cache:
+      - Hit from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Vcap-Request-Id:
+      - e161987e-ccfb-484a-7e68-986b0e9b83c2
+      X-XSS-Protection:
+      - 1; mode=block
     status:
       code: 200
-      message: ''
+      message: OK
 version: 1

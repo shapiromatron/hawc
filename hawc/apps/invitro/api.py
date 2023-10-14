@@ -4,8 +4,8 @@ from rest_framework.response import Response
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
-    AssessmentRootedTagTreeViewset,
-    AssessmentViewset,
+    AssessmentRootedTagTreeViewSet,
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
@@ -16,7 +16,7 @@ from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
 
 
-class IVAssessmentViewset(viewsets.GenericViewSet):
+class IVAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
@@ -45,30 +45,30 @@ class IVAssessmentViewset(viewsets.GenericViewSet):
         return Response(exporter.build_export())
 
 
-class IVChemical(AssessmentViewset):
+class IVChemical(AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.IVChemical
     serializer_class = serializers.IVChemicalSerializer
 
 
-class IVCellType(AssessmentViewset):
+class IVCellType(AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.IVCellType
     serializer_class = serializers.IVCellTypeSerializer
 
 
-class IVExperiment(AssessmentViewset):
+class IVExperiment(AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.IVExperiment
     serializer_class = serializers.IVExperimentSerializerFull
 
 
-class IVEndpointCategory(AssessmentRootedTagTreeViewset):
+class IVEndpointCategory(AssessmentRootedTagTreeViewSet):
     model = models.IVEndpointCategory
     serializer_class = serializers.IVEndpointCategorySerializer
 
 
-class IVEndpoint(AssessmentViewset):
+class IVEndpoint(AssessmentViewSet):
     assessment_filter_args = "assessment"
     model = models.IVEndpoint
     serializer_class = serializers.IVEndpointSerializer
@@ -79,8 +79,14 @@ class IVEndpointCleanup(CleanupFieldsBaseViewSet):
     model = models.IVEndpoint
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("experiment__study")
+
 
 class IVChemicalCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.IVChemicalCleanupFieldsSerializer
     model = models.IVChemical
     assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")

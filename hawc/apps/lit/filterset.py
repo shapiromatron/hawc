@@ -3,7 +3,13 @@ from django.db.models import Count, Q
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
-from ..common.filterset import BaseFilterSet, PaginationFilter, filter_noop
+from ..common.filterset import (
+    ArrowOrderingFilter,
+    BaseFilterSet,
+    ExpandableFilterForm,
+    PaginationFilter,
+    filter_noop,
+)
 from . import models
 
 
@@ -13,15 +19,19 @@ class ReferenceFilterSet(BaseFilterSet):
         field_name="identifiers__unique_id",
         lookup_expr="icontains",
         label="External identifier",
-        help_text="Pubmed ID, DOI, HERO ID, etc.",
+        help_text="Pubmed ID, DOI, HERO ID",
     )
-    year = df.NumberFilter(label="Year", help_text="Year of publication")
     journal = df.CharFilter(lookup_expr="icontains", label="Journal")
-    title_abstract = df.CharFilter(method="filter_title_abstract", label="Title/Abstract")
-    authors = df.CharFilter(method="filter_authors", label="Authors")
+    ref_search = df.CharFilter(
+        method="filter_search",
+        label="Title/Author/Year",
+        help_text="Filter citations (authors, year, title)",
+    )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
     )
+    authors = df.CharFilter(method="filter_authors", label="Authors")
+    year = df.NumberFilter(label="Year")
     tags = df.ModelMultipleChoiceFilter(
         queryset=models.ReferenceFilterTag.objects.all(),
         null_value="untagged",
@@ -64,12 +74,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Tagged by me",
         help_text="All references that you have tagged",
     )
-    order_by = df.OrderingFilter(
+    order_by = ArrowOrderingFilter(
+        initial="-year",
         fields=(
-            ("authors", "authors"),
+            ("authors_short", "authors"),
             ("year", "year"),
         ),
-        help_text="How results will be ordered",
     )
     needs_tagging = df.BooleanFilter(
         method="filter_needs_tagging",
@@ -87,13 +97,14 @@ class ReferenceFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Reference
+        form = ExpandableFilterForm
         fields = [
             "id",
             "db_id",
-            "year",
             "journal",
-            "title_abstract",
+            "ref_search",
             "authors",
+            "year",
             "search",
             "tags",
             "include_descendants",
@@ -115,9 +126,8 @@ class ReferenceFilterSet(BaseFilterSet):
         query = Q(authors_short__unaccent__icontains=value) | Q(authors__unaccent__icontains=value)
         return queryset.filter(query)
 
-    def filter_title_abstract(self, queryset, name, value):
-        query = Q(title__icontains=value) | Q(abstract__icontains=value)
-        return queryset.filter(query)
+    def filter_search(self, queryset, name, value):
+        return queryset.full_text_search(value)
 
     def filter_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)

@@ -12,7 +12,7 @@ from ..common.renderers import PandasRenderers
 from .actions import media_metadata_report
 
 
-class DashboardViewset(viewsets.ViewSet):
+class DashboardViewSet(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
@@ -20,11 +20,12 @@ class DashboardViewset(viewsets.ViewSet):
     def media(self, request):
         uri = request.build_absolute_uri(location="/")[:-1]
         df = media_metadata_report(uri)
-        export = FlatExport(df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}")
-        return Response(export)
+        return FlatExport.api_response(
+            df=df, filename=f"media-{timezone.now().strftime('%Y-%m-%d')}"
+        )
 
 
-class DiagnosticViewset(viewsets.ViewSet):
+class DiagnosticViewSet(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
     @action(detail=False, throttle_classes=(FivePerMinuteThrottle,))
@@ -33,7 +34,7 @@ class DiagnosticViewset(viewsets.ViewSet):
         return Response({"identity": throttle.get_ident(request)})
 
 
-class ReportsViewset(viewsets.ViewSet):
+class ReportsViewSet(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
     @action(detail=False, renderer_classes=PandasRenderers)

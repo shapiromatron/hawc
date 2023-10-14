@@ -11,7 +11,7 @@ class TestDesignChildren:
     def test_children(self, db_keys):
         design_id = db_keys.eco_design
         design = models.Design.objects.get(id=design_id)
-        client = Client(HTTP_HX_REQUEST="true")
+        client = Client(headers={"hx-request": "true"})
         assert client.login(email="pm@hawcproject.org", password="pw") is True
 
         init_cause_ct = models.Cause.objects.count()

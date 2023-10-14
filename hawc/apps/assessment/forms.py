@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+import numpy as np
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -8,7 +9,6 @@ from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
-from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -16,22 +16,16 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import (
-    AutocompleteSelectMultipleWidget,
-    AutocompleteSelectWidget,
-    AutocompleteTextWidget,
-)
+from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
     check_unique_for_assessment,
-    form_actions_apply_filters,
     form_actions_create_or_close,
 )
-from ..common.helper import new_window_a, tryParseInt
+from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
-from ..myuser.models import HAWCUser
 from . import autocomplete, models
 
 
@@ -42,16 +36,22 @@ class AssessmentForm(forms.ModelForm):
     )
 
     class Meta:
-        exclude = (
-            "creator",
-            "enable_literature_review",
-            "enable_project_management",
-            "enable_data_extraction",
-            "enable_risk_of_bias",
-            "enable_bmd",
-            "enable_summary_text",
-            "epi_version",
-            "admin_notes",
+        fields = (
+            "name",
+            "year",
+            "version",
+            "cas",
+            "dtxsids",
+            "assessment_objective",
+            "authors",
+            "project_manager",
+            "team_members",
+            "reviewers",
+            "editable",
+            "public_on",
+            "hide_from_public_page",
+            "conflicts_of_interest",
+            "funding_source",
         )
         model = models.Assessment
         widgets = {
@@ -119,16 +119,14 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("project_manager", 3, "col-md-4")
         helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_row("noel_name", 4, "col-md-3")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
 
 
 class AssessmentDetailForm(forms.ModelForm):
-    CREATE_LEGEND = "Add additional Assessment details"
-    CREATE_HELP_TEXT = ""
-    UPDATE_HELP_TEXT = "Update additional details for this Assessment."
+    LEGEND = "Additional Assessment Details"
+    HELP_TEXT = "Add additional details for this assessment."
 
     assessment = forms.Field(disabled=True, widget=forms.HiddenInput)
 
@@ -151,27 +149,21 @@ class AssessmentDetailForm(forms.ModelForm):
     def clean(self) -> dict:
         cleaned_data = super().clean()
         # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
-        if cleaned_data["extra"] is None:
+        if cleaned_data.get("extra") is None:
             cleaned_data["extra"] = dict()
         return cleaned_data
 
     @property
     def helper(self):
         self.fields["extra"].widget.attrs["rows"] = 3
-        if self.instance.id:
-            helper = BaseFormHelper(
-                self,
-                help_text=self.UPDATE_HELP_TEXT,
-                cancel_url=self.instance.get_absolute_url(),
-            )
-        else:
-            helper = BaseFormHelper(
-                self,
-                legend_text=self.CREATE_LEGEND,
-                help_text=self.CREATE_HELP_TEXT,
-                cancel_url=self.instance.assessment.get_absolute_url(),
-            )
-
+        cancel_url = (
+            self.instance.get_absolute_url()
+            if self.instance.id
+            else self.instance.assessment.get_absolute_url()
+        )
+        helper = BaseFormHelper(
+            self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
+        )
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
         helper.add_row("report_id", 3, "col-md-4")
@@ -179,7 +171,8 @@ class AssessmentDetailForm(forms.ModelForm):
 
 
 class AssessmentValueForm(forms.ModelForm):
-    CREATE_LEGEND = "Create Assessment values"
+    CREATE_LEGEND = "Create Assessment Value"
+    UPDATE_LEGEND = "Update Assessment Value"
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
@@ -189,6 +182,9 @@ class AssessmentValueForm(forms.ModelForm):
         widgets = {
             "system": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="system"
+            ),
+            "species_studied": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="species_studied"
             ),
             "duration": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="duration"
@@ -209,9 +205,6 @@ class AssessmentValueForm(forms.ModelForm):
             "pod_unit": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_unit"
             ),
-            "species_studied": AutocompleteSelectWidget(
-                autocomplete_class=autocomplete.SpeciesAutocomplete
-            ),
             "pod_type": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_type"
             ),
@@ -231,7 +224,7 @@ class AssessmentValueForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         # set None to an empty dict; see https://code.djangoproject.com/ticket/27697
-        if cleaned_data["extra"] is None:
+        if cleaned_data.get("extra") is None:
             cleaned_data["extra"] = dict()
 
         evaluation_type = cleaned_data.get("evaluation_type")
@@ -244,6 +237,18 @@ class AssessmentValueForm(forms.ModelForm):
             if not cleaned_data.get("uncertainty"):
                 msg = "Required for Noncancer evaluation types."
                 self.add_error("uncertainty", msg)
+        if (
+            cleaned_data.get("value")
+            and cleaned_data.get("pod_value")
+            and cleaned_data.get("uncertainty")
+        ):
+            if not np.isclose(
+                cleaned_data["value"],
+                cleaned_data["pod_value"] / cleaned_data["uncertainty"],
+                rtol=0.01,
+            ):
+                msg = "POD / uncertainty is not equal to value."
+                self.add_error("value", msg)
 
     @property
     def helper(self):
@@ -254,6 +259,7 @@ class AssessmentValueForm(forms.ModelForm):
             helper = BaseFormHelper(
                 self,
                 help_text=self.UPDATE_HELP_TEXT,
+                legend_text=self.UPDATE_LEGEND,
                 cancel_url=self.instance.get_absolute_url(),
             )
 
@@ -265,52 +271,14 @@ class AssessmentValueForm(forms.ModelForm):
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
         helper.add_row("evaluation_type", 2, "col-md-6")
-        helper.add_row("value_type", 3, "col-md-4")
+        helper.add_row("value_type", 4, "col-md-3")
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
         helper.add_row("species_studied", 3, "col-md-4")
-        helper.add_row("tumor_type", 4, "col-md-3")
+        helper.add_row("tumor_type", 2, "col-md-6")
         helper.add_row("comments", 2, "col-md-6")
 
         return helper
-
-
-class AssessmentFilterForm(forms.Form):
-    search = forms.CharField(required=False)
-
-    DEFAULT_ORDER_BY = "-year"
-    ORDER_BY_CHOICES = [
-        ("name", "Name"),
-        ("year", "Year, ascending"),
-        ("-year", "Year, descending"),
-        ("last_updated", "Date Updated, ascending"),
-        ("-last_updated", "Date Updated, descending"),
-    ]
-    order_by = forms.ChoiceField(required=False, choices=ORDER_BY_CHOICES, initial=DEFAULT_ORDER_BY)
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "GET"
-        helper.add_row("search", 2, ["col-md-8", "col-md-4"])
-        return helper
-
-    def get_filters(self):
-        query = Q()
-        if name := self.cleaned_data.get("search"):
-            if name_int := tryParseInt(name):
-                query &= Q(year=name_int)
-            query |= Q(name__icontains=name)
-        return query
-
-    def get_queryset(self, qs):
-        if self.is_valid():
-            qs = qs.filter(self.get_filters())
-        return qs.order_by(self.get_order_by())
-
-    def get_order_by(self):
-        value = self.cleaned_data.get("order_by") if self.is_valid() else None
-        return value or self.DEFAULT_ORDER_BY
 
 
 class AssessmentAdminForm(forms.ModelForm):
@@ -341,7 +309,13 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_project_management",
             "enable_risk_of_bias",
             "enable_bmd",
+            "enable_summary_tables",
+            "enable_visuals",
             "enable_summary_text",
+            "enable_downloads",
+            "noel_name",
+            "rob_name",
+            "vocabulary",
             "epi_version",
         )
         model = models.Assessment
@@ -356,7 +330,7 @@ class AssessmentModulesForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(
             self,
-            legend_text="Update enabled modules",
+            legend_text="Update modules",
             help_text="""
                 HAWC is composed of multiple modules, each designed
                 to capture data and decisions related to specific components of a
@@ -367,6 +341,11 @@ class AssessmentModulesForm(forms.ModelForm):
                 """,
             cancel_url=self.instance.get_absolute_url(),
         )
+        helper.add_row("enable_literature_review", 3, "col-lg-4")
+        helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
+        helper.add_row("enable_visuals", 3, "col-lg-4")
+        helper.add_row("noel_name", 3, "col-lg-4")
+        helper.add_row("epi_version", 1, "col-lg-4")
         return helper
 
 
@@ -688,71 +667,3 @@ class DatasetForm(forms.ModelForm):
         model = models.Dataset
         fields = ("name", "description", "published")
         field_classes = {"description": QuillField}
-
-
-class LogFilterForm(forms.Form):
-    user = forms.ModelChoiceField(
-        queryset=HAWCUser.objects.all(),
-        initial=None,
-        required=False,
-        help_text="The user who made the change",
-    )
-    object_id = forms.IntegerField(
-        min_value=1,
-        label="Object ID",
-        initial=None,
-        required=False,
-        help_text="The HAWC ID for the item which was modified; can often be found in the URL or in data exports",
-    )
-    content_type = forms.IntegerField(
-        min_value=1,
-        label="Data type",
-        initial=None,
-        required=False,
-    )
-    before = forms.DateField(
-        required=False,
-        label="Modified before",
-        widget=forms.widgets.DateInput(attrs={"type": "date"}),
-    )
-    after = forms.DateField(
-        required=False,
-        label="Modified After",
-        widget=forms.widgets.DateInput(attrs={"type": "date"}),
-    )
-    on = forms.DateField(
-        required=False, label="Modified On", widget=forms.widgets.DateInput(attrs={"type": "date"})
-    )
-
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["user"].queryset = assessment.pms_and_team_users()
-        url = reverse("assessment:content_types")
-        self.fields[
-            "content_type"
-        ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, form_actions=form_actions_apply_filters())
-        helper.form_method = "get"
-        helper.add_row("user", 3, "col-md-4")
-        helper.add_row("before", 3, "col-md-4")
-        return helper
-
-    def filters(self) -> Q:
-        query = Q()
-        if user := self.cleaned_data.get("user"):
-            query &= Q(user=user)
-        if content_type := self.cleaned_data.get("content_type"):
-            query &= Q(content_type=content_type)
-        if object_id := self.cleaned_data.get("object_id"):
-            query &= Q(object_id=object_id)
-        if before := self.cleaned_data.get("before"):
-            query &= Q(created__date__lt=before)
-        if after := self.cleaned_data.get("after"):
-            query &= Q(created__date__gt=after)
-        if on := self.cleaned_data.get("on"):
-            query &= Q(created__date=on)
-        return query

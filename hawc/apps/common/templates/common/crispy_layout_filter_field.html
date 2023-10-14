@@ -1,0 +1,53 @@
+{% load crispy_forms_field %}
+{% load crispy_forms_filters %}
+{% comment %} Adapted from https://github.com/django-crispy-forms/crispy-bootstrap4/blob/main/crispy_bootstrap4/templates/bootstrap4/field.html {% endcomment %}
+<div id="div_{{ field.auto_id }}" class="form-group mb-0">
+    <div class="input-group flex-nowrap">
+        {% if expandable %}
+        <div class="input-group-prepend">
+            <a id="ff-expand-form-toggle" class="btn btn-secondary d-flex align-items-center" data-toggle="collapse" data-target="#ff-expand-form" title="Toggle advanced options"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+        </div>
+        {% endif %}
+        {% if field|is_select %}
+            {% crispy_field field 'class' 'custom-select' %}
+        {% else %}
+        <input type="text" name="{% if field.name|wordcount > 1 %}{{ field.name|slugify }}{% else %}{{ field.name }}{% endif %}"  class="form-control {% if field.errors %} is-invalid {% endif %}" placeholder="{{field.help_text}}" aria-label="{{field.label}}" value="{% if field.value %}{{ field.value }}{% endif %}" {{ field.flat_attrs }}>
+        {% endif %}
+        <div class="input-group-append">
+            {% for field in appended_fields %}
+                {% if field|is_checkbox %}
+                    <div class="form-group input-group-text">
+                        <div class="custom-control custom-checkbox">
+                        {% crispy_field field 'class' 'custom-control-input' %}
+                        <label for="{{ field.id_for_label }}" class="custom-control-label form-sm-field">{{ field.label }}</label>
+                        </div>
+                        {% if field.field.hover_help %}
+                            {% include 'common/helptext_popup.html' with text=field.field.help_text %}
+                        {% endif %}
+                    </div>
+                {% elif field|is_select and use_custom_control %}
+                    <div title="{{field.help_text}}">
+                        {{field.widget}}
+                        {% if field.errors %}
+                            {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
+                        {% else %}
+                            {% crispy_field field 'class' 'custom-select form-sm-field' %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <a role="button" style="border: #ced4da solid 1px !important;" class="btn btn-light d-flex flex-wrap align-content-center px-3" href="." title="Reset form"><span aria-hidden="true">&times;</span></a>
+            <button type="submit" name="save" class="btn btn-primary px-5" title="Apply filters"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </div>
+    </div>
+</div>
+{% if expandable %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $("#ff-expand-form-toggle").click(function() {
+        const value = $("#ff-expand-form").hasClass("show");
+        document.getElementById("id_is_expanded").value=(!value).toString();
+    });
+});
+</script>
+{% endif %}

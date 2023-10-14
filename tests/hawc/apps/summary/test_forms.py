@@ -1,8 +1,11 @@
+import json
+from copy import deepcopy
+
 import pytest
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.summary.constants import VisualType
-from hawc.apps.summary.forms import ExternalSiteForm
+from hawc.apps.summary.forms import ExternalSiteForm, PlotlyVisualForm
 
 
 @pytest.mark.django_db
@@ -81,3 +84,47 @@ class TestExternalSiteForm:
             form = ExternalSiteForm(data=data, parent=assessment, visual_type=visual_type)
             assert form.is_valid() is False
             assert "filters" in form.errors
+
+
+@pytest.fixture
+def valid_plotly_data() -> dict:
+    return {
+        "title": "title",
+        "slug": "slug",
+        "settings": '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}',
+    }
+
+
+@pytest.mark.django_db
+class TestPlotlyVisualForm:
+    def _build_form(self, data: dict) -> PlotlyVisualForm:
+        return PlotlyVisualForm(
+            parent=Assessment.objects.first(), visual_type=VisualType.PLOTLY, data=data
+        )
+
+    def test_valid(self, valid_plotly_data: dict):
+        form = self._build_form(valid_plotly_data)
+        assert form.is_valid()
+
+    def test_settings_validation(self, valid_plotly_data):
+        # invalid settings or plotly configuration
+        for bad_settings in ["", "not JSON", "{}", '{"plotly": false}']:
+            data = deepcopy(valid_plotly_data)
+            data["settings"] = bad_settings
+            form = self._build_form(data)
+            assert not form.is_valid()
+            assert "settings" in form.errors
+
+        # valid plotly configuration, but additional undesirable items
+        for bad_title in [
+            "<script>alert('hi')</script>",
+            "<script>",
+            "href='http://www.example.com'",
+        ]:
+            data = deepcopy(valid_plotly_data)
+            settings = json.loads(valid_plotly_data["settings"])
+            settings["layout"]["title"] = bad_title
+            data["settings"] = json.dumps(settings)
+            form = self._build_form(data)
+            assert not form.is_valid()
+            assert "settings" in form.errors

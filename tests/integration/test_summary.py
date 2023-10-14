@@ -73,7 +73,7 @@ class TestSummary(PlaywrightTestCase):
         self.login_and_goto_url(
             page, f"{self.live_server_url}/summary/visual/5/", "pm@hawcproject.org"
         )
-        expect(page).to_have_url(re.compile(r"/summary/visual/assessment/2/barchart/"))
+        expect(page).to_have_url(re.compile(r"/summary/visual/assessment/2/rob-barchart/"))
         expect(page.locator("svg.d3")).to_be_visible()
         expect(page.locator("svg >> .legend")).not_to_have_count(0)
 
@@ -119,6 +119,10 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("h2:has-text('bioassay-aggregation')")).to_be_visible()
         expect(page.locator("svg.d3")).to_be_visible()
         assert page.locator("svg.d3 >> g >> circle").count() > 5
+
+        page.goto(self.live_server_url + "/summary/visual/assessment/2/plotly/")
+        expect(page.locator("h2:has-text('plotly')")).to_be_visible()
+        expect(page.locator(".plotly")).to_be_visible()
 
     def test_tables(self):
         """

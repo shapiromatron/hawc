@@ -35,8 +35,6 @@ class Criteria(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "criterias"
-
     class Meta:
         ordering = ("description",)
         unique_together = ("assessment", "description")
@@ -71,8 +69,6 @@ class AdjustmentFactor(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "factors"
-
     class Meta:
         unique_together = ("assessment", "description")
         ordering = ("description",)
@@ -103,8 +99,6 @@ class StudyPopulationCriteria(models.Model):
         "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
     )
     criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
-
-    COPY_NAME = "spcriterias"
 
 
 class StudyPopulation(models.Model):
@@ -210,7 +204,6 @@ class StudyPopulation(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "study_populations"
     BREADCRUMB_PARENT = "study"
 
     @staticmethod
@@ -360,7 +353,6 @@ class Outcome(BaseEndpoint):
         help_text="Provide additional outcome or extraction details if necessary. Ex. No association (data not shown)",
     )
 
-    COPY_NAME = "outcomes"
     BREADCRUMB_PARENT = "study_population"
 
     class Meta:
@@ -464,8 +456,6 @@ class ComparisonSet(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    COPY_NAME = "comparison_sets"
 
     @property
     def BREADCRUMB_PARENT(self) -> str:
@@ -583,7 +573,6 @@ class Group(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "groups"
     BREADCRUMB_PARENT = "comparison_set"
 
     class Meta:
@@ -762,7 +751,6 @@ class Exposure(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = "exposures"
     BREADCRUMB_PARENT = "study_population"
 
     class Meta:
@@ -895,8 +883,6 @@ class CentralTendency(models.Model):
     def upper_bound_interval(self):
         return self.upper_range if self.upper_ci is None else self.upper_ci
 
-    COPY_NAME = "central_tendencies"
-
     class Meta:
         ordering = ("estimate_type",)
         verbose_name = "Central Tendency"
@@ -973,8 +959,6 @@ class GroupNumericalDescriptions(models.Model):
         choices=constants.UpperLimit.choices, default=constants.UpperLimit.NONE
     )
 
-    COPY_NAME = "group_descriptions"
-
     class Meta:
         verbose_name_plural = "Group Numerical Descriptions"
 
@@ -1026,8 +1010,6 @@ class ResultAdjustmentFactor(models.Model):
     )
     result = models.ForeignKey("Result", on_delete=models.CASCADE, related_name="resfactors")
     included_in_final_model = models.BooleanField(default=True)
-
-    COPY_NAME = "rfactors"
 
 
 class Result(models.Model):
@@ -1127,7 +1109,6 @@ class Result(models.Model):
 
     resulttags = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
 
-    COPY_NAME = "results"
     BREADCRUMB_PARENT = "outcome"
 
     class Meta:
@@ -1422,8 +1403,6 @@ class GroupResult(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    COPY_NAME = "groupresults"
 
     class Meta:
         ordering = ("result", "group__group_id")

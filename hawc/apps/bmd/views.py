@@ -13,7 +13,7 @@ from . import forms, models
 
 
 # Assessment settings
-class AssessSettingsRead(BaseDetail):
+class AssessmentSettingsDetail(BaseDetail):
     model = models.AssessmentSettings
 
     def get_object(self, **kwargs):

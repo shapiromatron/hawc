@@ -2,13 +2,13 @@ from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import BaseAssessmentViewset
+from ..assessment.api import BaseAssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
 
-class Session(BaseAssessmentViewset):
+class Session(BaseAssessmentViewSet):
     http_method_names = ["get", "patch"]
     assessment_filter_args = "endpoint__assessment"
     model = models.Session

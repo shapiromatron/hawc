@@ -21,7 +21,7 @@ def has_redis():
 @pytest.mark.django_db
 class TestCleanupFieldsBaseViewSet:
     """
-    Test the CleanupFieldBaseViewset.
+    Test the CleanupFieldBaseViewSet.
 
     We'll test the `StudyCleanupFieldsView` since it's a fully parameterized implementation of
     this base class.
@@ -173,7 +173,7 @@ def test_user_can_edit_object(db_keys):
 
 
 @pytest.mark.django_db
-class TestHealthcheckViewset:
+class TestHealthcheckViewSet:
     def test_web(self):
         client = APIClient()
         url = reverse("common:api:healthcheck-web")

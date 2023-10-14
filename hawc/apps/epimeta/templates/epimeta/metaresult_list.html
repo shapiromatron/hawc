@@ -1,10 +1,15 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load bs4 %}
-
 {% block content %}
-<h2>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
-{% include 'common/filter_list.html' with plural_object_name='results' %}
+<div class="d-flex mb-2">
+    <h2 class="mb-0">Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
+    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+    {% actions %}
+        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+    {% endactions %}
+    {% endif %}
+</div>
+{% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '13,17,19,14,13,12,12' %}
     {% bs4_thead 'Study,Meta result,Protocol,Health outcome,Exposure,Confidence interval,Estimate' %}
@@ -13,16 +18,14 @@
         <tr>
             <td>
                 <a
-                    href="{% url 'study:detail' object.protocol.study.pk %}">{{object.protocol.study.short_citation}}</a>
+                    href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>
+            </td>
+            <td class="previewModalParent">
+                <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+                <a href="{{object.get_absolute_url}}">{{object.label}}</a>
             </td>
             <td>
-                <span class="previewModalParent">
-                    <a href="{% url 'meta:result_detail' object.pk %}">{{object.label}}</a>
-                    <i data-id={{object.pk}} class="fa fa-eye previewModalIcon ml-2" title="preview in a modal"></i>
-                </span>
-            </td>
-            <td>
-                <a href="{% url 'meta:protocol_detail' object.protocol.pk %}">{{object.protocol.name}}</a>
+                <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>
             </td>
             <td>
                 {{object.health_outcome|default:"--"}}

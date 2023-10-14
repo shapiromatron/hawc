@@ -1,5 +1,6 @@
 import "./App.css";
 
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -62,9 +63,9 @@ class App extends Component {
             <div>
                 <h3>Cleanup {h.titleCase(store.selectedModel.title)}</h3>
                 {store.modelCleanupFields ? (
-                    <ul>
+                    <ul className="list-group">
                         {store.modelCleanupFields.map(field => (
-                            <li key={field}>
+                            <li className="list-group-item" key={field}>
                                 <a href="#" onClick={() => store.selectField(field)}>
                                     {field}
                                 </a>
@@ -77,6 +78,7 @@ class App extends Component {
     }
     renderAssessmentMetadata() {
         const {store} = this.props;
+        const groupedItems = _.groupBy(store.assessmentMetadata.items, "app");
         return (
             <div>
                 <h2>Cleanup {store.assessmentMetadata.name}</h2>
@@ -86,15 +88,31 @@ class App extends Component {
                 </p>
                 <b>To begin, select a data-type to cleanup</b>
                 <ul>
-                    {store.assessmentMetadata.items
-                        .filter(d => d.count > 0)
-                        .map(d => {
+                    {Object.entries(groupedItems)
+                        .filter(([app, items]) => items.some(item => item.count > 0))
+                        .map(([app, items]) => {
                             return (
-                                <li key={d.type}>
-                                    <a href="#" onClick={() => store.selectModel(d)}>
-                                        {d.count}&nbsp;{d.title}
-                                    </a>
-                                </li>
+                                <div key={app}>
+                                    <h4 className="mt-3">{app}:</h4>
+                                    <ul className="list-group">
+                                        {items
+                                            .filter(item => item.count > 0)
+                                            .map(d => {
+                                                return (
+                                                    <a
+                                                        className="list-group-item list-group-item-action"
+                                                        key={d.title}
+                                                        href="#"
+                                                        onClick={() => store.selectModel(d)}>
+                                                        {d.title}
+                                                        <span className="badge badge-primary badge-pill ml-2">
+                                                            {d.count}
+                                                        </span>
+                                                    </a>
+                                                );
+                                            })}
+                                    </ul>
+                                </div>
                             );
                         })}
                 </ul>

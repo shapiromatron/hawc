@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
+from ..assessment.api import AssessmentLevelPermissions, AssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.helper import re_digits
@@ -11,7 +11,7 @@ from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
 
 
-class EpiMetaAssessmentViewset(viewsets.GenericViewSet):
+class EpiMetaAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
@@ -33,7 +33,7 @@ class EpiMetaAssessmentViewset(viewsets.GenericViewSet):
     )
     def export(self, request, pk):
         """
-        Retrieve epidemiology metadata for assessment.
+        Retrieve epidemiology meta-analysis data for an assessment.
         """
         self.get_object()
         exporter = exports.MetaResultFlatComplete(
@@ -42,13 +42,13 @@ class EpiMetaAssessmentViewset(viewsets.GenericViewSet):
         return Response(exporter.build_export())
 
 
-class MetaProtocol(AssessmentViewset):
+class MetaProtocol(AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.MetaProtocol
     serializer_class = serializers.MetaProtocolSerializer
 
 
-class MetaResult(AssessmentViewset):
+class MetaResult(AssessmentViewSet):
     assessment_filter_args = "protocol__study__assessment"
     model = models.MetaResult
     serializer_class = serializers.MetaResultSerializer

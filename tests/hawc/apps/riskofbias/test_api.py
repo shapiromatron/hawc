@@ -16,7 +16,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestRiskOfBiasAssessmentViewset:
+class TestRiskOfBiasAssessmentViewSet:
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         # permission check
         anon_client = APIClient()
@@ -75,7 +75,7 @@ class TestRiskOfBiasAssessmentViewset:
         """
         Make sure that our pandas xlsx serializer effectively returns JSON when needed.
 
-        We add this test to this viewset because it's related to a full Viewset lifecycle and
+        We add this test to this viewset because it's related to a full ViewSet lifecycle and
         not just the logic in a Renderer; thus it's essentially an integration test for this
         renderer type; test was added based on security scan.
         """

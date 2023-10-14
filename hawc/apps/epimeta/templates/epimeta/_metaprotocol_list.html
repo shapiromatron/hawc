@@ -1,19 +1,8 @@
-{% if object_list %}
+{% if object_list or obj_perms.edit %}
+  <h3>Epidemiological meta-analyses</h3>
   <table class="table table-sm table-striped">
-    <colgroup>
-        <col style="width:25%"></col>
-        <col style="width:25%"></col>
-        <col style="width:25%"></col>
-        <col style="width:25%"></col>
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Protocol name</th>
-        <th>Protocol type</th>
-        <th>Total references in literature search</th>
-        <th>Total references included in analysis</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '25,25,25,25' %}
+    {% bs4_thead 'Protocol name,Protocol type,Total references in literature search,Total references included in analysis' %}
     <tbody>
       {% for object in object_list %}
         <tr>
@@ -22,10 +11,9 @@
           <td>{{object.total_references}}</td>
           <td>{{object.total_studies_identified}}</td>
         </tr>
+      {% empty %}
+        {% bs4_fullrow 'No meta-protocols are available.' %}
       {% endfor %}
     </tbody>
   </table>
-{% else %}
-  <p>No meta-protocols are available.</p>
 {% endif %}
-

@@ -2,52 +2,31 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
+import {markKeywords} from "shared/utils/_helpers";
 import h from "shared/utils/helpers";
 import Hero from "shared/utils/Hero";
 import {getReferenceTagListUrl} from "shared/utils/urls";
 
-import ReferenceButton from "./ReferenceButton";
-
-const markKeywords = (text, allSettings) => {
-        const all_tokens = allSettings.set1.keywords
-                .concat(allSettings.set2.keywords)
-                .concat(allSettings.set3.keywords),
-            all_re = new RegExp(all_tokens.join("|"), "gim");
-
-        if (all_tokens.length === 0) {
-            return text;
-        }
-        text = text.replace(all_re, match => `<mark>${match}</mark>`);
-        text = markText(text, allSettings.set1);
-        text = markText(text, allSettings.set2);
-        text = markText(text, allSettings.set3);
-        return text;
-    },
-    markText = (text, settings) => {
-        if (settings.keywords.length === 0) {
-            return text;
-        }
-        const re = new RegExp(`<mark>(?<token>${settings.keywords.join("|")})</mark>`, "gim");
-        return text.replace(
-            re,
-            (match, token) =>
-                `<mark class="hawc-mk" title="${settings.name}" style='border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};'>${token}</mark>`
-        );
-    };
-
 class Reference extends Component {
-    renderIdentifiers(data) {
+    state = {abstractExpanded: false};
+    toggleAbstract = () => {
+        this.setState({abstractExpanded: !this.state.abstractExpanded});
+    };
+    renderIdentifiers(data, study_url, expanded) {
         const nodes = [];
 
+        const btn_size = expanded ? "" : "btn-tny";
         if (data.full_text_url) {
             nodes.push(
-                <ReferenceButton
-                    key={h.randomString()}
-                    className={"btn btn-sm btn-primary"}
-                    url={data.full_text_url}
-                    displayText={"Full text link"}
-                    textToCopy={data.full_text_url}
-                />
+                <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="outline-btn mr-1 mb-1 flex-shrink-0"
+                    href={data.full_text_url}
+                    key={h.randomString()}>
+                    Full Text&nbsp;
+                    <i className="fa fa-external-link" aria-hidden="true"></i>
+                </a>
             );
         }
 
@@ -56,44 +35,70 @@ class Reference extends Component {
             .sortBy(v => v.database_id)
             .each(v => {
                 nodes.push(
-                    <ReferenceButton
-                        key={h.randomString()}
-                        className={"btn btn-sm btn-success"}
-                        url={v.database === "HERO" ? Hero.getUrl(v.id) : v.url}
-                        displayText={v.database}
-                        textToCopy={v.id}
-                    />
+                    <div className="btn-group mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`btn outline-btn ${btn_size} rounded-left`}
+                            href={v.database === "HERO" ? Hero.getUrl(v.id) : v.url}>
+                            {v.database}
+                        </a>
+                        <div
+                            className={`outline-btn ${btn_size} rounded-right font-weight-normal border-left-0`}>
+                            {v.id}
+                        </div>
+                    </div>
                 );
             })
             .value();
 
         nodes.push(
-            <ReferenceButton
-                key={h.randomString()}
-                className={"btn btn-sm btn-warning"}
-                url={data.url}
-                displayText={"HAWC"}
-                textToCopy={data.pk.toString()}
-            />
+            <div className="btn-group mr-1 mb-1 flex-shrink-0" key={h.randomString()}>
+                <a className={`btn outline-btn ${btn_size} rounded-left`} href={data.url}>
+                    <i className="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC
+                </a>
+                <div
+                    className={`outline-btn ${btn_size} ${
+                        data.has_study ? "border-right-0" : "rounded-right"
+                    } font-weight-normal border-left-0`}>
+                    {data.pk.toString()}
+                </div>
+                {data.has_study ? (
+                    <a
+                        className={`btn outline-btn ${btn_size} rounded-right`}
+                        href={study_url}
+                        key={h.randomString()}>
+                        <i className="fa fa-book" aria-hidden="true"></i>&nbsp;Study
+                    </a>
+                ) : null}
+            </div>
         );
 
-        _.chain(data.identifiers)
-            .reject(v => v.url.length > 0 || v.database === "External link")
-            .sortBy(v => v.database_id)
-            .each(v => {
-                nodes.push(
-                    <ReferenceButton
-                        key={h.randomString()}
-                        className={"btn btn-sm btn-secondary"}
-                        url={v.url}
-                        displayText={v.database}
-                        textToCopy={v.id}
-                    />
-                );
-            })
-            .value();
-
-        return <div>{nodes}</div>;
+        if (data.searches.length) {
+            nodes.push(
+                <div
+                    style={{minWidth: 85}}
+                    className="d-flex dropdown flex-shrink-0"
+                    key={h.randomString()}>
+                    <a
+                        className={`btn dropdown-toggle ${btn_size} outline-btn`}
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        <i className="fa fa-cloud-download" aria-hidden="true"></i>
+                        &nbsp;Source
+                    </a>
+                    <div className="dropdown-menu dropdown-menu-right">
+                        {data.searches.map((d, i) => (
+                            <a className="dropdown-item small" key={h.randomString()} href={d.url}>
+                                {d.title}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+        return <div className={expanded ? "d-flex my-1 flex-wrap" : "d-flex my-1"}>{nodes}</div>;
     }
 
     render() {
@@ -106,56 +111,83 @@ class Reference extends Component {
                 actionsBtnClassName,
                 extraActions,
                 keywordDict,
+                expanded,
             } = this.props,
             {data, tags} = reference,
-            authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
+            authors = !expanded
+                ? data.authors_short || data.authors || reference.NO_AUTHORS_TEXT
+                : data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
             year = data.year || "",
             actionItems = [
                 <ActionLink key={0} label="Edit reference tags" href={data.editTagUrl} />,
                 <ActionLink key={1} label="Edit reference" href={data.editReferenceUrl} />,
                 <ActionLink key={2} label="Delete reference" href={data.deleteReferenceUrl} />,
                 <ActionLink key={3} label="Tag status" href={data.tagStatusUrl} />,
-            ].concat(extraActions);
+            ].concat(extraActions),
+            {abstractExpanded} = this.state;
 
         return (
-            <div className="referenceDetail pb-2">
+            <div className={expanded ? "referenceDetail expanded" : "referenceDetail"}>
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
-                    <div className="ref_small">
-                        {showActionsTagless ? (
-                            <ActionsButton
-                                dropdownClasses={actionsBtnClassName}
-                                items={actionItems.slice(1)}
-                            />
-                        ) : null}
-                        <span>
-                            {authors}&nbsp;{year}
-                        </span>
-                        {showActions ? (
-                            <ActionsButton
-                                dropdownClasses={actionsBtnClassName}
-                                items={actionItems}
-                            />
-                        ) : null}
+                    <div>
+                        <div className="d-flex ref_small">
+                            <div className="vw75 mb-2">
+                                <span title={expanded ? null : data.authors}>
+                                    {authors}&nbsp;{year}
+                                    {year != "" && data.journal && !expanded ? ". " : ""}
+                                    <i>{data.journal && !expanded ? data.journal : null}</i>
+                                </span>
+                            </div>
+                            {showActionsTagless ? (
+                                <ActionsButton
+                                    dropdownClasses={actionsBtnClassName}
+                                    items={actionItems.slice(1)}
+                                />
+                            ) : null}
+                            {showActions ? (
+                                <ActionsButton
+                                    dropdownClasses={actionsBtnClassName}
+                                    items={actionItems}
+                                />
+                            ) : null}
+                        </div>
+                        <div className="vw75">
+                            {data.title ? (
+                                keywordDict ? (
+                                    <p
+                                        style={{lineHeight: 1.25, marginTop: "-5px"}}
+                                        className="ref_title mb-1"
+                                        dangerouslySetInnerHTML={{
+                                            __html: markKeywords(data.title, keywordDict),
+                                        }}
+                                    />
+                                ) : (
+                                    <p
+                                        className="ref_title mb-1"
+                                        style={{lineHeight: 1.25, marginTop: "-5px"}}>
+                                        {data.title}
+                                    </p>
+                                )
+                            ) : null}
+                            {data.journal && expanded ? (
+                                <p className="ref_small">{data.journal}</p>
+                            ) : null}
+                        </div>
                     </div>
                 }
-                {data.title ? (
-                    keywordDict ? (
-                        <p
-                            className="ref_title py-1"
-                            dangerouslySetInnerHTML={{
-                                __html: markKeywords(data.title, keywordDict),
-                            }}
-                        />
-                    ) : (
-                        <p className="ref_title py-1">{data.title}</p>
-                    )
-                ) : null}
-                {data.journal ? <p className="ref_small">{data.journal}</p> : null}
+                <div className="d-flex vw75">
+                    {this.renderIdentifiers(data, reference.get_study_url(), expanded)}
+                </div>
                 {data.abstract ? (
                     <div
-                        className="abstracts resize-y p-2"
-                        style={data.abstract.length > 1500 ? {height: "45vh"} : null}
+                        onClick={!expanded ? this.toggleAbstract : null}
+                        className={
+                            abstractExpanded
+                                ? "abstracts vw75"
+                                : "abstracts abstract-collapsed vw75"
+                        }
+                        style={expanded ? {} : {}}
                         dangerouslySetInnerHTML={
                             keywordDict
                                 ? {__html: markKeywords(data.abstract, keywordDict)}
@@ -167,33 +199,15 @@ class Reference extends Component {
                     <p>
                         {tags.map((tag, i) => (
                             <a
-                                style={{color: "white"}}
                                 key={i}
                                 href={getReferenceTagListUrl(data.assessment_id, tag.data.pk)}
-                                className="refTag mt-1">
+                                className="refTag tagLink mt-1">
                                 {tag.get_full_name()}
                             </a>
                         ))}
                     </p>
                 ) : null}
-                {data.searches.length > 0 ? (
-                    <p className="my-1">
-                        <strong>HAWC searches/imports:</strong>
-                        {data.searches.map((d, i) => (
-                            <span className="badge badge-light mr-1" key={i}>
-                                &nbsp;<a href={d.url}>{d.title}</a>
-                            </span>
-                        ))}
-                    </p>
-                ) : null}
-                {data.has_study ? (
-                    <p className="my-1">
-                        <strong>HAWC study details:&nbsp;</strong>
-                        <a href={reference.get_study_url()}>{data.study_short_citation}</a>
-                    </p>
-                ) : null}
-                {this.renderIdentifiers(data)}
-                {showHr ? <hr /> : null}
+                {showHr ? <hr className="my-4" /> : null}
             </div>
         );
     }
@@ -208,16 +222,18 @@ Reference.propTypes = {
     showActionsTagless: PropTypes.bool,
     extraActions: PropTypes.arrayOf(PropTypes.element),
     keywordDict: PropTypes.object,
+    expanded: PropTypes.bool,
 };
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn-sm",
+    actionsBtnClassName: "btn-sm btn-secondary",
     showHr: false,
     showTags: true,
     showActionsTagsless: false,
     extraActions: null,
     keywordDict: null,
+    expanded: false,
 };
 
 export default Reference;

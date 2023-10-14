@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bullseye
 
 ENV PYTHONUNBUFFERED 1
 
@@ -18,7 +18,7 @@ COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 # https://pythonspeed.com/articles/system-packages-docker/
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y --no-install-recommends netcat git && \
+    apt-get install -y --no-install-recommends netcat-openbsd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     \
@@ -30,6 +30,7 @@ COPY ./dist /app/build/dist
 WORKDIR /app/build
 RUN pip install -U pip && \
     pip install -r /app/build/requirements/production.txt --no-cache-dir && \
+    pip uninstall -y pip setuptools && \
     rm -rf /app/build && \
     chown -R app:app /app
 

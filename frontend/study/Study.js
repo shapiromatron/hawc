@@ -46,7 +46,7 @@ class Study {
     }
 
     has_riskofbias() {
-        return this.riskofbias.length > 0;
+        return this.riskofbias && this.riskofbias.length > 0;
     }
 
     build_breadcrumbs() {
@@ -128,7 +128,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li>
+                `<li class="pb-2">
                     <a target="_blank" href="${v.url}">${v.filename}</a>
                     <a class="btn btn-sm btn-danger float-right" title="Delete" href="${v.url_delete}">
                         <i class="fa fa-trash"></i>
@@ -147,7 +147,7 @@ class Study {
         this.render($content, modal.getModal());
 
         modal
-            .addHeader(title)
+            .addHeader([title, HAWCUtils.unpublished(this.data.published, window.isEditable)])
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});

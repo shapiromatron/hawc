@@ -8,6 +8,7 @@ class RiskOfBiasResponses(models.IntegerChoices):
     HIGH_LOW_CONFIDENCE = 3, "High/low confidence"
     YES_NO = 4, "Yes/No"
     MINOR_CRITICAL = 5, "Minor/Critical concerns"
+    MINOR_CRITICAL_SENSITIVITY = 6, "Minor/Critical concerns (sensitivity)"
 
 
 RESPONSES_VALUES: dict[models.IntegerChoices, list[int]] = {
@@ -17,6 +18,7 @@ RESPONSES_VALUES: dict[models.IntegerChoices, list[int]] = {
     RiskOfBiasResponses.HIGH_LOW_CONFIDENCE: [37, 36, 35, 34, 22, 20],
     RiskOfBiasResponses.YES_NO: [40, 41, 22, 20],
     RiskOfBiasResponses.MINOR_CRITICAL: [53, 52, 51, 50, 22, 20],
+    RiskOfBiasResponses.MINOR_CRITICAL_SENSITIVITY: [57, 56, 55, 54, 22, 20],
 }
 
 RESPONSES_VALUES_DEFAULT: dict[models.IntegerChoices, int] = {
@@ -26,6 +28,7 @@ RESPONSES_VALUES_DEFAULT: dict[models.IntegerChoices, int] = {
     RiskOfBiasResponses.HIGH_LOW_CONFIDENCE: 22,
     RiskOfBiasResponses.YES_NO: 22,
     RiskOfBiasResponses.MINOR_CRITICAL: 22,
+    RiskOfBiasResponses.MINOR_CRITICAL_SENSITIVITY: 22,
 }
 
 
@@ -53,6 +56,10 @@ SCORE_CHOICES: tuple[tuple[int, str], ...] = (
     (51, "Major concerns"),
     (52, "Some concerns"),
     (53, "Minor concerns"),
+    (54, "Critical concerns"),
+    (55, "Major concerns"),
+    (56, "Some concerns"),
+    (57, "Minor concerns"),
 )
 
 SCORE_CHOICES_MAP: dict[int, str] = {k: v for k, v in SCORE_CHOICES}
@@ -84,6 +91,10 @@ SCORE_SYMBOLS: dict[int, str] = {
     51: "+",
     52: "++",
     53: "+++",
+    54: "0",
+    55: "+",
+    56: "++",
+    57: "+++",
 }
 
 SCORE_SHADES: dict[int, str] = {
@@ -110,6 +121,10 @@ SCORE_SHADES: dict[int, str] = {
     51: "#addea7",
     52: "#238d46",
     53: "#00441b",
+    54: "#CC3333",
+    55: "#FFCC00",
+    56: "#6FFF00",
+    57: "#00CC00",
 }
 
 

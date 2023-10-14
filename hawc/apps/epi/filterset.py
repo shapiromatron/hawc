@@ -1,11 +1,14 @@
 import django_filters as df
 from django import forms
+from django.db.models import Q
 
 from ..assessment.models import DoseUnits
 from ..common.autocomplete import AutocompleteTextWidget
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
+    ExpandableFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -23,9 +26,10 @@ class OutcomeFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Outcome name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.OutcomeAutocomplete, field="name"
+            autocomplete_class=autocomplete.OutcomeAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by endpoint name (ex: blood, glucose)"},
         ),
-        help_text="ex: blood, glucose",
     )
     study_population = df.CharFilter(
         field_name="study_population__name",
@@ -114,28 +118,30 @@ class OutcomeFilterSet(BaseFilterSet):
         label="Metric units",
         queryset=DoseUnits.objects.all(),
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("study_population__study__short_citation", "study"),
-            ("study_population__name", "study population"),
-            ("name", "outcome name"),
+            ("study_population__name", "study_population"),
+            ("name", "outcome_name"),
             ("system", "system"),
             ("effect", "effect"),
             ("diagnostic", "diagnostic"),
         ),
         choices=(
-            ("study", "study"),
-            ("study population", "study population"),
-            ("outcome name", "outcome name"),
-            ("system", "system"),
-            ("effect", "effect"),
-            ("diagnostic", "diagnostic"),
+            ("study", "↑ study"),
+            ("study_population", "↑ study population"),
+            ("outcome_name", "↑ outcome name"),
+            ("system", "↑ system"),
+            ("effect", "↑ effect"),
+            ("diagnostic", "↑ diagnostic"),
         ),
+        initial="study",
     )
     paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Outcome
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "name",
@@ -144,23 +150,29 @@ class OutcomeFilterSet(BaseFilterSet):
             "age_profile",
             "source",
             "country",
-            "design",
             "system",
+            "design",
             "effect",
             "effect_subtype",
-            "diagnostic",
             "metric_units",
+            "diagnostic",
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
+
+    def filter_search(self, queryset, name, value):
+        query = Q(name__icontains=value)
+        return queryset.filter(query)
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)

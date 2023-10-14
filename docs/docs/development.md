@@ -20,7 +20,6 @@ See the `Useful utilities` below for more details on how to automatically lint/f
 
 ## Environment setup
 
-
 HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
 
 ```bash title="Mac/Linux"
@@ -93,7 +92,8 @@ source ./venv/bin/activate
 # update python/js packages; sync app state with database
 make sync-dev
 
-# run development webserver
+# run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 
@@ -126,7 +126,8 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 :: update python/js packages; sync app state with database
 make sync-dev
 
-:: run development webserver
+:: run development webserver  (use one of these commands)
+python manage.py runserver
 manage runserver
 ```
 

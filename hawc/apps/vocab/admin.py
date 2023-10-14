@@ -34,11 +34,9 @@ class TermAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.prefetch_related("entities")
 
+    @admin.display(description="Related entities")
     def get_entities(self, obj):
         return ul_items(obj.entities.all(), lambda el: f"<a href={el.get_external_url()}>{el}</a>")
-
-    get_entities.short_description = "Related entities"
-    get_entities.allow_tags = True
 
 
 class EntityTermRelationAdmin(admin.TabularInline):
@@ -66,14 +64,10 @@ class EntityAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.prefetch_related("terms")
 
+    @admin.display(description="UID")
     def get_uid(self, obj):
         return format_html(f"<a href='{obj.get_external_url()}'>{obj.uid}</a>")
 
-    get_uid.short_description = "UID"
-    get_uid.allow_tags = True
-
+    @admin.display(description="Related terms")
     def get_terms(self, obj):
         return ul_items(obj.terms.all(), lambda el: f"<a href={el.get_admin_edit_url()}>{el}</a>")
-
-    get_terms.short_description = "Related terms"
-    get_terms.allow_tags = True

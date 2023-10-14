@@ -1,0 +1,20 @@
+[
+  {
+    "causes": "cause",
+    "climates": "Temperate",
+    "countries": "Denmark",
+    "design_types": "Observational/gradient",
+    "designs": "example eco design",
+    "doi": "",
+    "ecoregions": "Coast Range",
+    "effects": "effect",
+    "full_citation": "Foo et al. 2010",
+    "habitats": "Terrestrial",
+    "hero_id": "2",
+    "pubmed_id": "",
+    "short_citation": "Foo et al.",
+    "states": "",
+    "study_id": 1,
+    "study_settings": "Field"
+  }
+]

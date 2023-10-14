@@ -8,7 +8,6 @@ from django.urls import reverse_lazy
 
 from hawc.constants import AuthProvider, FeatureFlags
 from hawc.services.utils.git import Commit
-from hawc.tools import fips
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -25,7 +24,6 @@ LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
 USE_I18N = False
-USE_L10N = True
 USE_TZ = True
 
 ADMINS: list[tuple[str, str]] = []
@@ -66,6 +64,11 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "hawc.apps.common.context_processors.from_settings",
             ),
+            "builtins": [
+                "crispy_forms.templatetags.crispy_forms_tags",
+                "hawc.apps.common.templatetags.bs4",
+                "hawc.apps.common.templatetags.hawc",
+            ],
         },
     },
 ]
@@ -127,12 +130,8 @@ INSTALLED_APPS = (
     "hawc.apps.hawc_admin",
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
+    "hawc.apps.udf",
 )
-
-# TODO - remove with django==4.1
-if HAWC_FEATURES.FIPS_MODE is True:
-    fips.patch_md5()
-
 # DB settings
 DATABASES = {
     "default": {
@@ -188,6 +187,7 @@ AUTHENTICATION_BACKENDS = [
     "hawc.apps.common.auth.TokenBackend",
 ]
 PASSWORD_RESET_TIMEOUT = 259200  # 3 days, in seconds
+CSRF_TRUSTED_ORIGINS = os.getenv("HAWC_CSRF_TRUSTED_ORIGINS", "https://").split("|")
 SESSION_COOKIE_AGE = int(os.getenv("HAWC_SESSION_DURATION", "604800"))  # 1 week
 SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
@@ -202,6 +202,7 @@ ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
 LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
+DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DISABLED_LOGIN_HOSTS", "").split("|")
 
 # Static files
 STATIC_URL = "/static/"
@@ -295,6 +296,9 @@ GTM_ID = os.getenv("GTM_ID")
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
+
+# CCTE API key
+CCTE_API_KEY = os.getenv("CCTE_API_KEY")
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

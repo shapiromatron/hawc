@@ -55,7 +55,7 @@ class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     form_class = forms.ExperimentForm
 
 
-class ExperimentRead(BaseDetail):
+class ExperimentDetail(BaseDetail):
     model = models.Experiment
 
 
@@ -176,7 +176,7 @@ class AnimalGroupCreate(BaseCreate):
         return context
 
 
-class AnimalGroupRead(BaseDetail):
+class AnimalGroupDetail(BaseDetail):
     model = models.AnimalGroup
 
     def get_context_data(self, **kwargs):
@@ -426,7 +426,9 @@ class EndpointFilterList(BaseFilterList):
     def get_queryset(self):
         qs = super().get_queryset()
         form = self.filterset.form
-        dose_units = form.cleaned_data["dose_units"] or form.fields["dose_units"].queryset.first()
+        dose_units = (
+            form.cleaned_data.get("dose_units") or form.fields["dose_units"].queryset.first()
+        )
         return qs.select_related("animal_group__experiment__study").annotate_dose_values(dose_units)
 
     def get_context_data(self, **kwargs):
@@ -451,7 +453,7 @@ class EndpointListV2(BaseList):
         )
 
 
-class EndpointRead(BaseDetail):
+class EndpointDetail(BaseDetail):
     queryset = models.Endpoint.objects.select_related(
         "animal_group",
         "animal_group__dosing_regime",

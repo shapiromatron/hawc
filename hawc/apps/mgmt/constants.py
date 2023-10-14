@@ -2,10 +2,10 @@ from django.db import models
 
 
 class TaskType(models.IntegerChoices):
-    PREPARATION = 10, "preparation"
-    EXTRACTION = 20, "extraction"
-    QA = 30, "qa/qc"
-    ROB = 40, "rob completed"
+    PREPARATION = 10, "Preparation"
+    EXTRACTION = 20, "Data Extraction"
+    QA = 30, "QA/QC"
+    ROB = 40, "Study Evaluation"
 
 
 class TaskStatus(models.IntegerChoices):

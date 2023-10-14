@@ -12,13 +12,13 @@ from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 from hawc.apps.myuser.models import HAWCUser
 
-from ..test_utils import check_details_of_last_log_entry
+from ..test_utils import check_details_of_last_log_entry, get_client
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
-class TestLiteratureAssessmentViewset:
+class TestLiteratureAssessmentViewSet:
     def _test_flat_export(
         self, rewrite_data_files: bool, fn: str, url: str, client: APIClient | None = None
     ):
@@ -53,7 +53,6 @@ class TestLiteratureAssessmentViewset:
             ),
             reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
-            reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tagtree", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
@@ -295,7 +294,7 @@ class TestLiteratureAssessmentViewset:
 
 @pytest.mark.vcr
 @pytest.mark.django_db
-class TestSearchViewset:
+class TestSearchViewSet:
     def test_success(self, db_keys):
         url = reverse("lit:api:search-list")
         c = APIClient()
@@ -583,7 +582,7 @@ class TestReferenceDestroyApi:
 
 
 @pytest.mark.django_db
-class TestReferenceViewset:
+class TestReferenceViewSet:
     def test_update_permissions(self, db_keys):
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         data = {"title": "TestReferenceUpdateApi test"}
@@ -768,6 +767,17 @@ class TestReferenceViewset:
         assert response.status_code == 400
         assert response.json() == {"tags": "Array of tags must be valid primary keys"}
 
+    def test_merge_tag_permissions(self):
+        team = get_client("team", api=True)
+        reviewer = get_client("reviewer", api=True)
+        url = reverse("lit:api:reference-merge-tags", args=[11])
+
+        response = reviewer.post(url)
+        assert response.status_code == 403
+
+        response = team.post(url)
+        assert response.status_code == 200
+
     def test_conflict_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -788,3 +798,18 @@ class TestReferenceViewset:
         data = {"user_tag_id": -1}
         response = client.post(url, data, format="json")
         assert response.status_code == 404
+
+    def test_id_search(self):
+        client = APIClient()
+        url = reverse(
+            "lit:api:reference-id-search", args=[constants.ReferenceDatabase.PUBMED, 15907334]
+        )
+
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 403
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.get(url)
+        assert response.status_code == 200
+        assert len(response.json()) == 1

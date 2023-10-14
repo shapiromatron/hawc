@@ -1,9 +1,14 @@
+import os
+
 import pytest
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.bmd.constants import BmdInputSettings, SelectedModel
 from hawc.apps.bmd.models import Session
+
+SKIP_BMDS_TESTS = bool(os.environ.get("SKIP_BMDS_TESTS", "False") == "True")
+IN_CI = os.environ.get("GITHUB_RUN_ID") is not None
 
 
 def toggle_assessment_lock(assessment_id: int, editable: bool):
@@ -14,7 +19,7 @@ def toggle_assessment_lock(assessment_id: int, editable: bool):
 
 
 @pytest.mark.django_db
-class TestSessionViewset:
+class TestSessionViewSet:
     def test_bmds2_detail(self):
         # bmds 270
         session = Session.objects.filter(version="BMDS270", active=True).first()
@@ -68,6 +73,7 @@ class TestSessionViewset:
         assert data["is_finished"] is False
         assert data["date_executed"] is None
 
+    @pytest.mark.skipif(SKIP_BMDS_TESTS or IN_CI, reason="BMDS execution environment unavailable")
     def test_write_operations(self):
         toggle_assessment_lock(2, True)
 

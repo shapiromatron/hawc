@@ -1,21 +1,17 @@
 import html
 import json
 import logging
-import pickle
 import re
 from copy import copy
-from io import BytesIO
 from math import ceil
 from urllib import parse
 
-import pandas as pd
 from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
-from django.core.cache import cache
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -25,7 +21,6 @@ from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from ...constants import ColorblindColors
-from ...refml import topics
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
@@ -35,7 +30,6 @@ from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
     NonUniqueTagBase,
-    get_private_data_storage,
 )
 from ..myuser.models import HAWCUser
 from . import constants, managers, tasks
@@ -57,7 +51,6 @@ class TooManyPubMedResults(Exception):
 
 class LiteratureAssessment(models.Model):
     DEFAULT_EXTRACTION_TAG = "Inclusion"
-    TOPIC_MODEL_MIN_REFERENCES = 50
 
     assessment = models.OneToOneField(
         "assessment.Assessment",
@@ -97,8 +90,10 @@ class LiteratureAssessment(models.Model):
     keyword_list_1 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
-         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas.""",
+        Keywords are pipe-separated (&nbsp;|&nbsp;) to allow for highlighting chemicals which may
+        include commas. Keywords can be whole word matches or partial matches. For inexact matches,
+        use an asterisk (&nbsp;*&nbsp;) wildcard. For example, rat|phos*, it should match rat, but
+        not rats, as well as phos, phosphate, and phosphorous.""",
     )
     name_list_2 = models.CharField(
         max_length=64,
@@ -115,8 +110,10 @@ class LiteratureAssessment(models.Model):
     keyword_list_2 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
-         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas.""",
+        Keywords are pipe-separated (&nbsp;|&nbsp;) to allow for highlighting chemicals which may
+        include commas. Keywords can be whole word matches or partial matches. For inexact matches,
+        use an asterisk (&nbsp;*&nbsp;) wildcard. For example, rat|phos*, it should match rat, but
+        not rats, as well as phos, phosphate, and phosphorous.""",
     )
     name_list_3 = models.CharField(
         max_length=64,
@@ -133,18 +130,11 @@ class LiteratureAssessment(models.Model):
     keyword_list_3 = models.TextField(
         blank=True,
         help_text="""Keywords to highlight in titles and abstracts on the reference tagging page.
-         Keywords are pipe-separated ("|") to allow for highlighting chemicals which may include
-         commas.""",
+        Keywords are pipe-separated (&nbsp;|&nbsp;) to allow for highlighting chemicals which may
+        include commas. Keywords can be whole word matches or partial matches. For inexact matches,
+        use an asterisk (&nbsp;*&nbsp;) wildcard. For example, rat|phos*, it should match rat, but
+        not rats, as well as phos, phosphate, and phosphorous.""",
     )
-    topic_tsne_data = models.FileField(
-        blank=True,
-        null=True,
-        editable=False,
-        upload_to="lit/topic_model",
-        storage=get_private_data_storage(),
-    )
-    topic_tsne_refresh_requested = models.DateTimeField(null=True)
-    topic_tsne_last_refresh = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -174,73 +164,6 @@ class LiteratureAssessment(models.Model):
 
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
-
-    def get_topic_model_url(self) -> str:
-        return reverse("lit:api:assessment-topic-model", args=(self.assessment_id,))
-
-    def get_topic_model_refresh_url(self) -> str:
-        return reverse("lit:api:assessment-topic-model-request-refresh", args=(self.assessment_id,))
-
-    @property
-    def topic_tsne_fig_dict_cache_key(self) -> str:
-        return f"{self.assessment_id}_topic_tsne_data"
-
-    @property
-    def topic_tsne_data_filename(self) -> str:
-        return f"assessment-{self.assessment_id}.pkl"
-
-    def create_topic_tsne_data(self) -> None:
-        columns = ("id", "title", "abstract")
-        refs = Reference.objects.filter(assessment=self.assessment_id).values_list(*columns)
-        df = pd.DataFrame(data=refs, columns=columns)
-        df.loc[:, "text"] = df.title + " " + df.abstract
-        df.loc[:, "title"] = df.title.apply(topics.textwrapper)
-        df.drop(columns=["abstract"], inplace=True)
-
-        df, topics_df = topics.topic_model_tsne(df)
-
-        f1 = BytesIO()
-        df.to_parquet(f1, engine="pyarrow", index=False)
-
-        f2 = BytesIO()
-        topics_df.to_parquet(f2, engine="pyarrow", index=False)
-
-        data = dict(df=f1.getvalue(), topics=f2.getvalue())
-
-        if self.has_topic_model:
-            self.topic_tsne_data.delete(save=False)
-        self.topic_tsne_refresh_requested = None
-        self.topic_tsne_last_refresh = timezone.now()
-        self.topic_tsne_data.save(self.topic_tsne_data_filename, ContentFile(pickle.dumps(data)))
-        cache.delete(self.topic_tsne_fig_dict_cache_key)
-
-    def get_topic_tsne_data(self) -> dict:
-        if not self.has_topic_model:
-            raise ValueError("No data available.")
-        data = pickle.load(self.topic_tsne_data.file.file)  # noqa: S301
-        data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
-        data["topics"] = pd.read_parquet(BytesIO(data["topics"]), engine="pyarrow")
-        return data
-
-    def get_topic_tsne_fig_dict(self) -> dict:
-        fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
-        if fig_dict is None:
-            data = self.get_topic_tsne_data()
-            fig = topics.tsne_to_scatterplot(data)
-            fig_dict = fig.to_dict()
-            cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
-        return fig_dict
-
-    @property
-    def has_topic_model(self) -> bool:
-        name = self.topic_tsne_data.name
-        return name is not None and name != ""
-
-    def can_topic_model(self) -> bool:
-        return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
-
-    def can_request_refresh(self) -> bool:
-        return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
     def get_keyword_data(self) -> dict:
         return {
@@ -691,7 +614,7 @@ class Identifiers(models.Model):
 
     class Meta:
         unique_together = (("database", "unique_id"),)
-        index_together = (("database", "unique_id"),)
+        indexes = (models.Index(fields=("database", "unique_id")),)
         verbose_name_plural = "identifiers"
 
     def __str__(self):
@@ -879,8 +802,6 @@ class ReferenceTags(ItemBase):
 
 
 class Reference(models.Model):
-    TEXT_CLEANUP_FIELDS = ("full_text_url",)
-
     objects = managers.ReferenceManager()
 
     assessment = models.ForeignKey(
@@ -914,6 +835,48 @@ class Reference(models.Model):
     )
 
     BREADCRUMB_PARENT = "assessment"
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                constants.REFERENCE_SEARCH_VECTOR,
+                name="search_vector_idx",
+            )
+        ]
+
+    @transaction.atomic
+    def merge_tags(self, user):
+        """Merge all unresolved user tags and apply to the reference.
+
+        Args:
+            user: The user requesting the tag change
+        """
+
+        # if there are no unresolved user tags, do nothing
+        n_user_tags = self.user_tags.filter(is_resolved=False).count()
+        if n_user_tags == 0:
+            return
+
+        tag_pks = list(
+            self.user_tags.filter(is_resolved=False)
+            .values_list("tags", flat=True)
+            .distinct()
+            .filter(tags__isnull=False)
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user.id,
+            message=f"lit.Reference {self.id}: merge all user tags {tag_pks}.",
+            content_object=self,
+        )
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        self.user_tags.update(is_resolved=True)
+        self.tags.set(tag_pks)
+        self.last_updated = timezone.now()
+        self.save()
 
     def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
@@ -1246,6 +1209,11 @@ class UserReferenceTag(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=("user", "reference"), name="user_reference_tag"),
+        ]
 
     @property
     def assessment_id(self) -> int:

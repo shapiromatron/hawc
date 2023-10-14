@@ -5,8 +5,8 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"ehv", api.EhvTermViewset, basename="ehv")
-router.register(r"term", api.TermViewset, basename="term")
+router.register(r"ehv", api.EhvTermViewSet, basename="ehv")
+router.register(r"term", api.TermViewSet, basename="term")
 
 app_name = "vocab"
 urlpatterns = [

@@ -37,13 +37,14 @@ module.exports = {
     output: {
         filename: "[name].[contenthash].js",
         chunkFilename: "[name].[contenthash].js",
-        path: path.resolve("../hawc/static/bundles"),
+        path: path.resolve(__dirname, "../hawc/static/bundles"),
         publicPath: "/static/bundles/",
     },
 
     plugins: [
         new BundleTracker({
-            filename: "../hawc/webpack-stats.json",
+            path: path.resolve(__dirname, "../hawc"),
+            filename: "webpack-stats.json",
         }),
     ],
 
@@ -53,7 +54,9 @@ module.exports = {
             animal: path.join(__dirname, "animal"),
             assessment: path.join(__dirname, "assessment"),
             bmd: path.join(__dirname, "bmd"),
+            eco: path.join(__dirname, "eco"),
             epi: path.join(__dirname, "epi"),
+            epiv2: path.join(__dirname, "epiv2"),
             epimeta: path.join(__dirname, "epimeta"),
             invitro: path.join(__dirname, "invitro"),
             lit: path.join(__dirname, "lit"),

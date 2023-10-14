@@ -8,6 +8,8 @@ from ..common.filterset import (
     AutocompleteModelChoiceFilter,
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
+    ExpandableFilterForm,
+    OrderingFilter,
     PaginationFilter,
 )
 from ..study.autocomplete import StudyAutocomplete
@@ -87,9 +89,10 @@ class EndpointFilterSet(BaseFilterSet):
         lookup_expr="icontains",
         label="Endpoint name",
         widget=AutocompleteTextWidget(
-            autocomplete_class=autocomplete.EndpointAutocomplete, field="name"
+            autocomplete_class=autocomplete.EndpointAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by endpoint name (ex: heart weight)"},
         ),
-        help_text="ex: heart weight",
     )
     system = df.CharFilter(
         lookup_expr="icontains",
@@ -136,36 +139,36 @@ class EndpointFilterSet(BaseFilterSet):
         queryset=DoseUnits.objects.all(),
         distinct=True,
     )
-    order_by = df.OrderingFilter(
+    order_by = OrderingFilter(
         fields=(
             ("animal_group__experiment__study__short_citation", "study"),
-            ("animal_group__experiment__name", "experiment name"),
-            ("animal_group__name", "animal group"),
-            ("name", "endpoint name"),
-            ("animal_group__dosing_regime__doses__dose_units_id", "dose units"),
+            ("animal_group__experiment__name", "experiment_name"),
+            ("animal_group__name", "animal_group"),
+            ("name", "endpoint_name"),
             ("system", "system"),
             ("organ", "organ"),
             ("effect", "effect"),
-            ("effect_subtype", "effect subtype"),
+            ("effect_subtype", "effect_subtype"),
             ("animal_group__experiment__chemical", "chemical"),
         ),
         choices=(
-            ("study", "study"),
-            ("experiment name", "experiment name"),
-            ("animal group", "animal group"),
-            ("endpoint name", "endpoint name"),
-            ("dose units", "dose units"),
-            ("system", "system"),
-            ("organ", "organ"),
-            ("effect", "effect"),
-            ("effect subtype", "effect subtype"),
-            ("chemical", "chemical"),
+            ("study", "↑ study"),
+            ("experiment_name", "↑ experiment name"),
+            ("animal_group", "↑ animal group"),
+            ("endpoint_name", "↑ endpoint name"),
+            ("system", "↑ system"),
+            ("organ", "↑ organ"),
+            ("effect", "↑ effect"),
+            ("effect_subtype", "↑ effect subtype"),
+            ("chemical", "↑ chemical"),
         ),
+        initial="study",
     )
     paginate_by = PaginationFilter()
 
     class Meta:
         model = models.Endpoint
+        form = ExpandableFilterForm
         fields = [
             "studies",
             "chemical",
@@ -186,13 +189,15 @@ class EndpointFilterSet(BaseFilterSet):
             "order_by",
             "paginate_by",
         ]
+        main_field = "name"
+        appended_fields = ["order_by", "paginate_by"]
         grid_layout = {
             "rows": [
+                {"columns": [{"width": 12}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
                 {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}, {"width": 3}]},
-                {"columns": [{"width": 3}, {"width": 3}]},
+                {"columns": [{"width": 3}, {"width": 3}, {"width": 3}]},
             ]
         }
 

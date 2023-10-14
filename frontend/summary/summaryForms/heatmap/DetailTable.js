@@ -48,7 +48,7 @@ class DetailTable extends Component {
     renderRow(row, index) {
         const {
             getColumnsOptionsWithNull,
-            getDpeSettings,
+            getInteractivityOptions,
             changeArraySettings,
             moveArrayElementUp,
             moveArrayElementDown,
@@ -83,7 +83,7 @@ class DetailTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-on_click_event-${index}`}
-                        choices={getDpeSettings}
+                        choices={getInteractivityOptions}
                         multiple={false}
                         handleSelect={value =>
                             changeArraySettings(key, index, "on_click_event", value)

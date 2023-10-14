@@ -4,11 +4,10 @@ from rest_framework.routers import SimpleRouter
 from . import api, views
 
 router = SimpleRouter()
-router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
-router.register(r"reference", api.ReferenceViewset, basename="reference")
-router.register(r"search", api.SearchViewset, basename="search")
-router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
-router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="reference-cleanup")
+router.register(r"assessment", api.LiteratureAssessmentViewSet, basename="assessment")
+router.register(r"reference", api.ReferenceViewSet, basename="reference")
+router.register(r"search", api.SearchViewSet, basename="search")
+router.register(r"tags", api.ReferenceFilterTagViewSet, basename="tags")
 
 app_name = "lit"
 urlpatterns = [
@@ -63,11 +62,6 @@ urlpatterns = [
         "assessment/<int:pk>/references/visualization/",
         views.RefVisualization.as_view(),
         name="ref_visual",
-    ),
-    path(
-        "assessment/<int:pk>/references/topic-model/",
-        views.RefTopicModel.as_view(),
-        name="topic_model",
     ),
     path(
         "assessment/<int:pk>/references/search/",

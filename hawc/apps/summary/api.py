@@ -5,18 +5,19 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
-    AssessmentViewset,
+    AssessmentViewSet,
     EditPermissionsCheckMixin,
     InAssessmentFilter,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import re_digits
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers, table_serializers
@@ -37,7 +38,7 @@ class UnpublishedFilter(BaseFilterBackend):
         return queryset
 
 
-class SummaryAssessmentViewset(viewsets.GenericViewSet):
+class SummaryAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
@@ -59,7 +60,7 @@ class SummaryAssessmentViewset(viewsets.GenericViewSet):
         return Response(datasets)
 
 
-class DataPivotViewset(AssessmentViewset):
+class DataPivotViewSet(AssessmentViewSet):
     """
     For list view, return simplified data-pivot view.
 
@@ -91,7 +92,15 @@ class DataPivotViewset(AssessmentViewset):
         return Response(export)
 
 
-class VisualViewset(AssessmentViewset):
+class DataPivotQueryViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
+    assessment_filter_args = "assessment"
+    model = models.DataPivotQuery
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
+    serializer_class = serializers.DataPivotQuerySerializer
+
+
+class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     """
     For list view, return all Visual objects for an assessment, but using the
     simplified collection view.
@@ -99,6 +108,7 @@ class VisualViewset(AssessmentViewset):
     For all other views, use the detailed visual view.
     """
 
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Visual
     pagination_class = DisabledPagination
@@ -113,8 +123,24 @@ class VisualViewset(AssessmentViewset):
     def get_queryset(self):
         return super().get_queryset().select_related("assessment")
 
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def data(self, request, pk):
+        obj = self.get_object()
+        try:
+            df = obj.data_df()
+        except ValueError:
+            return Response(
+                {"error": "Data export not available for this visual type."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+        return FlatExport.api_response(df, obj.slug)
 
-class SummaryTextViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
+
+class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.SummaryText
@@ -126,7 +152,7 @@ class SummaryTextViewset(EditPermissionsCheckMixin, AssessmentEditViewset):
         return self.model.objects.all()
 
 
-class SummaryTableViewset(AssessmentEditViewset):
+class SummaryTableViewSet(AssessmentEditViewSet):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
     filter_backends = (InAssessmentFilter, UnpublishedFilter)

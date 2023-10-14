@@ -4,13 +4,15 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..assessment.api import AssessmentLevelPermissions
+from ..assessment.api import AssessmentLevelPermissions, CleanupFieldsBaseViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
+from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models
+from ..study.models import Study
+from . import models, serializers
 
 
 class TermViewSet(GenericViewSet):
@@ -46,7 +48,65 @@ class AssessmentViewSet(GenericViewSet):
         """
         Export entire ecological dataset.
         """
-        instance = self.get_object()
-        df = models.Result.complete_df(instance.id)
-        export = FlatExport(df=df, filename=f"ecological-export-{self.assessment.id}")
-        return Response(export)
+        assessment = self.get_object()
+        published_only = get_published_only(assessment, request)
+        qs = models.Result.objects.assessment_qs(assessment.id).published_only(published_only)
+        return FlatExport.api_response(
+            df=qs.complete_df(), filename=f"ecological-export-{assessment.id}"
+        )
+
+    @action(
+        detail=True,
+        url_path="study-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def study_export(self, request, pk):
+        """
+        Retrieve epidemiology at the study level for assessment.
+        """
+        assessment: Assessment = self.get_object()
+        published_only = get_published_only(assessment, request)
+        qs = (
+            Study.objects.assessment_qs(assessment.id)
+            .filter(eco=True)
+            .published_only(published_only)
+        )
+        df = models.Design.objects.study_df(qs)
+        return FlatExport.api_response(df=df, filename=f"ecological-study-export-{assessment.id}")
+
+
+class DesignCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.DesignCleanupSerializer
+    model = models.Design
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class CauseCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.CauseCleanupSerializer
+    model = models.Cause
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class EffectCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.EffectCleanupSerializer
+    model = models.Effect
+    assessment_filter_args = "study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
+
+class ResultCleanupViewSet(CleanupFieldsBaseViewSet):
+    serializer_class = serializers.ResultCleanupSerializer
+    model = models.Result
+    assessment_filter_args = "design__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("design__study")

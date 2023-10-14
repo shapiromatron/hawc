@@ -5,6 +5,7 @@ import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticError
 from rest_framework import serializers
@@ -162,6 +163,59 @@ class FlexibleChoiceField(serializers.ChoiceField):
         self.fail("invalid_choice", input=data)
 
 
+class FlexibleChoiceArrayField(serializers.ChoiceField):
+    """
+    like FlexibleChoiceField; accepts either the raw choice value OR a case-insensitive
+    display value when supplying data, intended for choice fields wrapped in an ArrayField
+    """
+
+    # dupe invalid_choice in ChoiceField, and create a new one that we'll use
+    default_error_messages = {
+        "invalid_choice": _('"{input}" is not a valid choice.'),
+        "full_custom": _("{input}"),
+    }
+
+    def to_representation(self, obj):
+        if len(obj) == 0 and self.allow_blank:
+            return obj
+        return [self._choices[x] for x in obj]
+
+    def to_internal_value(self, data):
+        if (data is None or len(data) == 0) and self.allow_blank:
+            return []
+        else:
+            converted_values = []
+            invalid_values = []
+            for x in data:
+                element_handled = False
+                # Look for an exact match of either key or val
+                for key, val in self._choices.items():
+                    if key == x or val == x:
+                        converted_values.append(key)
+                        element_handled = True
+                        break
+
+                if not element_handled:
+                    # No exact match; if a string was passed in let's try case-insensitive value match
+                    if type(x) is str:
+                        key = get_id_from_choices(self._choices.items(), x)
+                        if key is not None:
+                            converted_values.append(key)
+                            element_handled = True
+
+                if not element_handled:
+                    invalid_values.append(x)
+
+            if len(invalid_values) == 0:
+                return converted_values
+            else:
+                invalid_summary = ", ".join([f"'{x}'" for x in invalid_values])
+                self.fail(
+                    "full_custom",
+                    input=f"input {data} contained invalid value(s): {invalid_summary}.",
+                )
+
+
 class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
     FlexibleChoiceField subclass which derives its choices from a model/database table and optionally supports multiples.
@@ -172,10 +226,15 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         * etc.
     """
 
+    default_error_messages = {
+        "invalid_choice": _('"{input}" is not a valid choice.'),
+        "not_a_list": _('Expected a list of items but got type "{input_type}".'),
+    }
+
     def __init__(
         self,
         mapped_model: models.Model,
-        serializer_class: serializers.ModelSerializer,
+        serializer_class: type[serializers.ModelSerializer],
         field_for_descriptor: str,
         many: bool,
     ):
@@ -219,16 +278,12 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         self.load_related_objects_if_needed()
 
         if self.many:
-            # super() doesn't work inside list comprehensions; could this leverage __class__ somehow?
-            # resolved_ids = [super().to_internal_value(x) for x in data]
-            # for now just write the loop by hand.
-
-            resolved_ids = []
-            for raw_input_el in data:
-                # Each element could be an id or a readable value, so first we convert to id
-                resolved_ids.append(super().to_internal_value(raw_input_el))
-
-            # And now we return the actual objects in a list
+            if isinstance(data, str) or not hasattr(data, "__iter__"):
+                self.fail("not_a_list", input_type=type(data).__name__)
+            # Arguments for super() needed b/c of scoping inside comprehensions
+            resolved_ids = [
+                super(FlexibleDBLinkedChoiceField, self).to_internal_value(item) for item in data
+            ]
             return list(self.mapped_model.objects.filter(id__in=resolved_ids))
         else:
             obj_id = super().to_internal_value(data)

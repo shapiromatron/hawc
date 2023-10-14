@@ -21,7 +21,7 @@ class TestAttributeChoices:
         series = pd.Series({"foo": "foo", "bar": "bar", "free_html": "free_html"})
         cell = col.get_cell(series)
         assert cell.quill_text == "<p></p>"
-        series = pd.Series()
+        series = pd.Series(dtype=float)
         cell = col.get_cell(series)
         assert cell.quill_text == "<p></p>"
 

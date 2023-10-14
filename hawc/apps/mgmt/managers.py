@@ -13,6 +13,11 @@ class TaskQuerySet(QuerySet):
     def owned_by(self, user):
         return self.filter(owner=user)
 
+    def exclude_completed_and_abandonded(self):
+        return self.exclude(
+            status__in=[constants.TaskStatus.COMPLETED, constants.TaskStatus.ABANDONED]
+        )
+
 
 class TaskManager(BaseManager):
     assessment_relation = "study__assessment"

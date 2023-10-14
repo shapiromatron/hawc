@@ -7,6 +7,7 @@ class StudyType(models.IntegerChoices):
     EPI = 1, "Epidemiology"
     EPI_META = 4, "Epidemiology meta-analysis/pooled analysis"
     IN_VITRO = 2, "In vitro"
+    ECO = 5, "Ecology"
     OTHER = 3, "Other"
 
 
@@ -24,6 +25,7 @@ class VisualType(models.IntegerChoices):
     LITERATURE_TAGTREE = 4, "literature tagtree"
     EXTERNAL_SITE = 5, "embedded external website"
     EXPLORE_HEATMAP = 6, "exploratory heatmap"
+    PLOTLY = 7, "plotly"
 
 
 class SortOrder(models.TextChoices):

@@ -6,7 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError, OutputWrapper
 from django.db import connection
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from ...models import Assessment
 
@@ -19,7 +19,7 @@ class NaiveWrapper(OutputWrapper):
     """
 
     def write(self, msg, style_func=None, ending=None):
-        self._out.write(force_text(msg))
+        self._out.write(force_str(msg))
 
 
 class UnicodeCommand(BaseCommand):

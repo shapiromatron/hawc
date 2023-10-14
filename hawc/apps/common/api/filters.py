@@ -15,7 +15,7 @@ class CleanupBulkIdFilter(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         if not view.assessment_filter_args:
-            raise ValueError("Viewset requires the `assessment_filter_args` argument")
+            raise ValueError("ViewSet requires the `assessment_filter_args` argument")
 
         # always filter queryset by `assessment_id`
         queryset = queryset.filter(**{view.assessment_filter_args: view.assessment.id})

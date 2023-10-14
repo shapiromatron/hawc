@@ -15,7 +15,7 @@ import {
 
 class AutocompleteTerm extends Component {
     /*
-    Autocomplete widget; works with `hawc.apps.vocab.api.EhvTermViewset`
+    Autocomplete widget; works with `hawc.apps.vocab.api.EhvTermViewSet`
     */
 
     constructor(props) {

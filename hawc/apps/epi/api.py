@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
-    AssessmentEditViewset,
+    AssessmentEditViewSet,
     AssessmentLevelPermissions,
     CleanupFieldsBaseViewSet,
     EditPermissionsCheckMixin,
@@ -25,7 +25,7 @@ from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata
 
 
-class EpiAssessmentViewset(viewsets.GenericViewSet):
+class EpiAssessmentViewSet(viewsets.GenericViewSet):
     model = Assessment
     queryset = Assessment.objects.all()
     permission_classes = (AssessmentLevelPermissions,)
@@ -79,8 +79,7 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         if df is None:
             df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
 
     @action(
         detail=True,
@@ -106,18 +105,17 @@ class EpiAssessmentViewset(viewsets.GenericViewSet):
         if df is None:
             df = models.Result.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
-        return Response(export)
+        return FlatExport.api_response(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
 
 
-class Criteria(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Criteria(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
 
-class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
+class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study"]
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
@@ -270,7 +268,7 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewset):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewset):
+class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study_population"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
@@ -357,21 +355,21 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
         self.process_ct_creation(serializer.instance, False)
 
 
-class Outcome(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Outcome(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["assessment", "study_population"]
     assessment_filter_args = "assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
 
-class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewset):
+class GroupResult(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["group"]
     assessment_filter_args = "result__outcome__assessment"
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
 
-class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["outcome", "comparison_set"]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
@@ -510,7 +508,7 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewset):
         self.process_adjustment_factor_association(serializer, serializer.instance.id, False)
 
 
-class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
+class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["study_population", "outcome"]
     assessment_filter_args = "study_population__study__assessment"
     model = models.ComparisonSet
@@ -521,14 +519,14 @@ class ComparisonSet(EditPermissionsCheckMixin, AssessmentEditViewset):
         return serializers.ComparisonSetSerializer
 
 
-class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewset):
+class GroupNumericalDescriptions(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["group"]
     assessment_filter_args = "group__comparison_set__study_population__study__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
-class Group(EditPermissionsCheckMixin, AssessmentEditViewset):
+class Group(EditPermissionsCheckMixin, AssessmentEditViewSet):
     edit_check_keys = ["comparison_set"]
     assessment_filter_args = "comparison_set__study_population__study__assessment"
     model = models.Group
@@ -540,17 +538,26 @@ class OutcomeCleanup(CleanupFieldsBaseViewSet):
     model = models.Outcome
     assessment_filter_args = "assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
+
 
 class StudyPopulationCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.StudyPopulationCleanupFieldsSerializer
     model = models.StudyPopulation
     assessment_filter_args = "study__assessment"
 
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study")
+
 
 class ExposureCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ExposureCleanupFieldsSerializer
     model = models.Exposure
     assessment_filter_args = "study_population__study__assessment"
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset().select_related("study_population__study")
 
 
 class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

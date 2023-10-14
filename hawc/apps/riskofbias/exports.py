@@ -1,3 +1,6 @@
+import pandas as pd
+from django.conf import settings
+
 from ..common.helper import FlatFileExporter
 from ..study.models import Study
 from ..study.serializers import VerboseStudySerializer
@@ -71,6 +74,10 @@ class RiskOfBiasFlat(FlatFileExporter):
 
         return rows
 
+    def build_metadata(self) -> pd.DataFrame | None:
+        fn = settings.PROJECT_PATH / "apps/riskofbias/data/exports/RiskOfBiasFlatSchema.tsv"
+        return pd.read_csv(fn, delimiter="\t")
+
 
 class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     """
@@ -79,3 +86,7 @@ class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
     """
 
     final_only = False
+
+    def build_metadata(self) -> pd.DataFrame | None:
+        fn = settings.PROJECT_PATH / "apps/riskofbias/data/exports/RiskOfBiasCompleteFlatSchema.tsv"
+        return pd.read_csv(fn, delimiter="\t")

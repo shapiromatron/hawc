@@ -3,7 +3,21 @@ import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 const NULL_VALUE = "---",
-    EMPTY = {id: NULL_VALUE, label: NULL_VALUE};
+    EMPTY = {id: NULL_VALUE, label: NULL_VALUE},
+    formatDataset = data => {
+        // add 1-based __index__ attribute to each row; start at 2
+        _.each(data, (row, index) => (row.__index__ = index + 2));
+        // cast boolean fields to strings
+        _.each(data, row =>
+            _.each(row, (value, key) => {
+                if (typeof value === "boolean") {
+                    row[key] = value.toString();
+                }
+            })
+        );
+        return data;
+    };
+
 class Store {
     constructor(config) {
         this.config = config;
@@ -40,10 +54,7 @@ class Store {
             payload = h.fetchPostFile(this.config.csrf, file);
         fetch(url, payload)
             .then(response => response.json())
-            .then(data => {
-                _.each(data, (row, index) => (row.__index__ = index + 2));
-                this.dataset = data;
-            });
+            .then(data => (this.dataset = formatDataset(data)));
     }
     @computed get datasetColumns() {
         return _.chain(this.dataset)

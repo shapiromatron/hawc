@@ -1,9 +1,9 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
+    <div class="d-flex">
+        <h2>Update {{assessment.get_rob_name_display|lower}} requirements</h2>
+        {% actions %}
             <span class="dropdown-header">{{assessment.get_rob_name_display}} changes</span>
             <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.rob_settings.id %}">Update instructions</a>
             <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
@@ -11,9 +11,8 @@
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Domain changes</span>
             <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
-        </div>
+        {% endactions %}
     </div>
-    <h2>Update {{assessment.get_rob_name_display|lower}} requirements</h2>
     {{assessment.rob_settings.help_text|safe}}
 
     {% if no_data %}

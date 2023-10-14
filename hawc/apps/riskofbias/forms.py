@@ -143,7 +143,7 @@ class RiskOfBiasCopyForm(forms.Form):
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
             self.user, exclusion_id=self.assessment.id
         )
 

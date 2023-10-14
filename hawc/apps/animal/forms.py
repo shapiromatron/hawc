@@ -709,3 +709,8 @@ class EndpointSelectorForm(CopyForm):
         ].label_from_instance = (
             lambda obj: f"{obj.animal_group.experiment} | {obj.animal_group} | {obj}"
         )
+
+
+class MultipleEndpointChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.label

@@ -1,4 +1,5 @@
 from dal import autocomplete
+from django.core.exceptions import BadRequest, FieldError
 from django.http import HttpResponseForbidden
 
 from ..helper import reverse_with_query_lazy
@@ -52,9 +53,19 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         qs = cls.model.objects.all()
         return qs.filter(**filters)
 
+    def _clean_query(self):
+        self.qry = self.request.GET.dict()
+        if "q" in self.qry:
+            self.qry["q"] = self.qry["q"].replace("\0", "")
+        self.q = self.q.replace("\0", "")
+
     def get_queryset(self):
+        self._clean_query()
         # get base queryset
-        qs = self.get_base_queryset(self.request.GET)
+        try:
+            qs = self.get_base_queryset(self.qry)
+        except ValueError:
+            raise BadRequest("Invalid filter parameters")
 
         # check forwarded values for search_fields
         self.search_fields = self.forwarded.get("search_fields") or self.search_fields
@@ -64,7 +75,10 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.field:
             # order by field and get distinct
-            qs = qs.order_by(self.field).distinct(self.field)
+            try:
+                qs = qs.order_by(self.field).distinct(self.field)
+            except FieldError:
+                raise BadRequest("Invalid field parameters")
         else:
             # check forwarded values for ordering
             self.order_by = self.forwarded.get("order_by") or self.order_by

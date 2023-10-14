@@ -1,6 +1,7 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+import re
 from textwrap import dedent
 from uuid import uuid4
 
@@ -64,6 +65,18 @@ class AlertWrapperNode(template.Node):
         return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
 
 
+@register.simple_tag(name="actions")
+def bs4_actions():
+    return mark_safe(
+        '<div class="actionsMenu dropdown btn-group ml-auto align-self-start flex-shrink-0 pl-2"><a class="btn btn-primary dropdown-toggle" id="actionsDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a><div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionsDropdownButton">'
+    )
+
+
+@register.simple_tag(name="endactions")
+def bs4_endactions():
+    return mark_safe("</div></div>")
+
+
 _plotly_events = {"dom": "DOMContentLoaded", "htmx": "htmx:afterSettle"}
 
 
@@ -90,3 +103,24 @@ def plotly(fig: Figure | None, **kw) -> str:
     <script>document.addEventListener("{event}", {func}, false);</script>"""
         )
     )
+
+
+class_re = re.compile(r'(?<=class=["\'])(.*)(?=["\'])')
+
+
+@register.filter
+def add_class(value, css_class):
+    """http://djangosnippets.org/snippets/2253/
+    Example call: {{field.name|add_class:"col-md-4"}}"""
+    string = str(value)
+    match = class_re.search(string)
+    if match:
+        m = re.search(
+            rf"^{css_class}$|^{css_class}\s|\s{css_class}\s|\s{css_class}$",
+            match.group(1),
+        )
+        if not m:
+            return mark_safe(class_re.sub(match.group(1) + " " + css_class, string))
+    else:
+        return mark_safe(string.replace(">", f' class="{css_class}">'))
+    return value

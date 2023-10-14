@@ -11,7 +11,7 @@ class TestDesignChildren:
     def test_children(self, db_keys):
         design_id = db_keys.epiv2_design
         design = models.Design.objects.get(id=design_id)
-        client = Client(HTTP_HX_REQUEST="true")
+        client = Client(headers={"hx-request": "true"})
         assert client.login(email="pm@hawcproject.org", password="pw") is True
 
         initial_chem_count = models.Chemical.objects.count()
@@ -272,6 +272,7 @@ class TestDesignChildren:
             "factors": adjust_factor.id,
             "variance_type": 0,
             "ci_type": "Rng",
+            "adverse_direction": "unspecified",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/data_extraction_row.html")
@@ -316,6 +317,7 @@ class TestDesignChildren:
             "factors": adjust_factor.id,
             "variance_type": 1,
             "ci_type": "P95",
+            "adverse_direction": "unspecified",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/data_extraction_row.html")

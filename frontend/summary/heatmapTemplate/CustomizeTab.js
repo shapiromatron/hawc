@@ -5,6 +5,8 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
+import ValueDisplaySelect from "../summary/heatmap/ValueDisplaySelect";
+
 @inject("store")
 @observer
 class CustomizeTab extends Component {
@@ -24,18 +26,18 @@ class CustomizeTab extends Component {
                     <div className="col-md-6">
                         <SelectInput
                             choices={store.axisOptions}
-                            handleSelect={value => store.changeAxis("selectedXAxis", value)}
-                            value={store.selectedXAxis.id}
-                            label="X axis"
+                            handleSelect={value => store.changeAxis("selectedYAxis", value)}
+                            value={store.selectedYAxis.id}
+                            label="Y axis"
                             multiple={false}
                         />
                     </div>
                     <div className="col-md-6">
                         <SelectInput
                             choices={store.axisOptions}
-                            handleSelect={value => store.changeAxis("selectedYAxis", value)}
-                            value={store.selectedYAxis.id}
-                            label="Y axis"
+                            handleSelect={value => store.changeAxis("selectedXAxis", value)}
+                            value={store.selectedXAxis.id}
+                            label="X axis"
                             multiple={false}
                         />
                     </div>
@@ -63,7 +65,7 @@ class CustomizeTab extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <CheckboxInput
                             label="Show null field values"
                             name="show_null"
@@ -72,7 +74,13 @@ class CustomizeTab extends Component {
                             helpText={"Display data with <null> values in selected axes."}
                         />
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-4">
+                        <ValueDisplaySelect
+                            onChange={store.changeShowCounts}
+                            value={store.showCounts}
+                        />
+                    </div>
+                    <div className="col-md-4">
                         <TextInput
                             label="Color"
                             name="upperColor"

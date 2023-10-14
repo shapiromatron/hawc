@@ -5,7 +5,8 @@ import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from hawc.apps.assessment.forms import AssessmentValueForm, DatasetForm, LogFilterForm
+from hawc.apps.assessment.filterset import LogFilterSet
+from hawc.apps.assessment.forms import AssessmentValueForm, DatasetForm
 from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
 
 IRIS_DATA_CSV = (
@@ -160,13 +161,13 @@ class TestDatasetForm:
 class TestLogFilterForm:
     def test_setup(self):
         assess = Assessment.objects.get(id=1)
-        form = LogFilterForm(data={}, assessment=assess)
+        form = LogFilterSet(data={}, assessment=assess)
         assert form.is_valid()
-        assert len(form.filters()) == 0
+        assert len(form.qs) > 1
 
-        form = LogFilterForm(data=dict(object_id=999), assessment=assess)
+        form = LogFilterSet(data=dict(object_id=999), assessment=assess)
         assert form.is_valid()
-        assert len(form.filters()) == 1
+        assert len(form.qs) == 1
 
 
 @pytest.mark.django_db
@@ -179,9 +180,9 @@ class TestAssessmentValueForm:
         "value_unit": "mg/kg/day",
         "basis": "",
         "pod_type": "NOAEL",
-        "pod_value": 50.0,
+        "pod_value": 100.0,
         "pod_unit": "mg/kg/day",
-        "uncertainty": 30,
+        "uncertainty": 10,
         "confidence": "Medium High",
         "species_studied": "",
         "duration": "1 week",
@@ -217,6 +218,13 @@ class TestAssessmentValueForm:
         form = AssessmentValueForm(data=data, parent=assessment)
         assert form.is_valid() is False
         assert form.errors["uncertainty"] == ["Required for Noncancer evaluation types."]
+
+        # pod/uncertainty != value
+        data = valid_data.copy()
+        data.update(uncertainty=100)
+        form = AssessmentValueForm(data=data, parent=assessment)
+        assert form.is_valid() is False
+        assert form.errors["value"] == ["POD / uncertainty is not equal to value."]
 
     def test_extra(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)

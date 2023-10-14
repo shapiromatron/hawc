@@ -1,54 +1,28 @@
 {% extends 'crumbless.html' %}
 
-{% block content %}
-  <div class="row m-auto">
+{% block content_outer %}
+  <div class="d-flex">
     <h2>Welcome, {{ user.get_full_name }}.</h2>
-    <div class="dropdown ml-auto">
-      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Actions
-      </button>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-        <span class="dropdown-header">Assessment Editing</span>
-        {% if user.can_create_assessments %}
+    {% actions %}
+      <span class="dropdown-header">Assessment Editing</span>
+      {% if user.can_create_assessments %}
         <a class="dropdown-item" href="{% url 'assessment:new' %}">Create a new assessment</a>
-        {% else %}
-        <p class="dropdown-item help-block">
-          Assessment creation disabled - please <a href="{% url 'contact' %}">contact us</a> if needed.
-        </p>
-        {% endif %}
-      </div>
-    </div>
+      {% else %}
+        <p class="dropdown-item help-block">Assessment creation disabled - please <a href="{% url 'contact' %}">contact us</a> if needed.</p>
+      {% endif %}
+    {% endactions %}
   </div>
-
-  <p>
-    Welcome to the HAWC portal. Here you're able to create new assessments,
-    or work on existing assessments. Each assessment is a single human-health
-    risk assessment. You can view assessments by the role you've been assigned.
-  </p>
-
-  {% with assessments=user.assessment_pms.all %}
-    {% if assessments %}
-      <h3>Assessments you're managing:</h3>
-      {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
-    {% endif %}
-  {% endwith %}
-
-  {% with assessments=user.assessment_teams.all %}
-    {% if assessments %}
-      <h3>Assessments you're a team-member on:</h3>
-      {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
-    {% endif %}
-  {% endwith %}
-
-  {% with assessments=user.assessment_reviewers.all %}
-    {% if assessments %}
-      <h3>Assessments you can review:</h3>
-      {% include "assessment/_assessment_list_tbl.html" with object_list=assessments %}
-    {% endif %}
-  {% endwith %}
-
-{% endblock content %}
+  <p>Welcome to the HAWC portal. Here you're able to create new assessments or work on existing assessments.</p>
+  {% include "common/inline_filter_form.html" %}
+  {% include "assessment/fragments/assessment_list_team.html" %}
+  {% include "includes/paginator.html" with plural_object_name="assessments" %}
+{% endblock content_outer %}
 
 {% block extrajs %}
   {% include "includes/hero_access.html" %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+    });
+  </script>
 {% endblock extrajs %}

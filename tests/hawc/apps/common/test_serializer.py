@@ -2,6 +2,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from hawc.apps.common.serializers import (
+    FlexibleChoiceArrayField,
     FlexibleChoiceField,
     FlexibleDBLinkedChoiceField,
     get_matching_instance,
@@ -57,7 +58,7 @@ def test_get_matching_instances(db_keys):
 
 
 @pytest.mark.django_db
-def test_flexible_choice_field(db_keys):
+def test_FlexibleChoiceField(db_keys):
     """
     Test the FlexibleChoiceField
 
@@ -79,28 +80,20 @@ def test_flexible_choice_field(db_keys):
         assert text_choice.to_internal_value(valid_input) == "job"
 
     for invalid_input in [99, "bad input"]:
-        try:
+        with pytest.raises(ValidationError):
             numeric_choice.to_internal_value(invalid_input)
-            raise AssertionError()
-        except ValidationError:
-            # This is correct behavior
-            pass
 
     # Should convert raw values to readable ones
     assert numeric_choice.to_representation(0) == "example"
     assert numeric_choice.to_representation(1) == "test"
 
     # Should throw KeyError if given a bad value to convert
-    try:
+    with pytest.raises(KeyError):
         numeric_choice.to_representation(2)
-        raise AssertionError()
-    except KeyError:
-        # This is correct behavior
-        pass
 
 
 @pytest.mark.django_db
-def test_flexible_db_linked_choice_field(db_keys):
+def test_FlexibleDBLinkedChoiceField(db_keys):
     """
     Test the FlexibleDBLinkedChoiceField
 
@@ -135,12 +128,8 @@ def test_flexible_db_linked_choice_field(db_keys):
 
     # Test bad inputs on the simple "single" case
     for invalid_input in [99, "bad input"]:
-        try:
+        with pytest.raises(ValidationError):
             single_demo.to_internal_value(invalid_input)
-            raise AssertionError()
-        except ValidationError:
-            # This is correct behavior
-            pass
 
     # Test good inputs on the "many" case
     looked_up_list = many_demo.to_internal_value(valid_many_input)
@@ -154,12 +143,9 @@ def test_flexible_db_linked_choice_field(db_keys):
     assert saw_first_metric is True and saw_second_metric is True
 
     # Test bad input on the "many" case
-    try:
-        many_demo.to_internal_value([first_metric.id, second_metric.id * -1])
-        raise AssertionError()
-    except ValidationError:
-        # This is correct behavior
-        pass
+    for invalid__many_input in [[first_metric.id, second_metric.id * -1], "invalid input", False]:
+        with pytest.raises(ValidationError):
+            many_demo.to_internal_value(invalid__many_input)
 
     # Test serialization on the single case
     serialized_metric = single_demo.to_representation(first_metric)
@@ -171,3 +157,40 @@ def test_flexible_db_linked_choice_field(db_keys):
     assert len(serialized_metrics) == len(result_metrics_list)
     assert serialized_metrics[0]["id"] == first_metric.id
     assert serialized_metrics[1]["id"] == second_metric.id
+
+
+class TestFlexibleChoiceArrayField:
+    SAMPLE_NUMERIC_CHOICES = ((0, "example"), (1, "test"))
+    SAMPLE_TEXT_CHOICES = (("name", "nom de plume"), ("job", "occupation"))
+
+    def test_to_internal_value(self):
+        numeric_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_NUMERIC_CHOICES)
+        text_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_TEXT_CHOICES)
+
+        # Either the key or a case insensitive version will resolve to the same internal value
+        for valid_input in (["test", 0], ["tEsT", "EXAMPLE"], [1, "example"]):
+            converted = numeric_choice.to_internal_value(valid_input)
+            assert len(converted) == 2 and converted[0] == 1 and converted[1] == 0
+
+        # Works for text or numeric keys
+        for valid_input in (["job", "occupation", "OcCuPaTiOn"],):
+            converted = text_choice.to_internal_value(valid_input)
+            assert len(set(converted)) == 1 and converted[0] == "job"
+
+        # properly raise validation error for bad data
+        for invalid_input in (["example", "bad input"], [1, "another bad input"]):
+            with pytest.raises(ValidationError):
+                numeric_choice.to_internal_value(invalid_input)
+
+    def test_to_representation(self):
+        numeric_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_NUMERIC_CHOICES)
+        text_choice = FlexibleChoiceArrayField(choices=self.SAMPLE_TEXT_CHOICES)
+
+        # Should convert raw values to readable ones
+        assert numeric_choice.to_representation([0])[0] == "example"
+        assert numeric_choice.to_representation([1])[0] == "test"
+        assert text_choice.to_representation(["name"])[0] == "nom de plume"
+
+        # Should throw KeyError if given a bad value to convert
+        with pytest.raises(KeyError):
+            numeric_choice.to_representation([2])

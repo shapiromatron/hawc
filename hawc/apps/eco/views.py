@@ -2,11 +2,32 @@ from django.http import HttpRequest
 from django.shortcuts import render
 from django.views.generic import ListView
 
+from ..assessment.models import Assessment
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.models import include_related
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseUpdate, FilterSetMixin
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseUpdate,
+    FilterSetMixin,
+    HeatmapBase,
+)
 from ..study.models import Study
 from . import filterset, forms, models
+
+
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "ecology-study-design"
+    heatmap_data_url = "eco:api:assessment-study-export"
+    heatmap_view_title = "Ecological study design"
+
+
+class HeatmapResults(HeatmapBase):
+    heatmap_data_class = "ecology-result-summary"
+    heatmap_data_url = "eco:api:assessment-export"
+    heatmap_view_title = "Ecological data extraction"
 
 
 # Design
@@ -87,8 +108,8 @@ class NestedTermList(FilterSetMixin, ListView):
         return qs
 
 
-# Viewsets
-class DesignViewset(HtmxViewSet):
+# ViewSets
+class DesignViewSet(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
     model = models.Design
@@ -111,7 +132,7 @@ class DesignViewset(HtmxViewSet):
         return render(request, template, context)
 
 
-class DesignChildViewset(HtmxViewSet):
+class DesignChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Design
     model = None  # required
@@ -166,20 +187,32 @@ class DesignChildViewset(HtmxViewSet):
         return context
 
 
-class CauseViewset(DesignChildViewset):
+class CauseViewSet(DesignChildViewSet):
     model = models.Cause
     form_class = forms.CauseForm
     detail_fragment = "eco/fragments/cause_row.html"
 
 
-class EffectViewset(DesignChildViewset):
+class EffectViewSet(DesignChildViewSet):
     model = models.Effect
     form_class = forms.EffectForm
     detail_fragment = "eco/fragments/effect_row.html"
 
 
-class ResultViewset(DesignChildViewset):
+class ResultViewSet(DesignChildViewSet):
     model = models.Result
     form_class = forms.ResultForm
     parent_model = models.Design
     detail_fragment = "eco/fragments/result_row.html"
+
+
+class ResultFilterList(BaseFilterList):
+    parent_model = Assessment
+    model = models.Result
+    filterset_class = filterset.ResultFilterSet
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("design__study", "cause__term", "effect__term")
+
+    def get_filterset_form_kwargs(self):
+        return dict(main_field="search", appended_fields=["order_by", "paginate_by"])

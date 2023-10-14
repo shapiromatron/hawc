@@ -285,21 +285,17 @@ class _DataPivot_settings_description {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control"></select>').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            header_name: $('<input class="form-control" type="text">'),
+            field_name: $('<select class="form-control"></select>')
+                .html(this.data_pivot._get_header_options(true))
+                .val(values.field_name),
+            header_name: $('<input class="form-control" type="text">').val(values.header_name),
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
             text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
-            max_width: $('<input class="form-control" type="number">'),
-            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
+            max_width: $('<input class="form-control" type="number">').val(values.max_width),
+            dpe: $('<select class="form-control"></select>')
+                .html(this.data_pivot.interactivity_options)
+                .val(values.dpe),
         };
-
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.header_name.val(values.header_name);
-        this.content.max_width.val(values.max_width);
-        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
         this.content.field_name.on("change", function() {
@@ -375,19 +371,16 @@ class _DataPivot_settings_pointdata {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control">').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            header_name: $('<input class="form-control" type="text">'),
+            field_name: $('<select class="form-control">')
+                .html(this.data_pivot._get_header_options(true))
+                .val(values.field_name),
+            header_name: $('<input class="form-control" type="text">').val(values.header_name),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
-            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
+            dpe: $('<select class="form-control"></select>')
+                .html(this.data_pivot.interactivity_options)
+                .val(values.dpe),
         };
-
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.header_name.val(values.header_name);
-        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
         this.content.field_name.on("change", function() {
@@ -568,12 +561,17 @@ class _DataPivot_settings_general {
 
         // create fields
         this.content = {
-            plot_width: $(`<input class="form-control" type="text" value="${values.plot_width}">`),
+            plot_width: $(
+                `<input class="form-control" type="number" value="${values.plot_width}">`
+            ),
             minimum_row_height: $(
-                `<input class="form-control" type="text" value="${values.minimum_row_height}">`
+                `<input class="form-control" type="number" value="${values.minimum_row_height}">`
             ),
             title: $(`<input class="form-control" type="text" value="${values.title}">`),
             axis_label: $(`<input class="form-control" type="text" value="${values.axis_label}">`),
+            gridline_color: $('<input class="form-control" type="color">').val(
+                values.gridline_color
+            ),
             show_xticks: $('<input class="ml-1" type="checkbox">').prop(
                 "checked",
                 values.show_xticks
@@ -594,17 +592,24 @@ class _DataPivot_settings_general {
                     type="text"
                     value="${values.domain}">`
             ),
+            x_axis_force_domain: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.x_axis_force_domain
+            ),
+            x_axis_number_ticks: $(
+                `<input class="form-control" type="number" value="${values.x_axis_number_ticks}">`
+            ),
             padding_top: $(
-                `<input class="form-control" type="text" value="${values.padding.top}">`
+                `<input class="form-control" type="number" value="${values.padding.top}">`
             ),
             padding_right: $(
-                `<input class="form-control" type="text" value="${values.padding.right}">`
+                `<input class="form-control" type="number" value="${values.padding.right}">`
             ),
             padding_bottom: $(
-                `<input class="form-control" type="text" value="${values.padding.bottom}">`
+                `<input class="form-control" type="number" value="${values.padding.bottom}">`
             ),
             padding_left: $(
-                `<input class="form-control" type="text" value="${values.padding.left}">`
+                `<input class="form-control" type="number" value="${values.padding.left}">`
             ),
             merge_descriptions: $('<input class="ml-1" type="checkbox">').prop(
                 "checked",
@@ -621,6 +626,24 @@ class _DataPivot_settings_general {
             ),
             text_background_color: $('<input class="form-control" type="color">').val(
                 values.text_background_color
+            ),
+            text_background_extend: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.text_background_extend
+            ),
+            draw_background: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.draw_background
+            ),
+            plot_background_color: $('<input class="form-control" type="color">').val(
+                values.plot_background_color
+            ),
+            draw_plot_border: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.draw_plot_border
+            ),
+            plot_border_color: $('<input class="form-control" type="color">').val(
+                values.plot_border_color
             ),
         };
 
@@ -641,11 +664,14 @@ class _DataPivot_settings_general {
             build_tr("Minimum row height", this.content.minimum_row_height),
             build_tr("Font style", this.content.font_style),
             build_tr("Title", this.content.title),
+            build_tr("Gridline color", this.content.gridline_color),
+            build_tr("Show x-axis gridlines", this.content.show_xticks),
+            build_tr("Show y-axis gridlines", this.content.show_yticks),
             build_tr("X-axis label", this.content.axis_label),
-            build_tr("Show x-axis ticks", this.content.show_xticks),
-            build_tr("Show y-axis ticks", this.content.show_yticks),
             build_tr("Logscale", this.content.logscale),
             build_tr('Axis minimum and maximum<br>(ex: "1,100")', this.content.domain),
+            build_tr("Axis force domain", this.content.x_axis_force_domain),
+            build_tr("Axis number of ticks", this.content.x_axis_number_ticks),
             build_tr("Plot padding top", this.content.padding_top),
             build_tr("Plot padding right", this.content.padding_right),
             build_tr("Plot padding bottom", this.content.padding_bottom),
@@ -655,23 +681,64 @@ class _DataPivot_settings_general {
             build_tr("Merge aggressively", this.content.merge_aggressive),
             build_tr("Highlight background text", this.content.text_background),
             build_tr("Highlight background text color", this.content.text_background_color),
+            build_tr("Highlight background behind plot", this.content.text_background_extend),
+            build_tr("Draw background behind plot", this.content.draw_background),
+            build_tr("Background color", this.content.plot_background_color),
+            build_tr("Draw plot border", this.content.draw_plot_border),
+            build_tr("Plot border color", this.content.plot_border_color),
         ];
 
-        // display merge_until only when merge_descriptions activated
-        var show_mergeUntil = function() {
-            var show = self.content.merge_descriptions.prop("checked"),
-                row1 = self.content.merge_until.parent().parent(),
-                row2 = self.content.merge_aggressive.parent().parent();
-            if (show) {
-                row1.show();
-                row2.show();
-            } else {
-                row1.hide();
-                row2.hide();
-            }
+        var toggle_display = function(src, targets, reverse = false) {
+            const show = reverse ? !src.prop("checked") : src.prop("checked");
+            targets.forEach(target => {
+                target
+                    .parent()
+                    .parent()
+                    .toggle(show);
+            });
         };
-        this.content.merge_descriptions.on("change", show_mergeUntil);
-        show_mergeUntil();
+
+        this.content.logscale
+            .on("change", () =>
+                toggle_display(this.content.logscale, [this.content.x_axis_force_domain], true)
+            )
+            .trigger("change");
+
+        this.content.text_background
+            .on("change", () =>
+                toggle_display(this.content.text_background, [
+                    this.content.text_background_color,
+                    this.content.text_background_extend,
+                ])
+            )
+            .trigger("change");
+
+        this.content.merge_descriptions
+            .on("change", () =>
+                toggle_display(this.content.merge_descriptions, [
+                    this.content.merge_until,
+                    this.content.merge_aggressive,
+                ])
+            )
+            .trigger("change");
+
+        this.content.text_background
+            .on("change", () =>
+                toggle_display(this.content.text_background, [this.content.text_background_color])
+            )
+            .trigger("change");
+
+        this.content.draw_background
+            .on("change", () =>
+                toggle_display(this.content.draw_background, [this.content.plot_background_color])
+            )
+            .trigger("change");
+
+        this.content.draw_plot_border
+            .on("change", () =>
+                toggle_display(this.content.draw_plot_border, [this.content.plot_border_color])
+            )
+            .trigger("change");
 
         this.data_push();
         return this;
@@ -683,10 +750,13 @@ class _DataPivot_settings_general {
         this.values.font_style = this.content.font_style.find("option:selected").val();
         this.values.title = this.content.title.val();
         this.values.axis_label = this.content.axis_label.val();
+        this.values.gridline_color = this.content.gridline_color.val();
         this.values.show_xticks = this.content.show_xticks.prop("checked");
         this.values.show_yticks = this.content.show_yticks.prop("checked");
         this.values.logscale = this.content.logscale.prop("checked");
         this.values.domain = this.content.domain.val();
+        this.values.x_axis_force_domain = this.content.x_axis_force_domain.prop("checked");
+        this.values.x_axis_number_ticks = parseInt(this.content.x_axis_number_ticks.val());
         this.values.padding.top = parseInt(this.content.padding_top.val(), 10);
         this.values.padding.right = parseInt(this.content.padding_right.val(), 10);
         this.values.padding.bottom = parseInt(this.content.padding_bottom.val(), 10);
@@ -696,6 +766,11 @@ class _DataPivot_settings_general {
         this.values.merge_until = parseInt(this.content.merge_until.val(), 10) || 0;
         this.values.text_background = this.content.text_background.prop("checked");
         this.values.text_background_color = this.content.text_background_color.val();
+        this.values.text_background_extend = this.content.text_background_extend.prop("checked");
+        this.values.draw_background = this.content.draw_background.prop("checked");
+        this.values.plot_background_color = this.content.plot_background_color.val();
+        this.values.draw_plot_border = this.content.draw_plot_border.prop("checked");
+        this.values.plot_border_color = this.content.plot_border_color.val();
     }
 
     update_merge_until() {
@@ -739,7 +814,7 @@ class _DataPivot_settings_barchart {
 
                 conditional_formatting: cf,
                 dpe: $('<select id="bc_dpe" name="dpe" class="form-control">')
-                    .html(dp.dpe_options)
+                    .html(dp.interactivity_options)
                     .val(values.dpe),
                 error_show_tails: $(
                     '<input id="bc_error_show_tails" name="error_show_tails" type="checkbox" />'

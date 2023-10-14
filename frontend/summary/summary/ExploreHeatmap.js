@@ -30,6 +30,7 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
                 el
             );
         } catch (err) {
+            console.error(err);
             ReactDOM.render(<p>An error occurred</p>, el);
         }
     },
@@ -131,6 +132,7 @@ class ExploreHeatmap extends BaseVisual {
             padding: settings.padding,
             show_axis_border: settings.show_axis_border,
             show_grid: settings.show_grid,
+            show_counts: settings.show_counts,
             show_tooltip: settings.show_tooltip,
             show_totals: settings.show_totals,
             show_null: settings.show_null,
@@ -209,7 +211,12 @@ class ExploreHeatmap extends BaseVisual {
                     $el.empty().append($plotDiv);
 
                     if (!options.visualOnly) {
-                        $el.prepend([actions, title]).append(captionDiv);
+                        var headerRow = $('<div class="d-flex">').append([
+                            title,
+                            HAWCUtils.unpublished(this.data.published, window.isEditable),
+                            actions,
+                        ]);
+                        $el.prepend(headerRow).append(captionDiv);
                     }
 
                     // exit early if we got an error
@@ -264,13 +271,19 @@ class ExploreHeatmap extends BaseVisual {
                     });
 
                     modal
-                        .addHeader($("<h4>").text(this.data.title))
+                        .addHeader([
+                            $("<h4>").text(this.data.title),
+                            HAWCUtils.unpublished(this.data.published, window.isEditable),
+                        ])
                         .addBody([$plotDiv, captionDiv])
                         .addFooter("")
                         .show({maxWidth: 1200});
                 } else if (resp.error) {
                     modal
-                        .addHeader($("<h4>").text(this.data.title))
+                        .addHeader([
+                            $("<h4>").text(this.data.title),
+                            HAWCUtils.unpublished(this.data.published, window.isEditable),
+                        ])
                         .addBody(getErrorDiv())
                         .addFooter("")
                         .show({maxWidth: 1200});

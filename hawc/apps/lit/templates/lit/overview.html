@@ -1,38 +1,38 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">Literature Review</h2>
-  {% if obj_perms.edit %}
-  <div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-      {% if obj_perms.edit_assessment %}
-        <span class="dropdown-header">Literature Review</span>
-        <a class="dropdown-item" href="{{assessment.literature_settings.get_update_url}}">Update settings</a>
-        <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update tags</a>
+  <div class="d-flex">
+    <h2>Literature Review</h2>
+    {% if obj_perms.edit %}
+      {% actions %}
+        {% if obj_perms.edit_assessment %}
+          <span class="dropdown-header">Literature Review</span>
+          <a class="dropdown-item" href="{{assessment.literature_settings.get_update_url}}">Update settings</a>
+          <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update tags</a>
+          <div class="dropdown-divider"></div>
+        {% endif %}
+        <span class="dropdown-header">Searches and Imports</span>
+        <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
+        <a class="dropdown-item" href="{% url 'lit:import_new' assessment.pk %}">New import by ID</a>
+        {% if allow_ris %}<a class="dropdown-item" href="{% url 'lit:import_ris_new' assessment.pk %}">New import from RIS</a>{% endif %}
+        <a class="dropdown-item" href="{% url 'lit:copy_search' assessment.pk %}">Copy search from existing</a>
         <div class="dropdown-divider"></div>
-      {% endif %}
-      <span class="dropdown-header">Searches and Imports</span>
-      <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
-      <a class="dropdown-item" href="{% url 'lit:import_new' assessment.pk %}">New import by ID</a>
-      {% if allow_ris %}<a class="dropdown-item" href="{% url 'lit:import_ris_new' assessment.pk %}">New import from RIS</a>{% endif %}
-      <a class="dropdown-item" href="{% url 'lit:copy_search' assessment.pk %}">Copy search from existing</a>
-      <div class="dropdown-divider"></div>
-      <span class="dropdown-header">References</span>
-      <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
-      {% if assessment.literature_settings.conflict_resolution %}
-        <a class="dropdown-item" href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a>
-      {% endif %}
-      <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
-      <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>
-      <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?untagged=on">Tag untagged references</a>
-      <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full text URLs</a>
-      <div class="dropdown-divider"></div>
-      <span class="dropdown-header">Exports</span>
-      <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.pk %}?format=xlsx">Download all references</a>
-    </div>
-  </div>
-{% endif %}
+        <span class="dropdown-header">References</span>
+        <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
+        {% if assessment.literature_settings.conflict_resolution %}
+          <a class="dropdown-item" href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a>
+        {% endif %}
+        <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
+        <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>
+        <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?untagged=on">Tag untagged references</a>
+        <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full text URLs</a>
+        <div class="dropdown-divider"></div>
+        <span class="dropdown-header">Exports</span>
+        <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.pk %}?format=xlsx">Download all references</a>
+      {% endactions %}
+    {% endif %}
+</div>
+
   <div class="row no-gutter">
     <div class="col-md-8">
       <div class="d-flex row justify-content-around">
@@ -79,9 +79,6 @@
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
           <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
-          {% if user.is_beta_tester and can_topic_model %}
-          <a class="btn btn-dark betatester mt-1 py-1" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
-          {% endif %}
         </div>
         {% if overview.total_references > 10 %}
         <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">

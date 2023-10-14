@@ -92,12 +92,9 @@ export HAWC_FEATURE_FLAGS='{"THIS_IS_AN_EXAMPLE":true}'
 Fields include:
 
 - `THIS_IS_AN_EXAMPLE`: Does nothing; used to test configuration.
-- `FIPS_MODE`: If true, allow deployment on OS with [FIPS mode enabled](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/assembly_installing-a-rhel-8-system-with-fips-mode-enabled_security-hardening). Defaults to false.
 - `DEFAULT_LITERATURE_CONFLICT_RESOLUTION`: If true, when a new assessment is created, conflict resolution is enabled. If false, its disabled. Defaults to false.
 - `ALLOW_RIS_IMPORTS`: If true, RIS imports are available when working on assessments. If false, the button is not there, but it's still possible for users to import via RIS if the can find the correct URL. Defaults to true.
 - `ANONYMOUS_ACCOUNT_CREATION`: If true, anonymous users can create accounts. If false, only staff can create new accounts via the admin. Defaults to true.
-- `ENABLE_ECO`: If true, add ecological data extraction module, currently under development. Defaults to false.
-- `ENABLE_ASSESSMENT_VALUES`: If true, add new assessment detail and value modules, currently under  development. Defaults to false.
 - `ENABLE_BMDS_33`: If true, enable BMD execution using 3.x versions, currently under  development. Defaults to false.
 
 ### Application monitoring

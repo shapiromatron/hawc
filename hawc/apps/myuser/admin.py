@@ -44,12 +44,14 @@ class HAWCUserAdmin(admin.ModelAdmin):
     inlines = [UserProfileAdmin]
     can_delete = False
 
+    @admin.action(description="Send welcome email")
     def send_welcome_emails(modeladmin, request, queryset):
         for user in queryset:
             user.send_welcome_email()
 
         modeladmin.message_user(request, "Welcome email(s) sent!")
 
+    @admin.action(description="Set user-password")
     def set_password(modeladmin, request, queryset):
         if settings.AUTH_PROVIDERS == {AuthProvider.external}:
             return modeladmin.message_user(
@@ -66,9 +68,6 @@ class HAWCUserAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         form.save(commit=True)
-
-    set_password.short_description = "Set user-password"
-    send_welcome_emails.short_description = "Send welcome email"
 
     actions = (
         send_welcome_emails,
