@@ -400,7 +400,6 @@ class Barplot extends D3Plot {
         this.build_legend(legend_settings);
     }
 
-    add_bmd_line() {}
     cleanup_before_change() {}
 }
 

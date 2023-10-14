@@ -18,13 +18,9 @@ class EndpointPlotContainer {
                 isDichotomous = this.endpoint.isDichotomous();
             this.plot_style = isDichotomous ? [scatter, bar] : [bar, scatter];
             this.toggle_views();
+            this.scatter = scatter;
+            this.bar = bar;
         }
-    }
-
-    add_bmd_line(selected_model, line_class) {
-        this.plot_style.forEach(plot => {
-            plot.add_bmd_line(selected_model, line_class);
-        });
     }
 
     toggle_views() {
@@ -52,6 +48,12 @@ class EndpointPlotContainer {
             };
 
         plot.add_menu_button(options);
+    }
+
+    setScatter() {
+        if (!this.plot == this.scatter) {
+            this.toggle_views();
+        }
     }
 }
 

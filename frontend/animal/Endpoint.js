@@ -487,7 +487,7 @@ class Endpoint extends Observee {
             this.data.bmds
                 .filter(d => d.model !== null)
                 .forEach(d => {
-                    new BmdLine(d.model, epc.plot, "blue").render();
+                    new BmdLine(d.model, epc.scatter, "blue").render();
                 });
         }
         return epc;

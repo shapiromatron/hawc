@@ -583,6 +583,9 @@ class DRPlot extends D3Plot {
 
     render_bmd_lines() {
         this.remove_bmd_lines();
+        if (!this.x_scale) {
+            return;
+        }
         const doseUnits = this.endpoint.doseUnits.activeUnit.id,
             lines = this.bmd.filter(d => d.dose_units_id === doseUnits),
             x = this.x_scale,
