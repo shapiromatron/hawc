@@ -23,9 +23,7 @@ class EndpointPlotContainer {
 
     add_bmd_line(selected_model, line_class) {
         this.plot_style.forEach(plot => {
-            if (typeof plot.add_bmd_line == "function") {
-                plot.add_bmd_line(selected_model, line_class);
-            }
+            plot.add_bmd_line(selected_model, line_class);
         });
     }
 

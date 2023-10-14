@@ -541,7 +541,6 @@ class DRPlot extends D3Plot {
             });
 
         legend_settings.item_height = 20;
-        legend_settings.box_w = 65;
         legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
 
         legend_settings.box_padding = 5;
@@ -550,13 +549,11 @@ class DRPlot extends D3Plot {
         if (this.legend_left) {
             legend_settings.box_l = this.legend_left;
         } else {
-            legend_settings.box_l = this.w - legend_settings.box_w - 10;
+            legend_settings.box_l = 10;
         }
 
         if (this.legend_top) {
             legend_settings.box_t = this.legend_top;
-        } else if (this.endpoint.data.dataset_increasing) {
-            legend_settings.box_t = this.h - legend_settings.box_h - 20;
         } else {
             legend_settings.box_t = 10;
         }
