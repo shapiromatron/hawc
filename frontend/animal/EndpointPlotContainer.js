@@ -13,13 +13,11 @@ class EndpointPlotContainer {
             this.plot_div.html("<p>Plot unavailable.</p>");
         } else {
             var options = {build_plot_startup: false},
-                scatter = new DRPlot(endpoint, this.plot_id, options, this),
-                bar = new Barplot(endpoint, this.plot_id, options, this),
                 isDichotomous = this.endpoint.isDichotomous();
-            this.plot_style = isDichotomous ? [scatter, bar] : [bar, scatter];
+            this.scatter = new DRPlot(endpoint, this.plot_id, options, this);
+            this.bar = new Barplot(endpoint, this.plot_id, options, this);
+            this.plot_style = isDichotomous ? [this.scatter, this.bar] : [this.bar, this.scatter];
             this.toggle_views();
-            this.scatter = scatter;
-            this.bar = bar;
         }
     }
 
