@@ -275,7 +275,7 @@ class Endpoint extends Observee {
                             `/ani/assessment/${assessment_id}/endpoints/`,
                             {tags: v.name}
                         );
-                        return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
+                        return `<a class="btn btn-light mr-1" href="${url}">${v.name}</a>`;
                     })
                 );
 
