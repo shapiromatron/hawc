@@ -64,11 +64,6 @@ class ExperimentCopyForm(BaseCopyForm):
     form_class = forms.ExperimentSelectorForm
     model = Study
 
-    def get_form_kwargs(self):
-        kw = super().get_form_kwargs()
-        kw.update(parent=self.object)
-        return kw
-
 
 class ExperimentUpdate(BaseUpdate):
     success_message = "Experiment updated."
@@ -215,11 +210,6 @@ class AnimalGroupCopyForm(BaseCopyForm):
     form_class = forms.AnimalGroupSelectorForm
     model = models.Experiment
 
-    def get_form_kwargs(self):
-        kw = super().get_form_kwargs()
-        kw.update(parent=self.object)
-        return kw
-
 
 class AnimalGroupUpdate(BaseUpdate):
     """
@@ -258,11 +248,6 @@ class EndpointCopyForm(BaseCopyForm):
     copy_model = models.Endpoint
     form_class = forms.EndpointSelectorForm
     model = models.AnimalGroup
-
-    def get_form_kwargs(self):
-        kw = super().get_form_kwargs()
-        kw.update(parent=self.object)
-        return kw
 
 
 # Dosing Regime Views

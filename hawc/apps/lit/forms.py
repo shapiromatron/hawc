@@ -12,6 +12,7 @@ from ..assessment.models import Assessment
 from ..common.forms import (
     BaseFormHelper,
     ConfirmationField,
+    CopyForm,
     QuillField,
     addPopupLink,
     check_unique_for_assessment,
@@ -322,29 +323,22 @@ class SearchModelChoiceField(forms.ModelChoiceField):
         return f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
 
 
-class SearchCopyForm(forms.Form):
-    selector = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
-        self.assessment = kwargs.pop("assessment")
-        super().__init__(*args, **kwargs)
-        self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
-            "assessment"
-        )
-
-    @property
-    def helper(self):
-        return BaseFormHelper(
-            self,
-            legend_text="Copy search or import",
-            help_text="""Select an existing search or import from this
+class SearchCopyForm(CopyForm):
+    legend_text = "Copy search or import"
+    help_text = """Select an existing search or import from this
         assessment or another assessment and copy it as a template for use in
         this assessment. You will be taken to a new view to create a new
         search, but the form will be pre-populated using values from the
-        selected search or import.""",
-            cancel_url=reverse("lit:overview", args=(self.assessment.id,)),
-            submit_text="Copy selected as new",
+        selected search or import."""
+    selector = SearchModelChoiceField(
+        queryset=models.Search.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        self.user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
+            "assessment"
         )
 
     def get_success_url(self):
@@ -354,11 +348,11 @@ class SearchCopyForm(forms.Form):
             if search.search_type == constants.SearchType.SEARCH
             else "lit:import_new"
         )
-        url = reverse(pattern, args=(self.assessment.pk,))
+        url = reverse(pattern, args=(self.parent.pk,))
         return f"{url}?initial={search.pk}"
 
     def get_cancel_url(self):
-        return reverse("lit:overview", args=(self.assessment.id,))
+        return reverse("lit:overview", args=(self.parent.id,))
 
 
 def validate_external_id(

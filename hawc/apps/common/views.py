@@ -509,6 +509,7 @@ class BaseCopyForm(BaseUpdate):
     def get_form_kwargs(self):
         kw = super().get_form_kwargs()
         kw.pop("instance")
+        kw["parent"] = self.object
         return kw
 
     def form_valid(self, form):

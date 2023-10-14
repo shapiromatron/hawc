@@ -82,15 +82,15 @@ class SearchCopyForm(BaseCopyForm):
 
     def get_form_kwargs(self):
         kw = super().get_form_kwargs()
-        kw.update(user=self.request.user, assessment=self.assessment)
+        kw.update(user=self.request.user)
         return kw
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["breadcrumbs"] = lit_overview_crumbs(
-    #         self.request.user, self.assessment, "Copy search/import"
-    #     )
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Copy search/import"
+        )
+        return context
 
 
 class SearchNew(BaseCreate):
