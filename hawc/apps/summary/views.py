@@ -496,33 +496,27 @@ class VisualizationCopySelector(BaseDetail):
         return context
 
 
-class VisualizationCopy(BaseUpdate):
+class VisualizationCopy(BaseCopyForm):
+    copy_model = models.Visual
+    form_class = forms.VisualSelectorForm
     template_name = "summary/copy_selector.html"
     model = Assessment
-    form_class = forms.VisualSelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update(
-            assessment_id=self.assessment.id,
-            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
-            queryset=models.Visual.objects.clonable_queryset(self.request.user).filter(
-                visual_type=self.kwargs["visual_type"], assessment__pk=self.assessment.id
-            ),
+        kw = super().get_form_kwargs()
+        kw["queryset"] = models.Visual.objects.clonable_queryset(self.request.user).filter(
+            visual_type=self.kwargs["visual_type"]
         )
-        return kwargs
-
-    def form_valid(self, form):
-        return HttpResponseRedirect(form.get_create_url())
+        return kw
 
     def get_context_data(self, **kwargs):
-        kwargs["breadcrumbs"] = Breadcrumb.build_crumbs(
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Copy existing",
             [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
         )
-        return super().get_context_data(**kwargs)
+        return context
 
 
 class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):

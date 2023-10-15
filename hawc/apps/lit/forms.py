@@ -318,11 +318,6 @@ class RisImportForm(SearchForm):
         return search
 
 
-class SearchModelChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
-
-
 class SearchCopyForm(CopyForm):
     legend_text = "Copy search or import"
     help_text = """Select an existing search or import from this
@@ -330,7 +325,7 @@ class SearchCopyForm(CopyForm):
         this assessment. You will be taken to a new view to create a new
         search, but the form will be pre-populated using values from the
         selected search or import."""
-    selector = SearchModelChoiceField(
+    selector = forms.ModelChoiceField(
         queryset=models.Search.objects.all(), empty_label=None, label="Select template"
     )
 
@@ -339,6 +334,11 @@ class SearchCopyForm(CopyForm):
         super().__init__(*args, **kw)
         self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
             "assessment"
+        )
+        self.fields[
+            "selector"
+        ].label_from_instance = (
+            lambda obj: f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
         )
 
     def get_success_url(self):

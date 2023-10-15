@@ -105,9 +105,16 @@ class SummaryTableCopySelectorForm(CopyForm):
     def __init__(self, *args, **kw):
         self.user = kw.pop("user")
         super().__init__(*args, **kw)
-        self.fields["selector"].queryset = models.SummaryTable.objects.clonable_queryset(
-            self.user
-        ).filter(assessment=self.parent)
+        self.fields["selector"].queryset = (
+            models.SummaryTable.objects.clonable_queryset(self.user)
+            .select_related("assessment")
+            .order_by("assessment", "title")
+        )
+        self.fields[
+            "selector"
+        ].label_from_instance = (
+            lambda obj: f"{obj.assessment} | {{{obj.get_table_type_display()}}} | {obj}"
+        )
 
     def get_success_url(self):
         table = self.cleaned_data["selector"]
@@ -192,39 +199,29 @@ class VisualModelChoiceField(forms.ModelChoiceField):
         return f"{obj.assessment}: [{obj.get_visual_type_display()}] {obj}"
 
 
-class VisualSelectorForm(forms.Form):
-    visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
+class VisualSelectorForm(CopyForm):
+    legend_text = "Copy visualization"
+    help_text = "Select an existing visualization from this assessment to copy as a template for a new one. This will include all model-settings, and the selected dataset."
+    create_url_pattern = "summary:visualization_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Visual.objects.all(), empty_label=None, label="Select template"
+    )
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("instance")
-        self.cancel_url = kwargs.pop("cancel_url")
-        self.assessment_id = kwargs.pop("assessment_id")
-        self.queryset = kwargs.pop("queryset")
-        super().__init__(*args, **kwargs)
-        self.fields["visual"].queryset = self.queryset
+    def __init__(self, *args, **kw):
+        queryset = kw.pop("queryset")
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = queryset.order_by("assessment", "title")
+        self.fields["selector"].label_from_instance = lambda obj: f"{obj.assessment} | {obj}"
 
-    @property
-    def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-        return BaseFormHelper(
-            self,
-            legend_text="Copy visualization",
-            help_text="""
-                Select an existing visualization from this assessment to copy as a template for a
-                new one. This will include all model-settings, and the selected dataset.""",
-            submit_text="Copy selected as new",
-            cancel_url=self.cancel_url,
-        )
-
-    def get_create_url(self):
-        visual = self.cleaned_data["visual"]
+    def get_success_url(self):
+        visual = self.cleaned_data["selector"]
         return (
-            reverse("summary:visualization_create", args=(self.assessment_id, visual.visual_type))
+            reverse("summary:visualization_create", args=(self.parent.id, visual.visual_type))
             + f"?initial={visual.pk}"
         )
+
+    def get_cancel_url(self):
+        return reverse("summary:visualization_list", args=(self.parent.id,))
 
 
 class EndpointAggregationForm(VisualForm):
