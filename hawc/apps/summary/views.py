@@ -614,7 +614,7 @@ class DataPivotNew(BaseCreate):
         reset_rows = self.request.GET.get("reset_row_overrides")
         settings = kwargs["initial"].get("settings")
         if reset_rows and settings:
-            kwargs["initial"].update(settings=models.DataPivot.reset_row_overrides(settings))
+            models.DataPivot.reset_row_overrides(settings)
         return kwargs
 
 
@@ -660,36 +660,16 @@ class DataPivotFileNew(DataPivotNew):
         return context
 
 
-class DataPivotCopyAsNewSelector(BaseUpdate):
-    # Select an existing assessed outcome as a template for a new one
-    model = Assessment
-    template_name = "summary/copy_selector.html"
+class DataPivotCopyAsNewSelector(BaseCopyForm):
+    copy_model = models.DataPivot
     form_class = forms.DataPivotSelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    template_name = "summary/copy_selector.html"
+    model = Assessment
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
-        return kwargs
-
-    def form_valid(self, form):
-        dp = form.cleaned_data["dp"]
-
-        if hasattr(dp, "datapivotupload"):
-            url = reverse_lazy("summary:dp_new-file", kwargs={"pk": self.assessment.id})
-        else:
-            url = reverse_lazy(
-                "summary:dp_new-query",
-                kwargs={"pk": self.assessment.id, "study_type": dp.datapivotquery.evidence_type},
-            )
-
-        url += f"?initial={dp.pk}"
-
-        if form.cleaned_data["reset_row_overrides"]:
-            url += "&reset_row_overrides=1"
-
-        return HttpResponseRedirect(url)
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user)
+        return kw
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
