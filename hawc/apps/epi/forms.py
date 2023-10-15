@@ -192,9 +192,18 @@ class StudyPopulationForm(forms.ModelForm):
 
 
 class StudyPopulationSelectorForm(CopyForm):
-    label = "Study Population"
-    parent_field = "study_id"
-    autocomplete_class = autocomplete.StudyPopulationAutocomplete
+    legend_text = "Copy Study Population"
+    help_text = "Select an existing study population as a template to create a new one."
+    create_url_pattern = "epi:sp_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.StudyPopulation.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study=self.parent
+        )
 
 
 class AdjustmentFactorForm(forms.ModelForm):
@@ -307,9 +316,18 @@ class ExposureForm(forms.ModelForm):
 
 
 class ExposureSelectorForm(CopyForm):
-    label = "Exposure"
-    parent_field = "study_population_id"
-    autocomplete_class = autocomplete.ExposureAutocomplete
+    legend_text = "Copy Exposure"
+    help_text = "Select an existing exposure as a template to create a new one."
+    create_url_pattern = "epi:exp_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Exposure.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study_population=self.parent
+        )
 
 
 class OutcomeForm(forms.ModelForm):
@@ -387,9 +405,18 @@ class OutcomeForm(forms.ModelForm):
 
 
 class OutcomeSelectorForm(CopyForm):
-    label = "Outcome"
-    parent_field = "study_population_id"
-    autocomplete_class = autocomplete.OutcomeAutocomplete
+    legend_text = "Copy Outcome"
+    help_text = "Select an existing outcome as a template to create a new one."
+    create_url_pattern = "epi:outcome_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Outcome.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study_population=self.parent
+        )
 
 
 class ComparisonSet(forms.ModelForm):
@@ -446,15 +473,33 @@ class ComparisonSet(forms.ModelForm):
 
 
 class ComparisonSetByStudyPopulationSelectorForm(CopyForm):
-    label = "Comparison set"
-    parent_field = "study_population_id"
-    autocomplete_class = autocomplete.ComparisonSetAutocomplete
+    legend_text = "Copy Comparison Set"
+    help_text = "Select an existing comparison set as a template to create a new one."
+    create_url_pattern = "epi:cs_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.ComparisonSet.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study_population=self.parent
+        )
 
 
 class ComparisonSetByOutcomeSelectorForm(CopyForm):
-    label = "Comparison set"
-    parent_field = "outcome_id"
-    autocomplete_class = autocomplete.ComparisonSetAutocomplete
+    legend_text = "Copy Comparison Set"
+    help_text = "Select an existing comparison set as a template to create a new one."
+    create_url_pattern = "epi:cs_outcome_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.ComparisonSet.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            outcome=self.parent
+        )
 
 
 class GroupForm(forms.ModelForm):
@@ -694,9 +739,18 @@ class ResultForm(forms.ModelForm):
 
 
 class ResultSelectorForm(CopyForm):
-    label = "Result"
-    parent_field = "outcome_id"
-    autocomplete_class = autocomplete.ResultAutocomplete
+    legend_text = "Copy Result"
+    help_text = "Select an existing result as a template to create a new one."
+    create_url_pattern = "epi:result_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Result.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            outcome=self.parent
+        )
 
 
 class ResultUpdateForm(ResultForm):

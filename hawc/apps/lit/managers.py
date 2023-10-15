@@ -18,7 +18,6 @@ from hawc.services.utils.doi import get_doi_from_identifier
 from ...services.epa import hero
 from ...services.nih import pubmed
 from ..assessment.managers import published
-from ..assessment.models import Assessment
 from ..common.models import BaseManager, replace_null, str_m2m
 from ..study.managers import study_df_annotations
 from . import constants
