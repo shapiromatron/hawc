@@ -202,7 +202,6 @@ class SummaryTableCreate(BaseCreate):
 class SummaryTableCopy(BaseCopyForm):
     copy_model = models.SummaryTable
     form_class = forms.SummaryTableCopySelectorForm
-    template_name = "summary/copy_selector.html"
     model = Assessment
 
     def get_form_kwargs(self):
@@ -499,7 +498,6 @@ class VisualizationCopySelector(BaseDetail):
 class VisualizationCopy(BaseCopyForm):
     copy_model = models.Visual
     form_class = forms.VisualSelectorForm
-    template_name = "summary/copy_selector.html"
     model = Assessment
 
     def get_form_kwargs(self):
@@ -663,7 +661,6 @@ class DataPivotFileNew(DataPivotNew):
 class DataPivotCopyAsNewSelector(BaseCopyForm):
     copy_model = models.DataPivot
     form_class = forms.DataPivotSelectorForm
-    template_name = "summary/copy_selector.html"
     model = Assessment
 
     def get_form_kwargs(self):

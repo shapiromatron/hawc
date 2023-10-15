@@ -505,6 +505,7 @@ class BaseCreate(
 class BaseCopyForm(BaseUpdate):
     copy_model: type[models.Model]
     breadcrumb_name: str = ""
+    template_name = "common/copy_selector.html"
 
     def get_form_kwargs(self):
         kw = super().get_form_kwargs()

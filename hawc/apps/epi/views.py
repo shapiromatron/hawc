@@ -326,14 +326,12 @@ class ComparisonSetOutcomeCreate(ComparisonSetCreate):
 class ComparisonSetStudyPopCopySelector(BaseCopyForm):
     copy_model = models.ComparisonSet
     form_class = forms.ComparisonSetByStudyPopulationSelectorForm
-    template_name = "epi/comparisonset_sp_copy_selector.html"
     model = models.StudyPopulation
 
 
 class ComparisonSetOutcomeCopySelector(BaseCopyForm):
     copy_model = models.ComparisonSet
     form_class = forms.ComparisonSetByOutcomeSelectorForm
-    template_name = "epi/comparisonset_outcome_copy_selector.html"
     model = models.Outcome
 
 
