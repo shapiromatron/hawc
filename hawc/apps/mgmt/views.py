@@ -16,6 +16,7 @@ from ..study.models import Study
 from . import constants, filterset, forms, models
 from .analytics.growth import get_growth_data
 from .analytics.time_series import get_time_series_data
+from .analytics.time_spent import get_time_spent_data
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -194,6 +195,7 @@ class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
         return render(request, "mgmt/analytics/time_series.html", context)
 
     def time_spent(self, request: HttpRequest, context: dict):
+        context = get_time_spent_data(self)
         return render(request, "mgmt/analytics/time_spent.html", context)
 
     def growth(self, request: HttpRequest, context: dict):
