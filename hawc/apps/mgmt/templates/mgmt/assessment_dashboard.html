@@ -1,13 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load bs4 %}
-
 {% block content %}
 <div class="d-flex">
   <h2>Management dashboard</h2>
   {% actions %}
     <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
     <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
+    {% if feature_flags.ENABLE_ANALYTICS %}
+    <a class="dropdown-item" href="{% url 'mgmt:assessment-analytics' assessment.pk %}">Analytics</a>
+    {% endif %}
   {% endactions %}
 </div>
 {% if object_list %}
