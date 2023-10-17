@@ -3,6 +3,7 @@ import re
 from copy import copy
 
 import rispy
+from rispy.parser import ParseError
 
 from .authors import get_author_short_text, normalize_authors
 
@@ -26,7 +27,7 @@ class RisImporter:
             [content for content in reader]
             f.seek(0)
             return True
-        except OSError as err:
+        except ParseError as err:
             logger.warning(err)
             return False
 
