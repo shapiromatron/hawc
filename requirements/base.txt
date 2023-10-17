@@ -1,6 +1,7 @@
 # web application
 Django~=4.2.6
-django-crispy-forms==1.14.0
+django-crispy-forms==2.1
+crispy-bootstrap4==2023.1
 django-filter==23.2
 django-redis==5.3.0
 django-reversion==5.0.4
