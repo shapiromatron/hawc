@@ -250,7 +250,7 @@ def experiment_type_plot(assessment_id):
     return fig
 
 
-def get_context_data(self, **kwargs):
+def get_growth_data(self, **kwargs):
     id = self.assessment.id
     context = dict()
     # literature screening

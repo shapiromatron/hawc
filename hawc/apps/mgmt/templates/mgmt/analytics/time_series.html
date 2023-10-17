@@ -1,1 +1,27 @@
 Assessment Time Series
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Number of visuals created by year</h5>
+            <div>{% plotly visuals_per_year event='htmx' %}</div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Number of Data Pivots created by year</h5>
+            <div>{% plotly datapivots_per_year event='htmx' %}</div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Visuals and Data Pivots created</h5>
+            <div>{% plotly total_visuals event='htmx' %}</div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">References created per month</h5>
+            <div>{% plotly refs_per_month event='htmx' %}</div>
+        </div>
+    </div>
+{% endblock %}

@@ -14,7 +14,8 @@ from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
 from . import constants, filterset, forms, models
-from .analytics.growth import get_context_data
+from .analytics.growth import get_growth_data
+from .analytics.time_series import get_time_series_data
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -189,13 +190,14 @@ class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
         return render(request, "mgmt/analytics.html", context)
 
     def time_series(self, request: HttpRequest, context: dict):
+        context = get_time_series_data(self)
         return render(request, "mgmt/analytics/time_series.html", context)
 
     def time_spent(self, request: HttpRequest, context: dict):
         return render(request, "mgmt/analytics/time_spent.html", context)
 
     def growth(self, request: HttpRequest, context: dict):
-        context = get_context_data(self)
+        context = get_growth_data(self)
         return render(request, "mgmt/analytics/growth.html", context)
 
 
