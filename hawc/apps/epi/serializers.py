@@ -51,7 +51,7 @@ class StudyPopulationCountrySerializer(serializers.ModelSerializer):
         fields = ("code", "name")
 
     def to_internal_value(self, data):
-        if type(data) is str:
+        if isinstance(data, str):
             try:
                 country = self.Meta.model.objects.get(code__iexact=data)
                 return country
