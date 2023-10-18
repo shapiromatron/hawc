@@ -337,6 +337,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     is_default=score_to_create["is_default"],
                     label=score_to_create["label"],
                     score=score_to_create["score"],
+                    bias_direction=score_to_create.get(
+                        "bias_direction", constants.BiasDirections.BIAS_DIRECTION_UNKNOWN.value
+                    ),
                     notes=score_to_create["notes"],
                 )
             except ValidationError as err:

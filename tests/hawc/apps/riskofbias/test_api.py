@@ -429,6 +429,14 @@ def test_riskofbias_create():
     assert "scores" in resp.data and len(resp.data["scores"]) == 2
     check_details_of_last_log_entry(resp.data["id"], "Created")
 
+    # demonstrate working bias override
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["final"] = False
+    payload["scores"][0]["bias_direction"] = 1
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 201
+    assert resp.json()["scores"][0]["bias_direction"] == 1
+
 
 @pytest.mark.django_db
 class TestBulkRobCleanupApis:
