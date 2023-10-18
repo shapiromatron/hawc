@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from typing import Any, NamedTuple
 
 import pandas as pd
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, OuterRef, Q, QuerySet, Subquery, Value, When
+from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Subquery, Value, When
 from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum
@@ -65,22 +66,20 @@ class AssessmentQuerySet(QuerySet):
         return self.annotate(published=published())
 
     def with_role(self, user) -> QuerySet:
-        qs2 = (
-            self.model.objects.filter(id=OuterRef("id"))
-            .annotate(
-                user_role=Case(
-                    When(
-                        project_manager=user, then=Value(constants.AssessmentRole.PROJECT_MANAGER)
-                    ),
-                    When(team_members=user, then=Value(constants.AssessmentRole.TEAM_MEMBER)),
-                    When(reviewers=user, then=Value(constants.AssessmentRole.REVIEWER)),
-                    default=Value(constants.AssessmentRole.NO_ROLE),
-                )
-            )
-            .order_by("id")
-            .distinct("id")
+        User = get_user_model()
+        return self.annotate(
+            user_is_pm=Exists(User.objects.filter(id=user.id, assessment_pms=OuterRef("pk"))),
+            user_is_team=Exists(User.objects.filter(id=user.id, assessment_teams=OuterRef("pk"))),
+            user_is_reviewer=Exists(
+                User.objects.filter(id=user.id, assessment_reviewers=OuterRef("pk"))
+            ),
+            user_role=Case(
+                When(user_is_pm=True, then=Value(constants.AssessmentRole.PROJECT_MANAGER)),
+                When(user_is_team=True, then=Value(constants.AssessmentRole.TEAM_MEMBER)),
+                When(user_is_reviewer=True, then=Value(constants.AssessmentRole.REVIEWER)),
+                default=Value(constants.AssessmentRole.NO_ROLE),
+            ),
         )
-        return self.annotate(user_role=Subquery(qs2.values("user_role")[:1]))
 
     def global_chemical_report(self) -> pd.DataFrame:
         mapping = {
