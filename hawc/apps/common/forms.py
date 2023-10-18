@@ -3,7 +3,7 @@ from typing import Any
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
-from crispy_forms.utils import TEMPLATE_PACK, flatatt
+from crispy_forms.utils import flatatt
 from django import forms
 from django.forms.widgets import RadioSelect
 from django.template.loader import render_to_string
@@ -113,7 +113,7 @@ class BaseFormHelper(cf.FormHelper):
         return layout
 
     def get_layout_item(self, field_name: str) -> tuple[Any, int]:
-        mapping = {field: index for index, field in self.layout.get_field_names()}
+        mapping = {pointer.name: pointer.positions for pointer in self.layout.get_field_names()}
         layout = self.layout
         for idx in mapping[field_name]:
             if layout[idx] == field_name:
@@ -127,7 +127,7 @@ class BaseFormHelper(cf.FormHelper):
         """
         layout, index = self.get_layout_item(field_name)
         field = layout[index]
-        layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
+        layout[index] = CreateNewButton(field, adder_url=url, adder_title=title)
 
     def add_row(self, firstField: str, numFields: int, classes: str | list[str]):
         if isinstance(classes, str):
@@ -139,18 +139,16 @@ class BaseFormHelper(cf.FormHelper):
             cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
 
-    def find_layout_idx_for_field_name(self, field_name):
-        idx = 0
-        for el in self.layout:
+    def find_layout_idx_for_field_name(self, field_name: str) -> int:
+        # Return the root layout index for a given field
+        for idx, el in enumerate(self.layout):
             if isinstance(el, cfl.LayoutObject):
-                for field_names in el.get_field_names():
-                    if isinstance(field_names, list) and len(field_names) > 1:
-                        if field_names[1] == field_name:
-                            return idx
+                for pointer in el.get_field_names():
+                    if pointer.name == field_name:
+                        return idx
             elif isinstance(el, str):
                 if el == field_name:
                     return idx
-            idx += 1
         raise ValueError(f"Field not found: {field_name}")
 
     def add_refresh_page_note(self):
@@ -283,26 +281,20 @@ class FilterFormField(cfl.Field):
 
     template = "common/crispy_layout_filter_field.html"
 
-    def __init__(
-        self,
-        fields,
-        appended_fields: list[str],
-        expandable: bool = False,
-        **kwargs,
-    ):
-        """Set the given field values on the field model."""
+    def __init__(self, fields, appended_fields: list[str], expandable: bool = False, **kw):
         self.fields = fields
         self.appended_fields = appended_fields
         self.expandable = expandable
-        super().__init__(fields, **kwargs)
+        super().__init__(fields, **kw)
 
-    def render(self, form, form_style, context, template_pack, extra_context=None, **kwargs):
-        """Render the main_field and appended_fields in the template and return it."""
+    def render(self, form, context, extra_context=None, **kw):
         if extra_context is None:
             extra_context = {}
-        extra_context["appended_fields"] = [form[field] for field in self.appended_fields]
-        extra_context["expandable"] = self.expandable
-        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
+        extra_context.update(
+            appended_fields=[form[field] for field in self.appended_fields],
+            expandable=self.expandable,
+        )
+        return super().render(form, context, extra_context=extra_context, **kw)
 
 
 class CopyAsNewSelectorForm(forms.Form):
@@ -371,31 +363,23 @@ class TdLayout(cfl.LayoutObject):
         )
 
 
-class AdderLayout(cfl.Field):
+class CreateNewButton(cfl.Field):
     """
     Adder layout object. It contains a link-button to add a new field.
     """
 
-    template = "crispy_forms/layout/inputAdder.html"
+    template = "crispy_forms/layout/create_new_button.html"
 
     def __init__(self, *args, **kwargs):
         self.adder_url = kwargs.pop("adder_url")
         self.adder_title = kwargs.pop("adder_title")
         super().__init__(*args, **kwargs)
 
-    def render(
-        self,
-        form,
-        form_style,
-        context,
-        template_pack=TEMPLATE_PACK,
-        extra_context=None,
-        **kwargs,
-    ):
+    def render(self, form, context, extra_context=None, **kw):
         if extra_context is None:
             extra_context = {}
         extra_context.update(adder_url=self.adder_url, adder_title=self.adder_title)
-        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
+        return super().render(form, context, extra_context=extra_context, **kw)
 
 
 class CustomURLField(forms.URLField):

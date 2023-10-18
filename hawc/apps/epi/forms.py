@@ -288,12 +288,14 @@ class ExposureForm(forms.ModelForm):
         helper.add_row("age_of_exposure", 3, "col-md-6")
 
         inhalation_idx = helper.find_layout_idx_for_field_name("inhalation")
-        helper.layout[inhalation_idx].append(
+        helper.layout[inhalation_idx].css_class = "px-3"
+        helper.layout.insert(
+            inhalation_idx,
             cfl.HTML(
-                f"""<div class="col-md-12 pb-2">
-                    <small class="form-text text-muted">{self.instance.ROUTE_HELP_TEXT}</small>
-                </div>"""
-            )
+                f"""<div class="form-group mb-2">
+                <p><b>Exposure Route(s)</b></p>
+                <p class="text-muted">{self.instance.ROUTE_HELP_TEXT}</p></div>"""
+            ),
         )
 
         helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
