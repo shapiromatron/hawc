@@ -342,27 +342,6 @@ def addPopupLink(href, text):
     return f'<a href="{href}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
 
 
-class TdLayout(cfl.LayoutObject):
-    """
-    Layout object. It wraps fields in a <td>
-    """
-
-    template = "crispy_forms/layout/td.html"
-
-    def __init__(self, *fields, **kwargs):
-        self.fields = list(fields)
-        self.css_class = kwargs.pop("css_class", "")
-        self.css_id = kwargs.pop("css_id", None)
-        self.template = kwargs.pop("template", self.template)
-        self.flat_attrs = flatatt(kwargs)
-
-    def render(self, form, form_style, context, **kwargs):
-        fields = self.get_rendered_fields(form, form_style, context, **kwargs)
-        return render_to_string(
-            self.template, {"td": self, "fields": fields, "form_style": form_style}
-        )
-
-
 class CreateNewButton(cfl.Field):
     """
     Adder layout object. It contains a link-button to add a new field.
