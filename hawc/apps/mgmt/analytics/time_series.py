@@ -24,7 +24,7 @@ def time_series(Model, df):
     return fig
 
 
-def get_time_series_data(self, **kwargs):
+def get_context_data(self, **kwargs):
     context = {}
     context["visuals_per_year"] = time_series(Visual, get_data(Visual, "year"))
     context["datapivots_per_year"] = time_series(DataPivot, get_data(DataPivot, "year"))

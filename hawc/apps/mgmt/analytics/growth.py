@@ -25,7 +25,7 @@ def get_search_types(assessment_id):
     )
 
 
-def refs_df(assessment_id):
+def search_refs_df(assessment_id):
     qs = (
         Search.objects.filter(assessment_id=assessment_id)
         .annotate(num_refs=Count("references"))
@@ -36,6 +36,8 @@ def refs_df(assessment_id):
 
 
 def update_xscale(min_value: float, max_value: float) -> dict:
+    min_value = 1 if pd.isna(min_value) else min_value
+    max_value = 1 if pd.isna(max_value) else max_value
     values = np.power(
         10.0, range(math.floor(math.log10(min_value)), math.ceil(math.log10(max_value)) + 1)
     )
@@ -47,7 +49,7 @@ def update_xscale(min_value: float, max_value: float) -> dict:
 
 
 def refs_per_import_plot(assessent_id):
-    df = refs_df(assessent_id)
+    df = search_refs_df(assessent_id)
     df2 = df.query("num_refs > 0")
     fig = px.box(
         data_frame=df2,
@@ -72,7 +74,7 @@ def refs_by_year_df(assessment_id):
         .annotate(nyear=Count("year"))
         .order_by("year")
     )
-    df = pd.DataFrame(qs)
+    df = pd.DataFrame(qs, columns=["year", "nyear"])
     return df
 
 
@@ -98,7 +100,7 @@ def n_tags_per_ref(assessment_id):
         .annotate(ntags=Count("tags"))
         .order_by("ntags")
     )
-    df = pd.DataFrame(qs)
+    df = pd.DataFrame(qs, columns=["id", "ntags"])
     return df
 
 
@@ -144,6 +146,20 @@ def refs_tags_plot(assessment_id):
 
 # studies data
 def study_classifications(assessment_id):
+    published_totals = (
+        Study.objects.filter(assessment_id=assessment_id)
+        .values("published")
+        .annotate(total=Count("published"))
+        .order_by("published")
+    )
+    try:
+        published_total = next(iter([x for x in published_totals if x["published"]]))["total"]
+    except StopIteration:
+        published_total = 0
+    try:
+        unpublished_total = next(iter([x for x in published_totals if not x["published"]]))["total"]
+    except StopIteration:
+        unpublished_total = 0
     return {
         "total": Study.objects.filter(assessment_id=assessment_id).count(),
         "animal": Study.objects.filter(assessment_id=assessment_id)
@@ -162,14 +178,8 @@ def study_classifications(assessment_id):
         .annotate(n_rob=Count("riskofbiases"))
         .filter(n_rob__gt=0)
         .count(),
-        "published": Study.objects.filter(assessment_id=assessment_id)
-        .values("published")
-        .annotate(total=Count("published"))
-        .order_by("published")[True]["total"],
-        "unpublished": Study.objects.filter(assessment_id=assessment_id)
-        .values("published")
-        .annotate(total=Count("published"))
-        .order_by("published")[False]["total"],
+        "published": published_total,
+        "unpublished": unpublished_total,
     }
 
 
@@ -250,7 +260,7 @@ def experiment_type_plot(assessment_id):
     return fig
 
 
-def get_growth_data(self, **kwargs):
+def get_context_data(self, **kwargs):
     id = self.assessment.id
     context = dict()
     # literature screening
