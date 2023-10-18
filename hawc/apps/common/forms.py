@@ -3,10 +3,8 @@ from typing import Any
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
-from crispy_forms.utils import flatatt
 from django import forms
 from django.forms.widgets import RadioSelect
-from django.template.loader import render_to_string
 
 from . import autocomplete, validators, widgets
 from .helper import PydanticToDjangoError
@@ -51,14 +49,6 @@ def form_actions_create_or_close():
     ]
 
 
-def form_actions_apply_filters():
-    """Add form_actions to apply filters"""
-    return [
-        cfl.Submit("submit", "Apply filters"),
-        cfl.HTML('<a class="btn btn-light" href=".">Reset</a>'),
-    ]
-
-
 def form_actions_big_apply_filters():
     """Create big, centered Submit and Cancel buttons for filter forms."""
     return cfl.HTML(
@@ -72,10 +62,7 @@ def form_actions_big_apply_filters():
 
 
 class BaseFormHelper(cf.FormHelper):
-    error_text_inline = False
-    use_custom_control = True
     include_media = False
-    field_template = "crispy_forms/layout/field.html"
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -119,7 +106,7 @@ class BaseFormHelper(cf.FormHelper):
             if layout[idx] == field_name:
                 return (layout, idx)
             layout = layout[idx]
-        raise ValueError("Cannot find item")
+        raise ValueError("Cannot find item")  # pragma: no cover
 
     def add_create_btn(self, field_name: str, url: str, title: str):
         """
@@ -149,7 +136,7 @@ class BaseFormHelper(cf.FormHelper):
             elif isinstance(el, str):
                 if el == field_name:
                     return idx
-        raise ValueError(f"Field not found: {field_name}")
+        raise ValueError(f"Field not found: {field_name}")  # pragma: no cover
 
     def add_refresh_page_note(self):
         note = cfl.HTML(
@@ -347,7 +334,7 @@ class CreateNewButton(cfl.Field):
     Adder layout object. It contains a link-button to add a new field.
     """
 
-    template = "crispy_forms/layout/create_new_button.html"
+    template = "bootstrap4/field_create_new_button.html"
 
     def __init__(self, *args, **kwargs):
         self.adder_url = kwargs.pop("adder_url")
