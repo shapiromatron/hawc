@@ -5,7 +5,7 @@ from typing import Any, NamedTuple
 import pandas as pd
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Subquery, Value, When
+from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When
 from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum
