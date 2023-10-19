@@ -65,7 +65,7 @@
                 </form>
                 {% endif %}
                 <div class="d-inline-block my-2">
-                    <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}}</i>
+                    <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}} {{user_tag.is_resolved}}</i> 
                 </div>
             </div>
             {% with user_tag.consensus_diff as diff %}

@@ -671,3 +671,24 @@ class BulkReferenceStudyExtractForm(forms.Form):
         for reference in references:
             study_attrs = {st: True for st in study_type}
             Study.save_new_from_reference(reference, study_attrs)
+
+
+class BulkMergeConflictsForm(forms.Form):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        help_text="Select tag(s) to bulk merge conflicts for. This includes all descendant tag(s).",
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        self.fields["tags"].queryset = tags
+        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+        self.fields["tags"].widget.attrs["size"] = 8
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper

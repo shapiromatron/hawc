@@ -800,6 +800,11 @@ class ReferenceTags(ItemBase):
     )
     content_object = models.ForeignKey("Reference", on_delete=models.CASCADE)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["content_object", "tag"], name="reference_tag"),
+        ]
+
 
 class Reference(models.Model):
     objects = managers.ReferenceManager()
@@ -845,11 +850,12 @@ class Reference(models.Model):
         ]
 
     @transaction.atomic
-    def merge_tags(self, user):
+    def merge_tags(self, user, tags=None):
         """Merge all unresolved user tags and apply to the reference.
 
         Args:
             user: The user requesting the tag change
+            tags: Optional, a limited set of tags to merge
         """
 
         # if there are no unresolved user tags, do nothing
@@ -1198,6 +1204,11 @@ class UserReferenceTags(ItemBase):
         ReferenceFilterTag, on_delete=models.CASCADE, related_name="user_references"
     )
     content_object = models.ForeignKey("UserReferenceTag", on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=("tag", "content_object"), name="user_reference_tags"),
+        ]
 
 
 class UserReferenceTag(models.Model):

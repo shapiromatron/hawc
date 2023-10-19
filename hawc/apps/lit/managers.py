@@ -6,7 +6,7 @@ from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
 from taggit.managers import TaggableManager, _TaggableManager
@@ -517,6 +517,88 @@ class ReferenceQuerySet(models.QuerySet):
             reference_id: [tag for tag in tag_ids if tag is not None]
             for reference_id, tag_ids in user_qs
         }
+
+    @transaction.atomic
+    def merge_tag_conflicts(self, tags: list[int], user_id):
+        # get all relevant tag ids
+        ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
+        tags = ReferenceFilterTag.objects.filter(id__in=tags)
+        tag_ids = []
+
+        # tags include descendants
+        for tag in tags:
+            tag_ids = tag_ids + list(tag.get_tree(parent=tag).values_list("id", flat=True))
+
+        # annotate references with tags to be added
+        # then filter by references which have tags to be added
+        # TODO: maybe filter by n_unapplied_reviews (>1 as per conflict resolution page)
+        queryset = self.annotate(
+            bulk_merge_tags=ArrayAgg(
+                "user_tags__tags__id",
+                distinct=True,
+                filter=Q(user_tags__tags__in=tag_ids) & Q(user_tags__is_resolved=False),
+            ),
+            n_unapplied_reviews=Count(
+                "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
+            ),
+        ).filter(bulk_merge_tags__isnull=False)
+
+        # create new reference tags/consensus tags
+        ReferenceTags = apps.get_model("lit", "ReferenceTags")
+        new_tags = []
+        for ref in queryset:
+            new_tags.extend(
+                [
+                    ReferenceTags(tag_id=bulk_merge_tag_id, content_object_id=ref.id)
+                    for bulk_merge_tag_id in ref.bulk_merge_tags
+                ]
+            )
+        ReferenceTags.objects.bulk_create(new_tags, ignore_conflicts=True)
+
+        # create new UserReferenceTag objects for the user performing the bulk merge, with the merged tags
+        UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+        new_user_ref_tags = [
+            UserReferenceTag(user_id=user_id, reference_id=ref.id) for ref in queryset
+        ]
+        UserReferenceTag.objects.bulk_create(new_user_ref_tags, ignore_conflicts=True)
+
+        # annotate reference queryset with the ID of the UserReferenceTag for the user performing merge
+        bulk_user_query = UserReferenceTag.objects.filter(
+            reference=models.OuterRef("pk"), user=user_id
+        )
+        queryset = queryset.annotate(
+            bulk_user_ref_id=models.Subquery(bulk_user_query.values("pk")[:1])
+        )
+
+        # create the UserReferenceTag tag 'through' objects for the user performing the bulk merge
+        # (i.e., add the new tags to the user's UserReferenceTag)
+        UserReferenceTags = apps.get_model("lit", "UserReferenceTags")
+        new_user_ref_tag_throughs = []
+        for ref in queryset:
+            new_user_ref_tag_throughs.extend(
+                [
+                    UserReferenceTags(
+                        tag_id=bulk_merge_tag_id, content_object_id=ref.bulk_user_ref_id
+                    )
+                    for bulk_merge_tag_id in ref.bulk_merge_tags
+                ]
+            )
+        UserReferenceTags.objects.bulk_create(new_user_ref_tag_throughs, ignore_conflicts=True)
+
+        # Resolve user tags where possible
+        resolve_user_tags = UserReferenceTag.objects.annotate(
+            ref_tags=ArrayAgg("reference__tags", distinct=True)
+        ).filter(
+            ref_tags__contains=ArrayAgg("tags", distinct=True),
+            tags__isnull=False,
+            tags__in=tag_ids,
+            reference__in=queryset,
+            is_resolved=False,
+        )
+        updated_user_tag_count = resolve_user_tags.update(is_resolved=True)
+        return (
+            f"{queryset.count()} references updated and {updated_user_tag_count} user tags updated."
+        )
 
     def global_df(self) -> pd.DataFrame:
         mapping = {

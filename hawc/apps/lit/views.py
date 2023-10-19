@@ -521,6 +521,7 @@ class ConflictResolution(BaseFilterList):
             breadcrumbs=lit_overview_crumbs(
                 self.request.user, self.assessment, "Resolve Tag Conflicts"
             ),
+            bulk_merge_form=forms.BulkMergeConflictsForm(assessment=self.assessment),
         )
         models.Reference.annotate_tag_parents(context["object_list"], tags)
         return context
