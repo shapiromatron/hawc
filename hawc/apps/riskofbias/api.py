@@ -15,7 +15,6 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
-    get_assessment_from_query,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
@@ -172,9 +171,7 @@ class RiskOfBias(AssessmentEditViewSet):
     }
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related(
-            "study", "author", "scores__metric__domain"
-        )
+        return super().get_queryset().prefetch_related("study", "author", "scores__metric__domain")
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
@@ -268,10 +265,6 @@ class AssessmentScoreViewSet(AssessmentEditViewSet):
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
-    list_actions = ["list", "v2"]
-
-    def get_assessment(self, request, *args, **kwargs):  # TODO - remove - is this used?
-        return get_assessment_from_query(request)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("overridden_objects__content_object")
