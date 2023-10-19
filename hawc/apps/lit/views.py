@@ -720,7 +720,9 @@ class RefListExtract(BaseUpdate):
         kwargs = super().get_form_kwargs()
         kwargs.update(
             assessment=self.assessment,
-            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment),
+            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment)
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags"),
         )
         return kwargs
 

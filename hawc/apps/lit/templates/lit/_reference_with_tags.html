@@ -37,7 +37,7 @@
     <div>
         {% with ref.tags.all as tags %}{% if tags %}
         <div class="consensus-tag mt-2">
-            <p class="my-2"><b>Consensus tags:</b></p>
+            {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
             {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
         </div>
         {% endif %}{% endwith %}
@@ -52,7 +52,7 @@
             </form>
         </div>
         {% endif %}
-        {% for user_tag in ref.user_tags.all %}
+        {% if show_user_tags %}{% for user_tag in ref.user_tags.all %}
         <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
             <div>
                 {% if conflict_resolution %}
@@ -87,7 +87,7 @@
                 {% endfor %}
             {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %}{% endif %}
     </div>
 </div>
 <script type="text/javascript">

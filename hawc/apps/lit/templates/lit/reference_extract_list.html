@@ -7,31 +7,12 @@
     {% if object_list.count > 0 %}
         <form method="post">
             <table class="table table-sm">
-                <colgroup>
-                    <col style='width:5%'></col>
-                    <col style='width:15%'></col>
-                    <col style='width:10%'></col>
-                    <col style='width:40%'></col>
-                    <col style='width:20%'></col>
-                    <col style='width:10%'></col>
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Authors</th>
-                        <th>Year</th>
-                        <th>Title</th>
-                        <th>Journal</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+                {% bs4_colgroup '5,85,10' %}
+                {% bs4_thead 'Select,Reference,Action' %}
                 {% for object in object_list %}
                     <tr>
                         <td class="text-center"><input type="checkbox" name="references" value="{{object.id}}"></td>
-                        <td>{{object.authors_short}}</td>
-                        <td>{{object.year}}</td>
-                        <td>{{object.title}}</td>
-                        <td>{{object.journal}}</td>
+                        <td>{% include 'lit/_reference_with_tags.html' with ref=object %}</td>
                         <td><a class="btn btn-sm btn-primary" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a></td>
                     </tr>
                 {% endfor %}
