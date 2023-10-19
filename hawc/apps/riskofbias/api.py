@@ -166,6 +166,10 @@ class RiskOfBias(AssessmentEditViewSet):
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
     lookup_value_regex = re_digits
+    action_perms = {
+        "retrieve": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+        "list": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    }
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related(
