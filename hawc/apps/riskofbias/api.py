@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,7 +16,7 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
-    get_assessment_from_query,
+    check_assessment_query_permission,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
@@ -106,7 +107,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = re_digits
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related("metrics")
+        return super().get_queryset().prefetch_related("metrics")
 
     @action(detail=False, methods=("patch",), permission_classes=(CleanupFieldsPermissions,))
     def order_rob(self, request):
@@ -170,6 +171,7 @@ class RiskOfBias(AssessmentEditViewSet):
         "retrieve": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
         "list": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
     }
+    filterset_fields = ("study",)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("study", "author", "scores__metric__domain")
@@ -248,11 +250,13 @@ class RiskOfBias(AssessmentEditViewSet):
         To get a single review final review for a study, use the study detail API
         """
         # check permissions
-        assessment = get_assessment_from_query(request)
-        if not assessment.user_can_view_object(request.user):
-            raise PermissionDenied()
+        assessment = check_assessment_query_permission(
+            request, AssessmentViewSetPermissions.CAN_VIEW_OBJECT
+        )
         # query data
-        filters = dict(study__assessment=assessment, final=True, active=True)
+        filters: dict[str, Any] = dict(study__assessment=assessment, final=True, active=True)
+        if study := tryParseInt(request.query_params.get("study")):
+            filters["study"] = study
         if not assessment.user_is_team_member_or_higher(self.request.user):
             filters["study__published"] = True
         robs = models.RiskOfBias.objects.filter(**filters).prefetch_related(
@@ -268,18 +272,12 @@ class AssessmentMetricViewSet(AssessmentViewSet):
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
-    def get_queryset(self):
-        return self.model.objects.all()
-
 
 class AssessmentMetricScoreViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.MetricFinalScoresSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
 
 class AssessmentScoreViewSet(AssessmentEditViewSet):
