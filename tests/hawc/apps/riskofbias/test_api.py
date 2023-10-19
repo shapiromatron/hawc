@@ -124,34 +124,6 @@ class TestRiskOfBiasAssessmentViewSet:
         resp = pm.post(url, data, format="json")
         assert resp.status_code == 400
 
-    def test_reviews(self, rewrite_data_files: bool, db_keys):
-        anon_client = get_client(api=True)
-        fn = Path(DATA_ROOT / "api-rob-assessment-reviews.json")
-        url = (
-            reverse("riskofbias:api:assessment-reviews", args=(db_keys.assessment_final,))
-            + "?format=json"
-        )
-        resp = anon_client.get(url)
-        assert resp.status_code == 200
-        data = resp.json()
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-        assert data == json.loads(fn.read_text())
-
-    def test_study_review(self, rewrite_data_files: bool, db_keys):
-        anon_client = get_client(api=True)
-        fn = Path(DATA_ROOT / "api-rob-assessment-study-review.json")
-        url = (
-            reverse("riskofbias:api:assessment-study-review", args=(db_keys.assessment_final, 7))
-            + "?format=json"
-        )
-        resp = anon_client.get(url)
-        assert resp.status_code == 200
-        data = resp.json()
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-        assert data == json.loads(fn.read_text())
-
 
 @pytest.mark.django_db
 class TestAssessmentScoreViewSet:
@@ -196,6 +168,20 @@ class TestRiskOfBiasViewset:
         ]:
             assert anon.get(url).status_code == 403
             assert team.get(url).status_code == 200
+
+    def test_final_list(self, rewrite_data_files: bool, db_keys):
+        anon_client = get_client(api=True)
+        fn = Path(DATA_ROOT / "api-rob-review-final.json")
+        url = (
+            reverse("riskofbias:api:review-final")
+            + f"?assessment_id={db_keys.assessment_final}&format=json"
+        )
+        resp = anon_client.get(url)
+        assert resp.status_code == 200
+        data = resp.json()
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
+        assert data == json.loads(fn.read_text())
 
     def build_upload_payload(self, study, author, metrics, dummy_score):
         payload = {

@@ -15,6 +15,7 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
+    get_assessment_from_query,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
@@ -93,44 +94,6 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         self.get_object()
         ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
         return Response(ser.data)
-
-    @action(
-        detail=True, url_path="reviews", action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT
-    )
-    def reviews(self, request, pk):
-        """
-        Get all final risk of bias/study evaluations for an assessment.
-        """
-        assessment = self.get_object()
-        filters = dict(study__assessment=assessment, final=True, active=True)
-        if not assessment.user_is_team_member_or_higher(self.request.user):
-            filters["study__published"] = True
-        robs = models.RiskOfBias.objects.filter(**filters).prefetch_related(
-            "scores__overridden_objects"
-        )
-        serializer = serializers.FinalRiskOfBiasSerializer(robs, many=True)
-        return Response(serializer.data)
-
-    @action(
-        detail=True,
-        url_path=r"reviews/study/(?P<study_id>\d+)",
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-    )
-    def study_review(self, request, pk, study_id):
-        """
-        Get all final risk of bias/study evaluations for a study
-        """
-        assessment = self.get_object()
-        filters = dict(study__assessment=assessment, study=study_id, final=True, active=True)
-        if not assessment.user_is_team_member_or_higher(self.request.user):
-            filters["study__published"] = True
-        rob = (
-            models.RiskOfBias.objects.filter(**filters)
-            .prefetch_related("scores__overridden_objects")
-            .first()
-        )
-        serializer = serializers.FinalRiskOfBiasSerializer(rob)
-        return Response(serializer.data)
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
@@ -275,6 +238,27 @@ class RiskOfBias(AssessmentEditViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        return Response(serializer.data)
+
+    @action(detail=False, url_path="final")
+    def final(self, request):
+        """
+        Get all active, final evaluations for an assessment.
+
+        To get a single review final review for a study, use the study detail API
+        """
+        # check permissions
+        assessment = get_assessment_from_query(request)
+        if not assessment.user_can_view_object(request.user):
+            raise PermissionDenied()
+        # query data
+        filters = dict(study__assessment=assessment, final=True, active=True)
+        if not assessment.user_is_team_member_or_higher(self.request.user):
+            filters["study__published"] = True
+        robs = models.RiskOfBias.objects.filter(**filters).prefetch_related(
+            "scores__overridden_objects"
+        )
+        serializer = serializers.FinalRiskOfBiasSerializer(robs, many=True)
         return Response(serializer.data)
 
 
