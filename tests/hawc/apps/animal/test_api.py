@@ -545,6 +545,14 @@ class TestEndpointCreateApi:
         assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
         check_details_of_last_log_entry(response.data["id"], "Created animal.endpoint")
 
+        # assert tags are created
+        data2 = deepcopy(data)
+        data2["effects"] = ["test", "here"]
+        response = client.post(url, data2)
+        assert response.status_code == 201
+        endpoint_id = response.json()["id"]
+        assert models.Endpoint.objects.get(id=endpoint_id).effects.count() == 2
+
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")
         data = {

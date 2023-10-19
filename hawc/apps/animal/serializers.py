@@ -5,7 +5,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..assessment.api import user_can_edit_object
-from ..assessment.models import DoseUnits, DSSTox
+from ..assessment.models import DoseUnits, DSSTox, EffectTag
 from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
@@ -236,7 +236,7 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
 
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    effects = EffectTagsSerializer(read_only=True)
+    effects = EffectTagsSerializer(required=False)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
     groups = EndpointGroupSerializer(many=True, required=False)
     name = serializers.CharField(required=False)
@@ -360,14 +360,29 @@ class EndpointSerializer(serializers.ModelSerializer):
             group_serializers.append(group_serializer)
         self.group_serializers = group_serializers
 
+        # validate effects tag serializer
+        # ???
+
         return data
 
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("groups", None)
+        effects = validated_data.pop("effects", [])
         endpoint = models.Endpoint.objects.create(**validated_data)
         for group_serializer in self.group_serializers:
             group_serializer.save(endpoint_id=endpoint.id)
+        import pdb
+
+        pdb.set_trace()
+        tags = []
+        for effect_name in effects:
+            tag = EffectTag.objects.filter(name=effect_name).first()
+            if tag is None:
+                tag = EffectTag.create(name=effect_name)
+            tags.append(tag)
+        if tags:
+            endpoint.effects.set(tags)
         return endpoint
 
     class Meta:
