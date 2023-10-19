@@ -94,6 +94,44 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         ser = serializers.AssessmentRiskOfBiasSerializer(self.assessment)
         return Response(ser.data)
 
+    @action(
+        detail=True, url_path="reviews", action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT
+    )
+    def reviews(self, request, pk):
+        """
+        Get all final risk of bias/study evaluations for an assessment.
+        """
+        assessment = self.get_object()
+        filters = dict(study__assessment=assessment, final=True, active=True)
+        if not assessment.user_is_team_member_or_higher(self.request.user):
+            filters["study__published"] = True
+        robs = models.RiskOfBias.objects.filter(**filters).prefetch_related(
+            "scores__overridden_objects"
+        )
+        serializer = serializers.FinalRiskOfBiasSerializer(robs, many=True)
+        return Response(serializer.data)
+
+    @action(
+        detail=True,
+        url_path=r"reviews/study/(?P<study_id>\d+)",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
+    def study_review(self, request, pk, study_id):
+        """
+        Get all final risk of bias/study evaluations for a study
+        """
+        assessment = self.get_object()
+        filters = dict(study__assessment=assessment, study=study_id, final=True, active=True)
+        if not assessment.user_is_team_member_or_higher(self.request.user):
+            filters["study__published"] = True
+        rob = (
+            models.RiskOfBias.objects.filter(**filters)
+            .prefetch_related("scores__overridden_objects")
+            .first()
+        )
+        serializer = serializers.FinalRiskOfBiasSerializer(rob)
+        return Response(serializer.data)
+
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
