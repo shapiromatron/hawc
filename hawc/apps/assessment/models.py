@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, NamedTuple, Self
+from typing import Any, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -17,7 +17,6 @@ from django.template import RequestContext, Template
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
@@ -832,10 +831,6 @@ class EffectTag(models.Model):
 
     def __str__(self):
         return self.name
-
-    @classmethod
-    def create(cls, name) -> Self:
-        return cls.objects.create(name=name, slug=slugify(name))
 
     def get_json(self, json_encode=False):
         d = {}

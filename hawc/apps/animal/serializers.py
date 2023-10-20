@@ -361,27 +361,26 @@ class EndpointSerializer(serializers.ModelSerializer):
         self.group_serializers = group_serializers
 
         # validate effects tag serializer
-        # ???
+        # TODO - investigate - sometimes data is a dict, sometimes querydict, depends on format?
+        tags = self.context["request"].data.getlist("effects", [])
+        if isinstance(tags, list) and len(tags) > 0:
+            if not all(isinstance(el, str) for el in tags):
+                raise serializers.ValidationError("Tags must be strings")
+            tags = [el.strip() for el in tags]
+            if any(len(el) == 0 for el in tags):
+                raise serializers.ValidationError("Tags must not be empty")
+        self.effects_data = tags
 
         return data
 
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("groups", None)
-        effects = validated_data.pop("effects", [])
         endpoint = models.Endpoint.objects.create(**validated_data)
         for group_serializer in self.group_serializers:
             group_serializer.save(endpoint_id=endpoint.id)
-        import pdb
-
-        pdb.set_trace()
-        tags = []
-        for effect_name in effects:
-            tag = EffectTag.objects.filter(name=effect_name).first()
-            if tag is None:
-                tag = EffectTag.create(name=effect_name)
-            tags.append(tag)
-        if tags:
+        if self.effects_data:
+            tags = EffectTag.objects.get_or_create_all(self.effects_data)
             endpoint.effects.set(tags)
         return endpoint
 

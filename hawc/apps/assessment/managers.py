@@ -5,6 +5,7 @@ from typing import Any, NamedTuple
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, Q, QuerySet, Value, When
+from django.utils.text import slugify
 from reversion.models import Version
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum
@@ -178,6 +179,9 @@ class EffectTagManager(BaseManager):
 
     def get_choices(self, assessment_id):
         return self.get_qs(assessment_id).values_list("id", "name").order_by("name")
+
+    def get_or_create_all(self, names: list[str]) -> list:
+        return [self.get_or_create(name=name, slug=slugify(name))[0] for name in names]
 
 
 class BaseEndpointManager(BaseManager):
