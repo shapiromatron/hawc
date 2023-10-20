@@ -174,7 +174,12 @@ class RiskOfBias(AssessmentEditViewSet):
     filterset_fields = ("study",)
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("study", "author", "scores__metric__domain")
+        return (
+            super()
+            .get_queryset()
+            .select_related("author")
+            .prefetch_related("scores__overridden_objects")
+        )
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
