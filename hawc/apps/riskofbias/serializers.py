@@ -321,36 +321,15 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        rob = models.RiskOfBias.objects.create(
-            study=validated_data["study"],
-            final=validated_data["final"],
-            author=validated_data["author"],
-            active=validated_data["active"],
-        )
-
-        scores_to_create = validated_data["scores"]
-        for score_to_create in scores_to_create:
-            try:
-                score = models.RiskOfBiasScore.objects.create(
-                    riskofbias=rob,
-                    metric=score_to_create["metric"],
-                    is_default=score_to_create["is_default"],
-                    label=score_to_create["label"],
-                    score=score_to_create["score"],
-                    bias_direction=score_to_create.get(
-                        "bias_direction", constants.BiasDirections.BIAS_DIRECTION_UNKNOWN.value
-                    ),
-                    notes=score_to_create["notes"],
-                )
-            except ValidationError as err:
-                raise serializers.ValidationError(err.message)
-
-            overridden_objects = score_to_create["overridden_objects"]
+        scores_data = validated_data.pop("scores", [])
+        instance = models.RiskOfBias.objects.create(**validated_data)
+        for score_data in scores_data:
+            overridden_objects = score_data.pop("overridden_objects", [])
+            score = models.RiskOfBiasScore.objects.create(**score_data, riskofbias=instance)
             for overridden_object in overridden_objects:
                 overridden_object.score = score
                 overridden_object.save()
-
-        return rob
+        return instance
 
     @transaction.atomic
     def update(self, instance, validated_data):
