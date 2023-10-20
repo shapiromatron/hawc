@@ -1,28 +1,29 @@
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        Literature Screening Growth
-    </div>
-    <div class="d-flex justify-content-between">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Number Searches</h5>
-                <p class="card-text">{{ n }}</p>
+<div class="mb-4">
+    <h4>Literature Screening Growth</h4>
+    <div class="card-columns">
+        <div class="lit-review-box box-shadow with-icon w-30">
+            <div>
+                <p class="h3 m-0 mt-1">{{ n }}</p>
+                <p class="small">total searches</p>
+            </div>
+            <div class="lit-icon">
+                <i class="fa fa-magnifying-glass"></i>
             </div>
         </div>
-        <div class="card">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Searches by type</h5>
                 <p class="card-text">{{ search_types }}</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Total number of references</h5>
                 <p class="card-text">{{ total_n_refs }}</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Reference tags breakdown</h5>
                 <h6 class="card-subtitle mb-2 text-muted">References with no tags:</h6>
@@ -34,21 +35,20 @@
             </div>
         </div>
     </div>
-
-    <div class="d-flex justify-content-between">
-        <div class="card" style="width: 33%;">
+    <div class="card-columns">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Number of references per import</h5>
                 <div>{% plotly refs_per_import_plot event="htmx" %}</div>
             </div>
         </div>
-        <div class="card flex-fill">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">References by publication year</h5>
                 <div>{% plotly refs_by_year_plot event="htmx" %}</div>
             </div>
         </div>
-        <div class="card" style="width: 33%;">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">References and tags plot</h5>
                 <div>{% plotly refs_tags_plot event="htmx" %}</div>
@@ -56,11 +56,11 @@
         </div>
     </div>
 </div>
-<div class="card">
-    <div class="card-header">
-        Study Growth
-    </div>
-    <div class="card">
+
+
+<div class="mb-4">
+    <h4>Study Growth</h4>
+    <div class="card box-shadow">
         <div class="card-body">
             <h5 class="card-title">Study classifications - Turn into bar chart?</h5>
             <h6 class="card-subtitle mb-2 text-muted">Total number of studies:</h6>
@@ -81,12 +81,10 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        Animal Group Growth
-    </div>
-    <div class="d-flex justify-content-between">
-        <div class="card">
+<div>
+    <h4>Animal Group Growth</h4>
+    <div class="card-columns">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Animal group data breakdown</h5>
                 <h6 class="card-subtitle mb-2 text-muted">Number of studies:</h6>
@@ -99,26 +97,26 @@
                 <p class="card-text">{{ animal_counts.endpoints }}</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Number of endpoints with data extracted:</h5>
                 <p class="card-text">{{ n_endpoints_extracted }}</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Number of endpoints using EHV:</h5>
                 <p class="card-text">{{ n_endpoints_ehv }}</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card box-shadow">
             <div class="card-body">
                 <h5 class="card-title">Number of dose response groups:</h5>
                 <p class="card-text">{{ n_dose_res_groups }}</p>
             </div>
         </div>
     </div>
-    <div class="card">
+    <div class="card box-shadow">
         <div class="card-body">
             <h5 class="card-title">Number of experiment types</h5>
             <div>{% plotly experiment_type_plot event="htmx" %}</div>
