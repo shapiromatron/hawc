@@ -131,11 +131,12 @@ class SummaryTableCopySelectorForm(forms.Form):
 class VisualForm(forms.ModelForm):
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "prefilters")
+        exclude = ("assessment", "visual_type", "evidence_type", "prefilters")
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
+        evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
         if "settings" in self.fields:
             self.fields["settings"].widget.attrs["rows"] = 2
@@ -152,6 +153,8 @@ class VisualForm(forms.ModelForm):
             constants.VisualType.PLOTLY,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
+        if self.instance.id is None:
+            self.instance.evidence_type = evidence_type
 
     def setHelper(self):
         for fld in list(self.fields.keys()):
@@ -252,7 +255,15 @@ class EndpointAggregationForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "settings", "prefilters", "studies", "sort_order")
+        exclude = (
+            "assessment",
+            "visual_type",
+            "evidence_type",
+            "settings",
+            "prefilters",
+            "studies",
+            "sort_order",
+        )
 
 
 class CrossviewForm(VisualForm):
@@ -280,7 +291,7 @@ class CrossviewForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "endpoints", "studies")
+        exclude = ("assessment", "visual_type", "evidence_type", "endpoints", "studies")
 
 
 class RoBForm(VisualForm):
@@ -305,7 +316,7 @@ class RoBForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "dose_units", "endpoints")
+        exclude = ("assessment", "visual_type", "evidence_type", "dose_units", "endpoints")
 
 
 class TagtreeForm(VisualForm):

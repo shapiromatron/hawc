@@ -282,6 +282,9 @@ class Visual(models.Model):
     )
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
+    evidence_type = models.PositiveSmallIntegerField(
+        choices=constants.StudyType.choices, default=constants.StudyType.BIOASSAY
+    )
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
@@ -496,7 +499,6 @@ class Visual(models.Model):
         to the model.
         """
         qs = Study.objects.none()
-        filters = {}
 
         if self.visual_type in [
             constants.VisualType.ROB_HEATMAP,
@@ -507,27 +509,8 @@ class Visual(models.Model):
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
-            cleaned_prefilters = fs.form.cleaned_data
 
-            # TODO - fix - we should use a different set of prefilters for studies
-            study_fields = ["published_only", "studies"]
-            endpoint_prefilters = {
-                k: v
-                for k, v in cleaned_prefilters.items()
-                if k not in study_fields and not k.startswith("cb_")  # skip `checkbox` fields
-            }
-            if any(value for value in endpoint_prefilters.values()):
-                endpoint_qs = fs.qs
-                filters["id__in"] = set(
-                    endpoint_qs.values_list("animal_group__experiment__study_id", flat=True)
-                )
-            else:
-                if f := cleaned_prefilters.pop(study_fields[0], False):
-                    filters["published"] = f
-                if f := cleaned_prefilters.get(study_fields[1], []):
-                    filters["id__in"] = f
-
-            qs = Study.objects.assessment_qs(self.assessment).filter(**filters)
+            qs = fs.qs
 
         # TODO - remove? handle sort order in visualization?
         if self.sort_order:
