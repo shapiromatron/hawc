@@ -850,12 +850,11 @@ class Reference(models.Model):
         ]
 
     @transaction.atomic
-    def merge_tags(self, user, tags=None):
+    def merge_tags(self, user):
         """Merge all unresolved user tags and apply to the reference.
 
         Args:
             user: The user requesting the tag change
-            tags: Optional, a limited set of tags to merge
         """
 
         # if there are no unresolved user tags, do nothing
