@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -481,8 +482,11 @@ class TestOutcomeApi:
             "effect_subtype": "test subtype",
         }
 
-        diagname_data = base_data
+        diagname_data = deepcopy(base_data)
         diagname_data["diagnostic"] = diagnostic_name.upper()
+
+        tag_data = deepcopy(base_data)
+        tag_data["effects"] = ["tag1"]
 
         just_created_outcome_id = None
 
@@ -512,6 +516,9 @@ class TestOutcomeApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.Outcome.objects.get(id=just_created_outcome_id)
 
+        def check_tag_status(resp):
+            assert len(resp.json()["effects"]) == 1
+
         create_scenarios = (
             {
                 "desc": "basic outcome creation",
@@ -526,6 +533,13 @@ class TestOutcomeApi:
                 "expected_keys": {"id"},
                 "data": diagname_data,
                 "post_request_test": outcome_lookup_test,
+            },
+            {
+                "desc": "creation with tag",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": tag_data,
+                "post_request_test": check_tag_status,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
@@ -646,6 +660,9 @@ class TestResultApi:
 
         base_data = self.get_upload_data()
 
+        tag_data = deepcopy(base_data)
+        tag_data["resulttags"] = ["tag1"]
+
         def result_lookup_test(resp):
             nonlocal just_created_result_id
 
@@ -681,6 +698,9 @@ class TestResultApi:
                 and found_existing_by_description is True
                 and found_new_one is True
             )
+
+        def check_tag_status(resp):
+            assert len(resp.json()["resulttags"]) == 1
 
         def altered_result_test(resp):
             nonlocal just_created_result_id
@@ -724,6 +744,13 @@ class TestResultApi:
                     }
                 ),
                 "post_request_test": result_lookup_test_with_factors,
+            },
+            {
+                "desc": "result with resulttags creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": tag_data,
+                "post_request_test": check_tag_status,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
