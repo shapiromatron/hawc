@@ -126,38 +126,7 @@ class TestRiskOfBiasAssessmentViewSet:
 
 
 @pytest.mark.django_db
-class TestAssessmentScoreViewSet:
-    def test_delete(self, db_keys):
-        team = get_client("team", api=True)
-
-        # ensure you can delete a non-default score
-        assessment_id = 1  # editable assessment
-        assessment_scores = RiskOfBiasScore.objects.filter(
-            metric__domain__assessment_id=assessment_id
-        )
-        score = assessment_scores.filter(is_default=False).first()
-        url = (
-            reverse("riskofbias:api:scores-detail", args=(score.id,))
-            + f"?assessment_id={assessment_id}&ids={score.id}"
-        )
-        assert team.get(url).status_code == 200
-        assert team.delete(url).status_code == 204
-        check_details_of_last_log_entry(score.id, "Deleted riskofbias.riskofbiasscore")
-        assert team.get(url).status_code == 404
-
-        # but cannot delete a default score
-        score = assessment_scores.filter(is_default=True).first()
-        url = (
-            reverse("riskofbias:api:scores-detail", args=(score.id,))
-            + f"?assessment_id={assessment_id}&ids={score.id}"
-        )
-        assert team.get(url).status_code == 200
-        assert team.delete(url).status_code == 403
-        assert team.get(url).status_code == 200
-
-
-@pytest.mark.django_db
-class TestRiskOfBiasViewset:
+class TestRiskOfBiasViewSet:
     def test_permissions(self, db_keys):
         # we override permissions for list/retrieve views
         anon = get_client(api=True)
@@ -502,12 +471,38 @@ class TestRiskOfBiasViewset:
 
 
 @pytest.mark.django_db
-class TestCleanupViewSet:
-    """
-    Make sure all the APIs we're using for the risk of bias score cleanup are working and return
-    data as expected.
-    """
+class TestAssessmentScoreViewSet:
+    def test_delete(self, db_keys):
+        team = get_client("team", api=True)
 
+        # ensure you can delete a non-default score
+        assessment_id = 1  # editable assessment
+        assessment_scores = RiskOfBiasScore.objects.filter(
+            metric__domain__assessment_id=assessment_id
+        )
+        score = assessment_scores.filter(is_default=False).first()
+        url = (
+            reverse("riskofbias:api:scores-detail", args=(score.id,))
+            + f"?assessment_id={assessment_id}&ids={score.id}"
+        )
+        assert team.get(url).status_code == 200
+        assert team.delete(url).status_code == 204
+        check_details_of_last_log_entry(score.id, "Deleted riskofbias.riskofbiasscore")
+        assert team.get(url).status_code == 404
+
+        # but cannot delete a default score
+        score = assessment_scores.filter(is_default=True).first()
+        url = (
+            reverse("riskofbias:api:scores-detail", args=(score.id,))
+            + f"?assessment_id={assessment_id}&ids={score.id}"
+        )
+        assert team.get(url).status_code == 200
+        assert team.delete(url).status_code == 403
+        assert team.get(url).status_code == 200
+
+
+@pytest.mark.django_db
+class TestCleanupViewSet:
     def test_study_types(self, db_keys):
         c = APIClient()
         assert c.login(username="team@hawcproject.org", password="pw") is True
