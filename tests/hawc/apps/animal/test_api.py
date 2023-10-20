@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 from hawc.apps.animal import forms, models
 from hawc.apps.assessment.models import Species, Strain
 
-from ..test_utils import check_details_of_last_log_entry
+from ..test_utils import check_details_of_last_log_entry, get_client
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
@@ -532,26 +532,36 @@ class TestEndpointCreateApi:
             "observation_time_units": [forms.EndpointForm.OBS_TIME_UNITS_REQ]
         }
 
-    def test_valid_requests(self, db_keys):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+    def test_valid_request(self, db_keys):
+        client = get_client("team", api=True)
         url = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "data_extracted": False,
+        }
 
-        assert models.Endpoint.objects.filter(name=data["name"]).count() == 0
         response = client.post(url, data)
         assert response.status_code == 201
-        assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
         check_details_of_last_log_entry(response.data["id"], "Created animal.endpoint")
 
-        # assert tags are created
-        data2 = deepcopy(data)
-        data2["effects"] = ["test", "here"]
-        response = client.post(url, data2)
+    def test_tags(self, db_keys):
+        client = get_client("team", api=True)
+        url = reverse("animal:api:endpoint-list")
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "data_extracted": False,
+            "effects": [{"name": "test"}, {"name": "here"}],
+        }
+        response = client.post(url, data, format="json")
         assert response.status_code == 201
-        endpoint_id = response.json()["id"]
-        assert models.Endpoint.objects.get(id=endpoint_id).effects.count() == 2
+        endpoint = response.json()
+        assert len(endpoint["effects"]) == 2
 
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")

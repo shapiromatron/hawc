@@ -2,9 +2,10 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from django.apps import apps
+from django.utils.text import slugify
 from plotly.subplots import make_subplots
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
+from rest_framework.validators import UniqueValidator
 
 from ..common.serializers import FlexibleChoiceField
 from ..study.models import Study
@@ -92,16 +93,34 @@ class AssessmentValueSerializer(serializers.ModelSerializer):
 
 
 class EffectTagsSerializer(serializers.ModelSerializer):
-    def to_internal_value(self, data):
-        raise ParseError("Not implemented!")
+    def __init__(self, **kw):
+        super().__init__(**kw)
 
-    def to_representation(self, obj):
-        # obj is a model-manager in this case; convert to list to serialize
-        return list(obj.values("slug", "name"))
+        # remove UniqueValidator; we `get_or_create` tags instead of applying directly
+        for field in ["name", "slug"]:
+            for validator in self.fields[field].validators:
+                if isinstance(validator, UniqueValidator):
+                    self.fields[field].validators.remove(validator)
 
     class Meta:
         model = models.EffectTag
-        fields = "__all__"
+        fields = ["name", "slug"]
+        read_only_fields = ["slug"]
+
+    @classmethod
+    def set_tags(cls, instance, field: str, data: list[dict]):
+        """Apply EffectTag to parent instance. Used with a serializer create or update method
+
+        Args:
+            instance (models.Model): The instance to apply tags to
+            field (str): The field name
+            data (list[dict]): The effect tag validated_data
+        """
+        tags = [
+            models.EffectTag.objects.get_or_create(name=el["name"], slug=slugify(el["name"]))[0]
+            for el in data
+        ]
+        getattr(instance, field).set(tags)
 
 
 class DoseUnitsSerializer(serializers.ModelSerializer):

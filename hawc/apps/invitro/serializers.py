@@ -101,7 +101,7 @@ class IVEndpointSerializer(serializers.ModelSerializer):
     groups = IVEndpointGroupSerializer(many=True)
     benchmarks = IVBenchmarkSerializer(many=True)
     category = IVEndpointCategory()
-    effects = EffectTagsSerializer()
+    effects = EffectTagsSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

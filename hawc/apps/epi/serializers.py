@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from ..assessment.models import DoseUnits
+from ..assessment.models import DoseUnits, EffectTag
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
@@ -265,7 +265,7 @@ class ResultSerializer(serializers.ModelSerializer):
     variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    resulttags = EffectTagsSerializer(read_only=True)
+    resulttags = EffectTagsSerializer(required=False, many=True)
     results = GroupResultSerializer(many=True, read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
 
@@ -282,12 +282,26 @@ class ResultSerializer(serializers.ModelSerializer):
         model = models.Result
         exclude = ("adjustment_factors",)
 
+    def create(self, validated_data):
+        resulttags = validated_data.pop("resulttags", [])
+        instance = super().create(validated_data)
+        self.fields["resulttags"].child.set_tags(instance, "resulttags", resulttags)
+        return instance
+
+    def update(self, instance, validated_data):
+        resulttags = validated_data.pop("resulttags", [])
+        instance = super().update(instance, validated_data)
+        # only modify if it was in request (don't change in a patch w/o this field)
+        if "resulttags" in self.context["request"].data:
+            self.fields["resulttags"].child.set_tags(instance, "resulttags", resulttags)
+        return instance
+
 
 class OutcomeSerializer(IdLookupMixin, serializers.ModelSerializer):
     diagnostic = FlexibleChoiceField(choices=constants.Diagnostic.choices)
     study_population = StudyPopulationSerializer()
     can_create_sets = serializers.BooleanField(read_only=True)
-    effects = EffectTagsSerializer(read_only=True)
+    effects = EffectTagsSerializer(required=False, many=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     results = ResultSerializer(many=True, read_only=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
@@ -295,6 +309,20 @@ class OutcomeSerializer(IdLookupMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Outcome
         fields = "__all__"
+
+    def create(self, validated_data):
+        effects = validated_data.pop("effects", [])
+        instance = super().create(validated_data)
+        self.fields["effects"].child.set_tags(instance, "effects", effects)
+        return instance
+
+    def update(self, instance, validated_data):
+        effects = validated_data.pop("effects", [])
+        instance = super().update(instance, validated_data)
+        # only modify if it was in request (don't change in a patch w/o this field)
+        if "effects" in self.context["request"].data:
+            self.fields["effects"].child.set_tags(instance, "effects", effects)
+        return instance
 
 
 class ComparisonSetSerializer(serializers.ModelSerializer):

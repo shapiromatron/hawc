@@ -236,10 +236,10 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
 
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    effects = EffectTagsSerializer(required=False)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
-    groups = EndpointGroupSerializer(many=True, required=False)
     name = serializers.CharField(required=False)
+    effects = EffectTagsSerializer(required=False, many=True)
+    groups = EndpointGroupSerializer(required=False, many=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -360,29 +360,17 @@ class EndpointSerializer(serializers.ModelSerializer):
             group_serializers.append(group_serializer)
         self.group_serializers = group_serializers
 
-        # validate effects tag serializer
-        # TODO - investigate - sometimes data is a dict, sometimes querydict, depends on format?
-        tags = self.context["request"].data.getlist("effects", [])
-        if isinstance(tags, list) and len(tags) > 0:
-            if not all(isinstance(el, str) for el in tags):
-                raise serializers.ValidationError("Tags must be strings")
-            tags = [el.strip() for el in tags]
-            if any(len(el) == 0 for el in tags):
-                raise serializers.ValidationError("Tags must not be empty")
-        self.effects_data = tags
-
         return data
 
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("groups", None)
-        endpoint = models.Endpoint.objects.create(**validated_data)
+        effects = validated_data.pop("effects", [])
+        instance = models.Endpoint.objects.create(**validated_data)
         for group_serializer in self.group_serializers:
-            group_serializer.save(endpoint_id=endpoint.id)
-        if self.effects_data:
-            tags = EffectTag.objects.get_or_create_all(self.effects_data)
-            endpoint.effects.set(tags)
-        return endpoint
+            group_serializer.save(endpoint_id=instance.id)
+        self.fields["effects"].child.set_tags(instance, "effects", effects)
+        return instance
 
     class Meta:
         model = models.Endpoint
