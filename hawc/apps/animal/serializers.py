@@ -5,8 +5,8 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..assessment.api import user_can_edit_object
-from ..assessment.models import DoseUnits, DSSTox, EffectTag
-from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
+from ..assessment.models import DoseUnits, DSSTox
+from ..assessment.serializers import DSSToxSerializer, RelatedEffectTagSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
@@ -238,7 +238,7 @@ class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
     name = serializers.CharField(required=False)
-    effects = EffectTagsSerializer(required=False, many=True)
+    effects = RelatedEffectTagSerializer(required=False, many=True)
     groups = EndpointGroupSerializer(required=False, many=True)
 
     def __init__(self, *args, **kwargs):
@@ -369,7 +369,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         instance = models.Endpoint.objects.create(**validated_data)
         for group_serializer in self.group_serializers:
             group_serializer.save(endpoint_id=instance.id)
-        self.fields["effects"].child.set_tags(instance, "effects", effects)
+        instance.effects.set(effects)
         return instance
 
     class Meta:

@@ -556,7 +556,7 @@ class TestEndpointCreateApi:
             "data_type": "C",
             "variance_type": 1,
             "data_extracted": False,
-            "effects": [{"name": "test"}, {"name": "here"}],
+            "effects": ["tag1", "tag2"],
         }
         response = client.post(url, data, format="json")
         assert response.status_code == 201

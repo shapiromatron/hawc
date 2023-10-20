@@ -3,7 +3,7 @@ import json
 from rest_framework import serializers
 
 from ..assessment.api.serializers import AssessmentRootedSerializer
-from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
+from ..assessment.serializers import DSSToxSerializer, RelatedEffectTagSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
@@ -101,7 +101,7 @@ class IVEndpointSerializer(serializers.ModelSerializer):
     groups = IVEndpointGroupSerializer(many=True)
     benchmarks = IVBenchmarkSerializer(many=True)
     category = IVEndpointCategory()
-    effects = EffectTagsSerializer(many=True)
+    effects = RelatedEffectTagSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

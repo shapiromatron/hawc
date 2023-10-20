@@ -161,3 +161,7 @@ class LogFilterSet(BaseFilterSet):
         ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
         form.fields["user"].queryset = self.assessment.pms_and_team_users()
         return form
+
+
+class EffectTagFilterSet(df.FilterSet):
+    name = df.CharFilter(lookup_expr="icontains")

@@ -235,7 +235,7 @@ class TestClient(LiveServerTestCase, TestCase):
             power_notes="...",
             results_notes="...",
             endpoint_notes="...",
-            effects=[{"name": "foo"}],
+            effects=["tag1"],
             groups=[
                 dict(
                     dose_group_id=0,
@@ -269,7 +269,7 @@ class TestClient(LiveServerTestCase, TestCase):
         endpoint = client.animal.create_endpoint(data)
         assert isinstance(endpoint, dict) and endpoint["id"] > 0
         assert len(endpoint["effects"]) == 1
-        assert endpoint["effects"][0] == {"name": "foo", "slug": "foo"}
+        assert endpoint["effects"][0] == {"name": "tag1", "slug": "tag1"}
         assert len(endpoint["groups"]) == 3
 
         # test cleanup; remove what we just created
@@ -471,13 +471,13 @@ class TestClient(LiveServerTestCase, TestCase):
                 "summary": "my dsummary",
                 "effect": "my effect",
                 "effect_subtype": "my subtype",
-                "effects": [{"name": "foo"}],
+                "effects": ["tag1"],
             }
         )
         assert isinstance(outcome, dict) and outcome["name"] == outcome_name
         outcome_id = outcome["id"]
         assert len(outcome["effects"]) == 1
-        assert outcome["effects"][0] == {"name": "foo", "slug": "foo"}
+        assert outcome["effects"][0] == {"name": "tag1", "slug": "tag1"}
 
         # result
         result_name = "test result"
@@ -504,13 +504,13 @@ class TestClient(LiveServerTestCase, TestCase):
                 "factors_applied": ["birth order"],
                 "factors_considered": ["dynamic factor", "study center"],
                 "comments": "comments go here",
-                "resulttags": [{"name": "foo"}],
+                "resulttags": ["tag2"],
             }
         )
         assert isinstance(result, dict) and result["name"] == result_name
         result_id = result["id"]
         assert len(result["resulttags"]) == 1
-        assert result["resulttags"][0] == {"name": "foo", "slug": "foo"}
+        assert result["resulttags"][0] == {"name": "tag2", "slug": "tag2"}
 
         # group result
         gr_pval = 0.432
