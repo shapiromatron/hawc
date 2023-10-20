@@ -637,64 +637,164 @@
   pk: DTXSID6026296
   fields:
     content:
+      id: FD70373DEB12FD6675FDFD64FDFDFD0E3AFD53FD74784AFD5AFD1136FD
       casrn: 7732-18-5
       dtxcid: DTXCID106296
       dtxsid: DTXSID6026296
+      nhanes: null
       smiles: O
-      infoMsg: null
-      synGsid: 26296
-      synType: DSSTox_Substance_Id
-      checksum: NA
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
-      molWeight: 18.015
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
+      stereo: '0'
+      density: null
+      expocat: null
+      isotope: 0
+      qcLevel: 1
+      qcNotes: null
+      inchikey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      irisLink: null
+      isMarkush: 0
+      iupacName: Water
+      pprtvLink: null
+      compoundId: 6296
       molFormula: H2O
-      warningMsg: null
-      processedAs: LOOKUP
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
-      collidingGsid: null
-      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      pubchemCid: 962
+      toxvalData: Y
+      averageMass: 18.015
+      cpdataCount: 32127
+      inchiString: 'InChI=1S/H2O/h1H2
+
+        '
+      pubmedCount: 140447.0
+      qcLevelDesc: 'Level 1: Expert curated, highest confidence in accuracy and consistency
+        of unique chemical identifiers'
+      totalAssays: null
+      activeAssays: null
+      henrysLawAtm: null
+      pubchemCount: 857
+      sourcesCount: 300
+      hrDiphniaLc50: null
+      msReadySmiles: null
+      percentAssays: null
+      pkaaOperaPred: null
+      pkabOperaPred: null
       preferredName: Water
-      synIdentifier: DTXSID6026296
-      collidingCasrn: null
-      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      origIdentifier: DTXSID6026296
-      trimmedWhitespace: false
-      trimmedLeadingZeros: false
-      reformattedIdentifier: false
-      collidingPreferredName: null
+      toxcastSelect: null
+      devtoxTestPred: null
+      multicomponent: 0
+      oralRatLd50Mol: null
+      surfaceTension: null
+      hrFatheadMinnow: null
+      qsarReadySmiles: null
+      monoisotopicMass: 18.010564684
+      wikipediaArticle: Properties of water
+      hasStructureImage: 1
+      genericSubstanceId: 26296
+      descriptorStringTsv: "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0"
+      thermalConductivity: null
+      waterSolubilityTest: null
+      operaKmDaysOperaPred: null
+      waterSolubilityOpera: null
+      octanolWaterPartition: null
+      relatedStructureCount: 1
+      relatedSubstanceCount: 12
+      tetrahymenaPyriformis: null
+      viscosityCpCpTestPred: null
+      flashPointDegcTestPred: null
+      expocatMedianPrediction: null
+      amesMutagenicityTestPred: null
+      boilingPointDegcTestPred: null
+      meltingPointDegcTestPred: null
+      octanolAirPartitionCoeff: null
+      boilingPointDegcOperaPred: null
+      meltingPointDegcOperaPred: null
+      soilAdsorptionCoefficient: null
+      vaporPressureMmhgTestPred: null
+      biodegradationHalfLifeDays: null
+      vaporPressureMmhgOperaPred: null
+      atmosphericHydroxylationRate: null
+      bioconcentrationFactorTestPred: null
+      bioconcentrationFactorOperaPred: null
     created: 2020-08-12 19:34:12.687630+00:00
     last_updated: 2020-08-12 19:34:12.687630+00:00
 - model: assessment.dsstox
   pk: DTXSID7020970
   fields:
     content:
+      id: FDFD541B510CFD2C5064FD1FFDFD06FD40FD111324FDFD7D29FD0F74FD4EFD
       casrn: 1836-75-5
       dtxcid: DTXCID30970
       dtxsid: DTXSID7020970
+      nhanes: Y
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
-      infoMsg: null
-      synGsid: 20970
-      synType: DSSTox_Substance_Id
-      checksum: NA
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
-      molWeight: 284.09
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
+      stereo: '0'
+      density: 1.452
+      expocat: Y
+      isotope: 0
+      qcLevel: 1
+      qcNotes: null
+      inchikey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      irisLink: null
+      isMarkush: 0
+      iupacName: 2,4-Dichloro-1-(4-nitrophenoxy)benzene
+      pprtvLink: Nitrofentechnicalgrade
+      compoundId: 970
       molFormula: C12H7Cl2NO3
-      warningMsg: null
-      processedAs: LOOKUP
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
-      collidingGsid: null
-      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      pubchemCid: 15787
+      toxvalData: Y
+      averageMass: 284.09
+      cpdataCount: null
+      inchiString: 'InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H
+
+        '
+      pubmedCount: 341.0
+      qcLevelDesc: 'Level 1: Expert curated, highest confidence in accuracy and consistency
+        of unique chemical identifiers'
+      totalAssays: 1029
+      activeAssays: 163
+      henrysLawAtm: 6.79835e-05
+      pubchemCount: 116
+      sourcesCount: 201
+      hrDiphniaLc50: 1.63682e-06
+      msReadySmiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
+      percentAssays: 16.0
+      pkaaOperaPred: null
+      pkabOperaPred: null
       preferredName: Nitrofen
-      synIdentifier: DTXSID7020970
-      collidingCasrn: null
-      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      origIdentifier: DTXSID7020970
-      trimmedWhitespace: false
-      trimmedLeadingZeros: false
-      reformattedIdentifier: false
-      collidingPreferredName: null
+      toxcastSelect: 163/1029
+      devtoxTestPred: 0.697
+      multicomponent: 0
+      oralRatLd50Mol: 0.00961612
+      surfaceTension: null
+      hrFatheadMinnow: 1.06905e-06
+      qsarReadySmiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
+      monoisotopicMass: 282.9802985
+      wikipediaArticle: Nitrofen
+      hasStructureImage: 1
+      genericSubstanceId: 20970
+      descriptorStringTsv: "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t1\t1\t1\t0\t0\t1\t1\t0\t0\t0\t0\t0\t0\t1\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0"
+      thermalConductivity: 133.645
+      waterSolubilityTest: 1.86209e-06
+      operaKmDaysOperaPred: 7.23919
+      waterSolubilityOpera: 3.53106e-06
+      octanolWaterPartition: 4.6398
+      relatedStructureCount: null
+      relatedSubstanceCount: null
+      tetrahymenaPyriformis: 3.22107e-06
+      viscosityCpCpTestPred: null
+      flashPointDegcTestPred: 184.658
+      expocatMedianPrediction: '2.23E-07'
+      amesMutagenicityTestPred: 0.751
+      boilingPointDegcTestPred: 359.215
+      meltingPointDegcTestPred: 99.224
+      octanolAirPartitionCoeff: 8.61388
+      boilingPointDegcOperaPred: 358.785
+      meltingPointDegcOperaPred: 70.1221
+      soilAdsorptionCoefficient: 10030.7
+      vaporPressureMmhgTestPred: 4.48745e-07
+      biodegradationHalfLifeDays: 3.71673
+      vaporPressureMmhgOperaPred: 1.71599e-06
+      atmosphericHydroxylationRate: 2.58539e-12
+      bioconcentrationFactorTestPred: 899.498
+      bioconcentrationFactorOperaPred: 739.33
     created: 2020-08-12 19:45:56.718230+00:00
     last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
