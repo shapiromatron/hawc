@@ -161,7 +161,13 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         """
         assessment = self.get_object()
         queryset = models.Reference.objects.filter(assessment=assessment)
-        return Response(queryset.merge_tag_conflicts(request.data.getlist("tags"), request.user.id))
+        return Response(
+            queryset.merge_tag_conflicts(
+                request.data.getlist("tags"),
+                request.user.id,
+                request.data.get("include_without_conflict", False),
+            )
+        )
 
     @action(
         detail=True,

@@ -1,5 +1,5 @@
-<div id="{{ modal_id }}" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{ modal_id }}-label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
+<div id="{{ modal_id }}" class="modal fade" data-backdrop="static" tabindex="-1" aria-labelledby="{{ modal_id }}-label" aria-hidden="true">
+    <div class="modal-dialog {% if modal_size %} {{modal_size}} {% else %} modal-xl {% endif %}modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 {% block modal_header %}

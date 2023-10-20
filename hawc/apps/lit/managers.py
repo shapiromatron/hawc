@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime
 
 import pandas as pd
 from django.apps import apps
@@ -519,31 +520,112 @@ class ReferenceQuerySet(models.QuerySet):
         }
 
     @transaction.atomic
-    def merge_tag_conflicts(self, tags: list[int], user_id):
+    def merge_tag_conflicts(
+        self, tags: list[int], user_id, include_without_conflicts: bool = False
+    ):
         # get all relevant tag ids
         ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
         tags = ReferenceFilterTag.objects.filter(id__in=tags)
         tag_ids = []
 
-        # tags include descendants
+        # tags always include descendants; we're bulk merging by tag tree branch
         for tag in tags:
             tag_ids = tag_ids + list(tag.get_tree(parent=tag).values_list("id", flat=True))
 
-        # annotate references with tags to be added
-        # then filter by references which have tags to be added
-        # TODO: maybe filter by n_unapplied_reviews (>1 as per conflict resolution page)
+        # annotate references with tags to be added per bulk merge request
+        # this includes any of the tag_ids on an unresolved UserReferenceTag
         queryset = self.annotate(
             bulk_merge_tags=ArrayAgg(
                 "user_tags__tags__id",
                 distinct=True,
                 filter=Q(user_tags__tags__in=tag_ids) & Q(user_tags__is_resolved=False),
             ),
+            ref_tags=ArrayAgg(
+                "tags",
+                distinct=True,
+            ),
             n_unapplied_reviews=Count(
                 "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
             ),
-        ).filter(bulk_merge_tags__isnull=False)
+        )
 
-        # create new reference tags/consensus tags
+        # filter by references that have tags to be added (i.e., user tag(s) contains the tags given, consensus tags do not)
+        # then filter out references without conflict (1 unresolved user tag), or keep them, depending on parameter
+        # note: the '__contains' filter is overwritten for ArrayField; it filters by subset
+        # see: https://docs.djangoproject.com/en/4.2/ref/contrib/postgres/fields/#contains
+        if not include_without_conflicts:
+            queryset = queryset.filter(
+                Q(n_unapplied_reviews__gt=1),
+                Q(bulk_merge_tags__isnull=False),
+                ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
+            )
+        else:
+            queryset = queryset.filter(
+                Q(bulk_merge_tags__isnull=False), ~Q(ref_tags__contains=models.F("bulk_merge_tags"))
+            )
+
+        if not queryset.exists():  # return if no references were found from filtering
+            return "No references found to merge."
+
+        # Now we start the bulk tag merge process! The order of the procedure below is important:
+        # 0. Filter and annotate reference queryset (done above)
+        # 1. Create new 'UserReferenceTag' objects where necessary for the user doing these bulk merges
+        # 2. Create the 'UserReferenceTags' through objects (i.e. add tags to the UserReferenceTag objects created in #2)
+        # 3. Create the 'ReferenceTags' through objects (i.e. add the bulk merged tags to the reference as consensus tags)
+        # 4. Resolve any UserReferenceTag objects where possible
+
+        # 1. Create new UserReferenceTag objects for the user performing the bulk merge
+        # we do this first since we need to continue annotating the reference queryset, and every time you annotate a queryset,
+        # it is re-evaluated. creating these UserReferenceTag objs does not change the result of the above filtering
+        updatetime = datetime.now()
+        UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
+        new_user_ref_tags = [
+            UserReferenceTag(user_id=user_id, reference_id=ref.id, last_updated=updatetime)
+            for ref in queryset
+        ]
+        # UserReferenceTags have a unique constriction on user_id & reference_id (which is good, we don't want dupes)
+        # so if it tries to insert a dupe, instead it updates (update_conflicts=True) the last_updated field (update_fields).
+        UserReferenceTag.objects.bulk_create(
+            new_user_ref_tags,
+            update_conflicts=True,
+            update_fields=["last_updated"],
+            unique_fields=["user_id", "reference_id"],
+        )
+
+        # Now we can annotate the reference queryset with the UserReferenceTag id with the user ID for the user performing
+        # this bulk merge operation, since we created these UserReferenceTag objects in the previous step
+        bulk_user_query = UserReferenceTag.objects.filter(
+            reference=models.OuterRef("pk"), user=user_id
+        )
+        queryset = queryset.annotate(
+            bulk_user_ref_id=models.Subquery(bulk_user_query.values("pk")[:1])
+        )
+
+        # 2. Create the UserReferenceTag tag 'through' objects for the user performing the bulk merge (i.e., add the new
+        # tags to the user's UserReferenceTag). this requires the previous 'bulk_user_ref_id' annotation and the original
+        # 'bulk_merge_tag_id' annotations
+        UserReferenceTags = apps.get_model("lit", "UserReferenceTags")
+        new_user_ref_tag_throughs = []
+        for ref in queryset:
+            if ref in queryset:
+                new_user_ref_tag_throughs.extend(
+                    [
+                        UserReferenceTags(
+                            tag_id=bulk_merge_tag_id, content_object_id=ref.bulk_user_ref_id
+                        )
+                        for bulk_merge_tag_id in ref.bulk_merge_tags
+                    ]
+                )
+        UserReferenceTags.objects.bulk_create(new_user_ref_tag_throughs, ignore_conflicts=True)
+
+        # Save the list of reference IDs in the queryset, we need them for filtering & resolving user tags later
+        # and we can't do this after we create the ReferenceTags, since the queryset will re-evaluate and be empty
+        references = list(queryset.values_list("id", flat=True))
+        queryset.update(
+            last_updated=datetime.now()
+        )  # update last_updated field (since bulk_create won't call .save())
+
+        # 3. Create the new reference tags/consensus tags
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
         new_tags = []
         for ref in queryset:
@@ -555,50 +637,39 @@ class ReferenceQuerySet(models.QuerySet):
             )
         ReferenceTags.objects.bulk_create(new_tags, ignore_conflicts=True)
 
-        # create new UserReferenceTag objects for the user performing the bulk merge, with the merged tags
-        UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
-        new_user_ref_tags = [
-            UserReferenceTag(user_id=user_id, reference_id=ref.id) for ref in queryset
-        ]
-        UserReferenceTag.objects.bulk_create(new_user_ref_tags, ignore_conflicts=True)
-
-        # annotate reference queryset with the ID of the UserReferenceTag for the user performing merge
-        bulk_user_query = UserReferenceTag.objects.filter(
-            reference=models.OuterRef("pk"), user=user_id
-        )
-        queryset = queryset.annotate(
-            bulk_user_ref_id=models.Subquery(bulk_user_query.values("pk")[:1])
-        )
-
-        # create the UserReferenceTag tag 'through' objects for the user performing the bulk merge
-        # (i.e., add the new tags to the user's UserReferenceTag)
-        UserReferenceTags = apps.get_model("lit", "UserReferenceTags")
-        new_user_ref_tag_throughs = []
-        for ref in queryset:
-            new_user_ref_tag_throughs.extend(
-                [
-                    UserReferenceTags(
-                        tag_id=bulk_merge_tag_id, content_object_id=ref.bulk_user_ref_id
-                    )
-                    for bulk_merge_tag_id in ref.bulk_merge_tags
-                ]
+        # 4. Resolve user tags where possible
+        # In order for a UserReferenceTag to be resolved:
+        # A) All the user tags must be applied as consensus/reference tags
+        # B) Has to be a user tag on a reference that we modified above (in the 'references' id list we saved)
+        # C) Must have tags
+        # D) Must be unresolved
+        resolve_user_tags = (
+            UserReferenceTag.objects.annotate(ref_tags=ArrayAgg("reference__tags", distinct=True))
+            .filter(
+                tags__isnull=False,
+                tags__in=tag_ids,
+                reference__in=references,
+                is_resolved=False,
             )
-        UserReferenceTags.objects.bulk_create(new_user_ref_tag_throughs, ignore_conflicts=True)
+            .filter(
+                ref_tags__contains=ArrayAgg("tags", distinct=True),
+            )
+        )
+        updated_user_tag_count = resolve_user_tags.update(
+            is_resolved=True, last_updated=datetime.now()
+        )
 
-        # Resolve user tags where possible
-        resolve_user_tags = UserReferenceTag.objects.annotate(
-            ref_tags=ArrayAgg("reference__tags", distinct=True)
-        ).filter(
-            ref_tags__contains=ArrayAgg("tags", distinct=True),
-            tags__isnull=False,
-            tags__in=tag_ids,
-            reference__in=queryset,
-            is_resolved=False,
+        # log the changes
+        Log = apps.get_model("assessment", "Log")
+        assessment_id = queryset[0].assessment_id
+        Log.objects.create(
+            assessment_id=assessment_id,
+            user_id=user_id,
+            message=f"""assessment.Assessment {assessment_id}: Bulk merged user tags on all references with tags: {tag_ids}.
+                        {queryset.count()} references updated and {updated_user_tag_count} user tags resolved.
+                        References updated: {references}.""",
         )
-        updated_user_tag_count = resolve_user_tags.update(is_resolved=True)
-        return (
-            f"{queryset.count()} references updated and {updated_user_tag_count} user tags updated."
-        )
+        return f"{len(references)} references updated and {updated_user_tag_count} user tags resolved. References updated: {references}"
 
     def global_df(self) -> pd.DataFrame:
         mapping = {

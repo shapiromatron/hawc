@@ -678,6 +678,11 @@ class BulkMergeConflictsForm(forms.Form):
         queryset=models.ReferenceFilterTag.objects.all(),
         help_text="Select tag(s) to bulk merge conflicts for. This includes all descendant tag(s).",
     )
+    include_without_conflict = forms.BooleanField(
+        label="Include references without conflicts",
+        help_text="Includes references that are not shown on the conflict resolution page. This refers to references with one unresolved user tag.",
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")

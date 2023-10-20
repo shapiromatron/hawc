@@ -8,7 +8,7 @@
     <a class="dropdown-item" data-toggle="modal" data-target="#bulk_merge_form">Bulk Merge Conflicts</a>
     {% endactions %}
 </div>
-{% include "lit/bulk_merge_modal.html" with modal_id='bulk_merge_form'%}
+{% include "lit/bulk_merge_modal.html" with modal_id='bulk_merge_form' modal_size='modal-lg' %}
 {% include 'common/inline_filter_form.html' %}
 <ul class="list-group list-group-flush my-3">
     {% for ref in object_list %}
