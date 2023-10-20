@@ -260,9 +260,8 @@ def experiment_type_plot(assessment_id):
     return fig
 
 
-def get_context_data(self, **kwargs):
-    id = self.assessment.id
-    context = dict()
+def get_context_data(id: int) -> dict:
+    context = {}
     # literature screening
     context["n"] = get_search_count(id)
     context["search_types"] = get_search_types(id)

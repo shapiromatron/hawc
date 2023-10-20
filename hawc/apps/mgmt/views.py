@@ -7,7 +7,7 @@ from django.views.generic import ListView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, cacheable
 from ..common.htmx import HtmxGetMixin, HtmxViewSet, action, can_edit
 from ..common.views import BaseDetail, BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
 from ..myuser.models import HAWCUser
@@ -189,15 +189,24 @@ class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
         return render(request, "mgmt/analytics.html", context)
 
     def time_series(self, request: HttpRequest, context: dict):
-        context = time_series.get_context_data(self)
+        context = cacheable(
+            lambda: time_series.get_context_data(self.assessment.id),
+            f"mgmt:analytics:time_series:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/time_series.html", context)
 
     def time_spent(self, request: HttpRequest, context: dict):
-        context = time_spent.get_context_data(self)
+        context = cacheable(
+            lambda: time_spent.get_context_data(self.assessment.id),
+            f"mgmt:analytics:time_spent:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/time_spent.html", context)
 
     def growth(self, request: HttpRequest, context: dict):
-        context = growth.get_context_data(self)
+        context = cacheable(
+            lambda: growth.get_context_data(self.assessment.id),
+            f"mgmt:analytics:growth:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/growth.html", context)
 
 

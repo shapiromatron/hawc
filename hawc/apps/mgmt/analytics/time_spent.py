@@ -38,11 +38,10 @@ def time_spent_per_model_plot(assessment_id):
 
 def total_time_spent(assessment_id):
     df = time_spent_df(assessment_id)
-    return f"{df.seconds.sum()/60/60:,.1f}hr"
+    return f"{df.seconds.sum()/60/60:,.1f} hours"
 
 
-def get_context_data(self, **kwargs):
-    id = self.assessment.id
+def get_context_data(id: int) -> dict:
     context = {}
     context["time_spent_per_model_plot"] = time_spent_per_model_plot(id)
     context["total_time_spent"] = total_time_spent(id)

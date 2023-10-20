@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-from django.db.models import Count, Exists
+from django.db.models import Count
 from django.db.models.functions import Trunc
 
 from hawc.apps.lit.models import Reference
@@ -10,7 +9,8 @@ from hawc.apps.summary.models import DataPivot, Visual
 
 def get_data(Model, freq, assessment_id):
     qs = (
-        Model.objects.all().filter(assessment_id=assessment_id)
+        Model.objects.all()
+        .filter(assessment_id=assessment_id)
         .annotate(date=Trunc("created", freq))
         .order_by("date")
         .values("date")
@@ -29,12 +29,11 @@ def time_series(Model, df):
             xref="paper",
             yref="paper",
             showarrow=False,
-            font=dict(size=15)
+            font=dict(size=15),
         )
     else:
         fig = px.line(df, x="date", y="n", title=Model.__name__)
     return fig
-
 
 
 def get_context_data(id: int) -> dict:
