@@ -506,7 +506,7 @@ class TestCleanupViewSet:
         assert c.login(username="team@hawcproject.org", password="pw") is True
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
-        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        url = reverse("riskofbias:api:metric-list") + assessment_query
         resp = c.get(url, format="json")
         assert resp.status_code == 200
         assert (
@@ -527,7 +527,7 @@ class TestCleanupViewSet:
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
         # get metrics for score
-        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        url = reverse("riskofbias:api:metric-list") + assessment_query
         metrics = c.get(url, format="json").json()
 
         # get available rob scores for a metric

@@ -8,7 +8,6 @@ from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import (
-    AssessmentLevelPermissions,
     AssessmentViewSet,
     BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
@@ -187,7 +186,6 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
-    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return (
@@ -212,7 +210,6 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
-    permission_classes = (AssessmentLevelPermissions,)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -256,7 +253,6 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewSet):
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
     list_actions = ["list", "effects", "rob_filter", "update_terms"]
-    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()
