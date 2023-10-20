@@ -59,6 +59,81 @@ class DSSTox(models.Model):
         verbose_name = "DSSTox substance"
         verbose_name_plural = "DSSTox substances"
 
+    class Content(PydanticModel):
+        cpdataCount: str
+        id: str
+        expocatMedianPrediction: str
+        expocat: str
+        nhanes: str
+        toxvalData: str
+        waterSolubilityTest: str
+        casrn: str
+        compoundId: str
+        genericSubstanceId: str
+        preferredName: str
+        activeAssays: str
+        molFormula: str
+        monoisotopicMass: str
+        percentAssays: str
+        pubchemCount: str
+        pubmedCount: str
+        sourcesCount: str
+        qcLevel: str
+        qcLevelDesc: str
+        stereo: str
+        isotope: str
+        multicomponent: str
+        totalAssays: str
+        pubchemCid: str
+        relatedSubstanceCount: str
+        relatedStructureCount: str
+        hasStructureImage: str
+        iupacName: str
+        smiles: str
+        inchiString: str
+        averageMass: str
+        qcNotes: str
+        qsarReadySmiles: str
+        msReadySmiles: str
+        irisLink: str
+        pprtvLink: str
+        descriptorStringTsv: str
+        isMarkush: str
+        dtxsid: str
+        dtxcid: str
+        toxcastSelect: str
+        waterSolubilityOpera: str
+        viscosityCpCpTestPred: str
+        vaporPressureMmhgTestPred: str
+        vaporPressureMmhgOperaPred: str
+        thermalConductivity: str
+        tetrahymenaPyriformis: str
+        surfaceTension: str
+        soilAdsorptionCoefficient: str
+        oralRatLd50Mol: str
+        operaKmDaysOperaPred: str
+        octanolWaterPartition: str
+        octanolAirPartitionCoeff: str
+        meltingPointDegcTestPred: str
+        meltingPointDegcOperaPred: str
+        hrFatheadMinnow: str
+        hrDiphniaLc50: str
+        henrysLawAtm: str
+        flashPointDegcTestPred: str
+        devtoxTestPred: str
+        density: str
+        boilingPointDegcTestPred: str
+        boilingPointDegcOperaPred: str
+        biodegradationHalfLifeDays: str
+        bioconcentrationFactorTestPred: str
+        bioconcentrationFactorOperaPred: str
+        atmosphericHydroxylationRate: str
+        amesMutagenicityTestPred: str
+        pkaaOperaPred: str
+        pkabOperaPred: str
+        inchikey: str
+        wikipediaArticle: str
+
     def __str__(self):
         return self.dtxsid
 
