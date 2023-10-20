@@ -13,6 +13,7 @@ from ..assessment.api import (
     AssessmentEditViewSet,
     AssessmentLevelPermissions,
     AssessmentViewSet,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
@@ -34,13 +35,9 @@ from .actions.rob_clone import BulkRobCopyAction
 logger = logging.getLogger(__name__)
 
 
-class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
+class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     @action(
         detail=True,

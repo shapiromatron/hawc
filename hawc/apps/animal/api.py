@@ -10,11 +10,12 @@ from rest_framework.response import Response
 from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentViewSet,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import create_object_log
@@ -23,13 +24,9 @@ from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
 
 
-class AnimalAssessmentViewSet(viewsets.GenericViewSet):
+class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     model = models.Assessment
-    queryset = models.Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     def get_endpoint_queryset(self):
         perms = self.assessment.user_permissions(self.request.user)
