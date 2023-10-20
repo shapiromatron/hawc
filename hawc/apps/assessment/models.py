@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -58,81 +59,87 @@ class DSSTox(models.Model):
         ordering = ("dtxsid",)
         verbose_name = "DSSTox substance"
         verbose_name_plural = "DSSTox substances"
+        indexes = [
+            GinIndex(
+                constants.DSSTOX_SEARCH_VECTOR,
+                name="dsstox_search_idx",
+            )
+        ]
 
     class Content(PydanticModel):
-        cpdataCount: str
         id: str
-        expocatMedianPrediction: str
-        expocat: str
-        nhanes: str
-        toxvalData: str
-        waterSolubilityTest: str
+        cpdataCount: int | None
+        expocatMedianPrediction: str | None
+        expocat: bool | None
+        nhanes: bool | None
+        toxvalData: bool | None
+        waterSolubilityTest: str | None
         casrn: str
-        compoundId: str
-        genericSubstanceId: str
+        compoundId: int | None
+        genericSubstanceId: int | None
         preferredName: str
-        activeAssays: str
-        molFormula: str
-        monoisotopicMass: str
-        percentAssays: str
-        pubchemCount: str
-        pubmedCount: str
-        sourcesCount: str
-        qcLevel: str
-        qcLevelDesc: str
-        stereo: str
-        isotope: str
-        multicomponent: str
-        totalAssays: str
-        pubchemCid: str
-        relatedSubstanceCount: str
-        relatedStructureCount: str
-        hasStructureImage: str
-        iupacName: str
-        smiles: str
-        inchiString: str
-        averageMass: str
-        qcNotes: str
-        qsarReadySmiles: str
-        msReadySmiles: str
-        irisLink: str
-        pprtvLink: str
-        descriptorStringTsv: str
-        isMarkush: str
-        dtxsid: str
-        dtxcid: str
-        toxcastSelect: str
-        waterSolubilityOpera: str
-        viscosityCpCpTestPred: str
-        vaporPressureMmhgTestPred: str
-        vaporPressureMmhgOperaPred: str
-        thermalConductivity: str
-        tetrahymenaPyriformis: str
-        surfaceTension: str
-        soilAdsorptionCoefficient: str
-        oralRatLd50Mol: str
-        operaKmDaysOperaPred: str
-        octanolWaterPartition: str
-        octanolAirPartitionCoeff: str
-        meltingPointDegcTestPred: str
-        meltingPointDegcOperaPred: str
-        hrFatheadMinnow: str
-        hrDiphniaLc50: str
-        henrysLawAtm: str
-        flashPointDegcTestPred: str
-        devtoxTestPred: str
-        density: str
-        boilingPointDegcTestPred: str
-        boilingPointDegcOperaPred: str
-        biodegradationHalfLifeDays: str
-        bioconcentrationFactorTestPred: str
-        bioconcentrationFactorOperaPred: str
-        atmosphericHydroxylationRate: str
-        amesMutagenicityTestPred: str
-        pkaaOperaPred: str
-        pkabOperaPred: str
-        inchikey: str
-        wikipediaArticle: str
+        activeAssays: int | None
+        molFormula: str | None
+        monoisotopicMass: float | None
+        percentAssays: float | None
+        pubchemCount: int | None
+        pubmedCount: int | None
+        sourcesCount: int | None
+        qcLevel: int | None
+        qcLevelDesc: str | None
+        stereo: str | None
+        isotope: int | None
+        multicomponent: int | None
+        totalAssays: int | None
+        pubchemCid: int | None
+        relatedSubstanceCount: int | None
+        relatedStructureCount: int | None
+        hasStructureImage: int | None
+        iupacName: str | None
+        smiles: str | None
+        inchiString: str | None
+        averageMass: float | None
+        qcNotes: str | None
+        qsarReadySmiles: str | None
+        msReadySmiles: str | None
+        irisLink: str | None
+        pprtvLink: str | None
+        descriptorStringTsv: str | None
+        isMarkush: str | None
+        dtxsid: str | None
+        dtxcid: str | None
+        toxcastSelect: str | None
+        waterSolubilityOpera: str | None
+        viscosityCpCpTestPred: str | None
+        vaporPressureMmhgTestPred: float | None
+        vaporPressureMmhgOperaPred: float | None
+        thermalConductivity: float | None
+        tetrahymenaPyriformis: float | None
+        surfaceTension: str | None
+        soilAdsorptionCoefficient: float | None
+        oralRatLd50Mol: float | None
+        operaKmDaysOperaPred: float | None
+        octanolWaterPartition: float | None
+        octanolAirPartitionCoeff: float | None
+        meltingPointDegcTestPred: float | None
+        meltingPointDegcOperaPred: float | None
+        hrFatheadMinnow: float | None
+        hrDiphniaLc50: float | None
+        henrysLawAtm: float | None
+        flashPointDegcTestPred: float | None
+        devtoxTestPred: float | None
+        density: float | None
+        boilingPointDegcTestPred: float | None
+        boilingPointDegcOperaPred: float | None
+        biodegradationHalfLifeDays: float | None
+        bioconcentrationFactorTestPred: float | None
+        bioconcentrationFactorOperaPred: float | None
+        atmosphericHydroxylationRate: float | None
+        amesMutagenicityTestPred: float | None
+        pkaaOperaPred: str | None
+        pkabOperaPred: str | None
+        inchikey: str | None
+        wikipediaArticle: str | None
 
     def __str__(self):
         return self.dtxsid

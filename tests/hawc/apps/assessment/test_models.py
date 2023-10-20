@@ -51,3 +51,15 @@ class TestContent:
         assert cache.get(key) == "<h1>Hello Thor!</h1>"
         page.clear_cache()
         assert cache.get(key) is None
+
+
+class TestDSSTox:
+    @pytest.mark.django_db
+    def test_pydantic_model(self):
+        # test that both DSSTox objects can be parsed by the schema without errors
+        chemicals = [
+            models.DSSTox.objects.get(dtxsid="DTXSID6026296"),
+            models.DSSTox.objects.get(dtxsid="DTXSID7020970"),
+        ]
+        for chem in chemicals:
+            models.DSSTox.Content.parse_obj(chem.content)
