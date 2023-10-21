@@ -302,6 +302,7 @@ class Visual(models.Model):
         default=constants.SortOrder.SC,
     )
     prefilters = models.JSONField(default=dict)
+    image = models.ImageField(upload_to="summary/visual/images", blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

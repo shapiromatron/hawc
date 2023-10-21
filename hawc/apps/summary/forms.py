@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
@@ -150,6 +151,7 @@ class VisualForm(forms.ModelForm):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.EXPLORE_HEATMAP,
             constants.VisualType.PLOTLY,
+            constants.VisualType.IMAGE,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -581,6 +583,28 @@ class PlotlyVisualForm(VisualForm):
         return json.loads(settings)
 
 
+class ImageVisualForm(VisualForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["image"].required = True
+        self.helper = self.setHelper()
+
+    def clean_image(self):
+        image = self.cleaned_data["image"]
+        suffix = Path(image.name).suffix.lower()
+        suffixes = [".jpeg", ".jpg", ".png"]
+        if suffix not in suffixes:
+            raise forms.ValidationError(f"File extension must be one of {', '.join(suffixes)}.")
+        size_mb = image.size / 1024 / 1024
+        if size_mb < 0.1 or size_mb > 5:
+            raise forms.ValidationError("Image must be >100KB and <5 MB in size.")
+        return image
+
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "image", "caption", "published")
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -592,6 +616,7 @@ def get_visual_form(visual_type):
             constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
             constants.VisualType.PLOTLY: PlotlyVisualForm,
+            constants.VisualType.IMAGE: ImageVisualForm,
         }[visual_type]
     except Exception:
         raise ValueError()

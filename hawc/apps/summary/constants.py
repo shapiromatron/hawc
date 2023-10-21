@@ -26,6 +26,7 @@ class VisualType(models.IntegerChoices):
     EXTERNAL_SITE = 5, "embedded external website"
     EXPLORE_HEATMAP = 6, "exploratory heatmap"
     PLOTLY = 7, "plotly"
+    IMAGE = 8, "static image"
 
 
 class SortOrder(models.TextChoices):
