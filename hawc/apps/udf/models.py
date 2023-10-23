@@ -74,6 +74,9 @@ class ModelBinding(models.Model):
             prefix, form_kwargs, *args, **kwargs
         )
 
+    def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
+        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form(*args, **kwargs)
+
     def get_assessment(self):
         return self.assessment
 
