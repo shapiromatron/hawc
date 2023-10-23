@@ -28,7 +28,6 @@ def time_spent_per_model_plot(assessment_id):
         y="model",
         x="seconds",
         log_x=True,
-        title="Num references per import",
         points="outliers",
         height=600,
     )

@@ -55,7 +55,6 @@ def refs_per_import_plot(assessent_id):
         data_frame=df2,
         x="num_refs",
         log_x=True,
-        title="Num references per import",
         points="all",
         hover_name="title",
     )
@@ -87,7 +86,7 @@ def refs_by_year_plot(assessment_id):
         x="year",
         y="nyear",
         log_y=True,
-        title=f"Reference per year<br><sub>Total: {df.nyear.sum():,}   |   # Missing year: {n_null:,}</sub>",
+        title=f"<sub>Total: {df.nyear.sum():,}   |   # Missing year: {n_null:,}</sub>",
     )
     fig.layout["yaxis"].update(**update_xscale(df2.nyear.min(), df2.nyear.max()))
     return fig

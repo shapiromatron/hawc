@@ -32,7 +32,11 @@ def time_series(Model, df):
             font=dict(size=15),
         )
     else:
-        fig = px.line(df, x="date", y="n", title=Model.__name__)
+        fig = px.line(
+            df,
+            x="date",
+            y="n",
+        )
     return fig
 
 
