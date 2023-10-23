@@ -317,6 +317,21 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, list)
         assert len(response) == 3
 
+    def test_effect_tag(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        # test create
+        response = client.assessment.effect_tag_create(name="foo", slug="foo")
+        assert response == {"name": "foo", "slug": "foo"}
+
+        # test list
+        response = client.assessment.effect_tag_list()
+        assert response["count"] >= 3
+
+        response = client.assessment.effect_tag_list(name="foo")
+        assert response["count"] == 1
+        assert response["results"] == [{"name": "foo", "slug": "foo"}]
+
     ###################
     # EpiClient tests #
     ###################
