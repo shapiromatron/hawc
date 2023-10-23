@@ -1,5 +1,6 @@
 import django_filters as df
 from django import forms
+from django.contrib.postgres.search import SearchQuery
 from django.db.models import Q
 from django.urls import reverse
 
@@ -12,7 +13,7 @@ from ..common.filterset import (
 from ..common.helper import new_window_a
 from ..myuser.models import HAWCUser
 from . import models
-from .constants import PublishedStatus
+from .constants import DSSTOX_SEARCH_VECTOR, PublishedStatus
 
 
 class AssessmentFilterSet(BaseFilterSet):
@@ -83,14 +84,11 @@ class GlobalChemicalsFilterSet(df.FilterSet):
     public_only = df.BooleanFilter(method="filter_public_only")  # public_only=true/false
 
     def filter_query(self, queryset, name, value):
-        query = (
-            Q(name__icontains=value)
-            | Q(cas=value)
-            | Q(dtxsids__dtxsid=value)
-            | Q(dtxsids__content__preferredName__icontains=value)
-            | Q(dtxsids__content__casrn=value)
+        return (
+            queryset.annotate(search=DSSTOX_SEARCH_VECTOR)
+            .filter(search=SearchQuery(value, search_type="websearch", config="english"))
+            .distinct()
         )
-        return queryset.filter(query).distinct()
 
     def filter_public_only(self, queryset, name, value):
         if value is True:
