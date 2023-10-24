@@ -197,6 +197,14 @@ class VisualForm(forms.ModelForm):
         validators.validate_hyperlinks(caption)
         return validators.clean_html(caption)
 
+    def clean_evidence_type(self):
+        visual_type = self.cleaned_data["visual_type"]
+        evidence_type = self.cleaned_data["evidence_type"]
+        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
+            raise forms.ValidationError(
+                f"Invalid evidence type {evidence_type} for visual {visual_type}."
+            )
+
 
 class VisualModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
