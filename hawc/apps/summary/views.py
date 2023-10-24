@@ -432,7 +432,9 @@ class VisualizationCreate(BaseCreate):
         study_type = self.kwargs.get("study_type")
         kwargs["visual_type"] = visual_type
         kwargs["evidence_type"] = (
-            study_type if study_type is not None else constants.default_evidence_type(visual_type)
+            study_type
+            if study_type is not None
+            else constants.get_default_evidence_type(visual_type)
         )
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
@@ -505,7 +507,7 @@ class RenameFoobar(View):
         study_type = self.kwargs.get("study_type")
         if study_type is None:
             try:
-                study_type = constants.default_evidence_type(visual_type)
+                study_type = constants.get_default_evidence_type(visual_type)
             except ValueError:
                 # return evidence type selector
                 view = VisualizationCreate2()

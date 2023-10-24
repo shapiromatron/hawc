@@ -32,7 +32,7 @@ VISUAL_EVIDENCE_CHOICES = {
     VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
     VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},
     VisualType.ROB_HEATMAP: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
-    VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
+    VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI},
     VisualType.LITERATURE_TAGTREE: {StudyType.OTHER},
     VisualType.EXTERNAL_SITE: {StudyType.OTHER},
     VisualType.EXPLORE_HEATMAP: {StudyType.OTHER},
@@ -40,7 +40,7 @@ VISUAL_EVIDENCE_CHOICES = {
 }
 
 
-def default_evidence_type(visual_type: VisualType):
+def get_default_evidence_type(visual_type: VisualType):
     choices = VISUAL_EVIDENCE_CHOICES[visual_type]
     if len(choices) > 1:
         raise ValueError(

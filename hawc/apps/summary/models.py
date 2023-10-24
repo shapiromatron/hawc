@@ -282,9 +282,7 @@ class Visual(models.Model):
     )
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
-    evidence_type = models.PositiveSmallIntegerField(
-        choices=constants.StudyType.choices, default=constants.StudyType.BIOASSAY
-    )
+    evidence_type = models.PositiveSmallIntegerField(choices=constants.StudyType.choices)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
