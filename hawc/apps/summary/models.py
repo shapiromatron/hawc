@@ -454,7 +454,7 @@ class Visual(models.Model):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_filterset_class(self):
-        return prefilters.VisualTypePrefilter.from_visual_type(self.visual_type).value
+        return prefilters.get_prefilter_cls(self.visual_type, self.evidence_type, self.assessment)
 
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
@@ -809,9 +809,7 @@ class DataPivotQuery(DataPivot):
         return exporter
 
     def get_filterset_class(self):
-        return prefilters.StudyTypePrefilter.from_study_type(
-            self.evidence_type, self.assessment
-        ).value
+        return prefilters.get_prefilter_cls(None, self.evidence_type, self.assessment)
 
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)

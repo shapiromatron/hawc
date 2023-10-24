@@ -8,7 +8,7 @@ from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import RedirectView, TemplateView, View
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -428,7 +428,12 @@ class VisualizationCreate(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["visual_type"] = int(self.kwargs.get("visual_type"))
+        visual_type = self.kwargs.get("visual_type")
+        study_type = self.kwargs.get("study_type")
+        kwargs["visual_type"] = visual_type
+        kwargs["evidence_type"] = (
+            study_type if study_type is not None else constants.default_evidence_type(visual_type)
+        )
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
             kwargs["instance"].pk = None
@@ -471,6 +476,46 @@ class VisualizationCreate(BaseCreate):
         instance = context["form"].instance
         instance.id = instance.FAKE_INITIAL_ID
         return serializers.VisualSerializer().to_representation(instance)
+
+
+class VisualizationCreate2(BaseDetail):
+    model = Assessment
+    template_name = "summary/visual_evidence_selector.html"
+    breadcrumb_active_name = "Visualization selector"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        visual_type = constants.VisualType(self.kwargs["visual_type"])
+        context["visual_type"] = visual_type
+        context["study_types"] = constants.VISUAL_EVIDENCE_CHOICES[visual_type]
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
+
+
+class RenameFoobar(View):
+    def dispatch(self, *args, **kwargs):
+        visual_type = self.kwargs.get("visual_type")
+        try:
+            constants.VisualType(visual_type)
+        except ValueError:
+            raise Http404
+        study_type = self.kwargs.get("study_type")
+        if study_type is None:
+            try:
+                study_type = constants.default_evidence_type(visual_type)
+            except ValueError:
+                # return evidence type selector
+                view = VisualizationCreate2()
+                view.setup(*args, **kwargs)
+                return view.dispatch(*args, **kwargs)
+        if study_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
+            raise Http404
+        view = VisualizationCreate()
+        view.setup(*args, **kwargs)
+        return view.dispatch(*args, **kwargs)
 
 
 class VisualizationCreateTester(VisualizationCreate):
@@ -637,10 +682,10 @@ class DataPivotQueryNew(DataPivotNew):
     form_class = forms.DataPivotQueryForm
     template_name = "summary/datapivot_form.html"
 
-    def get_evidence_type(self) -> prefilters.StudyType:
+    def get_evidence_type(self) -> constants.StudyType:
         try:
             evidence_type = constants.StudyType(self.kwargs["study_type"])
-            _ = prefilters.StudyTypePrefilter.from_study_type(evidence_type, self.assessment).value
+            _ = prefilters.get_prefilter_cls(None, evidence_type, self.assessment)
         except (KeyError, ValueError):
             raise Http404
         return evidence_type

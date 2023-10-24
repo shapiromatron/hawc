@@ -281,9 +281,9 @@ class CrossviewForm(VisualForm):
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
-        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
-            constants.VisualType.BIOASSAY_CROSSVIEW
-        ).value
+        self.prefilter_cls = prefilters.get_prefilter_cls(
+            self.instance.visual_type, self.instance.evidence_type, self.instance.assessment
+        )
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
@@ -306,9 +306,9 @@ class RoBForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
-            constants.VisualType.ROB_BARCHART
-        ).value
+        self.prefilter_cls = prefilters.get_prefilter_cls(
+            self.instance.visual_type, self.instance.evidence_type, self.instance.assessment
+        )
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
@@ -727,9 +727,9 @@ class DataPivotQueryForm(DataPivotForm):
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
 
-        self.prefilter_cls = prefilters.StudyTypePrefilter.from_study_type(
-            self.instance.evidence_type, self.instance.assessment
-        ).value
+        self.prefilter_cls = prefilters.get_prefilter_cls(
+            None, self.instance.evidence_type, self.instance.assessment
+        )
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )

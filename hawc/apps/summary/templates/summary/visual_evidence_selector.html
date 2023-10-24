@@ -1,0 +1,11 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <h2>Select evidence type for {{visual_type.label}}</h2>
+  {% for study_type in study_types %}
+  <a href="{% url 'summary:visualization_create2' assessment.pk visual_type.value study_type.value %}">{{study_type.label}}</a>
+  {% endfor %}
+</div>
+{% endblock %}
+
