@@ -12,6 +12,7 @@ from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaBu
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
 from ..assessment.models import Assessment
+from ..lit.models import ReferenceFilterTag
 from . import constants, models
 
 
@@ -126,7 +127,7 @@ class TagBindingForm(forms.ModelForm):
             self.fields["assessment"].initial = self.assessment
             self.instance.assessment = self.assessment
             self.instance.creator = user
-        qs = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
+        qs = ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
         self.fields["tag"].queryset = qs
         self.fields["tag"].choices = [(el.id, el.get_nested_name()) for el in qs]
 

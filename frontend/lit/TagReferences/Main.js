@@ -53,7 +53,12 @@ ReferenceListItem.propTypes = {
 class ReferenceUDF extends Component {
     render() {
         const {currentUDF, intitialValues} = this.props;
-        return <div dangerouslySetInnerHTML={{__html: currentUDF}} />;
+        return (
+            <div>
+                <br/>
+                <div dangerouslySetInnerHTML={{__html: currentUDF}} />
+            </div>
+        );
     }
 }
 

@@ -432,6 +432,12 @@ class EndpointForm(ModelForm):
 
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
+        if assessment is None:
+            assessment = self.instance.get_assessment()
+        udf = assessment.get_model_udf(self.Meta.model, label="User defined fields")
+        if udf:
+            self.fields["udf"] = udf
+
     @property
     def helper(self):
         vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
