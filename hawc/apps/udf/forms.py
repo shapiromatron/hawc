@@ -54,20 +54,7 @@ class UDFForm(forms.ModelForm):
             cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
         ]
         legend_text = "Update a custom form" if self.instance.id else "Create a custom form"
-        helper = BaseFormHelper(self)
-        helper.layout = cfl.Layout(
-            cfl.HTML(f"<legend>{legend_text}</legend>"),
-            cfl.Row("name", "description"),
-            cfl.Row(
-                "schema",
-                cfl.Fieldset(
-                    "Form Preview", cfl.Div(css_id="schema-preview-frame"), css_class="col-md-6"
-                ),
-            ),
-            "editors",
-            "deprecated" if self.instance.id else None,
-            cfb.FormActions(*form_actions, css_class="form-actions"),
-        )
+        helper = BaseFormHelper(self, legend_text=legend_text, form_actions=form_actions)
         return helper
 
 
