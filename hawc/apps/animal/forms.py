@@ -602,10 +602,10 @@ class EndpointForm(ModelForm):
             content_type = ContentType.objects.get_for_model(self.Meta.model)
             model_binding = instance.assessment.udf_bindings.get(content_type=content_type)
             ModelUDFContent.objects.update_or_create(
+                defaults=dict(content=udf),
                 model_binding=model_binding,
                 content_type=content_type,
                 object_id=instance.id,
-                content=udf,
             )
         return instance
 
