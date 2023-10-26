@@ -42,32 +42,34 @@ class TestDashboard:
     def test_htmx_get(self):
         pm_client = get_client("pm")
         admin_client = get_client("admin")
-        urls = [
-            "admin_dashboard_growth",
-            "admin_dashboard_users",
-            "admin_dashboard_assessments",
-            "admin_dashboard_assessment_profile",
-            "admin_dashboard_assessment_size",
-            "admin_dashboard_changes",
+        actions = [
+            "assessment_size",
+            "assessment_growth",
+            "assessment_profile",
+            "growth",
+            "users",
+            "daily_changes",
         ]
-        for url in urls:
-            resp = pm_client.get(reverse(url))
+        for action in actions:
+            url = reverse("admin_dashboard") + f"?action={action}"
+            resp = pm_client.get(url)
             check_admin_login_redirect(resp)
-            resp = admin_client.get(reverse(url))
+            resp = admin_client.get(url)
             assert resp.status_code == 400
-            resp = admin_client.get(reverse(url), HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url, HTTP_HX_REQUEST="true")
             assert resp.status_code == 200
 
     def test_htmx_post(self):
         admin_client = get_client("admin")
         requests = [
-            ("admin_dashboard_growth", {"assessment_id": 1, "grouper": "W"}),
-            ("admin_dashboard_assessment_profile", {"model": "assessment", "grouper": "year"}),
+            ("?action=growth", {"assessment_id": 1, "grouper": "W"}),
+            ("?action=assessment_profile", {"model": "assessment", "grouper": "year"}),
         ]
-        for url, data in requests:
-            resp = admin_client.get(reverse(url), HTTP_HX_REQUEST="true")
+        for extra, data in requests:
+            url = reverse("admin_dashboard") + extra
+            resp = admin_client.get(url, HTTP_HX_REQUEST="true")
             assert resp.status_code == 200
-            resp = admin_client.post(reverse(url), data=data, HTTP_HX_REQUEST="true")
+            resp = admin_client.post(url, data=data, HTTP_HX_REQUEST="true")
             assert resp.status_code == 200
 
 
