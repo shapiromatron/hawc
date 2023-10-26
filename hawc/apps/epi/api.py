@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework import mixins, status, viewsets
@@ -18,7 +16,7 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.api import ReadWriteSerializerMixin
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from . import exports, models, serializers
@@ -75,10 +73,10 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-epi-study-heatmap-pub-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+        df = cacheable(
+            lambda: models.Result.heatmap_study_df(self.assessment, published_only=not unpublished),
+            key,
+        )
         return FlatExport.api_response(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
 
     @action(
@@ -101,10 +99,10 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-epi-result-heatmap-pub-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Result.heatmap_df(self.assessment.id, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+        df = cacheable(
+            lambda: models.Result.heatmap_df(self.assessment.id, published_only=not unpublished),
+            key,
+        )
         return FlatExport.api_response(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
 
 

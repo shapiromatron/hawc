@@ -2,8 +2,6 @@ from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.express as px
-from django.conf import settings
-from django.core.cache import cache
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, mixins, permissions, status, viewsets
@@ -20,7 +18,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport, cacheable, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
@@ -266,10 +264,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         """
         instance = self.get_object()
         key = f"assessment-{instance.id}-lit-tag-heatmap"
-        df = cache.get(key)
-        if df is None:
-            df = models.Reference.objects.heatmap_dataframe(instance.id)
-            cache.set(key, df, settings.CACHE_1_HR)
+        df = cacheable(lambda: models.Reference.objects.heatmap_dataframe(instance.id), key)
         return FlatExport.api_response(df=df, filename=f"df-{instance.id}")
 
     @transaction.atomic
