@@ -11,6 +11,7 @@ from ..common.filterset import (
 )
 from ..common.helper import new_window_a
 from ..myuser.models import HAWCUser
+from . import models
 from .constants import PublishedStatus
 
 
