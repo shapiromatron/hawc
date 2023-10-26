@@ -124,3 +124,17 @@ def add_class(value, css_class):
     else:
         return mark_safe(string.replace(">", f' class="{css_class}">'))
     return value
+
+
+@register.simple_tag
+def analytics_card(value, label):
+    return mark_safe(
+        f"""
+        <div class="card box-shadow">
+            <div class="card-body">
+                <h2 class="m-0 mt-1">{ value }</h2>
+                <p class="small">{ label }</p>
+            </div>
+        </div>
+        """
+    )

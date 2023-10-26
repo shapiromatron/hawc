@@ -1,153 +1,84 @@
 {% block content %}
 <div class="mt-4" style="border-bottom: 1px solid lightgray;">
-    <h4>Literature Screening Growth</h4>
+    <h3>Literature Screening Growth</h3>
     <div class="card-columns">
+        {% analytics_card value=n label='total searches' %}
         <div class="card box-shadow">
             <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ n }}</p>
-                <p class="small">total searches</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Searches by type</h5>
+                <h4 class="card-title">Reference source types</h4>
                 {% for type in search_types %}
                     {% if type.search_type == 'i' %}
-                    <p class="h3 m-0 mt-1">{{ type.total }}</p>
-                    <p class="small">Import</p>
+                    <h2 class="m-0 mt-1">{{ type.total }}</h2>
+                    <p class="small">Imported from PubMed/HERO</p>
                     {% elif type.search_type == 's' %}
-                    <p class="h3 m-0 mt-1">{{ type.total }}</p>
+                    <h2 class="m-0 mt-1">{{ type.total }}</h2>
                     <p class="small">Search</p>
                     {% endif %}
                 {% endfor %}
             </div>
         </div>
+        {% analytics_card value=animal_counts.studies label='total studies' %}
+        {% analytics_card value=total_n_refs label='total references' %}
         <div class="card box-shadow">
             <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ total_n_refs }}</p>
-                <p class="small">total references</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Reference tags breakdown</h5>
-                <p class="h3 m-0 mt-1">{{ ref_tags_breakdown.total_tags_applied }}</p>
+                <h4 class="card-title">Reference tags breakdown</h4>
+                <h2 class="m-0 mt-1">{{ ref_tags_breakdown.total_tags_applied }}</h2>
                 <p class="small">total tags applied</p>
-                <p class="h3 m-0 mt-1">{{ ref_tags_breakdown.with_tags }}</p>
+                <h2 class="m-0 mt-1">{{ ref_tags_breakdown.with_tags }}</h2>
                 <p class="small">references with tags</p>
-                <p class="h3 m-0 mt-1">{{ ref_tags_breakdown.no_tags }}</p>
+                <h2 class="m-0 mt-1">{{ ref_tags_breakdown.no_tags }}</h2>
                 <p class="small">references with no tags</p>
             </div>
         </div>
     </div>
     <div class="card-columns">
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title text-center">Number of references per import</h5>
-                <div>{% plotly refs_per_import_plot event="htmx" %}</div>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title text-center">References by publication year</h5>
-                <div>{% plotly refs_by_year_plot event="htmx" %}</div>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title text-center">References and tags plot</h5>
-                <div>{% plotly refs_tags_plot event="htmx" %}</div>
-            </div>
-        </div>
+        {% include 'common/analytics_plot.html' with title='Number of references per import' plot=refs_per_import_plot caption='Box plot displaying the number of references per import' %}
+        {% include 'common/analytics_plot.html' with title='References by publication year' plot=refs_by_year_plot %}
+        {% include 'common/analytics_plot.html' with title='References and tags plot' plot=refs_tags_plot %}
     </div>
 </div>
 
 
 <div class="mt-4" style="border-bottom: 1px solid lightgray;">
-    <h4>Study Growth</h4>
+    <h3>Study Growth</h3>
         <div class="card-columns">
+            {% analytics_card value=study_types.total label='total studies' %}
             <div class="card box-shadow">
                 <div class="card-body">
-                    <p class="h3 m-0 mt-1">{{ study_types.total }}</p>
-                    <p class="small">total studies</p>
-                </div>
-            </div>
-            <div class="card box-shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Published breakdown</h5>
-                    <p class="h3 m-0 mt-1">{{ study_types.published }}</p>
+                    <h4 class="card-title">Published breakdown</h4>
+                    <h2 class="m-0 mt-1">{{ study_types.published }}</h2>
                     <p class="small">published studies</p>
-                    <p class="h3 m-0 mt-1">{{ study_types.unpublished }}</p>
+                    <h2 class="m-0 mt-1">{{ study_types.unpublished }}</h2>
                     <p class="small">unpublished studies</p>
                 </div>
             </div>
             <div class="card box-shadow">
                 <div class="card-body">
-                    <h5 class="card-title">Study type breakdown</h5>
-                    <p class="h3 m-0 mt-1">{{ study_types.animal }}</p>
+                    <h4 class="card-title">Study type breakdown</h4>
+                    <h2 class="m-0 mt-1">{{ study_types.animal }}</h2>
                     <p class="small">animal studies</p>
-                    <p class="h3 m-0 mt-1">{{ study_types.epi }}</p>
+                    <h2 class="m-0 mt-1">{{ study_types.epi }}</h2>
                     <p class="small">epi studies</p>
-                    <p class="h3 m-0 mt-1">{{ study_types.epiv2 }}</p>
+                    <h2 class="m-0 mt-1">{{ study_types.epiv2 }}</h2>
                     <p class="small">epiv2 studies</p>
-                    <p class="h3 m-0 mt-1">{{ study_types.rob }}</p>
+                    <h2 class="m-0 mt-1">{{ study_types.rob }}</h2>
                     <p class="small">risk of bias studies</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="mt-4">
-    <h4>Animal Group Growth</h4>
+<div class="mt-4" style="border-bottom: 1px solid lightgray;">
+    <h3>Animal Group Growth</h3>
     <div class="card-columns">
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ animal_counts.studies }}</p>
-                <p class="small">total studies</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ animal_counts.experiments }}</p>
-                <p class="small">total experiments</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ animal_counts.animal_groups }}</p>
-                <p class="small">total animal groups</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ animal_counts.endpoints }}</p>
-                <p class="small">total endpoints</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ n_endpoints_extracted }}</p>
-                <p class="small">endpoints with data extracted</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ n_endpoints_ehv }}</p>
-                <p class="small">endpoints using Environmental Health Vocabulary (EHV)</p>
-            </div>
-        </div>
-        <div class="card box-shadow">
-            <div class="card-body">
-                <p class="h3 m-0 mt-1">{{ n_dose_res_groups }}</p>
-                <p class="small">total dose response groups</p>
-            </div>
-        </div>
+        {% analytics_card value=animal_counts.studies label='total studies' %}
+        {% analytics_card value=animal_counts.experiments label='total experiments' %}
+        {% analytics_card value=animal_counts.animal_groups label='total animal groups' %}
+        {% analytics_card value=animal_counts.endpoints label='total endpoints' %}
+        {% analytics_card value=n_endpoints_extracted label='endpoints with data extracted' %}
+        {% analytics_card value=n_endpoints_ehv label='endpoints using Environmental Health Vocabulary (EHV)' %}
+        {% analytics_card value=n_dose_res_groups label='total dose response groups' %}
     </div>
-    <div class="card box-shadow">
-        <div class="card-body">
-            <h5 class="card-title text-center">Number of experiment types</h5>
-            <div>{% plotly experiment_type_plot event="htmx" %}</div>
-        </div>
-    </div>
+    {% include 'common/analytics_plot.html' with title='Number of experiment types' plot=experiment_type_plot %}
 </div>
 {% endblock %}

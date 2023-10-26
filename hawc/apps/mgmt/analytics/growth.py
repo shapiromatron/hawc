@@ -16,7 +16,8 @@ def get_search_count(assessment_id):
     return Search.objects.filter(assessment_id=assessment_id).count()
 
 
-def get_search_types(assessment_id):
+# TODO filter further for import type (e.g., Pubmed, HERO, etc.)
+def get_search_source(assessment_id):
     return (
         Search.objects.filter(assessment_id=assessment_id)
         .values("search_type")
@@ -263,7 +264,7 @@ def get_context_data(id: int) -> dict:
     context = {}
     # literature screening
     context["n"] = get_search_count(id)
-    context["search_types"] = get_search_types(id)
+    context["search_types"] = get_search_source(id)
     context["total_n_refs"] = total_n_refs(id)
     context["refs_per_import_plot"] = refs_per_import_plot(id)
     context["refs_by_year_plot"] = refs_by_year_plot(id)

@@ -1,16 +1,6 @@
 {% block content %}
-<div class="card-columns">
-    <div class="card box-shadow">
-        <div class="card-body">
-            <p class="h3 m-0 mt-1">{{ total_time_spent }}</p>
-            <p class="small">spent on assessment</p>
-        </div>
+    <div class="card-columns">
+        {% analytics_card value=total_time_spent label='spent on assessment' %}
     </div>
-</div>
-<div class="card box-shadow">
-    <div class="card-body">
-        <h5 class="card-title">Time spent per model</h5>
-        <div>{% plotly time_spent_per_model_plot event="htmx" %}</div>
-    </div>
-</div>
+    {% include 'common/analytics_plot.html' with title='Time spent per model' plot=time_spent_per_model_plot %}
 {% endblock %}
