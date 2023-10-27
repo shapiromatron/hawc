@@ -5,8 +5,9 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from django import forms
 from django.forms.widgets import RadioSelect
+from django.urls import reverse
 
-from . import autocomplete, validators, widgets
+from . import validators, widgets
 from .helper import PydanticToDjangoError
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
@@ -143,6 +144,35 @@ class BaseFormHelper(cf.FormHelper):
             "<div class='alert alert-info'><b>Note:</b> If coming from an extraction form, you may need to refresh the extraction form to use the item which was recently created.</div>"
         )
         self.layout.insert(len(self.layout) - 1, note)
+
+
+class CopyForm(forms.Form):
+    legend_text: str
+    help_text: str
+    create_url_pattern: str
+    selector: forms.ModelChoiceField
+
+    def __init__(self, *args, **kwargs):
+        self.parent = kwargs.pop("parent")
+        super().__init__(*args, **kwargs)
+
+    def get_success_url(self) -> str:
+        item = self.cleaned_data["selector"]
+        url = reverse(self.create_url_pattern, args=(self.parent.id,))
+        return f"{url}?initial={item.id}"
+
+    def get_cancel_url(self) -> str:
+        return self.parent.get_absolute_url()
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text=self.legend_text,
+            help_text=self.help_text,
+            cancel_url=self.get_cancel_url(),
+            submit_text="Copy selected",
+        )
 
 
 class InlineFilterFormHelper(BaseFormHelper):
@@ -282,30 +312,6 @@ class FilterFormField(cfl.Field):
             expandable=self.expandable,
         )
         return super().render(form, context, extra_context=extra_context, **kw)
-
-
-class CopyAsNewSelectorForm(forms.Form):
-    label = None
-    parent_field = None
-    autocomplete_class = None
-
-    def __init__(self, *args, **kwargs):
-        parent_id = kwargs.pop("parent_id")
-        super().__init__(*args, **kwargs)
-        self.setupSelector(parent_id)
-
-    @property
-    def helper(self):
-        return BaseFormHelper(self)
-
-    def setupSelector(self, parent_id):
-        filters = {self.parent_field: parent_id}
-        fld = autocomplete.AutocompleteChoiceField(
-            autocomplete_class=self.autocomplete_class, filters=filters, label=self.label
-        )
-        fld.widget.forward = ["search_fields", "order_by", "order_direction"]
-        fld.widget.attrs["class"] = "col-md-10"
-        self.fields["selector"] = fld
 
 
 def form_error_list_to_lis(form):
