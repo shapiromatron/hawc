@@ -10272,7 +10272,7 @@
 - model: udf.ModelBinding
   pk: 1
   fields:
-    assessment: 1
+    assessment: 2
     content_type:
     - animal
     - endpoint
