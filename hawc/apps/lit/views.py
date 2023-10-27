@@ -15,6 +15,7 @@ from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, tryParseInt
 from ..common.views import (
+    BaseCopyForm,
     BaseCreate,
     BaseDelete,
     BaseDetail,
@@ -74,30 +75,22 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchCopyAsNewSelector(BaseUpdate):
-    """
-    Select an existing search and copy-as-new
-    """
-
+class SearchCopyForm(BaseCopyForm):
+    copy_model = models.Search
+    form_class = forms.SearchCopyForm
     model = Assessment
-    template_name = "lit/search_copy_selector.html"
-    form_class = forms.SearchSelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user)
+        return kw
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"] = lit_overview_crumbs(
-            self.request.user, self.assessment, "Copy literature search or import"
+            self.request.user, self.assessment, "Copy search/import"
         )
         return context
-
-    def get_form_kwargs(self):
-        kw = super().get_form_kwargs()
-        kw.update(user=self.request.user, assessment=self.assessment)
-        return kw
-
-    def form_valid(self, form):
-        return HttpResponseRedirect(form.get_success_url())
 
 
 class SearchNew(BaseCreate):
@@ -931,9 +924,10 @@ class TagsCopy(BaseUpdate):
         return context
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        kw.pop("instance")
+        return kw
 
     @transaction.atomic
     def form_valid(self, form):
