@@ -11,12 +11,14 @@ class EhvBrowse(TemplateView):
 
     def _get_config(self) -> str:
         # get EHV in json; use cache if possible
-        data = WebappConfig(
-            app="animalStartup",
-            page="ehvBrowserStartup",
-            data={"data": models.Term.ehv_dataframe().to_csv(index=False)},
-        ).json()
-        return cacheable(lambda: data, "ehv-dataframe-json", cache_duration=settings.CACHE_10_MIN)
+        def get_app_config() -> str:
+            return WebappConfig(
+                app="animalStartup",
+                page="ehvBrowserStartup",
+                data={"data": models.Term.ehv_dataframe().to_csv(index=False)},
+            ).json()
+
+        return cacheable(get_app_config, "ehv-dataframe-json", cache_duration=settings.CACHE_10_MIN)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
