@@ -1,19 +1,12 @@
 {% if object %}
+{% load bs4 %}
 <h3>User defined fields</h3>
-<table class="table table-sm m-0 noborder">
-    <colgroup>
-        <col width="30%" />
-        <col width="70%" />
-    </colgroup>
-    <thead>
-        <tr class="tr-light list-border">
-            <th>Field</th>
-            <th>Value</th>
-        </tr>
-    </thead>
+<table class="table table-sm table-striped">
+    {% bs4_colgroup '30,70' %}
+    {% bs4_thead 'Field, Value' %}
     <tbody>
         {% for key, value in object.get_content_as_list %}
-        <tr class="tr-light">
+        <tr>
             <td>{{key}}</td>
             <td>{{value}}</td>
         </tr>
