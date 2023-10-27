@@ -10,10 +10,6 @@ class ResultGroup {
         this.group = new Group(data.group);
     }
 
-    show_group_tooltip(e) {
-        this.group.show_tooltip(e);
-    }
-
     estimateNumeric() {
         return _.isNumber(this.data.estimate);
     }
@@ -51,9 +47,10 @@ class ResultGroup {
                 `Main finding as selected by HAWC assessment authors (${this.data.main_finding_support}).`,
             ]);
         }
-        return $('<a href="#">')
-            .on("click", this.group.show_tooltip.bind(this.group))
-            .html(txt);
+        return $("<a>")
+            .attr("href", this.group.url())
+            .text(txt)
+            .popover(this.group.popover());
     }
 
     build_tr(fn, cols) {
