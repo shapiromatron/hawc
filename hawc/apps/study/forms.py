@@ -59,7 +59,7 @@ class BaseStudyForm(forms.ModelForm):
             except ModelUDFContent.DoesNotExist:
                 initial = None
 
-            udf = self.model_binding.form_instance(label="User defined fields", initial=initial)
+            udf = self.model_binding.form_field(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
 
         if self.instance:
