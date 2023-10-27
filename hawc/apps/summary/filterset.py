@@ -35,7 +35,7 @@ class VisualFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
+        return queryset.filter(query).order_by("id")
 
     def get_type_choices(self):
         choices = (
@@ -119,7 +119,7 @@ class SummaryTableFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
+        return queryset.filter(query).order_by("id")
 
     def create_form(self):
         form = super().create_form()
