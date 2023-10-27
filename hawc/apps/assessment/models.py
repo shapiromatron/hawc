@@ -315,7 +315,7 @@ class Assessment(models.Model):
     def get_udf_list_url(self):
         return reverse("udf:binding-list", args=(self.id,))
 
-    def get_model_udf(self, model: type[models.Model] | models.Model, *args, **kwargs):
+    def get_model_binding(self, model: type[models.Model] | models.Model):
         """Get the form instance from this assessment's UDF for the given model class/instance.
 
         Args:
@@ -324,7 +324,7 @@ class Assessment(models.Model):
         """
         content_type = ContentType.objects.get_for_model(model)
         try:
-            return self.udf_bindings.get(content_type=content_type).form_instance(*args, **kwargs)
+            return self.udf_bindings.get(content_type=content_type)
         except ObjectDoesNotExist:
             return None
 

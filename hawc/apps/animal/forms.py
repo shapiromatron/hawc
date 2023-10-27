@@ -435,17 +435,18 @@ class EndpointForm(ModelForm):
 
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
-        # TODO: tidy up queries in init and save
+        # User Defined Form
         if assessment is None:
             assessment = self.instance.get_assessment()
-        try:
-            content = self.instance.udf_content.first().content
-        except Exception:
-            content = None
-        udf = assessment.get_model_udf(
-            self.Meta.model, label="User defined fields", initial=content
-        )
-        if udf:
+        self.model_binding = assessment.get_model_binding(self.Meta.model)
+        if self.model_binding:
+            try:
+                udf_content = self.model_binding.saved_contents.get(object_id=self.instance.id)
+                initial = udf_content.content
+            except ModelUDFContent.DoesNotExist:
+                initial = None
+
+            udf = self.model_binding.form_instance(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
 
     @property
@@ -596,15 +597,11 @@ class EndpointForm(ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=commit)
-        udf = self.cleaned_data.pop("udf", None)
-        if udf:
-            # TODO: clean up these queries
-            content_type = ContentType.objects.get_for_model(self.Meta.model)
-            model_binding = instance.assessment.udf_bindings.get(content_type=content_type)
+        if commit and "udf" in self.changed_data:
             ModelUDFContent.objects.update_or_create(
-                defaults=dict(content=udf),
-                model_binding=model_binding,
-                content_type=content_type,
+                defaults=dict(content=self.cleaned_data["udf"]),
+                model_binding=self.model_binding,
+                content_type=self.model_binding.content_type,
                 object_id=instance.id,
             )
         return instance

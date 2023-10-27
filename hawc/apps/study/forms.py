@@ -3,6 +3,8 @@ from django import forms
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
+from hawc.apps.udf.models import ModelUDFContent
+
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from ..lit.constants import ReferenceDatabase
@@ -46,16 +48,25 @@ class BaseStudyForm(forms.ModelForm):
             self.instance.assessment = parent
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
+
+        # User Definied Form
         assessment = self.instance.get_assessment()
-        udf = assessment.get_model_udf(self.Meta.model, label="User defined fields")
-        if udf:
+        self.model_binding = assessment.get_model_binding(self.Meta.model)
+        if self.model_binding:
+            try:
+                udf_content = self.model_binding.saved_contents.get(object_id=self.instance.id)
+                initial = udf_content.content
+            except ModelUDFContent.DoesNotExist:
+                initial = None
+
+            udf = self.model_binding.form_instance(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
+
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
         self.helper = self.setHelper()
 
-    # TODO: For some reason, form actions div is being 'pushed' outside the form tag
     def setHelper(self, inputs: dict | None = None):
         if inputs is None:
             inputs = {}
@@ -97,6 +108,13 @@ class BaseStudyForm(forms.ModelForm):
         instance = super().save(commit=commit)
         if commit and "internal_communications" in self.changed_data:
             instance.set_communications(self.cleaned_data["internal_communications"])
+        if commit and "udf" in self.changed_data:
+            ModelUDFContent.objects.update_or_create(
+                defaults=dict(content=self.cleaned_data["udf"]),
+                model_binding=self.model_binding,
+                content_type=self.model_binding.content_type,
+                object_id=instance.id,
+            )
         return instance
 
 
