@@ -831,7 +831,7 @@ class TestClient(LiveServerTestCase, TestCase):
         epi_client = client.epiv2
 
         metadata = epi_client.metadata()
-        assert type(metadata) is dict
+        assert isinstance(metadata, dict)
 
         # spotcheck a few items in the returned metadata
         things_to_check = [

@@ -191,15 +191,6 @@ input[type='number'] {
     background-color: #cccccc
 }
 
-/* Tooltips */
-.hawcTooltip {
-    position: absolute !important;
-    border: 3px solid gray;
-    border-radius: 8px;
-    overflow: auto;
-    z-index: 1150;
-}
-
 /* About-us page */
 .videoTab iframe {
     border: 2px black solid;
