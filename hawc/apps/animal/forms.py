@@ -3,7 +3,6 @@ from collections import Counter
 
 from crispy_forms import layout as cfl
 from django import forms
-from django.contrib.contenttypes.models import ContentType
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
