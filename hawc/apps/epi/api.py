@@ -224,7 +224,7 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 fixed = []
                 for el in data_probe:
-                    if type(el) is str:
+                    if isinstance(el, str):
                         try:
                             criteria = models.Criteria.objects.get(
                                 description=el, assessment_id=assessment_id
@@ -464,7 +464,7 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 fixed = []
                 for el in data_probe:
-                    if type(el) is str:
+                    if isinstance(el, str):
                         try:
                             adj_factor = models.AdjustmentFactor.objects.get(
                                 description=el, assessment_id=assessment_id

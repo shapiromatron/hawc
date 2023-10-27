@@ -1,42 +1,42 @@
 # web application
-Django~=4.2.3
+Django~=4.2.6
 django-crispy-forms==1.14.0
-django-filter==23.2
-django-redis==5.3.0
-django-reversion==5.0.4
+django-filter==23.3
+django-redis==5.4.0
+django-reversion==5.0.6
 django-autocomplete-light==3.9.7
 django-taggit==4.0.0
 django-treebeard==4.7
 django-webpack-loader==2.0.1
 djangorestframework==3.14.0
   uritemplate==4.1.1  # schema dependencies
-  pyyaml==6.0       # schema dependencies
+  pyyaml==6.0.1       # schema dependencies
 gunicorn==21.2.0
 
 # tasks
-celery==5.3.1
+celery==5.3.4
   billiard==4.1.0
-  kombu==5.3.1
+  kombu==5.3.2
 
 # utilities
-jsonschema==4.4.0
-lxml==4.9.2
-psycopg2-binary==2.9.6
-redis==4.6.0
+jsonschema==4.19.1
+lxml==4.9.3
+psycopg2-binary==2.9.9
+redis==5.0.1
 requests==2.31.0
   urllib3<2
-pydantic==1.9.0
-bleach[css]==6.0.0
+pydantic==1.10.12
+bleach[css]==6.1.0
 
 # computational
-numpy==1.24.1
-pandas==1.5.2
-  openpyxl==3.0.10
+numpy==1.26.1
+pandas==2.1.1
+  openpyxl==3.1.2
   jinja2==3.1.2
-plotly==5.15.0
-scipy==1.10.0
-bmds==22.1
+plotly==5.17.0
+scipy==1.11.3
+bmds==23.2
 
 # exports
-rispy==0.7.1
-python-docx==0.8.11
+rispy==0.8.1
+python-docx==1.0.1

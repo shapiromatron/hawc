@@ -44,20 +44,6 @@ class HAWCUtils {
         return links.join("<span> / </span>");
     }
 
-    static InitialForm(config) {
-        var selector = config.form.find("select[name='selector']"),
-            submitter = config.form.find("#submit_form");
-
-        submitter.on("click", function() {
-            var val = parseInt(selector.select2("data")[0].id);
-            if (val) {
-                submitter.attr("href", `${config.base_url}?initial=${val}`);
-                return true;
-            }
-            return false;
-        });
-    }
-
     static prettifyVariableName(str) {
         str = str.replace(/_/g, " ");
         return str.charAt(0).toUpperCase() + str.substr(1);

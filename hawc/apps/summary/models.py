@@ -512,7 +512,9 @@ class Visual(models.Model):
             # TODO - fix - we should use a different set of prefilters for studies
             study_fields = ["published_only", "studies"]
             endpoint_prefilters = {
-                k: v for k, v in cleaned_prefilters.items() if k not in study_fields
+                k: v
+                for k, v in cleaned_prefilters.items()
+                if k not in study_fields and not k.startswith("cb_")  # skip `checkbox` fields
             }
             if any(value for value in endpoint_prefilters.values()):
                 endpoint_qs = fs.qs
@@ -685,7 +687,8 @@ class DataPivot(models.Model):
         return self.visual_type
 
     @staticmethod
-    def reset_row_overrides(settings: dict):
+    def reset_row_overrides(settings: dict) -> None:
+        # reset row overrides in-place
         settings["row_overrides"] = []
 
 

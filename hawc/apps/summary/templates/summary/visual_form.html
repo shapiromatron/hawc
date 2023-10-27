@@ -1,7 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
 <div class="tabbable" style="display:none;">
   <ul class="nav nav-tabs">
@@ -26,7 +24,7 @@
 </div>
 
 <div id="main" style="display:none;"></div>
-{% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
+{% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
 
 {% block extrajs %}

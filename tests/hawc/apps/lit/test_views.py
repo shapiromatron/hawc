@@ -10,6 +10,8 @@ from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 from hawc.apps.lit.models import Reference
 from hawc.apps.study.models import Study
 
+from ..test_utils import check_200, get_client
+
 
 @pytest.mark.django_db
 class TestViewPermissions:
@@ -124,3 +126,60 @@ class TestRefListExtract:
         resp = c.post(url, {"references": 11, "study_type": "bioassay"}, follow=True)
         assert success in resp.content
         assert qs.exists() is True
+
+
+@pytest.mark.django_db
+class TestRefFilterList:
+    def test_full_text_search(self, db_keys):
+        c = Client()
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+        url = reverse("lit:ref_search", args=(db_keys.assessment_final,))
+
+        # search by author/year combo
+        resp = c.get(url + "?ref_search=kawana+2001")
+        n_results = b"References (1 found)"
+        title = b"Psycho-physiological effects of the terrorist sarin attack on the Tokyo subway system."
+        assert (n_results in resp.content) and (title in resp.content)
+
+
+@pytest.mark.django_db
+def test_get_200():
+    client = get_client("pm")
+    main = 1
+    slug_search = "manual-import"
+
+    urls = [
+        reverse("lit:overview", args=(main,)),
+        # crud tags
+        reverse("lit:tags_update", args=(main,)),
+        reverse("lit:literature_assessment_update", args=(main,)),
+        # reference-level details
+        reverse("lit:ref_detail", args=(main,)),
+        reverse("lit:ref_edit", args=(main,)),
+        reverse("lit:ref_delete", args=(main,)),
+        reverse("lit:tag-status", args=(main,)),
+        reverse("lit:tag", args=(main,)),
+        reverse("lit:bulk_tag", args=(main,)),
+        reverse("lit:ref_list", args=(main,)),
+        reverse("lit:ref_list_extract", args=(main,)),
+        reverse("lit:ref_visual", args=(main,)),
+        reverse("lit:ref_search", args=(main,)),
+        reverse("lit:ref_upload", args=(main,)),
+        # crud searches
+        reverse("lit:search_new", args=(main,)),
+        reverse("lit:copy_search", args=(main,)),
+        reverse("lit:search_detail", args=(main, slug_search)),
+        reverse("lit:search_update", args=(main, slug_search)),
+        reverse("lit:search_delete", args=(main, slug_search)),
+        # crud import
+        reverse("lit:import_new", args=(main,)),
+        reverse("lit:import_ris_new", args=(main,)),
+        # edit tags
+        reverse("lit:search_tags", args=(main, slug_search)),
+        reverse("lit:search_tags_visual", args=(main, slug_search)),
+        reverse("lit:ris_export_instructions"),
+        reverse("lit:tag-conflicts", args=(main,)),
+        reverse("lit:user-tag-list", args=(main,)),
+    ]
+    for url in urls:
+        check_200(client, url)

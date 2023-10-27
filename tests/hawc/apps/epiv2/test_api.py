@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Log
 from hawc.apps.epiv2 import models
+from hawc.apps.study.models import Study
 
 from ..test_utils import check_200, check_403, check_api_json_data, get_client
 
@@ -156,6 +157,28 @@ class TestDesignViewSet:
             },
         )
         generic_test_scenarios(client, url, delete_scenarios)
+
+        # test API filtering by study id
+        # make a dummy study (so we have something else in the assessment to filter by)
+        cloned_study = Study.objects.get(id=db_keys.study_working)
+        cloned_study.id = None
+        cloned_study.pk = None
+        cloned_study.save()
+
+        assert cloned_study.id is not None and cloned_study.id != db_keys.study_working
+        url = reverse("epiv2:api:design-list") + f"?assessment_id={cloned_study.assessment_id}"
+
+        resp = client.get(url)
+        num_designs_in_assessment = resp.data["count"]
+
+        resp = client.get(url + f"&study={db_keys.study_working}")
+        num_designs_on_study = resp.data["count"]
+
+        resp = client.get(url + f"&study={cloned_study.id}")
+        num_designs_on_other_study = resp.data["count"]
+
+        assert num_designs_in_assessment == num_designs_on_study
+        assert num_designs_on_other_study == 0
 
     def test_bad_requests(self, db_keys):
         url = reverse("epiv2:api:design-list")
@@ -1034,6 +1057,7 @@ class TestDataExtractionViewSet:
             "data_location": "loc test",
             "effect_description": "description test",
             "statistical_method": "stat method test",
+            "adverse_direction": "up",
             "comments": "comments test",
             "design": design.id,
         }
@@ -1117,6 +1141,12 @@ class TestDataExtractionViewSet:
                 "expected_code": 400,
                 "expected_content": "not a valid choice",
                 "data": self.get_upload_data({"significant": "bad significant"}),
+            },
+            {
+                "desc": "invalid adverse_direction",
+                "expected_code": 400,
+                "expected_content": "not a valid choice",
+                "data": self.get_upload_data({"adverse_direction": "dunno"}),
             },
         )
 

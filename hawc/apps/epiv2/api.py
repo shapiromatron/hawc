@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from ..assessment.api import (
     BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     EditPermissionsCheckMixin,
+    InAssessmentFilter,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
@@ -70,9 +72,8 @@ class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     assessment_filter_args = "study__assessment"
     model = models.Design
     serializer_class = serializers.DesignSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        return self.model.objects.all()
+    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
+    filterset_fields = ("study",)
 
 
 class MetadataViewSet(viewsets.ViewSet):

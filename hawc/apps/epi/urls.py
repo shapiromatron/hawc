@@ -59,9 +59,9 @@ urlpatterns = [
         name="sp_create",
     ),
     path(
-        "study/<int:pk>/study-population/copy-as-new-selector/",
-        views.StudyPopulationCopyAsNewSelector.as_view(),
-        name="sp_copy_selector",
+        "study/<int:pk>/study-population/copy/",
+        views.StudyPopulationCopyForm.as_view(),
+        name="sp_copy",
     ),
     path(
         "study-population/<int:pk>/",
@@ -85,9 +85,9 @@ urlpatterns = [
         name="exp_create",
     ),
     path(
-        "study/<int:pk>/exposure/copy-as-new-selector/",
-        views.ExposureCopyAsNewSelector.as_view(),
-        name="exp_copy_selector",
+        "study/<int:pk>/exposure/copy/",
+        views.ExposureCopyForm.as_view(),
+        name="exp_copy",
     ),
     path("exposure/<int:pk>/", views.ExposureDetail.as_view(), name="exp_detail"),
     path(
@@ -112,9 +112,9 @@ urlpatterns = [
         name="outcome_create",
     ),
     path(
-        "study-population/<int:pk>/outcome/copy-as-new-selector/",
-        views.OutcomeCopyAsNewSelector.as_view(),
-        name="outcome_copy_selector",
+        "study-population/<int:pk>/outcome/copy/",
+        views.OutcomeCopyForm.as_view(),
+        name="outcome_copy",
     ),
     path("outcome/<int:pk>/", views.OutcomeDetail.as_view(), name="outcome_detail"),
     path(
@@ -134,9 +134,9 @@ urlpatterns = [
         name="result_create",
     ),
     path(
-        "outcome/<int:pk>/result/copy-as-new-selector/",
-        views.ResultCopyAsNewSelector.as_view(),
-        name="result_copy_selector",
+        "outcome/<int:pk>/result/copy/",
+        views.ResultCopyForm.as_view(),
+        name="result_copy",
     ),
     path("result/<int:pk>/", views.ResultDetail.as_view(), name="result_detail"),
     path(
@@ -156,9 +156,9 @@ urlpatterns = [
         name="cs_create",
     ),
     path(
-        "study-population/<int:pk>/comparison-set/copy-as-new-selector/",
+        "study-population/<int:pk>/comparison-set/copy/",
         views.ComparisonSetStudyPopCopySelector.as_view(),
-        name="cs_copy_selector",
+        name="cs_copy",
     ),
     path(
         "outcome/<int:pk>/comparison-set/create/",
@@ -166,9 +166,9 @@ urlpatterns = [
         name="cs_outcome_create",
     ),
     path(
-        "outcome/<int:pk>/comparison-set/copy-as-new-selector/",
+        "outcome/<int:pk>/comparison-set/copy/",
         views.ComparisonSetOutcomeCopySelector.as_view(),
-        name="cs_outcome_copy_selector",
+        name="cs_outcome_copy",
     ),
     path(
         "comparison-set/<int:pk>/",

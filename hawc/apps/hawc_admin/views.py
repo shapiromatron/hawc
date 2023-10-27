@@ -7,9 +7,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 
-from ..common.htmx import action, staff_only
+from ..common.htmx import HtmxView
 from . import methods
 
 logger = logging.getLogger(__name__)
@@ -21,26 +21,27 @@ class Swagger(TemplateView):
 
 
 @method_decorator(staff_member_required, name="dispatch")
-class Dashboard(View):
-    def dispatch(self, request, *args, **kwargs):
-        request.action = self.kwargs["action"]
-        handler = getattr(self, request.action, self.http_method_not_allowed)
-        return handler(request, *args, **kwargs)
+class Dashboard(HtmxView):
+    actions = {
+        "assessment_size",
+        "assessment_growth",
+        "assessment_profile",
+        "growth",
+        "users",
+        "daily_changes",
+    }
 
-    @action(permission=staff_only, htmx_only=False)
     def index(self, request: HttpRequest, *args, **kwargs):
         return render(request, "admin/dashboard.html", {})
 
-    @action(permission=staff_only, methods=("get", "post"))
-    def growth(self, request, *args, **kwargs):
-        form = methods.GrowthForm(data=request.POST) if request.POST else methods.GrowthForm()
+    def growth(self, request: HttpRequest, *args, **kwargs):
+        form = methods.GrowthForm(data=request.GET)
         df = fig = None
         if form.is_valid():
             df, fig = form.get_data()
         context = dict(form=form, fig=fig, df=df)
         return render(request, "admin/fragments/growth.html", context)
 
-    @action(permission=staff_only)
     def users(self, request: HttpRequest, *args, **kwargs):
         return render(
             request,
@@ -52,13 +53,11 @@ class Dashboard(View):
             },
         )
 
-    @action(permission=staff_only)
     def assessment_size(self, request: HttpRequest, *args, **kwargs):
         df = methods.size_df()
         html = df.to_html(index=False, table_id="table", escape=False, border=0)
         return render(request, "admin/fragments/assessment_size.html", {"table": html})
 
-    @action(permission=staff_only)
     def assessment_growth(self, request: HttpRequest, *args, **kwargs):
         try:
             matrix = methods.growth_matrix().to_html()
@@ -70,13 +69,8 @@ class Dashboard(View):
             {"matrix": matrix, "form": methods.AssessmentGrowthSettings()},
         )
 
-    @action(permission=staff_only, methods=("get", "post"))
     def assessment_profile(self, request: HttpRequest, *args, **kwargs):
-        form = (
-            methods.AssessmentGrowthSettings(data=request.POST)
-            if request.POST
-            else methods.AssessmentGrowthSettings()
-        )
+        form = methods.AssessmentGrowthSettings(data=request.GET)
         assessment = fig = None
         if form.is_valid():
             assessment, fig = form.time_series()
@@ -86,7 +80,6 @@ class Dashboard(View):
             {"form": form, "assessment": assessment, "fig": fig},
         )
 
-    @action(permission=staff_only)
     def daily_changes(self, request: HttpRequest, *args, **kwargs):
         data = methods.daily_changes()
         return render(request, "admin/fragments/changes.html", data)
