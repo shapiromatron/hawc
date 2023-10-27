@@ -13,7 +13,7 @@
                             <input style="width: 17px;" type="checkbox" name="references" value="{{object.id}}">
                         </div>
                         <div style="width: 75vw;">
-                            {% include 'lit/_reference_with_tags.html' with ref=object %}
+                            {% include 'lit/_reference_with_tags.html' with ref=object hide_abstract=True extra_tag_classes='smaller' %}
                         </div>
                         <div>
                             <a class="btn btn-sm btn-primary d-flex flex-shrink-0 ml-2" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a>

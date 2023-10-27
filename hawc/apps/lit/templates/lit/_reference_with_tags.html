@@ -30,15 +30,15 @@
                 {% endif %}
             </div>
         </div>
-        {% if ref.abstract %}
+        {% if ref.abstract and not hide_abstract %}
         <p class="abstracts abstract-collapsed  mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
         {% endif %}
     </div>
     <div>
         {% with ref.tags.all as tags %}{% if tags %}
-        <div class="consensus-tag mt-2">
+        <div class="consensus-tag">
             {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
-            {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
+            {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
         </div>
         {% endif %}{% endwith %}
         {% if conflict_resolution %}

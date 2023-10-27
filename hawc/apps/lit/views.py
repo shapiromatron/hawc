@@ -736,10 +736,12 @@ class RefListExtract(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         context.update(
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Convert to study"),
             object_list=context["form"].fields["references"].queryset,
         )
+        models.Reference.annotate_tag_parents(context["object_list"], tags)
         return context
 
     def get_success_url(self):
