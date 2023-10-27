@@ -3,9 +3,12 @@ from collections import Counter
 
 from crispy_forms import layout as cfl
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
+
+from hawc.apps.udf.models import ModelUDFContent
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
 from ..common.autocomplete import (
@@ -432,6 +435,19 @@ class EndpointForm(ModelForm):
 
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
+        # TODO: tidy up queries in init and save
+        if assessment is None:
+            assessment = self.instance.get_assessment()
+        try:
+            content = self.instance.udf_content.first().content
+        except Exception:
+            content = None
+        udf = assessment.get_model_udf(
+            self.Meta.model, label="User defined fields", initial=content
+        )
+        if udf:
+            self.fields["udf"] = udf
+
     @property
     def helper(self):
         vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
@@ -577,6 +593,21 @@ class EndpointForm(ModelForm):
             self.add_error(None, self.NAME_REQ)
 
         return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        udf = self.cleaned_data.pop("udf", None)
+        if udf:
+            # TODO: clean up these queries
+            content_type = ContentType.objects.get_for_model(self.Meta.model)
+            model_binding = instance.assessment.udf_bindings.get(content_type=content_type)
+            ModelUDFContent.objects.update_or_create(
+                defaults=dict(content=udf),
+                model_binding=model_binding,
+                content_type=content_type,
+                object_id=instance.id,
+            )
+        return instance
 
 
 class EndpointGroupForm(forms.ModelForm):

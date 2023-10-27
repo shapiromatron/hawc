@@ -342,5 +342,90 @@ class HAWCUtils {
             })
             .trigger("change");
     }
+
+    static dynamicFormListeners() {
+        function compare(comparison, x, y) {
+            // comparisons are done on flat arrays
+            x = _.isArray(x) ? x : [x];
+            y = _.isArray(y) ? y : [y];
+            switch (comparison) {
+                case "equals":
+                    return _.isEqual(x, y);
+                case "in":
+                    return _.intersection(x, y).length > 0;
+                case "contains":
+                    return _.intersection(x, y).length === y.length;
+            }
+        }
+
+        function getValue(el) {
+            const type = $(el).attr("type");
+            // checkbox/radio inputs return values based on checked property
+            // and value attribute
+            if (type === "checkbox" || type === "radio") {
+                const value = $(el).attr("value"),
+                    checked = $(el).prop("checked");
+                // if the input has a value attribute...
+                if (value !== undefined) {
+                    // then the checked property determines
+                    // whether to use this value attribute
+                    return checked ? value : undefined;
+                }
+                // if there is no value attribute,
+                // the checked property is used
+                return checked;
+            }
+            // number inputs need to be parsed from their string value
+            if (type === "number") {
+                return parseFloat($(el).val());
+            }
+            // all other inputs return their computed value
+            return $(el).val();
+        }
+
+        function getValues($inputs) {
+            // get array of values from inputs
+            return _.chain($inputs)
+                .map(getValue)
+                .filter(v => v !== undefined)
+                .flatten()
+                .value();
+        }
+
+        // conditions are passed into the django template as scripts
+        const $ = window.$,
+            $conditionsScripts = $('script[id^="conditions-"]');
+        $conditionsScripts.remove(); // we only want these handled once, so remove them from dom
+        for (const $conditions of $conditionsScripts) {
+            // parse the conditions from script
+            const conditions = JSON.parse($conditions.textContent);
+            for (const condition of conditions) {
+                const $subject = $(`#div_${condition.subject_id}`),
+                    $subjectInput = $subject.find(":input");
+                // add listeners on all inputs in the subject div
+                $subjectInput.on("input", () => {
+                    for (const observerId of condition.observer_ids) {
+                        const $observer = $(`#div_${observerId}`),
+                            $observerInput = $observer.find(":input"),
+                            // get array of values from subject inputs
+                            value = getValues($subjectInput),
+                            // compare subject values against comparison value
+                            check = compare(
+                                condition.comparison,
+                                value,
+                                condition.comparison_value
+                            ),
+                            // determine whether observers should be shown or hidden
+                            show = condition.behavior === "show" ? check : !check;
+                        // hide the observer parent div (ie bootstrap column), and disable the observer inputs
+                        $observer.parent().prop("hidden", !show);
+                        $observerInput.prop("disabled", !show);
+                    }
+                });
+                // trigger input on subject to hide/show based on initial data
+                $subjectInput.trigger("input");
+            }
+        }
+    }
 }
 export default HAWCUtils;

@@ -1,5 +1,7 @@
 import json
 
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
@@ -450,6 +452,12 @@ class EndpointDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["bmd_session"] = self.object.get_latest_bmd_session()
+        content_type = ContentType.objects.get_for_model(models.Endpoint)
+        try:
+            udf_binding = self.assessment.udf_bindings.get(content_type=content_type)
+            context["udf_content"] = udf_binding.saved_contents.get(object_id=self.object.pk)
+        except ObjectDoesNotExist:
+            context["udf_content"] = None
         return context
 
 

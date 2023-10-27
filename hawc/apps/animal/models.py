@@ -5,6 +5,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -759,6 +760,8 @@ class Endpoint(BaseEndpoint):
         "endpoints to create new endpoints for a study.",
     )
     additional_fields = models.TextField(default="{}")
+
+    udf_content = GenericRelation("udf.ModelUDFContent")
 
     BREADCRUMB_PARENT = "animal_group"
 
