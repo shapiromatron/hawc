@@ -734,7 +734,7 @@ class RefListExtract(BaseUpdate):
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Convert to study"),
             object_list=context["form"].fields["references"].queryset,
         )
-        models.Reference.annotate_tag_parents(context["object_list"], tags)
+        models.Reference.annotate_tag_parents(context["object_list"], tags, user_tags=False)
         return context
 
     def get_success_url(self):
