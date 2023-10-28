@@ -14,7 +14,13 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
-from ..common.forms import BaseFormHelper, DynamicFormField, QuillField, check_unique_for_assessment
+from ..common.forms import (
+    BaseFormHelper,
+    CopyForm,
+    DynamicFormField,
+    QuillField,
+    check_unique_for_assessment,
+)
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..lit.models import ReferenceFilterTag
@@ -88,44 +94,37 @@ class SummaryTableModelChoiceField(forms.ModelChoiceField):
         return f"{obj.assessment}: [{obj.get_table_type_display()}] {obj}"
 
 
-class SummaryTableCopySelectorForm(forms.Form):
-    table = SummaryTableModelChoiceField(
-        label="Summary table", queryset=models.Visual.objects.all()
+class SummaryTableCopySelectorForm(CopyForm):
+    legend_text = "Copy summary table"
+    help_text = "Select an existing summary table as a template to create a new one."
+    create_url_pattern = "summary:tables_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.SummaryTable.objects.all(), empty_label=None, label="Select template"
     )
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("instance")
-        self.cancel_url = kwargs.pop("cancel_url")
-        self.assessment_id = kwargs.pop("assessment_id")
-        self.queryset = kwargs.pop("queryset")
-        super().__init__(*args, **kwargs)
-        self.fields["table"].queryset = self.queryset
-
-    @property
-    def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        return BaseFormHelper(
-            self,
-            legend_text="Select summary table",
-            help_text="""
-                Select an existing summary table and copy as a new summary table. You will be taken to a new view to
-                create a new table, but the form will be pre-populated using the values from
-                the currently-selected table.
-            """,
-            submit_text="Copy table",
-            cancel_url=self.cancel_url,
+    def __init__(self, *args, **kw):
+        self.user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = (
+            models.SummaryTable.objects.clonable_queryset(self.user)
+            .select_related("assessment")
+            .order_by("assessment", "title")
+        )
+        self.fields[
+            "selector"
+        ].label_from_instance = (
+            lambda obj: f"{obj.assessment} | {{{obj.get_table_type_display()}}} | {obj}"
         )
 
-    def get_create_url(self):
-        table = self.cleaned_data["table"]
+    def get_success_url(self):
+        table = self.cleaned_data["selector"]
         return (
-            reverse("summary:tables_create", args=(self.assessment_id, table.table_type))
-            + f"?initial={table.pk}"
+            reverse(self.create_url_pattern, args=(self.parent.id, table.table_type))
+            + f"?initial={table.id}"
         )
+
+    def get_cancel_url(self):
+        return reverse("summary:tables_list", args=(self.parent.id,))
 
 
 class VisualForm(forms.ModelForm):
@@ -200,39 +199,29 @@ class VisualModelChoiceField(forms.ModelChoiceField):
         return f"{obj.assessment}: [{obj.get_visual_type_display()}] {obj}"
 
 
-class VisualSelectorForm(forms.Form):
-    visual = VisualModelChoiceField(label="Visualization", queryset=models.Visual.objects.all())
+class VisualSelectorForm(CopyForm):
+    legend_text = "Copy visualization"
+    help_text = "Select an existing visualization from this assessment to copy as a template for a new one. This will include all model-settings, and the selected dataset."
+    create_url_pattern = "summary:visualization_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Visual.objects.all(), empty_label=None, label="Select template"
+    )
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("instance")
-        self.cancel_url = kwargs.pop("cancel_url")
-        self.assessment_id = kwargs.pop("assessment_id")
-        self.queryset = kwargs.pop("queryset")
-        super().__init__(*args, **kwargs)
-        self.fields["visual"].queryset = self.queryset
+    def __init__(self, *args, **kw):
+        queryset = kw.pop("queryset")
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = queryset.order_by("assessment", "title")
+        self.fields["selector"].label_from_instance = lambda obj: f"{obj.assessment} | {obj}"
 
-    @property
-    def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-        return BaseFormHelper(
-            self,
-            legend_text="Copy visualization",
-            help_text="""
-                Select an existing visualization from this assessment to copy as a template for a
-                new one. This will include all model-settings, and the selected dataset.""",
-            submit_text="Copy selected as new",
-            cancel_url=self.cancel_url,
-        )
-
-    def get_create_url(self):
-        visual = self.cleaned_data["visual"]
+    def get_success_url(self):
+        visual = self.cleaned_data["selector"]
         return (
-            reverse("summary:visualization_create", args=(self.assessment_id, visual.visual_type))
+            reverse("summary:visualization_create", args=(self.parent.id, visual.visual_type))
             + f"?initial={visual.pk}"
         )
+
+    def get_cancel_url(self):
+        return reverse("summary:visualization_list", args=(self.parent.id,))
 
 
 class EndpointAggregationForm(VisualForm):
@@ -765,47 +754,53 @@ class DataPivotSettingsForm(forms.ModelForm):
         fields = ("settings",)
 
 
-class DataPivotModelChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return f"{obj.assessment}: {obj}"
-
-
-class DataPivotSelectorForm(forms.Form):
-    dp = DataPivotModelChoiceField(
-        label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None
+class DataPivotSelectorForm(CopyForm):
+    legend_text = "Copy data pivot"
+    help_text = """
+        Select an existing data pivot and copy as a new data pivot. This includes all
+        model-settings, and the selected dataset. You will be taken to a new view to
+        create a new data pivot, but the form will be pre-populated using the values from
+        the currently-selected data pivot."""
+    create_url_pattern = "summary:visualization_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.DataPivot.objects.all(), empty_label=None, label="Select template"
     )
-
     reset_row_overrides = forms.BooleanField(
         help_text="Reset all row-level customization in the data-pivot copy",
         required=False,
         initial=True,
     )
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("instance")
-        user = kwargs.pop("user")
-        self.cancel_url = kwargs.pop("cancel_url")
-        super().__init__(*args, **kwargs)
-        self.fields["dp"].queryset = models.DataPivot.objects.clonable_queryset(user)
-
-    @property
-    def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        return BaseFormHelper(
-            self,
-            legend_text="Copy data pivot",
-            help_text="""
-                Select an existing data pivot and copy as a new data pivot. This includes all
-                model-settings, and the selected dataset. You will be taken to a new view to
-                create a new data pivot, but the form will be pre-populated using the values from
-                the currently-selected data pivot.""",
-            submit_text="Copy selected as new",
-            cancel_url=self.cancel_url,
+    def __init__(self, *args, **kw):
+        user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = (
+            models.DataPivot.objects.clonable_queryset(user)
+            .select_related("assessment")
+            .order_by("assessment", "title")
         )
+        self.fields["selector"].label_from_instance = lambda obj: f"{obj.assessment} | {obj}"
+
+    def get_success_url(self):
+        dp = self.cleaned_data["selector"]
+        reset_row_overrides = self.cleaned_data["reset_row_overrides"]
+
+        if hasattr(dp, "datapivotupload"):
+            url = reverse("summary:dp_new-file", args=(self.parent.id,))
+        else:
+            url = reverse(
+                "summary:dp_new-query", args=(self.parent.id, dp.datapivotquery.evidence_type)
+            )
+
+        url += f"?initial={dp.pk}"
+
+        if reset_row_overrides:
+            url += "&reset_row_overrides=1"
+
+        return url
+
+    def get_cancel_url(self):
+        return reverse("summary:visualization_list", args=(self.parent.id,))
 
 
 class SmartTagForm(forms.Form):

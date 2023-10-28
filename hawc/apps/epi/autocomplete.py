@@ -31,24 +31,10 @@ class OutcomeAutocomplete(BaseAutocomplete):
 
 
 @register
-class ComparisonSetAutocomplete(BaseAutocomplete):
-    model = models.ComparisonSet
-    search_fields = ["name"]
-    filter_fields = ["study_population_id", "outcome_id"]
-
-
-@register
 class AdjustmentFactorAutocomplete(BaseAutocomplete):
     model = models.AdjustmentFactor
     search_fields = ["description"]
     filter_fields = ["assessment_id"]
-
-
-@register
-class ResultAutocomplete(BaseAutocomplete):
-    model = models.Result
-    search_fields = ["metric__metric", "comparison_set__name"]
-    filter_fields = ["outcome_id"]
 
 
 @register

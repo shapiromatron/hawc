@@ -5,7 +5,7 @@ from django.forms.models import modelformset_factory
 from django.urls import reverse
 
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
+from ..common.forms import BaseFormHelper, CopyForm
 from ..epi.autocomplete import AdjustmentFactorAutocomplete, CriteriaAutocomplete
 from . import autocomplete, models
 
@@ -208,7 +208,16 @@ SingleResultFormset = modelformset_factory(
 )
 
 
-class MetaResultSelectorForm(CopyAsNewSelectorForm):
-    label = "Meta Result"
-    parent_field = "protocol_id"
-    autocomplete_class = autocomplete.MetaResultAutocomplete
+class MetaResultSelectorForm(CopyForm):
+    legend_text = "Copy Meta Result"
+    help_text = "Select an existing result as a template to create a new one."
+    create_url_pattern = "meta:result_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.MetaResult.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            protocol=self.parent
+        )

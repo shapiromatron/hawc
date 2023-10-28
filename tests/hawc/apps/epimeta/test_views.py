@@ -15,7 +15,7 @@ def test_get_200():
         reverse("meta:protocol_delete", args=(main,)),
         reverse("meta:result_list", args=(main,)),
         reverse("meta:result_create", args=(main,)),
-        reverse("meta:result_copy_selector", args=(main,)),
+        reverse("meta:result_copy", args=(main,)),
         reverse("meta:result_detail", args=(main,)),
         reverse("meta:result_update", args=(main,)),
         reverse("meta:result_delete", args=(main,)),

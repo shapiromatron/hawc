@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from ..assessment.api import user_can_edit_object
 from ..assessment.models import DoseUnits, DSSTox
-from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
+from ..assessment.serializers import DSSToxSerializer, RelatedEffectTagSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
@@ -236,10 +236,10 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
 
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    effects = EffectTagsSerializer(read_only=True)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
-    groups = EndpointGroupSerializer(many=True, required=False)
     name = serializers.CharField(required=False)
+    effects = RelatedEffectTagSerializer(required=False, many=True)
+    groups = EndpointGroupSerializer(required=False, many=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -365,10 +365,12 @@ class EndpointSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("groups", None)
-        endpoint = models.Endpoint.objects.create(**validated_data)
+        effects = validated_data.pop("effects", [])
+        instance = models.Endpoint.objects.create(**validated_data)
         for group_serializer in self.group_serializers:
-            group_serializer.save(endpoint_id=endpoint.id)
-        return endpoint
+            group_serializer.save(endpoint_id=instance.id)
+        instance.effects.set(effects)
+        return instance
 
     class Meta:
         model = models.Endpoint

@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -8,9 +9,10 @@ import rasterize from "./rasterize";
 
 // Generic parent for all d3.js visualizations
 class D3Plot {
-    add_title(x, y) {
+    add_title(x, y, opt) {
         x = x || this.w / 2;
         y = y || -this.padding.top / 2;
+        opt = opt || {wrapWidth: 800};
 
         if (this.title) {
             this.title.remove();
@@ -21,7 +23,10 @@ class D3Plot {
             .attr("y", y)
             .attr("text-anchor", "middle")
             .attr("class", "dr_title")
-            .html(this.title_str);
+            .html(this.title_str)
+            .each(function() {
+                HAWCUtils.wrapText(this, opt.wrapWidth);
+            });
     }
 
     add_final_rectangle(color) {
@@ -44,20 +49,8 @@ class D3Plot {
     }
 
     build_legend(settings) {
-        var plot = this,
-            buffer = settings.box_padding, //shortcut reference
-            drag = d3.drag().on("drag", function(event, d) {
-                var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                    p = d3.select(this),
-                    m = regexp.exec(p.attr("transform"));
-
-                if (m !== null && m.length === 3) {
-                    var x = parseFloat(m[1]) + event.dx,
-                        y = parseFloat(m[2]) + event.dy;
-                    p.attr("transform", `translate(${x},${y})`);
-                    plot.set_legend_location(y, x);
-                }
-            });
+        var buffer = settings.box_padding, //shortcut reference
+            onDrag = HAWCUtils.updateDragLocationTransform(() => {});
 
         if (this.legend) {
             this.legend.node().remove();
@@ -69,7 +62,7 @@ class D3Plot {
             .attr("transform", `translate(${settings.box_l},${settings.box_t})`)
             .attr("cursor", "pointer")
             .attr("data-buffer", buffer)
-            .call(drag);
+            .call(onDrag);
 
         this.set_legend_location(settings.box_t, settings.box_l);
 
