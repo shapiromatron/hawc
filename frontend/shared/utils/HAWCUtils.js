@@ -316,7 +316,12 @@ class HAWCUtils {
             handleChange = () => {
                 const selector = `#detail-${$selectEl.val()}`,
                     clone = $insertItems.find(selector).clone();
-                $insertEl.fadeOut(() => $insertEl.html(clone).trigger("select:change").fadeIn());
+                $insertEl.fadeOut(() =>
+                    $insertEl
+                        .html(clone)
+                        .trigger("select:change")
+                        .fadeIn()
+                );
             };
         $selectEl.on("change", handleChange).trigger("change");
     }
