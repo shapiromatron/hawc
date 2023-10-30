@@ -61,13 +61,9 @@ def user_growth():
         labels={"date_joined": "Date joined", "n": "New users"},
     )
 
-    most_freq_domain = df.domain.value_counts()[:20]
+    df2 = df.domain.value_counts()[:20].to_frame().reset_index()
     fig2 = px.bar(
-        most_freq_domain,
-        x=most_freq_domain.index,
-        y="domain",
-        text="domain",
-        title="Top 20 most frequently used domains",
+        df2, x="count", y="domain", title="Top 20 most frequently used domains", height=600
     )
 
     return fig1, fig2

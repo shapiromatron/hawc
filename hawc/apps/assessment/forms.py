@@ -587,9 +587,7 @@ class DatasetForm(forms.ModelForm):
                 "cancel_url": self.instance.assessment.get_absolute_url(),
             }
 
-        inputs[
-            "help_text"
-        ] = """Datasets are tabular data files that may contain information
+        inputs["help_text"] = """Datasets are tabular data files that may contain information
         which was captured in external data systems.  A dataset can be used for generating a
         custom visualization. All datasets are public and can be downloaded if an assessment
         is made public. Only team-members or higher can view or download older versions of a

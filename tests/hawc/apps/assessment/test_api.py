@@ -5,6 +5,8 @@ from rest_framework.test import APIClient
 
 from hawc.apps.assessment import constants
 
+from ..test_utils import get_client
+
 
 def has_redis():
     return "RedisCache" in settings.CACHES["default"]["BACKEND"]
@@ -244,3 +246,28 @@ class TestAssessmentViewSet:
         response = client.get(url + "?query=58-08-2")
         assert response.status_code == 200
         assert len(response.json()) == 1
+
+
+@pytest.mark.django_db
+class TestEffectTagViewSet:
+    def test_anon_permissions(self):
+        anon = get_client(api=True)
+        url = reverse("assessment:api:effect-tag-list")
+
+        # list
+        response = anon.get(url)
+        assert response.status_code == 200
+
+        # create
+        response = anon.post(url, {"name": "foo", "slug": "foo"}, format="json")
+        assert response.status_code == 403
+
+        # detail
+        response = anon.get(reverse("assessment:api:effect-tag-detail", args=(1,)))
+        assert response.status_code == 200
+
+    def test_create(self):
+        team = get_client("team", api=True)
+        url = reverse("assessment:api:effect-tag-list")
+        response = team.post(url, {"name": "foo", "slug": "foo"}, format="json")
+        assert response.status_code == 201

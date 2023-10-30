@@ -89,7 +89,7 @@ class PandasHtmlRenderer(PandasBaseRenderer):
     format = "html"
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
-        with pd.option_context("display.max_colwidth", -1):
+        with pd.option_context("display.max_colwidth", None):
             return export.df.fillna("-").to_html(index=False)
 
 
@@ -169,16 +169,17 @@ class PandasXlsxRenderer(PandasBaseRenderer):
         columns: list[str] = df.select_dtypes(include="object").columns.values
         for column in columns:
             if hasattr(df.loc[:, column], "str"):
-                df.loc[:, column] = df.loc[:, column].str.replace(ILLEGAL_CHARACTERS_RE, "")
+                df.loc[:, column] = df.loc[:, column].str.replace(
+                    ILLEGAL_CHARACTERS_RE, "", regex=True
+                )
 
     def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
         response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
 
         # Remove timezone from datetime objects to make Excel compatible
         df = export.df.copy()
-        df_datetime = df.select_dtypes(include="datetimetz").apply(lambda x: x.dt.tz_localize(None))
-        for col in df_datetime.columns:
-            df[col] = df_datetime[col]
+        for col in df.select_dtypes(include="datetimetz").columns:
+            df[col] = df[col].dt.tz_localize(None)
 
         f = BytesIO()
         with pd.ExcelWriter(

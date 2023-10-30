@@ -215,6 +215,10 @@ class Endpoint extends Observee {
         return txt;
     }
 
+    isDichotomous() {
+        return ["D", "DC"].includes(this.data.data_type);
+    }
+
     _calculate_stdev(eg) {
         // stdev is required for plotting; calculate if SE is specified
         var convert = this.data.data_type === "C" && parseInt(this.data.variance_type, 10) === 2;
@@ -271,7 +275,7 @@ class Endpoint extends Observee {
                             `/ani/assessment/${assessment_id}/endpoints/`,
                             {tags: v.name}
                         );
-                        return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
+                        return `<a class="btn btn-light mr-1" href="${url}">${v.name}</a>`;
                     })
                 );
 
@@ -483,7 +487,7 @@ class Endpoint extends Observee {
             this.data.bmds
                 .filter(d => d.model !== null)
                 .forEach(d => {
-                    new BmdLine(d.model, epc.plot, "blue").render();
+                    new BmdLine(d.model, epc.scatter, "blue").render();
                 });
         }
         return epc;

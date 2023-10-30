@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0015_endpoint_and_py3_unicode"),
     ]

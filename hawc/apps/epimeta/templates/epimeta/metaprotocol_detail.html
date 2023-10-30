@@ -11,7 +11,7 @@
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Meta-result editing</span>
         <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
-        <a class="dropdown-item" href="{% url 'meta:result_copy_selector' object.pk %}">Copy from existing</a>
+        <a class="dropdown-item" href="{% url 'meta:result_copy' object.pk %}">Copy from existing</a>
       {% endactions %}
     {% endif %}
   </div>
