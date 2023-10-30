@@ -549,7 +549,7 @@ class TestReferenceDestroyApi:
 
     def test_bad_requests(self, db_keys):
         # test bad id
-        url = reverse("lit:api:reference-detail", args=(9999999,))
+        url = reverse("lit:api:reference-detail", args=(9876543321,))
 
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -598,7 +598,7 @@ class TestReferenceViewSet:
 
     def test_update_bad_requests(self, db_keys):
         # test bad id
-        url = reverse("lit:api:reference-detail", args=(9999999,))
+        url = reverse("lit:api:reference-detail", args=(9876543321,))
         data = {"title": "TestReferenceUpdateApi test"}
 
         client = APIClient()
@@ -743,7 +743,7 @@ class TestReferenceViewSet:
     def test_tagging_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("lit:api:reference-tag", args=(9999999,))
+        url = reverse("lit:api:reference-tag", args=(9876543321,))
 
         # test bad id
         data = {"tags": [2, 3]}
@@ -771,7 +771,7 @@ class TestReferenceViewSet:
     def test_conflict_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("lit:api:reference-resolve-conflict", args=(9999999,))
+        url = reverse("lit:api:reference-resolve-conflict", args=(9876543321,))
 
         # test bad ref id
         data = {"user_tag_id": 1}
