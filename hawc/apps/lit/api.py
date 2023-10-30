@@ -166,6 +166,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
                 request.data.getlist("tags"),
                 request.user.id,
                 request.data.get("include_without_conflict", False),
+                request.data.get("preview", False),
             )
         )
 

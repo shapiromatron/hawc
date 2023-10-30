@@ -529,7 +529,11 @@ class ReferenceQuerySet(models.QuerySet):
 
     @transaction.atomic
     def merge_tag_conflicts(
-        self, tags: list[int], user_id, include_without_conflicts: bool = False
+        self,
+        tags: list[int],
+        user_id,
+        include_without_conflicts: bool = False,
+        preview: bool = False,
     ):
         # get all relevant tag ids
         ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
@@ -573,7 +577,10 @@ class ReferenceQuerySet(models.QuerySet):
             )
 
         if not queryset.exists():  # return if no references were found from filtering
-            return "No references found to merge."
+            return {"merged": False, "queryset": None, "message": "No references found to merge."}
+
+        if preview:
+            return {"merged": False, "queryset": queryset, "message": "Preview mode enabled."}
 
         # Now we start the bulk tag merge process! The order of the procedure below is important:
         # 0. Filter and annotate reference queryset (done above)
@@ -651,6 +658,7 @@ class ReferenceQuerySet(models.QuerySet):
         # B) Has to be a user tag on a reference that we modified above (in the 'references' id list we saved)
         # C) Must have tags
         # D) Must be unresolved
+        # E) Must not have any deleted_tags
         resolve_user_tags = (
             UserReferenceTag.objects.annotate(ref_tags=ArrayAgg("reference__tags", distinct=True))
             .filter(
@@ -658,6 +666,7 @@ class ReferenceQuerySet(models.QuerySet):
                 tags__in=tag_ids,
                 reference__in=references,
                 is_resolved=False,
+                deleted_tags__len=0,
             )
             .filter(
                 ref_tags__contains=ArrayAgg("tags", distinct=True),
@@ -677,7 +686,8 @@ class ReferenceQuerySet(models.QuerySet):
                         {queryset.count()} references updated and {updated_user_tag_count} user tags resolved.
                         References updated: {references}.""",
         )
-        return f"{len(references)} references updated and {updated_user_tag_count} user tags resolved. References updated: {references}"
+        message = f"{len(references)} references updated and {updated_user_tag_count} user tags resolved. References updated: {references}"
+        return {"merged": True, "queryset": queryset, "message": message}
 
     def global_df(self) -> pd.DataFrame:
         mapping = {

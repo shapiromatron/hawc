@@ -1,11 +1,12 @@
+import requests
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Q
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
@@ -14,6 +15,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, tryParseInt
+from ..common.htmx import HtmxView
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -396,6 +398,67 @@ class TagReferences(BaseFilterList):
         )
 
 
+class BulkMerge(HtmxView):
+    actions = {
+        "preview",
+        "merge",
+    }
+
+    def index(self, request: HttpRequest, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment)
+        context = dict(
+            form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
+        )
+        return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
+
+    def preview(self, request: HttpRequest, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        queryset = models.Reference.objects.filter(assessment=self.assessment)
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=request.POST)
+        for field in form.fields:
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            request.POST.getlist("tags"),
+            request.user.id,
+            request.POST.get("include_without_conflict", False),
+            preview=True,
+        )
+        if merge_result["queryset"]:
+            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+            models.Reference.annotate_tag_parents(merge_result["queryset"], tags)
+        context = dict(
+            object_list=merge_result["queryset"],
+            assessment=self.assessment,
+            action="preview",
+            message=merge_result["message"],
+            form=form,
+        )
+        return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
+
+    def merge(self, request: HttpRequest, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        queryset = models.Reference.objects.filter(assessment=self.assessment)
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=request.POST)
+        for field in form.fields:
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            request.POST.getlist("tags"),
+            request.user.id,
+            request.POST.get("include_without_conflict", False),
+            preview=False,
+        )
+        context = dict(
+            object_list=merge_result["queryset"],
+            assessment=self.assessment,
+            action="merge",
+            message=merge_result["message"],
+            merged=merge_result["merged"],
+            form=form,
+        )
+        return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
+
+
 class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
     parent_model = Assessment
@@ -514,7 +577,6 @@ class ConflictResolution(BaseFilterList):
             breadcrumbs=lit_overview_crumbs(
                 self.request.user, self.assessment, "Resolve Tag Conflicts"
             ),
-            bulk_merge_form=forms.BulkMergeConflictsForm(assessment=self.assessment),
         )
         models.Reference.annotate_tag_parents(context["object_list"], tags)
         return context

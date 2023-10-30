@@ -677,7 +677,7 @@ class BulkMergeConflictsForm(forms.Form):
         tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         self.fields["tags"].queryset = tags
         self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
-        self.fields["tags"].widget.attrs["size"] = 8
+        self.fields["tags"].widget.attrs["size"] = 6
 
     @property
     def helper(self):
