@@ -33,7 +33,7 @@ const helpers = {
     fetchGet: {
         credentials: "same-origin",
     },
-    docUrlRoot: "https://hawc.readthedocs.io/en/latest/",
+    docUrlRoot: "https://hawc.readthedocs.io",
     escapeRegexString(unescapedString) {
         // https://www.npmjs.com/package/escape-regex-string
         return unescapedString.replace(regexEscapeChars, "\\$&");

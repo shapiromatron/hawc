@@ -94,7 +94,7 @@ class ResultGroupTable {
                         .some()
                         .value()
                         ? fn.add_footnote(
-                              `Confidence intervals calculated in HAWC from distributions provided (<a href="${h.docUrlRoot}reference.html#statistical-methods-used">source</a>).`
+                              `Confidence intervals calculated in HAWC from distributions provided (<a href="${h.docUrlRoot}/statistical-methods/#epidemiology-v1">source</a>).`
                           )
                         : "";
 
