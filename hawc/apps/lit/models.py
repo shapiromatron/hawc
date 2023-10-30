@@ -10,6 +10,7 @@ from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
@@ -896,6 +897,7 @@ class Reference(models.Model):
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
+        user_tag.deleted_tags = list(set(self.tags.all()).difference(set(tag_pks)))
         user_tag.save()
 
         # determine if we should save the reference-level tags
@@ -1206,6 +1208,7 @@ class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    deleted_tags = ArrayField(models.IntegerField(), default=list)
     is_resolved = models.BooleanField(
         default=False, help_text="User specific tag differences are resolved for this reference"
     )

@@ -24,7 +24,7 @@
             {% endfor %}
             <div class="btn-group mr-1 mb-1 flex-shrink-0">
                 <a class="btn btn-tny outline-btn rounded-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
-                <span class="outline-btn btn-tny {% if not ref.has_study %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
+                <span class="outline-btn btn-tny {% if ref.has_study %} border-right-0 {% else %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
                 {% if ref.has_study %}
                 <a class="btn btn-tny outline-btn rounded-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
                 {% endif %}
@@ -65,7 +65,7 @@
                 </form>
                 {% endif %}
                 <div class="d-inline-block my-2">
-                    <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}}</i>
+                    <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}}</i> 
                 </div>
             </div>
             {% with user_tag.consensus_diff as diff %}
@@ -77,7 +77,7 @@
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
                         {% endif %}
                     {% else %}
-                        {% if not user_tag.is_resolved %}
+                        {% if tag.id in user_tag.deleted_tags %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
                         {% endif %}
                     {% endif %}
@@ -85,7 +85,7 @@
                 {% for tag in diff.difference %}
                     {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
                 {% endfor %}
-                {% if diff.intersection|length is 0 and diff.difference|length is 0 and user_tag.is_resolved %} 
+                {% if diff.intersection|length is 0 and diff.difference|length is 0 and user_tag.deleted_tags|length is 0 %} 
                     <p>No tags selected</p>
                 {% endif %}
             {% endwith %}
