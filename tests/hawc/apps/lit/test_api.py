@@ -1,6 +1,4 @@
-import json
 from io import BytesIO
-from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -12,9 +10,7 @@ from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
 from hawc.apps.lit import constants, models
 from hawc.apps.myuser.models import HAWCUser
 
-from ..test_utils import check_details_of_last_log_entry, get_client
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry, get_client
 
 
 @pytest.mark.django_db
@@ -29,13 +25,7 @@ class TestLiteratureAssessmentViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
 
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
@@ -559,7 +549,7 @@ class TestReferenceDestroyApi:
 
     def test_bad_requests(self, db_keys):
         # test bad id
-        url = reverse("lit:api:reference-detail", args=(-1,))
+        url = reverse("lit:api:reference-detail", args=(987654321,))
 
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -608,7 +598,7 @@ class TestReferenceViewSet:
 
     def test_update_bad_requests(self, db_keys):
         # test bad id
-        url = reverse("lit:api:reference-detail", args=(-1,))
+        url = reverse("lit:api:reference-detail", args=(987654321,))
         data = {"title": "TestReferenceUpdateApi test"}
 
         client = APIClient()
@@ -753,7 +743,7 @@ class TestReferenceViewSet:
     def test_tagging_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("lit:api:reference-tag", args=(-1,))
+        url = reverse("lit:api:reference-tag", args=(987654321,))
 
         # test bad id
         data = {"tags": [2, 3]}
@@ -781,7 +771,7 @@ class TestReferenceViewSet:
     def test_conflict_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("lit:api:reference-resolve-conflict", args=(-1,))
+        url = reverse("lit:api:reference-resolve-conflict", args=(987654321,))
 
         # test bad ref id
         data = {"user_tag_id": 1}

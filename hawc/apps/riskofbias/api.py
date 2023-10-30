@@ -2,8 +2,7 @@ import logging
 from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,17 +10,16 @@ from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
     AssessmentEditViewSet,
-    AssessmentLevelPermissions,
     AssessmentViewSet,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
-    InAssessmentFilter,
     check_assessment_query_permission,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import DisabledPagination
-from ..common.helper import re_digits, tryParseInt
+from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.validators import validate_exact_ids
@@ -34,13 +32,9 @@ from .actions.rob_clone import BulkRobCopyAction
 logger = logging.getLogger(__name__)
 
 
-class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
+class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     @action(
         detail=True,
@@ -97,14 +91,11 @@ class RiskOfBiasAssessmentViewSet(viewsets.GenericViewSet):
         return Response(ser.data)
 
 
-class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
+class RiskOfBiasDomain(AssessmentViewSet):
     assessment_filter_args = "assessment"
     model = models.RiskOfBiasDomain
     pagination_class = DisabledPagination
-    permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.NestedDomainSerializer
-    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("metrics")
@@ -163,10 +154,7 @@ class RiskOfBias(AssessmentEditViewSet):
     assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
-    permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
-    lookup_value_regex = re_digits
     action_perms = {
         "retrieve": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
         "list": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
@@ -177,7 +165,7 @@ class RiskOfBias(AssessmentEditViewSet):
         return (
             super()
             .get_queryset()
-            .select_related("author")
+            .select_related("study", "author")
             .prefetch_related("scores__overridden_objects")
         )
 
@@ -277,12 +265,11 @@ class AssessmentMetricViewSet(AssessmentViewSet):
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
-
-class AssessmentMetricScoreViewSet(AssessmentViewSet):
-    model = models.RiskOfBiasMetric
-    serializer_class = serializers.MetricFinalScoresSerializer
-    pagination_class = DisabledPagination
-    assessment_filter_args = "domain__assessment"
+    @action(detail=True, action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER)
+    def scores(self, request, *args, **kwargs):
+        metric = self.get_object()
+        serializer = serializers.MetricFinalScoresSerializer(metric)
+        return Response(serializer.data)
 
 
 class AssessmentScoreViewSet(AssessmentEditViewSet):
