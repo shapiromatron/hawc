@@ -252,10 +252,8 @@ class RiskOfBias(AssessmentEditViewSet):
             filters["study"] = study
         if not assessment.user_is_team_member_or_higher(self.request.user):
             filters["study__published"] = True
-        robs = (
-            models.RiskOfBias
-            .objects.filter(**filters)
-            .prefetch_related('scores__overridden_objects')
+        robs = models.RiskOfBias.objects.filter(**filters).prefetch_related(
+            "scores__overridden_objects"
         )
         serializer = serializers.FinalRiskOfBiasSerializer(robs, many=True)
         return Response(serializer.data)
