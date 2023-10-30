@@ -138,15 +138,32 @@ class RiskOfBiasClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def reviews(self, assessment_id: int) -> dict:
+    def reviews(self, assessment_id: int, study_id: int | None = None) -> dict:
         """
-        Retrieves all reviews for the given assessment.
+        Retrieves all reviews for the given assessment. Must be team member or higher
         Args:
             assessment_id (int): Assessment ID
+            study_id (int | None): A study ID; returns results for a single study
         Returns:
-            pd.DataFrame: A dictionary of reviews
+            dict: A dictionary of reviews
         """
         url = f"{self.session.root_url}/rob/api/review/?assessment_id={assessment_id}"
+        if study_id:
+            url += f"&study={study_id}"
+        return self.session.get(url).json()
+
+    def final_reviews(self, assessment_id: int, study_id: int | None = None) -> dict:
+        """
+        Retrieves all final reviews for the given assessment.
+        Args:
+            assessment_id (int): Assessment ID
+            study_id (int | None): A study ID; returns results for a single study
+        Returns:
+            dict: A dictionary of final reviews
+        """
+        url = f"{self.session.root_url}/rob/api/review/final/?assessment_id={assessment_id}"
+        if study_id:
+            url += f"&study={study_id}"
         return self.session.get(url).json()
 
     def compare_metrics(

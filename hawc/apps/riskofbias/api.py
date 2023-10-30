@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,7 +16,7 @@ from ..assessment.api import (
     CleanupFieldsBaseViewSet,
     CleanupFieldsPermissions,
     InAssessmentFilter,
-    get_assessment_from_query,
+    check_assessment_query_permission,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
@@ -106,7 +107,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     lookup_value_regex = re_digits
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related("metrics")
+        return super().get_queryset().prefetch_related("metrics")
 
     @action(detail=False, methods=("patch",), permission_classes=(CleanupFieldsPermissions,))
     def order_rob(self, request):
@@ -166,10 +167,18 @@ class RiskOfBias(AssessmentEditViewSet):
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
     lookup_value_regex = re_digits
+    action_perms = {
+        "retrieve": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+        "list": AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    }
+    filterset_fields = ("study",)
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related(
-            "study", "author", "scores__metric__domain"
+        return (
+            super()
+            .get_queryset()
+            .select_related("author")
+            .prefetch_related("scores__overridden_objects")
         )
 
     def perform_update(self, serializer):
@@ -217,8 +226,8 @@ class RiskOfBias(AssessmentEditViewSet):
         object_ = self.get_object()
         return Response(object_.get_override_options())
 
-    @action(detail=False, methods=("post",), permission_classes=[])
-    def create_v2(self, request):
+    @action(detail=False, url_path="assignment", methods=("post",), permission_classes=[])
+    def create_assignment(self, request):
         # perms checked in serializer
         kw = {"context": self.get_serializer_context()}
         serializer = serializers.RiskOfBiasAssignmentSerializer(data=request.data, **kw)
@@ -226,8 +235,8 @@ class RiskOfBias(AssessmentEditViewSet):
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=("patch",), permission_classes=[])
-    def update_v2(self, request, *args, **kwargs):
+    @action(detail=True, url_path="assignment", methods=("patch",), permission_classes=[])
+    def update_assignment(self, request, *args, **kwargs):
         # perms checked in serializer
         instance = self.get_object()
         kw = {"context": self.get_serializer_context()}
@@ -238,15 +247,35 @@ class RiskOfBias(AssessmentEditViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
+    @action(detail=False, url_path="final")
+    def final(self, request):
+        """
+        Get all active, final evaluations for an assessment.
+
+        To get a single review final review for a study, use the study detail API
+        """
+        # check permissions
+        assessment = check_assessment_query_permission(
+            request, AssessmentViewSetPermissions.CAN_VIEW_OBJECT
+        )
+        # query data
+        filters: dict[str, Any] = dict(study__assessment=assessment, final=True, active=True)
+        if study := tryParseInt(request.query_params.get("study")):
+            filters["study"] = study
+        if not assessment.user_is_team_member_or_higher(self.request.user):
+            filters["study__published"] = True
+        robs = models.RiskOfBias.objects.filter(**filters).prefetch_related(
+            "scores__overridden_objects"
+        )
+        serializer = serializers.FinalRiskOfBiasSerializer(robs, many=True)
+        return Response(serializer.data)
+
 
 class AssessmentMetricViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
 
 class AssessmentMetricScoreViewSet(AssessmentViewSet):
@@ -255,19 +284,12 @@ class AssessmentMetricScoreViewSet(AssessmentViewSet):
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
 
-    def get_queryset(self):
-        return self.model.objects.all()
-
 
 class AssessmentScoreViewSet(AssessmentEditViewSet):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain__assessment"
     serializer_class = serializers.RiskOfBiasScoreSerializer
-    list_actions = ["list", "v2"]
-
-    def get_assessment(self, request, *args, **kwargs):  # TODO - remove - is this used?
-        return get_assessment_from_query(request)
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("overridden_objects__content_object")
