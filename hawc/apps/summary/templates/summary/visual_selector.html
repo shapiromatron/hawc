@@ -20,9 +20,9 @@
         <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
           Plotly visual</option>
         {% endif %}
-        <option value="2">
+        <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
           {{assessment.get_rob_name_display}} heatmap</option>
-        <option value="3">
+        <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
           {{assessment.get_rob_name_display}} barchart</option>
         <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
           Data pivot</option>
@@ -81,12 +81,14 @@
       </p>
     </div>
     <div id="detail-2" class="col-md-12">
-      <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern2 assessment.id 2 0 %}" />
+      {% if action == "Create" %}
+      <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 2 0 %}" />
       <label for="bio">Bioassay</label>
-      <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern2 assessment.id 2 1 %}" />
+      <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 2 1 %}" />
       <label for="epi">Epidemiology</label>
-      <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern2 assessment.id 2 2 %}" />
+      <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 2 2 %}" />
       <label for="invitro">In vitro</label>
+      {% endif %}
       <h3>{{assessment.get_rob_name_display}} heatmap</h3>
       <div class="row">
         <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
@@ -100,12 +102,14 @@
       </p>
     </div>
     <div id="detail-3" class="col-md-12">
-      <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern2 assessment.id 3 0 %}" />
+      {% if action == "Create" %}
+      <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 3 0 %}" />
       <label for="bio">Bioassay</label>
-      <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern2 assessment.id 3 1 %}" />
+      <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 3 1 %}" />
       <label for="epi">Epidemiology</label>
-      <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern2 assessment.id 3 2 %}" />
+      <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 3 2 %}" />
       <label for="invitro">In vitro</label>
+      {% endif %}
       <h3>{{assessment.get_rob_name_display}} barchart</h3>
       <div class="row">
         <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"

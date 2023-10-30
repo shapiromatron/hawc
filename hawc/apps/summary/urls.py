@@ -77,7 +77,7 @@ urlpatterns = [
     path(
         "assessment/<int:pk>/visuals/<int:visual_type>/create/<int:study_type>/",
         views.VisualizationCreate.as_view(),
-        name="visualization_create2",
+        name="visualization_create",
     ),
     path(
         "assessment/<int:pk>/visuals/copy/",

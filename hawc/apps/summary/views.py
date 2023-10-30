@@ -404,7 +404,6 @@ class VisualizationCreateSelector(BaseDetail):
         kwargs.update(
             action="Create",
             viz_url_pattern="summary:visualization_create",
-            viz_url_pattern2="summary:visualization_create2",
             dp_url_pattern="summary:dp_new-prompt",
         )
         context = super().get_context_data(**kwargs)
@@ -420,26 +419,6 @@ class VisualizationCreate(BaseCreate):
     parent_template_name = "assessment"
     model = models.Visual
 
-    def dispatch(self, *args, **kwargs):
-        # visual type must be valid
-        visual_type = self.kwargs.get("visual_type")
-        try:
-            constants.VisualType(visual_type)
-        except ValueError:
-            raise Http404
-        # evidence type must be valid for visual
-        study_type = self.kwargs.get("study_type")
-        if study_type is None:
-            try:
-                study_type = constants.get_default_evidence_type(visual_type)
-            except ValueError:
-                raise Http404
-            else:
-                self.kwargs["study_type"] = study_type
-        if study_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
-            raise Http404
-        return super().dispatch(*args, **kwargs)
-
     def get_form_class(self):
         visual_type = int(self.kwargs.get("visual_type"))
         return forms.get_visual_form(visual_type)
@@ -448,12 +427,30 @@ class VisualizationCreate(BaseCreate):
         kwargs = super().get_form_kwargs()
 
         kwargs["visual_type"] = self.kwargs.get("visual_type")
-        kwargs["evidence_type"] = self.kwargs.get("study_type")
+        try:
+            constants.VisualType(kwargs["visual_type"])
+        except ValueError:
+            raise Http404
 
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
             kwargs["instance"].pk = None
             self.instance = kwargs["instance"]
+            kwargs["evidence_type"] = kwargs["instance"].evidence_type
+        else:
+            kwargs["evidence_type"] = self.kwargs.get("study_type")
+            if kwargs["evidence_type"] is None:
+                try:
+                    kwargs["evidence_type"] = constants.get_default_evidence_type(
+                        kwargs["visual_type"]
+                    )
+                except ValueError:
+                    raise Http404
+            if (
+                kwargs["evidence_type"]
+                not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
+            ):
+                raise Http404
         return kwargs
 
     def get_template_names(self):
