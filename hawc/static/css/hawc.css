@@ -546,6 +546,9 @@ div.smart-tag.active {
     height: fit-content;
     cursor: unset;
 }
+.referenceDetail.expanded .abstracts:hover{
+    background-color: unset;
+}
 .refTag {
     color: #ffffff !important;
     background-color: #162e51;
@@ -836,6 +839,10 @@ table.bordered td {
     background: none;
     border: none;
     padding: 0;
+}
+.smaller {
+    font-size: .8em;
+    font-weight: 400;
 }
 
 /* table column text alignment */

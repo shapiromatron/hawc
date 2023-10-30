@@ -1163,7 +1163,7 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def annotate_tag_parents(cls, references: list, tags: models.QuerySet):
+    def annotate_tag_parents(cls, references: list, tags: models.QuerySet, user_tags: bool = True):
         """Annotate tag parents for all tags and user tags.
 
         Sets a new attribute (parents: list[Tag]) for each tag.
@@ -1171,6 +1171,7 @@ class Reference(models.Model):
         Args:
             references (list): a list of references
             tags (models.QuerySet): the full tag list for an assessment
+            user_tags (bool): set parents for user tags as well as consensus tags
         """
         tag_map = {tag.path: tag for tag in tags}
 
@@ -1186,9 +1187,10 @@ class Reference(models.Model):
         for reference in references:
             for tag in reference.tags.all():
                 _set_parents(tag)
-            for user_tag in reference.user_tags.all():
-                for tag in user_tag.tags.all():
-                    _set_parents(tag)
+            if user_tags:
+                for user_tag in reference.user_tags.all():
+                    for tag in user_tag.tags.all():
+                        _set_parents(tag)
 
 
 class UserReferenceTags(ItemBase):
