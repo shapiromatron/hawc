@@ -70,21 +70,21 @@ mkdocs serve -a localhost:8010
 goto :eof
 
 :lint
-black . --check && ruff .
+ruff format . --check && ruff .
 npm --prefix .\frontend run lint
 goto :eof
 
 :format
-black . && ruff . --fix --show-fixes
+ruff format . && ruff . --fix --show-fixes
 npm --prefix .\frontend run format
 goto :eof
 
 :lint-py
-black . --check && ruff .
+ruff format . --check && ruff .
 goto :eof
 
 :format-py
-black . && ruff . --fix --show-fixes
+ruff format . && ruff . --fix --show-fixes
 goto :eof
 
 :lint-js

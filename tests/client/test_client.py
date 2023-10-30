@@ -1154,10 +1154,19 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
         response = client.riskofbias.reviews(self.db_keys.assessment_final)
         assert isinstance(response, list) and len(response) > 0
         assert len(response) == 6
         assert response[0]["scores"][0]["score_symbol"] == "++"
+
+    def test_riskofbias_final_reviews(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.final_reviews(self.db_keys.assessment_final)
+        assert isinstance(response, list) and len(response) > 0
+        assert len(response) > 0
+        assert all(review["final"] is True for review in response)
 
     #######################
     # SummaryClient tests #
