@@ -9,7 +9,6 @@ def set_public_training_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0015_flavor_options"),
     ]
