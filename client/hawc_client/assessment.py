@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from requests import Response
 
 from .client import BaseClient
@@ -94,3 +96,34 @@ class AssessmentClient(BaseClient):
         """
         url = f"{self.session.root_url}/assessment/api/assessment/{assessment_id}/"
         return self.session.delete(url)
+
+    def effect_tag_create(self, name: str, slug: str) -> dict:
+        """Create an effect tag.
+
+        Effect tags can be associated with endpoints our health outcomes.
+
+        Args:
+            name (str): Tag name
+            slug (str): Tag slug
+
+        Returns:
+            dict: The created tag
+        """
+        url = f"{self.session.root_url}/assessment/api/effect-tag/"
+        return self.session.post(url, {"name": name, "slug": slug}).json()
+
+    def effect_tag_list(self, name: str = "") -> dict:
+        """Return a paginated list of available tags.
+
+        If a name is specified, list is filtered to tags with the specified name.
+
+        Args:
+            name (str, optional): A search term to filter tag listing
+
+        Returns:
+            dict: a list of search results
+        """
+        url = f"{self.session.root_url}/assessment/api/effect-tag/"
+        if name:
+            url += "?" + urlencode({"name": name})
+        return self.session.get(url).json()

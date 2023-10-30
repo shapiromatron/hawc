@@ -12,7 +12,7 @@
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Animal Group Editing</span>
             <a class="dropdown-item" href="{% url 'animal:animal_group_new' object.pk %}">Create new</a>
-            <a class="dropdown-item" href="{% url 'animal:animal_group_copy_selector' object.pk %}">Copy from existing</a>
+            <a class="dropdown-item" href="{% url 'animal:animal_group_copy' object.pk %}">Copy from existing</a>
         {% endactions %}
       {% endif %}
     </div>

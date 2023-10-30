@@ -72,7 +72,7 @@ def modify_group_result(sender, instance, created, **kwargs):
     if len(grs) > 0:
         assessment_id = instance.get_assessment().id
         logger.info(
-            "Assessment {} -> Group {} (post_save creation signal) "
-            "-> {} GroupResult(s) created.".format(assessment_id, instance.id, len(grs))
+            f"Assessment {assessment_id} -> Group {instance.id} (post_save creation signal) "
+            f"-> {len(grs)} GroupResult(s) created."
         )
         models.GroupResult.objects.bulk_create(grs)
