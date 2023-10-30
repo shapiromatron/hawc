@@ -90,7 +90,7 @@ urlpatterns = [
         name="visualization_copy",
     ),
     path(
-        "assessment/<int:pk>/type/<int:visual_type>/data/",
+        "assessment/<int:pk>/type/<int:visual_type>/<int:study_type>/data/",
         views.VisualizationCreateTester.as_view(),
         name="visualization_create_tester",
     ),

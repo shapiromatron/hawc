@@ -437,6 +437,7 @@ class VisualizationCreate(BaseCreate):
             kwargs["instance"].pk = None
             self.instance = kwargs["instance"]
             kwargs["evidence_type"] = kwargs["instance"].evidence_type
+
         else:
             kwargs["evidence_type"] = self.kwargs.get("study_type")
             if kwargs["evidence_type"] is None:
@@ -451,6 +452,7 @@ class VisualizationCreate(BaseCreate):
                 not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
             ):
                 raise Http404
+        self.evidence_type = kwargs["evidence_type"]
         return kwargs
 
     def get_template_names(self):
@@ -475,6 +477,7 @@ class VisualizationCreate(BaseCreate):
         context["dose_units"] = models.Visual.get_dose_units()
         context["instance"] = {}
         context["visual_type"] = int(self.kwargs.get("visual_type"))
+        context["evidence_type"] = self.evidence_type
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
@@ -583,6 +586,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         context["dose_units"] = models.Visual.get_dose_units()
         context["instance"] = self.object.get_json()
         context["visual_type"] = self.object.visual_type
+        context["evidence_type"] = self.object.evidence_type
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
