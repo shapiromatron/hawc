@@ -5,9 +5,11 @@ from django.db import migrations, models
 
 def remove_duplicates(apps, schema_editor):
     ReferenceTags = apps.get_model("lit", "ReferenceTags")
-    for reftag in ReferenceTags.objects.all():
-        if ReferenceTags.objects.filter(content_object=reftag.content_object, tag=reftag.tag).count() > 1:
-            reftag.delete()
+    unique_tags = ReferenceTags.objects.distinct("content_object", "tag")
+    duplicate_tags = (
+        ReferenceTags.objects.all().difference(unique_tags).values_list("id", flat=True)
+    )
+    ReferenceTags.objects.filter(id__in=duplicate_tags).delete()
 
 
 class Migration(migrations.Migration):
