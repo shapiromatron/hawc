@@ -24,21 +24,21 @@
             {% endfor %}
             <div class="btn-group mr-1 mb-1 flex-shrink-0">
                 <a class="btn btn-tny outline-btn rounded-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
-                <span class="outline-btn btn-tny {% if not ref.has_study %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
+                <span class="outline-btn btn-tny {% if ref.has_study %} border-right-0 {% else %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
                 {% if ref.has_study %}
                 <a class="btn btn-tny outline-btn rounded-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
                 {% endif %}
             </div>
         </div>
-        {% if ref.abstract %}
+        {% if ref.abstract and not hide_abstract %}
         <p class="abstracts abstract-collapsed  mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
         {% endif %}
     </div>
     <div>
         {% with ref.tags.all as tags %}{% if tags %}
-        <div class="consensus-tag mt-2">
-            <p class="my-2"><b>Consensus tags:</b></p>
-            {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}{% endfor %}
+        <div class="consensus-tag">
+            {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
+            {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
         </div>
         {% endif %}{% endwith %}
         {% if conflict_resolution %}
@@ -52,7 +52,7 @@
             </form>
         </div>
         {% endif %}
-        {% for user_tag in ref.user_tags.all %}
+        {% if show_user_tags %}{% for user_tag in ref.user_tags.all %}
         <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
             <div>
                 {% if conflict_resolution %}
@@ -77,7 +77,7 @@
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
                         {% endif %}
                     {% else %}
-                        {% if not user_tag.is_resolved %}
+                        {% if tag.id in user_tag.deleted_tags %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
                         {% endif %}
                     {% endif %}
@@ -85,13 +85,13 @@
                 {% for tag in diff.difference %}
                     {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
                 {% endfor %}
-                {% if diff.intersection|length is 0 and diff.difference|length is 0 and user_tag.is_resolved %} 
+                {% if diff.intersection|length is 0 and diff.difference|length is 0 and user_tag.deleted_tags|length is 0 %} 
                     <p>No tags selected</p>
                 {% endif %}
             {% endwith %}
             
         </div>
-        {% endfor %}
+        {% endfor %}{% endif %}
     </div>
 </div>
 <script type="text/javascript">

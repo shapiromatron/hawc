@@ -65,10 +65,10 @@ class AssessmentFilterSet(BaseFilterSet):
             | Q(details__project_type__icontains=value)
             | Q(details__report_id__icontains=value)
         )
-        return queryset.filter(query).distinct()
+        return queryset.filter(query)
 
     def filter_role(self, queryset, name, value):
-        return queryset.filter(**{value: self.request.user}).distinct()
+        return queryset.filter(**{value: self.request.user})
 
     def filter_published(self, queryset, name, value):
         return queryset.with_published().filter(published=value)
@@ -161,3 +161,7 @@ class LogFilterSet(BaseFilterSet):
         ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
         form.fields["user"].queryset = self.assessment.pms_and_team_users()
         return form
+
+
+class EffectTagFilterSet(df.FilterSet):
+    name = df.CharFilter(lookup_expr="icontains")

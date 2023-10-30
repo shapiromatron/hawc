@@ -218,8 +218,8 @@ class ReferenceFilterSet(BaseFilterSet):
         if not value:
             return queryset
         include_descendants = self.data.get("include_additiontag_descendants", False)
-        queryset = queryset.annotate(addtag_count=Value(0))
         for tag in value:
+            queryset = queryset.annotate(addtag_count=Value(0))
             tag_ids = (
                 list(tag.get_tree(parent=tag).values_list("id", flat=True))
                 if include_descendants
@@ -242,8 +242,8 @@ class ReferenceFilterSet(BaseFilterSet):
         if not value:
             return queryset
         include_descendants = self.data.get("include_deletiontag_descendants", False)
-        queryset = queryset.annotate(deltag_count=Value(0))
         for tag in value:
+            queryset = queryset.annotate(deltag_count=Value(0))
             tag_ids = (
                 list(tag.get_tree(parent=tag).values_list("id", flat=True))
                 if include_descendants
@@ -254,9 +254,7 @@ class ReferenceFilterSet(BaseFilterSet):
                     deltag_count=F("deltag_count")
                     + Count(
                         "user_tags",
-                        filter=~Q(user_tags__tags=tag_id)
-                        & Q(tags=tag_id)
-                        & Q(user_tags__is_resolved=False),
+                        filter=Q(user_tags__deleted_tags__contains=[tag_id]),
                     )
                 )
             queryset = queryset.filter(deltag_count__gt=0)

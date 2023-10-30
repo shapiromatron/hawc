@@ -22,7 +22,7 @@ def _get_df(Model, freq: str, field: str) -> pd.DataFrame:
 def daily_changes():
     df = _get_df(Revision, "day", "date_created")
     df["weekday"] = df.date.dt.day_name()
-    df["weekofyear"] = df.date.dt.weekofyear
+    df["weekofyear"] = df.date.dt.isocalendar().week
     df["year"] = df.date.dt.year
     df["yr-wk"] = df.year.astype(str) + "-" + df.weekofyear.astype(str)
     lines = px.line(

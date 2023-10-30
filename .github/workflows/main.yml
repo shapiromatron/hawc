@@ -75,7 +75,6 @@ jobs:
           export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
         fi
         coverage run -m pytest --vcr-record=none
-        coverage html -d coverage_report
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
     - name: loc
@@ -83,11 +82,6 @@ jobs:
         sudo apt-get install -y cloc
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
         make loc >> $GITHUB_STEP_SUMMARY
-    - name: upload-coverage-report
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage-report
-        path: coverage_report
 
   frontend:
     name: frontend

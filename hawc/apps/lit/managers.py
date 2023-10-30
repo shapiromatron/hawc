@@ -75,6 +75,14 @@ class SearchManager(BaseManager):
         except Exception:
             return None
 
+    def copyable(self, user) -> models.QuerySet:
+        assessments = user.get_assessments().values_list("id", flat=True)
+        return (
+            self.model.objects.filter(assessment__in=assessments)
+            .exclude(title="Manual import")
+            .order_by("assessment_id")
+        )
+
 
 class PubMedQueryManager(BaseManager):
     assessment_relation = "search__assessment"
