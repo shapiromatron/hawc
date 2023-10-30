@@ -1,3 +1,4 @@
+{% comment %} Adapted from https://github.com/django-crispy-forms/crispy-bootstrap4/blob/be1cb8a79ecdefb612d5444a0ad70a25e26cde4d/crispy_bootstrap4/templates/bootstrap4/field.html {% endcomment %}
 {% load crispy_forms_field %}
 
 {% if field.is_hidden %}
@@ -46,10 +47,10 @@
                 <label for="{{ field.id_for_label }}" class="{%if use_custom_control%}custom-control-label{% else %}form-check-label{% endif %}{% if field.field.required %} requiredField{% endif %}">
                     {{ field.label }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
                     {% if field.field.hover_help %}
-                    {% include 'common/helptext_popup.html' with text=field.field.help_text %}
+                        {% include 'common/helptext_popup.html' with text=field.field.help_text %}
                     {% endif %}
                 </label>
-                {% include 'crispy_forms/layout/help_text_and_errors.html' %}
+                {% include 'bootstrap4/layout/help_text_and_errors.html' %}
             {% elif field|is_file and use_custom_control  %}
                 {% include 'bootstrap4/layout/field_file.html' %}
             {% else %}
@@ -73,7 +74,7 @@
                             {% crispy_field field 'class' 'form-control' %}
                         {% endif %}
                     {% endif %}
-                    {% include 'crispy_forms/layout/help_text_and_errors.html' %}
+                    {% include 'bootstrap4/layout/help_text_and_errors.html' %}
                 </div>
             {% endif %}
         {% endif %}

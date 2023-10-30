@@ -45,6 +45,7 @@ valid_html_attrs = {
 valid_css_properties = {"color", "background-color"}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
+    "canada.ca",
     ".edu",
     ".gov",
     ".who.int",
@@ -53,6 +54,7 @@ valid_netloc_endings = {
     "public.tableau.com",
     "sciencedirect.com",
     "hawcproject.org",
+    "zenodo.org",
 }
 
 

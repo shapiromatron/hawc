@@ -81,7 +81,7 @@ urlpatterns = [
     ),
     path(
         "assessment/<int:pk>/search/copy/",
-        views.SearchCopyAsNewSelector.as_view(),
+        views.SearchCopyForm.as_view(),
         name="copy_search",
     ),
     path(

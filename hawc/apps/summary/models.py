@@ -668,7 +668,8 @@ class DataPivot(models.Model):
         return self.visual_type
 
     @staticmethod
-    def reset_row_overrides(settings: dict):
+    def reset_row_overrides(settings: dict) -> None:
+        # reset row overrides in-place
         settings["row_overrides"] = []
 
 

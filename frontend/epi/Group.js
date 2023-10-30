@@ -1,7 +1,6 @@
 import _ from "lodash";
 import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
-import HawcTooltip from "shared/utils/HawcTooltip";
 
 import $ from "$";
 
@@ -21,6 +20,10 @@ class Group {
 
     static displayFullPager($el, id) {
         Group.get_object(id, d => d.displayFullPager($el));
+    }
+
+    url() {
+        return `/epi/group/${this.data.id}/`;
     }
 
     displayFullPager($el) {
@@ -105,12 +108,13 @@ class Group {
         return tbl.getTbl();
     }
 
-    show_tooltip(e) {
-        e.preventDefault();
-        var opts = {width: "700px", height: "380px"},
-            title = this.data.name,
-            content = this.build_details_table();
-        new HawcTooltip(opts).show(e, title, content);
+    popover() {
+        return {
+            trigger: "hover",
+            title: this.data.name,
+            html: true,
+            content: this.build_details_table(),
+        };
     }
 }
 

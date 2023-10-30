@@ -9,22 +9,15 @@ class EndpointPlotContainer {
         this.endpoint = endpoint;
         this.plot_div = $(plot_id);
         this.plot_id = plot_id;
-
         if (!this.endpoint.hasEGdata()) {
             this.plot_div.html("<p>Plot unavailable.</p>");
         } else {
-            var options = {build_plot_startup: false};
-            this.plot_style = [
-                new Barplot(endpoint, this.plot_id, options, this),
-                new DRPlot(endpoint, this.plot_id, options, this),
-            ];
+            var options = {build_plot_startup: false},
+                isDichotomous = this.endpoint.isDichotomous();
+            this.scatter = new DRPlot(endpoint, this.plot_id, options, this);
+            this.bar = new Barplot(endpoint, this.plot_id, options, this);
+            this.plot_style = isDichotomous ? [this.scatter, this.bar] : [this.bar, this.scatter];
             this.toggle_views();
-        }
-    }
-
-    add_bmd_line(selected_model, line_class) {
-        if (this.plot.add_bmd_line) {
-            this.plot.add_bmd_line(selected_model, line_class);
         }
     }
 
@@ -53,6 +46,12 @@ class EndpointPlotContainer {
             };
 
         plot.add_menu_button(options);
+    }
+
+    setScatter() {
+        if (!this.plot == this.scatter) {
+            this.toggle_views();
+        }
     }
 }
 
