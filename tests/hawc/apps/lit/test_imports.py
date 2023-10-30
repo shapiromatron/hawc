@@ -189,14 +189,14 @@ class TestHero:
         initial_searches = models.Search.objects.count()
 
         # known hero ID that doesn't exist
-        data["search_string"] = "9876543321"
+        data["search_string"] = "987654321"
         url = reverse("lit:import_new", kwargs={"pk": assessment_pk})
         response = client.post(url, data)
 
         assertFormError(
             response.context["form"],
             "search_string",
-            "The following HERO ID(s) could not be imported: 9876543321",
+            "The following HERO ID(s) could not be imported: 987654321",
         )
         assert models.Search.objects.count() == initial_searches
 

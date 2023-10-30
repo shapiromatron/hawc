@@ -1,10 +1,7 @@
-
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0003_auto_20150723_1557"),
     ]

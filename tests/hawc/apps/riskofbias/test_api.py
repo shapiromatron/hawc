@@ -279,6 +279,14 @@ class TestRiskOfBiasViewSet:
         assert "scores" in resp.data and len(resp.data["scores"]) == 2
         check_details_of_last_log_entry(resp.data["id"], "Created")
 
+        # demonstrate working bias direction
+        payload = self.build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+        payload["final"] = False
+        payload["scores"][0]["bias_direction"] = 1
+        resp = team.post(url, payload, format="json")
+        assert resp.status_code == 201
+        assert resp.json()["scores"][0]["bias_direction"] == 1
+
     def test_override_options(self, db_keys):
         # check read-version of study api; including deeply nested scores and overridden objects
         team = get_client("team", api=True)

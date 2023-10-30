@@ -253,18 +253,18 @@ class RiskOfBias(AssessmentEditViewSet):
         serializer = serializers.FinalRiskOfBiasSerializer(robs, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER)
+    def scores(self, request, *args, **kwargs):
+        metric = self.get_object()
+        serializer = serializers.MetricFinalScoresSerializer(metric)
+        return Response(serializer.data)
+
 
 class AssessmentMetricViewSet(AssessmentViewSet):
     model = models.RiskOfBiasMetric
     serializer_class = serializers.RiskOfBiasMetricSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "domain__assessment"
-
-    @action(detail=True, action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER)
-    def scores(self, request, *args, **kwargs):
-        metric = self.get_object()
-        serializer = serializers.MetricFinalScoresSerializer(metric)
-        return Response(serializer.data)
 
 
 class AssessmentScoreViewSet(AssessmentEditViewSet):

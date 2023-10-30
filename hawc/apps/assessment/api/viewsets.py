@@ -21,7 +21,7 @@ from ...common.views import bulk_create_object_log, create_object_log
 from .. import models, serializers
 from ..actions.audit import AssessmentAuditSerializer
 from ..constants import AssessmentViewSetPermissions
-from ..filterset import GlobalChemicalsFilterSet
+from ..filterset import EffectTagFilterSet, GlobalChemicalsFilterSet
 from .filters import InAssessmentFilter
 from .helper import get_assessment_from_query
 from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
@@ -488,6 +488,16 @@ class Assessment(AssessmentEditViewSet):
         df = fs.qs.global_chemical_report()
         filename = f"assessment-search-{query}"
         return FlatExport.api_response(df, filename)
+
+
+class EffectTagViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+    model = models.EffectTag
+    queryset = models.EffectTag.objects.all()
+    serializer_class = serializers.EffectTagSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    lookup_value_regex = re_digits
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = EffectTagFilterSet
 
 
 class AssessmentValueViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):

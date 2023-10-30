@@ -193,7 +193,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
             .get_queryset()
             .select_related("study", "study__assessment", "dtxsid")
             .prefetch_related("study__searches", "study__identifiers")
-        )
+        ).order_by("id")
 
     @transaction.atomic
     def perform_create(self, serializer):
