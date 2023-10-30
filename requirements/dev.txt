@@ -5,8 +5,7 @@
 flit==3.9.0
 
 # lint and formatting tools
-black==23.10.0
-ruff==0.1.0
+ruff==0.1.3
 
 # django development
 django-debug-toolbar==4.2.0

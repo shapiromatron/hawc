@@ -1,5 +1,3 @@
-
-
 from django.db import migrations
 
 
@@ -18,7 +16,6 @@ def units_from_list(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0005_datapivotquery_preferred_units"),
     ]
