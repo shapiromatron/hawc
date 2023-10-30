@@ -24,7 +24,7 @@ class BMROptionModal extends BaseModal {
 
         return (
             <div className="modal" id={BMR_MODAL_ID}>
-                <div className="modal-dialog">
+                <div className="modal-dialog modal-xl">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h3>{title}</h3>

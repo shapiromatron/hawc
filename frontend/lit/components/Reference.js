@@ -21,7 +21,7 @@ class Reference extends Component {
                 <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="outline-btn mr-1 mb-1 flex-shrink-0"
+                    className={`outline-btn ${btn_size} rounded mr-1 mb-1 flex-shrink-0`}
                     href={data.full_text_url}
                     key={h.randomString()}>
                     Full Text&nbsp;
