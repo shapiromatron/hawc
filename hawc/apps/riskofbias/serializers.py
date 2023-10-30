@@ -325,7 +325,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         instance = models.RiskOfBias.objects.create(**validated_data)
         for score_data in scores_data:
             overridden_objects = score_data.pop("overridden_objects", [])
-            score = models.RiskOfBiasScore.objects.create(**score_data, riskofbias=instance)
+            try:
+                score = models.RiskOfBiasScore.objects.create(**score_data, riskofbias=instance)
+            except ValidationError as err:
+                raise serializers.ValidationError(err.message)
             for overridden_object in overridden_objects:
                 overridden_object.score = score
                 overridden_object.save()
