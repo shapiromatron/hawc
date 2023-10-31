@@ -4116,7 +4116,8 @@ dfn {
   right: auto
 }
 
-* {
+/* this adds an unappealing transition to the actions button  */
+/* * {
   -webkit-transition-duration: 200ms;
   transition-duration: 200ms;
   -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
@@ -4125,7 +4126,7 @@ dfn {
   transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
   -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
-}
+} */
 
 @media(prefers-reduced-motion: reduce) {
 
@@ -10679,13 +10680,13 @@ input[type=search] {
     z-index: 500
   }
 
-  .usa-nav.is-visible {
+  /* .usa-nav.is-visible {
     -webkit-animation: slidein-left .3s ease-in-out;
     animation: slidein-left .3s ease-in-out;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex
-  }
+  } */
 }
 
 @media all and (min-width: 64em) {
@@ -17274,14 +17275,14 @@ html.no-js .usa-banner:hover .usa-banner__content {
   width: auto
 }
 
-@media(prefers-reduced-motion: reduce) {
+/* @media(prefers-reduced-motion: reduce) {
   .usa-nav.is-visible {
     -webkit-animation-duration: .01ms !important;
     animation-duration: .01ms !important;
     -webkit-animation-iteration-count: 1 !important;
     animation-iteration-count: 1 !important
   }
-}
+} */
 
 .usa-section {
   overflow: auto
