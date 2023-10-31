@@ -1,6 +1,5 @@
 import json
 from copy import deepcopy
-from pathlib import Path
 
 import pytest
 from django.urls import reverse
@@ -10,9 +9,7 @@ from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
 from hawc.apps.study.models import Study
 
-from ..test_utils import check_details_of_last_log_entry, get_client
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry, get_client
 
 
 @pytest.mark.django_db
@@ -28,7 +25,7 @@ class TestRiskOfBiasAssessmentViewSet:
         assert rev_client.get(url).status_code == 403
         assert team_client.get(url).status_code == 200
 
-        fn = Path(DATA_ROOT / "api-rob-assessment-full-export.json")
+        fn = "api-rob-assessment-full-export.json"
         url = (
             reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -37,10 +34,7 @@ class TestRiskOfBiasAssessmentViewSet:
         # check data
         resp = team_client.get(url)
         assert resp.status_code == 200
-        data = resp.json()
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-        assert data == json.loads(fn.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_export(self, rewrite_data_files: bool, db_keys):
         # permission check
@@ -54,7 +48,7 @@ class TestRiskOfBiasAssessmentViewSet:
         assert team_client.get(url).status_code == 200
 
         # data check
-        fn = Path(DATA_ROOT / "api-rob-assessment-export.json")
+        fn = "api-rob-assessment-export.json"
         url = (
             reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -62,10 +56,7 @@ class TestRiskOfBiasAssessmentViewSet:
 
         resp = anon_client.get(url)
         assert resp.status_code == 200
-        data = resp.json()
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-        assert data == json.loads(fn.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_PandasXlsxRenderer(self, db_keys):
         """
@@ -140,17 +131,14 @@ class TestRiskOfBiasViewSet:
 
     def test_final_list(self, rewrite_data_files: bool, db_keys):
         anon_client = get_client(api=True)
-        fn = Path(DATA_ROOT / "api-rob-review-final.json")
+        fn = "api-rob-review-final.json"
         url = (
             reverse("riskofbias:api:review-final")
             + f"?assessment_id={db_keys.assessment_final}&format=json"
         )
         resp = anon_client.get(url)
         assert resp.status_code == 200
-        data = resp.json()
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2, sort_keys=True))
-        assert data == json.loads(fn.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def build_upload_payload(self, study, author, metrics, dummy_score):
         payload = {
@@ -526,7 +514,7 @@ class TestCleanupViewSet:
         assert c.login(username="team@hawcproject.org", password="pw") is True
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
-        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        url = reverse("riskofbias:api:metric-list") + assessment_query
         resp = c.get(url, format="json")
         assert resp.status_code == 200
         assert (
@@ -547,7 +535,7 @@ class TestCleanupViewSet:
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
         # get metrics for score
-        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        url = reverse("riskofbias:api:metric-list") + assessment_query
         metrics = c.get(url, format="json").json()
 
         # get available rob scores for a metric

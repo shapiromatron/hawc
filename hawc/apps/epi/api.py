@@ -10,7 +10,7 @@ from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
     AssessmentEditViewSet,
-    AssessmentLevelPermissions,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     EditPermissionsCheckMixin,
 )
@@ -18,20 +18,16 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.api import ReadWriteSerializerMixin
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata
 
 
-class EpiAssessmentViewSet(viewsets.GenericViewSet):
+class EpiAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     def get_outcome_queryset(self):
         perms = self.assessment.user_permissions(self.request.user)
