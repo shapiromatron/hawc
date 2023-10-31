@@ -93,10 +93,9 @@ class BaseStudyForm(forms.ModelForm):
         helper.layout.insert(
             study_type_idx,
             cfl.HTML(
-                """<div class="form-row">
-            <p class="mb-2"><b>Study Type(s)</b></p>
-            <p class="text-muted">Select the type(s) of data contained in this study. Study evaluation and data extraction fields will change depending on the selection. Modifying values after proceeding with study evaluation and/or data extraction may cause data to be removed.</p></div>
-        """
+                """<div class="form-row mb-2">
+            <p><b>Study Type(s)</b></p>
+            <p class="text-muted">Select the type(s) of data contained in this study. Study evaluation and data extraction fields will change depending on the selection. Modifying values after proceeding with study evaluation and/or data extraction may cause data to be removed.</p></div>"""
             ),
         )
         return helper

@@ -731,9 +731,7 @@ class EndpointSelectorForm(CopyForm):
             .select_related("animal_group__experiment")
             .order_by("animal_group__experiment__name", "animal_group__name", "name")
         )
-        self.fields[
-            "selector"
-        ].label_from_instance = (
+        self.fields["selector"].label_from_instance = (
             lambda obj: f"{obj.animal_group.experiment} | {obj.animal_group} | {obj}"
         )
 

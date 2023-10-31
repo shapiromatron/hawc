@@ -12,7 +12,7 @@ following applications installed on your local development system:
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
-- Python code must comply with code formatters and linters: black and ruff
+- Python code must comply with code formatters and linters: ruff
 - Javascript code must comply with eslint formatters
 - All unit-test (currently in python-only) must pass; please write test when contributing new code
 
@@ -388,7 +388,6 @@ py.test -sv tests/integration/test_login.py --pdb
 [Visual Studio Code]( https://code.visualstudio.com/) is the recommended editor for this project. Recommended extensions include:
 
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [Black formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
@@ -411,7 +410,7 @@ When using the recommended settings below, your python and javascript code shoul
         "editor.quickSuggestions": false
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.fixAll": true

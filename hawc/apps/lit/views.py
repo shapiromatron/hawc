@@ -713,7 +713,9 @@ class RefListExtract(BaseUpdate):
         kwargs = super().get_form_kwargs()
         kwargs.update(
             assessment=self.assessment,
-            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment),
+            reference_qs=models.Reference.objects.get_references_ready_for_import(self.assessment)
+            .select_related("study")
+            .prefetch_related("searches", "identifiers", "tags"),
         )
         return kwargs
 
@@ -727,10 +729,12 @@ class RefListExtract(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         context.update(
             breadcrumbs=lit_overview_crumbs(self.request.user, self.assessment, "Convert to study"),
             object_list=context["form"].fields["references"].queryset,
         )
+        models.Reference.annotate_tag_parents(context["object_list"], tags, user_tags=False)
         return context
 
     def get_success_url(self):

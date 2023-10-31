@@ -16,7 +16,6 @@ def add_barchart(apps, schema_editor):
             settings = False
 
         if settings:
-
             # add barchart options
             settings["plot_settings"]["as_barchart"] = False
             settings["barchart"] = {
@@ -64,7 +63,6 @@ def remove_barchart(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0011_add_na_option"),
     ]

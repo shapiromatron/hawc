@@ -235,6 +235,7 @@ class TestClient(LiveServerTestCase, TestCase):
             power_notes="...",
             results_notes="...",
             endpoint_notes="...",
+            effects=["tag1"],
             groups=[
                 dict(
                     dose_group_id=0,
@@ -267,6 +268,9 @@ class TestClient(LiveServerTestCase, TestCase):
         )
         endpoint = client.animal.create_endpoint(data)
         assert isinstance(endpoint, dict) and endpoint["id"] > 0
+        assert len(endpoint["effects"]) == 1
+        assert endpoint["effects"][0] == {"name": "tag1", "slug": "tag1"}
+        assert len(endpoint["groups"]) == 3
 
         # test cleanup; remove what we just created
         Experiment.objects.filter(id=experiment["id"]).delete()
@@ -312,6 +316,21 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.all_values()
         assert isinstance(response, list)
         assert len(response) == 3
+
+    def test_effect_tag(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        # test create
+        response = client.assessment.effect_tag_create(name="foo", slug="foo")
+        assert response == {"name": "foo", "slug": "foo"}
+
+        # test list
+        response = client.assessment.effect_tag_list()
+        assert response["count"] >= 3
+
+        response = client.assessment.effect_tag_list(name="foo")
+        assert response["count"] == 1
+        assert response["results"] == [{"name": "foo", "slug": "foo"}]
 
     ###################
     # EpiClient tests #
@@ -467,10 +486,13 @@ class TestClient(LiveServerTestCase, TestCase):
                 "summary": "my dsummary",
                 "effect": "my effect",
                 "effect_subtype": "my subtype",
+                "effects": ["tag1"],
             }
         )
         assert isinstance(outcome, dict) and outcome["name"] == outcome_name
         outcome_id = outcome["id"]
+        assert len(outcome["effects"]) == 1
+        assert outcome["effects"][0] == {"name": "tag1", "slug": "tag1"}
 
         # result
         result_name = "test result"
@@ -497,10 +519,13 @@ class TestClient(LiveServerTestCase, TestCase):
                 "factors_applied": ["birth order"],
                 "factors_considered": ["dynamic factor", "study center"],
                 "comments": "comments go here",
+                "resulttags": ["tag2"],
             }
         )
         assert isinstance(result, dict) and result["name"] == result_name
         result_id = result["id"]
+        assert len(result["resulttags"]) == 1
+        assert result["resulttags"][0] == {"name": "tag2", "slug": "tag2"}
 
         # group result
         gr_pval = 0.432
@@ -1129,10 +1154,19 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
         response = client.riskofbias.reviews(self.db_keys.assessment_final)
         assert isinstance(response, list) and len(response) > 0
         assert len(response) == 6
         assert response[0]["scores"][0]["score_symbol"] == "++"
+
+    def test_riskofbias_final_reviews(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.final_reviews(self.db_keys.assessment_final)
+        assert isinstance(response, list) and len(response) > 0
+        assert len(response) > 0
+        assert all(review["final"] is True for review in response)
 
     #######################
     # SummaryClient tests #

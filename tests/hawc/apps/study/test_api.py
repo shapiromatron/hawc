@@ -74,6 +74,40 @@ class TestStudyViewSet:
             "url": "/study/1/",
         }
 
+    def test_riskofbias_detail(self, db_keys):
+        # check read-version of study api; including deeply nested scores and overridden objects
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        # study detail
+        url = reverse("study:api:study-detail", kwargs={"pk": db_keys.study_working})
+        response = client.get(url)
+        assert response.status_code == 200
+        rob = response.json()["riskofbiases"]
+        assert len(rob) == 1
+        assert "author" not in rob[0]
+
+        # study detail; all rob
+        url = reverse("study:api:study-rob", args=(db_keys.study_working,))
+        response = client.get(url)
+        assert response.status_code == 200
+
+        rob = response.json()
+        assert len(rob) == 3
+        assert "author" in rob[0]
+        assert rob[2]["scores"][1]["is_default"] is True
+        assert rob[2]["scores"][2]["is_default"] is False
+        assert rob[2]["scores"][2]["overridden_objects"] == [
+            {
+                "id": 1,
+                "score_id": 9,
+                "content_type_name": "animal.endpoint",
+                "object_id": 1,
+                "object_name": "my outcome",
+                "object_url": "/ani/endpoint/1/",
+            }
+        ]
+
     def test_detail_robs(self, db_keys):
         client = Client()
         url = reverse("study:api:study-rob", args=(db_keys.study_final_bioassay,))
