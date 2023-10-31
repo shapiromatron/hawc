@@ -670,6 +670,7 @@ class BulkMergeConflictsForm(forms.Form):
         help_text="Includes references that are not shown on the conflict resolution page. This refers to references with one unresolved user tag.",
         required=False,
     )
+    cache_key = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")

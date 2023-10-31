@@ -534,6 +534,7 @@ class ReferenceQuerySet(models.QuerySet):
         user_id,
         include_without_conflicts: bool = False,
         preview: bool = False,
+        cached: bool = False,
     ):
         # get all relevant tag ids
         ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
@@ -546,37 +547,40 @@ class ReferenceQuerySet(models.QuerySet):
 
         # annotate references with tags to be added per bulk merge request
         # this includes any of the tag_ids on an unresolved UserReferenceTag
-        queryset = self.annotate(
-            bulk_merge_tags=ArrayAgg(
-                "user_tags__tags__id",
-                distinct=True,
-                filter=Q(user_tags__tags__in=tag_ids) & Q(user_tags__is_resolved=False),
-            ),
-            ref_tags=ArrayAgg(
-                "tags",
-                distinct=True,
-            ),
-            n_unapplied_reviews=Count(
-                "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
-            ),
-        )
-
-        # filter by references that have tags to be added (i.e., user tag(s) contains the tags given, consensus tags do not)
-        # then filter out references without conflict (1 unresolved user tag), or keep them, depending on parameter
-        # note: the '__contains' filter is overwritten for ArrayField; it filters by subset
-        # see: https://docs.djangoproject.com/en/4.2/ref/contrib/postgres/fields/#contains
-        if not include_without_conflicts:
-            queryset = queryset.filter(
-                Q(n_unapplied_reviews__gt=1),
-                Q(bulk_merge_tags__isnull=False),
-                ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
+        if not cached:
+            queryset = self.annotate(
+                bulk_merge_tags=ArrayAgg(
+                    "user_tags__tags__id",
+                    distinct=True,
+                    filter=Q(user_tags__tags__in=tag_ids) & Q(user_tags__is_resolved=False),
+                ),
+                ref_tags=ArrayAgg(
+                    "tags",
+                    distinct=True,
+                ),
+                n_unapplied_reviews=Count(
+                    "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
+                ),
             )
+            # filter by references that have tags to be added (i.e., user tag(s) contains the tags given, consensus tags do not)
+            # then filter out references without conflict (1 unresolved user tag), or keep them, depending on parameter
+            # note: the '__contains' filter is overwritten for ArrayField; it filters by subset
+            # see: https://docs.djangoproject.com/en/4.2/ref/contrib/postgres/fields/#contains
+            if not include_without_conflicts:
+                queryset = queryset.filter(
+                    Q(n_unapplied_reviews__gt=1),
+                    Q(bulk_merge_tags__isnull=False),
+                    ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(bulk_merge_tags__isnull=False),
+                    ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
+                )
         else:
-            queryset = queryset.filter(
-                Q(bulk_merge_tags__isnull=False), ~Q(ref_tags__contains=models.F("bulk_merge_tags"))
-            )
+            queryset = self
 
-        if not queryset.exists():  # return if no references were found from filtering
+        if not queryset.exists():  # return if no references were found after filtering
             return {"merged": False, "queryset": None, "message": "No references found to merge."}
 
         if preview:

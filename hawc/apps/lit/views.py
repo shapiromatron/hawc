@@ -1,5 +1,5 @@
-import requests
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Q
@@ -415,8 +415,11 @@ class BulkMerge(HtmxView):
     def preview(self, request: HttpRequest, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
         queryset = models.Reference.objects.filter(assessment=self.assessment)
-        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=request.POST)
-        for field in form.fields:
+        key = f'{self.assessment.pk}-bulk-merge-tags-{"-".join(request.POST.getlist("tags"))}'
+        form = forms.BulkMergeConflictsForm(
+            assessment=self.assessment, initial={**request.POST, "cache_key": key}
+        )
+        for field in "tags", "include_without_conflict":
             form.fields[field].disabled = True
         merge_result = queryset.merge_tag_conflicts(
             request.POST.getlist("tags"),
@@ -427,26 +430,31 @@ class BulkMerge(HtmxView):
         if merge_result["queryset"]:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
             models.Reference.annotate_tag_parents(merge_result["queryset"], tags)
+            cache_duration = 60 * 30  # half hour
+            cache.set(key, (merge_result["queryset"], request.POST), cache_duration)
         context = dict(
             object_list=merge_result["queryset"],
             assessment=self.assessment,
             action="preview",
             message=merge_result["message"],
             form=form,
+            cache_key=key,
         )
         return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
 
     def merge(self, request: HttpRequest, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
-        queryset = models.Reference.objects.filter(assessment=self.assessment)
-        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=request.POST)
-        for field in form.fields:
+        cache_key = request.POST.get("cache_key")
+        queryset, data = cache.get(cache_key)
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
+        for field in "tags", "include_without_conflict":
             form.fields[field].disabled = True
         merge_result = queryset.merge_tag_conflicts(
-            request.POST.getlist("tags"),
+            data.getlist("tags"),
             request.user.id,
-            request.POST.get("include_without_conflict", False),
+            data.get("include_without_conflict", False),
             preview=False,
+            cached=True,
         )
         context = dict(
             object_list=merge_result["queryset"],

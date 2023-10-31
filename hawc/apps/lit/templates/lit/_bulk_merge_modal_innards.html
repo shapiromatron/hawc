@@ -21,7 +21,7 @@
                 {% elif action == 'merge' %}
                 <h3 class="mb-0">Error</h3>
                 {% elif action == 'preview' %}
-                <h3 class="mb-0">The following references would be affected by the bulk merge:</h3>
+                <h3 class="mb-0">The following {{object_list|length}} references will be tagged:</h3>
                 {% endif %}
             </div>
             <ul class="list-group list-group-flush">
@@ -42,8 +42,7 @@
 </div>
 <div class="modal-footer">
     <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner" aria-hidden="true"></i>
-    {% if action == 'preview' %}
-        {% if object_list %}
+    {% if action == 'preview' and object_list %}
         <button class="btn btn-primary ml-2"
             hx-target="#modal-content"
             hx-indicator="#spinner"
@@ -51,15 +50,17 @@
             hx-encoding="multipart/form-data">
         Bulk Merge Tags
         </button>
-        {% endif %}
-    <button class="btn btn-secondary ml-2"
+    {% endif %}
+    {% if action == 'preview' or merged == True %}
+        <button class="btn btn-secondary ml-2"
         hx-target="#modal-content"
         hx-indicator="#spinner"
         hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=index"
         hx-encoding="multipart/form-data">
-    Change Tag Selection
-    </button>
-    {% else %}
+        Change Tag Selection
+        </button>
+    {% endif %}
+    {% if action == 'index' %}
     <button class="btn btn-primary ml-2"
         hx-target="#modal-content"
         hx-indicator="#spinner"
