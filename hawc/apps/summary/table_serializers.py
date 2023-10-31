@@ -264,7 +264,6 @@ class StudyEvaluationSerializer(serializers.Serializer):
         fields = [
             "study_id",
             "metric_id",
-            "id",
             "score_id",
             "score_label",
             "score_notes",

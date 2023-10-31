@@ -71,7 +71,6 @@
     {
       "bias_direction": 1,
       "content_type_id": null,
-      "id": 7,
       "is_default": true,
       "metric_id": 1,
       "object_id": null,
@@ -85,7 +84,6 @@
     {
       "bias_direction": 2,
       "content_type_id": null,
-      "id": 6,
       "is_default": true,
       "metric_id": 2,
       "object_id": null,
@@ -99,7 +97,6 @@
     {
       "bias_direction": 1,
       "content_type_id": 9999,
-      "id": 1,
       "is_default": false,
       "metric_id": 2,
       "object_id": 1,
