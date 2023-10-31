@@ -474,6 +474,19 @@ A few major revisions were made to the compiled USWDS assets, most notably:
 
 - Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
 
+### Updating EPA.gov style
+
+HAWC follows standards to comply with the EPA.gov look and feel. The following steps describe how to update HAWC styling with the EPA theme:
+
+1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
+2.  Right click the page and select "Save As" to download the page as an .html file.
+3. Open the downloaded `EPA Template_US EPA_files` folder.
+4. Open `styles.css` in VS Code.
+5. Replace the contents of `hawc/static/css/epa/core/style.css` with the updated `styles.css`.
+6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
+7. Test changes locally to ensure HAWC matches EPA.gov styling.
+
+
 ### Materialized views
 
 HAWC is in essence two different systems with very different data requirements:
