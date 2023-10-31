@@ -4116,7 +4116,7 @@ dfn {
   right: auto
 }
 
-/* this adds an unappealing transition to the actions button  */
+/* HAWC CHANGES START  */
 /* * {
   -webkit-transition-duration: 200ms;
   transition-duration: 200ms;
@@ -4127,6 +4127,7 @@ dfn {
   -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
 } */
+/* HAWC CHANGES END  */
 
 @media(prefers-reduced-motion: reduce) {
 
