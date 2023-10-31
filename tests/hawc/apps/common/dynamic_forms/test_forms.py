@@ -19,19 +19,17 @@ class TestDynamicForm:
         yesno["fields"] = [field for field in yesno["fields"] if field["name"] == "yesno"]
         schema = Schema.parse_obj(yesno)
         form_rendering = render_crispy_form(schema.to_form({}))
-        expected = """<div class="form-row " id="row_id_dynamic_form">
-        <div class="col-6" > <div id="div_id_yesno" class="form-group">
-        <label class="">Yes/no field?</label><div>
-        <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
-        <label class="custom-control-label" for="id_yesno_0">Yes</label>
-        </div>
-        <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
-        <label class="custom-control-label" for="id_yesno_1">No</label>
-        </div>
-        <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
-        </div> </div> </div> </div>"""
+        expected = """<div class="form-row ">
+        <div \n class="col-6">
+        <div id="div_id_yesno" class="form-group"> <label class="">\n Yes/no field?\n </label>
+        <div><div class="custom-control custom-radio custom-control-inline"> <input type="radio"
+        class="custom-control-input" name="yesno" value="yes" id="id_yesno_0" \n> <label
+        class="custom-control-label" for="id_yesno_0">\n Yes\n </label> </div>
+        <div class="custom-control custom-radio custom-control-inline"> <input type="radio"
+        class="custom-control-input" name="yesno" value="no" id="id_yesno_1" \n> <label
+        class="custom-control-label" for="id_yesno_1">\n No\n </label> </div> <small id="hint_id_yesno"
+        class="form-text text-muted">Help text</small>
+        </div></div></div></div>"""
         assertInHTML(expected, form_rendering)
 
     def test_validation(self):
