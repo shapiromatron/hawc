@@ -4,11 +4,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ..assessment.api import AssessmentLevelPermissions, CleanupFieldsBaseViewSet
+from ..assessment.api import (
+    BaseAssessmentViewSet,
+    CleanupFieldsBaseViewSet,
+)
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api.utils import get_published_only
-from ..common.helper import FlatExport, cacheable, re_digits
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..study.models import Study
@@ -29,15 +32,9 @@ class TermViewSet(GenericViewSet):
         return Response(export)
 
 
-class AssessmentViewSet(GenericViewSet):
+class AssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
     @action(
         detail=True,

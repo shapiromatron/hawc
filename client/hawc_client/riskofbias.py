@@ -134,7 +134,7 @@ class RiskOfBiasClient(BaseClient):
         Returns:
             pd.DataFrame: A dataframe of metrics
         """
-        url = f"{self.session.root_url}/rob/api/metrics/?assessment_id={assessment_id}"
+        url = f"{self.session.root_url}/rob/api/metric/?assessment_id={assessment_id}"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 

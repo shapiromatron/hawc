@@ -1,6 +1,4 @@
-import json
 from copy import deepcopy
-from pathlib import Path
 
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
@@ -11,9 +9,7 @@ from rest_framework.test import APIClient
 from hawc.apps.assessment.models import Assessment, DoseUnits
 from hawc.apps.epi import constants, models
 
-from ..test_utils import check_details_of_last_log_entry
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry
 
 
 @pytest.mark.django_db
@@ -23,14 +19,7 @@ class TestEpiAssessmentViewSet:
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()

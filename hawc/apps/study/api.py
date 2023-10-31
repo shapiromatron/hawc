@@ -1,19 +1,17 @@
 from django.db import transaction
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, permissions, status, viewsets
+from rest_framework import mixins, permissions, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from ..assessment.api import (
-    AssessmentLevelPermissions,
+    AssessmentViewSet,
     CleanupFieldsBaseViewSet,
-    InAssessmentFilter,
     check_assessment_query_permission,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api import DisabledPagination
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from ..common.views import create_object_log
 from ..lit.models import Reference
@@ -21,15 +19,11 @@ from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import filterset, models, serializers
 
 
-class Study(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+class Study(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
-    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     list_actions = ["list", "rob_scores"]
-    lookup_value_regex = re_digits
 
     def get_serializer_class(self):
         if self.action == "create_from_identifier":
