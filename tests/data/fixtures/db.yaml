@@ -8377,6 +8377,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: reference, p-trend <0.001
     created: 2022-01-10 21:18:05.442039+00:00
     last_updated: 2022-01-10 21:22:42.511191+00:00
@@ -8406,6 +8407,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.446161+00:00
     last_updated: 2022-01-13 17:31:45.166735+00:00
@@ -8435,6 +8437,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.449764+00:00
     last_updated: 2022-01-13 17:31:45.330298+00:00
@@ -8464,6 +8467,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.453394+00:00
     last_updated: 2022-01-13 17:31:45.373797+00:00
@@ -8491,6 +8495,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: reference, p-trend=0.001
     created: 2022-01-10 21:18:05.457140+00:00
     last_updated: 2022-01-10 21:22:42.527813+00:00
@@ -8518,6 +8523,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.460901+00:00
     last_updated: 2022-01-13 17:31:45.412605+00:00
@@ -8545,6 +8551,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.464462+00:00
     last_updated: 2022-01-13 17:31:45.446933+00:00
@@ -8572,6 +8579,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: Logistic regression
+    adverse_direction: unspecified
     comments: ''
     created: 2022-01-10 21:18:05.468642+00:00
     last_updated: 2022-01-13 17:31:45.496401+00:00
@@ -8599,6 +8607,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: test
     created: 2022-01-10 21:44:55.946716+00:00
     last_updated: 2022-01-13 17:32:54.027252+00:00
@@ -8626,6 +8635,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: preferred outcome
     created: 2022-01-10 21:44:55.951328+00:00
     last_updated: 2022-01-13 17:32:54.031518+00:00
@@ -8653,6 +8663,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: a different endpoint the same PFAS
     created: 2022-01-10 21:44:55.955074+00:00
     last_updated: 2022-01-13 17:32:54.035581+00:00
@@ -8680,6 +8691,7 @@
     confidence: medium
     data_location: Table 3
     statistical_method: linear regression
+    adverse_direction: unspecified
     comments: testing another PFAS
     created: 2022-01-10 21:44:55.958967+00:00
     last_updated: 2022-01-13 17:32:54.039436+00:00
@@ -9411,16 +9423,7 @@
     visual_type: 6
     dose_units: null
     prefilters: {}
-    settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
-      "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter":
-      "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_tooltip":
-      true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter":
-      "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal
-      group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete",
-      "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column":
-      "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation",
-      "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":
-      "and"}
+    settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":"and"}
     caption: ''
     published: true
     sort_order: short_citation
@@ -10269,7 +10272,7 @@
 - model: udf.ModelBinding
   pk: 1
   fields:
-    assessment: 1
+    assessment: 4
     content_type:
     - animal
     - endpoint

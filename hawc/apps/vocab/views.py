@@ -1,19 +1,10 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.urls import reverse
 from django.views.generic import TemplateView
 
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from . import models
-
-
-def build_ehv_breadcrumbs(user, name: str) -> list[Breadcrumb]:
-    return Breadcrumb.build_crumbs(
-        user,
-        name,
-        [Breadcrumb(name="Environmental Health Vocabulary", url=reverse("vocab:ehv-browse"))],
-    )
 
 
 class EhvBrowse(TemplateView):

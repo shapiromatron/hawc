@@ -2,9 +2,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from plotly.subplots import make_subplots
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
 
 from ..common.serializers import FlexibleChoiceField
 from ..study.models import Study
@@ -91,17 +91,24 @@ class AssessmentValueSerializer(serializers.ModelSerializer):
         exclude = ("created", "last_updated")
 
 
-class EffectTagsSerializer(serializers.ModelSerializer):
-    def to_internal_value(self, data):
-        raise ParseError("Not implemented!")
-
-    def to_representation(self, obj):
-        # obj is a model-manager in this case; convert to list to serialize
-        return list(obj.values("slug", "name"))
-
+class EffectTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EffectTag
-        fields = "__all__"
+        fields = ["name", "slug"]
+
+
+class RelatedEffectTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.EffectTag
+        fields = ["name", "slug"]
+
+    def to_internal_value(self, data):
+        if not isinstance(data, str):
+            raise serializers.ValidationError(f"'{data}' must be a string.")
+        try:
+            return models.EffectTag.objects.get(name=data)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(f"'{data}' not found.")
 
 
 class DoseUnitsSerializer(serializers.ModelSerializer):

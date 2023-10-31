@@ -70,9 +70,7 @@ class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     assessment_filter_args = "study__assessment"
     model = models.Design
     serializer_class = serializers.DesignSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        return self.model.objects.all()
+    filterset_fields = ("study",)
 
 
 class MetadataViewSet(viewsets.ViewSet):

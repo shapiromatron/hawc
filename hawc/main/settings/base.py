@@ -64,6 +64,11 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "hawc.apps.common.context_processors.from_settings",
             ),
+            "builtins": [
+                "crispy_forms.templatetags.crispy_forms_tags",
+                "hawc.apps.common.templatetags.bs4",
+                "hawc.apps.common.templatetags.hawc",
+            ],
         },
     },
 ]
@@ -105,6 +110,7 @@ INSTALLED_APPS = (
     "taggit",
     "treebeard",
     "crispy_forms",
+    "crispy_bootstrap4",
     "webpack_loader",
     # Custom apps
     "hawc.apps.common",
@@ -312,6 +318,7 @@ REST_FRAMEWORK = {
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
 
 # Django crispy-forms settings
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 WEBPACK_LOADER = {

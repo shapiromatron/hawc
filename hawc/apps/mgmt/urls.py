@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import path
 
 from . import views
@@ -36,3 +37,12 @@ urlpatterns = [
         name="task-update",
     ),
 ]
+
+if settings.HAWC_FEATURES.ENABLE_ANALYTICS:
+    urlpatterns += [
+        path(
+            "assessment/<int:pk>/analytics/",
+            views.AssessmentAnalytics.as_view(),
+            name="assessment-analytics",
+        ),
+    ]

@@ -9,7 +9,6 @@ from hawc.apps.common.models import get_private_data_storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("assessment", "0016_assessment_is_public_training_data"),
     ]

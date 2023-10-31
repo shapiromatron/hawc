@@ -16,7 +16,7 @@ from ..common.autocomplete import (
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, QuillField
+from ..common.forms import BaseFormHelper, CopyForm, QuillField
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
@@ -121,10 +121,19 @@ class ExperimentForm(ModelForm):
         return self.cleaned_data.get("purity_qualifier", "")
 
 
-class ExperimentSelectorForm(CopyAsNewSelectorForm):
-    label = "Experiment"
-    parent_field = "study_id"
-    autocomplete_class = autocomplete.ExperimentAutocomplete
+class ExperimentSelectorForm(CopyForm):
+    legend_text = "Copy experiment"
+    help_text = "Select an existing experiment as a template to create a new one."
+    create_url_pattern = "animal:experiment_new"
+    selector = forms.ModelChoiceField(
+        queryset=models.Experiment.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study=self.parent
+        )
 
 
 class AnimalGroupForm(ModelForm):
@@ -224,10 +233,19 @@ class AnimalGroupForm(ModelForm):
         return cleaned_data
 
 
-class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
-    label = "Animal group"
-    parent_field = "experiment_id"
-    autocomplete_class = autocomplete.AnimalGroupAutocomplete
+class AnimalGroupSelectorForm(CopyForm):
+    legend_text = "Copy animal group"
+    help_text = "Select an existing animal group as a template to create a new one."
+    create_url_pattern = "animal:animal_group_new"
+    selector = forms.ModelChoiceField(
+        queryset=models.AnimalGroup.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            experiment=self.parent
+        )
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):
@@ -435,17 +453,18 @@ class EndpointForm(ModelForm):
 
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
-        # TODO: tidy up queries in init and save
+        # User Defined Form
         if assessment is None:
             assessment = self.instance.get_assessment()
-        try:
-            content = self.instance.udf_content.first().content
-        except Exception:
-            content = None
-        udf = assessment.get_model_udf(
-            self.Meta.model, label="User defined fields", initial=content
-        )
-        if udf:
+        self.model_binding = assessment.get_model_binding(self.Meta.model)
+        if self.model_binding:
+            try:
+                udf_content = self.model_binding.saved_contents.get(object_id=self.instance.id)
+                initial = udf_content.content
+            except ModelUDFContent.DoesNotExist:
+                initial = None
+
+            udf = self.model_binding.form_field(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
 
     @property
@@ -596,15 +615,11 @@ class EndpointForm(ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=commit)
-        udf = self.cleaned_data.pop("udf", None)
-        if udf:
-            # TODO: clean up these queries
-            content_type = ContentType.objects.get_for_model(self.Meta.model)
-            model_binding = instance.assessment.udf_bindings.get(content_type=content_type)
+        if commit and "udf" in self.changed_data:
             ModelUDFContent.objects.update_or_create(
-                defaults=dict(content=udf),
-                model_binding=model_binding,
-                content_type=content_type,
+                defaults=dict(content=self.cleaned_data["udf"]),
+                model_binding=self.model_binding,
+                content_type=self.model_binding.content_type,
                 object_id=instance.id,
             )
         return instance
@@ -701,10 +716,25 @@ EndpointGroupFormSet = modelformset_factory(
 )
 
 
-class EndpointSelectorForm(CopyAsNewSelectorForm):
-    label = "Endpoint"
-    parent_field = "animal_group__experiment__study_id"
-    autocomplete_class = autocomplete.EndpointAutocomplete
+class EndpointSelectorForm(CopyForm):
+    legend_text = "Copy endpoint"
+    help_text = "Select an existing endpoint as a template to create a new one."
+    create_url_pattern = "animal:endpoint_new"
+    selector = forms.ModelChoiceField(
+        queryset=models.Endpoint.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = (
+            self.fields["selector"]
+            .queryset.filter(animal_group__experiment__study=self.parent.experiment.study_id)
+            .select_related("animal_group__experiment")
+            .order_by("animal_group__experiment__name", "animal_group__name", "name")
+        )
+        self.fields["selector"].label_from_instance = (
+            lambda obj: f"{obj.animal_group.experiment} | {obj.animal_group} | {obj}"
+        )
 
 
 class MultipleEndpointChoiceField(forms.ModelMultipleChoiceField):

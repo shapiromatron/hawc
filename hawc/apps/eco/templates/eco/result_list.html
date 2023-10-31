@@ -1,9 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load bs4 split %}
-
 {% block content %}
-<h2>Results ({{page_obj.paginator.count}} found)</h2>
+<div class="d-flex mb-2">
+    <h2 class="mb-0">Results ({{page_obj.paginator.count}} found)</h2>
+    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+    {% actions %}
+        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+    {% endactions %}
+    {% endif %}
+</div>
 {% include 'common/inline_filter_form.html' %}
 <table class="table table-sm table-striped">
     {% bs4_colgroup '15,10,10,10,15,15,10,15' %}

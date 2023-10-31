@@ -377,7 +377,7 @@ def get_id_from_choices(items, lookup_value):
     lookup_index = 1
     return_index = 0
 
-    if case_insensitive and type(lookup_value) is str:
+    if case_insensitive and isinstance(lookup_value, str):
         lookup_value = lookup_value.lower()
         matching_vals = [
             x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value

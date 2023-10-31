@@ -55,7 +55,6 @@ def rewrite_static_files(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0016_datapivotupload_excel_file"),
     ]

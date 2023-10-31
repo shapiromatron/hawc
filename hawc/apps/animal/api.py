@@ -8,13 +8,13 @@ from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import (
-    AssessmentLevelPermissions,
     AssessmentViewSet,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import create_object_log
@@ -23,13 +23,9 @@ from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
 
 
-class AnimalAssessmentViewSet(viewsets.GenericViewSet):
+class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     model = models.Assessment
-    queryset = models.Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     def get_endpoint_queryset(self):
         perms = self.assessment.user_permissions(self.request.user)
@@ -190,7 +186,6 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
-    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return (
@@ -198,7 +193,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
             .get_queryset()
             .select_related("study", "study__assessment", "dtxsid")
             .prefetch_related("study__searches", "study__identifiers")
-        )
+        ).order_by("id")
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -215,7 +210,6 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
-    permission_classes = (AssessmentLevelPermissions,)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
@@ -259,7 +253,6 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewSet):
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
     list_actions = ["list", "effects", "rob_filter", "update_terms"]
-    permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()
