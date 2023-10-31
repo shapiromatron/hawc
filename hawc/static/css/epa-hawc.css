@@ -6,16 +6,16 @@
     color: #005ea2;
  }
 
-/* this rule was disabled in the epa style; re-enable to header */
-header.l-header * {
-    -webkit-transition-duration: 200ms;
-    transition-duration: 200ms;
+/* this will overwrite transitions from epa/style.css  */
+* {
+    -webkit-transition-duration: unset;
+    transition-duration: unset;
     -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
     transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
     transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform;
     transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
-    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
+    -webkit-transition-timing-function: unset;
+    transition-timing-function: unset;
 }
 
 /* Header */
