@@ -136,7 +136,7 @@ class BaseAssessmentViewSet(viewsets.GenericViewSet):
     action_perms = {}
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter,)
+    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     lookup_value_regex = re_digits
 
     def get_queryset(self):
@@ -144,11 +144,11 @@ class BaseAssessmentViewSet(viewsets.GenericViewSet):
 
 
 class AssessmentEditViewSet(viewsets.ModelViewSet):
-    http_method_names = METHODS_NO_PUT
-    assessment_filter_args = ""
-    permission_classes = (AssessmentLevelPermissions,)
     action_perms = {}
-    filter_backends = (InAssessmentFilter,)
+    assessment_filter_args = ""
+    http_method_names = METHODS_NO_PUT
+    permission_classes = (AssessmentLevelPermissions,)
+    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     lookup_value_regex = re_digits
 
     def get_queryset(self):
