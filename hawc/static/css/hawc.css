@@ -160,12 +160,6 @@ input[type='number'] {
     -moz-appearance: textfield;
 }
 
-/* Override bootstrap modal width
-.modal-dialog {
-    min-width: 950px;
-    max-width: 1200px;
-} */
-
 .modal-body {
     max-height: 600px;
     overflow-y: auto;
