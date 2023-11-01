@@ -9,6 +9,7 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
@@ -25,6 +26,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     create_object_log,
+    htmx_required,
 )
 from . import constants, filterset, forms, models
 
@@ -398,6 +400,7 @@ class TagReferences(BaseFilterList):
         )
 
 
+@method_decorator(htmx_required, name="dispatch")
 class BulkMerge(HtmxView):
     actions = {
         "preview",
@@ -406,6 +409,8 @@ class BulkMerge(HtmxView):
 
     def index(self, request: HttpRequest, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.get_permissions().can_edit_object(request.user):
+            raise PermissionDenied()
         form = forms.BulkMergeConflictsForm(assessment=self.assessment)
         context = dict(
             form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
@@ -414,6 +419,8 @@ class BulkMerge(HtmxView):
 
     def preview(self, request: HttpRequest, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.get_permissions().can_edit_object(request.user):
+            raise PermissionDenied()
         queryset = models.Reference.objects.filter(assessment=self.assessment)
         key = f'{self.assessment.pk}-bulk-merge-tags-{"-".join(request.POST.getlist("tags"))}'
         form = forms.BulkMergeConflictsForm(
@@ -444,6 +451,8 @@ class BulkMerge(HtmxView):
 
     def merge(self, request: HttpRequest, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.get_permissions().can_edit_object(request.user):
+            raise PermissionDenied()
         cache_key = request.POST.get("cache_key")
         queryset, data = cache.get(cache_key)
         form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
