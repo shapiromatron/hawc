@@ -11,7 +11,8 @@ def add_deletions(apps, schema_editor):
         ref_tags=ArrayAgg("reference__tags__id"), user_tags=ArrayAgg("tags__id")
     )
     for user_tag in user_tag_qs:
-        user_tag.deleted_tags = list(set(user_tag.ref_tags).difference(set(user_tag.user_tags)))
+        deleted_tags = set(user_tag.ref_tags).difference(set(user_tag.user_tags))
+        user_tag.deleted_tags = list(deleted_tags) if deleted_tags else []
     UserReferenceTag.objects.bulk_update(user_tag_qs, ["deleted_tags"])
 
 

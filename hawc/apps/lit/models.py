@@ -902,9 +902,8 @@ class Reference(models.Model):
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
-        user_tag.deleted_tags = list(
-            set(self.tags.all().values_list("pk", flat=True)).difference(set(tag_pks))
-        )
+        deleted_tags = set(self.tags.all().values_list("pk", flat=True)).difference(set(tag_pks))
+        user_tag.deleted_tags = list(deleted_tags) if deleted_tags else []
         user_tag.save()
 
         # determine if we should save the reference-level tags
