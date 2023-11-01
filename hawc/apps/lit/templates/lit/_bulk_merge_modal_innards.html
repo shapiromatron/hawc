@@ -2,9 +2,15 @@
     <h4 class="modal-title" id="bulk-merge-modal-label">
         Bulk Merge Tag Conflicts
     </h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    {% if merged == True %}
+    <a type="button" class="close text-dark" aria-label="Close" href=".">
+        <span aria-hidden="true">&times;</span>
+    </a>
+    {% else %}
+    <button type="button" class="close text-dark" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
+    {% endif %}
 </div>
 <div class="modal-body pt-0">
     <div style="width: 48vw;" class="justify-content-center">
@@ -21,7 +27,7 @@
                 {% elif action == 'merge' %}
                 <h3 class="mb-0">Error</h3>
                 {% elif action == 'preview' %}
-                <h3 class="mb-0">The following {{object_list|length}} references will be tagged:</h3>
+                <h3 class="mb-0">The following {{object_list|length}} reference(s) will be tagged:</h3>
                 {% endif %}
             </div>
             <ul class="list-group list-group-flush">
@@ -69,7 +75,13 @@
     Preview Bulk Merge
     </button>
     {% endif %}
+    {% if merged == True %}
+    <a type="button" class="btn btn-light" aria-label="Close" href=".">
+        Close
+    </a>
+    {% else %}
     <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
         Cancel
     </button>
+    {% endif %}
 </div>
