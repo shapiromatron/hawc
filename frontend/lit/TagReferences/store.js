@@ -16,6 +16,8 @@ class Store {
     @observable successMessage = "";
     @observable filterClass = "";
     @observable showInstructionsModal = false;
+    @observable currentUDF = null;
+    @observable UDFValues = null;
 
     constructor(config) {
         this.config = config;
@@ -46,6 +48,10 @@ class Store {
         }
         this.currentUDF = udf_html;
     }
+    @action.bound getUDFContent() {
+        // TODO: get the actual UDF content from the form, if applicable
+        return null;
+    }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
     }
@@ -56,9 +62,11 @@ class Store {
         ) {
             this.referenceUserTags.push(tag);
         }
+        // this.setUDF()
     }
     @action.bound removeTag(tag) {
         _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
+        // this.setUDF()
     }
     @action.bound toggleTag(tag) {
         return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);
@@ -94,6 +102,7 @@ class Store {
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
+                udf_content: this.getUDFContent(),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
         h.handleSubmit(

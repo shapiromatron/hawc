@@ -52,15 +52,29 @@ ReferenceListItem.propTypes = {
 @observer
 class ReferenceUDF extends Component {
     render() {
-        const {currentUDF, intitialValues} = this.props;
+        const {currentUDF, UDFValues} = this.props;
+        // Use UDFValues to appease the linter for now
+        let tmp_message;
+        if (UDFValues) {
+            tmp_message = <p>UDF has initial content</p>;
+        } else {
+            tmp_message = <p>UDF does not have initial content</p>;
+        }
+        // TODO: inject initial values into form
         return (
             <div>
+                <br />
+                {tmp_message}
                 <br />
                 <div dangerouslySetInnerHTML={{__html: currentUDF}} />
             </div>
         );
     }
 }
+ReferenceUDF.propTypes = {
+    currentUDF: PropTypes.string.isRequired,
+    UDFValues: PropTypes.object,
+};
 
 @inject("store")
 @observer

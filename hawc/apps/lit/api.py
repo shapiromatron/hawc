@@ -358,9 +358,12 @@ class ReferenceViewSet(
     def get_queryset(self):
         qs = super().get_queryset()
         if self.action in ("tag", "resolve_conflict"):
-            qs = qs.select_related(
-                "assessment__literature_settings", "assessment__udf_tag_bindings__form__schema"
-            ).prefetch_related("user_tags__tags", "tags", "saved_udf_contents")
+            qs = qs.select_related("assessment__literature_settings").prefetch_related(
+                "user_tags__tags",
+                "tags",
+                "saved_tag_contents",
+                "assessment__udf_tag_bindings__form",
+            )
         return qs
 
     @action(
