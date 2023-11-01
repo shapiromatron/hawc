@@ -3,3 +3,9 @@
 {% block content %}
 {% crispy form %}
 {% endblock %}
+
+{% block extrajs %}
+<script>
+    window.app.HAWCUtils.dynamicFormListeners();
+</script>
+{% endblock extrajs %}
