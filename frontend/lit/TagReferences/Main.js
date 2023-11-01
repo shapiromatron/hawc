@@ -55,7 +55,7 @@ class ReferenceUDF extends Component {
         const {currentUDF, intitialValues} = this.props;
         return (
             <div>
-                <br/>
+                <br />
                 <div dangerouslySetInnerHTML={{__html: currentUDF}} />
             </div>
         );
@@ -226,8 +226,10 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
-                            <ReferenceUDF currentUDF={currentUDF}
-                            intitialValues={reference.tag_udf_contents} />
+                            <ReferenceUDF
+                                currentUDF={currentUDF}
+                                intitialValues={reference.tag_udf_contents}
+                            />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>
