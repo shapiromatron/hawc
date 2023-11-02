@@ -1,6 +1,7 @@
 import django_filters as df
 from django.db.models import Q
 
+from ..assessment.constants import RobName
 from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import constants, models
 
@@ -44,7 +45,10 @@ class VisualFilterSet(BaseFilterSet):
             .distinct()
         )
         choices = [constants.VisualType(choice) for choice in sorted(set(choices))]
-        return [(choice.value, choice.label) for choice in choices]
+        if self.assessment.rob_name == RobName.ROB:
+            return [(choice.value, choice.label) for choice in choices]
+        else:
+            return [(choice.value, choice.label.replace('risk of bias', 'study evaluation')) for choice in choices]
 
     def create_form(self):
         form = super().create_form()

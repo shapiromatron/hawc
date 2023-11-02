@@ -23,7 +23,7 @@ from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
-from ..assessment.constants import EpiVersion
+from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
@@ -337,6 +337,16 @@ class Visual(models.Model):
 
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
+
+    def get_visual_type_display(self):
+        visual_type = constants.VisualType(self.visual_type)
+        if self.assessment.rob_name == RobName.SE and (
+            self.visual_type == constants.VisualType.ROB_HEATMAP
+            or self.visual_type == constants.VisualType.ROB_BARCHART
+        ):
+            visual_type_display = visual_type.label.replace("risk of bias", "study evaluation")
+            return visual_type_display
+        return visual_type.label
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
