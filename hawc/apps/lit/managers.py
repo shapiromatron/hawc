@@ -566,17 +566,12 @@ class ReferenceQuerySet(models.QuerySet):
             # then filter out references without conflict (1 unresolved user tag), or keep them, depending on parameter
             # note: the '__contains' filter is overwritten for ArrayField; it filters by subset
             # see: https://docs.djangoproject.com/en/4.2/ref/contrib/postgres/fields/#contains
+            queryset = queryset.filter(
+                Q(bulk_merge_tags__isnull=False),
+                ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
+            )
             if not include_without_conflicts:
-                queryset = queryset.filter(
-                    Q(n_unapplied_reviews__gt=1),
-                    Q(bulk_merge_tags__isnull=False),
-                    ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
-                )
-            else:
-                queryset = queryset.filter(
-                    Q(bulk_merge_tags__isnull=False),
-                    ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
-                )
+                queryset = queryset.filter(n_unapplied_reviews__gt=1)
         else:
             queryset = self
 
