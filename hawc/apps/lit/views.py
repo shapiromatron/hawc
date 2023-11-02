@@ -421,7 +421,11 @@ class BulkMerge(HtmxView):
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
         if not self.assessment.get_permissions().can_edit_object(request.user):
             raise PermissionDenied()
-        queryset = models.Reference.objects.filter(assessment=self.assessment)
+        queryset = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
         key = f'{self.assessment.pk}-bulk-merge-tags-{"-".join(request.POST.getlist("tags"))}'
         form = forms.BulkMergeConflictsForm(
             assessment=self.assessment, initial={**request.POST, "cache_key": key}
