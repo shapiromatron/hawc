@@ -436,7 +436,7 @@ class BulkMerge(HtmxView):
         )
         if merge_result["queryset"]:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            models.Reference.annotate_tag_parents(merge_result["queryset"], tags)
+            tags = models.Reference.annotate_tag_parents(merge_result["queryset"], tags, True, True)
             cache_duration = 60 * 30  # half hour
             cache.set(key, (merge_result["queryset"], request.POST), cache_duration)
         context = dict(

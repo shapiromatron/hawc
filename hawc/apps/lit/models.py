@@ -1171,7 +1171,13 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def annotate_tag_parents(cls, references: list, tags: models.QuerySet, user_tags: bool = True):
+    def annotate_tag_parents(
+        cls,
+        references: list,
+        tags: models.QuerySet,
+        user_tags: bool = True,
+        check_bulk: bool = False,
+    ):
         """Annotate tag parents for all tags and user tags.
 
         Sets a new attribute (parents: list[Tag]) for each tag.
@@ -1193,12 +1199,19 @@ class Reference(models.Model):
                 tag.parents.append(tag_map[current_path])
 
         for reference in references:
+            reference.bulk_merge_tag_names = []
             for tag in reference.tags.all():
                 _set_parents(tag)
             if user_tags:
                 for user_tag in reference.user_tags.all():
                     for tag in user_tag.tags.all():
                         _set_parents(tag)
+                        if (
+                            check_bulk
+                            and tag.id in reference.bulk_merge_tags
+                            and tag not in reference.bulk_merge_tag_names
+                        ):
+                            reference.bulk_merge_tag_names.append(tag)
 
 
 class UserReferenceTags(ItemBase):
