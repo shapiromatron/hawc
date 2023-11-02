@@ -339,14 +339,13 @@ class Visual(models.Model):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
 
     def get_visual_type_display(self):
-        visual_type = constants.VisualType(self.visual_type)
-        if self.assessment.rob_name == RobName.SE and (
+        label = constants.VisualType(self.visual_type).label
+        if (
             self.visual_type == constants.VisualType.ROB_HEATMAP
             or self.visual_type == constants.VisualType.ROB_BARCHART
-        ):
-            visual_type_display = visual_type.label.replace("risk of bias", "study evaluation")
-            return visual_type_display
-        return visual_type.label
+        ) and self.assessment.rob_name == RobName.SE:
+            label = label.replace("risk of bias", "study evaluation")
+        return label
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:

@@ -45,13 +45,14 @@ class VisualFilterSet(BaseFilterSet):
             .distinct()
         )
         choices = [constants.VisualType(choice) for choice in sorted(set(choices))]
-        if self.assessment.rob_name == RobName.ROB:
-            return [(choice.value, choice.label) for choice in choices]
-        else:
-            return [
-                (choice.value, choice.label.replace("risk of bias", "study evaluation"))
-                for choice in choices
+
+        choices = [(choice.value, choice.label) for choice in choices]
+        if self.assessment.rob_name == RobName.SE:
+            choices = [
+                (value, label.replace("risk of bias", "study evaluation"))
+                for value, label in choices
             ]
+        return choices
 
     def create_form(self):
         form = super().create_form()
