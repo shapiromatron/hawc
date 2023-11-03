@@ -35,7 +35,7 @@ class OutputModal extends BaseModal {
 
         return (
             <div className="modal" id={types.OUTPUT_MODAL_ID}>
-                <div className="modal-dialog modal-xl">
+                <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h3>{models[0].name} model output</h3>

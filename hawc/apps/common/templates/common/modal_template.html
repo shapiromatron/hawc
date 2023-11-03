@@ -1,6 +1,5 @@
-{% block pre_modal %}{% endblock pre_modal %}
-<div id="{{ modal_id }}" class="modal fade" data-backdrop="static" tabindex="-1" aria-labelledby="{{ modal_id }}-label" aria-hidden="true">
-    <div class="modal-dialog {% if modal_size %} {{modal_size}} {% else %} modal-xl {% endif %}modal-dialog-scrollable" role="document">
+<div id="{{ modal_id }}" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{ modal_id }}-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 {% block modal_header %}
@@ -12,7 +11,7 @@
                 </button>
                 {% endblock modal_header %}
             </div>
-            <div class="modal-body {{modal_body_class}}">
+            <div class="modal-body">
                 {% block modal_body %}
                 {% endblock modal_body %}
             </div>
@@ -24,4 +23,3 @@
         </div>
     </div>
 </div>
-{% block post_modal %}{% endblock post_modal %}

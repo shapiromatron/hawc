@@ -11,7 +11,7 @@ class HAWCModal {
                 '<div id="hawcModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"></div>'
             )
                 .append(
-                    $('<div class="modal-dialog modal-xl" role="document">').append(
+                    $('<div class="modal-dialog" role="document">').append(
                         $('<div class="modal-content">')
                             .append('<div class="modal-header"></div>')
                             .append('<div class="modal-body"></div>')

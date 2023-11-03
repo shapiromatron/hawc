@@ -56,7 +56,7 @@ class Modal extends React.Component {
                 tabIndex="-1"
                 role="dialog"
                 aria-hidden="true">
-                <div className="modal-dialog modal-xl" role="document">
+                <div className="modal-dialog" role="document">
                     <div className="modal-content">{children}</div>
                 </div>
             </div>
