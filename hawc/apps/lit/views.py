@@ -459,6 +459,9 @@ class BulkMerge(HtmxView):
             raise PermissionDenied()
         cache_key = request.POST.get("cache_key")
         queryset, data = cache.get(cache_key)
+        assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
+        if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
+            raise PermissionDenied()
         form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
         for field in "tags", "include_without_conflict":
             form.fields[field].disabled = True
