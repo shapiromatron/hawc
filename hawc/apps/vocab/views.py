@@ -19,7 +19,7 @@ class EhvBrowse(TemplateView):
                 app="animalStartup",
                 page="ehvBrowserStartup",
                 data={"data": models.Term.ehv_dataframe().to_csv(index=False)},
-            ).json()
+            ).model_dump_json()
             cache.set(key, data, settings.CACHE_10_MIN)
         return data
 

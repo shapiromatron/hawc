@@ -1,5 +1,5 @@
 from django.db import models
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 
 class StudyType(models.IntegerChoices):
@@ -43,5 +43,5 @@ class TableauFilter(BaseModel):
     value: str
 
 
-class TableauFilterList(BaseModel):
-    __root__: list[TableauFilter]
+class TableauFilterList(RootModel):
+    root: list[TableauFilter]

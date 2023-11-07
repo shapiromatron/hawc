@@ -9,4 +9,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         current = Commit.current(settings.PROJECT_ROOT)
-        settings.GIT_COMMIT_FILE.write_text(current.json())
+        settings.GIT_COMMIT_FILE.write_text(current.model_dump_json())
