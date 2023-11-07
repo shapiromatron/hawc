@@ -154,7 +154,7 @@ def size_df() -> pd.DataFrame:
     df1 = df1.reset_index().sort_values("id")
 
     # stringify datetimes
-    df1[["created", "last_updated"]] = df1[["created", "last_updated"]].applymap(HAWCtoDateString)
+    df1[["created", "last_updated"]] = df1[["created", "last_updated"]].map(HAWCtoDateString)
 
     # apply hyperlink to assessment names
     df1["name"] = df1[["id", "name"]].apply(

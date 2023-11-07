@@ -1,5 +1,6 @@
 from ..assessment.models import Assessment
 from ..common.views import (
+    BaseCopyForm,
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
@@ -8,12 +9,10 @@ from ..common.views import (
     BaseUpdate,
     BaseUpdateWithFormset,
     CloseIfSuccessMixin,
-    CopyAsNewSelectorMixin,
     HeatmapBase,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from ..study.views import StudyDetail
 from . import filterset, forms, models
 
 
@@ -66,9 +65,10 @@ class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
         return kwargs
 
 
-class StudyPopulationCopyAsNewSelector(CopyAsNewSelectorMixin, StudyDetail):
+class StudyPopulationCopyForm(BaseCopyForm):
     copy_model = models.StudyPopulation
     form_class = forms.StudyPopulationSelectorForm
+    model = Study
 
 
 class StudyPopulationDetail(BaseDetail):
@@ -121,9 +121,10 @@ class ExposureCreate(BaseCreateWithFormset):
         return forms.BlankCentralTendencyFormset(queryset=models.CentralTendency.objects.none())
 
 
-class ExposureCopyAsNewSelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
+class ExposureCopyForm(BaseCopyForm):
     copy_model = models.Exposure
     form_class = forms.ExposureSelectorForm
+    model = models.StudyPopulation
 
 
 class ExposureDetail(BaseDetail):
@@ -187,9 +188,10 @@ class OutcomeCreate(BaseCreate):
         return kwargs
 
 
-class OutcomeCopyAsNewSelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
+class OutcomeCopyForm(BaseCopyForm):
     copy_model = models.Outcome
     form_class = forms.OutcomeSelectorForm
+    model = models.StudyPopulation
 
 
 class OutcomeDetail(BaseDetail):
@@ -250,9 +252,10 @@ class ResultCreate(BaseCreateWithFormset):
         )
 
 
-class ResultCopyAsNewSelector(CopyAsNewSelectorMixin, OutcomeDetail):
+class ResultCopyForm(BaseCopyForm):
     copy_model = models.Result
     form_class = forms.ResultSelectorForm
+    model = models.Outcome
 
 
 class ResultDetail(BaseDetail):
@@ -320,16 +323,16 @@ class ComparisonSetOutcomeCreate(ComparisonSetCreate):
     parent_template_name = "outcome"
 
 
-class ComparisonSetStudyPopCopySelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
+class ComparisonSetStudyPopCopySelector(BaseCopyForm):
     copy_model = models.ComparisonSet
     form_class = forms.ComparisonSetByStudyPopulationSelectorForm
-    template_name = "epi/comparisonset_sp_copy_selector.html"
+    model = models.StudyPopulation
 
 
-class ComparisonSetOutcomeCopySelector(CopyAsNewSelectorMixin, OutcomeDetail):
+class ComparisonSetOutcomeCopySelector(BaseCopyForm):
     copy_model = models.ComparisonSet
     form_class = forms.ComparisonSetByOutcomeSelectorForm
-    template_name = "epi/comparisonset_outcome_copy_selector.html"
+    model = models.Outcome
 
 
 class ComparisonSetDetail(BaseDetail):

@@ -795,7 +795,7 @@ class CleanStudyRoB(BaseDetail):
                     "assessment:api:assessment-endpoints", args=(self.assessment.id,)
                 ),
                 items=dict(
-                    url=reverse("riskofbias:api:metric_scores-list"),
+                    url=reverse("riskofbias:api:metric-list"),
                     patchUrl=reverse("riskofbias:api:score-cleanup-list"),
                 ),
                 studyTypes=dict(url=reverse("study:api:study-types")),

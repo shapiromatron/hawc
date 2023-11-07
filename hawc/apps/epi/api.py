@@ -8,7 +8,7 @@ from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
     AssessmentEditViewSet,
-    AssessmentLevelPermissions,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     EditPermissionsCheckMixin,
 )
@@ -16,20 +16,16 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.api import ReadWriteSerializerMixin
-from ..common.helper import FlatExport, cacheable, re_digits
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata
 
 
-class EpiAssessmentViewSet(viewsets.GenericViewSet):
+class EpiAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     def get_outcome_queryset(self):
         perms = self.assessment.user_permissions(self.request.user)
@@ -222,7 +218,7 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 fixed = []
                 for el in data_probe:
-                    if type(el) is str:
+                    if isinstance(el, str):
                         try:
                             criteria = models.Criteria.objects.get(
                                 description=el, assessment_id=assessment_id
@@ -462,7 +458,7 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 fixed = []
                 for el in data_probe:
-                    if type(el) is str:
+                    if isinstance(el, str):
                         try:
                             adj_factor = models.AdjustmentFactor.objects.get(
                                 description=el, assessment_id=assessment_id

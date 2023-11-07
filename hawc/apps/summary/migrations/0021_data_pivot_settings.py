@@ -12,7 +12,6 @@ from hawc.apps.summary import constants
 
 
 def _replace_column(text: str, existing: str, replacement: str) -> str:
-
     return (
         text.replace(f'"low_field_name":"{existing}"', f'"low_field_name":"{replacement}"')
         .replace(f'"low_field_name": "{existing}"', f'"low_field_name":"{replacement}"')
@@ -127,7 +126,6 @@ def rename_fields(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0020_auto_20190407_2040"),
     ]

@@ -27,7 +27,8 @@ FinalRiskOfBiasScore = SQL(
     ON scr.riskofbias_id = rob.id
     LEFT JOIN riskofbias_riskofbiasscoreoverrideobject ovr
     ON scr.id = ovr.score_id
-    WHERE rob.final AND rob.active;
+    WHERE rob.final AND rob.active
+    ORDER BY scr.id, ovr.id;
 
     CREATE UNIQUE INDEX ON materialized_finalriskofbiasscore (id);
     CREATE INDEX ON materialized_finalriskofbiasscore (score_id);

@@ -1293,7 +1293,8 @@ class Result(models.Model):
 
         df2 = pd.DataFrame(data=qs, columns=["id", *exposure_cols]).set_index("id")
         df2["exposure route"] = df2[exposure_cols].apply(
-            lambda x: "|".join(x.index[x == True]).replace("_", " "), axis=1  # noqa: E712
+            lambda x: "|".join(x.index[x == True]).replace("_", " "),  # noqa: E712
+            axis=1,
         )
         df2 = df2.drop(columns=exposure_cols)
 

@@ -58,7 +58,6 @@ def migrate_to_endpoint(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("animal", "0020_move_fields_create"),
     ]
