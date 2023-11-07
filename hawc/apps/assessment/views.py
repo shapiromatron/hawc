@@ -9,7 +9,6 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count
 from django.http import (
     Http404,
     HttpRequest,
@@ -21,7 +20,6 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
@@ -29,7 +27,7 @@ from django.views.generic.edit import CreateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, cacheable
+from ..common.helper import WebappConfig
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
@@ -47,17 +45,10 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
+from ..mgmt.analytics.overall import get_object_counts
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
-
-
-def percentage(numerator, denominator):
-    # Checking for denominator counts that are zero when dividing
-    try:
-        return numerator / float(denominator)
-    except ZeroDivisionError:
-        return 0
 
 
 # General views
@@ -88,121 +79,6 @@ class About(TemplateView):
             return HttpResponseRedirect(settings.EXTERNAL_ABOUT)
         return super().dispatch(request, *args, **kwargs)
 
-    def get_object_counts(self):
-        key = "about-counts"
-        updated = timezone.now()
-
-        users = apps.get_model("myuser", "HAWCUser").objects.count()
-
-        assessments = models.Assessment.objects.count()
-
-        references = apps.get_model("lit", "Reference").objects.count()
-
-        tags = apps.get_model("lit", "ReferenceTags").objects.count()
-
-        references_tagged = (
-            apps.get_model("lit", "ReferenceTags").objects.distinct("content_object_id").count()
-        )
-
-        assessments_with_studies = (
-            apps.get_model("study", "Study")
-            .objects.values_list("assessment_id", flat=True)
-            .distinct()
-            .count()
-        )
-
-        studies = apps.get_model("study", "Study").objects.count()
-
-        rob_scores = apps.get_model("riskofbias", "RiskOfBiasScore").objects.count()
-
-        studies_with_rob = (
-            apps.get_model("study", "Study")
-            .objects.annotate(robc=Count("riskofbiases"))
-            .filter(robc__gt=0)
-            .count()
-        )
-
-        endpoints = apps.get_model("animal", "Endpoint").objects.count()
-
-        endpoints_with_data = (
-            apps.get_model("animal", "EndpointGroup")
-            .objects.order_by("endpoint_id")
-            .distinct("endpoint_id")
-            .count()
-        )
-
-        outcomes = apps.get_model("epi", "Outcome").objects.count()
-
-        results = apps.get_model("epi", "Result").objects.count()
-
-        results_with_data = (
-            apps.get_model("epi", "GroupResult")
-            .objects.order_by("result_id")
-            .distinct("result_id")
-            .count()
-        )
-
-        iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
-
-        iv_endpoints_with_data = (
-            apps.get_model("invitro", "IVEndpointGroup")
-            .objects.order_by("endpoint_id")
-            .distinct("endpoint_id")
-            .count()
-        )
-
-        visuals = (
-            apps.get_model("summary", "Visual").objects.count()
-            + apps.get_model("summary", "DataPivot").objects.count()
-        )
-
-        assessments_with_visuals = len(
-            set(
-                models.Assessment.objects.order_by("-created")
-                .annotate(vc=Count("visuals"))
-                .filter(vc__gt=0)
-                .values_list("id", flat=True)
-            ).union(
-                set(
-                    models.Assessment.objects.order_by("-created")
-                    .annotate(dp=Count("datapivot"))
-                    .filter(dp__gt=0)
-                    .values_list("id", flat=True)
-                )
-            )
-        )
-
-        counts = dict(
-            updated=updated,
-            users=users,
-            assessments=assessments,
-            references=references,
-            tags=tags,
-            references_tagged=references_tagged,
-            references_tagged_percent=percentage(references_tagged, references),
-            studies=studies,
-            assessments_with_studies=assessments_with_studies,
-            assessments_with_studies_percent=percentage(assessments_with_studies, assessments),
-            rob_scores=rob_scores,
-            studies_with_rob=studies_with_rob,
-            studies_with_rob_percent=percentage(studies_with_rob, studies),
-            endpoints=endpoints,
-            endpoints_with_data=endpoints_with_data,
-            endpoints_with_data_percent=percentage(endpoints_with_data, endpoints),
-            outcomes=outcomes,
-            results=results,
-            results_with_data=results_with_data,
-            results_with_data_percent=percentage(results_with_data, results),
-            iv_endpoints=iv_endpoints,
-            iv_endpoints_with_data=iv_endpoints_with_data,
-            iv_endpoints_with_data_percent=percentage(iv_endpoints_with_data, iv_endpoints),
-            visuals=visuals,
-            assessments_with_visuals=assessments_with_visuals,
-            assessments_with_visuals_percent=percentage(assessments_with_visuals, assessments),
-        )
-        logger.info("Setting about-page cache")
-        return cacheable(lambda: counts, key)
-
     def get_rob_name(self):
         if settings.HAWC_FLAVOR == "PRIME":
             return constants.RobName.ROB.label
@@ -216,7 +92,7 @@ class About(TemplateView):
         context.update(
             HAWC_FLAVOR=settings.HAWC_FLAVOR,
             rob_name=self.get_rob_name(),
-            counts=self.get_object_counts(),
+            counts=get_object_counts(),
         )
         context["page"] = models.Content.rendered_page(
             models.ContentTypeChoices.ABOUT, self.request, context
