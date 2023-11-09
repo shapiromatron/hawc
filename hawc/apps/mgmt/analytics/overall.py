@@ -4,8 +4,6 @@ from django.apps import apps
 from django.db.models import Count
 from django.utils import timezone
 
-from ...common.helper import cacheable
-
 logger = logging.getLogger(__name__)
 
 
@@ -17,7 +15,7 @@ def percentage(numerator, denominator) -> float:
         return 0
 
 
-def _compute_object_counts() -> dict:
+def compute_object_counts() -> dict:
     """Compute object counts in HAWC. This uses a large number of queries."""
     updated = timezone.now()
     Assessment = apps.get_model("assessment", "Assessment")
@@ -131,13 +129,3 @@ def _compute_object_counts() -> dict:
         assessments_with_visuals=assessments_with_visuals,
         assessments_with_visuals_percent=percentage(assessments_with_visuals, assessments),
     )
-
-
-def get_object_counts() -> dict:
-    """
-    Return high level objects counts about content in HAWC.
-
-    This method caches the computation as it requires many database queries.
-    """
-    key = "analytics-overall-object-counts"
-    return cacheable(lambda: _compute_object_counts(), key)

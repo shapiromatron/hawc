@@ -27,7 +27,7 @@ from django.views.generic.edit import CreateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, cacheable
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
@@ -45,7 +45,7 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
-from ..mgmt.analytics.overall import get_object_counts
+from ..mgmt.analytics.overall import compute_object_counts
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
@@ -92,7 +92,7 @@ class About(TemplateView):
         context.update(
             HAWC_FLAVOR=settings.HAWC_FLAVOR,
             rob_name=self.get_rob_name(),
-            counts=get_object_counts(),
+            counts=cacheable(lambda: compute_object_counts(), "assessment.views.about:counts"),
         )
         context["page"] = models.Content.rendered_page(
             models.ContentTypeChoices.ABOUT, self.request, context
