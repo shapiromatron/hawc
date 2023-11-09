@@ -512,7 +512,7 @@ def cacheable(
         callable (Callable): method to evaluation if not found in cache
         cache_key (str): the cache key to get/set
         flush (bool, default False): Force flush the cache and re-evaluate.
-        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR
+        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR.
 
     Returns:
         The result from the callable, either from cache or regenerated.
