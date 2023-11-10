@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.core.cache import cache
+import pandas as pd
 from django.db import transaction
 from django.db.models import Q
 from rest_framework import mixins, status, viewsets
@@ -14,7 +13,7 @@ from ..assessment.api import (
     DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
-from ..common.helper import FlatExport
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import create_object_log
@@ -89,10 +88,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+
+        def func() -> pd.DataFrame:
+            return models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
+
+        df = cacheable(func, key)
         return FlatExport.api_response(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
 
     @action(
@@ -115,10 +115,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+
+        def df_func() -> pd.DataFrame:
+            return models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
+
+        df = cacheable(df_func, key)
         return FlatExport.api_response(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
 
     @action(
@@ -141,10 +142,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+
+        def df_func() -> pd.DataFrame:
+            return models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
+
+        df = cacheable(df_func, key)
         return FlatExport.api_response(
             df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}"
         )
@@ -162,12 +164,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
-        df = cache.get(key)
-        if df is None:
-            df = models.Endpoint.objects.endpoint_df(
+
+        def df_func() -> pd.DataFrame:
+            return models.Endpoint.objects.endpoint_df(
                 self.assessment, published_only=not unpublished
             )
-            cache.set(key, df, settings.CACHE_1_HR)
+
+        df = cacheable(df_func, key)
         return FlatExport.api_response(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
 
     @action(

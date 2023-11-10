@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
@@ -16,7 +14,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import FlatExport
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers, table_serializers
@@ -170,9 +168,5 @@ class SummaryTableViewSet(AssessmentEditViewSet):
         ser.is_valid(raise_exception=True)
         # get cached value
         cache_key = f"assessment-{self.assessment.id}-summary-table-{ser.cache_key}"
-        data = cache.get(cache_key)
-        if data is None:
-            # if cached value does not exist, get the data and set the cache
-            data = ser.get_data()
-            cache.set(cache_key, data, settings.CACHE_1_HR)
+        data = cacheable(lambda: ser.get_data(), cache_key)
         return Response(data)
