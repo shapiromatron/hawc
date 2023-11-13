@@ -46,9 +46,9 @@ urlpatterns = [
         name="result_create",
     ),
     path(
-        "protocol/<int:pk>/result/copy-as-new-selector/",
-        views.MetaResultCopyAsNew.as_view(),
-        name="result_copy_selector",
+        "protocol/<int:pk>/result/copy/",
+        views.MetaResultCopyForm.as_view(),
+        name="result_copy",
     ),
     path("result/<int:pk>/", views.MetaResultDetail.as_view(), name="result_detail"),
     path(

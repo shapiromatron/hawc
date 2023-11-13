@@ -2,7 +2,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ..assessment.models import DoseUnits
-from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
+from ..assessment.serializers import (
+    DoseUnitsSerializer,
+    DSSToxSerializer,
+    RelatedEffectTagSerializer,
+)
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import (
@@ -51,14 +55,12 @@ class StudyPopulationCountrySerializer(serializers.ModelSerializer):
         fields = ("code", "name")
 
     def to_internal_value(self, data):
-        if type(data) is str:
-            try:
-                country = self.Meta.model.objects.get(code__iexact=data)
-                return country
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"'{data}' is not a country.")
-
-        return super().to_internal_value(data)
+        if not isinstance(data, str):
+            raise serializers.ValidationError(f"'{data}' must be a string.")
+        try:
+            return models.Country.objects.get(code=data)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(f"'{data}' is not a country.")
 
 
 class OutcomeLinkSerializer(serializers.ModelSerializer):
@@ -265,7 +267,7 @@ class ResultSerializer(serializers.ModelSerializer):
     variance_type = FlexibleChoiceField(choices=constants.VarianceType.choices)
     factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    resulttags = EffectTagsSerializer(read_only=True)
+    resulttags = RelatedEffectTagSerializer(required=False, many=True)
     results = GroupResultSerializer(many=True, read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
 
@@ -282,12 +284,26 @@ class ResultSerializer(serializers.ModelSerializer):
         model = models.Result
         exclude = ("adjustment_factors",)
 
+    def create(self, validated_data):
+        resulttags = validated_data.pop("resulttags", [])
+        instance = super().create(validated_data)
+        instance.resulttags.set(resulttags)
+        return instance
+
+    def update(self, instance, validated_data):
+        resulttags = validated_data.pop("resulttags", [])
+        instance = super().update(instance, validated_data)
+        # only modify if it was in request (don't change in a patch w/o this field)
+        if "resulttags" in self.context["request"].data:
+            instance.resulttags.set(resulttags)
+        return instance
+
 
 class OutcomeSerializer(IdLookupMixin, serializers.ModelSerializer):
     diagnostic = FlexibleChoiceField(choices=constants.Diagnostic.choices)
     study_population = StudyPopulationSerializer()
     can_create_sets = serializers.BooleanField(read_only=True)
-    effects = EffectTagsSerializer(read_only=True)
+    effects = RelatedEffectTagSerializer(required=False, many=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     results = ResultSerializer(many=True, read_only=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
@@ -295,6 +311,20 @@ class OutcomeSerializer(IdLookupMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Outcome
         fields = "__all__"
+
+    def create(self, validated_data):
+        effects = validated_data.pop("effects", [])
+        instance = super().create(validated_data)
+        instance.effects.set(effects)
+        return instance
+
+    def update(self, instance, validated_data):
+        effects = validated_data.pop("effects", [])
+        instance = super().update(instance, validated_data)
+        # only modify if it was in request (don't change in a patch w/o this field)
+        if "effects" in self.context["request"].data:
+            instance.effects.set(effects)
+        return instance
 
 
 class ComparisonSetSerializer(serializers.ModelSerializer):

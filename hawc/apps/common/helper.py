@@ -377,7 +377,7 @@ def get_id_from_choices(items, lookup_value):
     lookup_index = 1
     return_index = 0
 
-    if case_insensitive and type(lookup_value) is str:
+    if case_insensitive and isinstance(lookup_value, str):
         lookup_value = lookup_value.lower()
         matching_vals = [
             x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value
@@ -512,7 +512,7 @@ def cacheable(
         callable (Callable): method to evaluation if not found in cache
         cache_key (str): the cache key to get/set
         flush (bool, default False): Force flush the cache and re-evaluate.
-        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR
+        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR.
 
     Returns:
         The result from the callable, either from cache or regenerated.

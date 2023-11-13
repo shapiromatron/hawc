@@ -1,6 +1,4 @@
-import json
 from copy import deepcopy
-from pathlib import Path
 
 import pytest
 from django.urls import reverse
@@ -9,9 +7,7 @@ from rest_framework.test import APIClient
 from hawc.apps.animal import forms, models
 from hawc.apps.assessment.models import Species, Strain
 
-from ..test_utils import check_details_of_last_log_entry
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry, get_client
 
 
 @pytest.mark.django_db
@@ -21,14 +17,7 @@ class TestAssessmentViewSet:
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_permissions(self, db_keys):
         admin_client = APIClient()
@@ -532,18 +521,36 @@ class TestEndpointCreateApi:
             "observation_time_units": [forms.EndpointForm.OBS_TIME_UNITS_REQ]
         }
 
-    def test_valid_requests(self, db_keys):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+    def test_valid_request(self, db_keys):
+        client = get_client("team", api=True)
         url = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "data_extracted": False,
+        }
 
-        assert models.Endpoint.objects.filter(name=data["name"]).count() == 0
         response = client.post(url, data)
         assert response.status_code == 201
-        assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
         check_details_of_last_log_entry(response.data["id"], "Created animal.endpoint")
+
+    def test_tags(self, db_keys):
+        client = get_client("team", api=True)
+        url = reverse("animal:api:endpoint-list")
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "data_extracted": False,
+            "effects": ["tag1", "tag2"],
+        }
+        response = client.post(url, data, format="json")
+        assert response.status_code == 201
+        endpoint = response.json()
+        assert len(endpoint["effects"]) == 2
 
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")
@@ -738,11 +745,4 @@ class TestMetadataApi:
         client = APIClient()
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
