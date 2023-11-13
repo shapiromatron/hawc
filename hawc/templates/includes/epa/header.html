@@ -57,16 +57,17 @@
                         </svg>
                     </span>
                 </a>
-                <button class="usa-menu-btn usa-button l-header__menu-button rounded-0 font-weight-light">MENU</button>
+                <button class="usa-menu-btn button--dark l-header__menu-button">MAIN MENU</button>
             </div>
             <div class="l-header__search">
                 <form class="usa-search usa-search--small usa-search--epa" method="get" action="https://search.epa.gov/epasearch">
                     <div role="search">
                         <label class="usa-sr-only" for="search-box">Search</label>
                         <input class="usa-input" id="search-box" type="search" name="querytext" placeholder="Search EPA.gov">
-                        <button class="usa-button" type="submit">
-                            <span class="usa-sr-only">Search</span>
-
+                        <button class="button button--dark" type="submit">
+                            <svg class="icon icon--social usa-search__submit-icon" aria-hidden="true" role="img" xlmns="http://www.w3.org/2000/svg">
+                                <use href="{% static 'vendor/uswds/3.1.0/img/sprite.svg' %}#search"></use>
+                            </svg>
                         </button>
                         <input type="hidden" name="areaname" value="">
                         <input type="hidden" name="areacontacts" value="">
