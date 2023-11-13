@@ -84,6 +84,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
 )
@@ -112,6 +113,18 @@ INSTALLED_APPS = (
     "crispy_forms",
     "crispy_bootstrap4",
     "webpack_loader",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
     # Custom apps
     "hawc.apps.common",
     "hawc.apps.myuser",
@@ -218,6 +231,10 @@ STATICFILES_FINDERS = (
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
+
+# Wagtail setup
+WAGTAIL_SITE_NAME = "HAWC"
+WAGTAILADMIN_BASE_URL = "/docs/cms/"
 
 # Logging configuration
 LOGGING = {
