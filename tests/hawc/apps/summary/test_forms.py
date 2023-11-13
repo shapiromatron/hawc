@@ -1,11 +1,14 @@
+import base64
 import json
 from copy import deepcopy
 
+import PIL
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.summary.constants import VisualType
-from hawc.apps.summary.forms import ExternalSiteForm, PlotlyVisualForm
+from hawc.apps.summary.forms import ExternalSiteForm, ImageVisualForm, PlotlyVisualForm
 
 
 @pytest.mark.django_db
@@ -128,3 +131,74 @@ class TestPlotlyVisualForm:
             form = self._build_form(data)
             assert not form.is_valid()
             assert "settings" in form.errors
+
+
+def create_image(storage, filename, size=(100, 100), image_mode="RGB", image_format="PNG"):
+    """
+    Generate a test image, returning the filename that it was saved as.
+
+    If ``storage`` is ``None``, the BytesIO containing the image data
+    will be passed instead.
+    """
+    data = BytesIO()
+    Image.new(image_mode, size).save(data, image_format)
+    data.seek(0)
+    if not storage:
+        return data
+    image_file = ContentFile(data.read())
+    return storage.save(filename, image_file)
+
+
+@pytest.mark.django_db
+class TestImageVisualForm:
+    def test_valid(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        visual_type = VisualType.IMAGE
+        img_str = (
+            "iVBORw0KGgoAAAANSUhEUgAAAAUA"
+            + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO"
+            + "9TXL0Y4OHwAAAABJRU5ErkJggg=="
+        )
+        # expand str to be >100KB
+
+        image = SimpleUploadedFile(
+            "file.png",
+            base64.b64decode(img_str),
+            content_type="image/png",
+        )
+        data = dict(
+            title="title",
+            slug="slug",
+            caption="hi",
+        )
+        form = ImageVisualForm(
+            data=data, files={"image": image}, parent=assessment, visual_type=visual_type
+        )
+        print(form.errors)
+        assert form.is_valid()
+
+    def test_filename(self):
+        pass
+
+    def test_file_size(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        visual_type = VisualType.IMAGE
+
+        sml_image = SimpleUploadedFile(
+            "file.png",
+            base64.b64decode(
+                "iVBORw0KGgoAAAANSUhEUgAAAAUA"
+                + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO"
+                + "9TXL0Y4OHwAAAABJRU5ErkJggg=="
+            ),
+            content_type="image/png",
+        )
+        data = dict(
+            title="title",
+            slug="slug",
+            caption="hi",
+        )
+        form = ImageVisualForm(
+            data=data, files={"image": sml_image}, parent=assessment, visual_type=visual_type
+        )
+        assert form.is_valid() is False
