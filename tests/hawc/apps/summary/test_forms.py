@@ -1,10 +1,10 @@
-import base64
 import json
 from copy import deepcopy
+from io import BytesIO
 
-import PIL
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from PIL import Image
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.summary.constants import VisualType
@@ -133,20 +133,16 @@ class TestPlotlyVisualForm:
             assert "settings" in form.errors
 
 
-def create_image(storage, filename, size=(100, 100), image_mode="RGB", image_format="PNG"):
+def create_image(size=(100, 100), image_mode="RGB", image_format="PNG"):
     """
-    Generate a test image, returning the filename that it was saved as.
+    Generate a test image, returning a BytesIO of the image data.
 
-    If ``storage`` is ``None``, the BytesIO containing the image data
-    will be passed instead.
+    from https://stackoverflow.com/questions/11170425/how-to-unit-test-file-upload-in-django
     """
     data = BytesIO()
     Image.new(image_mode, size).save(data, image_format)
     data.seek(0)
-    if not storage:
-        return data
-    image_file = ContentFile(data.read())
-    return storage.save(filename, image_file)
+    return data
 
 
 @pytest.mark.django_db
@@ -154,43 +150,51 @@ class TestImageVisualForm:
     def test_valid(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
         visual_type = VisualType.IMAGE
-        img_str = (
-            "iVBORw0KGgoAAAANSUhEUgAAAAUA"
-            + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO"
-            + "9TXL0Y4OHwAAAABJRU5ErkJggg=="
-        )
-        # expand str to be >100KB
-
-        image = SimpleUploadedFile(
+        image = create_image((10000, 10000))
+        file = SimpleUploadedFile(
             "file.png",
-            base64.b64decode(img_str),
+            image.getvalue(),
             content_type="image/png",
         )
+
         data = dict(
             title="title",
             slug="slug",
             caption="hi",
         )
         form = ImageVisualForm(
-            data=data, files={"image": image}, parent=assessment, visual_type=visual_type
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
         )
-        print(form.errors)
         assert form.is_valid()
 
-    def test_filename(self):
-        pass
+    def test_filename(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        visual_type = VisualType.IMAGE
+
+        file = SimpleUploadedFile(
+            "file.txt",
+            b"",
+        )
+
+        data = dict(
+            title="title",
+            slug="slug",
+            caption="hi",
+        )
+        form = ImageVisualForm(
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        )
+        assert form.is_valid() is False
 
     def test_file_size(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
         visual_type = VisualType.IMAGE
 
-        sml_image = SimpleUploadedFile(
+        # small image
+        image = create_image((10, 10))
+        file = SimpleUploadedFile(
             "file.png",
-            base64.b64decode(
-                "iVBORw0KGgoAAAANSUhEUgAAAAUA"
-                + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO"
-                + "9TXL0Y4OHwAAAABJRU5ErkJggg=="
-            ),
+            image.getvalue(),
             content_type="image/png",
         )
         data = dict(
@@ -199,6 +203,18 @@ class TestImageVisualForm:
             caption="hi",
         )
         form = ImageVisualForm(
-            data=data, files={"image": sml_image}, parent=assessment, visual_type=visual_type
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        )
+        assert form.is_valid() is False
+
+        # big image
+        image = create_image((30000, 30000))
+        file = SimpleUploadedFile(
+            "file.png",
+            image.getvalue(),
+            content_type="image/png",
+        )
+        form = ImageVisualForm(
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
         )
         assert form.is_valid() is False
