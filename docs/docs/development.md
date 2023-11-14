@@ -476,7 +476,7 @@ A few major revisions were made to the compiled USWDS assets, most notably:
 
 ### Updating EPA.gov style
 
-HAWC follows standards to comply with the EPA.gov look and feel. The following steps describe how to update HAWC styling with the EPA theme:
+THere are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
 
 1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
 2.  Right click the page and select "Save As" to download the page as an .html file.
@@ -484,8 +484,7 @@ HAWC follows standards to comply with the EPA.gov look and feel. The following s
 4. Open `styles.css` in VS Code.
 5. Replace the contents of `hawc/static/css/epa/core/style.css` with the updated `styles.css`.
 6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
-7. Test changes locally to ensure HAWC matches EPA.gov styling.
-
+7. Test changes locally to ensure HAWC matches EPA.gov styling.  On the base.html, you may want to disable caching for the header and footer components (or cache for 1 second) so it makes it easier to see the changes.
 
 ### Materialized views
 
