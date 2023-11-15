@@ -23,7 +23,7 @@ from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
-from ..assessment.constants import EpiVersion
+from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
@@ -215,9 +215,9 @@ class SummaryTable(models.Model):
         schema_class = self.get_content_schema_class()
         # ensure the assessment id is from the object; not custom config
         kwargs = {}
-        if "assessment_id" in schema_class.schema()["properties"]:
+        if "assessment_id" in schema_class.model_json_schema()["properties"]:
             kwargs["assessment_id"] = self.assessment_id
-        return schema_class.parse_obj(dict(self.content, **kwargs))
+        return schema_class.model_validate(dict(self.content, **kwargs))
 
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
@@ -338,6 +338,15 @@ class Visual(models.Model):
 
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
+
+    def get_visual_type_display(self):
+        label = constants.VisualType(self.visual_type).label
+        if (
+            self.visual_type == constants.VisualType.ROB_HEATMAP
+            or self.visual_type == constants.VisualType.ROB_BARCHART
+        ) and self.assessment.rob_name == RobName.SE:
+            label = label.replace("risk of bias", "study evaluation")
+        return label
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:

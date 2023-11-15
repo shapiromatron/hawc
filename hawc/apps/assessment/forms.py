@@ -655,7 +655,7 @@ class DatasetForm(forms.ModelForm):
                 dataset=instance,
                 version=instance.get_new_version_value(),
                 data=self.cleaned_data["revision_data"],
-                metadata=self.revision_metadata.dict(),
+                metadata=self.revision_metadata.model_dump(),
                 excel_worksheet_name=self.cleaned_data["revision_excel_worksheet_name"],
                 notes=self.cleaned_data["revision_notes"],
             )
