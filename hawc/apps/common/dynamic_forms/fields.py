@@ -111,10 +111,7 @@ class YesNoChoiceField(_Field):
     type: Literal["yes_no"] = "yes_no"
     widget: Literal["radio_select"] = "radio_select"
 
-    choices: list[tuple[str, str]] = [
-        ("yes", "Yes"),
-        ("no", "No"),
-    ]  # TODO: make this act as Literal
+    choices: list[tuple[Literal["yes", "no"], str]] = [("yes", "Yes"), ("no", "No")]
 
 
 class MultipleChoiceField(_Field):
