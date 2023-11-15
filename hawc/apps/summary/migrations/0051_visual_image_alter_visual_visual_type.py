@@ -12,7 +12,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="visual",
             name="image",
-            field=models.ImageField(blank=True, null=True, upload_to="summary/visual/images"),
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                upload_to="summary/visual/images",
+                help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
+            ),
         ),
         migrations.AlterField(
             model_name="visual",

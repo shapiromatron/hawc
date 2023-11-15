@@ -133,7 +133,9 @@ class TestPlotlyVisualForm:
             assert "settings" in form.errors
 
 
-def create_image(size=(100, 100), image_mode="RGB", image_format="PNG"):
+def create_image(
+    size: tuple[int, int], image_mode: str = "RGB", image_format: str = "PNG"
+) -> bytes:
     """
     Generate a test image, returning a BytesIO of the image data.
 
@@ -141,8 +143,7 @@ def create_image(size=(100, 100), image_mode="RGB", image_format="PNG"):
     """
     data = BytesIO()
     Image.new(image_mode, size).save(data, image_format)
-    data.seek(0)
-    return data
+    return data.getvalue()
 
 
 @pytest.mark.django_db
@@ -150,71 +151,31 @@ class TestImageVisualForm:
     def test_valid(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
         visual_type = VisualType.IMAGE
-        image = create_image((10000, 10000))
-        file = SimpleUploadedFile(
-            "file.png",
-            image.getvalue(),
-            content_type="image/png",
-        )
-
-        data = dict(
-            title="title",
-            slug="slug",
-            caption="hi",
-        )
+        file = SimpleUploadedFile("file.png", create_image((2000, 2000)), content_type="image/png")
+        data = dict(title="title", slug="slug", caption="hi")
         form = ImageVisualForm(
             data=data, files={"image": file}, parent=assessment, visual_type=visual_type
         )
         assert form.is_valid()
 
-    def test_filename(self, db_keys):
+    def test_clean_image(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
         visual_type = VisualType.IMAGE
 
-        file = SimpleUploadedFile(
-            "file.txt",
-            b"",
-        )
-
-        data = dict(
-            title="title",
-            slug="slug",
-            caption="hi",
-        )
+        # wrong extension
+        file = SimpleUploadedFile("file.txt", create_image((2000, 2000)), content_type="image/png")
+        data = dict(title="title", slug="slug", caption="hi")
         form = ImageVisualForm(
             data=data, files={"image": file}, parent=assessment, visual_type=visual_type
         )
         assert form.is_valid() is False
+        assert "File extension “txt” is not allowed." in form.errors["image"][0]
 
-    def test_file_size(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.IMAGE
-
-        # small image
-        image = create_image((10, 10))
-        file = SimpleUploadedFile(
-            "file.png",
-            image.getvalue(),
-            content_type="image/png",
-        )
-        data = dict(
-            title="title",
-            slug="slug",
-            caption="hi",
-        )
+        # wrong size
+        file = SimpleUploadedFile("file.png", create_image((5, 5)), content_type="image/png")
+        data = dict(title="title", slug="slug", caption="hi")
         form = ImageVisualForm(
             data=data, files={"image": file}, parent=assessment, visual_type=visual_type
         )
         assert form.is_valid() is False
-
-        # big image
-        image = create_image((30000, 30000))
-        file = SimpleUploadedFile(
-            "file.png",
-            image.getvalue(),
-            content_type="image/png",
-        )
-        form = ImageVisualForm(
-            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
-        )
-        assert form.is_valid() is False
+        assert "Image must be >10KB and <3 MB in size." in form.errors["image"][0]

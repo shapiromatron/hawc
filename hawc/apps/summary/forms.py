@@ -579,12 +579,12 @@ class ImageVisualForm(VisualForm):
     def clean_image(self):
         image = self.cleaned_data["image"]
         suffix = Path(image.name).suffix.lower()
-        suffixes = [".jpeg", ".jpg", ".png"]
+        suffixes = (".jpeg", ".jpg", ".png")
         if suffix not in suffixes:
             raise forms.ValidationError(f"File extension must be one of {', '.join(suffixes)}.")
         size_mb = image.size / 1024 / 1024
-        if size_mb < 0.1 or size_mb > 5:
-            raise forms.ValidationError("Image must be >100KB and <5 MB in size.")
+        if size_mb < 0.01 or size_mb > 3:
+            raise forms.ValidationError("Image must be >10KB and <3 MB in size.")
         return image
 
     class Meta:

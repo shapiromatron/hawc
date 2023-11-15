@@ -302,7 +302,12 @@ class Visual(models.Model):
         default=constants.SortOrder.SC,
     )
     prefilters = models.JSONField(default=dict)
-    image = models.ImageField(upload_to="summary/visual/images", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="summary/visual/images",
+        blank=True,
+        null=True,
+        help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
