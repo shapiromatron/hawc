@@ -334,11 +334,15 @@ class VisualizationList(BaseFilterList):
         choice = self.form.cleaned_data.get("type", "")
         if choice != "":
             if choice.startswith("v-"):
-                items = self.visual_fs.qs
+                items = self.visual_fs.qs.select_related("assessment")
             else:
                 items = self.data_pivot_fs.qs
         else:
-            items = list(itertools.chain(self.visual_fs.qs, self.data_pivot_fs.qs))
+            items = list(
+                itertools.chain(
+                    self.visual_fs.qs.select_related("assessment"), self.data_pivot_fs.qs
+                )
+            )
         return sorted(items, key=lambda d: d.title.lower())
 
     def get_filterset_form_kwargs(self):
