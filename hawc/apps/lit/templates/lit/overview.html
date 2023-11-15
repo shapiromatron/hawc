@@ -21,6 +21,7 @@
         <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
         {% if assessment.literature_settings.conflict_resolution %}
           <a class="dropdown-item" href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a>
+          <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         {% endif %}
         <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>

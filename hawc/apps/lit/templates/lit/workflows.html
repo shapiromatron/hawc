@@ -1,0 +1,10 @@
+{% extends 'assessment-rooted.html' %}
+{% block content %}
+<div class="d-flex">
+    <h2>Workflows</h2>
+    {% if obj_perms.edit_assessment %}
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-create' assessment.pk %}" hx-trigger="click" hx-target="#workflow-list" hx-swap="outerHTML" href="/">Create new workflow</a>
+    {% endif %}
+</div>
+{% include "lit/fragments/workflow_list.html" %}
+{% endblock %}

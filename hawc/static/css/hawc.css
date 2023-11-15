@@ -82,13 +82,22 @@ tfoot > tr > td {
 .vw75 {
     max-width: 75vw;
 }
-.clickable {
+.clickable, .clickable .bg-gray {
     transition: background-color 0.25s ease;
 }
 .clickable:hover {
     cursor: pointer;
     background-color: #f3f3f3;
     text-decoration: none;
+}
+.bg-lightblue {
+    background-color: #eaf6ff;
+}
+.bg-gray, .bg-grey {
+    background-color: #e8e8e8;
+}
+.clickable:hover .bg-gray {
+    background-color: #d1d1d1;
 }
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -649,7 +658,7 @@ a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     background-color: #eaf6ff;
 }
 
-#ff-expand-form .form-group {
+#ff-expand-form .form-group, .pad-form .form-group {
     padding: 0.2rem 0.75rem;
 }
 

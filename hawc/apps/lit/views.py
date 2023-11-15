@@ -3,9 +3,9 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Q
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
@@ -14,6 +14,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, tryParseInt
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -959,3 +960,66 @@ class BulkTagReferences(BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
+
+
+class Workflows(BaseList):
+    parent_model = Assessment
+    model = models.Workflow
+    breadcrumb_active_name = "Workflows"
+    template_name = "lit/workflows.html"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(assessment=self.assessment)
+
+
+class WorkflowViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = Assessment
+    model = models.Workflow
+
+    form_fragment = "lit/fragments/workflow_edit_row.html"
+    detail_fragment = "lit/fragments/workflow_row.html"
+    list_fragment = "lit/fragments/workflow_list.html"
+
+    @action(permission=can_view, htmx_only=False)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        if request.is_htmx:
+            return render(request, self.detail_fragment, self.get_context_data())
+        raise Http404()
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.WorkflowForm(request.POST, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.WorkflowForm(parent=request.item.parent)
+            template = self.list_fragment
+        context = self.get_context_data(form=form)
+        context.update(object_list=self.model.objects.filter(assessment=request.item.assessment))
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.WorkflowForm(request.POST, instance=request.item.object)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.WorkflowForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        form = forms.WorkflowForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, self.form_fragment, context)

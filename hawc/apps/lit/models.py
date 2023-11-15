@@ -1232,8 +1232,95 @@ class UserReferenceTag(models.Model):
         )
 
 
+class WorkflowAdmissionTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="workflow_admissions"
+    )
+    content_object = models.ForeignKey("Workflow", on_delete=models.CASCADE)
+
+
+class WorkflowRemovalTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="workflow_removals"
+    )
+    content_object = models.ForeignKey("Workflow", on_delete=models.CASCADE)
+
+
+class Workflow(models.Model):
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="workflows"
+    )
+    title = models.CharField(max_length=128, help_text="Descriptive name for this workflow.")
+    link_tagging = models.BooleanField(
+        default=False,
+        help_text="Add a panel on the Literature Review page for tagging references in this workflow.",
+    )
+    link_conflict_resolution = models.BooleanField(
+        default=False,
+        help_text="Add a panel on the Literature Review page for resolving conflicts on references in this workflow.",
+    )
+    # admission_with_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
+    admission_tags = managers.ReferenceFilterTagManager(
+        through=WorkflowAdmissionTags, blank=True, related_name="admission_workflows"
+    )
+    admission_tags_descendants = models.BooleanField(
+        default=False,
+        help_text="""Applies to tags selected above. By default, only references with the exact
+          selected tag(s) are admitted to the workflow; checking this box includes references that
+            are tagged with any descendant of the selected tag(s).""",
+    )
+    # admission_without_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
+    # admission_without_include_descendants = models.BooleanField(
+    #     default=False,
+    #     help_text="""Applies to tags selected above. By default, only references with the exact
+    #       selected tag(s) will not be admitted to the workflow; checking this box includes references that
+    #         are tagged with any descendant of the selected tag(s).""",
+    # )
+    admission_source = models.ManyToManyField(
+        Search, blank=True, related_name="workflow_admissions"
+    )
+    # completion_with_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
+    removal_tags = managers.ReferenceFilterTagManager(
+        through=WorkflowRemovalTags, blank=True, related_name="removal_workflows"
+    )
+    removal_tags_descendants = models.BooleanField(
+        default=False,
+        help_text="""Applies to tags selected above. By default, only references with the exact
+          selected tag(s) are admitted to the workflow; checking this box includes references that
+            are tagged with any descendant of the selected tag(s).""",
+    )
+    # completion_without_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
+    # completion_without_include_descendants = models.BooleanField(
+    #     default=False,
+    #     help_text="""Applies to tags selected above. By default, only references with the exact
+    #       selected tag(s) a to the workflow; checking this box includes references that
+    #         are tagged with any descendant of the selected tag(s).""",
+    # )
+    removal_source = models.ManyToManyField(Search, blank=True, related_name="workflow_removals")
+    references = models.ManyToManyField(Reference, blank=True, related_name="workflows")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse("lit:workflow-detail", args=[self.pk])
+
+    def get_edit_url(self):
+        return reverse("lit:workflow-update", args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse("lit:workflow-delete", args=[self.pk])
+
+    def get_assessment(self):
+        return self.assessment
+
+
 reversion.register(LiteratureAssessment)
 reversion.register(Search)
 reversion.register(ReferenceFilterTag)
 reversion.register(Reference, follow=["tags"])
 reversion.register(UserReferenceTag, follow=["tags"])
+reversion.register(Workflow)

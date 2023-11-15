@@ -99,3 +99,11 @@ class UserReferenceTagAdmin(admin.ModelAdmin):
     list_filter = ("last_updated",)
     list_select_related = ("user", "reference")
     readonly_fields = ("created", "last_updated")
+
+
+@admin.register(models.Workflow)
+class WorkflowAdmin(admin.ModelAdmin):
+    raw_id_fields = ("admission_source", "removal_source")
+    list_display = ("title", "assessment", "created", "last_updated")
+    list_filter = ("last_updated", "assessment")
+    readonly_fields = ("created", "last_updated")
