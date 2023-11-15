@@ -15,7 +15,7 @@ FILE_PATH = Path(__file__).parent.absolute() / "data" / "set_report.docx"
 class TestAttributeChoices:
     def test_free_html(self):
         attribute = AttributeChoices.FreeHtml
-        col = Column.construct(attribute=attribute)
+        col = Column.model_construct(attribute=attribute)
 
         # returns an empty cell; overridden by customizations
         series = pd.Series({"foo": "foo", "bar": "bar", "free_html": "free_html"})
@@ -27,7 +27,7 @@ class TestAttributeChoices:
 
     def test_rob(self):
         attribute = AttributeChoices.Rob
-        col = Column.construct(attribute=attribute)
+        col = Column.model_construct(attribute=attribute)
 
         # test with scores
         df = pd.DataFrame({"score_score": [1, 2]})
@@ -47,18 +47,18 @@ class TestAttributeChoices:
         )
 
         # show all doses
-        col = Column.construct(attribute=attribute, dose_unit="")
+        col = Column.model_construct(attribute=attribute, dose_unit="")
         cell = col.get_cell(series)
         assert cell.quill_text == "<p>0, 1, 10 ppm; 1, 10, 100 ppm; 1, 10, 100 mg/m3</p>"
 
         # show ppm doses
-        col = Column.construct(attribute=attribute, dose_unit="ppm")
+        col = Column.model_construct(attribute=attribute, dose_unit="ppm")
         cell = col.get_cell(series)
         assert cell.quill_text == "<p>0, 1, 10; 1, 10, 100</p>"
 
     def test_default(self):
         attribute = AttributeChoices.StudyShortCitation
-        col = Column.construct(attribute=attribute)
+        col = Column.model_construct(attribute=attribute)
 
         # valid
         series = pd.Series({"study_short_citation": "Foo et al.; Bar et al."})
@@ -105,7 +105,7 @@ class TestStudyEvaluationTable:
                 {"id": -1, "type": "study", "customized": []},
             ],
         }
-        table = StudyEvaluationTable.parse_obj(data)
+        table = StudyEvaluationTable.model_validate(data)
         document = table.to_docx()
         if rewrite_data_files:
             document.save(FILE_PATH)

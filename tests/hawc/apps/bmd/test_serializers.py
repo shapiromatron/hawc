@@ -12,12 +12,12 @@ class TestSessionBmd3UpdateSerializer:
         schema = BmdInputSettings.create_default(endpoint=session.endpoint)
 
         # valid
-        data = {"inputs": schema.dict()}
+        data = {"inputs": schema.model_dump()}
         serializer = SessionBmd3UpdateSerializer(data=data)
         assert serializer.is_valid() is True
 
         # invalid
-        data = {"inputs": {**schema.dict(), **{"dtype": "Z"}}}
+        data = {"inputs": {**schema.model_dump(), **{"dtype": "Z"}}}
         serializer = SessionBmd3UpdateSerializer(data=data)
         assert serializer.is_valid() is False
 
@@ -25,11 +25,11 @@ class TestSessionBmd3UpdateSerializer:
         schema = SelectedModel()
 
         # valid
-        data = {"selected": schema.dict()}
+        data = {"selected": schema.model_dump()}
         serializer = SessionBmd3UpdateSerializer(data=data)
         assert serializer.is_valid() is True
 
         # invalid
-        data = {"selected": {**schema.dict(), **{"model_index": "A"}}}
+        data = {"selected": {**schema.model_dump(), **{"model_index": "A"}}}
         serializer = SessionBmd3UpdateSerializer(data=data)
         assert serializer.is_valid() is False

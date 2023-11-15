@@ -79,7 +79,7 @@ class BaseApiAction:
     def validate(self, raise_exception: bool = False):
         # parse primitive data types
         try:
-            self.inputs = self.input_model.parse_obj(self.data)
+            self.inputs = self.input_model.model_validate(self.data)
         except pydantic.ValidationError as err:
             self.errors = json.loads(err.json())
 

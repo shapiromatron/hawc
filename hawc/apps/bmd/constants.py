@@ -1,6 +1,7 @@
 import json
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from bmds import constants
 from bmds.bmds3.constants import DistType
@@ -82,7 +83,7 @@ class ContinuousInputSettings(BaseModel):
 
 
 class BmdInputSettings(BaseModel):
-    version: int = Field(default=2, const=True)
+    version: Literal[2] = 2
     dtype: constants.ModelClass
     settings: DichotomousInputSettings | ContinuousInputSettings
 
@@ -123,8 +124,8 @@ def get_input_options(dtype: str) -> dict:
 
 
 class SelectedModel(BaseModel):
-    version: int = Field(default=2, const=True)
-    model_index: int = -1
+    version: Literal[2] = 2
+    bmds_model_index: int = Field(-1, alias="model_index")
     bmdl: float | None = None
     bmd: float | None = None
     bmdu: float | None = None
@@ -133,5 +134,5 @@ class SelectedModel(BaseModel):
     notes: str = ""
 
     def to_bmd_output(self) -> dict:
-        index = None if self.model_index == -1 else self.model_index
+        index = None if self.bmds_model_index == -1 else self.bmds_model_index
         return {"model_index": index, "notes": self.notes}
