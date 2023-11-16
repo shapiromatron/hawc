@@ -14,7 +14,9 @@
       {% endactions %}
     {% endif %}
   </div>
-  <img src="{{object.image.url}}" style="max-width: 100%" />
+  <div id="visual-image">
+    <img src="{{object.image.url}}" style="max-width: 100%" />
+  </div>
   <p>{{object.caption|safe}}</p>
 </div>
 {% endblock %}
