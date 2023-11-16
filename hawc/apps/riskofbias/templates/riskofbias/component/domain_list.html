@@ -2,10 +2,10 @@
 {% for domain in qs %}
     {% for metric in domain %}
         {% if forloop.first %}
-        <h3>{{metric.domain.name}}{% if show_id %}<span class="badge badge-secondary px-2 ml-2 hidden ids">{{metric.domain.id}}</span>{% endif %}</h3>
+        <h3>{{metric.domain.name}}{% debug_badge metric.domain_id %}</h3>
         <p class="mb-0">{{metric.domain.description|safe}}</p>
         {% endif %}
-        <h4>{{metric.name}}{% if show_id %}<span class="badge badge-secondary px-2 ml-2 hidden ids">{{metric.id}}</span>{% endif %}</h4>
+        <h4>{{metric.name}}{% debug_badge metric.id %}</h4>
         <p class="mb-0">{{metric.description|safe}}</p>
     {% empty %}
     {% alert info %}No evaluation metrics available for this domain.{% endalert %}

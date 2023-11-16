@@ -7,7 +7,7 @@ from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.urls import reverse
-from django.utils.html import strip_tags
+from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
 
 from ..helper import new_window_a
@@ -106,3 +106,10 @@ def url_replace(context, *args, **kwargs):
         handle_replace(dict_, key, value)
 
     return dict_.urlencode()
+
+
+@register.simple_tag
+def debug_badge(text: str):
+    return format_html(
+        '<span class="badge badge-dark px-1 mx-1 debug-badge hidden">{}</span>', text
+    )

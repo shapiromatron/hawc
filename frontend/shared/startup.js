@@ -53,8 +53,15 @@ const setupAjax = document => {
     });
 };
 
+const debugStartup = function() {
+    if (window.localStorage.getItem("hawc-debug-badge") == "true") {
+        $(".debug-badge").removeClass("hidden");
+    }
+};
+
 $(document).ready(() => {
     setupAjax(document);
     tryWebAppStartup();
     checkSession();
+    debugStartup();
 });

@@ -2,6 +2,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
+import DebugBadge from "shared/components/DebugBadge";
 import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
@@ -109,6 +110,7 @@ class RobItem extends Component {
                         <i className="fa fa-fw fa-edit"></i>Update
                     </button>
                 ) : null}
+                <DebugBadge text={rob.id} />
             </div>
         );
     }

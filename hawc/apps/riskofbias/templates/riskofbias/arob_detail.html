@@ -44,8 +44,8 @@
       {% bs4_thead 'Domain,Metric,Bioassay,Epidemiology,In Vitro' %}
       <tbody>{% for metric in metrics %}
         <tr>
-          <td>{{metric.domain.name}}{% if show_id %}<span class="badge badge-secondary px-2 ml-2 hidden ids">{{metric.domain.id}}</span>{% endif %}</td>
-          <td>{{metric.name}}{% if show_id %}<span class="badge badge-secondary px-2 ml-2 hidden ids">{{metric.id}}</span>{% endif %}</td>
+          <td>{{metric.domain.name}}{% debug_badge metric.domain_id %}</td>
+          <td>{{metric.name}}{% debug_badge metric.id %}</td>
           <td>{{metric.required_animal|yesno:'✔,-'}}</td>
           <td>{{metric.required_epi|yesno:'✔,-'}}</td>
           <td>{{metric.required_invitro|yesno:'✔,-'}}</td>

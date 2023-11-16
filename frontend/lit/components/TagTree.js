@@ -1,6 +1,7 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import DebugBadge from "shared/components/DebugBadge";
 import h from "shared/utils/helpers";
 
 @observer
@@ -54,7 +55,7 @@ class TagNode extends Component {
                                     {tag.get_references_deep().length}
                                 </span>
                             ) : null}
-                            <span className="ml-2 badge badge-dark ids hidden">1{tag.data.pk}</span>
+                            <DebugBadge text={tag.data.pk} />
                         </span>
                     </div>
                 </div>
