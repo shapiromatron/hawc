@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     "wagtail.images",
     "wagtail.search",
     "wagtail.admin",
+    "wagtail_draftail_anchors",
     "wagtail",
     "modelcluster",
     # Custom apps
@@ -237,6 +238,7 @@ FILE_UPLOAD_PERMISSIONS = 0o755
 WAGTAIL_SITE_NAME = "HAWC"
 WAGTAILADMIN_BASE_URL = "/docs/cms/"
 WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
+DRAFTAIL_ANCHORS_RENDERER = "wagtail_draftail_anchors.rich_text.render_span"
 
 # Logging configuration
 LOGGING = {

@@ -14,6 +14,7 @@ djangorestframework==3.14.0
   pyyaml==6.0.1       # schema dependencies
 gunicorn==21.2.0
 wagtail==5.2
+wagtail-draftail-anchors==0.6.0
 
 # tasks
 celery==5.3.4
