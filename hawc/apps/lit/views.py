@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, prefetch_related_objects
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -969,7 +969,15 @@ class Workflows(BaseList):
     template_name = "lit/workflows.html"
 
     def get_queryset(self):
-        return super().get_queryset().filter(assessment=self.assessment)
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related("admission_tags", "removal_tags")
+        )
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Workflow.annotate_tag_parents(queryset, tags)
+        return queryset
 
 
 class WorkflowViewSet(HtmxViewSet):
@@ -983,6 +991,9 @@ class WorkflowViewSet(HtmxViewSet):
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
+        tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+        prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+        models.Workflow.annotate_tag_parents([request.item.object], tags)
         if request.is_htmx:
             return render(request, self.detail_fragment, self.get_context_data())
         raise Http404()
@@ -999,7 +1010,12 @@ class WorkflowViewSet(HtmxViewSet):
             form = forms.WorkflowForm(parent=request.item.parent)
             template = self.list_fragment
         context = self.get_context_data(form=form)
-        context.update(object_list=self.model.objects.filter(assessment=request.item.assessment))
+        object_list = self.model.objects.filter(
+            assessment=request.item.assessment
+        ).prefetch_related("admission_tags", "removal_tags")
+        tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+        models.Workflow.annotate_tag_parents(object_list, tags)
+        context.update(object_list=object_list)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -1010,6 +1026,9 @@ class WorkflowViewSet(HtmxViewSet):
             if form.is_valid():
                 self.perform_update(request.item, form)
                 template = self.detail_fragment
+                tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+                prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+                models.Workflow.annotate_tag_parents([request.item.object], tags)
         else:
             form = forms.WorkflowForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)

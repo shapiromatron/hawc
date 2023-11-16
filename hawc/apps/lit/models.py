@@ -1263,7 +1263,6 @@ class Workflow(models.Model):
         default=False,
         help_text="Add a panel on the Literature Review page for resolving conflicts on references in this workflow.",
     )
-    # admission_with_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
     admission_tags = managers.ReferenceFilterTagManager(
         through=WorkflowAdmissionTags, blank=True, related_name="admission_workflows"
     )
@@ -1273,17 +1272,9 @@ class Workflow(models.Model):
           selected tag(s) are admitted to the workflow; checking this box includes references that
             are tagged with any descendant of the selected tag(s).""",
     )
-    # admission_without_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
-    # admission_without_include_descendants = models.BooleanField(
-    #     default=False,
-    #     help_text="""Applies to tags selected above. By default, only references with the exact
-    #       selected tag(s) will not be admitted to the workflow; checking this box includes references that
-    #         are tagged with any descendant of the selected tag(s).""",
-    # )
     admission_source = models.ManyToManyField(
         Search, blank=True, related_name="workflow_admissions"
     )
-    # completion_with_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
     removal_tags = managers.ReferenceFilterTagManager(
         through=WorkflowRemovalTags, blank=True, related_name="removal_workflows"
     )
@@ -1293,13 +1284,6 @@ class Workflow(models.Model):
           selected tag(s) are admitted to the workflow; checking this box includes references that
             are tagged with any descendant of the selected tag(s).""",
     )
-    # completion_without_tags = ArrayField(models.IntegerField(), default=list, null=True, blank=True)
-    # completion_without_include_descendants = models.BooleanField(
-    #     default=False,
-    #     help_text="""Applies to tags selected above. By default, only references with the exact
-    #       selected tag(s) a to the workflow; checking this box includes references that
-    #         are tagged with any descendant of the selected tag(s).""",
-    # )
     removal_source = models.ManyToManyField(Search, blank=True, related_name="workflow_removals")
     references = models.ManyToManyField(Reference, blank=True, related_name="workflows")
     created = models.DateTimeField(auto_now_add=True)
@@ -1316,6 +1300,34 @@ class Workflow(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    @classmethod
+    def annotate_tag_parents(cls, workflows: list, tags: models.QuerySet):
+        """Annotate tag parents for all tags and user tags.
+
+        Sets a new attribute (parents: list[Tag]) for each tag.
+
+        Args:
+            references (list): a list of references
+            tags (models.QuerySet): the full tag list for an assessment
+            user_tags (bool): set parents for user tags as well as consensus tags
+        """
+        tag_map = {tag.path: tag for tag in tags}
+
+        def _set_parents(tag):
+            tag.parents = []
+            current_path = tag.path
+            while True:
+                current_path = tag._get_parent_path_from_path(current_path)
+                if len(current_path) == 4:
+                    break
+                tag.parents.append(tag_map[current_path])
+
+        for workflow in workflows:
+            for tag in workflow.admission_tags.all():
+                _set_parents(tag)
+            for tag in workflow.removal_tags.all():
+                _set_parents(tag)
 
 
 reversion.register(LiteratureAssessment)

@@ -10,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
+from ..common.autocomplete import AutocompleteSelectMultipleWidget
 from ..common.forms import (
     BaseFormHelper,
     ConfirmationField,
@@ -21,6 +22,7 @@ from ..common.forms import (
 from ..study.constants import StudyTypeChoices
 from ..study.models import Study
 from . import constants, models
+from .autocomplete import SearchAutocomplete
 
 logger = logging.getLogger(__name__)
 
@@ -521,50 +523,42 @@ class ReferenceForm(forms.ModelForm):
 
 
 class WorkflowForm(forms.ModelForm):
-    title = forms.CharField(max_length=128, required=True)
     admission_tags = forms.ModelMultipleChoiceField(
         required=False, queryset=models.ReferenceFilterTag.objects.all(), label="Tagged With:"
-    )
-    admission_tags_descendants = forms.BooleanField(required=False, label="Include Descendants")
-    admission_source = forms.ModelMultipleChoiceField(
-        required=False, queryset=models.Search.objects.all(), label="Search/Import Source(s):"
     )
     removal_tags = forms.ModelMultipleChoiceField(
         required=False, queryset=models.ReferenceFilterTag.objects.all(), label="Tagged With:"
     )
-    removal_tags_descendants = forms.BooleanField(required=False, label="Include Descendants")
-    removal_source = forms.ModelMultipleChoiceField(
-        required=False, queryset=models.Search.objects.all(), label="Search/Import Source(s):"
-    )
 
     class Meta:
         model = models.Workflow
-        fields = [
-            "title",
-            "link_tagging",
-            "link_conflict_resolution",
-            "admission_tags",
-            "admission_source",
-            "admission_tags_descendants",
-            "removal_tags",
-            "removal_tags_descendants",
-            "removal_source",
-        ]
+        exclude = ("assessment", "references", "created", "last_updated")
+        widgets = {
+            "admission_source": AutocompleteSelectMultipleWidget(
+                autocomplete_class=SearchAutocomplete
+            ),
+            "removal_source": AutocompleteSelectMultipleWidget(
+                autocomplete_class=SearchAutocomplete
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
+
         tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment.id)
         for field in ["admission_tags", "removal_tags"]:
+            self.fields[field].label = "Tagged With:"
             self.fields[field].queryset = tags
             self.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
-            self.fields[field].widget.attrs["size"] = 6
-        searches = models.Search.objects.filter(assessment=self.instance.assessment)
+            self.fields[field].widget.attrs["size"] = 5
+
         for field in ["admission_source", "removal_source"]:
-            self.fields[field].queryset = searches
-            self.fields[field].widget.attrs["size"] = 6
+            self.fields[field].label = "Search/Import Source"
+            self.fields[field].widget.set_filters({"assessment_id": self.instance.assessment.id})
+
         for field in ["admission_tags_descendants", "removal_tags_descendants"]:
             self.fields[field].hover_help = True
             self.fields[field].label = "Include Descendants of above tag(s)"
@@ -584,46 +578,30 @@ class WorkflowForm(forms.ModelForm):
                     cfl.Fieldset(
                         "Admission Criteria",
                         cfl.Row(
-                            cfl.Column("admission_tags", css_class="col-md-7"),
-                            cfl.Column("admission_source", css_class="col-md-5"),
+                            cfl.Column("admission_tags", css_class="col-md-12"),
                         ),
                         cfl.Row(cfl.Column("admission_tags_descendants")),
-                        css_class="bg-light my-4 p-3 rounded",
+                        cfl.Row(cfl.Column("admission_source", css_class="col-md-12")),
+                        css_class="fieldset-border mx-2 mb-4",
                     ),
                 ),
                 cfl.Column(
                     cfl.Fieldset(
                         "Removal Criteria",
                         cfl.Row(
-                            cfl.Column("removal_tags", css_class="col-md-7"),
-                            cfl.Column("removal_source", css_class="col-md-5"),
+                            cfl.Column("removal_tags", css_class="col-md-12"),
                         ),
                         cfl.Row(cfl.Column("removal_tags_descendants")),
-                        css_class="bg-light my-4 p-3 rounded",
+                        cfl.Row(cfl.Column("removal_source", css_class="col-md-12")),
+                        css_class="fieldset-border mx-2 mb-4",
                     ),
                 ),
             ),
         )
-        # helper.layout = cfl.Layout(
-        #     cfl.Row(cfl.Column("title"), cfl.Column("link_tagging"), cfl.Column("link_conflict_resolution")),
-        #     cfl.Div(cfl.Fieldset("Admission Criteria",
-        #                          cfl.Row(cfl.Column("admission_with_tags"), cfl.Column("admission_without_tags"), cfl.Column("admission_source"), css_class="pt-2"),
-        #                          cfl.Row(cfl.Column("admission_with_include_descendants", css_class="col-md-4"), cfl.Column("admission_without_include_descendants", css_class="col-md-5"))),
-        #                           css_class="bg-light my-2 p-3 rounded"),
-        #     cfl.Div(cfl.Fieldset("Completion Criteria",
-        #                          cfl.Row(cfl.Column("completion_with_tags"), cfl.Column("completion_without_tags"), cfl.Column("completion_source"), css_class="pt-2"),
-        #                          cfl.Row(cfl.Column("completion_with_include_descendants", css_class="col-md-4"), cfl.Column("completion_without_include_descendants", css_class="col-md-5"))),
-        #                           css_class="bg-light my-4 p-3 rounded"),
-        # )
         return helper
 
     def clean(self):
         cleaned_data = super().clean()
-        # for (tag_list, include_descendants) in
-        #     [("admission_with_tags", "admission_with_include_descendants"),
-        #     ("admission_without_tags", "admission_without_include_descendants"),
-        #     ("completion_with_tags", "completion_with_include_descendants"),
-        #     ("completion_without_tags", "completion_without_include_descendants")]:\
         for tag_list in ["admission_tags", "removal_tags"]:
             tag_ids = list(cleaned_data[tag_list].values_list("id", flat=True))
             cleaned_data[tag_list] = tag_ids

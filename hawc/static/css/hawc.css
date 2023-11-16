@@ -79,15 +79,18 @@ tfoot > tr > td {
     overflow-y: auto;
     resize:vertical;
 }
+.vw50 {
+    max-width: 50vw;
+}
 .vw75 {
     max-width: 75vw;
 }
 .clickable, .clickable .bg-gray {
     transition: background-color 0.25s ease;
 }
-.clickable:hover {
+.clickable:hover, .clickable:hover .bg-white {
     cursor: pointer;
-    background-color: #f3f3f3;
+    background-color: #f3f3f3 !important;
     text-decoration: none;
 }
 .bg-lightblue {
@@ -122,6 +125,21 @@ p {
 
 select[multiple]{
     resize: vertical;
+}
+
+fieldset.fieldset-border {
+    border: #c2c7c9 2px solid;
+    border-radius: 12px;
+    padding: 0.25rem 1rem;
+}
+
+fieldset.fieldset-border>legend {
+    width: fit-content;
+    margin-left: 0.2rem;
+    padding: 0rem 0.5rem;
+}
+fieldset.fieldset-border>div{
+    padding: 0 0.75rem;
 }
 
 /* BOOTSTRAP 4 OVERRIDES */
@@ -811,6 +829,16 @@ table.bordered td {
 .htmx-swapping {
     opacity: 0;
     transition: opacity 1s ease-out;
+}
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+.htmx-request .htmx-indicator{
+    opacity:1
+}
+.htmx-request.htmx-indicator{
+    opacity:1
 }
 
 /* fade in/out */
