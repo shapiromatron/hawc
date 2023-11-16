@@ -54,6 +54,7 @@ class TagNode extends Component {
                                     {tag.get_references_deep().length}
                                 </span>
                             ) : null}
+                            <span className="ml-2 badge badge-dark ids hidden">1{tag.data.pk}</span>
                         </span>
                     </div>
                 </div>

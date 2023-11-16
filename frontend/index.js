@@ -19,6 +19,6 @@ window.app = {
     renderPlotlyFromApi,
     startup,
     toggleDebug: () => {
-        $(".ids").show();
+        $(".ids").toggleClass("hidden");
     },
 };
