@@ -1,5 +1,5 @@
 # web application
-Django~=4.2.6
+Django~=4.2.7
 django-crispy-forms==2.1
 crispy-bootstrap4==2023.1
 django-filter==23.2
@@ -26,7 +26,7 @@ psycopg2-binary==2.9.9
 redis==5.0.1
 requests==2.31.0
   urllib3<2
-pydantic==1.10.12
+pydantic==2.4.2
 bleach[css]==6.1.0
 
 # computational
@@ -36,7 +36,7 @@ pandas==2.1.1
   jinja2==3.1.2
 plotly==5.17.0
 scipy==1.11.3
-bmds==23.2
+bmds==23.4
 
 # exports
 rispy==0.8.1

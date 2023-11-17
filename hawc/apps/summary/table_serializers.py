@@ -261,29 +261,26 @@ class StudyEvaluationSerializer(serializers.Serializer):
         return df.drop(columns=self._id_fields[self._id_fields.index(column) + 1 :])
 
     def _get_rob_df(self):
+        fields = [
+            "study_id",
+            "metric_id",
+            "score_id",
+            "score_label",
+            "score_notes",
+            "score_score",
+            "bias_direction",
+            "is_default",
+            "riskofbias_id",
+            "content_type_id",
+            "object_id",
+        ]
         study_ids = Study.objects.filter(**self._study_filters).values_list("id", flat=True)
         rob_values = (
-            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids).order_by("id").values()
+            FinalRiskOfBiasScore.objects.filter(study_id__in=study_ids)
+            .order_by("score_id")
+            .values_list(*fields)
         )
-        # specify the columns in case rob_values is empty; this is needed when building the report
-        df = pd.DataFrame(
-            rob_values,
-            columns=[
-                "study_id",
-                "metric_id",
-                "id",
-                "score_id",
-                "score_label",
-                "score_notes",
-                "score_score",
-                "bias_direction",
-                "is_default",
-                "riskofbias_id",
-                "content_type_id",
-                "object_id",
-            ],
-        )
-        return df.convert_dtypes()
+        return pd.DataFrame(rob_values, columns=fields).convert_dtypes()
 
     def _get_df(self):
         data_source = self.validated_data["data_source"]

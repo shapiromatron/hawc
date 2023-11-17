@@ -6,21 +6,24 @@
     color: #005ea2;
  }
 
-/* this rule was disabled in the epa style; re-enable to header */
-header.l-header * {
-    -webkit-transition-duration: 200ms;
-    transition-duration: 200ms;
+/* this will overwrite transitions from epa/style.css  */
+* {
+    -webkit-transition-duration: unset;
+    transition-duration: unset;
     -webkit-transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
     transition-property: background-color, border-color, color, opacity, text-shadow, -webkit-box-shadow, -webkit-transform;
     transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform;
     transition-property: background-color, border-color, box-shadow, color, opacity, text-shadow, transform, -webkit-box-shadow, -webkit-transform;
-    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
+    -webkit-transition-timing-function: unset;
+    transition-timing-function: unset;
 }
 
-/* Header */
-#search-box {
-    margin-top: 0px;
+/* usa-banner */
+.usa-banner__button[aria-expanded=true]::after {
+    -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_less.svg) no-repeat center/contain;
+}
+.usa-banner__button[aria-expanded=false]::after {
+    -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_more.svg) no-repeat center/contain;
 }
 
 /* Top nav */
@@ -36,7 +39,6 @@ header.l-header * {
 .unstyled-action-button {
     color: var(--epa-primary);
 }
-
 /* override environment banner position */
 .env-banner {
     margin: 0 10% 0 70%;
@@ -65,12 +67,13 @@ table td {
 table {
     margin-top: 0;
 }
+
 /* list */
 li {
     margin-bottom: 0rem;
 }
 
-/* caret on dropdown menu */
+/* dropdown menu caret */
 a.dropdown-toggle:not([href])::after {
     display: inline-block !important;
 }

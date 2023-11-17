@@ -105,32 +105,32 @@ class Schema(BaseModel):
 class TestPydanticToDjangoError:
     bad_obj = {"children": [{"integer": "test"}, {}]}
     err_messages = [
-        "string: field required",
-        "children->0->integer: value is not a valid integer",
-        "children->1->integer: field required",
+        "string: Field required",
+        "children->0->integer: Input should be a valid integer, unable to parse string as an integer",
+        "children->1->integer: Field required",
     ]
 
     def test_django_error(self):
         with pytest.raises(DjangoValidationError) as err:
             with helper.PydanticToDjangoError(drf=False):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"__all__": self.err_messages}
 
     def test_drf_error(self):
         with pytest.raises(DRFValidationError) as err:
             with helper.PydanticToDjangoError(drf=True):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"non_field_errors": self.err_messages}
 
     def test_fields(self):
         # don't include a field; useful for field in form validation
         with pytest.raises(DjangoValidationError) as err:
             with helper.PydanticToDjangoError(include_field=False):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == self.err_messages
 
         # specify the field; useful for form validation
         with pytest.raises(DjangoValidationError) as err:
             with helper.PydanticToDjangoError(field="field"):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"field": self.err_messages}
