@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% for crumb in breadcrumbs reversed %}
+    {% if forloop.last %}{{crumb.name}}{% else %}{{crumb.name}} | {% endif %}
+{% endfor %}
+{% endblock title %}
+
+{% block sidebar_outer %}
+    {% include "includes/sidebar_container.html" with is_wagtail=True%}
+{% endblock sidebar_outer %}
+
+{% block breadcrumbs_outer %}
+    {% include "includes/breadcrumbs.html" %}
+{% endblock breadcrumbs_outer %}

@@ -63,6 +63,25 @@
         </ul>
     </li>
     {% endif %}
+    {% if is_wagtail %}
+    {% load wagtailcore_tags %}
+    <li class="{{li_class}}">
+        {% with wagtail_site=page.get_site.root_page %}
+        {% with wagtail_site_children=wagtail_site.get_children.live %}
+        <a class="{{a_class}}" href="{% pageurl wagtail_site %}">{{ wagtail_site.title }}</a>
+        {% if wagtail_site_children %}
+        <ul class="{{sub_ul}}">
+            {% for wagtail_site_child in wagtail_site_children %}
+            <li class="{{li_class}}">
+                <a class="{{a_class}}" href="{% pageurl wagtail_site_child %}">{{ wagtail_site_child.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% endwith %}
+    </li>
+    {% endif %}
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
 </ul>
