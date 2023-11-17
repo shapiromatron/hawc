@@ -45,12 +45,12 @@
           {% else %}
           <li class="list-group-item">
             {% url 'riskofbias:api:assessment-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-final' button_text=assessment.get_rob_name_display|add:' Export' help_text="All final reviews." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-final' button_text=assessment.get_rob_name_display|title|add:' Export' help_text="All final reviews." %}
           </li>
           {% if obj_perms.edit %}
           <li class="list-group-item">
             {% url 'riskofbias:api:assessment-full-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-all' button_text='Complete '|add:assessment.get_rob_name_display|add:' Export' help_text="All reviews, including individual reviews. Team members only." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-all' button_text='Complete '|add:assessment.get_rob_name_display|title|add:' Export' help_text="All reviews, including individual reviews. Team members only." %}
           </li>
           {% endif %}
           {% endif %}
@@ -70,15 +70,15 @@
           {% else %}
           <li class="list-group-item">
             {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-data' button_text='Complete Export' help_text="Animal data." %}
-          </li>
-          <li class="list-group-item">
-            {% url 'animal:api:assessment-endpoint-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-summary' button_text='Endpoint Summary' help_text="Endpoint-summary animal data." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-data' button_text='Complete Export' help_text="Complete animal bioassay data export, where each row is a endpoint-group for all data extracted." %}
           </li>
           <li class="list-group-item">
             {% url 'animal:api:assessment-study-heatmap' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-study-summary' button_text='Study Summary' help_text="Study-summary animal data." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-study-summary' button_text='Study Summary' help_text="Study-level summary of animal bioassy data, where each row is a study. Columns with multiple values are pipe \"|\" delimited." %}
+          </li>
+          <li class="list-group-item">
+            {% url 'animal:api:assessment-endpoint-export' assessment.pk as the_url %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-summary' button_text='Endpoint Summary' help_text="Endpoint summary animal bioassay data, where each row is an extracted endpoint." %}
           </li>
           {% endif %}
         </ul>
@@ -101,20 +101,20 @@
           {% if assessment.epi_version == EpiVersion.V1 %}
           <li class="list-group-item">
             {% url 'epi:api:assessment-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' button_text='Complete Export' help_text="All epidemiology data." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' button_text='Complete Export' help_text="Complete epidemiology export, where each row is an individual result associated with a health outcome." %}
           </li>
           <li class="list-group-item">
             {% url 'epi:api:assessment-study-heatmap' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-study-design' button_text='Study Design' help_text="Epidemiology study design data." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-study-design' button_text='Study Summary' help_text="Epidemiology study summary, where each row is a study. Columns with multiple values are pipe \"|\" delimited." %}
           </li>
           {% elif assessment.epi_version == EpiVersion.V2 %}
           <li class="list-group-item">
             {% url 'epiv2:api:assessment-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' button_text='Complete Export' help_text="All epidemiology data." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' button_text='Complete Export' help_text="Complete epidemiology export, where each row is an individual result associated with a health outcome." %}
           </li>
           <li class="list-group-item">
             {% url 'epiv2:api:assessment-study-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-study-design' button_text='Study Design' help_text="Epidemiology study design data." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-study-design' button_text='Study Summary' help_text="Epidemiology study summary, where each row is a study. Columns with multiple values are pipe \"|\" delimited." %}
           </li>
           {% endif %}
           {% endif %}
