@@ -9,8 +9,10 @@ class OutputFigure extends React.Component {
     }
 
     componentDidMount() {
-        let {endpoint} = this.props;
-        this.plt = endpoint.renderPlot($(this.epFigure.current), {showBmd: false}).plot;
+        let {endpoint} = this.props,
+            ept = endpoint.renderPlot($(this.epFigure.current), {showBmd: false});
+        ept.setScatter();
+        this.plt = ept.scatter;
         this.renderSelectedLine(this.props.selectedModel);
     }
 

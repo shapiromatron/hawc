@@ -31,7 +31,7 @@ class UDFDetailView(LoginRequiredMixin, DetailView):
     model = models.UserDefinedForm
 
     def get_context_data(self, **kwargs):
-        form = dynamic_forms.Schema.parse_obj(self.object.schema).to_form()
+        form = dynamic_forms.Schema.model_validate(self.object.schema).to_form()
         kwargs.update(form=form)
         return super().get_context_data(**kwargs)
 
@@ -91,7 +91,7 @@ class SchemaPreview(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         """Process a valid dynamic form/schema."""
-        dynamic_form = dynamic_forms.Schema.parse_obj(form.cleaned_data["schema"]).to_form(
+        dynamic_form = dynamic_forms.Schema.model_validate(form.cleaned_data["schema"]).to_form(
             prefix=self.field_name
         )
         return self.render_to_response(self.get_context_data(valid=True, form=dynamic_form))

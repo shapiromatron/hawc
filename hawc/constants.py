@@ -16,7 +16,7 @@ class FeatureFlags(BaseModel):
     ALLOW_RIS_IMPORTS: bool = True
     FAKE_IMPORTS: bool = False
     ANONYMOUS_ACCOUNT_CREATION: bool = True
-    ENABLE_BMDS_33 = False
+    ENABLE_BMDS_33: bool = False
     ENABLE_PLOTLY_VISUAL: bool = False
     ENABLE_FILTER_DOWNLOADS: bool = False
     ENABLE_UDF: bool = False
@@ -24,7 +24,7 @@ class FeatureFlags(BaseModel):
 
     @classmethod
     def from_env(cls, variable) -> "FeatureFlags":
-        return cls.parse_obj(json.loads(os.environ.get(variable, "{}")))
+        return cls.model_validate(json.loads(os.environ.get(variable, "{}")))
 
 
 class ColorblindColors:

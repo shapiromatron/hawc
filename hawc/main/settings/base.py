@@ -110,6 +110,7 @@ INSTALLED_APPS = (
     "taggit",
     "treebeard",
     "crispy_forms",
+    "crispy_bootstrap4",
     "webpack_loader",
     # Custom apps
     "hawc.apps.common",
@@ -280,7 +281,7 @@ LOGGING = {
 # commit information
 def get_git_commit() -> Commit:
     if GIT_COMMIT_FILE.exists():
-        return Commit.parse_file(GIT_COMMIT_FILE)
+        return Commit.model_validate_json(GIT_COMMIT_FILE.read_text())
     try:
         return Commit.current(str(PROJECT_ROOT))
     except (CalledProcessError, FileNotFoundError):
@@ -317,6 +318,7 @@ REST_FRAMEWORK = {
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
 
 # Django crispy-forms settings
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 WEBPACK_LOADER = {

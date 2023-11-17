@@ -55,11 +55,9 @@ class TestDashboard:
             resp = pm_client.get(url)
             check_admin_login_redirect(resp)
             resp = admin_client.get(url)
-            assert resp.status_code == 400
-            resp = admin_client.get(url, HTTP_HX_REQUEST="true")
             assert resp.status_code == 200
 
-    def test_htmx_post(self):
+    def test_htmx_form_get(self):
         admin_client = get_client("admin")
         requests = [
             ("?action=growth", {"assessment_id": 1, "grouper": "W"}),
@@ -67,9 +65,9 @@ class TestDashboard:
         ]
         for extra, data in requests:
             url = reverse("admin_dashboard") + extra
-            resp = admin_client.get(url, HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url)
             assert resp.status_code == 200
-            resp = admin_client.post(url, data=data, HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url, data=data)
             assert resp.status_code == 200
 
 

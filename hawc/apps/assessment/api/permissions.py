@@ -3,8 +3,10 @@ from collections import ChainMap
 
 from django.db import models
 from rest_framework import exceptions, permissions
+from rest_framework.request import Request
 
 from ...assessment.constants import AssessmentViewSetPermissions
+from ...assessment.models import Assessment
 from .helper import get_assessment_from_query
 
 logger = logging.getLogger(__name__)
@@ -148,3 +150,16 @@ class JobPermissions(permissions.BasePermission):
             # other actions are object specific,
             # and will be caught by object permissions
             return True
+
+
+def check_assessment_query_permission(
+    request: Request, permission: AssessmentViewSetPermissions
+) -> Assessment:
+    """
+    Check assessment and query permission; raises error if user doesn't have permission.
+    Returns an assessment instance.
+    """
+    assessment = get_assessment_from_query(request)
+    if not permission.has_permission(assessment, request.user):
+        raise exceptions.PermissionDenied()
+    return assessment

@@ -3,7 +3,7 @@ from typing import Annotated, Any, Literal
 
 from django import forms
 from django.utils.html import conditional_escape
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, ConfigDict, field_validator
 from pydantic import Field as PydanticField
 
 from . import constants
@@ -19,25 +19,21 @@ class _Field(BaseModel):
     in constants.Widget.
     """
 
-    name: str = PydanticField(regex=r"^[a-zA-Z0-9_]+$")
-    required: bool | None
-    label: str | None
-    label_suffix: str | None
+    name: str = PydanticField(pattern=r"^[a-zA-Z0-9_]+$")
+    required: bool | None = None
+    label: str | None = None
+    label_suffix: str | None = None
     initial: Any = None
-    help_text: str | None
-    css_class: str | None
+    help_text: str | None = None
+    css_class: str | None = None
     # error_messages
     # validators
     # localize
     # disabled
 
-    class Config:
-        """Schema config."""
+    model_config = ConfigDict(use_enum_values=True)
 
-        underscore_attrs_are_private = True
-        use_enum_values = True
-
-    @validator("help_text")
+    @field_validator("help_text")
     def ensure_safe_string(cls, v):
         """Sanitize help_text values."""
         if v is None:
@@ -46,7 +42,7 @@ class _Field(BaseModel):
 
     def get_form_field_kwargs(self) -> dict:
         """Get keyword arguments for Django form field."""
-        kwargs = self.dict(exclude={"type", "widget", "name", "css_class"}, exclude_none=True)
+        kwargs = self.model_dump(exclude={"type", "widget", "name", "css_class"}, exclude_none=True)
         kwargs["widget"] = constants.Widget[self.widget.upper()].value
         return kwargs
 
@@ -74,10 +70,10 @@ class CharField(_Field):
     type: Literal["char"] = "char"
     widget: Literal["text_input", "textarea"] = "text_input"
 
-    max_length: int | None
-    min_length: int | None
-    strip: bool | None
-    empty_value: str | None
+    max_length: int | None = None
+    min_length: int | None = None
+    strip: bool | None = None
+    empty_value: str | None = None
 
 
 class IntegerField(_Field):
@@ -86,8 +82,8 @@ class IntegerField(_Field):
     type: Literal["integer"] = "integer"
     widget: Literal["number_input"] = "number_input"
 
-    min_value: int | None
-    max_value: int | None
+    min_value: int | None = None
+    max_value: int | None = None
 
 
 class FloatField(_Field):
@@ -96,8 +92,8 @@ class FloatField(_Field):
     type: Literal["float"] = "float"
     widget: Literal["number_input"] = "number_input"
 
-    min_value: int | None
-    max_value: int | None
+    min_value: int | None = None
+    max_value: int | None = None
 
 
 class ChoiceField(_Field):
@@ -113,9 +109,9 @@ class YesNoChoiceField(_Field):
     """Yes No field."""
 
     type: Literal["yes_no"] = "yes_no"
-    widget: Literal["radio_select"] = PydanticField("radio_select", const=True)
+    widget: Literal["radio_select"] = "radio_select"
 
-    choices: list[tuple[str, str]] = PydanticField([("yes", "Yes"), ("no", "No")], const=True)
+    choices: list[tuple[Literal["yes", "no"], str]] = [("yes", "Yes"), ("no", "No")]
 
 
 class MultipleChoiceField(_Field):

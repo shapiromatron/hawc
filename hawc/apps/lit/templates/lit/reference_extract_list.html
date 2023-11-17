@@ -6,36 +6,21 @@
     <p class="text-muted">Select one or more references from the list below:</p>
     {% if object_list.count > 0 %}
         <form method="post">
-            <table class="table table-sm">
-                <colgroup>
-                    <col style='width:5%'></col>
-                    <col style='width:15%'></col>
-                    <col style='width:10%'></col>
-                    <col style='width:40%'></col>
-                    <col style='width:20%'></col>
-                    <col style='width:10%'></col>
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Authors</th>
-                        <th>Year</th>
-                        <th>Title</th>
-                        <th>Journal</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                {% for object in object_list %}
-                    <tr>
-                        <td class="text-center"><input type="checkbox" name="references" value="{{object.id}}"></td>
-                        <td>{{object.authors_short}}</td>
-                        <td>{{object.year}}</td>
-                        <td>{{object.title}}</td>
-                        <td>{{object.journal}}</td>
-                        <td><a class="btn btn-sm btn-primary" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a></td>
-                    </tr>
-                {% endfor %}
-            </table>
+            <ul class="list-group my-3 vw75">
+            {% for object in object_list %}
+                    <li class="list-group-item d-flex col">
+                        <div class="col-auto d-flex align-content-center pl-4 pr-5">  
+                            <input style="width: 17px;" type="checkbox" name="references" value="{{object.id}}">
+                        </div>
+                        <div style="width: 75vw;">
+                            {% include 'lit/_reference_with_tags.html' with ref=object hide_abstract=True extra_tag_classes='smaller' %}
+                        </div>
+                        <div>
+                            <a class="btn btn-sm btn-primary d-flex flex-shrink-0 ml-2" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a>
+                        </div>
+                    </li>
+            {% endfor %}
+            </ul>
             <div>
                 <h4>Create studies from selected references</h4>
                 <p class="text-muted">Select one more references from the list above, and a study

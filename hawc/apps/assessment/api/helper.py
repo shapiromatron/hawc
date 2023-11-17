@@ -28,7 +28,7 @@ def get_assessment_id_param(request: Request) -> int:
     return assessment_id
 
 
-def get_assessment_from_query(request: Request) -> models.Assessment | None:
+def get_assessment_from_query(request: Request) -> models.Assessment:
     """Returns assessment or raises exception if does not exist."""
     assessment_id = get_assessment_id_param(request)
     try:
