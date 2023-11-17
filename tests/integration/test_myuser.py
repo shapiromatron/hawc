@@ -5,7 +5,7 @@ from playwright.sync_api import expect
 from .common import PlaywrightTestCase
 
 
-class TestLogin(PlaywrightTestCase):
+class TestUser(PlaywrightTestCase):
     def test_login(self):
         """
         expect( that we're able to login/logout successfully and an errors are displayed as expected.
@@ -37,3 +37,31 @@ class TestLogin(PlaywrightTestCase):
         page.locator("#navbarDropdownMenuLink").click()
         page.locator("div.dropdown-menu >> text=Logout").click()
         expect(page).to_have_url(self.live_server_url + "/")
+
+    def test_debug(self):
+        page = self.page
+        page.goto(self.live_server_url)
+        self.login_and_goto_url(
+            page, f"{self.live_server_url}/study/assesment/2/", "pm@hawcproject.org"
+        )
+        locator = page.locator(".debug-badge")
+        expect(locator).to_be_hidden()
+
+        page.goto(f"{self.live_server_url}/user/profile/")
+        locator = page.locator("#id_debug")
+        expect(locator).to_have_text("False")
+
+        page.goto(f"{self.live_server_url}/user/profile/update/")
+        locator = page.locator("#id_debug")
+        expect(locator).not_to_be_checked()
+        locator.check()
+        expect(locator).to_be_checked()
+        page.get_by_role("button", name="Save").click()
+
+        expect(page).to_have_url("/user/profile/")
+        locator = page.locator("#id_debug")
+        expect(locator).to_have_text("True")
+
+        page.goto(f"{self.live_server_url}/study/assesment/2/")
+        locator = page.locator(".debug-badge")
+        expect(locator).to_be_visible()
