@@ -111,5 +111,6 @@ def url_replace(context, *args, **kwargs):
 @register.simple_tag
 def debug_badge(text: str):
     return format_html(
-        '<span class="badge badge-dark px-1 mx-1 debug-badge hidden">{}</span>', text
+        '<span title="Click to copy text to clipboard" class="badge badge-dark px-1 mx-1 debug-badge hidden">{}</span>',
+        text,
     )

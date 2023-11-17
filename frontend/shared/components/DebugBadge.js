@@ -5,7 +5,17 @@ const DebugBadge = function({text}) {
     if (window.localStorage.getItem("hawc-debug-badge") != "true") {
         return null;
     }
-    return <span className="badge badge-dark px-1 mx-1 debug-badge">{text}</span>;
+    return (
+        <span
+            onClick={e => {
+                navigator.clipboard.writeText(text);
+                e.stopPropagation();
+            }}
+            title="Click to copy text to clipboard"
+            className="badge badge-dark px-1 mx-1 debug-badge">
+            {text}
+        </span>
+    );
 };
 
 DebugBadge.propTypes = {

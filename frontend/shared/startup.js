@@ -37,27 +37,31 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 const setupAjax = document => {
-    // htmx
-    document.body.addEventListener("htmx:configRequest", event => {
-        event.detail.headers["X-CSRFToken"] = csrftoken;
-    });
-    // jquery
-    $.ajaxSetup({
-        crossDomain: false,
-        beforeSend(xhr, settings) {
-            if (!csrfSafeMethod(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                xhr.setRequestHeader("sessionid", sessionid);
-            }
-        },
-    });
-};
-
-const debugStartup = function() {
-    if (window.localStorage.getItem("hawc-debug-badge") == "true") {
-        $(".debug-badge").removeClass("hidden");
-    }
-};
+        // htmx
+        document.body.addEventListener("htmx:configRequest", event => {
+            event.detail.headers["X-CSRFToken"] = csrftoken;
+        });
+        // jquery
+        $.ajaxSetup({
+            crossDomain: false,
+            beforeSend(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    xhr.setRequestHeader("sessionid", sessionid);
+                }
+            },
+        });
+    },
+    debugStartup = function() {
+        if (window.localStorage.getItem("hawc-debug-badge") == "true") {
+            $(".debug-badge")
+                .on("click", e => {
+                    navigator.clipboard.writeText(e.target.closest(".debug-badge").innerText);
+                    e.stopPropagation();
+                })
+                .removeClass("hidden");
+        }
+    };
 
 $(document).ready(() => {
     setupAjax(document);
