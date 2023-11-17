@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from ..test_utils import check_200, check_302, check_403, get_client
+from ..test_utils import check_200, check_302, get_client
 
 
 @pytest.mark.django_db
