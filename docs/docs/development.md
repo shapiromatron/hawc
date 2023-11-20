@@ -476,7 +476,7 @@ A few major revisions were made to the compiled USWDS assets, most notably:
 
 ### Updating EPA.gov style
 
-THere are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
+There are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
 
 1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
 2.  Right click the page and select "Save As" to download the page as an .html file.
@@ -514,3 +514,45 @@ To generate a report on the lines of code, install [cloc](https://github.com/AlD
 ```bash
 make loc
 ```
+
+### Wagtail setup
+HAWC uses the [Wagtail CMS](https://wagtail.org/) to write documentation. When you first create a Wagtail site, it comes with a default root page. This root page is usually named 'Home'. To delete this default root page and replace it with your own custom root page and ensure permissions are correct:
+
+#### Deleting the default Wagtail root page
+
+1. Log into the Wagtail admin (`/admin/cms/`), and navigate to '📁 Pages' -> 'HOME' in the sidebar tab.
+2. Within the HOME page, click the Actions menu ('...') at the top and select 'Delete'.
+3. A confirmation box will appear asking you to confirm. Click the 'Yes, delete it' button.
+4. The default root page is now deleted.
+
+#### Creating a new Root page
+Now that the default root page is deleted, we can create our own custom root page. Here's how to create a new root page called 'HAWC Documentation':
+
+1. In the Wagtail admin (`/admin/cms/`), navigate to '📁 Pages' -> '🏠 Pages'. Or, you can go to the url `/admin/cms/pages/`. Here you should see 'Root' in the top left.
+2. Select 'Add child page', then choose to create a `Docs index page`.
+<!-- TODO update if models change  -->
+3. Fill out the Title as 'HAWC Documentation'.
+4. Add any additional content you want on the page. You can leave Intro and Body blank if you want an empty root page.
+5. At the bottom, click 'Save draft' when finished.
+
+The new 'HAWC Documentation' page is now created and set as your site's root page. You can now build out your site by adding additional pages as children of this page.
+
+#### Setting privacy permissions on the Root page
+<!-- TODO could change if new way to set perms is found  -->
+Now that we have created a new root page, we need to set permissions on who can view and edit it. By default, Wagtail pages are public and accessible to anyone. We will make the HAWC documentation only visible to authenticated users.
+
+1. In the Wagtail admin (`/admin/cms/`), navigate to '📁 Pages' -> 'HAWC Documentation'.
+2. Select the 'Status' icon () in the top right of the screen.
+3. Currently, the privacy setting is set to 'Visible to all'. Select the 'Change privacy' setting and set it to 'Private, accessible to logged-in users'.
+4. Save these changes.
+
+The permissions we set on the root HAWC page will automatically cascade down to any child pages we create under it. This means we only need to set the permissions at the top root HAWC level, and all child pages will inherit those privacy settings.
+
+#### Publishing the root page
+Now that the privacy settings have been set, it is safe to publish the root page.
+
+1. Navigate to the 'HAWC Documentation' root page from the Wagtail admin (`/admin/cms/`).
+2. At the top, select the Actions menu ('...') -> Edit.
+3. At the bottom next to 'Save draft' the '^' dropdown and select 'Publish'.
+
+
