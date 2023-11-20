@@ -14,7 +14,7 @@ class TestSchema:
             ]
         }
         with pytest.raises(PydanticError, match="Duplicate field name"):
-            Schema.parse_obj(schema_dict)
+            Schema.model_validate(schema_dict)
 
         # all fields should have a valid type
         schema_dict = {
@@ -22,8 +22,8 @@ class TestSchema:
                 {"name": "field1"},
             ]
         }
-        with pytest.raises(PydanticError, match="Discriminator 'type' is missing in value"):
-            Schema.parse_obj(schema_dict)
+        with pytest.raises(PydanticError, match="Unable to extract tag using discriminator 'type'"):
+            Schema.model_validate(schema_dict)
         schema_dict = {
             "fields": [
                 {"name": "field1", "type": "not a type"},
@@ -31,9 +31,9 @@ class TestSchema:
         }
         with pytest.raises(
             PydanticError,
-            match="No match for discriminator 'type' and value 'not a type'",
+            match="Input tag 'not a type' found using 'type' does not match any of the expected tags",
         ):
-            Schema.parse_obj(schema_dict)
+            Schema.model_validate(schema_dict)
 
         # if a widget is given, it should be valid for the type
         schema_dict = {
@@ -41,8 +41,8 @@ class TestSchema:
                 {"name": "field1", "type": "integer", "widget": "text_input"},
             ]
         }
-        with pytest.raises(PydanticError, match="unexpected value; permitted: 'number_input'"):
-            Schema.parse_obj(schema_dict)
+        with pytest.raises(PydanticError, match="Input should be 'number_input'"):
+            Schema.model_validate(schema_dict)
 
     def test_condition_validation(self):
         # condition subjects should correspond with a field
@@ -61,7 +61,7 @@ class TestSchema:
             ],
         }
         with pytest.raises(PydanticError, match="Invalid condition subject"):
-            Schema.parse_obj(schema_dict)
+            Schema.model_validate(schema_dict)
 
         # condition observers should correspond with a field
         schema_dict = {
@@ -79,4 +79,4 @@ class TestSchema:
             ],
         }
         with pytest.raises(PydanticError, match="Invalid condition observer"):
-            Schema.parse_obj(schema_dict)
+            Schema.model_validate(schema_dict)

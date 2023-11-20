@@ -302,7 +302,7 @@ LOGGING = {
 # commit information
 def get_git_commit() -> Commit:
     if GIT_COMMIT_FILE.exists():
-        return Commit.parse_file(GIT_COMMIT_FILE)
+        return Commit.model_validate_json(GIT_COMMIT_FILE.read_text())
     try:
         return Commit.current(str(PROJECT_ROOT))
     except (CalledProcessError, FileNotFoundError):

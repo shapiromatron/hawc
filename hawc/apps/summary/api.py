@@ -47,7 +47,7 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
     def heatmap_datasets(self, request, pk):
         """Returns a list of the heatmap datasets available for an assessment."""
         instance = self.get_object()
-        datasets = models.Visual.get_heatmap_datasets(instance).dict()
+        datasets = models.Visual.get_heatmap_datasets(instance).model_dump()
         return Response(datasets)
 
 

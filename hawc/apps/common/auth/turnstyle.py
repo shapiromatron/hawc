@@ -6,16 +6,16 @@ from django.conf import settings
 class SiteVerifyRequest(pydantic.BaseModel):
     secret: str
     response: str
-    remoteip: str | None
+    remoteip: str | None = None
 
 
 class SiteVerifyResponse(pydantic.BaseModel):
     success: bool
-    challenge_ts: str | None
-    hostname: str | None
+    challenge_ts: str | None = None
+    hostname: str | None = None
     error_codes: list[str] = pydantic.Field(alias="error-codes", default_factory=list)
-    action: str | None
-    cdata: str | None
+    action: str | None = None
+    cdata: str | None = None
 
 
 def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyResponse:
@@ -23,7 +23,7 @@ def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyR
     model = SiteVerifyRequest(
         secret=settings.TURNSTYLE_KEY, response=turnstile_response, remoteip=user_ip
     )
-    resp = requests.post(url, data=model.dict())
+    resp = requests.post(url, data=model.model_dump())
     if resp.status_code != 200:
         model = SiteVerifyResponse(success=False, hostname=None)
         model.error_codes.extend(

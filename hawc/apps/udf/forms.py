@@ -17,7 +17,7 @@ from . import constants, models
 
 class UDFForm(forms.ModelForm):
     schema = forms.JSONField(
-        initial=Schema(fields=[]).dict(),
+        initial=Schema(fields=[]).model_dump(),
         validators=[PydanticValidator(Schema)],
         widget=TextareaButton(
             btn_attrs={
