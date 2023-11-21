@@ -528,7 +528,7 @@ HAWC uses the [Wagtail CMS](https://wagtail.org/) to write documentation. When y
 #### Creating a new Root page
 Now that the default root page is deleted, we can create our own custom root page. Here's how to create a new root page called 'HAWC Documentation':
 
-1. In the Wagtail admin (`/admin/cms/`), navigate to '📁 Pages' -> '🏠 Pages'. Or, you can go to the url `/admin/cms/pages/`. Here you should see 'Root' in the top left.
+1. In the Wagtail admin (`/admin/cms/`), navigate to the Root page at '📁 Pages' -> '🏠 Pages', or `/admin/cms/pages/`. Here you should see 'Root' in the top left.
 2. Select 'Add child page', then choose to create a `Docs index page`.
 <!-- TODO update if models change  -->
 3. Fill out the Title as 'HAWC Documentation'.
@@ -537,14 +537,12 @@ Now that the default root page is deleted, we can create our own custom root pag
 
 The new 'HAWC Documentation' page is now created and set as your site's root page. You can now build out your site by adding additional pages as children of this page.
 
-#### Setting privacy permissions on the Root page
-<!-- TODO could change if new way to set perms is found  -->
-Now that we have created a new root page, we need to set permissions on who can view and edit it. By default, Wagtail pages are public and accessible to anyone. We will make the HAWC documentation only visible to authenticated users.
+#### Ensure privacy permissions
+Now that we have created a new root page, we need to set permissions on who can view and edit it. By default, Wagtail pages are public and accessible to anyone. However, HAWC uses a custom hook to make the page Private upon creation. HAWC documentation is itended to only be visible to authenticated users.
 
 1. In the Wagtail admin (`/admin/cms/`), navigate to '📁 Pages' -> 'HAWC Documentation'.
 2. Select the 'Status' icon () in the top right of the screen.
-3. Currently, the privacy setting is set to 'Visible to all'. Select the 'Change privacy' setting and set it to 'Private, accessible to logged-in users'.
-4. Save these changes.
+3. Ensure the privacy setting is set to 'Private, accessible to logged-in users'.
 
 The permissions we set on the root HAWC page will automatically cascade down to any child pages we create under it. This means we only need to set the permissions at the top root HAWC level, and all child pages will inherit those privacy settings.
 
@@ -555,4 +553,10 @@ Now that the privacy settings have been set, it is safe to publish the root page
 2. At the top, select the Actions menu ('...') -> Edit.
 3. At the bottom next to 'Save draft' the '^' dropdown and select 'Publish'.
 
+#### Configure root site
+Now that we have created a new 'HAWC Documentation' root page, we still need to configure Wagtail to use this page as the root URL for our site.
 
+1. In the Wagtail Admin, navigate to the Settings tab, then Sites.
+2. In the upper right hand corner, select 'Add a site'.
+3. Fill in the required information and set as default site.
+4. In a new browser, navigate to `/docs/pages` to view the new 'HAWC Documentation' root page!
