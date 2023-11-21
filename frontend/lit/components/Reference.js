@@ -12,6 +12,18 @@ class Reference extends Component {
     toggleAbstract = () => {
         this.setState({abstractExpanded: !this.state.abstractExpanded});
     };
+    renderSearchesBlock(data) {
+        return (
+            <div>
+                <label>Searches/imports:&nbsp;</label>
+                {data.searches.map((d, i) => (
+                    <a className="btn btn-light mr-1 mb-2" key={d.url} href={d.url}>
+                        {d.title}
+                    </a>
+                ))}
+            </div>
+        );
+    }
     renderIdentifiers(data, study_url, expanded) {
         const nodes = [];
 
@@ -74,7 +86,7 @@ class Reference extends Component {
             </div>
         );
 
-        if (data.searches.length) {
+        if (!expanded && data.searches.length) {
             nodes.push(
                 <div
                     style={{minWidth: 85}}
@@ -82,6 +94,7 @@ class Reference extends Component {
                     key={h.randomString()}>
                     <a
                         className={`btn dropdown-toggle ${btn_size} outline-btn`}
+                        title="HAWC Searches/Imports"
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false">
@@ -90,7 +103,7 @@ class Reference extends Component {
                     </a>
                     <div className="dropdown-menu dropdown-menu-right">
                         {data.searches.map((d, i) => (
-                            <a className="dropdown-item small" key={h.randomString()} href={d.url}>
+                            <a className="dropdown-item small" key={d.url} href={d.url}>
                                 {d.title}
                             </a>
                         ))}
@@ -207,6 +220,7 @@ class Reference extends Component {
                         ))}
                     </p>
                 ) : null}
+                {expanded ? this.renderSearchesBlock(data) : null}
                 {showHr ? <hr className="my-4" /> : null}
             </div>
         );
