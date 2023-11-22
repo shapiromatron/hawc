@@ -24,6 +24,15 @@ class Command(BaseCommand):
 
         call_command("dumpdata", "sites", **shared_kwargs)
         call_command("dumpdata", "contenttypes", **shared_kwargs)
+        call_command("dumpdata", "wagtailcore", **shared_kwargs)
+        call_command("dumpdata", "wagtailadmin", **shared_kwargs)
+        call_command("dumpdata", "wagtaildocs", **shared_kwargs)
+        call_command("dumpdata", "wagtailembeds", **shared_kwargs)
+        call_command("dumpdata", "wagtailforms", **shared_kwargs)
+        call_command("dumpdata", "wagtailimages", **shared_kwargs)
+        call_command("dumpdata", "wagtailredirects", **shared_kwargs)
+        call_command("dumpdata", "wagtailsearch", **shared_kwargs)
+        call_command("dumpdata", "wagtailusers", **shared_kwargs)
         call_command("dumpdata", "myuser", **shared_kwargs)
         call_command("dumpdata", "vocab", **shared_kwargs)
         call_command(
