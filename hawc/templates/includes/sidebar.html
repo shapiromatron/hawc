@@ -63,25 +63,30 @@
         </ul>
     </li>
     {% endif %}
-    {% if is_wagtail %}
+
     {% load wagtailcore_tags %}
+    {% wagtail_site as doc_site %}
+    {% with doc_root_page=doc_site.root_page %}
+    {% if doc_root_page.live %}
     <li class="{{li_class}}">
-        {% with wagtail_site=page.get_site.root_page %}
-        {% with wagtail_site_children=wagtail_site.get_children.live %}
-        <a class="{{a_class}}" href="{% pageurl wagtail_site %}">{{ wagtail_site.title }}</a>
-        {% if wagtail_site_children %}
+        <a class="{{a_class}}" href="{% pageurl doc_root_page %}">{{ doc_root_page.title }}</a>
+        {% if expand_docs %}
+        {% with doc_child_pages=doc_root_page.get_children.live %}
+        {% if doc_child_pages %}
         <ul class="{{sub_ul}}">
-            {% for wagtail_site_child in wagtail_site_children %}
+            {% for doc_child_page in doc_child_pages %}
             <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% pageurl wagtail_site_child %}">{{ wagtail_site_child.title }}</a>
+                <a class="{{a_class}}" href="{% pageurl doc_child_page %}">{{ doc_child_page.title }}</a>
             </li>
             {% endfor %}
         </ul>
         {% endif %}
         {% endwith %}
-        {% endwith %}
+        {% endif %}
     </li>
     {% endif %}
+    {% endwith %}
+
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
 </ul>
