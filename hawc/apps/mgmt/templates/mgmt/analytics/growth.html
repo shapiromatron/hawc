@@ -1,23 +1,18 @@
 {% block content %}
 <div class="mt-4" style="border-bottom: 1px solid lightgray;">
-    <h3>Literature Screening Growth</h3>
+    <h3>Literature Tagging & Screening</h3>
     <div class="card-columns">
         {% analytics_card value=n label='total searches' %}
         <div class="card box-shadow">
             <div class="card-body">
                 <h4 class="card-title">Reference source types</h4>
-                {% for type in search_types %}
-                    {% if type.search_type == 'i' %}
-                    <h2 class="m-0 mt-1">{{ type.total }}</h2>
-                    <p class="small">Imported from PubMed/HERO</p>
-                    {% elif type.search_type == 's' %}
-                    <h2 class="m-0 mt-1">{{ type.total }}</h2>
-                    <p class="small">Search</p>
-                    {% endif %}
-                {% endfor %}
+                <h2 class="m-0 mt-1">{{ search_source|get:"imports" }}</h2>
+                <p class="small">Added from Imports (PubMed/HERO/RIS)</p>
+                <p><b>{{ search_source|get:"pubmed_imports" }}</b> PubMed, <b>{{ search_source|get:"hero_imports" }}</b> HERO, <b>{{ search_source|get:"ris_imports" }}</b> RIS</p>
+                <h2 class="m-0 mt-1">{{ search_source|get:"searches" }}</h2>
+                <p class="small">Added from PubMed Keyword Searches</p>
             </div>
         </div>
-        {% analytics_card value=animal_counts.studies label='total studies' %}
         {% analytics_card value=total_n_refs label='total references' %}
         <div class="card box-shadow">
             <div class="card-body">
@@ -40,7 +35,7 @@
 
 
 <div class="mt-4" style="border-bottom: 1px solid lightgray;">
-    <h3>Study Growth</h3>
+    <h3>Study</h3>
         <div class="card-columns">
             {% analytics_card value=study_types.total label='total studies' %}
             <div class="card box-shadow">
@@ -69,7 +64,7 @@
 </div>
 
 <div class="mt-4" style="border-bottom: 1px solid lightgray;">
-    <h3>Animal Group Growth</h3>
+    <h3>Animal Bioassay</h3>
     <div class="card-columns">
         {% analytics_card value=animal_counts.studies label='total studies' %}
         {% analytics_card value=animal_counts.experiments label='total experiments' %}

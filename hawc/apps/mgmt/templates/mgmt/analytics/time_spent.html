@@ -3,4 +3,5 @@
         {% analytics_card value=total_time_spent label='spent on assessment' %}
     </div>
     {% include 'common/analytics_plot.html' with title='Time spent per model' plot=time_spent_per_model_plot %}
+    <p class="text-muted p-4">Total time spent by content type for content objects within this assessment. This metric is imperfect; it is calculated by the total time the create and update forms are open for each content object.  This may overestimate time if a form is open but a user is not actively using it; or underestimate time where users are reviewing data in the read-only form. If content is missing or data appears incaccureate, please let us know, we'd like to improve this metric!</p>
 {% endblock %}

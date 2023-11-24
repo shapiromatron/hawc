@@ -7,23 +7,37 @@ from django.db.models import Count, Q
 
 from hawc.apps.animal import constants
 from hawc.apps.animal.models import Endpoint, EndpointGroup, Experiment
+from hawc.apps.lit import constants as lc
 from hawc.apps.lit.models import Reference, Search
 from hawc.apps.study.models import Study
 
 
 # literature screening data
 def get_search_count(assessment_id):
-    return Search.objects.filter(assessment_id=assessment_id).count()
-
-
-# TODO filter further for import type (e.g., Pubmed, HERO, etc.)
-def get_search_source(assessment_id):
     return (
         Search.objects.filter(assessment_id=assessment_id)
-        .values("search_type")
-        .annotate(total=Count("search_type"))
-        .order_by("search_type")
+        .exclude(source=lc.ReferenceDatabase.MANUAL)
+        .count()
     )
+
+
+def get_search_source(assessment_id):
+    qs = Search.objects.filter(assessment_id=assessment_id)
+    return {
+        "searches": qs.filter(search_type=lc.SearchType.SEARCH).count(),
+        "imports": qs.filter(search_type=lc.SearchType.IMPORT)
+        .exclude(source=lc.ReferenceDatabase.MANUAL)
+        .count(),
+        "pubmed_imports": qs.filter(
+            search_type=lc.SearchType.IMPORT, source=lc.ReferenceDatabase.PUBMED
+        ).count(),
+        "hero_imports": qs.filter(
+            search_type=lc.SearchType.IMPORT, source=lc.ReferenceDatabase.HERO
+        ).count(),
+        "ris_imports": qs.filter(
+            search_type=lc.SearchType.IMPORT, source=lc.ReferenceDatabase.RIS
+        ).count(),
+    }
 
 
 def search_refs_df(assessment_id):
@@ -58,6 +72,7 @@ def refs_per_import_plot(assessent_id):
         log_x=True,
         points="all",
         hover_name="title",
+        labels={"num_refs": "Number References"},
     )
     fig.layout["xaxis"].update(**update_xscale(df2.num_refs.min(), df2.num_refs.max()))
     return fig
@@ -88,6 +103,7 @@ def refs_by_year_plot(assessment_id):
         y="nyear",
         log_y=True,
         title=f"<sub>Total: {df.nyear.sum():,}   |   # Missing year: {n_null:,}</sub>",
+        labels={"year": "Year", "nyear": "#"},
     )
     fig.layout["yaxis"].update(**update_xscale(df2.nyear.min(), df2.nyear.max()))
     return fig
@@ -264,7 +280,7 @@ def get_context_data(id: int) -> dict:
     context = {}
     # literature screening
     context["n"] = get_search_count(id)
-    context["search_types"] = get_search_source(id)
+    context["search_source"] = get_search_source(id)
     context["total_n_refs"] = total_n_refs(id)
     context["refs_per_import_plot"] = refs_per_import_plot(id)
     context["refs_by_year_plot"] = refs_by_year_plot(id)
