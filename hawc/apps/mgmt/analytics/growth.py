@@ -10,6 +10,8 @@ from hawc.apps.animal.models import Endpoint, EndpointGroup, Experiment
 from hawc.apps.lit import constants as lc
 from hawc.apps.lit.models import Reference, Search
 from hawc.apps.study.models import Study
+from hawc.apps.summary import constants as sc
+from hawc.apps.summary.models import DataPivot, SummaryTable, Visual
 
 
 # literature screening data
@@ -248,7 +250,11 @@ def n_dose_response_groups(assessment_id):
     return EndpointGroup.objects.filter(endpoint__assessment_id=assessment_id).count()
 
 
-def experiment_type_df(assessment_id):
+def barchart_count_plot(df: pd.DataFrame, **kw):
+    return px.bar(data_frame=df, y="type", x="count", orientation="h", text_auto=True, **kw)
+
+
+def experiment_type_plot(assessment_id):
     types = (
         Experiment.objects.filter(study__assessment_id=assessment_id)
         .values_list("type")
@@ -259,39 +265,52 @@ def experiment_type_df(assessment_id):
     for type, n in list(types):
         data.append((constants.ExperimentType(type).label, n))
     df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
-    return df
+    return barchart_count_plot(df, labels={"type": "Experiment type", "count": "# Experiments"})
 
 
-def experiment_type_plot(assessment_id):
-    df = experiment_type_df(assessment_id)
-    fig = px.bar(
-        data_frame=df,
-        y="type",
-        x="count",
-        orientation="h",
-        text_auto=True,
-        height=500,
-        labels={"type": "Experiment type", "count": "# Experiments"},
+# summary data
+def summary_counts(assessment_id):
+    dp_count = DataPivot.objects.assessment_qs(assessment_id).count()
+
+    # visual by type
+    types = (
+        Visual.objects.assessment_qs(assessment_id)
+        .values_list("visual_type")
+        .annotate(total=Count("visual_type"))
+        .order_by("visual_type")
     )
-    return fig
+    data = [("Data Pivot", dp_count)]
+    for type, n in list(types):
+        data.append((sc.VisualType(type).label.title(), n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    fig = barchart_count_plot(df, labels={"type": "Visual type", "count": "# Visuals"})
+
+    return {
+        "visual": Visual.objects.assessment_qs(assessment_id).count(),
+        "datapivot": dp_count,
+        "table": SummaryTable.objects.assessment_qs(assessment_id).count(),
+        "visual_barchart": fig,
+    }
 
 
 def get_context_data(id: int) -> dict:
-    context = {}
-    # literature screening
-    context["n"] = get_search_count(id)
-    context["search_source"] = get_search_source(id)
-    context["total_n_refs"] = total_n_refs(id)
-    context["refs_per_import_plot"] = refs_per_import_plot(id)
-    context["refs_by_year_plot"] = refs_by_year_plot(id)
-    context["ref_tags_breakdown"] = ref_tags_breakdown(id)
-    context["refs_tags_plot"] = refs_tags_plot(id)
-    # studies
-    context["study_types"] = study_classifications(id)
-    # animal group
-    context["animal_counts"] = animal_counts(id)
-    context["n_endpoints_extracted"] = endpoints_extracted(id)
-    context["n_endpoints_ehv"] = endpoints_ehv(id)
-    context["n_dose_res_groups"] = n_dose_response_groups(id)
-    context["experiment_type_plot"] = experiment_type_plot(id)
-    return context
+    return {
+        # literature screening
+        "n": get_search_count(id),
+        "search_source": get_search_source(id),
+        "total_n_refs": total_n_refs(id),
+        "refs_per_import_plot": refs_per_import_plot(id),
+        "refs_by_year_plot": refs_by_year_plot(id),
+        "ref_tags_breakdown": ref_tags_breakdown(id),
+        "refs_tags_plot": refs_tags_plot(id),
+        # studies
+        "study_types": study_classifications(id),
+        # animal group
+        "animal_counts": animal_counts(id),
+        "n_endpoints_extracted": endpoints_extracted(id),
+        "n_endpoints_ehv": endpoints_ehv(id),
+        "n_dose_res_groups": n_dose_response_groups(id),
+        "experiment_type_plot": experiment_type_plot(id),
+        # summary
+        "summary_count": summary_counts(id),
+    }

@@ -1,15 +1,15 @@
 {% block content %}
-<div class="mt-4" style="border-bottom: 1px solid lightgray;">
+<div class="my-4">
     <h3>Literature Tagging & Screening</h3>
     <div class="card-columns">
         {% analytics_card value=n label='total searches' %}
         <div class="card box-shadow">
             <div class="card-body">
                 <h4 class="card-title">Reference source types</h4>
-                <h2 class="m-0 mt-1">{{ search_source|get:"imports" }}</h2>
+                <h2 class="m-0 mt-1">{{ search_source.imports }}</h2>
                 <p class="small">Added from Imports (PubMed/HERO/RIS)</p>
-                <p><b>{{ search_source|get:"pubmed_imports" }}</b> PubMed, <b>{{ search_source|get:"hero_imports" }}</b> HERO, <b>{{ search_source|get:"ris_imports" }}</b> RIS</p>
-                <h2 class="m-0 mt-1">{{ search_source|get:"searches" }}</h2>
+                <p><b>{{ search_source.pubmed_imports }}</b> PubMed, <b>{{ search_source.hero_imports }}</b> HERO, <b>{{ search_source.ris_imports }}</b> RIS</p>
+                <h2 class="m-0 mt-1">{{ search_source.searches }}</h2>
                 <p class="small">Added from PubMed Keyword Searches</p>
             </div>
         </div>
@@ -34,46 +34,57 @@
 </div>
 
 
-<div class="mt-4" style="border-bottom: 1px solid lightgray;">
+<div class="my-4">
     <h3>Study</h3>
-        <div class="card-columns">
-            {% analytics_card value=study_types.total label='total studies' %}
-            <div class="card box-shadow">
-                <div class="card-body">
-                    <h4 class="card-title">Published breakdown</h4>
-                    <h2 class="m-0 mt-1">{{ study_types.published }}</h2>
-                    <p class="small">published studies</p>
-                    <h2 class="m-0 mt-1">{{ study_types.unpublished }}</h2>
-                    <p class="small">unpublished studies</p>
-                </div>
+    <div class="card-columns">
+        {% analytics_card value=study_types.total label='total studies' %}
+        <div class="card box-shadow">
+            <div class="card-body">
+                <h4 class="card-title">Published breakdown</h4>
+                <h2 class="m-0 mt-1">{{ study_types.published }}</h2>
+                <p class="small">published studies</p>
+                <h2 class="m-0 mt-1">{{ study_types.unpublished }}</h2>
+                <p class="small">unpublished studies</p>
             </div>
-            <div class="card box-shadow">
-                <div class="card-body">
-                    <h4 class="card-title">Study type breakdown</h4>
-                    <h2 class="m-0 mt-1">{{ study_types.animal }}</h2>
-                    <p class="small">animal studies</p>
-                    <h2 class="m-0 mt-1">{{ study_types.epi }}</h2>
-                    <p class="small">epi studies</p>
-                    <h2 class="m-0 mt-1">{{ study_types.epiv2 }}</h2>
-                    <p class="small">epiv2 studies</p>
-                    <h2 class="m-0 mt-1">{{ study_types.rob }}</h2>
-                    <p class="small">risk of bias studies</p>
+        </div>
+        <div class="card box-shadow">
+            <div class="card-body">
+                <h4 class="card-title">Study type breakdown</h4>
+                <h2 class="m-0 mt-1">{{ study_types.animal }}</h2>
+                <p class="small">animal studies</p>
+                <h2 class="m-0 mt-1">{{ study_types.epi }}</h2>
+                <p class="small">epi studies</p>
+                <h2 class="m-0 mt-1">{{ study_types.epiv2 }}</h2>
+                <p class="small">epiv2 studies</p>
+                <h2 class="m-0 mt-1">{{ study_types.rob }}</h2>
+                <p class="small">risk of bias studies</p>
             </div>
         </div>
     </div>
+    <hr/>
 </div>
 
-<div class="mt-4" style="border-bottom: 1px solid lightgray;">
+<div class="my-4">
     <h3>Animal Bioassay</h3>
     <div class="card-columns">
         {% analytics_card value=animal_counts.studies label='total studies' %}
         {% analytics_card value=animal_counts.experiments label='total experiments' %}
         {% analytics_card value=animal_counts.animal_groups label='total animal groups' %}
         {% analytics_card value=animal_counts.endpoints label='total endpoints' %}
+        {% include 'common/analytics_plot.html' with title='Experiments by type' plot=experiment_type_plot %}
         {% analytics_card value=n_endpoints_extracted label='endpoints with data extracted' %}
         {% analytics_card value=n_endpoints_ehv label='endpoints using Environmental Health Vocabulary (EHV)' %}
         {% analytics_card value=n_dose_res_groups label='total dose response groups' %}
     </div>
-    {% include 'common/analytics_plot.html' with title='Number of experiment types' plot=experiment_type_plot %}
+</div>
+
+<div class="my-4">
+    <h3>Summary Tables and Visuals</h3>
+    <div class="card-columns">
+        {% analytics_card value=summary_count.visual label='total visuals' %}
+        {% analytics_card value=summary_count.datapivot label='total data pivots' %}
+        {% analytics_card value=summary_count.table label='total tables' %}
+        {% include 'common/analytics_plot.html' with title='Visuals by type' plot=summary_count.visual_barchart %}
+    </div>
 </div>
 {% endblock %}

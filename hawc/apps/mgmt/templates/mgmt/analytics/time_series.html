@@ -1,8 +1,12 @@
 {% block content %}
-<div class="card-columns">
-    {% include 'common/analytics_plot.html' with title='Number of visuals created by year' plot=visuals_per_year %}
-    {% include 'common/analytics_plot.html' with title='Number of data pivots created by year' plot=datapivots_per_year %}
-    {% include 'common/analytics_plot.html' with title='Total visuals and data pivots created' plot=total_visuals %}
-    {% include 'common/analytics_plot.html' with title='References created over time' plot=refs_per_month %}
+<div class="row card-group">
+    {% include 'common/analytics_plot.html' with title='References created over time' plot=refs %}
+    {% include 'common/analytics_plot.html' with title='Studies created over time' plot=studies %}
+    {% include 'common/analytics_plot.html' with title='Risk Of Bias created over time' plot=robs %}
+</div>
+<div class="row card-group">
+    {% include 'common/analytics_plot.html' with title='Data pivots created over time' plot=datapivots %}
+    {% include 'common/analytics_plot.html' with title='Visuals created over time' plot=visuals %}
+    {% include 'common/analytics_plot.html' with title='Total visuals and data pivots over time' plot=total_visuals %}
 </div>
 {% endblock %}

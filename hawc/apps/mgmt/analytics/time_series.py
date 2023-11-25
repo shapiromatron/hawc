@@ -4,23 +4,26 @@ from django.db.models import Count
 from django.db.models.functions import Trunc
 
 from hawc.apps.lit.models import Reference
+from hawc.apps.riskofbias.models import RiskOfBias
+from hawc.apps.study.models import Study
 from hawc.apps.summary.models import DataPivot, Visual
 
 
-def get_data(Model, freq, assessment_id):
+def get_data(
+    Model, freq: str, assessment_id: int, filter_str: str = "assessment_id"
+) -> pd.DataFrame:
     qs = (
         Model.objects.all()
-        .filter(assessment_id=assessment_id)
+        .filter(**{filter_str: assessment_id})
         .annotate(date=Trunc("created", freq))
         .order_by("date")
         .values("date")
         .annotate(n=Count("created"))
     )
-    df = pd.DataFrame(data=qs, columns=["date", "n"])
-    return df
+    return pd.DataFrame(data=qs, columns=["date", "n"])
 
 
-def time_series(Model, df):
+def time_series(df: pd.DataFrame):
     if df.empty:
         fig = px.line()
         fig.update_layout(xaxis_title="date", yaxis_title="n")
@@ -32,24 +35,22 @@ def time_series(Model, df):
             font=dict(size=15),
         )
     else:
-        fig = px.line(
-            df,
-            x="date",
-            y="n",
-        )
+        df2 = df.set_index("date").cumsum().reset_index()
+        fig = px.line(df2, x="date", y="n")
+
     return fig
 
 
 def get_context_data(id: int) -> dict:
-    context = {}
-    context["visuals_per_year"] = time_series(Visual, get_data(Visual, "year", id))
-    context["datapivots_per_year"] = time_series(DataPivot, get_data(DataPivot, "year", id))
-    context["total_visuals"] = time_series(
-        Visual,
-        pd.concat([get_data(Visual, "year", id), get_data(DataPivot, "year", id)])
-        .groupby("date")
-        .sum()
-        .reset_index(),
-    )
-    context["refs_per_month"] = time_series(Reference, get_data(Reference, "month", id))
-    return context
+    viz_per_year = get_data(Visual, "month", id)
+    dp_per_year = get_data(DataPivot, "month", id)
+    return {
+        "refs": time_series(get_data(Reference, "month", id)),
+        "studies": time_series(get_data(Study, "month", id)),
+        "robs": time_series(get_data(RiskOfBias, "month", id, "study__assessment_id")),
+        "visuals": time_series(viz_per_year),
+        "datapivots": time_series(dp_per_year),
+        "total_visuals": time_series(
+            pd.concat([viz_per_year, dp_per_year]).groupby("date").sum().reset_index()
+        ),
+    }
