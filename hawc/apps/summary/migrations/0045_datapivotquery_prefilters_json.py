@@ -56,7 +56,7 @@ def prefilters_dict(apps, schema_editor):
         data = json.loads(obj.prefilters)
         if not data:
             continue
-        key_map = mapping[get_prefilter_cls(None,obj.evidence_type,obj.assessment)]
+        key_map = mapping[get_prefilter_cls(None, obj.evidence_type, obj.assessment)]
         key_map = {v: k for k, v in key_map.items()}
         data = {key_map[k]: v for k, v in data.items() if v}
         obj.temp = data
@@ -70,7 +70,7 @@ def reverse_prefilters_dict(apps, schema_editor):
     for obj in objs:
         if not obj.temp:
             continue
-        key_map = mapping[get_prefilter_cls(None,obj.evidence_type,obj.assessment)]
+        key_map = mapping[get_prefilter_cls(None, obj.evidence_type, obj.assessment)]
         data = {key_map[k]: v for k, v in obj.temp.items()}
         obj.prefilters = json.dumps(data)
     DataPivotQuery.objects.bulk_update(objs, ["prefilters"])
