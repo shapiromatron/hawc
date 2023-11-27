@@ -6,6 +6,14 @@
 {% endfor %}
 {% endblock title %}
 
+{% block content_row_outer %}
+{% if user.is_staff %}
+{% load wagtailuserbar %}
+{% wagtailuserbar %}
+{% endif %}
+{{ block.super }}
+{% endblock content_row_outer %}
+
 {% block sidebar_outer %}
     {% include "includes/sidebar_container.html" with expand_docs=True%}
 {% endblock sidebar_outer %}
