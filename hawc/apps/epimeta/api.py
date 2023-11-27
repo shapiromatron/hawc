@@ -1,23 +1,17 @@
-from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewSet
+from ..assessment.api import AssessmentViewSet, BaseAssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
 
 
-class EpiMetaAssessmentViewSet(viewsets.GenericViewSet):
+class EpiMetaAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
     def get_meta_result_queryset(self):
         perms = self.assessment.user_permissions(self.request.user)

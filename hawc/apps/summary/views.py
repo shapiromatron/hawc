@@ -16,6 +16,7 @@ from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig
 from ..common.views import (
+    BaseCopyForm,
     BaseCreate,
     BaseDelete,
     BaseDetail,
@@ -198,25 +199,15 @@ class SummaryTableCreate(BaseCreate):
         )
 
 
-class SummaryTableCopy(BaseUpdate):
-    template_name = "summary/copy_selector.html"
-    model = Assessment
+class SummaryTableCopy(BaseCopyForm):
+    copy_model = models.SummaryTable
     form_class = forms.SummaryTableCopySelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    model = Assessment
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update(
-            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
-            assessment_id=self.assessment.id,
-            queryset=models.SummaryTable.objects.clonable_queryset(self.request.user).filter(
-                assessment=self.assessment
-            ),
-        )
-        return kwargs
-
-    def form_valid(self, form):
-        return HttpResponseRedirect(form.get_create_url())
+        kw = super().get_form_kwargs()
+        kw.update(parent=self.assessment, user=self.request.user)
+        return kw
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -343,11 +334,15 @@ class VisualizationList(BaseFilterList):
         choice = self.form.cleaned_data.get("type", "")
         if choice != "":
             if choice.startswith("v-"):
-                items = self.visual_fs.qs
+                items = self.visual_fs.qs.select_related("assessment")
             else:
                 items = self.data_pivot_fs.qs
         else:
-            items = list(itertools.chain(self.visual_fs.qs, self.data_pivot_fs.qs))
+            items = list(
+                itertools.chain(
+                    self.visual_fs.qs.select_related("assessment"), self.data_pivot_fs.qs
+                )
+            )
         return sorted(items, key=lambda d: d.title.lower())
 
     def get_filterset_form_kwargs(self):
@@ -504,33 +499,26 @@ class VisualizationCopySelector(BaseDetail):
         return context
 
 
-class VisualizationCopy(BaseUpdate):
-    template_name = "summary/copy_selector.html"
-    model = Assessment
+class VisualizationCopy(BaseCopyForm):
+    copy_model = models.Visual
     form_class = forms.VisualSelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    model = Assessment
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update(
-            assessment_id=self.assessment.id,
-            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
-            queryset=models.Visual.objects.clonable_queryset(self.request.user).filter(
-                visual_type=self.kwargs["visual_type"], assessment__pk=self.assessment.id
-            ),
+        kw = super().get_form_kwargs()
+        kw["queryset"] = models.Visual.objects.clonable_queryset(self.request.user).filter(
+            visual_type=self.kwargs["visual_type"]
         )
-        return kwargs
-
-    def form_valid(self, form):
-        return HttpResponseRedirect(form.get_create_url())
+        return kw
 
     def get_context_data(self, **kwargs):
-        kwargs["breadcrumbs"] = Breadcrumb.build_crumbs(
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
             self.request.user,
             "Copy existing",
             [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
         )
-        return super().get_context_data(**kwargs)
+        return context
 
 
 class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
@@ -628,7 +616,7 @@ class DataPivotNew(BaseCreate):
         reset_rows = self.request.GET.get("reset_row_overrides")
         settings = kwargs["initial"].get("settings")
         if reset_rows and settings:
-            kwargs["initial"].update(settings=models.DataPivot.reset_row_overrides(settings))
+            models.DataPivot.reset_row_overrides(settings)
         return kwargs
 
 
@@ -674,36 +662,15 @@ class DataPivotFileNew(DataPivotNew):
         return context
 
 
-class DataPivotCopyAsNewSelector(BaseUpdate):
-    # Select an existing assessed outcome as a template for a new one
-    model = Assessment
-    template_name = "summary/copy_selector.html"
+class DataPivotCopyAsNewSelector(BaseCopyForm):
+    copy_model = models.DataPivot
     form_class = forms.DataPivotSelectorForm
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    model = Assessment
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
-        return kwargs
-
-    def form_valid(self, form):
-        dp = form.cleaned_data["dp"]
-
-        if hasattr(dp, "datapivotupload"):
-            url = reverse_lazy("summary:dp_new-file", kwargs={"pk": self.assessment.id})
-        else:
-            url = reverse_lazy(
-                "summary:dp_new-query",
-                kwargs={"pk": self.assessment.id, "study_type": dp.datapivotquery.evidence_type},
-            )
-
-        url += f"?initial={dp.pk}"
-
-        if form.cleaned_data["reset_row_overrides"]:
-            url += "&reset_row_overrides=1"
-
-        return HttpResponseRedirect(url)
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user)
+        return kw
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,5 +1,4 @@
-import json
-from pathlib import Path
+from copy import deepcopy
 
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,9 +9,7 @@ from rest_framework.test import APIClient
 from hawc.apps.assessment.models import Assessment, DoseUnits
 from hawc.apps.epi import constants, models
 
-from ..test_utils import check_details_of_last_log_entry
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry
 
 
 @pytest.mark.django_db
@@ -22,14 +19,7 @@ class TestEpiAssessmentViewSet:
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
@@ -481,8 +471,11 @@ class TestOutcomeApi:
             "effect_subtype": "test subtype",
         }
 
-        diagname_data = base_data
+        diagname_data = deepcopy(base_data)
         diagname_data["diagnostic"] = diagnostic_name.upper()
+
+        tag_data = deepcopy(base_data)
+        tag_data["effects"] = ["tag1"]
 
         just_created_outcome_id = None
 
@@ -512,6 +505,9 @@ class TestOutcomeApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.Outcome.objects.get(id=just_created_outcome_id)
 
+        def check_tag_status(resp):
+            assert len(resp.json()["effects"]) == 1
+
         create_scenarios = (
             {
                 "desc": "basic outcome creation",
@@ -526,6 +522,13 @@ class TestOutcomeApi:
                 "expected_keys": {"id"},
                 "data": diagname_data,
                 "post_request_test": outcome_lookup_test,
+            },
+            {
+                "desc": "creation with tag",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": tag_data,
+                "post_request_test": check_tag_status,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
@@ -646,6 +649,9 @@ class TestResultApi:
 
         base_data = self.get_upload_data()
 
+        tag_data = deepcopy(base_data)
+        tag_data["resulttags"] = ["tag1"]
+
         def result_lookup_test(resp):
             nonlocal just_created_result_id
 
@@ -681,6 +687,9 @@ class TestResultApi:
                 and found_existing_by_description is True
                 and found_new_one is True
             )
+
+        def check_tag_status(resp):
+            assert len(resp.json()["resulttags"]) == 1
 
         def altered_result_test(resp):
             nonlocal just_created_result_id
@@ -724,6 +733,13 @@ class TestResultApi:
                     }
                 ),
                 "post_request_test": result_lookup_test_with_factors,
+            },
+            {
+                "desc": "result with resulttags creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": tag_data,
+                "post_request_test": check_tag_status,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)

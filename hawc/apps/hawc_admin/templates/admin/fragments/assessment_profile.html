@@ -1,8 +1,6 @@
-{% load bs4 %}
-
 <div hx-target="this" hx-swap="outerHTML">
     <h2>Assessment profile</h2>
-    <form hx-post="{% url 'admin_dashboard' %}?action=assessment_profile" hx-trigger="change">
+    <form hx-get="{% url 'admin_dashboard' %}?action=assessment_profile" hx-trigger="change">
         {{ form.as_p }}
         {% csrf_token %}
     </form>

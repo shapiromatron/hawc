@@ -12,6 +12,8 @@ from hawc.apps.myuser import models
 from hawc.apps.myuser.forms import _accept_license_error
 from hawc.apps.myuser.views import ExternalAuth
 
+from ..test_utils import check_200, get_client
+
 
 class UserCreationTests(TestCase):
     def test_validation_errors(self):
@@ -226,3 +228,26 @@ class ExternalAuthTests(TestCase):
         bad_email = "another_user@hawcproject.org"
         response = self._login(bad_email, external_id)
         assert response.status_code == 302 and response.url == forbidden_url
+
+
+@pytest.mark.django_db
+def test_get_200():
+    client = get_client("pm")
+
+    url = reverse("user:accept-license")
+    assert client.get(url).status_code == 302
+    url = reverse("user:set_password", args=(1,))
+    assert client.get(url).status_code == 302
+
+    urls = [
+        reverse("user:settings"),
+        reverse("user:profile_update"),
+        reverse("user:api_token_validate"),
+        reverse("user:register"),
+        reverse("user:change_password"),
+        reverse("user:reset_password"),
+        reverse("user:reset_password_sent"),
+        reverse("user:reset_password_done"),
+    ]
+    for url in urls:
+        check_200(client, url)

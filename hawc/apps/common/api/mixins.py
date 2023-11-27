@@ -31,11 +31,7 @@ class ListUpdateModelMixin:
             header_name = "http_{}".format(self.bulk_header.strip().replace("-", "_")).upper()
             return (
                 bool(self.request.META.get(header_name, None)),
-                {
-                    "detail": "Header '{}' should be provided for bulk operation.".format(
-                        self.bulk_header
-                    )
-                },
+                {"detail": f"Header '{self.bulk_header}' should be provided for bulk operation."},
             )
         else:
             return True, {}

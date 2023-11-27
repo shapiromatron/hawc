@@ -45,6 +45,7 @@ valid_html_attrs = {
 valid_css_properties = {"color", "background-color"}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
+    "canada.ca",
     ".edu",
     ".gov",
     ".who.int",
@@ -52,7 +53,9 @@ valid_netloc_endings = {
     "elsevier.com",
     "public.tableau.com",
     "sciencedirect.com",
+    "sharepoint.com",
     "hawcproject.org",
+    "zenodo.org",
 }
 
 
@@ -236,7 +239,7 @@ def _validate_json_pydantic(value: str, Model: type[BaseModel]):
         django.core.exceptions.ValidationError: If data do not conform
     """
     try:
-        Model.parse_raw(value)
+        Model.model_validate_json(value)
     except PydanticValidationError as err:
         raise ValidationError(err.json())
 

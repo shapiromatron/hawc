@@ -1,0 +1,71 @@
+[
+  {
+    "active": true,
+    "created": "2020-05-08T13:56:46.183552-04:00",
+    "final": true,
+    "id": 6,
+    "last_updated": "2020-05-08T15:34:31.468702-04:00",
+    "scores": [
+      {
+        "bias_direction": 1,
+        "id": 14,
+        "is_default": true,
+        "label": "test1",
+        "metric_id": 14,
+        "notes": "<p>test</p>",
+        "overridden_objects": [],
+        "riskofbias_id": 6,
+        "score": 16,
+        "score_description": "Probably low risk of bias",
+        "score_shade": "#6FFF00",
+        "score_symbol": "+"
+      },
+      {
+        "bias_direction": 1,
+        "id": 16,
+        "is_default": false,
+        "label": "test2",
+        "metric_id": 14,
+        "notes": "<p>beep</p>",
+        "overridden_objects": [
+          {
+            "content_type_name": "animal.animalgroup",
+            "id": 2,
+            "object_id": 3,
+            "object_name": "sd rats",
+            "object_url": "/ani/animal-group/3/",
+            "score_id": 16
+          },
+          {
+            "content_type_name": "animal.animalgroup",
+            "id": 3,
+            "object_id": 99999,
+            "object_name": "<deleted id=3;score=16;obj_ct=53;obj_id=99999>",
+            "object_url": "/404/",
+            "score_id": 16
+          }
+        ],
+        "riskofbias_id": 6,
+        "score": 14,
+        "score_description": "Definitely high risk of bias",
+        "score_shade": "#CC3333",
+        "score_symbol": "--"
+      },
+      {
+        "bias_direction": 1,
+        "id": 15,
+        "is_default": true,
+        "label": "",
+        "metric_id": 15,
+        "notes": "<p>test</p>",
+        "overridden_objects": [],
+        "riskofbias_id": 6,
+        "score": 16,
+        "score_description": "Probably low risk of bias",
+        "score_shade": "#6FFF00",
+        "score_symbol": "+"
+      }
+    ],
+    "study": 7
+  }
+]
