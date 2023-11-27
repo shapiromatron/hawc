@@ -34,7 +34,7 @@ class TestGenericTable:
                 },
             ],
         }
-        GenericTable.parse_obj(obj)
+        GenericTable.model_validate(obj)
 
     def test_bad_parse(self):
         # cells overlap
@@ -57,4 +57,4 @@ class TestGenericTable:
             ],
         }
         with pytest.raises(ValueError, match="Cell overlap"):
-            GenericTable.parse_obj(obj)
+            GenericTable.model_validate(obj)
