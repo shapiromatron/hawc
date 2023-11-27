@@ -10,4 +10,9 @@
 
 {{ page.body|richtext }}
 
+{% if node.children %}
+<h2>Content:</h2>
+{% include "docs/components/tree_list.html" %}
+{% endif %}
+
 {% endblock %}
