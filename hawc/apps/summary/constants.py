@@ -40,12 +40,11 @@ VISUAL_EVIDENCE_CHOICES = {
 }
 
 
-def get_default_evidence_type(visual_type: VisualType):
+def get_default_evidence_type(visual_type: VisualType) -> StudyType:
+    """Return StudyType for visual if only one option exists, otherwise raise ValueError."""
     choices = VISUAL_EVIDENCE_CHOICES[visual_type]
     if len(choices) > 1:
-        raise ValueError(
-            f"No default evidence type for visual {visual_type}; choices are {', '.join([str(_) for _ in choices])}."
-        )
+        raise ValueError(f"No default evidence type for visual {visual_type}; multiple exist.")
     return next(iter(choices))
 
 

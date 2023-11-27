@@ -31,7 +31,9 @@ class StudyPrefilter(Enum):
     IN_VITRO = InvitroStudyPrefilter
 
 
-def get_prefilter_cls(visual_type: VisualType, study_type: StudyType, assessment: Assessment):
+def get_prefilter_cls(
+    visual_type: VisualType | None, study_type: StudyType, assessment: Assessment
+):
     study_type = StudyType(study_type)
     name = study_type.name
     if study_type == StudyType.EPI:
