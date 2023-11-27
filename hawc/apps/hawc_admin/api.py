@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
+from ..assessment import exports
 from ..assessment.exports import ValuesListExport
 from ..assessment.models import AssessmentValue
 from ..common.api import FivePerMinuteThrottle
@@ -40,7 +41,18 @@ class ReportsViewSet(viewsets.ViewSet):
     @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
         """Gets all value data across all assessments."""
-        export = ValuesListExport(
-            queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
-        ).build_export()
-        return Response(export, status=status.HTTP_200_OK)
+        qs = AssessmentValue.objects.all().select_related("assessment", "assessment_detail")
+        exporter = exports.AssessmentExporter.flat_export(qs, filename="hawc-assessment-values")
+        # export = ValuesListExport(
+        #     queryset=AssessmentValue.objects.all().select_related("assessment", "assessment_id"),
+        #     filename="hawc-assessment-values",
+        # ).build_export()
+        return Response(exporter, status=status.HTTP_200_OK)
+
+    # @action(detail=False, renderer_classes=PandasRenderers)
+    # def values(self, request):
+    #     """Gets all value data across all assessments."""
+    #     export = ValuesListExport(
+    #         queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
+    #     ).build_export()
+    #     return Response(export, status=status.HTTP_200_OK)
