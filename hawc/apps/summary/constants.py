@@ -32,7 +32,7 @@ VISUAL_EVIDENCE_CHOICES = {
     VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
     VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},
     VisualType.ROB_HEATMAP: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
-    VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI},
+    VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
     VisualType.LITERATURE_TAGTREE: {StudyType.OTHER},
     VisualType.EXTERNAL_SITE: {StudyType.OTHER},
     VisualType.EXPLORE_HEATMAP: {StudyType.OTHER},
