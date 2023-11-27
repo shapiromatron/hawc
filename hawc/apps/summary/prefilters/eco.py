@@ -48,4 +48,4 @@ class EcoResultPrefilter(PrefilterBaseFilterSet):
         self._set_passthrough_choices(form, ["studies"])
 
     def set_form_options(self, form):
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "eco")

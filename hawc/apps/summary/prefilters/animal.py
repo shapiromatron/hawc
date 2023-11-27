@@ -108,7 +108,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         return queryset.filter(published=True)
 
     def filter_queryset(self, queryset):
-        queryset = queryset.filter(assessment_id=self.assessment.pk)
+        queryset = queryset.filter(assessment_id=self.assessment.pk, bioassay=True)
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
@@ -117,7 +117,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         )
 
     def set_form_options(self, form):
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "bioassay")
         form.fields["systems"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
         form.fields["organs"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
         form.fields["effects"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)

@@ -95,7 +95,7 @@ class InvitroStudyPrefilter(PrefilterBaseFilterSet):
         return queryset.filter(published=True)
 
     def filter_queryset(self, queryset):
-        queryset = queryset.filter(assessment_id=self.assessment.pk)
+        queryset = queryset.filter(assessment_id=self.assessment.pk, in_vitro=True)
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
@@ -104,7 +104,7 @@ class InvitroStudyPrefilter(PrefilterBaseFilterSet):
         )
 
     def set_form_options(self, form):
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "in_vitro")
         form.fields["effects"].choices = IVEndpoint.objects.get_effect_choices(self.assessment.pk)
         form.fields["categories"].choices = IVEndpointCategory.get_choices(self.assessment.pk)
         form.fields["chemicals"].choices = IVChemical.objects.get_choices(self.assessment.pk)

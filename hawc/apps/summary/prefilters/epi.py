@@ -82,14 +82,14 @@ class EpiV1StudyPrefilter(PrefilterBaseFilterSet):
         return queryset.filter(published=True)
 
     def filter_queryset(self, queryset):
-        queryset = queryset.filter(assessment_id=self.assessment.pk)
+        queryset = queryset.filter(assessment_id=self.assessment.pk, epi=True)
         return super().filter_queryset(queryset)
 
     def set_passthrough_options(self, form):
         self._set_passthrough_choices(form, ["studies", "systems", "effects", "effect_tags"])
 
     def set_form_options(self, form):
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "epi")
         form.fields["systems"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
         form.fields["effects"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
@@ -177,7 +177,7 @@ class EpiV1ResultPrefilter(PrefilterBaseFilterSet):
         self._set_passthrough_choices(form, ["studies", "systems", "effects", "effect_tags"])
 
     def set_form_options(self, form):
-        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "epi")
         form.fields["systems"].choices = Outcome.objects.get_system_choices(self.assessment.pk)
         form.fields["effects"].choices = Outcome.objects.get_effect_choices(self.assessment.pk)
         form.fields["effect_tags"].choices = EffectTag.objects.get_choices(self.assessment.pk)
