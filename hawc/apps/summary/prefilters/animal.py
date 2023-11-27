@@ -34,7 +34,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         help_text="Prefilter endpoints to include only selected systems.",
     )
     systems = df.MultipleChoiceFilter(
-        field_name="experiments__animal_groups__system",
+        field_name="experiments__animal_groups__endpoints__system",
         label="Systems to include",
         help_text="Select one or more systems to include in the plot.",
     )
@@ -45,7 +45,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         help_text="Prefilter endpoints to include only selected organs.",
     )
     organs = df.MultipleChoiceFilter(
-        field_name="experiments__animal_groups__organ",
+        field_name="experiments__animal_groups__endpoints__organ",
         label="Organs to include",
         help_text="Select one or more organs to include in the plot.",
     )
@@ -56,7 +56,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         help_text="Prefilter endpoints to include only selected effects.",
     )
     effects = df.MultipleChoiceFilter(
-        field_name="experiments__animal_groups__effect",
+        field_name="experiments__animal_groups__endpoints__effect",
         label="Effects to include",
         help_text="Select one or more effects to include in the plot.",
     )
@@ -67,7 +67,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         help_text="Prefilter endpoints to include only selected effect subtypes.",
     )
     effect_subtypes = df.MultipleChoiceFilter(
-        field_name="experiments__animal_groups__effect_subtype",
+        field_name="experiments__animal_groups__endpoints__effect_subtype",
         label="Effect Sub-Types to include",
         help_text="Select one or more effect sub-types to include in the plot.",
     )
@@ -78,7 +78,7 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         help_text="Prefilter endpoints to include only selected effect tags.",
     )
     effect_tags = df.MultipleChoiceFilter(
-        field_name="experiments__animal_groups__effects",
+        field_name="experiments__animal_groups__endpoints__effects",
         label="Tags to include",
         help_text="Select one or more effect tags to include in the plot.",
     )
