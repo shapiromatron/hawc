@@ -210,9 +210,9 @@ class Reference extends Component {
                 ) : null}
                 {expanded && data.searches.length > 0 ? (
                     <div>
-                        <label>Searches/imports:&nbsp;</label>
                         {data.searches.map((d, i) => (
                             <a className="btn btn-light mr-1 mb-2" key={d.url} href={d.url}>
+                                <i className="fa fa-cloud-download" aria-hidden="true"></i>&nbsp;
                                 {d.title}
                             </a>
                         ))}
