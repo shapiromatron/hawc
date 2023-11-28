@@ -11,9 +11,7 @@
     </li>
     {% empty %}
     <li class="list-group-item">
-        <div class="alert alert-warning">
-            <i class='fa fa-fw fa-exclamation-triangle mr-1'></i>&nbsp;No conflicts found.
-        </div>
+        {% alert warning %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
     </li>
     {% endfor %}
 </ul>
