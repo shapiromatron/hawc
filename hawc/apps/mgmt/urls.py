@@ -36,13 +36,9 @@ urlpatterns = [
         {"action": "update"},
         name="task-update",
     ),
+    path(
+        "assessment/<int:pk>/analytics/",
+        views.AssessmentAnalytics.as_view(),
+        name="assessment-analytics",
+    ),
 ]
-
-if settings.HAWC_FEATURES.ENABLE_ANALYTICS:
-    urlpatterns += [
-        path(
-            "assessment/<int:pk>/analytics/",
-            views.AssessmentAnalytics.as_view(),
-            name="assessment-analytics",
-        ),
-    ]
