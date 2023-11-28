@@ -801,6 +801,16 @@ class ReferenceTags(ItemBase):
     content_object = models.ForeignKey("Reference", on_delete=models.CASCADE)
 
 
+def _set_tag_parents(tag, tag_map):
+    tag.parents = []
+    current_path = tag.path
+    while True:
+        current_path = tag._get_parent_path_from_path(current_path)
+        if len(current_path) == 4:
+            break
+        tag.parents.append(tag_map[current_path])
+
+
 class Reference(models.Model):
     objects = managers.ReferenceManager()
 
@@ -1175,22 +1185,13 @@ class Reference(models.Model):
         """
         tag_map = {tag.path: tag for tag in tags}
 
-        def _set_parents(tag):
-            tag.parents = []
-            current_path = tag.path
-            while True:
-                current_path = tag._get_parent_path_from_path(current_path)
-                if len(current_path) == 4:
-                    break
-                tag.parents.append(tag_map[current_path])
-
         for reference in references:
             for tag in reference.tags.all():
-                _set_parents(tag)
+                _set_tag_parents(tag, tag_map)
             if user_tags:
                 for user_tag in reference.user_tags.all():
                     for tag in user_tag.tags.all():
-                        _set_parents(tag)
+                        _set_tag_parents(tag, tag_map)
 
 
 class UserReferenceTags(ItemBase):
@@ -1289,6 +1290,9 @@ class Workflow(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.title} Workflow"
+
     def get_absolute_url(self):
         return reverse("lit:workflow-detail", args=[self.pk])
 
@@ -1301,33 +1305,54 @@ class Workflow(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    def get_filters(self):
+        filters = models.Q(assessment=self.assessment)
+
+        removal_tags = []
+        if self.removal_tags_descendants:
+            for tag in self.removal_tags.all():
+                removal_tags.extend(tag.get_tree(parent=tag).values_list("id", flat=True))
+            removal_tags = list(set(removal_tags))
+        else:
+            removal_tags = self.removal_tags.all().values_list("id", flat=True)
+        if len(removal_tags) > 0:
+            filters &= ~models.Q(tags__in=removal_tags)
+
+        admission_tags = []
+        if self.admission_tags_descendants:
+            for tag in self.admission_tags.all():
+                admission_tags.extend(tag.get_tree(parent=tag).values_list("id", flat=True))
+            admission_tags = list(set(admission_tags))
+        else:
+            admission_tags = self.admission_tags.all().values_list("id", flat=True)
+        if len(admission_tags) > 0:
+            filters &= models.Q(tags__in=admission_tags)
+
+        if self.admission_source.exists():
+            filters &= models.Q(searches__in=self.admission_source.all())
+
+        if self.removal_source.exists():
+            filters &= ~models.Q(searches__in=self.removal_source.all())
+
+        return filters
+
     @classmethod
     def annotate_tag_parents(cls, workflows: list, tags: models.QuerySet):
-        """Annotate tag parents for all tags and user tags.
+        """Annotate tag parents for all tags.
 
         Sets a new attribute (parents: list[Tag]) for each tag.
 
         Args:
-            references (list): a list of references
+            workflows (list): a list of workflows
             tags (models.QuerySet): the full tag list for an assessment
-            user_tags (bool): set parents for user tags as well as consensus tags
         """
         tag_map = {tag.path: tag for tag in tags}
 
-        def _set_parents(tag):
-            tag.parents = []
-            current_path = tag.path
-            while True:
-                current_path = tag._get_parent_path_from_path(current_path)
-                if len(current_path) == 4:
-                    break
-                tag.parents.append(tag_map[current_path])
-
         for workflow in workflows:
             for tag in workflow.admission_tags.all():
-                _set_parents(tag)
+                _set_tag_parents(tag, tag_map)
             for tag in workflow.removal_tags.all():
-                _set_parents(tag)
+                _set_tag_parents(tag, tag_map)
 
 
 reversion.register(LiteratureAssessment)

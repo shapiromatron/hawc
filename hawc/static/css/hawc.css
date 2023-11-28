@@ -102,6 +102,12 @@ tfoot > tr > td {
 .clickable:hover .bg-gray {
     background-color: #d1d1d1;
 }
+.bg-pink {
+    background-color: #ff9393;
+}
+.btn.bg-pink:hover {
+    background-color: #df7575;
+}
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }

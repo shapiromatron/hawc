@@ -73,6 +73,10 @@ class LitOverview(BaseList):
             ),
         }
         context["allow_ris"] = settings.HAWC_FEATURES.ALLOW_RIS_IMPORTS
+        context["workflows"] = models.Workflow.objects.filter(
+            Q(assessment=self.assessment)
+            & (Q(link_conflict_resolution=True) | Q(link_tagging=True))
+        )
         return context
 
 
@@ -268,7 +272,7 @@ class TagReferences(BaseFilterList):
         if conflict_resolution:
             return dict(
                 main_field="ref_search",
-                appended_fields=["partially_tagged", "needs_tagging", "order_by"],
+                appended_fields=["partially_tagged", "needs_tagging", "workflow", "order_by"],
                 dynamic_fields=[
                     "ref_search",
                     "needs_tagging",
@@ -284,6 +288,7 @@ class TagReferences(BaseFilterList):
                     "my_tags",
                     "include_mytag_descendants",
                     "anything_tagged_me",
+                    "workflow",
                 ],
                 grid_layout={
                     "rows": [
@@ -407,6 +412,7 @@ class ConflictResolution(BaseFilterList):
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="ref_search",
+            appended_fields=["workflow"],
             dynamic_fields=[
                 "id",
                 "ref_search",
@@ -418,6 +424,7 @@ class ConflictResolution(BaseFilterList):
                 "my_tags",
                 "include_mytag_descendants",
                 "anything_tagged_me",
+                "workflow",
             ],
             grid_layout={
                 "rows": [

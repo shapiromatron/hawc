@@ -27,9 +27,14 @@
                     <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">Tagged with 
                         {% for tag in object.admission_tags.all %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
+                            {% if forloop.revcounter0 > 1 %}
+                                ,&nbsp;
+                            {% elif forloop.revcounter0 == 1 %}
+                                or
+                            {% endif %}
                         {% endfor %}
                         {% if object.admission_tags_descendants %}
-                            or descendant tag
+                            (including descendant tags)
                         {% endif %}
                     </span>
                 {% endif %}
@@ -43,8 +48,10 @@
                         Sourced from
                         {% for source in object.admission_source.all %}
                             <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{source}}</span>
-                            {% if not forloop.last %}
-                            or
+                            {% if forloop.revcounter0 > 1 %}
+                                ,&nbsp;
+                            {% elif forloop.revcounter0 == 1 %}
+                                or
                             {% endif %}
                         {% endfor %}
                     </span>
@@ -61,9 +68,14 @@
                     <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center flex-wrap align-items-center">Tagged with 
                         {% for tag in object.removal_tags.all %}
                             {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
+                            {% if forloop.revcounter0 > 1 %}
+                                ,&nbsp;
+                            {% elif forloop.revcounter0 == 1 %}
+                                or
+                            {% endif %}
                         {% endfor %}
                         {% if object.removal_tags_descendants %}
-                            or descendant tag
+                            (including descendant tags)
                         {% endif %}
                     </span>
                 {% endif %}
@@ -76,8 +88,10 @@
                     <span class="bg-gray rounded px-3 py-2 m-1 justify-content-center d-flex align-items-center text-center">Sourced from 
                         {% for source in object.removal_source.all %}
                         <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{source}}</span>
-                            {% if not forloop.last %}
-                            or
+                            {% if forloop.revcounter0 > 1 %}
+                                ,&nbsp;
+                            {% elif forloop.revcounter0 == 1 %}
+                                or
                             {% endif %}
                         {% endfor %}
                     </span>

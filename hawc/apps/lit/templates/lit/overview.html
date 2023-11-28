@@ -129,6 +129,25 @@
             </div>
           </a>
         {% endif %}
+        {% for workflow in workflows.all %}
+        <div class="lit-review-box with-icon box-shadow w-30">
+          <div>
+            <p class="h5 m-0 mt-1" style="line-height: 1.4rem;">{{workflow}}</p>
+          </div>
+          <div class="pl-2">
+          {% if workflow.link_tagging %}
+          <a href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}" style="min-width: 4.8rem;" class="btn btn-primary my-1">
+            Tag
+          </a>
+          {% endif %}
+          {% if workflow.link_conflict_resolution %}
+          <a href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}" class="btn bg-pink text-white my-1">
+            Resolve
+          </a>
+          {% endif %}
+          </div>
+        </div>
+        {% endfor %}
         {% endif %}
       </div>
     </div>
