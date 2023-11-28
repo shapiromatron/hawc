@@ -1,5 +1,5 @@
 
-<div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4">
+<div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form">
     {% if form %}
     <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
         <form class="workflow-form" method=post enctype="multipart/form-data">
@@ -68,5 +68,11 @@
         {% endif %}
     </div>
 </div>
-
+{% if form %}
+<script type="text/javascript">
+    $(document).ready(() => {
+            $('#id_title').focus();
+    });
+</script>
 {% include "common/helptext_popup_js.html" %}
+{% endif %}

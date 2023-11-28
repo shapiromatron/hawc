@@ -19,9 +19,9 @@
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">References</span>
         <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
+        <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         {% if assessment.literature_settings.conflict_resolution %}
           <a class="dropdown-item" href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a>
-          <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         {% endif %}
         <a class="dropdown-item" href="{% url 'lit:bulk_tag' assessment.pk %}">Bulk tag references</a>
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>
@@ -129,6 +129,8 @@
             </div>
           </a>
         {% endif %}
+        {% endif %}
+        {% if obj_perms.edit %}
         {% for workflow in workflows.all %}
         <div class="lit-review-box with-icon box-shadow w-30">
           <div>
@@ -136,7 +138,7 @@
           </div>
           <div class="pl-2">
           {% if workflow.link_tagging %}
-          <a href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}" style="min-width: 4.8rem;" class="btn btn-primary my-1">
+          <a href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" style="min-width: 4.8rem;" class="btn btn-primary my-1">
             Tag
           </a>
           {% endif %}

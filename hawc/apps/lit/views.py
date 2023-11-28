@@ -600,7 +600,7 @@ class RefFilterList(BaseFilterList):
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="ref_search",
-            appended_fields=["order_by", "paginate_by"],
+            appended_fields=["workflow", "order_by", "paginate_by"],
             dynamic_fields=[
                 "id",
                 "db_id",
@@ -609,6 +609,7 @@ class RefFilterList(BaseFilterList):
                 "year",
                 "ref_search",
                 "journal",
+                "workflow",
                 "order_by",
                 "paginate_by",
                 "tags",
