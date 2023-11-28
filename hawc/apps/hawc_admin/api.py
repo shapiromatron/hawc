@@ -41,18 +41,6 @@ class ReportsViewSet(viewsets.ViewSet):
     @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
         """Gets all value data across all assessments."""
-        qs = AssessmentValue.objects.all().select_related("assessment", "assessment_detail")
+        qs = AssessmentValue.objects.all()
         exporter = exports.AssessmentExporter.flat_export(qs, filename="hawc-assessment-values")
-        # export = ValuesListExport(
-        #     queryset=AssessmentValue.objects.all().select_related("assessment", "assessment_id"),
-        #     filename="hawc-assessment-values",
-        # ).build_export()
-        return Response(exporter, status=status.HTTP_200_OK)
-
-    # @action(detail=False, renderer_classes=PandasRenderers)
-    # def values(self, request):
-    #     """Gets all value data across all assessments."""
-    #     export = ValuesListExport(
-    #         queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
-    #     ).build_export()
-    #     return Response(export, status=status.HTTP_200_OK)
+        return Response(exporter)
