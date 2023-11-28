@@ -609,10 +609,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: docs
-    model: docsindexpage
-- model: contenttypes.contenttype
-  fields:
-    app_label: docs
     model: docspage
 - model: myuser.hawcuser
   fields:
@@ -10418,7 +10414,7 @@
     preferred_units: '[]'
     prefilters:
       published_only: true
-- model: docs.docsindexpage
+- model: docs.docspage
   pk: 3
   fields:
     page_ptr: 3
@@ -10655,7 +10651,7 @@
     slug: hawc-documentation
     content_type:
     - docs
-    - docsindexpage
+    - docspage
     url_path: /hawc-documentation/
     owner:
     - admin@hawcproject.org
@@ -10737,7 +10733,7 @@
   fields:
     content_type:
     - docs
-    - docsindexpage
+    - docspage
     base_content_type:
     - wagtailcore
     - page
@@ -11029,7 +11025,7 @@
   fields:
     content_type:
     - docs
-    - docsindexpage
+    - docspage
     label: HAWC Documentation
     action: wagtail.create
     data: {}
@@ -11046,7 +11042,7 @@
   fields:
     content_type:
     - docs
-    - docsindexpage
+    - docspage
     label: HAWC Documentation
     action: wagtail.edit
     data: {}
@@ -11063,7 +11059,7 @@
   fields:
     content_type:
     - docs
-    - docsindexpage
+    - docspage
     label: HAWC Documentation
     action: wagtail.publish
     data: {}
@@ -11080,7 +11076,7 @@
   fields:
     content_type:
     - docs
-    - docsindexpage
+    - docspage
     label: HAWC Documentation
     action: wagtail.view_restriction.create
     data:
