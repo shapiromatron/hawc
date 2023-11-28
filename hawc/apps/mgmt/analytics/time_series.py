@@ -1,12 +1,14 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from django.db.models import Count
 from django.db.models.functions import Trunc
 
-from hawc.apps.lit.models import Reference
-from hawc.apps.riskofbias.models import RiskOfBias
-from hawc.apps.study.models import Study
-from hawc.apps.summary.models import DataPivot, Visual
+from ...lit.models import Reference
+from ...riskofbias.models import RiskOfBias
+from ...study.models import Study
+from ...summary.models import DataPivot, Visual
+from .common import empty_plot
 
 
 def get_data(
@@ -23,21 +25,11 @@ def get_data(
     return pd.DataFrame(data=qs, columns=["date", "n"])
 
 
-def time_series(df: pd.DataFrame):
+def time_series(df: pd.DataFrame) -> go.Figure:
     if df.empty:
-        fig = px.line()
-        fig.update_layout(xaxis_title="date", yaxis_title="n")
-        fig.add_annotation(
-            text="No Data for this Assessment",
-            xref="paper",
-            yref="paper",
-            showarrow=False,
-            font=dict(size=15),
-        )
-    else:
-        df2 = df.set_index("date").cumsum().reset_index()
-        fig = px.line(df2, x="date", y="n")
-
+        return empty_plot()
+    df2 = df.set_index("date").cumsum().reset_index()
+    fig = px.line(df2, x="date", y="n")
     return fig
 
 

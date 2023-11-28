@@ -14,7 +14,7 @@ from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
 from . import constants, filterset, forms, models
-from .analytics import growth, time_series, time_spent
+from .analytics import overview, time_series, time_spent
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -183,7 +183,7 @@ class AssessmentTaskList(BaseFilterList):
 class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
     model = Assessment
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-    actions: set[str] = {"index", "time_series", "time_spent", "growth"}
+    actions: set[str] = {"index", "time_series", "time_spent", "overview"}
 
     def index(self, request: HttpRequest, context: dict):
         return render(request, "mgmt/analytics.html", context)
@@ -202,12 +202,12 @@ class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
         )
         return render(request, "mgmt/analytics/time_spent.html", context)
 
-    def growth(self, request: HttpRequest, context: dict):
+    def overview(self, request: HttpRequest, context: dict):
         context = cacheable(
-            lambda: growth.get_context_data(self.assessment.id),
-            f"mgmt:analytics:growth:{self.assessment.id}",
+            lambda: overview.get_context_data(self.assessment.id),
+            f"mgmt:analytics:overview:{self.assessment.id}",
         )
-        return render(request, "mgmt/analytics/growth.html", context)
+        return render(request, "mgmt/analytics/overview.html", context)
 
 
 class TaskViewSet(HtmxViewSet):

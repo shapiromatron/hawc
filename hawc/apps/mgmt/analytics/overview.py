@@ -1,17 +1,15 @@
-import math
-
-import numpy as np
 import pandas as pd
 import plotly.express as px
 from django.db.models import Count, Q
 
-from hawc.apps.animal import constants
-from hawc.apps.animal.models import Endpoint, EndpointGroup, Experiment
-from hawc.apps.lit import constants as lc
-from hawc.apps.lit.models import Reference, Search
-from hawc.apps.study.models import Study
-from hawc.apps.summary import constants as sc
-from hawc.apps.summary.models import DataPivot, SummaryTable, Visual
+from ...animal import constants
+from ...animal.models import Endpoint, EndpointGroup, Experiment
+from ...lit import constants as lc
+from ...lit.models import Reference, Search
+from ...study.models import Study
+from ...summary import constants as sc
+from ...summary.models import DataPivot, SummaryTable, Visual
+from .common import update_xscale
 
 
 # literature screening data
@@ -50,19 +48,6 @@ def search_refs_df(assessment_id):
     )
     df = pd.DataFrame(qs)
     return df
-
-
-def update_xscale(min_value: float, max_value: float) -> dict:
-    min_value = 1 if pd.isna(min_value) else min_value
-    max_value = 1 if pd.isna(max_value) else max_value
-    values = np.power(
-        10.0, range(math.floor(math.log10(min_value)), math.ceil(math.log10(max_value)) + 1)
-    )
-    return dict(
-        tickmode="array",
-        tickvals=values,
-        ticktext=[f"{value:,g}" for value in values],
-    )
 
 
 def refs_per_import_plot(assessent_id):

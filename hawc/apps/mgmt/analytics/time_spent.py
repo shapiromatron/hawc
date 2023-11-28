@@ -3,9 +3,8 @@ import plotly.express as px
 from django.db.models import Value
 from django.db.models.functions import Concat
 
-from hawc.apps.assessment.models import TimeSpentEditing
-
-from .growth import update_xscale
+from ...assessment.models import TimeSpentEditing
+from .common import update_xscale
 
 
 def time_spent_df(assessment_id: int) -> pd.DataFrame:
