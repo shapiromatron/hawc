@@ -5,7 +5,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from ..assessment import exports
-from ..assessment.exports import ValuesListExport
 from ..assessment.filterset import AssessmentValueFilterSet
 from ..assessment.models import AssessmentValue
 from ..common.api import FivePerMinuteThrottle

@@ -182,6 +182,7 @@ class AssessmentValueFilterSet(df.FilterSet):
         lookup_expr="icontains",
         label="Assessment project type",
     )
+    year = df.CharFilter(field_name="assessment__year", label="Assessment year")
 
     class Meta:
         model = models.AssessmentValue
