@@ -85,6 +85,7 @@
         {% analytics_card value=summary_count.datapivot label='total data pivots' %}
         {% analytics_card value=summary_count.table label='total tables' %}
         {% include 'common/analytics_plot.html' with title='Visuals by type' plot=summary_count.visual_barchart %}
+        {% include 'common/analytics_plot.html' with title='Tables by type' plot=summary_count.table_barchart %}
     </div>
 </div>
 {% endblock %}

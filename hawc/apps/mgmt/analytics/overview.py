@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from django.db.models import Count, Q
 
 from ...animal import constants
@@ -9,7 +10,7 @@ from ...lit.models import Reference, Search
 from ...study.models import Study
 from ...summary import constants as sc
 from ...summary.models import DataPivot, SummaryTable, Visual
-from .common import update_xscale
+from .common import empty_plot, update_xscale
 
 
 # literature screening data
@@ -50,9 +51,11 @@ def search_refs_df(assessment_id):
     return df
 
 
-def refs_per_import_plot(assessent_id):
+def refs_per_import_plot(assessent_id) -> go.Figure:
     df = search_refs_df(assessent_id)
     df2 = df.query("num_refs > 0")
+    if df2.empty:
+        return empty_plot()
     fig = px.box(
         data_frame=df2,
         x="num_refs",
@@ -80,9 +83,11 @@ def refs_by_year_df(assessment_id):
     return df
 
 
-def refs_by_year_plot(assessment_id):
+def refs_by_year_plot(assessment_id) -> go.Figure:
     df = refs_by_year_df(assessment_id)
     df2 = df.dropna()
+    if df2.empty:
+        return empty_plot()
     n_null = df.year.isna().count()
     fig = px.area(
         data_frame=df2,
@@ -133,6 +138,8 @@ def ref_tags_breakdown(assessment_id):
 
 def refs_tags_plot(assessment_id):
     df2 = ntags_nrefs_df(assessment_id)
+    if df2.empty:
+        return empty_plot()
     fig = px.bar(
         data_frame=df2,
         y="ntags",
@@ -250,6 +257,8 @@ def experiment_type_plot(assessment_id):
     for type, n in list(types):
         data.append((constants.ExperimentType(type).label, n))
     df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
     return barchart_count_plot(df, labels={"type": "Experiment type", "count": "# Experiments"})
 
 
@@ -264,17 +273,41 @@ def summary_counts(assessment_id):
         .annotate(total=Count("visual_type"))
         .order_by("visual_type")
     )
-    data = [("Data Pivot", dp_count)]
+    data = []
+    if dp_count:
+        data.append(("Data Pivot", dp_count))
     for type, n in list(types):
         data.append((sc.VisualType(type).label.title(), n))
     df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
-    fig = barchart_count_plot(df, labels={"type": "Visual type", "count": "# Visuals"})
+    visual_barchart = (
+        empty_plot()
+        if df["count"].sum() == 0
+        else barchart_count_plot(df, labels={"type": "Visual type", "count": "# Visuals"})
+    )
+
+    # tables by type
+    types = (
+        SummaryTable.objects.assessment_qs(assessment_id)
+        .values_list("table_type")
+        .annotate(total=Count("table_type"))
+        .order_by("table_type")
+    )
+    data = []
+    for type, n in list(types):
+        data.append((sc.TableType(type).label.title(), n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    table_barchart = (
+        empty_plot()
+        if df["count"].sum() == 0
+        else barchart_count_plot(df, labels={"type": "Table type", "count": "# Tables"})
+    )
 
     return {
         "visual": Visual.objects.assessment_qs(assessment_id).count(),
         "datapivot": dp_count,
         "table": SummaryTable.objects.assessment_qs(assessment_id).count(),
-        "visual_barchart": fig,
+        "visual_barchart": visual_barchart,
+        "table_barchart": table_barchart,
     }
 
 
