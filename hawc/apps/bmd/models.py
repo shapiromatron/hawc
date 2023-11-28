@@ -104,8 +104,8 @@ class Session(models.Model):
             endpoint_id=endpoint.id,
             dose_units_id=inputs.settings.dose_units_id,
             version=version,
-            inputs=inputs.dict(),
-            selected=constants.SelectedModel().dict(),
+            inputs=inputs.model_dump(),
+            selected=constants.SelectedModel().model_dump(by_alias=True),
         )
 
     @property
@@ -134,12 +134,12 @@ class Session(models.Model):
     def reset_execution(self):
         self.outputs = {}
         self.errors = {}
-        self.selected = constants.SelectedModel().dict()
+        self.selected = constants.SelectedModel().model_dump(by_alias=True)
         self.active = False
         self.date_executed = None
 
     def get_settings(self) -> constants.BmdInputSettings:
-        return constants.BmdInputSettings.parse_obj(self.inputs)
+        return constants.BmdInputSettings.model_validate(self.inputs)
 
     def get_session(self, with_models=False):
         session = getattr(self, "_session", None)
@@ -196,7 +196,7 @@ class Session(models.Model):
         return selected
 
     def set_selected_model(self, selected: constants.SelectedModel):
-        self.selected = selected.dict()
+        self.selected = selected.model_dump(by_alias=True)
         self.active = True
         self.outputs["selected"] = selected.to_bmd_output()
 

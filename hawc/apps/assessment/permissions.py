@@ -1,6 +1,7 @@
-from django.conf import settings
 from django.core.cache import cache
 from pydantic import BaseModel
+
+from ..common.helper import cacheable
 
 
 class AssessmentPermissions(BaseModel):
@@ -22,16 +23,17 @@ class AssessmentPermissions(BaseModel):
     @classmethod
     def get(cls, assessment) -> "AssessmentPermissions":
         key = cls.get_cache_key(assessment.id)
-        perms = cache.get(key)
-        if perms is None:
-            perms = cls(
+
+        def get_perms() -> "AssessmentPermissions":
+            return cls(
                 public=(assessment.public_on is not None),
                 editable=assessment.editable,
                 project_manager={user.id for user in assessment.project_manager.all()},
                 team_members={user.id for user in assessment.team_members.all()},
                 reviewers={user.id for user in assessment.reviewers.all()},
             )
-            cache.set(key, perms, settings.CACHE_1_HR)
+
+        perms = cacheable(get_perms, key)
         return perms
 
     def project_manager_or_higher(self, user) -> bool:

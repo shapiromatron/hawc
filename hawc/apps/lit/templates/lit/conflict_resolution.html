@@ -11,9 +11,7 @@
     </li>
     {% empty %}
     <li class="list-group-item">
-        <div class="alert alert-success">
-            <i class='fa fa-fw fa-check mr-1'></i>&nbsp;Conflict resolution complete! No conflicts to resolve.
-        </div>
+        {% alert warning %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
     </li>
     {% endfor %}
 </ul>

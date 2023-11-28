@@ -321,7 +321,7 @@ class WebappMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
+            context["config"] = self.get_app_config(context).model_dump()
         return context
 
 
