@@ -165,3 +165,24 @@ class LogFilterSet(BaseFilterSet):
 
 class EffectTagFilterSet(df.FilterSet):
     name = df.CharFilter(lookup_expr="icontains")
+
+
+class AssessmentValueFilterSet(df.FilterSet):
+    name = df.CharFilter(
+        field_name="assessment__name",
+        lookup_expr="icontains",
+        label="Assessment name",
+    )
+    cas = df.CharFilter(
+        field_name="assessment__cas",
+        label="Assessment CAS",
+    )
+    project_type = df.CharFilter(
+        field_name="assessment__details__project_type",
+        lookup_expr="icontains",
+        label="Assessment project type",
+    )
+
+    class Meta:
+        model = models.AssessmentValue
+        fields = ["value_type"]

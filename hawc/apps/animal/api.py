@@ -13,6 +13,7 @@ from ..assessment.api import (
     DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.api.filters import filtered_qs
 from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -20,6 +21,7 @@ from ..common.views import create_object_log
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
 from .actions.term_check import term_check
+from .filterset import EndpointFilterSet
 
 
 class AnimalAssessmentViewSet(BaseAssessmentViewSet):
@@ -43,8 +45,9 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         Retrieve complete animal data
         """
         self.assessment = self.get_object()
+        qs = self.get_endpoint_queryset()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_endpoint_queryset(),
+            filtered_qs(qs, EndpointFilterSet, request, assessment=self.assessment),
             filename=f"{self.assessment}-bioassay-complete",
             assessment=self.assessment,
         )

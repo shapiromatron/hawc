@@ -6,8 +6,10 @@ from rest_framework.response import Response
 
 from ..assessment import exports
 from ..assessment.exports import ValuesListExport
+from ..assessment.filterset import AssessmentValueFilterSet
 from ..assessment.models import AssessmentValue
 from ..common.api import FivePerMinuteThrottle
+from ..common.api.filters import filtered_qs
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from .actions import media_metadata_report
@@ -42,5 +44,7 @@ class ReportsViewSet(viewsets.ViewSet):
     def values(self, request):
         """Gets all value data across all assessments."""
         qs = AssessmentValue.objects.all()
-        exporter = exports.AssessmentExporter.flat_export(qs, filename="hawc-assessment-values")
+        exporter = exports.AssessmentExporter.flat_export(
+            filtered_qs(qs, AssessmentValueFilterSet, request), filename="hawc-assessment-values"
+        )
         return Response(exporter)
