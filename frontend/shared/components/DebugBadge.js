@@ -12,7 +12,7 @@ const DebugBadge = function({text}) {
                 e.stopPropagation();
             }}
             title="Click to copy text to clipboard"
-            className="badge badge-dark px-1 mx-1 debug-badge">
+            className="badge badge-dark px-1 mx-1 cursor-pointer debug-badge">
             {text}
         </span>
     );
