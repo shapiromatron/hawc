@@ -24,7 +24,7 @@ class BulkCopyAuthor(IntEnum):
 class BulkRobCopyData(pydantic.BaseModel):
     src_assessment_id: int
     dst_assessment_id: int
-    dst_author_id: int | None
+    dst_author_id: int | None = None
     src_dst_study_ids: list[tuple[int, int]]
     src_dst_metric_ids: list[tuple[int, int]]
     copy_mode: BulkCopyMode

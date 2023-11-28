@@ -59,7 +59,7 @@ class ModelBinding(models.Model):
         unique_together = (("assessment", "content_type"),)
 
     def form_instance(self) -> Form:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form()
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form()
 
     def get_assessment(self):
         return self.assessment
@@ -87,7 +87,7 @@ class TagBinding(models.Model):
         unique_together = (("assessment", "tag"),)
 
     def form_instance(self) -> Form:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form()
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form()
 
     def get_assessment(self):
         return self.assessment
