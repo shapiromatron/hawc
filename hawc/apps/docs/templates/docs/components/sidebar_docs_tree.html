@@ -1,0 +1,21 @@
+{% load cache wagtailcore_tags %}
+
+{% cache 60 docs %}
+{% wagtail_site as doc_site %}
+{% with doc_root_page=doc_site.root_page  %}
+{% with doc_child_pages=doc_root_page.get_children.live %}
+<li class="{{li_class}}">
+    <a class="{{a_class}}" href="{% pageurl doc_root_page %}">{{ doc_root_page.title }}</a>
+    {% if doc_child_pages %}
+    <ul class="{{sub_ul}}">
+        {% for doc_child_page in doc_child_pages %}
+        <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% pageurl doc_child_page %}">{{ doc_child_page.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>
+{% endwith %}
+{% endwith %}
+{% endcache docs %}
