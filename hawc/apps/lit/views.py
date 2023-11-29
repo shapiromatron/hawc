@@ -51,7 +51,9 @@ class LitOverview(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
+        overview, workflows = models.Reference.objects.get_overview_details(self.assessment)
+        context["overview"] = overview
+        context["workflows"] = workflows
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
             .filter(user_tags__user=self.request.user)
@@ -73,10 +75,6 @@ class LitOverview(BaseList):
             ),
         }
         context["allow_ris"] = settings.HAWC_FEATURES.ALLOW_RIS_IMPORTS
-        context["workflows"] = models.Workflow.objects.filter(
-            Q(assessment=self.assessment)
-            & (Q(link_conflict_resolution=True) | Q(link_tagging=True))
-        )
         return context
 
 

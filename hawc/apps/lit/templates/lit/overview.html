@@ -131,25 +131,53 @@
         {% endif %}
         {% endif %}
         {% if obj_perms.edit %}
-        {% for workflow in workflows.all %}
-        <div class="lit-review-box with-icon box-shadow w-30">
-          <div>
-            <p class="h5 m-0 mt-1" style="line-height: 1.4rem;">{{workflow}}</p>
-          </div>
-          <div class="pl-2">
-          {% if workflow.link_tagging %}
-          <a href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" style="min-width: 4.8rem;" class="btn btn-primary my-1">
-            Tag
-          </a>
-          {% endif %}
-          {% if workflow.link_conflict_resolution %}
-          <a href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}" class="btn bg-pink text-white my-1">
-            Resolve
-          </a>
-          {% endif %}
-          </div>
-        </div>
-        {% endfor %}
+          {% for workflow in workflows %}
+            {% with show_conflicts=workflow.link_conflict_resolution show_tags=workflow.link_tagging %}
+              {% if show_conflicts and show_tags %}
+                <div class="lit-review-box box-shadow w-30 d-flex flex-column justify-content-between py-0" style="padding-bottom: 8px">
+                  <div class="d-flex row justify-content-between flex-grow-1">
+                      <a class="pl-3 pb-1 clickable w-50 box-shadow-2" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" style="padding-top: 12px;">
+                        <div class="d-flex pl-0">
+                          <p class="h3 m-0 text-black">{{workflow.needs_tagging}}</p>
+                          <div class="lit-icon px-2 text-black"><i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: .9em; border-radius: 5px;"></i></div>
+                        </div>
+                        <p class="m-0 small text-black">need tagging&nbsp;</p>
+                      </a>
+                    <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-2 text-black" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}" style="padding-top: 12px;">
+                      <div class="d-flex flex-row-reverse pl-0">
+                        <p class="h3 m-0 text-black">{{workflow.conflicts}}</p>
+                        <div class="lit-icon px-2 text-black"><div class="icon-bg" style="color: white; background-color: #ff9393; height: 25px; width: 25px; font-size: 1.2em; border-radius: 5px;">&#8800;</div></div>
+                      </div>
+                      <p class="m-0 small text-black">with conflicts</p>
+                    </a>
+                  </div>
+                  <div class="text-center small" style="padding: 6px;">
+                    in <i>{{workflow}}</i>
+                  </div>
+                </div>
+              {% elif show_tags %}
+                <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged">
+                  <div style="overflow: hidden;">
+                    <p class="h3 m-0 mt-1">{{workflow.needs_tagging}}</p>
+                    <p class="small mt-0" style="overflow: hidden; text-overflow: ellipsis;"">need{{ overview.needs_tagging|pluralize:"s," }} tagging in <i style="white-space: nowrap;" title="{{workflow}}">{{workflow}}</i></p>
+                  </div>
+                  <div class="lit-icon pl-2">
+                    <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
+                  </div>
+                </a>
+              {% elif show_conflicts %}
+                <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}">
+                  <div style="overflow: hidden;">
+                    <p class="h3 m-0 mt-1">{{workflow.conflicts}}</p>
+                    <p class="small mt-0" style="overflow: hidden; text-overflow: ellipsis;">with tag conflicts in <i style="white-space: nowrap;" title="{{workflow}}">{{workflow}}</i></p>
+                  </div>
+                  <div class="lit-icon pl-2">
+                    <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
+                  </div>
+                </a>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
         {% endif %}
       </div>
     </div>

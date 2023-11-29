@@ -10,11 +10,11 @@
     style="width: fit-content;">
     <div class="d-flex">
         <h4>{{object.title}} Workflow &nbsp;<i class="fa fa-spinner fa-spin htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i></h4>
-        <div class="ml-auto align-self-start">
-        {% if object.link_tagging %}
+        <div class="ml-auto align-self-start d-flex flex-shrink-0 flex-wrap-0">
+        {% if object.link_conflict_resolution %}
             <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Conflict Resolution linked on Literature Review</span>
         {% endif %}
-        {% if object.link_conflict_resolution %}
+        {% if object.link_tagging %}
         <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Tagging linked on Literature Review</span>
         {% endif %}
         </div>
