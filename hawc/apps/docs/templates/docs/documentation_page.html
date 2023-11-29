@@ -1,0 +1,26 @@
+{% extends "docs/base.html" %}
+
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<div class="d-flex">
+    <h2>{{ page.title }}</h2>
+    <span class="ml-auto align-self-start badge badge-light p-2">Updated {{ page.last_published_at|date }}</span>
+</div>
+
+<p>{{ page.tagline }}</p>
+
+<div>
+{% for tag in page.tags.all %}<span class="badge badge-primary px-3 mx-1">{{tag}}</span>{% endfor %}
+</div>
+
+{% for block in page.body %}
+    {% if block.block_type == 'toc' %}
+        {% include_block block with page=page %}
+    {% else %}
+        {{block}}
+    {% endif %}
+{% endfor %}
+
+{% endblock %}

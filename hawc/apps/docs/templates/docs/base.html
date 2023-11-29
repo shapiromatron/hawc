@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load wagtailuserbar %}
+
 {% block title %}
 {% for crumb in breadcrumbs reversed %}
     {% if forloop.last %}{{crumb.name}}{% else %}{{crumb.name}} | {% endif %}
@@ -7,11 +9,8 @@
 {% endblock title %}
 
 {% block content_row_outer %}
-{% if user.is_staff %}
-{% load wagtailuserbar %}
-{% wagtailuserbar %}
-{% endif %}
 {{ block.super }}
+{% if user.is_staff %}{% wagtailuserbar %}{% endif %}
 {% endblock content_row_outer %}
 
 {% block sidebar_outer %}

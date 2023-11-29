@@ -1,45 +1,106 @@
+from typing import Self
+
 from django.db import models
-from wagtail import fields as wag_fields
-from wagtail import models as wag_models
+from modelcluster.contrib.taggit import ClusterTaggableManager
+from modelcluster.fields import ParentalKey
+from taggit.models import TaggedItemBase
+from wagtail import blocks, fields
 from wagtail.admin.panels import FieldPanel
+from wagtail.models import Page
 from wagtail.search import index
 
 from ..common.crumbs import Breadcrumb
+from . import constants
 
 
-class DocsPage(wag_models.Page):
-    intro = models.CharField(max_length=250, blank=True)
-    body = wag_fields.RichTextField(blank=True)
+class TableOfContentsBlock(blocks.StructBlock):
+    child_header = blocks.CharBlock(default="Content")
+    show_all_descendants = blocks.BooleanBlock(default=False, required=False)
+
+    class Meta:
+        template = "docs/blocks/table_of_contents.html"
+
+
+class AlertBlock(blocks.StructBlock):
+    type = blocks.ChoiceBlock(
+        choices=[
+            ("info", "Info"),
+            ("warning", "Warning"),
+            ("success", "Success"),
+            ("danger", "Danger"),
+            ("primary", "Primary"),
+            ("secondary", "Secondary"),
+            ("light", "Light"),
+            ("dark", "Dark"),
+        ],
+        default="info",
+    )
+    label = blocks.CharBlock(required=False)
+    message = blocks.RichTextBlock(features=constants.RICH_TEXT_FEATURES)
+
+    class Meta:
+        template = "docs/blocks/alert.html"
+
+
+class DocumentationPageTag(TaggedItemBase):
+    content_object = ParentalKey(
+        "docs.DocumentationPage", related_name="docs", on_delete=models.CASCADE
+    )
+
+
+class DocumentationPage(Page):
+    tagline = models.CharField(max_length=256)
+    body = fields.StreamField(
+        [
+            (
+                "content",
+                blocks.RichTextBlock(features=constants.RICH_TEXT_FEATURES),
+            ),
+            (
+                "alert",
+                AlertBlock(),
+            ),
+            (
+                "toc",
+                TableOfContentsBlock(),
+            ),
+        ],
+        block_counts={
+            "toc": {"max_num": 1},
+            "content": {"max_num": 100},
+            "alert": {"max_num": 100},
+        },
+        use_json_field=True,
+    )
+    tags = ClusterTaggableManager(through=DocumentationPageTag, blank=True)
 
     search_fields = [
-        *wag_models.Page.search_fields,
-        index.SearchField("intro"),
-        index.SearchField("body"),
+        *Page.search_fields,
+        index.SearchField("tagline"),
     ]
 
     content_panels = [
-        *wag_models.Page.content_panels,
-        FieldPanel("intro"),
+        *Page.content_panels,
+        FieldPanel("tagline"),
+        FieldPanel("tags"),
         FieldPanel("body"),
     ]
 
-    subpage_types = ["DocsPage"]
+    subpage_types = ["DocumentationPage"]
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        dump_bulk = self.dump_bulk(self)
-
-        def _remove_unpublished(node: dict):
-            if "children" in node:
-                node["children"] = [child for child in node["children"] if child["data"]["live"]]
-                for child in node["children"]:
-                    _remove_unpublished(child)
-
-        _remove_unpublished(dump_bulk[0])
-        context["node"] = dump_bulk[0]
-        ancestors = list(self.get_ancestors().live())[1:]
-        context["breadcrumbs"] = [
-            *[Breadcrumb(name=page.title, url=page.url) for page in ancestors],
-            Breadcrumb(name=self.title),
-        ]
+        ancestors = list(self.get_ancestors(inclusive=True).live())[1:]
+        context.update(
+            breadcrumbs=[Breadcrumb(name=page.title, url=page.url) for page in ancestors],
+        )
         return context
+
+    def toc_children(self) -> models.QuerySet:
+        return self.get_children().filter(live=True)
+
+    def toc_descendants(self) -> list[Self]:
+        desc = self.get_descendants().filter(live=True)
+        for page in desc:
+            page.indent_offset = page.depth - (self.depth + 1)
+        return desc
