@@ -8,6 +8,8 @@ from ..common.filterset import (
     BaseFilterSet,
     ExpandableFilterForm,
     InlineFilterForm,
+    OrderingFilter,
+    PaginationFilter,
 )
 from ..common.helper import new_window_a
 from ..myuser.models import HAWCUser
@@ -183,6 +185,19 @@ class AssessmentValueFilterSet(df.FilterSet):
         label="Assessment project type",
     )
     year = df.CharFilter(field_name="assessment__year", label="Assessment year")
+
+    order_by = OrderingFilter(
+        fields=(
+            (
+                "assessment__name",
+                "name",
+            ),
+            ("assessment__id", "assessment_id"),
+        ),
+        initial="name",
+    )
+
+    paginate_by = PaginationFilter()
 
     class Meta:
         model = models.AssessmentValue
