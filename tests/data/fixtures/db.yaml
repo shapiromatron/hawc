@@ -610,6 +610,166 @@
   fields:
     app_label: docs
     model: docspage
+- model: auth.permission
+  fields:
+    name: Can access Wagtail admin
+    content_type:
+    - wagtailadmin
+    - admin
+    codename: access_admin
+- model: auth.permission
+  fields:
+    name: Lock/unlock pages you've locked
+    content_type:
+    - wagtailcore
+    - page
+    codename: lock_page
+- model: auth.permission
+  fields:
+    name: Publish any page
+    content_type:
+    - wagtailcore
+    - page
+    codename: publish_page
+- model: auth.permission
+  fields:
+    name: Unlock any page
+    content_type:
+    - wagtailcore
+    - page
+    codename: unlock_page
+- model: auth.permission
+  fields:
+    name: Can change page
+    content_type:
+    - wagtailcore
+    - page
+    codename: change_page
+- model: auth.permission
+  fields:
+    name: Can add page
+    content_type:
+    - wagtailcore
+    - page
+    codename: add_page
+- model: auth.permission
+  fields:
+    name: Can change document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: change_document
+- model: auth.permission
+  fields:
+    name: Can delete document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: delete_document
+- model: auth.permission
+  fields:
+    name: Can choose document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: choose_document
+- model: auth.permission
+  fields:
+    name: Can add document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: add_document
+- model: auth.permission
+  fields:
+    name: Can add image
+    content_type:
+    - wagtailimages
+    - image
+    codename: add_image
+- model: auth.permission
+  fields:
+    name: Can change image
+    content_type:
+    - wagtailimages
+    - image
+    codename: change_image
+- model: auth.permission
+  fields:
+    name: Can delete image
+    content_type:
+    - wagtailimages
+    - image
+    codename: delete_image
+- model: auth.permission
+  fields:
+    name: Can choose image
+    content_type:
+    - wagtailimages
+    - image
+    codename: choose_image
+- model: auth.group
+  fields:
+    name: Moderators
+    permissions:
+    - - access_admin
+      - wagtailadmin
+      - admin
+    - - add_document
+      - wagtaildocs
+      - document
+    - - change_document
+      - wagtaildocs
+      - document
+    - - choose_document
+      - wagtaildocs
+      - document
+    - - delete_document
+      - wagtaildocs
+      - document
+    - - add_image
+      - wagtailimages
+      - image
+    - - change_image
+      - wagtailimages
+      - image
+    - - choose_image
+      - wagtailimages
+      - image
+    - - delete_image
+      - wagtailimages
+      - image
+- model: auth.group
+  fields:
+    name: Editors
+    permissions:
+    - - access_admin
+      - wagtailadmin
+      - admin
+    - - add_document
+      - wagtaildocs
+      - document
+    - - change_document
+      - wagtaildocs
+      - document
+    - - choose_document
+      - wagtaildocs
+      - document
+    - - delete_document
+      - wagtaildocs
+      - document
+    - - add_image
+      - wagtailimages
+      - image
+    - - change_image
+      - wagtailimages
+      - image
+    - - choose_image
+      - wagtailimages
+      - image
+    - - delete_image
+      - wagtailimages
+      - image
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
