@@ -1290,7 +1290,6 @@ class Workflow(models.Model):
             are tagged with any descendant of the selected tag(s).""",
     )
     removal_source = models.ManyToManyField(Search, blank=True, related_name="workflow_removals")
-    references = models.ManyToManyField(Reference, blank=True, related_name="workflows")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

@@ -563,6 +563,9 @@ class WorkflowForm(forms.ModelForm):
             self.fields[field].hover_help = True
             self.fields[field].label = "Include Descendants of above tag(s)"
 
+        if not self.instance.assessment.literature_settings.conflict_resolution:
+            self.fields["link_conflict_resolution"].widget = forms.HiddenInput()
+
     @property
     def helper(self):
         helper = BaseFormHelper(self)
