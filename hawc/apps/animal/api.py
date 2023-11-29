@@ -85,13 +85,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-unpublished-{not published_only}"
 
         def func() -> pd.DataFrame:
-            return models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
+            return models.Endpoint.heatmap_study_df(self.assessment, published_only=published_only)
 
         df = cacheable(func, key)
         return FlatExport.api_response(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
@@ -112,13 +110,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{not published_only}"
 
         def df_func() -> pd.DataFrame:
-            return models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
+            return models.Endpoint.heatmap_df(self.assessment.id, published_only=published_only)
 
         df = cacheable(df_func, key)
         return FlatExport.api_response(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
@@ -139,13 +135,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{not published_only}"
 
         def df_func() -> pd.DataFrame:
-            return models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
+            return models.Endpoint.heatmap_doses_df(self.assessment, published_only=published_only)
 
         df = cacheable(df_func, key)
         return FlatExport.api_response(
@@ -161,14 +155,12 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         self.assessment = self.get_object()
         ser = HeatmapQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-list-unpublished-{not published_only}"
 
         def df_func() -> pd.DataFrame:
             return models.Endpoint.objects.endpoint_df(
-                self.assessment, published_only=not unpublished
+                self.assessment, published_only=published_only
             )
 
         df = cacheable(df_func, key)
