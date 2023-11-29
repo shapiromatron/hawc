@@ -13,6 +13,7 @@ from ..assessment.api import (
     DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -26,11 +27,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     model = models.Assessment
     serializer_class = UnusedSerializer
 
-    def get_endpoint_queryset(self):
-        perms = self.assessment.user_permissions(self.request.user)
-        if not perms["edit"]:
-            return models.Endpoint.objects.published(self.assessment)
-        return models.Endpoint.objects.get_qs(self.assessment)
+    def get_endpoint_queryset(self, request):
+        published_only = get_published_only(self.assessment, request)
+        return models.Endpoint.objects.get_qs(self.assessment).published_only(
+            self.assessment, published_only
+        )
 
     @action(
         detail=True,
@@ -44,7 +45,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         """
         self.assessment = self.get_object()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_endpoint_queryset(),
+            self.get_endpoint_queryset(request),
             filename=f"{self.assessment}-bioassay-complete",
             assessment=self.assessment,
         )
@@ -62,7 +63,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         """
         self.assessment = self.get_object()
         exporter = exports.EndpointSummary(
-            self.get_endpoint_queryset(),
+            self.get_endpoint_queryset(request),
             filename=f"{self.assessment}-bioassay-summary",
             assessment=self.assessment,
         )
