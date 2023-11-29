@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotAcceptable, PermissionDenied
+from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
 from ..assessment.api import (
