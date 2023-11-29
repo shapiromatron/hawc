@@ -11,9 +11,10 @@ def replace_homepage(apps, schema_editor):
     Page = apps.get_model("wagtailcore", "Page")
     Site = apps.get_model("wagtailcore", "Site")
     DocsPage = apps.get_model("docs", "DocsPage")
+    Locale = apps.get_model("wagtailcore", "Locale")
 
     # Delete the default homepage
-    Page.objects.filter(slug="home").delete()
+    Page.objects.filter(path="00010001").delete()
 
     # Get content type for docs page model
     content_type = ContentType.objects.get_for_model(DocsPage)
@@ -28,6 +29,7 @@ def replace_homepage(apps, schema_editor):
         depth=2,
         numchild=0,
         url_path="/home/",
+        locale=Locale.objects.first(),
     )
 
     # Create a site with the new homepage set as the root
@@ -37,12 +39,8 @@ def replace_homepage(apps, schema_editor):
 class Migration(migrations.Migration):
     initial = True
 
-    run_before = [
-        ("wagtailcore", "0053_locale_model"),
-    ]
-
     dependencies = [
-        ("wagtailcore", "0040_page_draft_title"),
+        ("wagtailcore", "0089_log_entry_data_json_null_to_object"),
     ]
 
     operations = [
