@@ -29,9 +29,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
 
     def get_endpoint_queryset(self, request):
         published_only = get_published_only(self.assessment, request)
-        return models.Endpoint.objects.get_qs(self.assessment).published_only(
-            self.assessment, published_only
-        )
+        return models.Endpoint.objects.get_qs(self.assessment).published_only(published_only)
 
     @action(
         detail=True,
