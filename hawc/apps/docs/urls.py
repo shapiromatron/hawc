@@ -4,5 +4,5 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
-    path("pages/", include(wagtail_urls)),
+    path("", include(wagtail_urls)),
 ]

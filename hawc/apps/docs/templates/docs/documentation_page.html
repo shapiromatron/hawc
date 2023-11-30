@@ -24,10 +24,10 @@
     <hr/>
     <div class="d-flex">
         <div>
-            {% if prev %}<a href="{{prev.url}}">←&nbsp;{{prev.title}}</a>{% endif %}
+            {% if prev %}<a href="{% pageurl prev %}">←&nbsp;{{prev.title}}</a>{% endif %}
         </div>
         <div class="ml-auto">
-            {% if next %}<a href="{{next.url}}">{{next.title}}&nbsp;→</a>{% endif %}
+            {% if next %}<a href="{% pageurl next %}">{{next.title}}&nbsp;→</a>{% endif %}
         </div>
     </div>
     {% endif %}
