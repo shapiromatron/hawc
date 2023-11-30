@@ -38,6 +38,8 @@ def setup(apps, schema_editor):
         url_path="/",
         locale=locale,
     )
+    PageViewRestriction.objects.create(page=root, restriction_type="login", password="")
+
     home = DocumentationPage.objects.create(
         # Page fields
         title="HAWC Documentation",
@@ -50,10 +52,28 @@ def setup(apps, schema_editor):
         url_path="/home/",
         locale=locale,
         # DocumentationPage fields
-        tagline="Welcome to the HAWC Documentation",
-        body={},
-        # TODO - add
-        # # "body": "[{\"type\": \"content\", \"value\": \"<p data-block-key=\\\"xi8dg\\\">Welcome <a href=\\\"https://hawc.epa.gov\\\">to</a> <b>HAWC</b> documentation!</p>\", \"id\": \"9cd2f6cf-39e4-4a1b-a44f-7150986568d5\"}, {\"type\": \"toc\", \"value\": {\"child_header\": \"Table of Contents\", \"show_all_descendants\": true}, \"id\": \"b01199a5-88ef-4afa-9080-8af016500358\"}, {\"type\": \"alert\", \"value\": {\"type\": \"info\", \"label\": \"Alert me\", \"message\": \"<p data-block-key=\\\"3zi3n\\\">Please.</p>\"}, \"id\": \"cf9f1edb-7c1a-4b9e-8b93-8df40a5d154a\"}, {\"type\": \"content\", \"value\": \"<p data-block-key=\\\"xi8dg\\\">Add content here.</p>\", \"id\": \"3b848cba-da7a-48c9-8f38-711c20a94cd5\"}]",
+        tagline="HAWC Documentation homepage and for all things HAWC. User's guide, tutorials, etc.",
+        body=[
+            {
+                "type": "content",
+                "value": """<p data-block-key="xi8dg">Welcome to the <a href="/">HAWC</a> documentation!</p>""",
+                "id": "9cd2f6cf-39e4-4a1b-a44f-7150986568d5",
+            },
+            {
+                "type": "alert",
+                "value": {
+                    "type": "info",
+                    "label": "Example alert",
+                    "message": """<p data-block-key="3zi3n">An example alert box!</p>""",
+                },
+                "id": "cf9f1edb-7c1a-4b9e-8b93-8df40a5d154a",
+            },
+            {
+                "type": "content",
+                "value": """<p data-block-key="xi8dg">Add more content here.</p>""",
+                "id": "3b848cba-da7a-48c9-8f38-711c20a94cd5",
+            },
+        ],
     )
     Site.objects.create(hostname="localhost", root_page=home, is_default_site=True)
 
@@ -71,7 +91,6 @@ def setup(apps, schema_editor):
         GroupPagePermission(page=home, group=moderators, permission=perm_map["unlock_page"]),
     ]
     GroupPagePermission.objects.bulk_create(group_page_permissions)
-    PageViewRestriction.objects.create(page=root, restriction_type="login", password="")
 
 
 class Migration(migrations.Migration):
