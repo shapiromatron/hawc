@@ -3,18 +3,11 @@
 {% load wagtailcore_tags %}
 
 {% block content %}
+<div class='container ml-0'>
+<h2>{{ page.title }}</h2>
+<p class='bg-light p-3'>{{ page.tagline }}</p>
 
-<div class="d-flex">
-    <h2>{{ page.title }}</h2>
-    <span class="ml-auto align-self-start badge badge-light p-2">Updated {{ page.last_published_at|date }}</span>
-</div>
-
-<p>{{ page.tagline }}</p>
-
-<div>
-{% for tag in page.tags.all %}<span class="badge badge-primary px-3 mx-1">{{tag}}</span>{% endfor %}
-</div>
-
+<div id="wt-body" class="mt-2">
 {% for block in page.body %}
     {% if block.block_type == 'toc' %}
         {% include_block block with page=page %}
@@ -22,5 +15,27 @@
         {{block}}
     {% endif %}
 {% endfor %}
+</div>
 
+<hr/>
+<div class='row'>
+    {% with tags=page.tags.all %}
+    {% if tags %}
+    <div class="col-md-2"><b>Categories:</b></div>
+    <div class="col-md-10">{% for tag in tags %}<span class="badge badge-info p-2 mr-2">#{{tag}}</span>{% endfor %}</div>
+    {% endif %}
+    {% endwith %}
+    <div class="col-md-2"><b>Last Updated:</b></div>
+    <div class="col-md-10">{{ page.last_published_at|date }}</div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block extrajs %}
+<script>
+$(document).ready(() => {
+    window.app.HAWCUtils.addAnchorLinks('#wt-body', 'h3,h4,h5,h6');
+});
+</script>
 {% endblock %}
