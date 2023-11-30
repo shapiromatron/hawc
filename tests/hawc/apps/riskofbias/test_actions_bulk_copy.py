@@ -23,9 +23,12 @@ class TestBulkRobCopyAction:
     def test_validation(self):
         invalid_datasets = [
             # data structure
-            (dict(src_dst_study_ids="not a list"), "value is not a valid list"),
-            (dict(src_dst_study_ids=[(-1,)]), "wrong tuple length 1, expected 2"),
-            (dict(src_dst_study_ids=[(-1, -1, -1)]), "wrong tuple length 3, expected 2"),
+            (dict(src_dst_study_ids="not a list"), "Input should be a valid list"),
+            (dict(src_dst_study_ids=[(-1,)]), "Field required"),
+            (
+                dict(src_dst_study_ids=[(-1, -1, -1)]),
+                "Tuple should have at most 2 items after validation",
+            ),
             # business logic
             (dict(dst_assessment_id=1), "Source and destination assessments must be different"),
             (dict(src_dst_study_ids=[(-1, 5)]), "Invalid source study"),

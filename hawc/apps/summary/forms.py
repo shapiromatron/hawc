@@ -110,9 +110,7 @@ class SummaryTableCopySelectorForm(CopyForm):
             .select_related("assessment")
             .order_by("assessment", "title")
         )
-        self.fields[
-            "selector"
-        ].label_from_instance = (
+        self.fields["selector"].label_from_instance = (
             lambda obj: f"{obj.assessment} | {{{obj.get_table_type_display()}}} | {obj}"
         )
 

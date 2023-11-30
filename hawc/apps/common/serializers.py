@@ -33,7 +33,7 @@ def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) ->
         BaseModel: The pydantic BaseModel
     """
     try:
-        return pydantic_class.parse_obj(data)
+        return pydantic_class.model_validate(data)
     except PydanticError as err:
         raise DrfValidationError({field: err.json()})
 
@@ -580,7 +580,7 @@ class PydanticDrfSerializer(BaseModel):
         if extras:
             d.update(extras)
         try:
-            return cls.parse_obj(d)
+            return cls.model_validate(d)
         except PydanticError as err:
             errors = defaultdict(list)
             for e in err.errors():

@@ -98,11 +98,10 @@
                 {% for tag in diff.difference %}
                     {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
                 {% endfor %}
-                {% if diff.intersection|length is 0 and diff.difference|length is 0 and user_tag.deleted_tags|length is 0 %} 
+                {% if diff.intersection|length == 0 and diff.difference|length == 0 and user_tag.deleted_tags|length == 0 %}
                     <p>No tags selected</p>
                 {% endif %}
             {% endwith %}
-            
         </div>
         {% endfor %}{% endif %}
     </div>

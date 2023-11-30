@@ -35,7 +35,7 @@ class RobAssignmentStore extends StudyRobStore {
     @action.bound
     update(study, rob, updates, cb) {
         const {csrf} = this.config,
-            url = `/rob/api/review/${rob.id}/update_v2/`;
+            url = `/rob/api/review/${rob.id}/assignment/`;
 
         _.defaults(updates, rob);
 
@@ -79,7 +79,7 @@ class RobAssignmentStore extends StudyRobStore {
     @action.bound
     create(study, authorId, final, cb) {
         const {csrf} = this.config,
-            url = `/rob/api/review/create_v2/`,
+            url = `/rob/api/review/assignment/`,
             payload = {study: study.id, author: authorId, final, active: true};
 
         this.error = false;

@@ -223,9 +223,7 @@ class RisImportForm(SearchForm):
         self.instance.search_type = "i"
         if self.instance.id is None:
             self.fields["import_file"].required = True
-            self.fields[
-                "import_file"
-            ].help_text = """Unicode RIS export file
+            self.fields["import_file"].help_text = """Unicode RIS export file
                 ({} for EndNote RIS library preparation)""".format(
                 addPopupLink(reverse_lazy("lit:ris_export_instructions"), "view instructions")
             )
@@ -335,9 +333,7 @@ class SearchCopyForm(CopyForm):
         self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
             "assessment"
         )
-        self.fields[
-            "selector"
-        ].label_from_instance = (
+        self.fields["selector"].label_from_instance = (
             lambda obj: f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
         )
 

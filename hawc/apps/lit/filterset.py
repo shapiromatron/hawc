@@ -296,9 +296,12 @@ class ReferenceFilterSet(BaseFilterSet):
             if field in form.fields:
                 form.fields[field].hover_help = True
 
-        for field in "tags", "my_tags", "addition_tags", "deletion_tags":
-            if field in form.fields:
-                tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        tag_fields = [
+            f for f in ("tags", "my_tags", "addition_tags", "deletion_tags") if f in form.fields
+        ]
+        if tag_fields:
+            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+            for field in tag_fields:
                 form.fields[field].queryset = tags
                 form.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
                 form.fields[field].widget.attrs["size"] = 8
