@@ -5,10 +5,9 @@
 <div class="d-flex">
     <h2>Resolve Tag Conflicts</h2>
     {% actions %}
-    <a class="dropdown-item" data-toggle="modal" data-target="#bulk-merge-modal" hx-get="{% url 'lit:bulk-merge-conflicts' assessment.pk %}" hx-target="#modal-content">Bulk Merge Conflicts</a>
+    <a class="dropdown-item" data-toggle="modal" data-target="#bulk-merge-modal" hx-get="{% url 'lit:bulk-merge-conflicts' assessment.pk %}" hx-target="#bulk-merge-modal-content">Bulk Merge Conflicts</a>
     {% endactions %}
 </div>
-{% include "lit/_bulk_merge_modal.html" %}
 {% include 'common/inline_filter_form.html' %}
 <ul class="list-group list-group-flush my-3">
     {% for ref in object_list %}
@@ -23,6 +22,7 @@
     {% endfor %}
 </ul>
 {% include "includes/paginator.html" with plural_object_name="conflicts" %}
+{% include "lit/components/bulk_merge_modal.html" with modal_id="bulk-merge-modal"%}
 {% endblock content %}
 
 {% block extrajs %}

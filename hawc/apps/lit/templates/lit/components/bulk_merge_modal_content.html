@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title" id="bulk-merge-modal-label">
-        Bulk Merge Tag Conflicts
+        Bulk Merge Tag Conflicts?
     </h4>
     {% if merged == True %}
     <a type="button" class="close text-dark" aria-label="Close" href=".">
@@ -12,45 +12,43 @@
     </button>
     {% endif %}
 </div>
-<div class="modal-body pt-0">
-    <div class="justify-content-center">
-        {% if form %}
-            <div class="pt-2">
-            {% crispy form %}
-            </div>
-        {% endif %}
-        {% if object_list %}
-        <hr>
-            <div class="alert {% if action == 'merge' %} alert-success {% else %} alert-warning {% endif %} mt-3" style="position: sticky; z-index: 1; top: 0px;">
-                {% if action == 'merge' and merged %}
-                <h3 class="mb-0">Reference results:</h3>
-                {% elif action == 'merge' %}
-                <h3 class="mb-0">Error</h3>
-                {% elif action == 'preview' %}
-                <h3 class="mb-0">The following {{object_list|length}} reference(s) will be tagged:</h3>
-                {% endif %}
-            </div>
-            <ul class="list-group list-group-flush">
-                {% for ref in object_list %}
-                    <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
-                    {% include 'lit/_reference_with_tags.html' with conflict_resolution=False show_actions=False show_user_tags=True show_consensus_tag_after=True hide_abstract=True show_resolved_badge=True %}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        {% if message and not merged %}
-            <div class="alert alert-danger mt-4">{{message}}</div>
-        {% endif %}
-        {% if merged %}
-        <div class="alert alert-success mt-4">{{message}}</div>
+<div class="modal-body justify-content-center">
+    {% if form %}
+    <div class="pt-2">
+        {% crispy form %}
+    </div>
+    {% endif %}
+    {% if object_list %}
+    <hr>
+    <div class="alert mt-3 {% if action == 'merge' %} alert-success {% else %} alert-warning {% endif %}">
+        {% if action == 'merge' and merged %}
+        <h3 class="mb-0">Reference results:</h3>
+        {% elif action == 'merge' %}
+        <h3 class="mb-0">Error</h3>
+        {% elif action == 'preview' %}
+        <h3 class="mb-0">The following {{object_list|length}} reference(s) will be tagged:</h3>
         {% endif %}
     </div>
+    <ul class="list-group list-group-flush">
+        {% for ref in object_list %}
+            <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
+            {% include 'lit/_reference_with_tags.html' with conflict_resolution=False show_actions=False show_user_tags=True show_consensus_tag_after=True hide_abstract=True show_resolved_badge=True %}
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if message and not merged %}
+        <div class="alert alert-danger mt-4">{{message}}</div>
+    {% endif %}
+    {% if merged %}
+    <div class="alert alert-success mt-4">{{message}}</div>
+    {% endif %}
 </div>
 <div class="modal-footer">
     <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner" aria-hidden="true"></i>
     {% if action == 'preview' and object_list %}
         <button class="btn btn-primary ml-2"
-            hx-target="#modal-content"
+            hx-target="#bulk-merge-modal-content"
             hx-indicator="#spinner"
             hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=merge"
             hx-encoding="multipart/form-data">
@@ -59,7 +57,7 @@
     {% endif %}
     {% if action == 'preview' or merged == True %}
         <button class="btn btn-secondary ml-2"
-        hx-target="#modal-content"
+        hx-target="#bulk-merge-modal-content"
         hx-indicator="#spinner"
         hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=index"
         hx-encoding="multipart/form-data">
@@ -68,7 +66,7 @@
     {% endif %}
     {% if action == 'index' %}
     <button class="btn btn-primary ml-2"
-        hx-target="#modal-content"
+        hx-target="#bulk-merge-modal-content"
         hx-indicator="#spinner"
         hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=preview"
         hx-encoding="multipart/form-data">

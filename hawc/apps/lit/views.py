@@ -415,7 +415,7 @@ class BulkMerge(HtmxView):
         context = dict(
             form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
         )
-        return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
     def preview(self, request: HttpRequest, *args, **kwargs):
         queryset = (
@@ -450,7 +450,7 @@ class BulkMerge(HtmxView):
             form=form,
             cache_key=key,
         )
-        return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
     def merge(self, request: HttpRequest, *args, **kwargs):
         cache_key = request.POST.get("cache_key")
@@ -476,7 +476,7 @@ class BulkMerge(HtmxView):
             merged=merge_result["merged"],
             form=form,
         )
-        return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
 
 class ConflictResolution(BaseFilterList):
