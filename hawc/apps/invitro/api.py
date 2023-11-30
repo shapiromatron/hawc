@@ -44,6 +44,19 @@ class IVAssessmentViewSet(viewsets.GenericViewSet):
         )
         return Response(exporter.build_export())
 
+    @action(
+        detail=True,
+        url_path="full-export2",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def full_export2(self, request, pk):
+        self.get_object()
+        self.object_list = self.get_endpoint_queryset()
+        exporter = exports.DataPivotEndpoint2(
+            self.object_list, filename=f"{self.assessment}-invitro"
+        )
+        return Response(exporter.build_export())
 
 class IVChemical(AssessmentViewSet):
     assessment_filter_args = "study__assessment"

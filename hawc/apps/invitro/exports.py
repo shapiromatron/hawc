@@ -5,6 +5,169 @@ from django.apps import apps
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
+from ..common.exports import Exporter, ModelExport
+from ..common.helper import FlatFileExporter
+from ..common.models import sql_display, sql_format, str_m2m
+from ..materialized.models import FinalRiskOfBiasScore
+from ..study.exports import StudyExport
+from . import constants, models
+
+# TODO make a modelexport for dtxsid
+# TODO add groups, and dataframe pivot to provide some missing values?
+#      or try to use sql
+# TODO add minimum dose, maximum dose, number of doses
+
+class IVChemicalExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id": "id",
+            "name": "name",
+            "cas": "cas",
+            "dtxsid":"dtxsid",
+            "purity":"purity",
+        }
+
+class IVExperimentExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id": "id",
+            "dose_units": "dose_units__name",
+            "metabolic_activation": "metabolic_activation",
+            "transfection": "transfection",
+        }
+
+class IVCellTypeExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id": "id",
+            "species": "species",
+            "strain": "strain",
+            "sex": "sex",
+            "cell_type":"cell_type",
+            "tissue":"tissue",
+        }
+    
+class IVEndpointExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id": "id",
+            "name": "name",
+            "effects": "effects__name",
+            "assay_type": "assay_type",
+            "short_description":"short_description",
+            "response_units":"response_units",
+            "observation_time":"observation_time",
+            "observation_time_units":"observation_time_units",
+            "NOEL":"NOEL",
+            "LOEL":"LOEL",
+            "monotonicity":"monotonicity",
+            "overall_pattern":"overall_pattern",
+            "trend_test":"trend_test",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "effects__name": str_m2m(query_prefix + "effects__name"),
+        }
+
+class InvitroExporter(Exporter):
+
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            StudyExport(
+                "study",
+                "experiment__study",
+            ),
+            IVChemicalExport(
+                "iv_chemical", "chemical",
+            ),
+            IVExperimentExport(
+                "iv_experiment",
+                "experiment",
+            ),
+            IVCellTypeExport("iv_cell_type", "experiment__cell_type",),
+            IVEndpointExport(
+                "iv_endpoint",
+                "",
+            ),
+        ]
+
+import pandas as pd
+class DataPivotEndpoint2(FlatFileExporter):
+
+
+    def build_df(self) -> pd.DataFrame:
+        df = InvitroExporter().get_df(self.queryset)
+        study_ids = list(df["study-id"].unique())
+        rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
+            self.queryset.first().assessment_id,
+            study_ids,
+            "invitro",
+        )
+        rob_df = pd.DataFrame(
+            data=[
+                [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
+                for study_id in study_ids
+            ],
+            columns=list(rob_headers.values()),
+            index=study_ids,
+        )
+        df = df.join(rob_df, on="study-id")
+
+        df["key"] = df["iv_endpoint-id"]
+
+        df = df.rename(
+            columns={
+                "study-id":"study id",
+                "study-hero_id":"study hero_id",
+                "study-pubmed_id":"study pubmed_id",
+                "study-doi":"study doi",
+                "study-short_citation": "study name",
+                "study-study_identifier": "study identifier",
+                "study-published": "study published",
+            }
+        )
+        df = df.rename(
+            columns={
+                "iv_chemical-id":"chemical id",
+                "iv_chemical-name":"chemical name",
+                "iv_chemical-cas":"chemical CAS",
+                "iv_chemical-dtxsid":"chemical DTXSID",
+                "iv_chemical-purity":"chemical purity",
+                "iv_experiment-id":"IVExperiment id",
+                "iv_experiment-dose_units":"Dose units",
+                "iv_experiment-metabolic_activation":"Metabolic activation",
+                "iv_experiment-transfection":"Transfection",
+                "iv_cell_type-id":"IVCellType id",
+                "iv_cell_type-species":"cell species",
+                "iv_cell_type-stain":"cell strain",
+                "iv_cell_type-sex":"cell sex",
+                "iv_cell_type-cell_type":"cell type",
+                "iv_cell_type-tissue":"cell tissue",
+                "iv_endpoint-id":"IVEndpoint id",
+                "iv_endpoint-name":"IVEndpoint name",
+                "iv_endpoint-effects":"IVEndpoint description tags",
+                "iv_endpoint-assay_type":"assay type",
+                "iv_endpoint-short_description":"endpoint description",
+                "iv_endpoint-response_units":"endpoint response units",
+                "iv_endpoint-observation_time":"observation time",
+                "iv_endpoint-observation_time_units":"observation time units",
+                "iv_endpoint-NOEL":"NOEL",
+                "iv_endpoint-LOEL":"LOEL",
+                "iv_endpoint-monotonicity":"monotonicity",
+                "iv_endpoint-overall_pattern":"overall pattern",
+                "iv_endpoint-trend_test":"trend test result",
+            }
+        )
+
+        return df
+
+
+
+
+
+
+
 
 
 def getDose(ser, tag):
