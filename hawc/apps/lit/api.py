@@ -141,27 +141,6 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
 
     @action(
         detail=True,
-        methods=("get", "post"),
-        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
-        url_path="bulk-merge-conflicts",
-    )
-    def bulk_merge_conflicts(self, request, pk):
-        """
-        Merge specific tag conflicts on all references for an assessment.
-        """
-        assessment = self.get_object()
-        queryset = models.Reference.objects.filter(assessment=assessment)
-        return Response(
-            queryset.merge_tag_conflicts(
-                request.data.getlist("tags"),
-                request.user.id,
-                request.data.get("include_without_conflict", False),
-                request.data.get("preview", False),
-            )
-        )
-
-    @action(
-        detail=True,
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         url_path="reference-year-histogram",
     )
