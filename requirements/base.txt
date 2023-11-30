@@ -2,7 +2,7 @@
 Django~=4.2.7
 django-crispy-forms==2.1
 crispy-bootstrap4==2023.1
-django-filter==23.3
+django-filter==23.4
 django-redis==5.3.0
 django-reversion==5.0.4
 django-autocomplete-light==3.9.7
@@ -13,7 +13,7 @@ djangorestframework==3.14.0
   uritemplate==4.1.1  # schema dependencies
   pyyaml==6.0.1       # schema dependencies
 gunicorn==21.2.0
-wagtail==5.2
+wagtail==5.2.1
 wagtail-draftail-anchors==0.6.0
 
 # tasks
