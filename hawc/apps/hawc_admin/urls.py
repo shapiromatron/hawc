@@ -2,7 +2,8 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, reverse_lazy
+from django.views.generic import RedirectView
 from rest_framework import permissions
 from rest_framework.routers import SimpleRouter
 from rest_framework.schemas import get_schema_view
@@ -35,6 +36,7 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
     ]
 
     if settings.INCLUDE_ADMIN:
+        login_view = RedirectView.as_view(url=reverse_lazy("404"))
         # extend URL patterns
         patterns.extend(
             [
@@ -59,6 +61,10 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
                     views.MediaPreview.as_view(),
                     name="admin_media_preview",
                 ),
+                # login views
+                path(f"{admin_url}/cms/login/", login_view),
+                path(f"{admin_url}/cms/account/", login_view),
+                path(f"{admin_url}/login/", login_view),
                 # wagtail cms
                 path(f"{admin_url}/cms/", include(wagtailadmin_urls)),
                 # site

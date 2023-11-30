@@ -10,7 +10,7 @@
 
 {% block content_row_outer %}
 {{ block.super }}
-{% if user.is_staff %}{% wagtailuserbar %}{% endif %}
+{% wagtailuserbar %}
 {% endblock content_row_outer %}
 
 {% block sidebar_outer %}

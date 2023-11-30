@@ -62,7 +62,7 @@ class DocumentationPage(Page):
             ),
             (
                 "toc",
-                TableOfContentsBlock(),
+                TableOfContentsBlock(label="Table of Contents"),
             ),
         ],
         block_counts={
