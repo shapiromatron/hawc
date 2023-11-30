@@ -6,6 +6,7 @@ from textwrap import dedent
 from uuid import uuid4
 
 from django import template
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from plotly.graph_objs._figure import Figure
 
@@ -45,6 +46,11 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     return mark_safe(
         f'<tr {tr_attrs}><td colspan="100%"><p class="text-center mb-0">{text}</p></td></tr>'
     )
+
+
+@register.simple_tag()
+def icon(name: str):
+    return format_html('<span class="fa fa-fw {} mr-1" aria-hidden="true"></span>', name)
 
 
 @register.tag(name="alert")
