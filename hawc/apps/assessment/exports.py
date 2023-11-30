@@ -41,6 +41,9 @@ class AssessmentValueExport(ModelExport):
             ),
         }
 
+    def prepare_df(self, df):
+        return self.format_time(df)
+
 
 class AssessmentExport(ModelExport):
     def get_value_map(self) -> dict:
@@ -52,6 +55,9 @@ class AssessmentExport(ModelExport):
             "created": "created",
             "last_updated": "last_updated",
         }
+
+    def prepare_df(self, df):
+        return self.format_time(df)
 
 
 class AssessmentDetailExport(ModelExport):
@@ -69,6 +75,9 @@ class AssessmentDetailExport(ModelExport):
             "created": "created",
             "last_updated": "last_updated",
         }
+
+    def prepare_df(self, df):
+        return self.format_time(df)
 
     def get_annotation_map(self, query_prefix: str) -> dict:
         return {
