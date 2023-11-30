@@ -904,6 +904,7 @@ table.bordered td {
     opacity: 0;
     text-decoration: none;
     color: #738ffe;
+    transition: 0.5s;
 }
 h2:hover > .anchor-link,
 h3:hover > .anchor-link,
