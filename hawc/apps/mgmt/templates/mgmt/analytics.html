@@ -6,10 +6,10 @@
 </div>
 <ul class="nav nav-tabs" hx-trigger="click" hx-swap="innerHTML">
   <li class="nav-item">
-    <button class="nav-link active" data-toggle="pill" data-target="#about">Home</button>
+    <button class="nav-link active" data-toggle="pill" data-target="#about">About</button>
   </li>
   <li class="nav-item">
-    <button class="nav-link" hx-get="?action=growth" data-toggle="pill" hx-target="#growth" data-target="#growth">Growth</button>
+    <button class="nav-link" hx-get="?action=overview" data-toggle="pill" hx-target="#overview" data-target="#overview">Overview</button>
   </li>
   <li class="nav-item">
     <button class="nav-link" hx-get="?action=time_series" data-toggle="pill" hx-target="#time_series" data-target="#time_series">Time Series</button>
@@ -20,9 +20,19 @@
 </ul>
 <div class="tab-content mx-2 mt-2">
   <div class="tab-pane fade show active" id="about" role="tabpanel">
-    This content is available with the initial page load.
+    <div class="row">
+      <div class="col-xl-8">
+
+        <p class="mb-3">Assessment analytics give a high level overview about the shape and composition of data within a HAWC assessment. They include generated tables, plots, and summary statistics for counts of data types within an assessment, as well as time series and estimates of total time spent working on an adding and changing content within an assessment.</p>
+
+        {% alert info %}This is a work in progress; we'd appreciate feedback on the current content, as well as recommendations for other approaches; please <a href="{% url 'contact' %}">contact us</a> with any feedback!{% endalert %}
+
+        <p><b>Note:&nbsp;</b>These tabs are expensive to calculate and therefore are cached; check back every few hours to see updates.</p>
+
+      </div>
+    </div>
   </div>
-  <div class="tab-pane fade" id="growth" role="tabpanel">
+  <div class="tab-pane fade" id="overview" role="tabpanel">
     <p class="text-muted">Loading...</p>
   </div>
   <div class="tab-pane fade" id="time_series" role="tabpanel">
