@@ -532,7 +532,7 @@ class WorkflowForm(forms.ModelForm):
 
     class Meta:
         model = models.Workflow
-        exclude = ("assessment", "references", "created", "last_updated")
+        exclude = ("assessment", "created", "last_updated")
         widgets = {
             "admission_source": AutocompleteSelectMultipleWidget(
                 autocomplete_class=SearchAutocomplete

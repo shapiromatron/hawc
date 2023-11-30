@@ -51,9 +51,9 @@ class LitOverview(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        overview, workflows = models.Reference.objects.get_overview_details(self.assessment)
-        context["overview"] = overview
-        context["workflows"] = workflows
+        context["overview"], context["workflows"] = models.Reference.objects.get_overview_details(
+            self.assessment
+        )
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
             .filter(user_tags__user=self.request.user)

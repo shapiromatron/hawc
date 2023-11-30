@@ -662,7 +662,17 @@ class ReferenceManager(BaseManager):
 
         return refs
 
-    def get_overview_details(self, assessment) -> dict[str, int]:
+    def get_overview_details(self, assessment) -> (dict[str, int], list):
+        """Generates statistics for literature overview page.
+
+        Args:
+            assessment (models.Assessment): The assessment to fetch data from
+
+        Returns:
+            (dict[str, int], list(models.Workflows)): A tuple, where the first object
+            is a dictionary of relevant literature statistics, and the second object is
+            a list of Workflow objects with added data attributes.
+        """
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
         Workflow = apps.get_model("lit", "Workflow")
