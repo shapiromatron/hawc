@@ -402,15 +402,15 @@ class TagReferences(BaseFilterList):
 
 @method_decorator(htmx_required, name="dispatch")
 class BulkMerge(HtmxView):
-    actions = {
-        "preview",
-        "merge",
-    }
+    actions = {"preview", "merge"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
 
     def index(self, request: HttpRequest, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
-        if not self.assessment.get_permissions().can_edit_object(request.user):
-            raise PermissionDenied()
         form = forms.BulkMergeConflictsForm(assessment=self.assessment)
         context = dict(
             form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
@@ -418,15 +418,14 @@ class BulkMerge(HtmxView):
         return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
 
     def preview(self, request: HttpRequest, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
-        if not self.assessment.get_permissions().can_edit_object(request.user):
-            raise PermissionDenied()
         queryset = (
             models.Reference.objects.filter(assessment=self.assessment)
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
-        key = f'{self.assessment.pk}-bulk-merge-tags-{"-".join(request.POST.getlist("tags"))}'
+        key = (
+            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
+        )
         form = forms.BulkMergeConflictsForm(
             assessment=self.assessment, initial={**request.POST, "cache_key": key}
         )
@@ -454,9 +453,6 @@ class BulkMerge(HtmxView):
         return render(request, "lit/_bulk_merge_modal_innards.html", context=context)
 
     def merge(self, request: HttpRequest, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
-        if not self.assessment.get_permissions().can_edit_object(request.user):
-            raise PermissionDenied()
         cache_key = request.POST.get("cache_key")
         queryset, data = cache.get(cache_key)
         assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
