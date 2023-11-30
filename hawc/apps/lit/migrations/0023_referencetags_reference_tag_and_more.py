@@ -4,12 +4,13 @@ from django.db import migrations, models
 
 
 def remove_duplicates(apps, schema_editor):
+    # remove duplicates prior to adding unique constraint
+    UserReferenceTags = apps.get_model("lit", "UserReferenceTags")
     ReferenceTags = apps.get_model("lit", "ReferenceTags")
-    unique_tags = ReferenceTags.objects.distinct("content_object", "tag")
-    duplicate_tags = (
-        ReferenceTags.objects.all().difference(unique_tags).values_list("id", flat=True)
-    )
-    ReferenceTags.objects.filter(id__in=duplicate_tags).delete()
+    for Model in (UserReferenceTags, ReferenceTags):
+        unique_tags = Model.objects.distinct("content_object", "tag")
+        duplicate_tags = Model.objects.all().difference(unique_tags).values_list("id", flat=True)
+        Model.objects.filter(id__in=duplicate_tags).delete()
 
 
 class Migration(migrations.Migration):
