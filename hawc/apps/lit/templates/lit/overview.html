@@ -136,14 +136,20 @@
               {% if show_conflicts and show_tags %}
                 <div class="lit-review-box box-shadow w-30 d-flex flex-column justify-content-between py-0" style="padding-bottom: 8px">
                   <div class="d-flex row justify-content-between flex-grow-1">
-                      <a class="pl-3 pb-1 clickable w-50 box-shadow-2" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" style="padding-top: 12px;">
+                      <a class="pl-3 pb-1 clickable w-50 box-shadow-2 border-right border-bottom" 
+                        {% if assessment.literature_settings.conflict_resolution %}
+                        href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" 
+                        {% else %}
+                        href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}" 
+                        {% endif %}
+                        style="padding-top: 12px;">
                         <div class="d-flex pl-0">
                           <p class="h3 m-0 text-black">{{workflow.needs_tagging}}</p>
                           <div class="lit-icon px-2 text-black"><i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: .9em; border-radius: 5px;"></i></div>
                         </div>
-                        <p class="m-0 small text-black">need tagging&nbsp;</p>
+                        <p class="m-0 small text-black">need{{ workflow.needs_tagging|pluralize:"s," }} tagging&nbsp;</p>
                       </a>
-                    <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-2 text-black" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}" style="padding-top: 12px;">
+                    <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-2 border-left border-bottom" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}" style="padding-top: 12px;">
                       <div class="d-flex flex-row-reverse pl-0">
                         <p class="h3 m-0 text-black">{{workflow.conflicts}}</p>
                         <div class="lit-icon px-2 text-black"><div class="icon-bg" style="color: white; background-color: #ff9393; height: 25px; width: 25px; font-size: 1.2em; border-radius: 5px;">&#8800;</div></div>
@@ -151,15 +157,39 @@
                       <p class="m-0 small text-black">with conflicts</p>
                     </a>
                   </div>
-                  <div class="text-center small" style="padding: 6px;">
-                    in <i>{{workflow}}</i>
+                    <div class="text-center small" style="overflow: hidden; padding: 6px;">
+                      <div class="d-flex flex-row justify-content-center">
+                        <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{workflow}}">{{workflow}}</i></p>
+                        <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                          {% if workflow.description %}
+                          {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
+                          {% else %}
+                          {% include "common/helptext_popup.html" with text="Go to 'View Workflows' under the actions button for more information." title=workflow %}
+                          {% endif %}
+                        </i>
+                      </div>
                   </div>
                 </div>
               {% elif show_tags %}
-                <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged">
+                <a class="lit-review-box box-shadow with-icon clickable w-30" 
+                  {% if assessment.literature_settings.conflict_resolution %}
+                    href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" 
+                    {% else %}
+                    href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}" 
+                    {% endif %}
+                  >
                   <div style="overflow: hidden;">
                     <p class="h3 m-0 mt-1">{{workflow.needs_tagging}}</p>
-                    <p class="small mt-0" style="overflow: hidden; text-overflow: ellipsis;"">need{{ overview.needs_tagging|pluralize:"s," }} tagging in <i style="white-space: nowrap;" title="{{workflow}}">{{workflow}}</i></p>
+                    <div class="d-flex flex-row">
+                      <p class="small mt-0 d-flex flex-column" style="overflow: hidden;">need{{ workflow.needs_tagging|pluralize:"s," }} tagging in <i style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{workflow}}">{{workflow}}</i></p>
+                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                        {% if workflow.description %}
+                        {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
+                        {% else %}
+                        {% include "common/helptext_popup.html" with text="Go to 'View Workflows' under the actions button for more information." title=workflow %}
+                        {% endif %}
+                      </i>
+                    </div>
                   </div>
                   <div class="lit-icon pl-2">
                     <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
@@ -169,7 +199,16 @@
                 <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}">
                   <div style="overflow: hidden;">
                     <p class="h3 m-0 mt-1">{{workflow.conflicts}}</p>
-                    <p class="small mt-0" style="overflow: hidden; text-overflow: ellipsis;">with tag conflicts in <i style="white-space: nowrap;" title="{{workflow}}">{{workflow}}</i></p>
+                    <div class="d-flex flex-row">
+                      <p class="small mt-0 d-flex flex-column" style="overflow: hidden;">with tag conflicts in <i style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{workflow}}">{{workflow}}</i></p>
+                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                        {% if workflow.description %}
+                        {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
+                        {% else %}
+                        {% include "common/helptext_popup.html" with text="Go to 'View Workflows' under the actions button for more information." title=workflow %}
+                        {% endif %}
+                      </i>
+                    </div>
                   </div>
                   <div class="lit-icon pl-2">
                     <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
@@ -195,7 +234,7 @@
     <div class="alert alert-danger mt-3">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>References have tag conflicts!</b><br>
-      <p>{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
+      <p class="m-0">{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
     </div>
   {% endif %}
 
@@ -203,7 +242,7 @@
     <div class="alert alert-warning mt-3">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>New references marked for inclusion.</b><br>
-      <p>{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
+      <p class="m-0">{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
   </div>
   {% endif %}
 

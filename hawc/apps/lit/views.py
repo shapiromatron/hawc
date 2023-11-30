@@ -337,6 +337,7 @@ class TagReferences(BaseFilterList):
                     "search",
                     "id",
                     "order_by",
+                    "workflow",
                     "authors",
                     "year",
                     "tags",
@@ -344,7 +345,7 @@ class TagReferences(BaseFilterList):
                     "anything_tagged",
                 ],
                 main_field="ref_search",
-                appended_fields=["order_by"],
+                appended_fields=["workflow", "order_by"],
                 grid_layout={
                     "rows": [
                         {"columns": [{"width": 12}]},
@@ -1001,6 +1002,13 @@ class Workflows(BaseList):
     model = models.Workflow
     breadcrumb_active_name = "Workflows"
     template_name = "lit/workflows.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Workflows"
+        )
+        return context
 
     def get_queryset(self):
         queryset = (

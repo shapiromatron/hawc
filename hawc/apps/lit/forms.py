@@ -548,6 +548,8 @@ class WorkflowForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
 
+        self.fields["description"].widget.attrs["rows"] = 2
+
         tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment.id)
         for field in ["admission_tags", "removal_tags"]:
             self.fields[field].label = "Tagged With:"
@@ -575,6 +577,9 @@ class WorkflowForm(forms.ModelForm):
                 cfl.Column("title"),
                 cfl.Column("link_tagging"),
                 cfl.Column("link_conflict_resolution"),
+            ),
+            cfl.Row(
+                cfl.Column("description"),
             ),
             cfl.Row(
                 cfl.Column(

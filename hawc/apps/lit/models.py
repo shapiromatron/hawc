@@ -1259,7 +1259,11 @@ class Workflow(models.Model):
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="workflows"
     )
-    title = models.CharField(max_length=128, help_text="Descriptive name for this workflow.")
+    title = models.CharField(max_length=32, help_text="Descriptive name for this workflow.")
+    description = models.TextField(
+        blank=True,
+        help_text="A description or set of notes for for this workflow.",
+    )
     link_tagging = models.BooleanField(
         default=False,
         help_text="Add a panel on the Literature Review page for tagging references in this workflow.",
