@@ -17,6 +17,7 @@ if HTTPS_ONLY:
     SECURE_HSTS_SECONDS = 0  # handle upstream in reverse proxy
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
+WAGTAILADMIN_BASE_URL = os.getenv("WAGTAILADMIN_BASE_URL", "")
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
