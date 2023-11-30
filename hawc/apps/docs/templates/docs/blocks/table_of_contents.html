@@ -1,6 +1,6 @@
 {% load wagtailcore_tags %}
 
-<h3>{{value.child_header}}</h3>
+<h3 id="toc">{{value.child_header}}</h3>
 <ul>
     {% if value.show_all_descendants %}
         {% for child in page.toc_descendants %}
