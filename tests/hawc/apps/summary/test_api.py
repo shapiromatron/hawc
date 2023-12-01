@@ -133,6 +133,7 @@ class TestVisual:
             "title": "bioassay-aggregation-2",
             "slug": "bioassay-aggregation-2",
             "visual_type": 0,
+            "evidence_type": 0,
             "settings": {},
             "assessment": db_keys.assessment_working,
             "prefilters": {},
@@ -149,6 +150,7 @@ class TestVisual:
             "title": "rob-heatmap-2",
             "slug": "rob-heatmap-2",
             "visual_type": 2,
+            "evidence_type": 0,
             "settings": json.loads(
                 '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
             ),
@@ -167,6 +169,7 @@ class TestVisual:
             "title": "crossview-2",
             "slug": "crossview-2",
             "visual_type": 1,
+            "evidence_type": 0,
             "settings": json.loads(
                 '{"title":"Title","xAxisLabel":"Dose (<add units>)","yAxisLabel":"% change from control (continuous), % incidence (dichotomous)","width":1100,"height":600,"inner_width":940,"inner_height":520,"padding_left":75,"padding_top":45,"dose_isLog":true,"dose_range":"","response_range":"","title_x":0,"title_y":0,"xlabel_x":0,"xlabel_y":0,"ylabel_x":0,"ylabel_y":0,"filters":[{"name":"study","headerName":"Study","allValues":true,"values":null,"columns":1,"x":null,"y":null}],"reflines_dose":[{"value":null,"title":"","style":"base"}],"refranges_dose":[{"lower":null,"upper":null,"title":"","style":"base"}],"reflines_response":[{"value":null,"title":"","style":"base"}],"refranges_response":[{"lower":null,"upper":null,"title":"","style":"base"}],"labels":[{"caption":"","style":"base","max_width":null,"x":null,"y":null}],"colorBase":"#cccccc","colorHover":"#ff4040","colorSelected":"#6495ed","colorFilters":[],"colorFilterLegend":true,"colorFilterLegendLabel":"Color filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}'
             ),
@@ -185,6 +188,7 @@ class TestVisual:
             "title": "barchart-2",
             "slug": "barchart-2",
             "visual_type": 3,
+            "evidence_type": 0,
             "settings": json.loads(
                 '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}'
             ),
@@ -203,6 +207,7 @@ class TestVisual:
             "title": "tagtree-2",
             "slug": "tagtree-2",
             "visual_type": 4,
+            "evidence_type": 3,
             "settings": json.loads(
                 '{"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}'
             ),
@@ -221,6 +226,7 @@ class TestVisual:
             "title": "embedded-tableau-2",
             "slug": "embedded-tableau-2",
             "visual_type": 5,
+            "evidence_type": 3,
             "settings": json.loads(
                 '{"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual", "external_url_hostname": "https://public.tableau.com", "external_url_path": "/views/Iris_15675445278420/Iris-Actual", "external_url_query_args": [":showVizHome=no", ":embed=y"], "filters": []}'
             ),
@@ -239,6 +245,7 @@ class TestVisual:
             "title": "exploratory-heatmap-2",
             "slug": "exploratory-heatmap-2",
             "visual_type": 6,
+            "evidence_type": 3,
             "settings": json.loads(
                 '{"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic": "and"}'
             ),

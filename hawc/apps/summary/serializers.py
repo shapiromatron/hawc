@@ -83,6 +83,17 @@ class VisualSerializer(serializers.ModelSerializer):
 
         return ret
 
+    def validate(self, data):
+        visual_type = data["visual_type"]
+        evidence_type = data["evidence_type"]
+        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
+            raise serializers.ValidationError(
+                {
+                    "evidence_type": f"Invalid evidence type {evidence_type} for visual {visual_type}."
+                }
+            )
+        return data
+
     class Meta:
         model = models.Visual
         exclude = ("endpoints",)
