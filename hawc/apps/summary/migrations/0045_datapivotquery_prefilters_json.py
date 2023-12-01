@@ -4,12 +4,12 @@ import logging
 
 from django.db import migrations, models
 
-from hawc.apps.summary.prefilters import StudyTypePrefilter
+from hawc.apps.summary.prefilters import EndpointPrefilter, get_prefilter_cls
 
 logger = logging.getLogger(__name__)
 
 mapping = {
-    StudyTypePrefilter.BIOASSAY: {
+    EndpointPrefilter.BIOASSAY.value: {
         "published_only": "animal_group__experiment__study__published",
         "studies": "animal_group__experiment__study__in",
         "systems": "system__in",
@@ -18,22 +18,22 @@ mapping = {
         "effect_subtypes": "effect_subtype__in",
         "effect_tags": "effects__in",
     },
-    StudyTypePrefilter.EPIV1: {
+    EndpointPrefilter.EPIV1.value: {
         "published_only": "study_population__study__published",
         "studies": "study_population__study__in",
         "systems": "system__in",
         "effects": "effect__in",
         "effect_tags": "effects__in",
     },
-    StudyTypePrefilter.EPIV2: {
+    EndpointPrefilter.EPIV2.value: {
         "published_only": "design__study__published",
         "studies": "design__study__in",
     },
-    StudyTypePrefilter.EPI_META: {
+    EndpointPrefilter.EPI_META.value: {
         "published_only": "protocol__study__published",
         "studies": "protocol__study__in",
     },
-    StudyTypePrefilter.IN_VITRO: {
+    EndpointPrefilter.IN_VITRO.value: {
         "published_only": "experiment__study__published",
         "studies": "experiment__study__in",
         "categories": "category__in",
@@ -41,7 +41,7 @@ mapping = {
         "effects": "effect__in",
         "effect_tags": "effects__in",
     },
-    StudyTypePrefilter.ECO: {
+    EndpointPrefilter.ECO.value: {
         "published_only": "design__study__published",
         "studies": "design__study__in",
     },
@@ -56,7 +56,7 @@ def prefilters_dict(apps, schema_editor):
         data = json.loads(obj.prefilters)
         if not data:
             continue
-        key_map = mapping[StudyTypePrefilter.from_study_type(obj.evidence_type, obj.assessment)]
+        key_map = mapping[get_prefilter_cls(None, obj.evidence_type, obj.assessment)]
         key_map = {v: k for k, v in key_map.items()}
         data = {key_map[k]: v for k, v in data.items() if v}
         obj.temp = data
@@ -70,7 +70,7 @@ def reverse_prefilters_dict(apps, schema_editor):
     for obj in objs:
         if not obj.temp:
             continue
-        key_map = mapping[StudyTypePrefilter.from_study_type(obj.evidence_type, obj.assessment)]
+        key_map = mapping[get_prefilter_cls(None, obj.evidence_type, obj.assessment)]
         data = {key_map[k]: v for k, v in obj.temp.items()}
         obj.prefilters = json.dumps(data)
     DataPivotQuery.objects.bulk_update(objs, ["prefilters"])
