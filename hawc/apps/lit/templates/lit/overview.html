@@ -159,7 +159,7 @@
                   </div>
                     <div class="text-center small" style="overflow: hidden; padding: 6px;">
                       <div class="d-flex flex-row justify-content-center">
-                        <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{workflow}}">{{workflow}}</i></p>
+                        <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
                         <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
                           {% if workflow.description %}
                           {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
@@ -178,10 +178,10 @@
                     href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}" 
                     {% endif %}
                   >
-                  <div style="overflow: hidden;">
+                  <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{workflow.needs_tagging}}</p>
                     <div class="d-flex flex-row">
-                      <p class="small mt-0 d-flex flex-column" style="overflow: hidden;">need{{ workflow.needs_tagging|pluralize:"s," }} tagging in <i style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{workflow}}">{{workflow}}</i></p>
+                      <p class="small mt-0 d-flex flex-column text-truncate">need{{ workflow.needs_tagging|pluralize:"s," }} tagging in <i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
                       <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
                         {% if workflow.description %}
                         {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
@@ -197,10 +197,10 @@
                 </a>
               {% elif show_conflicts %}
                 <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}">
-                  <div style="overflow: hidden;">
+                  <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{workflow.conflicts}}</p>
                     <div class="d-flex flex-row">
-                      <p class="small mt-0 d-flex flex-column" style="overflow: hidden;">with tag conflicts in <i style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;" title="{{workflow}}">{{workflow}}</i></p>
+                      <p class="small mt-0 d-flex flex-column text-truncate">with tag conflicts in <i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
                       <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
                         {% if workflow.description %}
                         {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
@@ -221,7 +221,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="lit-review-box box-shadow" style="width: 100%;">
+      <div class="lit-review-box box-shadow w-100">
         <p class="h4 m-0">Tagtree
           {% include "common/helptext_popup.html" with text="Tag, plus count of references with this tag applied" %}
         </p>

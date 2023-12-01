@@ -96,7 +96,7 @@ tfoot > tr > td {
 .bg-lightblue {
     background-color: #eaf6ff;
 }
-.bg-gray, .bg-grey {
+.bg-gray {
     background-color: #e8e8e8;
 }
 .clickable:hover .bg-gray {
@@ -843,11 +843,9 @@ table.bordered td {
     opacity: 0;
     transition: opacity 500ms ease-in;
 }
-.htmx-request .htmx-indicator{
-    opacity:1
-}
-.htmx-request.htmx-indicator{
-    opacity:1
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1
 }
 
 /* fade in/out */
