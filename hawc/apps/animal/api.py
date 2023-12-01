@@ -16,7 +16,7 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
-from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from ..common.views import create_object_log
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
@@ -81,7 +81,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         published_only = get_published_only(self.assessment, request)
         key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-unpublished-{not published_only}"
@@ -106,7 +106,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         published_only = get_published_only(self.assessment, request)
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{not published_only}"
@@ -131,7 +131,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         published_only = get_published_only(self.assessment, request)
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{not published_only}"
@@ -151,7 +151,7 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     )
     def endpoints(self, request, pk):
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
         published_only = get_published_only(self.assessment, request)
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-list-unpublished-{not published_only}"
