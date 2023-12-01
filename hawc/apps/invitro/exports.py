@@ -70,6 +70,22 @@ class IVEndpointExport(ModelExport):
             "effects__name": str_m2m(query_prefix + "effects__name"),
         }
 
+class IVEndpointGroupExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id": "id",
+            "dose_group_id": "dose_group_id",
+            "dose": "dose",
+            "n": "n",
+            "response":"response",
+            "variance":"variance",
+            "difference_control":"difference_control",
+            "significant_control":"significant_control",
+            "cytotoxicity_observed":"cytotoxicity_observed",
+            "precipitation_observed":"precipitation_observed",
+        } # do stdev, percentControlMean, percentControlLow, percentControlHigh
+
+
 class InvitroExporter(Exporter):
 
     def build_modules(self) -> list[ModelExport]:
@@ -89,6 +105,10 @@ class InvitroExporter(Exporter):
             IVEndpointExport(
                 "iv_endpoint",
                 "",
+            ),
+            IVEndpointGroupExport(
+                "iv_endpoint_group",
+                "groups",
             ),
         ]
 
@@ -162,8 +182,150 @@ class DataPivotEndpoint2(FlatFileExporter):
 
         return df
 
+class InvitroGroupExporter(Exporter):
+    
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            StudyExport(
+                "study",
+                "experiment__study",
+                include=("id","short_citation","study_identifier","published")
+            ),
+            IVChemicalExport(
+                "iv_chemical", "chemical",
+            ),
+            IVExperimentExport(
+                "iv_experiment",
+                "experiment",
+            ),
+            IVCellTypeExport("iv_cell_type", "experiment__cell_type",),
+            IVEndpointExport(
+                "iv_endpoint",
+                "",
+            ),
+            IVEndpointGroupExport(
+                "iv_endpoint_group",
+                "groups",
+            ),
+        ]
 
+class DataPivotEndpointGroup2(FlatFileExporter):
 
+    def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
+        def _get_stdev(x: pd.Series):
+            return models.GroupResult.stdev(
+                x["result-variance_type"], x["result_group-variance"], x["result_group-n"]
+            )
+
+        def _apply_results(_df1: pd.DataFrame):
+            controls = _df1.loc[_df1["group-isControl"] == True]  # noqa: E712
+            control = _df1.iloc[0] if controls.empty else controls.iloc[0]
+            n_1 = control["result_group-n"]
+            mu_1 = control["result_group-estimate"]
+            sd_1 = _get_stdev(control)
+
+            def _apply_result_groups(_df2: pd.DataFrame):
+                row = _df2.iloc[0]
+                if control["result-estimate_type"] in ["median", "mean"] and control[
+                    "result-variance_type"
+                ] in [
+                    "SD",
+                    "SE",
+                    "SEM",
+                ]:
+                    n_2 = row["result_group-n"]
+                    mu_2 = row["result_group-estimate"]
+                    sd_2 = _get_stdev(row)
+                    mean, low, high = percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2)
+                    return pd.DataFrame(
+                        [[mean, low, high]],
+                        columns=[
+                            "percent control mean",
+                            "percent control low",
+                            "percent control high",
+                        ],
+                        index=[row["result_group-id"]],
+                    )
+                return pd.DataFrame(
+                    [],
+                    columns=[
+                        "percent control mean",
+                        "percent control low",
+                        "percent control high",
+                    ],
+                )
+
+            rgs = _df1.groupby("result_group-id", group_keys=False)
+            return rgs.apply(_apply_result_groups)
+
+        results = df.groupby("result-id", group_keys=False)
+        computed_df = results.apply(_apply_results)
+        return df.join(computed_df, on="result_group-id").drop(
+            columns=["result-estimate_type", "result-variance_type", "group-isControl"]
+        )
+
+    def build_df(self) -> pd.DataFrame:
+        df = InvitroGroupExporter().get_df(self.queryset)
+        study_ids = list(df["study-id"].unique())
+        rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
+            self.queryset.first().assessment_id,
+            study_ids,
+            "invitro",
+        )
+        rob_df = pd.DataFrame(
+            data=[
+                [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
+                for study_id in study_ids
+            ],
+            columns=list(rob_headers.values()),
+            index=study_ids,
+        )
+        df = df.join(rob_df, on="study-id")
+
+        df["key"] = df["iv_endpoint-id"]
+
+        df = df.rename(
+            columns={
+                "study-id":"study id",
+                "study-short_citation": "study name",
+                "study-study_identifier": "study identifier",
+                "study-published": "study published",
+            }
+        )
+        df = df.rename(
+            columns={
+                "iv_chemical-id":"chemical id",
+                "iv_chemical-name":"chemical name",
+                "iv_chemical-cas":"chemical CAS",
+                "iv_chemical-dtxsid":"chemical DTXSID",
+                "iv_chemical-purity":"chemical purity",
+                "iv_experiment-id":"IVExperiment id",
+                "iv_experiment-dose_units":"dose units",
+                "iv_experiment-metabolic_activation":"metabolic activation",
+                "iv_experiment-transfection":"transfection",
+                "iv_cell_type-id":"IVCellType id",
+                "iv_cell_type-species":"cell species",
+                "iv_cell_type-stain":"cell strain",
+                "iv_cell_type-sex":"cell sex",
+                "iv_cell_type-cell_type":"cell type",
+                "iv_cell_type-tissue":"cell tissue",
+                "iv_endpoint-id":"IVEndpoint id",
+                "iv_endpoint-name":"IVEndpoint name",
+                "iv_endpoint-effects":"IVEndpoint description tags",
+                "iv_endpoint-assay_type":"assay type",
+                "iv_endpoint-short_description":"endpoint description",
+                "iv_endpoint-response_units":"endpoint response units",
+                "iv_endpoint-observation_time":"observation time",
+                "iv_endpoint-observation_time_units":"observation time units",
+                "iv_endpoint-NOEL":"NOEL",
+                "iv_endpoint-LOEL":"LOEL",
+                "iv_endpoint-monotonicity":"monotonicity",
+                "iv_endpoint-overall_pattern":"overall pattern",
+                "iv_endpoint-trend_test":"trend test result",
+            } # need low_dose, high_dose, group specific (ie key and lower)
+        ) # find out if name differences are important in visuals; this is similar to regular dp export
+
+        return df
 
 
 
