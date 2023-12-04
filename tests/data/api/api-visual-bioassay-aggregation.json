@@ -360,6 +360,7 @@
       "variance_type": 1
     }
   ],
+  "evidence_type": 0,
   "id": 10,
   "last_updated": "2020-11-25T13:35:00.094667-05:00",
   "prefilters": {},
