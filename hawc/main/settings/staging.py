@@ -59,7 +59,7 @@ ACCEPT_LICENSE_REQUIRED = os.getenv("HAWC_ACCEPT_LICENSE_REQUIRED", "True") == "
 
 REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
 
-HAWC_LOAD_TEST_DB = int(os.environ.get("HAWC_LOAD_TEST_DB", 0))  # 0 = no; 1 = ifempty; 2 = always
+HAWC_LOAD_TEST_DB = int(os.environ.get("HAWC_LOAD_TEST_DB", 0))  # 0 = no; 1 = yes
 if HAWC_LOAD_TEST_DB:
     PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
     TEST_DB_FIXTURE = "/app/test-db-fixture.yaml"
