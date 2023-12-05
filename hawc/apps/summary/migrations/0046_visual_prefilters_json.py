@@ -3,36 +3,14 @@ import json
 
 from django.db import migrations, models
 
-from hawc.apps.summary.prefilters import VisualTypePrefilter
-
-mapping = {
-    VisualTypePrefilter.BIOASSAY_CROSSVIEW: {
-        "published_only": "animal_group__experiment__study__published",
-        "studies": "animal_group__experiment__study__in",
-        "systems": "system__in",
-        "organs": "organ__in",
-        "effects": "effect__in",
-        "effect_subtypes": "effect_subtype__in",
-        "effect_tags": "effects__in",
-    },
-    VisualTypePrefilter.ROB_HEATMAP: {
-        "published_only": "animal_group__experiment__study__published",
-        "studies": "animal_group__experiment__study__in",
-        "systems": "system__in",
-        "organs": "organ__in",
-        "effects": "effect__in",
-        "effect_subtypes": "effect_subtype__in",
-        "effect_tags": "effects__in",
-    },
-    VisualTypePrefilter.ROB_BARCHART: {
-        "published_only": "animal_group__experiment__study__published",
-        "studies": "animal_group__experiment__study__in",
-        "systems": "system__in",
-        "organs": "organ__in",
-        "effects": "effect__in",
-        "effect_subtypes": "effect_subtype__in",
-        "effect_tags": "effects__in",
-    },
+key_map = {
+    "published_only": "animal_group__experiment__study__published",
+    "studies": "animal_group__experiment__study__in",
+    "systems": "system__in",
+    "organs": "organ__in",
+    "effects": "effect__in",
+    "effect_subtypes": "effect_subtype__in",
+    "effect_tags": "effects__in",
 }
 
 
@@ -44,9 +22,8 @@ def prefilters_dict(apps, schema_editor):
         data = json.loads(obj.prefilters)
         if not data:
             continue
-        key_map = mapping[VisualTypePrefilter.from_visual_type(obj.visual_type)]
-        key_map = {v: k for k, v in key_map.items()}
-        data = {key_map[k]: v for k, v in data.items() if v}
+        reverse_key_map = {v: k for k, v in key_map.items()}
+        data = {reverse_key_map[k]: v for k, v in data.items() if v}
         obj.temp = data
     Visual.objects.bulk_update(objs, ["temp"])
 
@@ -58,7 +35,6 @@ def reverse_prefilters_dict(apps, schema_editor):
     for obj in objs:
         if not obj.temp:
             continue
-        key_map = mapping[VisualTypePrefilter.from_visual_type(obj.visual_type)]
         data = {key_map[k]: v for k, v in obj.temp.items()}
         obj.prefilters = json.dumps(data)
     Visual.objects.bulk_update(objs, ["prefilters"])
