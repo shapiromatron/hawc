@@ -10,8 +10,6 @@ manage migrate --noinput
 if [[ $HAWC_LOAD_TEST_DB == "1" ]]; then
     echo "loading fixture database..."
     manage load_test_db
-else
-    echo "not modifying database..."
 fi
 
 # drop/rebuild materialized views
