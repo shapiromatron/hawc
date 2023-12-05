@@ -1,4 +1,5 @@
 import json
+import re
 from copy import deepcopy
 
 import pytest
@@ -138,7 +139,8 @@ class TestRiskOfBiasViewSet:
         )
         resp = anon_client.get(url)
         assert resp.status_code == 200
-        check_api_json_data(resp.json(), fn, rewrite_data_files)
+        data = re.sub(r"obj_ct=\d+", "obj_ct=99999", json.dumps(resp.json()))
+        check_api_json_data(json.loads(data), fn, rewrite_data_files)
 
     def build_upload_payload(self, study, author, metrics, dummy_score):
         payload = {
