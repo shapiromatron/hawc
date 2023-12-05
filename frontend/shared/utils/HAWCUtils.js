@@ -333,5 +333,18 @@ class HAWCUtils {
             })
             .trigger("change");
     }
+
+    static addAnchorLinks(parent, selector) {
+        $(parent)
+            .find(selector)
+            .each(function(index) {
+                const id = $(this).attr("id");
+                if (id) {
+                    $(this).append(
+                        `<a href="#${id}" class="ml-2 anchor-link" title="Section link"><span class="fa fa-fw fa-chain"></span></a>`
+                    );
+                }
+            });
+    }
 }
 export default HAWCUtils;
