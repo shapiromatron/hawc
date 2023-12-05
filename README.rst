@@ -1,9 +1,6 @@
 Health Assessment Workspace Collaborative
 =========================================
 
-.. image:: https://zenodo.org/badge/25273569.svg
-   :target: https://zenodo.org/badge/latestdoi/25273569
-
 .. image:: https://readthedocs.org/projects/hawc/badge/
         :target: https://hawc.readthedocs.io
         :alt: Documentation Status
