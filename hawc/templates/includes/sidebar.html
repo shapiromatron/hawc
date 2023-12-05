@@ -64,7 +64,7 @@
     </li>
     {% endif %}
 
-    {% if user.is_authenticated %}
+    {% if feature_flags.ENABLE_DOCS_SIDEBAR and user.is_authenticated %}
         {% if expand_docs %}
             {% include 'docs/components/sidebar_docs_tree.html' %}
         {% else %}

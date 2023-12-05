@@ -20,6 +20,7 @@ class FeatureFlags(BaseModel):
     ENABLE_PLOTLY_VISUAL: bool = False
     ENABLE_FILTER_DOWNLOADS: bool = False
     ENABLE_UDF: bool = False
+    ENABLE_DOCS_SIDEBAR: bool = False
 
     @classmethod
     def from_env(cls, variable) -> "FeatureFlags":
