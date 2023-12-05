@@ -1,6 +1,8 @@
 from copy import copy
+import math
 
 from django.apps import apps
+from django.conf import settings
 
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
@@ -17,13 +19,48 @@ from . import constants, models
 #      or try to use sql
 # TODO add minimum dose, maximum dose, number of doses
 
+def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
+    mean = low = high = None
+
+    if mu_1 and mu_2 and mu_1 != 0:
+        mean = (mu_2 - mu_1) / mu_1 * 100.0
+        if sd_1 and sd_2 and n_1 and n_2:
+            sd = math.sqrt(
+                pow(mu_1, -2)
+                * ((pow(sd_2, 2) / n_2) + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2)))
+            )
+            ci = (1.96 * sd) * 100
+            rng = sorted([mean - ci, mean + ci])
+            low = rng[0]
+            high = rng[1]
+
+    return mean, low, high
+
+class DSSToxExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "dtxsid": "dtxsid",
+            "content": "content",
+            "dashboard_url": "dashboard_url",
+            "img_url": "img_url",
+            "created":"created",
+            "last_updated":"last_updated",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        img_url_str = f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{{}}?x-api-key={settings.CCTE_API_KEY}" if settings.CCTE_API_KEY else "https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{}"
+        return {
+            "dashboard_url": sql_format("https://comptox.epa.gov/dashboard/dsstoxdb/results?search={}", query_prefix + "dtxsid"),
+            "img_url": sql_format(img_url_str, query_prefix + "dtxsid"),
+        }
+
+
 class IVChemicalExport(ModelExport):
     def get_value_map(self):
         return {
             "id": "id",
             "name": "name",
             "cas": "cas",
-            "dtxsid":"dtxsid",
             "purity":"purity",
         }
 
@@ -52,22 +89,28 @@ class IVEndpointExport(ModelExport):
         return {
             "id": "id",
             "name": "name",
+            "data_type":"data_type",
+            "variance_type":"variance_type",
             "effects": "effects__name",
             "assay_type": "assay_type",
             "short_description":"short_description",
             "response_units":"response_units",
             "observation_time":"observation_time",
-            "observation_time_units":"observation_time_units",
+            "observation_time_units":"observation_time_units_display",
             "NOEL":"NOEL",
             "LOEL":"LOEL",
-            "monotonicity":"monotonicity",
-            "overall_pattern":"overall_pattern",
-            "trend_test":"trend_test",
+            "monotonicity":"monotonicity_display",
+            "overall_pattern":"overall_pattern_display",
+            "trend_test":"trend_test_display",
         }
 
     def get_annotation_map(self, query_prefix):
         return {
             "effects__name": str_m2m(query_prefix + "effects__name"),
+            "observation_time_units_display": sql_display(query_prefix + "observation_time_units", constants.ObservationTimeUnits),
+            "monotonicity_display": sql_display(query_prefix + "monotonicity", constants.Monotonicity),
+            "overall_pattern_display": sql_display(query_prefix + "overall_pattern", constants.OverallPattern),
+            "trend_test_display": sql_display(query_prefix + "trend_test", constants.TrendTestResult),
         }
 
 class IVEndpointGroupExport(ModelExport):
@@ -79,12 +122,20 @@ class IVEndpointGroupExport(ModelExport):
             "n": "n",
             "response":"response",
             "variance":"variance",
-            "difference_control":"difference_control",
-            "significant_control":"significant_control",
-            "cytotoxicity_observed":"cytotoxicity_observed",
-            "precipitation_observed":"precipitation_observed",
+            "difference_control":"difference_control_display",
+            "significant_control":"significant_control_display",
+            "cytotoxicity_observed":"cytotoxicity_observed_display",
+            "precipitation_observed":"precipitation_observed_display",
         } # do stdev, percentControlMean, percentControlLow, percentControlHigh
 
+    def get_annotation_map(self, query_prefix):
+        Observation = type('Observation', (object,), {'choices': constants.OBSERVATION_CHOICES})
+        return {
+            "difference_control_display": sql_display(query_prefix + "difference_control", constants.DifferenceControl),
+            "significant_control_display": sql_display(query_prefix + "significant_control", constants.Significance),
+            "cytotoxicity_observed_display": sql_display(query_prefix + "cytotoxicity_observed", Observation),
+            "precipitation_observed_display": sql_display(query_prefix + "precipitation_observed", Observation),
+        }
 
 class InvitroExporter(Exporter):
 
@@ -93,10 +144,12 @@ class InvitroExporter(Exporter):
             StudyExport(
                 "study",
                 "experiment__study",
+                include=("id","short_citation","study_identifier","published")
             ),
             IVChemicalExport(
                 "iv_chemical", "chemical",
             ),
+            DSSToxExport("dsstox","chemical__dtxsid",),
             IVExperimentExport(
                 "iv_experiment",
                 "experiment",
@@ -109,15 +162,47 @@ class InvitroExporter(Exporter):
             IVEndpointGroupExport(
                 "iv_endpoint_group",
                 "groups",
+                include=("dose","difference_control","significant_control","cytotoxicity_observed")
             ),
         ]
 
 import pandas as pd
 class DataPivotEndpoint2(FlatFileExporter):
+    # TODO add category, bmds benchmark
+    # otherwise done
+
+    def collapse_dsstox(self,df:pd.DataFrame):
+        # condenses the dsstox info into one column
+        dsstox_cols = [col for col in df.columns if col.startswith("dsstox-")]
+        dsstox_df = df[dsstox_cols]
+        dsstox_df.columns = dsstox_df.columns.str[7:]
+        df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
+        return df.drop(columns=dsstox_cols)
+
+    def foobar(self,df):
+        def _func(_df: pd.DataFrame)->pd.Series:
+            row = _df.iloc[0]
+            if pd.isna(row["iv_endpoint_group-dose"]):
+                row["number of doses"] = 0
+                return row.to_frame().T
+            row["number of doses"] = _df.shape[0]
+            row["minimum dose"] = _df["iv_endpoint_group-dose"].loc[lambda x: x > 0].min()
+            row["maximum dose"] = _df["iv_endpoint_group-dose"].loc[lambda x: x > 0].max()
+            for i,_row in enumerate(_df.itertuples(index=False,name=None),start=1):
+                row[f"Dose {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-dose")]
+                row[f"Change Control {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-difference_control")]
+                row[f"Significant {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-significant_control")]
+                row[f"Cytotoxicity {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-cytotoxicity_observed")]
+            row["iv_endpoint-NOEL"] = None if row["iv_endpoint-NOEL"] == -999 else _df.iloc[row["iv_endpoint-NOEL"]]["iv_endpoint_group-dose"]
+            row["iv_endpoint-LOEL"] = None if row["iv_endpoint-LOEL"] == -999 else _df.iloc[row["iv_endpoint-LOEL"]]["iv_endpoint_group-dose"]
+            return row.to_frame().T
+        groups = df.groupby("iv_endpoint-id", group_keys=False)
+        return groups.apply(_func).drop(columns=["iv_endpoint_group-dose","iv_endpoint_group-difference_control","iv_endpoint_group-significant_control","iv_endpoint_group-cytotoxicity_observed"])
+
 
 
     def build_df(self) -> pd.DataFrame:
-        df = InvitroExporter().get_df(self.queryset)
+        df = InvitroExporter().get_df(self.queryset.order_by("id", "groups"))
         study_ids = list(df["study-id"].unique())
         rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
             self.queryset.first().assessment_id,
@@ -136,6 +221,12 @@ class DataPivotEndpoint2(FlatFileExporter):
 
         df["key"] = df["iv_endpoint-id"]
 
+        df = self.collapse_dsstox(df)
+        df = self.foobar(df)
+
+
+
+
         df = df.rename(
             columns={
                 "study-id":"study id",
@@ -152,7 +243,6 @@ class DataPivotEndpoint2(FlatFileExporter):
                 "iv_chemical-id":"chemical id",
                 "iv_chemical-name":"chemical name",
                 "iv_chemical-cas":"chemical CAS",
-                "iv_chemical-dtxsid":"chemical DTXSID",
                 "iv_chemical-purity":"chemical purity",
                 "iv_experiment-id":"IVExperiment id",
                 "iv_experiment-dose_units":"Dose units",
@@ -211,30 +301,46 @@ class InvitroGroupExporter(Exporter):
 
 class DataPivotEndpointGroup2(FlatFileExporter):
 
+    def add_stdevs(self,df):
+        df["stdev"] = df.apply(lambda x:models.IVEndpointGroup.stdev(x["iv_endpoint-variance_type"],x["iv_endpoint_group-variance"],x["iv_endpoint_group-n"]),axis="columns")
+        return df
+
     def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
+        foo1 = "result-variance_type"
+        foo2 = "result_group-variance"
+        foo3 = "result_group-n"
+        foo4 = "group-isControl"
+        foo5 = "result_group-estimate"
+        foo6 = "result-estimate_type"
+        foo7 = "result_group-id"
         def _get_stdev(x: pd.Series):
-            return models.GroupResult.stdev(
-                x["result-variance_type"], x["result_group-variance"], x["result_group-n"]
+            return models.IVEndpointGroup.stdev(
+                x[foo1], x[foo2], x[foo3]
             )
 
         def _apply_results(_df1: pd.DataFrame):
-            controls = _df1.loc[_df1["group-isControl"] == True]  # noqa: E712
-            control = _df1.iloc[0] if controls.empty else controls.iloc[0]
-            n_1 = control["result_group-n"]
-            mu_1 = control["result_group-estimate"]
-            sd_1 = _get_stdev(control)
+            control = _df1.iloc[0]
+            data_type = control["iv_endpoint-data_type"]
+            n_1 = control["iv_endpoint_group-n"]
+            mu_1 = control["iv_endpoint_group-response"]
+            sd_1 = control["stdev"]
 
             def _apply_result_groups(_df2: pd.DataFrame):
+
+                if data_type == constants.DataType.CONTINUOUS:
+                    pass
+                elif data_type == constants.DataType.DICHOTOMOUS:
+                    pass
                 row = _df2.iloc[0]
-                if control["result-estimate_type"] in ["median", "mean"] and control[
-                    "result-variance_type"
+                if control[foo6] in ["median", "mean"] and control[
+                    foo1
                 ] in [
                     "SD",
                     "SE",
                     "SEM",
                 ]:
-                    n_2 = row["result_group-n"]
-                    mu_2 = row["result_group-estimate"]
+                    n_2 = row[foo3]
+                    mu_2 = row[foo5]
                     sd_2 = _get_stdev(row)
                     mean, low, high = percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2)
                     return pd.DataFrame(
@@ -244,7 +350,7 @@ class DataPivotEndpointGroup2(FlatFileExporter):
                             "percent control low",
                             "percent control high",
                         ],
-                        index=[row["result_group-id"]],
+                        index=[row[foo7]],
                     )
                 return pd.DataFrame(
                     [],
@@ -255,13 +361,13 @@ class DataPivotEndpointGroup2(FlatFileExporter):
                     ],
                 )
 
-            rgs = _df1.groupby("result_group-id", group_keys=False)
+            rgs = _df1.groupby(foo7, group_keys=False)
             return rgs.apply(_apply_result_groups)
 
         results = df.groupby("result-id", group_keys=False)
         computed_df = results.apply(_apply_results)
-        return df.join(computed_df, on="result_group-id").drop(
-            columns=["result-estimate_type", "result-variance_type", "group-isControl"]
+        return df.join(computed_df, on=foo7).drop(
+            columns=[foo6, foo1, foo4]
         )
 
     def build_df(self) -> pd.DataFrame:
@@ -283,6 +389,9 @@ class DataPivotEndpointGroup2(FlatFileExporter):
         df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint-id"]
+
+
+        df = self.add_stdevs(df)
 
         df = df.rename(
             columns={
