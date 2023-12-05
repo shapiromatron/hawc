@@ -4,6 +4,8 @@ import math
 from django.apps import apps
 from django.conf import settings
 
+from django.db.models import Exists, OuterRef
+
 from ..common.helper import FlatFileExporter
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.models import Study
@@ -40,9 +42,9 @@ class DSSToxExport(ModelExport):
     def get_value_map(self):
         return {
             "dtxsid": "dtxsid",
-            "content": "content",
             "dashboard_url": "dashboard_url",
             "img_url": "img_url",
+            "content": "content",
             "created":"created",
             "last_updated":"last_updated",
         }
@@ -69,8 +71,14 @@ class IVExperimentExport(ModelExport):
         return {
             "id": "id",
             "dose_units": "dose_units__name",
-            "metabolic_activation": "metabolic_activation",
+            "metabolic_activation": "metabolic_activation_display",
             "transfection": "transfection",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "metabolic_activation_display": sql_display(query_prefix + "metabolic_activation", constants.MetabolicActivation),
+
         }
 
 class IVCellTypeExport(ModelExport):
@@ -79,11 +87,15 @@ class IVCellTypeExport(ModelExport):
             "id": "id",
             "species": "species",
             "strain": "strain",
-            "sex": "sex",
+            "sex": "sex_display",
             "cell_type":"cell_type",
             "tissue":"tissue",
         }
-    
+    def get_annotation_map(self, query_prefix):
+        return {
+            "sex_display": sql_display(query_prefix + "sex", constants.Sex),
+
+        }
 class IVEndpointExport(ModelExport):
     def get_value_map(self):
         return {
@@ -116,13 +128,14 @@ class IVEndpointExport(ModelExport):
 class IVEndpointGroupExport(ModelExport):
     def get_value_map(self):
         return {
-            "id": "id",
+            "id":"id",
             "dose_group_id": "dose_group_id",
             "dose": "dose",
             "n": "n",
             "response":"response",
             "variance":"variance",
-            "difference_control":"difference_control_display",
+            "difference_control":"difference_control",
+            "difference_control_display":"difference_control_display",
             "significant_control":"significant_control_display",
             "cytotoxicity_observed":"cytotoxicity_observed_display",
             "precipitation_observed":"precipitation_observed_display",
@@ -144,7 +157,7 @@ class InvitroExporter(Exporter):
             StudyExport(
                 "study",
                 "experiment__study",
-                include=("id","short_citation","study_identifier","published")
+                include=("id","hero_id","pubmed_id","doi","short_citation","study_identifier","published")
             ),
             IVChemicalExport(
                 "iv_chemical", "chemical",
@@ -158,11 +171,12 @@ class InvitroExporter(Exporter):
             IVEndpointExport(
                 "iv_endpoint",
                 "",
+                exclude=("data_type","variance_type",)
             ),
             IVEndpointGroupExport(
                 "iv_endpoint_group",
                 "groups",
-                include=("dose","difference_control","significant_control","cytotoxicity_observed")
+                include=("dose","difference_control_display","significant_control","cytotoxicity_observed")
             ),
         ]
 
@@ -184,20 +198,24 @@ class DataPivotEndpoint2(FlatFileExporter):
             row = _df.iloc[0]
             if pd.isna(row["iv_endpoint_group-dose"]):
                 row["number of doses"] = 0
+                row["minimum dose"] = None
+                row["maximum dose"] = None
+                row["iv_endpoint-NOEL"] = None
+                row["iv_endpoint-LOEL"] = None
                 return row.to_frame().T
             row["number of doses"] = _df.shape[0]
             row["minimum dose"] = _df["iv_endpoint_group-dose"].loc[lambda x: x > 0].min()
             row["maximum dose"] = _df["iv_endpoint_group-dose"].loc[lambda x: x > 0].max()
             for i,_row in enumerate(_df.itertuples(index=False,name=None),start=1):
                 row[f"Dose {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-dose")]
-                row[f"Change Control {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-difference_control")]
+                row[f"Change Control {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-difference_control_display")]
                 row[f"Significant {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-significant_control")]
                 row[f"Cytotoxicity {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-cytotoxicity_observed")]
             row["iv_endpoint-NOEL"] = None if row["iv_endpoint-NOEL"] == -999 else _df.iloc[row["iv_endpoint-NOEL"]]["iv_endpoint_group-dose"]
             row["iv_endpoint-LOEL"] = None if row["iv_endpoint-LOEL"] == -999 else _df.iloc[row["iv_endpoint-LOEL"]]["iv_endpoint_group-dose"]
             return row.to_frame().T
         groups = df.groupby("iv_endpoint-id", group_keys=False)
-        return groups.apply(_func).drop(columns=["iv_endpoint_group-dose","iv_endpoint_group-difference_control","iv_endpoint_group-significant_control","iv_endpoint_group-cytotoxicity_observed"])
+        return groups.apply(_func).drop(columns=["iv_endpoint_group-dose","iv_endpoint_group-difference_control_display","iv_endpoint_group-significant_control","iv_endpoint_group-cytotoxicity_observed"])
 
 
 
@@ -250,7 +268,7 @@ class DataPivotEndpoint2(FlatFileExporter):
                 "iv_experiment-transfection":"Transfection",
                 "iv_cell_type-id":"IVCellType id",
                 "iv_cell_type-species":"cell species",
-                "iv_cell_type-stain":"cell strain",
+                "iv_cell_type-strain":"cell strain",
                 "iv_cell_type-sex":"cell sex",
                 "iv_cell_type-cell_type":"cell type",
                 "iv_cell_type-tissue":"cell tissue",
@@ -284,6 +302,7 @@ class InvitroGroupExporter(Exporter):
             IVChemicalExport(
                 "iv_chemical", "chemical",
             ),
+            DSSToxExport("dsstox","chemical__dtxsid",),
             IVExperimentExport(
                 "iv_experiment",
                 "experiment",
@@ -301,77 +320,58 @@ class InvitroGroupExporter(Exporter):
 
 class DataPivotEndpointGroup2(FlatFileExporter):
 
+    def collapse_dsstox(self,df:pd.DataFrame):
+        # condenses the dsstox info into one column
+        dsstox_cols = [col for col in df.columns if col.startswith("dsstox-")]
+        dsstox_df = df[dsstox_cols]
+        dsstox_df.columns = dsstox_df.columns.str[7:]
+        df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
+        return df.drop(columns=dsstox_cols)
+
     def add_stdevs(self,df):
         df["stdev"] = df.apply(lambda x:models.IVEndpointGroup.stdev(x["iv_endpoint-variance_type"],x["iv_endpoint_group-variance"],x["iv_endpoint_group-n"]),axis="columns")
-        return df
+        return df.drop(columns=["iv_endpoint-variance_type","iv_endpoint_group-variance"])
 
     def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
-        foo1 = "result-variance_type"
-        foo2 = "result_group-variance"
-        foo3 = "result_group-n"
-        foo4 = "group-isControl"
-        foo5 = "result_group-estimate"
-        foo6 = "result-estimate_type"
-        foo7 = "result_group-id"
-        def _get_stdev(x: pd.Series):
-            return models.IVEndpointGroup.stdev(
-                x[foo1], x[foo2], x[foo3]
-            )
 
         def _apply_results(_df1: pd.DataFrame):
             control = _df1.iloc[0]
+
+            _df1["low_dose"] = _df1["iv_endpoint_group-dose"].loc[lambda x: x > 0].min()
+            _df1["high_dose"] = _df1["iv_endpoint_group-dose"].loc[lambda x: x > 0].max()
+
+            _df1["iv_endpoint-NOEL"] = None if control["iv_endpoint-NOEL"] == -999 else _df1.iloc[control["iv_endpoint-NOEL"]]["iv_endpoint_group-dose"]
+            _df1["iv_endpoint-LOEL"] = None if control["iv_endpoint-LOEL"] == -999 else _df1.iloc[control["iv_endpoint-LOEL"]]["iv_endpoint_group-dose"]
+
             data_type = control["iv_endpoint-data_type"]
             n_1 = control["iv_endpoint_group-n"]
             mu_1 = control["iv_endpoint_group-response"]
             sd_1 = control["stdev"]
 
-            def _apply_result_groups(_df2: pd.DataFrame):
+            def _apply_result_groups(test: pd.Series):
 
                 if data_type == constants.DataType.CONTINUOUS:
-                    pass
+                    n_2 = test["iv_endpoint_group-n"]
+                    mu_2 = test["iv_endpoint_group-response"]
+                    sd_2 = test["stdev"]
+                    test["percent control mean"], test["percent control low"], test["percent control high"] = percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2)
                 elif data_type == constants.DataType.DICHOTOMOUS:
+                    # TODO this seems to be a dead conditional;
+                    # invitro has no 'incidence' variables so
+                    # nothing is ever computed here
                     pass
-                row = _df2.iloc[0]
-                if control[foo6] in ["median", "mean"] and control[
-                    foo1
-                ] in [
-                    "SD",
-                    "SE",
-                    "SEM",
-                ]:
-                    n_2 = row[foo3]
-                    mu_2 = row[foo5]
-                    sd_2 = _get_stdev(row)
-                    mean, low, high = percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2)
-                    return pd.DataFrame(
-                        [[mean, low, high]],
-                        columns=[
-                            "percent control mean",
-                            "percent control low",
-                            "percent control high",
-                        ],
-                        index=[row[foo7]],
-                    )
-                return pd.DataFrame(
-                    [],
-                    columns=[
-                        "percent control mean",
-                        "percent control low",
-                        "percent control high",
-                    ],
-                )
+                return test
+            
 
-            rgs = _df1.groupby(foo7, group_keys=False)
-            return rgs.apply(_apply_result_groups)
+            return _df1.apply(_apply_result_groups,axis="columns")
 
-        results = df.groupby("result-id", group_keys=False)
+
+        results = df.groupby("iv_endpoint-id", group_keys=False)
         computed_df = results.apply(_apply_results)
-        return df.join(computed_df, on=foo7).drop(
-            columns=[foo6, foo1, foo4]
-        )
+        return computed_df.drop(columns="iv_endpoint-data_type")
 
     def build_df(self) -> pd.DataFrame:
-        df = InvitroGroupExporter().get_df(self.queryset)
+        df = InvitroGroupExporter().get_df(self.queryset.filter(Exists(models.IVEndpointGroup.objects.filter(endpoint=OuterRef('pk')))).order_by("id", "groups"))
         study_ids = list(df["study-id"].unique())
         rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
             self.queryset.first().assessment_id,
@@ -388,10 +388,13 @@ class DataPivotEndpointGroup2(FlatFileExporter):
         )
         df = df.join(rob_df, on="study-id")
 
-        df["key"] = df["iv_endpoint-id"]
+        df["key"] = df["iv_endpoint_group-id"]
 
 
         df = self.add_stdevs(df)
+        df = self._add_percent_control(df)
+        df = self.collapse_dsstox(df)
+        df["iv_endpoint_group-difference_control"] = df["iv_endpoint_group-difference_control"].map(models.IVEndpointGroup.DIFFERENCE_CONTROL_SYMBOLS)
 
         df = df.rename(
             columns={
@@ -414,7 +417,7 @@ class DataPivotEndpointGroup2(FlatFileExporter):
                 "iv_experiment-transfection":"transfection",
                 "iv_cell_type-id":"IVCellType id",
                 "iv_cell_type-species":"cell species",
-                "iv_cell_type-stain":"cell strain",
+                "iv_cell_type-strain":"cell strain",
                 "iv_cell_type-sex":"cell sex",
                 "iv_cell_type-cell_type":"cell type",
                 "iv_cell_type-tissue":"cell tissue",
@@ -431,9 +434,22 @@ class DataPivotEndpointGroup2(FlatFileExporter):
                 "iv_endpoint-monotonicity":"monotonicity",
                 "iv_endpoint-overall_pattern":"overall pattern",
                 "iv_endpoint-trend_test":"trend test result",
+
             } # need low_dose, high_dose, group specific (ie key and lower)
         ) # find out if name differences are important in visuals; this is similar to regular dp export
 
+        df = df.rename(
+            columns={
+                "iv_endpoint_group-dose_group_id":"dose index",
+                "iv_endpoint_group-dose":"dose",
+                "iv_endpoint_group-n":"N",
+                "iv_endpoint_group-response":"response",
+                "iv_endpoint_group-difference_control":"change from control",
+                "iv_endpoint_group-significant_control":"significant from control",
+                "iv_endpoint_group-cytotoxicity_observed":"cytotoxicity observed",
+                "iv_endpoint_group-precipitation_observed":"precipitation observed",
+            }
+        )
         return df
 
 
