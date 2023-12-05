@@ -114,6 +114,9 @@ tfoot > tr > td {
 .box-shadow-2 {
     box-shadow: #0000003d 0px 1px 6px -1px;
 }
+.text-black {
+    color: black !important;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
