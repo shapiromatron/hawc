@@ -186,87 +186,40 @@
 </div>
 
 
+{% if view.can_access_restricted_downloads %}
+<h3>Data extractions</h3>
 <p class='form-text text-muted mb-3'>
-  Assessment downloads availalbe for team members or higher.
+  Assessment downloads available for team members or higher.
 </p>
 <div class="row">
 <div class="col-xl-6">
-    <h3>Data extractions</h3>
     <div class="bg-light border shadow p-3">
         <p><b>Animal bioassy export</b></p>
         {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
-        <span class="d-inline-block" style="width:200px">Published Only:</span>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=tsv">tsv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=csv">csv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=json">json</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=html">html</a>
-        <br/>
-        <span class="d-inline-block" style="width:200px">Published & Unpublished:</span>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=tsv">tsv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=csv">csv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=json">json</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=html">html</a>
+        {% include "assessment/fragments/assessment_export_links.html" with link=the_url %}
         <p class="text-muted mt-1">Help text</p>
 
-        <p><b>Animal bioassy export</b></p>
-        {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
-        <span class="d-inline-block" style="width:200px">Published Only:</span>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=tsv">tsv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=csv">csv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=json">json</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=html">html</a>
-        <br/>
-        <span class="d-inline-block" style="width:200px">Published & Unpublished:</span>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=tsv">tsv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=csv">csv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=json">json</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=html">html</a>
+        <p><b>Animal bioassy endpoint export</b></p>
+        {% url 'animal:api:assessment-endpoint-export' assessment.pk as the_url %}
+        {% include "assessment/fragments/assessment_export_links.html" with link=the_url %}
         <p class="text-muted mt-1">Help text</p>
     </div>
 </div>
 
 <div class="col-xl-6">
-    <h3>Data extractions</h3>
     <div class="bg-light border shadow p-3">
-        <p><b>Animal bioassy export</b></p>
-        {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
-        <span class="d-inline-block" style="width:200px">Published Only:</span>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=tsv">tsv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=csv">csv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=json">json</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=html">html</a>
-        <br/>
-        <span class="d-inline-block" style="width:200px">Published & Unpublished:</span>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=tsv">tsv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=csv">csv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=json">json</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=html">html</a>
+        <p><b>Epidemiology export</b></p>
+        {% url 'epi:api:assessment-export' assessment.pk as the_url %}
+        {% include "assessment/fragments/assessment_export_links.html" with link=the_url %}
         <p class="text-muted mt-1">Help text</p>
 
         <p><b>Animal bioassy export</b></p>
         {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
-        <span class="d-inline-block" style="width:200px">Published Only:</span>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=tsv">tsv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=csv">csv</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=json">json</a>
-        <a class="btn btn-sm btn-primary mx-1" href="{{the_url}}?format=html">html</a>
-        <br/>
-        <span class="d-inline-block" style="width:200px">Published & Unpublished:</span>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=xlsx">xlsx</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=tsv">tsv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=csv">csv</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=json">json</a>
-        <a class="btn btn-sm btn-success mx-1" href="{{the_url}}?unpublished=true&format=html">html</a>
+        {% include "assessment/fragments/assessment_export_links.html" with link=the_url %}
         <p class="text-muted mt-1">Help text</p>
     </div>
 </div>
+{% endif %}
 
 {% endblock %}
 
