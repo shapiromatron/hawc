@@ -71,6 +71,28 @@ def check_403(
     return response
 
 
+def check_404(
+    client: Client | APIClient, url: str, kw: dict | None = None
+) -> HttpResponse | Response:
+    """Check that a GET request with the given client returns a 404
+
+    Args:
+        client (Client | APIClient): A client object
+        url (str): The URL to request
+        kw (dict | None, optional): Any additional kwargs to pass to the client.
+
+    Returns:
+        A response instance
+    """
+    if kw is None:
+        kw = {}
+    if isinstance(client, APIClient):
+        kw.setdefault("format", "json")
+    response = client.get(url, **kw)
+    assert response.status_code == 404
+    return response
+
+
 def check_200(
     client: Client | APIClient, url: str, kw: dict | None = None
 ) -> HttpResponse | Response:

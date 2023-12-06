@@ -1,7 +1,11 @@
 import pytest
 from django.http.response import HttpResponse
+from django.test import RequestFactory
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
+from wagtail.admin.views.account import BaseSettingsPanel, NameEmailSettingsPanel, account
+
+from hawc.apps.myuser.models import HAWCUser
 
 from ..test_utils import check_200, get_client
 
@@ -72,7 +76,6 @@ class TestDashboard:
 
 
 @pytest.mark.django_db
-@pytest.mark.django_db
 class TestMediaPreview:
     def test_permission(self):
         url = reverse("admin_media_preview")
@@ -85,3 +88,17 @@ class TestMediaPreview:
         client = get_client("admin")
         resp = check_200(client, url)
         assertTemplateUsed(resp, "admin/media_preview.html")
+
+
+@pytest.mark.django_db
+class TestWagtailAccounts:
+    def test_no_name_email_panel(self):
+        # confirm `NameEmailSettingsPanel` is removed from the accounts page
+        factory = RequestFactory()
+        request = factory.get("/admin/cms/account/")
+        request.user = HAWCUser.objects.filter(is_superuser=True).first()
+        response = account(request)
+        for panel_set in response.context_data["panels_by_tab"].values():
+            for panel in panel_set:
+                assert isinstance(panel, BaseSettingsPanel)
+                assert not isinstance(panel, NameEmailSettingsPanel)
