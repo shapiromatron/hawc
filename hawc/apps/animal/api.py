@@ -40,6 +40,9 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
         exporter = exports.EndpointGroupFlatComplete(
@@ -58,6 +61,9 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
         exporter = exports.EndpointSummary(

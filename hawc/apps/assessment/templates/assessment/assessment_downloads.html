@@ -132,7 +132,7 @@
             <p class="text-muted">No data available.</p>
             {% else %}
             {% url 'meta:api:assessment-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epimeta-data' button_text='Complete Export' help_text="All epidemiology meta-analysis data." allow_unpublished=False %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epimeta-data' button_text='Complete Export' help_text="All epidemiology meta-analysis data." %}
             {% endif %}
           </li>
         </ul>
@@ -149,7 +149,7 @@
             <p class="text-muted">No data available.</p>
             {% else %}
             {% url 'invitro:api:assessment-full-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='invitro-data' button_text='Complete Export' help_text="All in-vitro data." allow_unpublished=False %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='invitro-data' button_text='Complete Export' help_text="All in-vitro data." %}
             {% endif %}
           </li>
         </ul>
