@@ -1,6 +1,10 @@
 <div class="input-group my-2" style="width: fit-content;" role="group" aria-label="Downlink link button group with format select">
     <div class="input-group-prepend">
+    {% if allow_unpublished %}
         <a class="btn btn-primary" style="line-height: 1.5rem;" type="button" id="{{name}}-url" href="{{link}}?format={{format}}?unpublished=false"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;{{button_text}}</a>
+    {% else %}
+        <a class="btn btn-primary" style="line-height: 1.5rem;" type="button" id="{{name}}-url" href="{{link}}?format={{format}}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;{{button_text}}</a>
+    {% endif %}
     </div>
     <select id="{{name}}" class="custom-select" required>
         <option selected value="xlsx">xlsx</option>
