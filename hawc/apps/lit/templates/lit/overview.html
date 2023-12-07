@@ -69,17 +69,17 @@
           </div>
         </a>
         {% comment %} row #2 {% endcomment %}
-        <div class="lit-review-box box-shadow w-30 justify-content-between py-4" style="height: 235px">
+        <div class="lit-review-box box-shadow w-30 justify-content-between align-items-center p-4" style="height: 235px">
           {% if obj_perms.edit %}
             {% if assessment.literature_settings.conflict_resolution %}
-            <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&my_tags=untagged">Tag</a>
+            <a class="btn btn-primary" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&my_tags=untagged">Tag</a>
             {% else %}
-            <a class="btn btn-primary my-1 py-1" href="{% url 'lit:tag' assessment.pk %}?tags=untagged">Tag</a>
+            <a class="btn btn-primary" href="{% url 'lit:tag' assessment.pk %}?tags=untagged">Tag</a>
             {% endif %}
           {% endif %}
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
-          <a class="btn btn-primary my-1 py-1" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
+          <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
+          <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Search</a>
+          <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
         </div>
         {% if overview.total_references > 10 %}
         <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">

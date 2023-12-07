@@ -419,6 +419,11 @@ div.smart-tag.active {
     border: 2px dotted rgb(22, 46, 81);
     background-color: white;
 }
+.lit-review-box>.btn {
+    padding: 0.35rem;
+    width: 70%;
+    font-size: large;
+}
 #refFilter h4,
 #fullRefList p {
     overflow: hidden;
