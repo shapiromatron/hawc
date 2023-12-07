@@ -361,10 +361,10 @@ class AssessmentDownloads(BaseDetail):
         kwargs.update(
             EpiVersion=constants.EpiVersion,
         )
+        kwargs["allow_unpublished"] = self.assessment.user_is_team_member_or_higher(
+            self.request.user
+        )
         return super().get_context_data(**kwargs)
-
-    def can_access_restricted_downloads(self):
-        return self.assessment.user_is_team_member_or_higher(self.request.user)
 
 
 # Assessment Detail views
