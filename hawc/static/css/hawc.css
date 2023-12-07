@@ -93,6 +93,15 @@ tfoot > tr > td {
     background-color: #f3f3f3 !important;
     text-decoration: none;
 }
+.box-shadow.clickable:hover {
+    box-shadow: rgba(0, 0, 0, 0.45) 0px 3px 11px;
+}
+.box-shadow-minor.clickable:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 2px 2px 6px 0px;
+}
+.box-shadow.clickable, .box-shadow-minor.clickable {
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
 .bg-lightblue {
     background-color: #eaf6ff;
 }
@@ -111,7 +120,7 @@ tfoot > tr > td {
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
-.box-shadow-2 {
+.box-shadow-minor {
     box-shadow: #0000003d 0px 1px 6px -1px;
 }
 .text-black {
