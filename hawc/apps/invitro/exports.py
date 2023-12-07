@@ -1,5 +1,6 @@
 from copy import copy
 import math
+import pandas as pd
 
 from django.apps import apps
 from django.conf import settings
@@ -16,15 +17,11 @@ from ..materialized.models import FinalRiskOfBiasScore
 from ..study.exports import StudyExport
 from . import constants, models
 
-# TODO make a modelexport for dtxsid
-# TODO add groups, and dataframe pivot to provide some missing values?
-#      or try to use sql
-# TODO add minimum dose, maximum dose, number of doses
 
 def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
     mean = low = high = None
 
-    if mu_1 and mu_2 and mu_1 != 0:
+    if mu_1 is not None and mu_2 is not None and mu_1 > 0 and mu_2 > 0:
         mean = (mu_2 - mu_1) / mu_1 * 100.0
         if sd_1 and sd_2 and n_1 and n_2:
             sd = math.sqrt(
@@ -139,7 +136,7 @@ class IVEndpointGroupExport(ModelExport):
             "significant_control":"significant_control_display",
             "cytotoxicity_observed":"cytotoxicity_observed_display",
             "precipitation_observed":"precipitation_observed_display",
-        } # do stdev, percentControlMean, percentControlLow, percentControlHigh
+        }
 
     def get_annotation_map(self, query_prefix):
         Observation = type('Observation', (object,), {'choices': constants.OBSERVATION_CHOICES})
@@ -150,6 +147,13 @@ class IVEndpointGroupExport(ModelExport):
             "precipitation_observed_display": sql_display(query_prefix + "precipitation_observed", Observation),
         }
 
+class IVBenchmarkExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "benchmark": "benchmark",
+            "value": "value",
+        } 
 class InvitroExporter(Exporter):
 
     def build_modules(self) -> list[ModelExport]:
@@ -176,16 +180,16 @@ class InvitroExporter(Exporter):
             IVEndpointGroupExport(
                 "iv_endpoint_group",
                 "groups",
-                include=("dose","difference_control_display","significant_control","cytotoxicity_observed")
+                include=("id","dose","difference_control_display","significant_control","cytotoxicity_observed")
             ),
+            IVBenchmarkExport("iv_benchmark","benchmarks",)
         ]
 
-import pandas as pd
-class DataPivotEndpoint2(FlatFileExporter):
-    # TODO add category, bmds benchmark
-    # otherwise done
 
-    def collapse_dsstox(self,df:pd.DataFrame):
+class DataPivotEndpoint2(FlatFileExporter):
+    # TODO add category, otherwise done
+
+    def handle_dsstox(self,df:pd.DataFrame)->pd.DataFrame:
         # condenses the dsstox info into one column
         dsstox_cols = [col for col in df.columns if col.startswith("dsstox-")]
         dsstox_df = df[dsstox_cols]
@@ -193,34 +197,59 @@ class DataPivotEndpoint2(FlatFileExporter):
         df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
         return df.drop(columns=dsstox_cols)
 
-    def foobar(self,df):
-        def _func(_df: pd.DataFrame)->pd.Series:
-            row = _df.iloc[0]
-            if pd.isna(row["iv_endpoint_group-dose"]):
-                row["number of doses"] = 0
-                row["minimum dose"] = None
-                row["maximum dose"] = None
-                row["iv_endpoint-NOEL"] = None
-                row["iv_endpoint-LOEL"] = None
-                return row.to_frame().T
-            row["number of doses"] = _df.shape[0]
-            row["minimum dose"] = _df["iv_endpoint_group-dose"].loc[lambda x: x > 0].min()
-            row["maximum dose"] = _df["iv_endpoint_group-dose"].loc[lambda x: x > 0].max()
-            for i,_row in enumerate(_df.itertuples(index=False,name=None),start=1):
-                row[f"Dose {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-dose")]
-                row[f"Change Control {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-difference_control_display")]
-                row[f"Significant {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-significant_control")]
-                row[f"Cytotoxicity {i}"] = _row[_df.columns.get_loc("iv_endpoint_group-cytotoxicity_observed")]
-            row["iv_endpoint-NOEL"] = None if row["iv_endpoint-NOEL"] == -999 else _df.iloc[row["iv_endpoint-NOEL"]]["iv_endpoint_group-dose"]
-            row["iv_endpoint-LOEL"] = None if row["iv_endpoint-LOEL"] == -999 else _df.iloc[row["iv_endpoint-LOEL"]]["iv_endpoint_group-dose"]
-            return row.to_frame().T
-        groups = df.groupby("iv_endpoint-id", group_keys=False)
-        return groups.apply(_func).drop(columns=["iv_endpoint_group-dose","iv_endpoint_group-difference_control_display","iv_endpoint_group-significant_control","iv_endpoint_group-cytotoxicity_observed"])
+    
+    def handle_dose_groups(self,df:pd.DataFrame)->pd.DataFrame:
+        def _func(group_df: pd.DataFrame)->pd.Series:
+            # handle case with no dose groups
+            if group_df["iv_endpoint_group-id"].isna().all():
+                group_df["number of doses"] = 0
+                group_df["minimum dose"] = None
+                group_df["maximum dose"] = None
+                group_df["iv_endpoint-NOEL"] = None
+                group_df["iv_endpoint-LOEL"] = None
+                return group_df
+            # only interested in unique, non-control dose groups
+            unique_df = group_df.drop_duplicates(subset="iv_endpoint_group-id")
+            non_control_df = unique_df.loc[unique_df["iv_endpoint_group-dose"] > 0]
+            # add dose related columns
+            group_df["number of doses"] = non_control_df.shape[0]
+            group_df["minimum dose"] = non_control_df["iv_endpoint_group-dose"].min()
+            group_df["maximum dose"] = non_control_df["iv_endpoint_group-dose"].max()
+            NOEL_index = unique_df.iloc[0]["iv_endpoint-NOEL"]
+            group_df["iv_endpoint-NOEL"] = None if NOEL_index == -999 else unique_df.iloc[NOEL_index]["iv_endpoint_group-dose"]
+            LOEL_index = unique_df.iloc[0]["iv_endpoint-LOEL"]
+            group_df["iv_endpoint-LOEL"] = None if LOEL_index == -999 else unique_df.iloc[LOEL_index]["iv_endpoint_group-dose"]
+            for i,row in enumerate(non_control_df.itertuples(index=False,name=None),start=1):
+                group_df[f"Dose {i}"] = row[non_control_df.columns.get_loc("iv_endpoint_group-dose")]
+                group_df[f"Change Control {i}"] = row[non_control_df.columns.get_loc("iv_endpoint_group-difference_control_display")]
+                group_df[f"Significant {i}"] = row[non_control_df.columns.get_loc("iv_endpoint_group-significant_control")]
+                group_df[f"Cytotoxicity {i}"] = row[non_control_df.columns.get_loc("iv_endpoint_group-cytotoxicity_observed")]
+            # return a df that is dose group agnostic
+            return group_df.drop_duplicates(subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(["iv_endpoint_group-id"]))
+        return df.groupby("iv_endpoint-id", group_keys=False).apply(_func).drop(columns=["iv_endpoint_group-id","iv_endpoint_group-dose","iv_endpoint_group-difference_control_display","iv_endpoint_group-significant_control","iv_endpoint_group-cytotoxicity_observed"])
 
+
+    def handle_benchmarks(self,df:pd.DataFrame)->pd.DataFrame:
+        def _func(group_df:pd.DataFrame):
+            # handle case with no benchmarks
+            if group_df["iv_benchmark-id"].isna().all():
+                # no need to deduplicate, since there should be
+                # only one benchmark id: None
+                return group_df
+            # only interested in unique benchmarks
+            unique_df = group_df.drop_duplicates(subset="iv_benchmark-id")
+            # add the benchmark columns
+            for i,row in enumerate(unique_df.itertuples(index=False,name=None),start=1):
+                group_df[f"Benchmark Type {i}"] = row[unique_df.columns.get_loc("iv_benchmark-benchmark")]
+                group_df[f"Benchmark Value {i}"] = row[unique_df.columns.get_loc("iv_benchmark-value")]
+            # return a df that is benchmark agnostic
+            return group_df.drop_duplicates(subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(["iv_benchmark-id"]))
+
+        return df.groupby("iv_endpoint-id", group_keys=False).apply(_func).drop(columns=["iv_benchmark-id","iv_benchmark-benchmark","iv_benchmark-value"])
 
 
     def build_df(self) -> pd.DataFrame:
-        df = InvitroExporter().get_df(self.queryset.order_by("id", "groups"))
+        df = InvitroExporter().get_df(self.queryset.select_related("experiment__study","chemical__dtxsid","experiment__cell_type").prefetch_related("groups","benchmarks").order_by("id", "groups","benchmarks"))
         study_ids = list(df["study-id"].unique())
         rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
             self.queryset.first().assessment_id,
@@ -239,8 +268,9 @@ class DataPivotEndpoint2(FlatFileExporter):
 
         df["key"] = df["iv_endpoint-id"]
 
-        df = self.collapse_dsstox(df)
-        df = self.foobar(df)
+        df = self.handle_dose_groups(df)
+        df = self.handle_benchmarks(df)
+        df = self.handle_dsstox(df)
 
 
 
@@ -315,6 +345,7 @@ class InvitroGroupExporter(Exporter):
             IVEndpointGroupExport(
                 "iv_endpoint_group",
                 "groups",
+                exclude=("difference_control_display",)
             ),
         ]
 
@@ -332,7 +363,11 @@ class DataPivotEndpointGroup2(FlatFileExporter):
         df["stdev"] = df.apply(lambda x:models.IVEndpointGroup.stdev(x["iv_endpoint-variance_type"],x["iv_endpoint_group-variance"],x["iv_endpoint_group-n"]),axis="columns")
         return df.drop(columns=["iv_endpoint-variance_type","iv_endpoint_group-variance"])
 
+
+
     def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
+
+
 
         def _apply_results(_df1: pd.DataFrame):
             control = _df1.iloc[0]
@@ -371,7 +406,7 @@ class DataPivotEndpointGroup2(FlatFileExporter):
         return computed_df.drop(columns="iv_endpoint-data_type")
 
     def build_df(self) -> pd.DataFrame:
-        df = InvitroGroupExporter().get_df(self.queryset.filter(Exists(models.IVEndpointGroup.objects.filter(endpoint=OuterRef('pk')))).order_by("id", "groups"))
+        df = InvitroGroupExporter().get_df(self.queryset.select_related("experiment__study","chemical__dtxsid","experiment__cell_type").prefetch_related("groups").filter(Exists(models.IVEndpointGroup.objects.filter(endpoint=OuterRef('pk')))).order_by("id", "groups"))
         study_ids = list(df["study-id"].unique())
         rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
             self.queryset.first().assessment_id,
@@ -388,13 +423,14 @@ class DataPivotEndpointGroup2(FlatFileExporter):
         )
         df = df.join(rob_df, on="study-id")
 
-        df["key"] = df["iv_endpoint_group-id"]
-
 
         df = self.add_stdevs(df)
         df = self._add_percent_control(df)
         df = self.collapse_dsstox(df)
         df["iv_endpoint_group-difference_control"] = df["iv_endpoint_group-difference_control"].map(models.IVEndpointGroup.DIFFERENCE_CONTROL_SYMBOLS)
+
+        df["key"] = df["iv_endpoint_group-id"]
+        df = df.drop(columns=["iv_endpoint_group-id"])
 
         df = df.rename(
             columns={
@@ -435,8 +471,8 @@ class DataPivotEndpointGroup2(FlatFileExporter):
                 "iv_endpoint-overall_pattern":"overall pattern",
                 "iv_endpoint-trend_test":"trend test result",
 
-            } # need low_dose, high_dose, group specific (ie key and lower)
-        ) # find out if name differences are important in visuals; this is similar to regular dp export
+            }
+        )
 
         df = df.rename(
             columns={
@@ -579,6 +615,7 @@ class DataPivotEndpoint(FlatFileExporter):
                 doses.pop(0)
                 diffs.pop(0)
                 sigs.pop(0)
+                #cytotoxes.pop(0)
 
             number_doses = len(doses)
 
