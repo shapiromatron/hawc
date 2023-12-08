@@ -281,6 +281,7 @@ class DataPivotEndpoint(FlatFileExporter):
                     "iv_endpoint_group-cytotoxicity_observed",
                 ]
             )
+            .reset_index(drop=True)
         )
 
     def handle_benchmarks(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -311,6 +312,7 @@ class DataPivotEndpoint(FlatFileExporter):
             df.groupby("iv_endpoint-id", group_keys=False)
             .apply(_func)
             .drop(columns=["iv_benchmark-id", "iv_benchmark-benchmark", "iv_benchmark-value"])
+            .reset_index(drop=True)
         )
 
     def build_df(self) -> pd.DataFrame:
@@ -321,21 +323,22 @@ class DataPivotEndpoint(FlatFileExporter):
             .prefetch_related("groups", "benchmarks")
             .order_by("id", "groups", "benchmarks")
         )
-        study_ids = list(df["study-id"].unique())
-        rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-            self.queryset.first().assessment_id,
-            study_ids,
-            "invitro",
-        )
-        rob_df = pd.DataFrame(
-            data=[
-                [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
-                for study_id in study_ids
-            ],
-            columns=list(rob_headers.values()),
-            index=study_ids,
-        )
-        df = df.join(rob_df, on="study-id")
+        if obj := self.queryset.first():
+            study_ids = list(df["study-id"].unique())
+            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
+                obj.assessment_id,
+                study_ids,
+                "invitro",
+            )
+            rob_df = pd.DataFrame(
+                data=[
+                    [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
+                    for study_id in study_ids
+                ],
+                columns=list(rob_headers.values()),
+                index=study_ids,
+            )
+            df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint-id"]
 
@@ -482,6 +485,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             df.groupby("iv_endpoint-id", group_keys=False)
             .apply(_func)
             .drop(columns="iv_endpoint-data_type")
+            .reset_index(drop=True)
         )
 
     def handle_dsstox(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -501,21 +505,22 @@ class DataPivotEndpointGroup(FlatFileExporter):
             .filter(Exists(models.IVEndpointGroup.objects.filter(endpoint=OuterRef("pk"))))
             .order_by("id", "groups")
         )
-        study_ids = list(df["study-id"].unique())
-        rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-            self.queryset.first().assessment_id,
-            study_ids,
-            "invitro",
-        )
-        rob_df = pd.DataFrame(
-            data=[
-                [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
-                for study_id in study_ids
-            ],
-            columns=list(rob_headers.values()),
-            index=study_ids,
-        )
-        df = df.join(rob_df, on="study-id")
+        if obj := self.queryset.first():
+            study_ids = list(df["study-id"].unique())
+            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
+                obj.assessment_id,
+                study_ids,
+                "invitro",
+            )
+            rob_df = pd.DataFrame(
+                data=[
+                    [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
+                    for study_id in study_ids
+                ],
+                columns=list(rob_headers.values()),
+                index=study_ids,
+            )
+            df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint_group-id"]
         df = df.drop(columns=["iv_endpoint_group-id"])
