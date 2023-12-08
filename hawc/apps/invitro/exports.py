@@ -222,6 +222,9 @@ class DataPivotEndpoint(FlatFileExporter):
         dsstox_df = df[dsstox_cols]
         dsstox_df.columns = dsstox_df.columns.str[7:]
         df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
+        df["chemical DTXSID"] = df["chemical DTXSID"].apply(
+            lambda x: None if pd.isna(x["dtxsid"]) else x
+        )
         return df.drop(columns=dsstox_cols)
 
     def handle_dose_groups(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -494,6 +497,9 @@ class DataPivotEndpointGroup(FlatFileExporter):
         dsstox_df = df[dsstox_cols]
         dsstox_df.columns = dsstox_df.columns.str[7:]
         df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
+        df["chemical DTXSID"] = df["chemical DTXSID"].apply(
+            lambda x: None if pd.isna(x["dtxsid"]) else x
+        )
         return df.drop(columns=dsstox_cols)
 
     def build_df(self) -> pd.DataFrame:
