@@ -151,7 +151,7 @@ class ModelExport:
             return df
         tz = timezone.get_default_timezone()
         for key in [self.get_column_name("created"), self.get_column_name("last_updated")]:
-            if key in df.columns:
+            if key in df.columns and not df[key].isnull().all():
                 df[key] = df[key].dt.tz_convert(tz).dt.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
         return df
 
