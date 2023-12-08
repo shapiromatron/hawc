@@ -1,21 +1,10 @@
+import reversion
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from ..assessment.models import BaseEndpoint, DSSTox
+from ..assessment.models import DSSTox
 from ..vocab.models import Term
 from . import constants, managers
-
-"""
-Generate a GraphViz dot file of this model:
-
-    manage.py graph_models animalv2 > /path/to/file_to_create.dot
-
-(see https://django-extensions.readthedocs.io/en/latest/graph_models.html for details)
-
-Make an svg/png out of it (assuming you've installed graphviz):
-
-    dot -Tsvg /path/to/previously_generated_file.dot > converted.svg
-"""
 
 
 class Experiment(models.Model):
@@ -170,8 +159,10 @@ class AnimalGroup(models.Model):
         max_length=128, help_text="Source from where animals were acquired", blank=True
     )
     lifestage_at_exposure = models.CharField(
-        max_length=32,
         blank=True,
+        default="",
+        max_length=5,
+        choices=constants.Lifestage.choices,
         help_text="Definitions: <strong>Developmental</strong>: Prenatal and perinatal exposure in dams "
         "or postnatal exposure in offspring until sexual maturity (~6 weeks "
         "in rats and mice). Include studies with pre-mating exposure <em>if the "
@@ -182,15 +173,18 @@ class AnimalGroup(models.Model):
         "maturity and continue to adulthood)",
     )
     lifestage_at_assessment = models.CharField(
-        max_length=32,
         blank=True,
-        help_text="Definitions: <b>Developmental</b>: Prenatal and perinatal exposure in dams or "
-        + "postnatal exposure in offspring until sexual maturity (~6 weeks in rats and "
-        + "mice). Include studies with pre-mating exposure if the endpoint focus is "
-        + "developmental. <b>Juvenile</b>: Exposure between weaned and sexual maturity. <b>Adult</b>: Exposure in sexually mature males or females. <b>Adult "
-        + "(gestation)</b>: Exposure in dams during pregnancy. <b>Multi-lifestage</b>: includes both "
-        + "developmental and adult (i.e., multi-generational studies, exposure that start "
-        + "before sexual maturity and continue to adulthood)",
+        default="",
+        max_length=5,
+        choices=constants.Lifestage.choices,
+        help_text="Definitions: <strong>Developmental</strong>: Prenatal and perinatal exposure in dams "
+        "or postnatal exposure in offspring until sexual maturity (~6 weeks "
+        "in rats and mice). Include studies with pre-mating exposure <em>if the "
+        "endpoint focus is developmental</em>. <strong>Juvenile</strong>: Exposure between weaned and sexual maturity. <strong>Adult</strong>: Exposure in sexually "
+        "mature males or females. <strong>Adult (gestation)</strong>: Exposure in dams during"
+        "pregnancy. <strong>Multi-lifestage</strong>: includes both developmental and adult "
+        "(i.e., multi-generational studies, exposure that start before sexual "
+        "maturity and continue to adulthood)",
     )
     generation = models.CharField(
         blank=True, default="", max_length=2, choices=constants.Generation.choices
@@ -312,9 +306,8 @@ class DoseGroup(models.Model):
     # TODO - flat_complete_header_row / flat_complete_data_row
 
 
-# can't just name it Endpoint; that clashes around baseendpoint_ptr
-class AnimalEndpoint(BaseEndpoint):
-    objects = managers.AnimalEndpointManager()
+class Endpoint(models.Model):
+    objects = managers.EndpointManager()
 
     # TODO
     TEXT_CLEANUP_FIELDS = ()
@@ -391,15 +384,13 @@ class AnimalEndpoint(BaseEndpoint):
         return self.experiment.get_study()
 
 
-class AnimalEndpointTimepoint(models.Model):
-    objects = managers.AnimalEndpointTimepointManager()
+class ObservationTime(models.Model):
+    objects = managers.ObservationTimeManager()
 
     # TODO
     TEXT_CLEANUP_FIELDS = ()
 
-    endpoint = models.ForeignKey(
-        AnimalEndpoint, on_delete=models.CASCADE, related_name="v2_timepoints"
-    )
+    endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE, related_name="v2_timepoints")
     observation_time = models.FloatField(
         blank=True,
         null=True,
@@ -435,22 +426,13 @@ class DataExtraction(models.Model):
         Experiment, on_delete=models.CASCADE, related_name="v2_data_extractions"
     )
     endpoint = models.ForeignKey(
-        AnimalEndpoint, on_delete=models.CASCADE, related_name="v2_data_extractions"
-    )
-    treatment = models.ForeignKey(
-        Treatment, on_delete=models.CASCADE, related_name="v2_data_extractions"
-    )
-
-    # specifically, DoseGroup.dose?
-    dose = models.ForeignKey(
-        DoseGroup, on_delete=models.CASCADE, related_name="v2_data_extractions"
+        Endpoint, on_delete=models.CASCADE, related_name="v2_data_extractions"
     )
     observation_timepoint = models.ForeignKey(
-        AnimalEndpointTimepoint, on_delete=models.CASCADE, related_name="v2_data_extractions"
+        ObservationTime, on_delete=models.CASCADE, related_name="v2_data_extractions"
     )
 
     # specific fields
-    n = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
     is_qualitative_only = models.BooleanField(default=False)
     data_location = models.CharField(
         max_length=128,
@@ -463,9 +445,6 @@ class DataExtraction(models.Model):
         default=constants.VarianceType.SD, choices=constants.VarianceType.choices
     )
     statistical_method = models.CharField(max_length=128, blank=True, help_text="TODO")
-    treatment_related_effect = models.PositiveSmallIntegerField(
-        choices=constants.TreatmentRelatedEffect.choices
-    )
     method_to_control_for_litter_effects = models.PositiveSmallIntegerField(
         choices=constants.MethodToControlForLitterEffects.choices
     )
@@ -473,17 +452,10 @@ class DataExtraction(models.Model):
         default=False,
         help_text="Response values were estimated using a digital ruler or other methods",
     )
-    p_value = models.CharField(max_length=128, blank=True, help_text="TODO")
     dataset_type = models.CharField(
         blank=True, default="", max_length=2, choices=constants.DatasetType.choices
     )
-    variance = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     statistical_power = models.CharField(max_length=128, blank=True, help_text="TODO")
-    statistically_significant = models.PositiveSmallIntegerField(
-        choices=constants.StatisticallySignificant.choices
-    )
-    NOAEL = models.SmallIntegerField(default=-999, help_text="No observed effect level")
-    LOAEL = models.SmallIntegerField(default=-999, help_text="Lowest observed effect level")
     response_units = models.CharField(
         max_length=32,
         blank=True,
@@ -504,28 +476,17 @@ class DataExtraction(models.Model):
     # TODO - flat_complete_header_row / flat_complete_data_row
 
 
-"""
-based on conversations with Vidhi and Pam - various fields here (n, treatment_name, loael, etc.)
-are duplicated on both the parent dataExtraction object and these associated group/animal level data
-objects. Not sure how this is supposed to work - does the dataExtraction level field take precedence?
-Provide a default that can be overridden? Still chatting with them to see what's expected here so
-that type of overlap is the most likely portion of the model to be subject to change.
-"""
-
-
 class DoseResponseGroupLevelData(models.Model):
     objects = managers.DoseResponseGroupLevelDataManager()
 
     data_extraction = models.ForeignKey(
         DataExtraction, on_delete=models.CASCADE, related_name="v2_group_level_data"
     )
-    treatment = models.ForeignKey(
-        Treatment, on_delete=models.CASCADE, related_name="v2_group_level_data"
-    )
-    # specifically, DoseGroup.dose?
-    dose = models.ForeignKey(
-        DoseGroup, on_delete=models.CASCADE, related_name="v2_group_level_data"
-    )
+    treatment_name = models.CharField(max_length=256, help_text="TODO")
+    dose = models.CharField(max_length=128, help_text="TODO")
+    # as per guidance, intentionally making this text, not numeric, in case extractors want to note units.
+    # could split into separate dose/dose_units instead if desired? See also DoseResponseAnimalLevelData.dose
+
     n = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
     response = models.FloatField()
     variance = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
@@ -536,8 +497,8 @@ class DoseResponseGroupLevelData(models.Model):
         choices=constants.StatisticallySignificant.choices
     )
     p_value = models.CharField(max_length=128, blank=True, help_text="TODO")
-    NOAEL = models.SmallIntegerField(default=-999, help_text="No observed effect level")
-    LOAEL = models.SmallIntegerField(default=-999, help_text="Lowest observed effect level")
+    NOEL = models.SmallIntegerField(default=-999, help_text="No observed effect level")
+    LOEL = models.SmallIntegerField(default=-999, help_text="Lowest observed effect level")
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -559,6 +520,7 @@ class DoseResponseAnimalLevelData(models.Model):
     )
     cage_id = models.CharField(max_length=128, blank=True, help_text="TODO")
     animal_id = models.CharField(max_length=128, blank=True, help_text="TODO")
+    dose = models.CharField(max_length=128, help_text="TODO")
     response = models.FloatField()
 
     created = models.DateTimeField(auto_now_add=True)
@@ -573,4 +535,13 @@ class DoseResponseAnimalLevelData(models.Model):
     # TODO - flat_complete_header_row / flat_complete_data_row
 
 
-# TODO - reversion.register?
+reversion.register(Experiment)
+reversion.register(Chemical)
+reversion.register(AnimalGroup)
+reversion.register(Treatment)
+reversion.register(DoseGroup)
+reversion.register(Endpoint)
+reversion.register(ObservationTime)
+reversion.register(DataExtraction)
+reversion.register(DoseResponseGroupLevelData)
+reversion.register(DoseResponseAnimalLevelData)

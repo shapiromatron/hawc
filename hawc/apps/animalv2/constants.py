@@ -90,3 +90,11 @@ class StatisticallySignificant(models.IntegerChoices):
     YES = 0, "Yes"
     NO = 1, "No"
     NA = 2, "NA"
+
+
+class Lifestage(models.TextChoices):
+    DEV = "DEV", "Developmental"
+    JUV = "JUV", "Juvenile"
+    ADULT = "ADULT", "Adult"
+    AG = "AG", "Adult (gestation)"
+    ML = "ML", "Multi-lifestage"

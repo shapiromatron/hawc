@@ -21,11 +21,11 @@ class DoseGroupManager(BaseManager):
     assessment_relation = "treatment__experiment__study__assessment"
 
 
-class AnimalEndpointManager(BaseManager):
+class EndpointManager(BaseManager):
     assessment_relation = "experiment__study__assessment"
 
 
-class AnimalEndpointTimepointManager(BaseManager):
+class ObservationTimeManager(BaseManager):
     assessment_relation = "endpoint__experiment__study__assessment"
 
 
