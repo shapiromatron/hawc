@@ -19,9 +19,10 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import DisabledPagination
+from ..common.api.utils import get_published_only
 from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from ..common.validators import validate_exact_ids
 from ..mgmt.models import Task
 from ..riskofbias import exports
@@ -47,12 +48,16 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
         Get all final risk of bias/study evaluations for an assessment.
         """
         self.get_object()
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        published_only = get_published_only(self.assessment, request)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
             self.get_queryset().none(),
             filename=f"{self.assessment}-{rob_name}",
             assessment_id=self.assessment.id,
         )
+        exporter.published_only = published_only
 
         return Response(exporter.build_export())
 
@@ -67,12 +72,17 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
         Get all risk of bias/study evaluations for an assessment, including individual reviews.
         """
         self.get_object()
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        published_only = get_published_only(self.assessment, request)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset().none(),
             filename=f"{self.assessment}-{rob_name}-complete",
             assessment_id=self.assessment.id,
         )
+        exporter.published_only = published_only
+
         return Response(exporter.build_export())
 
     @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))

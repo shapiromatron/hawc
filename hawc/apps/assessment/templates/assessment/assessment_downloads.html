@@ -45,12 +45,12 @@
           {% else %}
           <li class="list-group-item">
             {% url 'riskofbias:api:assessment-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-final' button_text=assessment.get_rob_name_display|title|add:' Export' help_text="All final reviews." allow_unpublished=False %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-final' button_text=assessment.get_rob_name_display|title|add:' Export' help_text="All final reviews." %}
           </li>
           {% if obj_perms.edit %}
           <li class="list-group-item">
             {% url 'riskofbias:api:assessment-full-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-all' button_text='Complete '|add:assessment.get_rob_name_display|title|add:' Export' help_text="All reviews, including individual reviews. Team members only." allow_unpublished=False %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='rob-all' button_text='Complete '|add:assessment.get_rob_name_display|title|add:' Export' help_text="All reviews, including individual reviews. Team members only." %}
           </li>
           {% endif %}
           {% endif %}

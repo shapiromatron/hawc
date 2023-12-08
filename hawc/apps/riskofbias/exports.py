@@ -14,6 +14,7 @@ class RiskOfBiasFlat(FlatFileExporter):
     """
 
     final_only = True  # only return final data
+    published_only = True  # only return data from published studies
 
     def get_serialized_data(self):
         assessment_id = self.kwargs["assessment_id"]
@@ -21,6 +22,7 @@ class RiskOfBiasFlat(FlatFileExporter):
             Study.objects.filter(assessment_id=assessment_id)
             .prefetch_related("identifiers", "riskofbiases__scores__overridden_objects")
             .select_related("assessment")
+            .published_only(self.published_only)
         )
         ser = VerboseStudySerializer(qs, many=True)
         study_data = ser.data
@@ -30,6 +32,7 @@ class RiskOfBiasFlat(FlatFileExporter):
                 models.RiskOfBias.objects.filter(study__assessment_id=assessment_id, active=True)
                 .select_related("author")
                 .prefetch_related("scores__overridden_objects")
+                .published_only(self.published_only)
             )
             ser = serializers.RiskOfBiasSerializer(qs, many=True)
             rob_data = ser.data
