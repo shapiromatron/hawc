@@ -313,39 +313,6 @@ class TimeSpentOnPageMixin:
         return response
 
 
-class CopyAsNewSelectorMixin:
-    copy_model = None  # required
-    template_name_suffix = "_copy_selector"
-
-    def get_related_id(self):
-        return self.object.id
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # prevents copy from locked studies
-        if context["obj_perms"]["edit"] is False:
-            raise PermissionDenied
-
-        related_id = self.get_related_id()
-        context["form"] = self.form_class(parent_id=related_id)
-        context["breadcrumbs"].append(
-            Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}")
-        )
-        return context
-
-    def get_template_names(self):
-        if self.template_name is not None:
-            name = self.template_name
-        else:
-            name = "{}/{}{}.html".format(
-                self.copy_model._meta.app_label,
-                self.copy_model._meta.object_name.lower(),
-                self.template_name_suffix,
-            )
-        return [name]
-
-
 class WebappMixin:
     """Mixin to startup a javascript single-page application"""
 
@@ -354,7 +321,7 @@ class WebappMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
+            context["config"] = self.get_app_config(context).model_dump()
         return context
 
 
@@ -533,6 +500,34 @@ class BaseCreate(
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         crumbs.append(Breadcrumb(name=f"Create {self.model._meta.verbose_name}"))
         return crumbs
+
+
+class BaseCopyForm(BaseUpdate):
+    copy_model: type[models.Model]
+    breadcrumb_name: str = ""
+    template_name = "common/copy_selector.html"
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.pop("instance")
+        kw["parent"] = self.object
+        return kw
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(form.get_success_url())
+
+    def get_template_names(self) -> list[str]:
+        if self.template_name:
+            return [self.template_name]
+        model_meta = self.copy_model._meta
+        return [f"{model_meta.app_label}/{model_meta.object_name.lower()}_copy_selector.html"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][-1] = Breadcrumb(
+            name=self.breadcrumb_name or f"Copy {self.copy_model._meta.verbose_name}"
+        )
+        return context
 
 
 class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):

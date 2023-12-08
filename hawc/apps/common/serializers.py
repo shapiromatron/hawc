@@ -33,7 +33,7 @@ def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) ->
         BaseModel: The pydantic BaseModel
     """
     try:
-        return pydantic_class.parse_obj(data)
+        return pydantic_class.model_validate(data)
     except PydanticError as err:
         raise DrfValidationError({field: err.json()})
 
@@ -155,7 +155,7 @@ class FlexibleChoiceField(serializers.ChoiceField):
                 return key
 
         # No exact match; if a string was passed in let's try case-insensitive value match
-        if type(data) is str:
+        if isinstance(data, str):
             key = get_id_from_choices(self._choices.items(), data)
             if key is not None:
                 return key
@@ -197,7 +197,7 @@ class FlexibleChoiceArrayField(serializers.ChoiceField):
 
                 if not element_handled:
                     # No exact match; if a string was passed in let's try case-insensitive value match
-                    if type(x) is str:
+                    if isinstance(x, str):
                         key = get_id_from_choices(self._choices.items(), x)
                         if key is not None:
                             converted_values.append(key)
@@ -297,7 +297,7 @@ class IdLookupMixin:
     """
 
     def to_internal_value(self, data):
-        if type(data) is int:
+        if isinstance(data, int):
             try:
                 obj = self.Meta.model.objects.get(id=data)
                 return obj
@@ -580,7 +580,7 @@ class PydanticDrfSerializer(BaseModel):
         if extras:
             d.update(extras)
         try:
-            return cls.parse_obj(d)
+            return cls.model_validate(d)
         except PydanticError as err:
             errors = defaultdict(list)
             for e in err.errors():

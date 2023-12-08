@@ -1,6 +1,4 @@
-import json
 from copy import deepcopy
-from pathlib import Path
 
 import pytest
 from django.urls import reverse
@@ -9,9 +7,7 @@ from rest_framework.test import APIClient
 from hawc.apps.animal import forms, models
 from hawc.apps.assessment.models import Species, Strain
 
-from ..test_utils import check_details_of_last_log_entry
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry, get_client
 
 
 @pytest.mark.django_db
@@ -21,16 +17,11 @@ class TestAssessmentViewSet:
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_permissions(self, db_keys):
+        admin_client = APIClient()
+        assert admin_client.login(username="admin@hawcproject.org", password="pw") is True
         rev_client = APIClient()
         assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
@@ -38,6 +29,7 @@ class TestAssessmentViewSet:
         urls = [
             reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_working,)),
+            reverse("animal:api:assessment-study-heatmap", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_working,)),
             reverse(
                 "animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_working,)
@@ -47,6 +39,7 @@ class TestAssessmentViewSet:
         for url in urls:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
+            assert admin_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-full-export.json"
@@ -270,6 +263,11 @@ class TestExperimentCreateApi:
         assert response.status_code == 201
         assert len(models.Experiment.objects.filter(name="Experiment name")) == 2
         check_details_of_last_log_entry(response.data["id"], "Created animal.experiment")
+
+        # queryset
+        url = url + f"?assessment_id={db_keys.assessment_working}"
+        resp = client.get(url)
+        assert resp.status_code == 200
 
 
 @pytest.mark.django_db
@@ -523,18 +521,36 @@ class TestEndpointCreateApi:
             "observation_time_units": [forms.EndpointForm.OBS_TIME_UNITS_REQ]
         }
 
-    def test_valid_requests(self, db_keys):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+    def test_valid_request(self, db_keys):
+        client = get_client("team", api=True)
         url = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "data_extracted": False,
+        }
 
-        assert models.Endpoint.objects.filter(name=data["name"]).count() == 0
         response = client.post(url, data)
         assert response.status_code == 201
-        assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
         check_details_of_last_log_entry(response.data["id"], "Created animal.endpoint")
+
+    def test_tags(self, db_keys):
+        client = get_client("team", api=True)
+        url = reverse("animal:api:endpoint-list")
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "data_extracted": False,
+            "effects": ["tag1", "tag2"],
+        }
+        response = client.post(url, data, format="json")
+        assert response.status_code == 201
+        endpoint = response.json()
+        assert len(endpoint["effects"]) == 2
 
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")
@@ -674,6 +690,45 @@ class TestEndpointApi:
         response = client.post(url, data, format="json")
         assert response.status_code == 200
 
+    def test_endpoint_effects(self, db_keys):
+        url = (
+            reverse("animal:api:endpoint-effects") + f"?assessment_id={db_keys.assessment_working}"
+        )
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        assert client.get(url).status_code == 200
+
+    def test_endpoint_rob_filter(self, db_keys):
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        # general
+        url = (
+            reverse("animal:api:endpoint-rob-filter")
+            + f"?assessment_id={db_keys.assessment_working}&effect=A&study_id=1"
+        )
+        assert client.get(url).status_code == 200
+
+
+@pytest.mark.django_db
+class TestCleanupFieldsView:
+    def test_permissions(self, db_keys):
+        client = APIClient()
+        anon_client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        urls = [
+            f"/ani/api/experiment-cleanup/?assessment_id={db_keys.assessment_working}",
+            f"/ani/api/animal_group-cleanup/?assessment_id={db_keys.assessment_working}",
+            f"/ani/api/endpoint-cleanup/?assessment_id={db_keys.assessment_working}",
+            f"/ani/api/dosingregime-cleanup/?assessment_id={db_keys.assessment_working}",
+        ]
+
+        for url in urls:
+            resp = client.get(url)
+            assert resp.status_code == 200
+            assert anon_client.get(url).status_code == 403
+
 
 @pytest.mark.django_db
 class TestMetadataApi:
@@ -690,11 +745,4 @@ class TestMetadataApi:
         client = APIClient()
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)

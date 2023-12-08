@@ -1,8 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load hawc %}
-{% load bs4 %}
-
 {% block content %}
   <div id="animal-group-header" class="d-flex">
     <h2>{{object}}</h2>
@@ -23,7 +20,7 @@
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Endpoint Editing</span>
         <a class="dropdown-item" href="{% url 'animal:endpoint_new' object.pk %}">Create new</a>
-        <a class="dropdown-item" href="{% url 'animal:endpoint_copy_selector' object.pk %}">Copy from existing</a>
+        <a class="dropdown-item" href="{% url 'animal:endpoint_copy' object.pk %}">Copy from existing</a>
       {% endactions %}
     {% endif %}
   </div>

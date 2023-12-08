@@ -63,6 +63,17 @@
         </ul>
     </li>
     {% endif %}
+
+    {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
+        {% if expand_docs %}
+            {% include 'docs/components/sidebar_docs_tree.html' %}
+        {% else %}
+            <li class="{{li_class}}">
+                <a class="{{a_class}}" href="{% url 'wagtail_serve' '' %}">HAWC Documentation</a>
+            </li>
+        {% endif %}
+    {% endif %}
+
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
     <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
 </ul>

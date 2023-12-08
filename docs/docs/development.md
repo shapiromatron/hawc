@@ -12,7 +12,7 @@ following applications installed on your local development system:
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
-- Python code must comply with code formatters and linters: black and ruff
+- Python code must comply with code formatters and linters: ruff
 - Javascript code must comply with eslint formatters
 - All unit-test (currently in python-only) must pass; please write test when contributing new code
 
@@ -388,7 +388,6 @@ py.test -sv tests/integration/test_login.py --pdb
 [Visual Studio Code]( https://code.visualstudio.com/) is the recommended editor for this project. Recommended extensions include:
 
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [Black formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
@@ -411,7 +410,7 @@ When using the recommended settings below, your python and javascript code shoul
         "editor.quickSuggestions": false
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.fixAll": true
@@ -474,6 +473,18 @@ After running, manually delete unused fonts and images.
 A few major revisions were made to the compiled USWDS assets, most notably:
 
 - Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
+
+### Updating EPA.gov style
+
+There are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
+
+1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
+2.  Right click the page and select "Save As" to download the page as an .html file.
+3. Open the downloaded `EPA Template_US EPA_files` folder.
+4. Open `styles.css` in VS Code.
+5. Replace the contents of `hawc/static/css/epa/core/style.css` with the updated `styles.css`.
+6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
+7. Test changes locally to ensure HAWC matches EPA.gov styling.  On the base.html, you may want to disable caching for the header and footer components (or cache for 1 second) so it makes it easier to see the changes.
 
 ### Materialized views
 
