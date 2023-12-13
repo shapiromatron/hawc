@@ -97,3 +97,149 @@ a.dropdown-toggle:not([href])::after {
 .dataTables_filter [type="search"]{
     float: none;
 }
+
+/* fonts */
+@font-face {
+    font-family: "Roboto Mono Web";
+    font-style: normal;
+    font-weight: 300;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-300.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-300.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-300.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Roboto Mono Web";
+    font-style: normal;
+    font-weight: 400;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-regular.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-regular.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-regular.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Roboto Mono Web";
+    font-style: normal;
+    font-weight: 700;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-700.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-700.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-700.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Roboto Mono Web";
+    font-style: italic;
+    font-weight: 300;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-300italic.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-300italic.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-300italic.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Roboto Mono Web";
+    font-style: italic;
+    font-weight: 400;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-italic.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-italic.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-italic.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Roboto Mono Web";
+    font-style: italic;
+    font-weight: 700;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-700italic.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-700italic.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/roboto-mono/roboto-mono-v5-latin-700italic.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Source Sans Pro Web";
+    font-style: normal;
+    font-weight: 300;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-light-webfont.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-light-webfont.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-light-webfont.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Source Sans Pro Web";
+    font-style: normal;
+    font-weight: 400;
+    font-display: auto;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-regular-webfont.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-regular-webfont.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-regular-webfont.ttf) format("truetype") !important;
+  }
+  
+  @font-face {
+    font-family: "Source Sans Pro Web";
+    font-style: normal;
+    font-weight: 700;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-bold-webfont.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-bold-webfont.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-bold-webfont.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Source Sans Pro Web";
+    font-style: italic;
+    font-weight: 300;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-lightitalic-webfont.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Source Sans Pro Web";
+    font-style: italic;
+    font-weight: 400;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-italic-webfont.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-italic-webfont.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-italic-webfont.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Source Sans Pro Web";
+    font-style: italic;
+    font-weight: 700;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/source-sans-pro/sourcesanspro-bolditalic-webfont.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Merriweather Web";
+    font-style: normal;
+    font-weight: 300;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Light.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Light.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Light.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Merriweather Web";
+    font-style: normal;
+    font-weight: 400;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Regular.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Regular.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Regular.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Merriweather Web";
+    font-style: normal;
+    font-weight: 700;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Bold.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Bold.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Bold.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Merriweather Web";
+    font-style: italic;
+    font-weight: 300;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-LightItalic.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-LightItalic.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-LightItalic.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Merriweather Web";
+    font-style: italic;
+    font-weight: 400;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Italic.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Italic.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-Italic.ttf) format("truetype")
+  }
+  
+  @font-face {
+    font-family: "Merriweather Web";
+    font-style: italic;
+    font-weight: 700;
+    font-display: fallback;
+    src: url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-BoldItalic.woff2) format("woff2"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-BoldItalic.woff) format("woff"), url(//www.epa.gov/themes/epa_theme/fonts/merriweather/Latin-Merriweather-BoldItalic.ttf) format("truetype")
+  }
+  
