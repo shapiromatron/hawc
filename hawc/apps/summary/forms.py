@@ -241,7 +241,15 @@ class EndpointAggregationForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "settings", "prefilters", "studies", "sort_order")
+        exclude = (
+            "assessment",
+            "visual_type",
+            "settings",
+            "prefilters",
+            "studies",
+            "sort_order",
+            "image",
+        )
 
 
 class CrossviewForm(VisualForm):
@@ -269,7 +277,7 @@ class CrossviewForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "endpoints", "studies")
+        exclude = ("assessment", "visual_type", "endpoints", "studies", "image")
 
 
 class RoBForm(VisualForm):
@@ -294,7 +302,7 @@ class RoBForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "dose_units", "endpoints")
+        exclude = ("assessment", "visual_type", "dose_units", "endpoints", "image")
 
 
 class TagtreeForm(VisualForm):
@@ -590,6 +598,7 @@ class ImageVisualForm(VisualForm):
     class Meta:
         model = models.Visual
         fields = ("title", "slug", "image", "caption", "published")
+        widgets = {"image": forms.FileInput}
 
 
 def get_visual_form(visual_type):
