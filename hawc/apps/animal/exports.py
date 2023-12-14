@@ -1,3 +1,294 @@
+import math
+
+import pandas as pd
+from django.db.models import Exists, OuterRef, F
+from django.db.models.lookups import Exact
+
+
+from ..common.exports import Exporter, ModelExport
+from ..common.helper import FlatFileExporter
+from ..common.models import sql_display, str_m2m, sql_format
+from ..materialized.models import FinalRiskOfBiasScore
+from ..study.exports import StudyExport
+from . import constants, models
+
+
+def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
+    mean = low = high = None
+
+    if mu_1 is not None and mu_2 is not None and mu_1 > 0 and mu_2 > 0:
+        mean = (mu_2 - mu_1) / mu_1 * 100.0
+        if sd_1 and sd_2 and n_1 and n_2:
+            sd = math.sqrt(
+                pow(mu_1, -2)
+                * ((pow(sd_2, 2) / n_2) + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2)))
+            )
+            ci = (1.96 * sd) * 100
+            rng = sorted([mean - ci, mean + ci])
+            low = rng[0]
+            high = rng[1]
+
+    return mean, low, high
+
+
+class ExperimentExport(ModelExport):
+    # experiment
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "type":"type",
+            "has_multiple_generations":"has_multiple_generations",
+            "chemical":"chemical",
+            "cas":"cas",
+            "dtxsid":"dtxsid",
+            "chemical_source":"chemical_source",
+            "purity_available":"purity_available",
+            "purity_qualifier":"purity_qualifier",
+            "purity":"purity",
+            "vehicle":"vehicle",
+            "guideline_compliance":"guideline_compliance",
+            "description":"description",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+        }
+
+class AnimalGroupExport(ModelExport):
+    # animal_group
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "sex":"sex",
+            "animal_source":"animal_source",
+            "lifestage_exposed":"lifestage_exposed",
+            "lifestage_assessed":"lifestage_assessed",
+            "siblings":"siblings",
+            "parents":"parents",
+            "generation":"generation",
+            "comments":"comments",
+            "diet":"diet",
+            "species":"species",
+            "strain":"strain",
+        }
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+        }
+
+
+class DosingRegimeExport(ModelExport):
+    # dosing_regime
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "dosed_animals":"dosed_animals",
+            "route_of_exposure":"route_of_exposure",
+            "duration_exposure":"duration_exposure",
+            "duration_exposure_text":"duration_exposure_text",
+            "duration_observation":"duration_observation",
+            "num_dose_groups":"num_dose_groups",
+            "positive_control":"positive_control",
+            "negative_control":"negative_control",
+            "description":"description",
+        }
+
+
+
+class EndpointExport(ModelExport):
+    # endpoint
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "url":"url",
+            "name":"name",
+            "effects":"effects",
+            "system":"system",
+            "organ":"organ",
+            "effect":"effect",
+            "effect_subtype":"effect_subtype",
+            "name_term_id":"name_term_id",
+            "system_term_id":"system_term_id",
+            "organ_term_id":"organ_term_id",
+            "effect_term_id":"effect_term_id",
+            "effect_subtype_term_id":"effect_subtype_term_id",
+            "litter_effects":"litter_effects",
+            "litter_effect_notes":"litter_effect_notes",
+            "observation_time":"observation_time",
+            "observation_time_units":"observation_time_units",
+            "observation_time_text":"observation_time_text",
+            "data_location":"data_location",
+            "response_units":"response_units",
+            "data_type":"data_type",
+            "variance_type":"variance_type",
+            "confidence_interval":"confidence_interval",
+            "data_reported":"data_reported",
+            "data_extracted":"data_extracted",
+            "values_estimated":"values_estimated",
+            "expected_adversity_direction":"expected_adversity_direction",
+            "monotonicity":"monotonicity",
+            "statistical_test":"statistical_test",
+            "trend_value":"trend_value",
+            "trend_result":"trend_result",
+            "diagnostic":"diagnostic",
+            "power_notes":"power_notes",
+            "results_notes":"results_notes",
+            "endpoint_notes":"endpoint_notes",
+            "additional_fields":"additional_fields",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+        }
+
+
+class EndpointGroupExport(ModelExport):
+    # endpoint_group
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "dose_group_id":"dose_group_id",
+            "n":"n",
+            "incidence":"incidence",
+            "response":"response",
+            "variance":"variance",
+            "lower_ci":"lower_ci",
+            "upper_ci":"upper_ci",
+            "significant":"significant",
+            "significance_level":"significance_level",
+            "treatment_effect":"treatment_effect",
+            "NOEL":"NOEL",
+            "LOEL":"LOEL",
+            "FEL":"FEL",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "NOEL": Exact(F(query_prefix+"dose_group_id"),F(query_prefix+"endpoint__NOEL")),
+            "LOEL": Exact(F(query_prefix+"dose_group_id"),F(query_prefix+"endpoint__LOEL")),
+            "FEL": Exact(F(query_prefix+"dose_group_id"),F(query_prefix+"endpoint__FEL")),
+        }
+
+
+
+class AnimalExporter(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            StudyExport(
+                "study",
+                "animal_group__experiment__study",
+            ),
+            ExperimentExport(
+                "experiment",
+                "animal_group__experiment",
+            ),
+            AnimalGroupExport(
+                "animal_group",
+                "animal_group",
+            ),
+            DosingRegimeExport(
+                "dosing_regime",
+                "animal_group__dosing_regime",
+            ),
+            EndpointExport(
+                "endpoint",
+                "",
+            ),
+            EndpointGroupExport(
+                "endpoint_group",
+                "groups",
+            ),
+        ]
+
+### FIRST
+class EndpointGroupFlatComplete2(FlatFileExporter):
+    # add flat doses, otherwise good?
+    def build_df(self) -> pd.DataFrame:
+        df = AnimalExporter().get_df(
+            self.queryset.select_related(
+                "animal_group__experiment__study", "animal_group__dosing_regime",
+            )
+            .prefetch_related("groups",)
+            .order_by("id", "groups",)
+        )
+
+        return df
+
+### SECOND
+class EndpointGroupFlatDataPivot2(FlatFileExporter):
+
+    def build_df(self) -> pd.DataFrame:
+        df = AnimalExporter().get_df(
+            self.queryset.select_related(
+                "animal_group__experiment__study", "animal_group__dosing_regime",
+            )
+            .prefetch_related("groups",)
+            .order_by("id", "groups",)
+        )
+
+        df = df.rename(
+            columns={
+                "study-id": "study id",
+                "study-short_citation": "study name",
+                "study-study_identifier": "study identifier",
+                "study-published": "study published",
+            }
+        )
+
+        return df
+
+### THIRD
+class EndpointFlatDataPivot2(FlatFileExporter):
+
+    def build_df(self) -> pd.DataFrame:
+        df = AnimalExporter().get_df(
+            self.queryset.select_related(
+                "animal_group__experiment__study", "animal_group__dosing_regime",
+            )
+            .prefetch_related("groups",)
+            .order_by("id", "groups",)
+        )
+
+        return df
+
+
+### FOURTH
+class EndpointSummary2(FlatFileExporter):
+
+    def build_df(self) -> pd.DataFrame:
+        df = AnimalExporter().get_df(
+            self.queryset.select_related(
+                "animal_group__experiment__study", "animal_group__dosing_regime",
+            )
+            .prefetch_related("groups",)
+            .order_by("id", "groups",)
+        )
+
+        return df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 from copy import copy
 
 from ..assessment.models import DoseUnits
