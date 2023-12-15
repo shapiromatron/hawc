@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from ...constants import AuthProvider
 from ..common.diagnostics import (
+    clear_cache,
     diagnostic_500,
     diagnostic_cache,
     diagnostic_celery_task,
@@ -72,6 +73,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
     actions = (
         send_welcome_emails,
         set_password,
+        clear_cache,
         diagnostic_500,
         diagnostic_celery_task,
         diagnostic_cache,

@@ -7,6 +7,7 @@
   "data_url": "/summary/api/visual/5/data/",
   "dose_units": null,
   "endpoints": [],
+  "evidence_type": 0,
   "id": 5,
   "image": null,
   "last_updated": "2020-05-08T15:38:48.445082-04:00",
