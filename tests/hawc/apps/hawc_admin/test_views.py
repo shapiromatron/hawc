@@ -1,7 +1,11 @@
 import pytest
 from django.http.response import HttpResponse
+from django.test import RequestFactory
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
+from wagtail.admin.views.account import BaseSettingsPanel, NameEmailSettingsPanel, account
+
+from hawc.apps.myuser.models import HAWCUser
 
 from ..test_utils import check_200, get_client
 
@@ -42,36 +46,35 @@ class TestDashboard:
     def test_htmx_get(self):
         pm_client = get_client("pm")
         admin_client = get_client("admin")
-        urls = [
-            "admin_dashboard_growth",
-            "admin_dashboard_users",
-            "admin_dashboard_assessments",
-            "admin_dashboard_assessment_profile",
-            "admin_dashboard_assessment_size",
-            "admin_dashboard_changes",
+        actions = [
+            "assessment_size",
+            "assessment_growth",
+            "assessment_profile",
+            "growth",
+            "users",
+            "daily_changes",
         ]
-        for url in urls:
-            resp = pm_client.get(reverse(url))
+        for action in actions:
+            url = reverse("admin_dashboard") + f"?action={action}"
+            resp = pm_client.get(url)
             check_admin_login_redirect(resp)
-            resp = admin_client.get(reverse(url))
-            assert resp.status_code == 400
-            resp = admin_client.get(reverse(url), HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url)
             assert resp.status_code == 200
 
-    def test_htmx_post(self):
+    def test_htmx_form_get(self):
         admin_client = get_client("admin")
         requests = [
-            ("admin_dashboard_growth", {"assessment_id": 1, "grouper": "W"}),
-            ("admin_dashboard_assessment_profile", {"model": "assessment", "grouper": "year"}),
+            ("?action=growth", {"assessment_id": 1, "grouper": "W"}),
+            ("?action=assessment_profile", {"model": "assessment", "grouper": "year"}),
         ]
-        for url, data in requests:
-            resp = admin_client.get(reverse(url), HTTP_HX_REQUEST="true")
+        for extra, data in requests:
+            url = reverse("admin_dashboard") + extra
+            resp = admin_client.get(url)
             assert resp.status_code == 200
-            resp = admin_client.post(reverse(url), data=data, HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url, data=data)
             assert resp.status_code == 200
 
 
-@pytest.mark.django_db
 @pytest.mark.django_db
 class TestMediaPreview:
     def test_permission(self):
@@ -85,3 +88,17 @@ class TestMediaPreview:
         client = get_client("admin")
         resp = check_200(client, url)
         assertTemplateUsed(resp, "admin/media_preview.html")
+
+
+@pytest.mark.django_db
+class TestWagtailAccounts:
+    def test_no_name_email_panel(self):
+        # confirm `NameEmailSettingsPanel` is removed from the accounts page
+        factory = RequestFactory()
+        request = factory.get("/admin/cms/account/")
+        request.user = HAWCUser.objects.filter(is_superuser=True).first()
+        response = account(request)
+        for panel_set in response.context_data["panels_by_tab"].values():
+            for panel in panel_set:
+                assert isinstance(panel, BaseSettingsPanel)
+                assert not isinstance(panel, NameEmailSettingsPanel)

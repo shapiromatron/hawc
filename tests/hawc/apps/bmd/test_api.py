@@ -96,7 +96,9 @@ class TestSessionViewSet:
 
         # check selected
         data_old = session.selected.copy()
-        data_new = SelectedModel(model_index=1, model="Hill", bmr="1SD", notes="Hi", bmd=1).dict()
+        data_new = SelectedModel(
+            model_index=1, model="Hill", bmr="1SD", notes="Hi", bmd=1
+        ).model_dump(by_alias=True)
         assert data_old != data_new
         resp = client.patch(url, data={"action": "select", "selected": data_new}, format="json")
         assert resp.status_code == 200
@@ -112,7 +114,7 @@ class TestSessionViewSet:
 
         # check execute
         data_old = session.inputs
-        data_new = BmdInputSettings.create_default(session.endpoint).dict()
+        data_new = BmdInputSettings.create_default(session.endpoint).model_dump()
         data_new["bmr_value"] = 0.2
         assert data_old != data_new
         resp = client.patch(url, data={"action": "execute", "inputs": data_new}, format="json")

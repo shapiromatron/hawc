@@ -23,7 +23,7 @@ from reversion import revisions as reversion
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.exceptions import AssessmentNotFound
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
 from ..common.models import get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
@@ -1305,13 +1305,11 @@ class Content(models.Model):
         the current context provided, cache, and return.
         """
         key = cls.get_cache_key(content_type)
-        html = cache.get(key)
-        if html is None:
-            context = RequestContext(request, context)
-            content = cls.objects.get(content_type=content_type)
-            html = Template(content.template).render(context)
-            cache.set(key, html, settings.CACHE_10_MIN)
-        return html
+        context = RequestContext(request, context)
+        content = cls.objects.get(content_type=content_type)
+        html = Template(content.template).render(context)
+        cache_html = cacheable(lambda: html, key, cache_duration=settings.CACHE_10_MIN)
+        return cache_html
 
 
 reversion.register(DSSTox)

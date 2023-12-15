@@ -1,3 +1,4 @@
+from io import StringIO
 from pathlib import Path
 
 import pandas as pd
@@ -78,5 +79,5 @@ class TestReportsViewSet:
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-        df = pd.read_json(resp.content.decode())
+        df = pd.read_json(StringIO(resp.content.decode()))
         assert df.shape == (3, 33)

@@ -39,7 +39,6 @@ def remove_merge_option(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("summary", "0008_auto_20160608_1109"),
     ]

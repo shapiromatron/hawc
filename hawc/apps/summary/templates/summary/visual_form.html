@@ -1,7 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
 <div class="tabbable" style="display:none;">
   <ul class="nav nav-tabs">
@@ -26,7 +24,7 @@
 </div>
 
 <div id="main" style="display:none;"></div>
-{% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
+{% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
 
 {% block extrajs %}
@@ -42,7 +40,7 @@
           "cancel_url": "{% if crud == "Create" %}{% url 'summary:visualization_list' pk=assessment.id %}{% else %}{{object.get_absolute_url}}{% endif %}",
           "data_url": "{% url 'summary:api:visual-list' %}",
           "endpoint_url": "{% url 'autocomplete' 'animal-endpointautocomplete' %}",
-          "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type %}",
+          "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type evidence_type %}",
           "rob_metrics": {{rob_metrics|safe}},
           "initial_data": {{initial_data|safe}},
           "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",

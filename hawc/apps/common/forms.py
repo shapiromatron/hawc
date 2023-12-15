@@ -3,12 +3,11 @@ from typing import Any
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
-from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.forms.widgets import RadioSelect
-from django.template.loader import render_to_string
+from django.urls import reverse
 
-from . import autocomplete, validators, widgets
+from . import validators, widgets
 from .helper import PydanticToDjangoError
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
@@ -51,14 +50,6 @@ def form_actions_create_or_close():
     ]
 
 
-def form_actions_apply_filters():
-    """Add form_actions to apply filters"""
-    return [
-        cfl.Submit("submit", "Apply filters"),
-        cfl.HTML('<a class="btn btn-light" href=".">Reset</a>'),
-    ]
-
-
 def form_actions_big_apply_filters():
     """Create big, centered Submit and Cancel buttons for filter forms."""
     return cfl.HTML(
@@ -72,10 +63,7 @@ def form_actions_big_apply_filters():
 
 
 class BaseFormHelper(cf.FormHelper):
-    error_text_inline = False
-    use_custom_control = True
     include_media = False
-    field_template = "crispy_forms/layout/field.html"
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -113,13 +101,13 @@ class BaseFormHelper(cf.FormHelper):
         return layout
 
     def get_layout_item(self, field_name: str) -> tuple[Any, int]:
-        mapping = {field: index for index, field in self.layout.get_field_names()}
+        mapping = {pointer.name: pointer.positions for pointer in self.layout.get_field_names()}
         layout = self.layout
         for idx in mapping[field_name]:
             if layout[idx] == field_name:
                 return (layout, idx)
             layout = layout[idx]
-        raise ValueError("Cannot find item")
+        raise ValueError("Cannot find item")  # pragma: no cover
 
     def add_create_btn(self, field_name: str, url: str, title: str):
         """
@@ -127,7 +115,7 @@ class BaseFormHelper(cf.FormHelper):
         """
         layout, index = self.get_layout_item(field_name)
         field = layout[index]
-        layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
+        layout[index] = CreateNewButton(field, adder_url=url, adder_title=title)
 
     def add_row(self, firstField: str, numFields: int, classes: str | list[str]):
         if isinstance(classes, str):
@@ -139,25 +127,52 @@ class BaseFormHelper(cf.FormHelper):
             cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
 
-    def find_layout_idx_for_field_name(self, field_name):
-        idx = 0
-        for el in self.layout:
+    def find_layout_idx_for_field_name(self, field_name: str) -> int:
+        # Return the root layout index for a given field
+        for idx, el in enumerate(self.layout):
             if isinstance(el, cfl.LayoutObject):
-                for field_names in el.get_field_names():
-                    if isinstance(field_names, list) and len(field_names) > 1:
-                        if field_names[1] == field_name:
-                            return idx
+                for pointer in el.get_field_names():
+                    if pointer.name == field_name:
+                        return idx
             elif isinstance(el, str):
                 if el == field_name:
                     return idx
-            idx += 1
-        raise ValueError(f"Field not found: {field_name}")
+        raise ValueError(f"Field not found: {field_name}")  # pragma: no cover
 
     def add_refresh_page_note(self):
         note = cfl.HTML(
             "<div class='alert alert-info'><b>Note:</b> If coming from an extraction form, you may need to refresh the extraction form to use the item which was recently created.</div>"
         )
         self.layout.insert(len(self.layout) - 1, note)
+
+
+class CopyForm(forms.Form):
+    legend_text: str
+    help_text: str
+    create_url_pattern: str
+    selector: forms.ModelChoiceField
+
+    def __init__(self, *args, **kwargs):
+        self.parent = kwargs.pop("parent")
+        super().__init__(*args, **kwargs)
+
+    def get_success_url(self) -> str:
+        item = self.cleaned_data["selector"]
+        url = reverse(self.create_url_pattern, args=(self.parent.id,))
+        return f"{url}?initial={item.id}"
+
+    def get_cancel_url(self) -> str:
+        return self.parent.get_absolute_url()
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text=self.legend_text,
+            help_text=self.help_text,
+            cancel_url=self.get_cancel_url(),
+            submit_text="Copy selected",
+        )
 
 
 class InlineFilterFormHelper(BaseFormHelper):
@@ -283,50 +298,20 @@ class FilterFormField(cfl.Field):
 
     template = "common/crispy_layout_filter_field.html"
 
-    def __init__(
-        self,
-        fields,
-        appended_fields: list[str],
-        expandable: bool = False,
-        **kwargs,
-    ):
-        """Set the given field values on the field model."""
+    def __init__(self, fields, appended_fields: list[str], expandable: bool = False, **kw):
         self.fields = fields
         self.appended_fields = appended_fields
         self.expandable = expandable
-        super().__init__(fields, **kwargs)
+        super().__init__(fields, **kw)
 
-    def render(self, form, form_style, context, template_pack, extra_context=None, **kwargs):
-        """Render the main_field and appended_fields in the template and return it."""
+    def render(self, form, context, extra_context=None, **kw):
         if extra_context is None:
             extra_context = {}
-        extra_context["appended_fields"] = [form[field] for field in self.appended_fields]
-        extra_context["expandable"] = self.expandable
-        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
-
-
-class CopyAsNewSelectorForm(forms.Form):
-    label = None
-    parent_field = None
-    autocomplete_class = None
-
-    def __init__(self, *args, **kwargs):
-        parent_id = kwargs.pop("parent_id")
-        super().__init__(*args, **kwargs)
-        self.setupSelector(parent_id)
-
-    @property
-    def helper(self):
-        return BaseFormHelper(self)
-
-    def setupSelector(self, parent_id):
-        filters = {self.parent_field: parent_id}
-        fld = autocomplete.AutocompleteChoiceField(
-            autocomplete_class=self.autocomplete_class, filters=filters, label=self.label
+        extra_context.update(
+            appended_fields=[form[field] for field in self.appended_fields],
+            expandable=self.expandable,
         )
-        fld.widget.forward = ["search_fields", "order_by", "order_direction"]
-        fld.widget.attrs["class"] = "col-md-10"
-        self.fields["selector"] = fld
+        return super().render(form, context, extra_context=extra_context, **kw)
 
 
 def form_error_list_to_lis(form):
@@ -350,52 +335,23 @@ def addPopupLink(href, text):
     return f'<a href="{href}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
 
 
-class TdLayout(cfl.LayoutObject):
-    """
-    Layout object. It wraps fields in a <td>
-    """
-
-    template = "crispy_forms/layout/td.html"
-
-    def __init__(self, *fields, **kwargs):
-        self.fields = list(fields)
-        self.css_class = kwargs.pop("css_class", "")
-        self.css_id = kwargs.pop("css_id", None)
-        self.template = kwargs.pop("template", self.template)
-        self.flat_attrs = flatatt(kwargs)
-
-    def render(self, form, form_style, context, **kwargs):
-        fields = self.get_rendered_fields(form, form_style, context, **kwargs)
-        return render_to_string(
-            self.template, {"td": self, "fields": fields, "form_style": form_style}
-        )
-
-
-class AdderLayout(cfl.Field):
+class CreateNewButton(cfl.Field):
     """
     Adder layout object. It contains a link-button to add a new field.
     """
 
-    template = "crispy_forms/layout/inputAdder.html"
+    template = "bootstrap4/field_create_new_button.html"
 
     def __init__(self, *args, **kwargs):
         self.adder_url = kwargs.pop("adder_url")
         self.adder_title = kwargs.pop("adder_title")
         super().__init__(*args, **kwargs)
 
-    def render(
-        self,
-        form,
-        form_style,
-        context,
-        template_pack=TEMPLATE_PACK,
-        extra_context=None,
-        **kwargs,
-    ):
+    def render(self, form, context, extra_context=None, **kw):
         if extra_context is None:
             extra_context = {}
         extra_context.update(adder_url=self.adder_url, adder_title=self.adder_title)
-        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
+        return super().render(form, context, extra_context=extra_context, **kw)
 
 
 class CustomURLField(forms.URLField):
@@ -540,4 +496,4 @@ class PydanticValidator:
     def __call__(self, value):
         """Validate the field with the pydantic model."""
         with PydanticToDjangoError(include_field=False):
-            self.schema.parse_obj(value)
+            self.schema.model_validate(value)
