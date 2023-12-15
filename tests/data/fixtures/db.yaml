@@ -10293,6 +10293,7 @@
     slug: image
     assessment: 2
     visual_type: 8
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {}

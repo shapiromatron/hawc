@@ -38,6 +38,7 @@ VISUAL_EVIDENCE_CHOICES = {
     VisualType.EXTERNAL_SITE: {StudyType.OTHER},
     VisualType.EXPLORE_HEATMAP: {StudyType.OTHER},
     VisualType.PLOTLY: {StudyType.OTHER},
+    VisualType.IMAGE: {StudyType.OTHER},
 }
 
 
