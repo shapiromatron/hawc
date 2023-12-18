@@ -93,7 +93,7 @@ class TestAnalytics:
             "index": "mgmt/analytics.html",
             "time_series": "mgmt/analytics/time_series.html",
             "time_spent": "mgmt/analytics/time_spent.html",
-            "growth": "mgmt/analytics/growth.html",
+            "overview": "mgmt/analytics/overview.html",
         }
         assert set(AssessmentAnalytics.actions) == set(templates.keys())
         for action, expected_template in templates.items():

@@ -482,7 +482,7 @@ A few major revisions were made to the compiled USWDS assets, most notably:
 
 ### Updating EPA.gov style
 
-THere are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
+There are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
 
 1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
 2.  Right click the page and select "Save As" to download the page as an .html file.
