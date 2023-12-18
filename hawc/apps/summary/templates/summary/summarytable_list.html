@@ -41,6 +41,7 @@
           {% if obj_perms.edit and not object.published %}
           <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
           {% endif %}
+          {% debug_badge object.id %}
         </td>
         <td>{{object.get_table_type_display}}</td>
         {% if show_published %}<td>{{object.published}}</td>{% endif %}
