@@ -369,6 +369,12 @@ set INTEGRATION_TESTS=1
 py.test -sv tests/integration/ --pdb
 ```
 
+It can be helpful to record interactions initially when writing an integration test. This can be done using this command:
+
+```bash
+playwright codegen 127.0.0.1:8000
+```
+
 By default, the integration tests run in "headless" mode, or without a browser being shown. When editing integration tests, use the interactive mode to capture user operations:
 
 ```bash
@@ -377,7 +383,7 @@ make test-integration-debug
 # use set instead of export on windows
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
-py.test -sv tests/integration/test_login.py --pdb
+py.test -sv tests/integration/test_myuser.py --pdb
 ```
 
 
