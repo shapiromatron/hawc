@@ -24,7 +24,7 @@ class State(models.Model):
 
 class NestedTerm(MP_Node):
     name = models.CharField(max_length=128)
-    type = models.CharField(choices=TypeChoices.choices, max_length=2, default="CE")
+    type = models.CharField(choices=TypeChoices, max_length=2, default="CE")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
@@ -66,7 +66,7 @@ class NestedTerm(MP_Node):
 
 
 class Vocab(models.Model):
-    category = models.IntegerField(choices=VocabCategories.choices)
+    category = models.IntegerField(choices=VocabCategories)
     value = models.CharField(max_length=128)
     parent = models.ForeignKey(
         "self",
@@ -408,7 +408,7 @@ class Result(models.Model):
         default=0,
     )
     relationship_direction = models.IntegerField(
-        choices=ChangeTrajectory.choices,
+        choices=ChangeTrajectory,
         verbose_name="Direction of relationship",
         help_text="Direction of cause and effect relationship",
     )
