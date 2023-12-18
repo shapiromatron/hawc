@@ -5,7 +5,7 @@ from playwright.sync_api import expect
 from .common import PlaywrightTestCase
 
 
-class TestLogin(PlaywrightTestCase):
+class TestUser(PlaywrightTestCase):
     def test_login(self):
         """
         expect( that we're able to login/logout successfully and an errors are displayed as expected.
