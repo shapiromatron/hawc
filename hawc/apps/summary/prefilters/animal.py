@@ -156,7 +156,7 @@ class BioassayEndpointPrefilter(PrefilterBaseFilterSet):
     )
     experiment_types = df.MultipleChoiceFilter(
         field_name="animal_group__experiment__type",
-        label="Systems to include",
+        label="Experiment types to include",
         choices=ExperimentType.choices,
         help_text="Select one or more experiment types to include in the plot.",
     )
@@ -262,6 +262,9 @@ class BioassayEndpointPrefilter(PrefilterBaseFilterSet):
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk)
+        form.fields["experiment_types"].choices = Experiment.objects.get_type_choices(
+            self.assessment.pk
+        )
         form.fields["systems"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
         form.fields["organs"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
         form.fields["effects"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)
