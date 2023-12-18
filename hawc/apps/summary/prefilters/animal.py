@@ -2,7 +2,7 @@ import django_filters as df
 from django.forms.widgets import CheckboxInput
 
 from ...animal.constants import ExperimentType
-from ...animal.models import Endpoint
+from ...animal.models import Endpoint, Experiment
 from ...assessment.models import EffectTag
 from ...study.models import Study
 from .base import PrefilterBaseFilterSet, PrefilterForm
@@ -28,6 +28,18 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
         help_text="Select one or more studies to include in the plot.",
     )
     # bioassay
+    cb_experiment_type = df.BooleanFilter(
+        method="noop",
+        widget=CheckboxInput(attrs={"data-pf": "experiment_types"}),
+        label="Prefilter by experiment type",
+        help_text="Prefilter endpoints to include only selected experiment types.",
+    )
+    experiment_types = df.MultipleChoiceFilter(
+        field_name="experiments__type",
+        label="Experiments types to include",
+        choices=ExperimentType.choices,
+        help_text="Select one or more experiment types to include in the plot.",
+    )
     cb_systems = df.BooleanFilter(
         method="noop",
         widget=CheckboxInput(attrs={"data-pf": "systems"}),
@@ -90,6 +102,8 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
             "published_only",
             "cb_studies",
             "studies",
+            "cb_experiment_type",
+            "experiment_types",
             "cb_systems",
             "systems",
             "cb_organs",
@@ -114,11 +128,23 @@ class BioassayStudyPrefilter(PrefilterBaseFilterSet):
 
     def set_passthrough_options(self, form):
         self._set_passthrough_choices(
-            form, ["studies", "systems", "organs", "effects", "effect_subtypes", "effect_tags"]
+            form,
+            [
+                "studies",
+                "experiment_types",
+                "systems",
+                "organs",
+                "effects",
+                "effect_subtypes",
+                "effect_tags",
+            ],
         )
 
     def set_form_options(self, form):
         form.fields["studies"].choices = Study.objects.get_choices(self.assessment.pk, "bioassay")
+        form.fields["experiment_types"].choices = Experiment.objects.get_type_choices(
+            self.assessment.pk
+        )
         form.fields["systems"].choices = Endpoint.objects.get_system_choices(self.assessment.pk)
         form.fields["organs"].choices = Endpoint.objects.get_organ_choices(self.assessment.pk)
         form.fields["effects"].choices = Endpoint.objects.get_effect_choices(self.assessment.pk)
