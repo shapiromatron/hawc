@@ -30,4 +30,10 @@
 {% else %}
 <p><i>There are no tasks available</i></p>
 {% endif %}
+
+{% with rob_name=assessment.get_rob_name_display %}
+<h3>Assigned Study Evaluation/Risk of Bias Reviews</h3>
+{% include "mgmt/fragments/rob_reviews.html" with show_assessment=True %}
+{% endwith %}
+
 {% endblock %}
