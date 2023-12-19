@@ -15,7 +15,13 @@ class RisImporter:
     def get_mapping(cls):
         mapping = copy(rispy.TAG_KEY_MAPPING)
         mapping.update(
-            {"AT": "accession_type", "PM": "pubmed_id",  "C7": "pubmed_id_backup", "N2": "abstract2", "SV": "serial_volume"}
+            {
+                "AT": "accession_type",
+                "PM": "pubmed_id",
+                "C7": "pubmed_id_backup",
+                "N2": "abstract2",
+                "SV": "serial_volume",
+            }
         )
         return mapping
 
