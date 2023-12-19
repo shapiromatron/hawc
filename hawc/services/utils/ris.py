@@ -15,7 +15,7 @@ class RisImporter:
     def get_mapping(cls):
         mapping = copy(rispy.TAG_KEY_MAPPING)
         mapping.update(
-            {"AT": "accession_type", "PM": "pubmed_id", "N2": "abstract2", "SV": "serial_volume"}
+            {"AT": "accession_type", "PM": "pubmed_id",  "C7": "pubmed_id_backup", "N2": "abstract2", "SV": "serial_volume"}
         )
         return mapping
 
@@ -162,8 +162,7 @@ class ReferenceParser:
 
     def _get_pmid(self) -> int | None:
         # get PMID if specified in that field
-        if "pubmed_id" in self.content:
-            pubmed_id = self.content["pubmed_id"]
+        if pubmed_id := self.content.get("pubmed_id", self.content.get("pubmed_id_backup", None)):
             if isinstance(pubmed_id, int):
                 return pubmed_id
             else:
