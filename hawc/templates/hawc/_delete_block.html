@@ -20,6 +20,7 @@
 {% if confirm %}
 <script>
   window.addEventListener('load', function () {
+    $("#confirmationText").focus();
     $('#confirmationText').on('keyup', function(){
       if (this.value === "delete") {
         $('#deleteConfirmationActionsDiv').removeClass('hidden');
