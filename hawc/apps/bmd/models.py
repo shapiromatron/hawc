@@ -17,7 +17,7 @@ class AssessmentSettings(models.Model):
     )
     version = models.CharField(
         max_length=10,
-        choices=constants.BmdsVersion.choices,
+        choices=constants.BmdsVersion,
         default=constants.BmdsVersion.BMDS330,
         help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
     )
@@ -56,7 +56,7 @@ class Session(models.Model):
     dose_units = models.ForeignKey(
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
-    version = models.CharField(max_length=10, choices=constants.BmdsVersion.choices)
+    version = models.CharField(max_length=10, choices=constants.BmdsVersion)
     inputs = models.JSONField(default=dict)
     outputs = models.JSONField(default=dict)
     errors = models.JSONField(default=dict)

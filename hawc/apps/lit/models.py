@@ -194,9 +194,9 @@ class Search(models.Model):
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
     )
-    search_type = models.CharField(max_length=1, choices=constants.SearchType.choices)
+    search_type = models.CharField(max_length=1, choices=constants.SearchType)
     source = models.PositiveSmallIntegerField(
-        choices=constants.ReferenceDatabase.choices,
+        choices=constants.ReferenceDatabase,
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
@@ -609,7 +609,7 @@ class Identifiers(models.Model):
     unique_id = models.CharField(
         max_length=256, db_index=True
     )  # DOI has no limit; we make this relatively large
-    database = models.IntegerField(choices=constants.ReferenceDatabase.choices)
+    database = models.IntegerField(choices=constants.ReferenceDatabase)
     content = models.TextField()
     url = models.URLField(blank=True)
 
