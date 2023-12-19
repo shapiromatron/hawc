@@ -48,9 +48,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "method_to_control_for_litter_effects",
-                    models.PositiveSmallIntegerField(
-                        choices=[(0, "Yes"), (1, "NR"), (2, "NA")]
-                    ),
+                    models.PositiveSmallIntegerField(choices=[(0, "Yes"), (1, "NR"), (2, "NA")]),
                 ),
                 (
                     "values_estimated",
@@ -165,9 +163,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "statistically_significant",
-                    models.PositiveSmallIntegerField(
-                        choices=[(0, "Yes"), (1, "No"), (2, "NA")]
-                    ),
+                    models.PositiveSmallIntegerField(choices=[(0, "Yes"), (1, "No"), (2, "NA")]),
                 ),
                 (
                     "p_value",
@@ -175,9 +171,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "NOEL",
-                    models.SmallIntegerField(
-                        default=-999, help_text="No observed effect level"
-                    ),
+                    models.SmallIntegerField(default=-999, help_text="No observed effect level"),
                 ),
                 (
                     "LOEL",
@@ -425,15 +419,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "source",
-                    models.CharField(
-                        blank=True, max_length=128, verbose_name="Source of chemical"
-                    ),
+                    models.CharField(blank=True, max_length=128, verbose_name="Source of chemical"),
                 ),
                 (
                     "purity",
-                    models.CharField(
-                        blank=True, max_length=128, verbose_name="Chemical purity"
-                    ),
+                    models.CharField(blank=True, max_length=128, verbose_name="Chemical purity"),
                 ),
                 (
                     "vehicle",
@@ -786,9 +776,7 @@ class Migration(migrations.Migration):
                 ("dose_group_id", models.PositiveSmallIntegerField()),
                 (
                     "dose",
-                    models.FloatField(
-                        validators=[django.core.validators.MinValueValidator(0)]
-                    ),
+                    models.FloatField(validators=[django.core.validators.MinValueValidator(0)]),
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
