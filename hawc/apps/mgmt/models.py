@@ -27,9 +27,9 @@ class Task(models.Model):
         related_name="tasks",
     )
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
-    type = models.PositiveSmallIntegerField(choices=constants.TaskType.choices)
+    type = models.PositiveSmallIntegerField(choices=constants.TaskType)
     status = models.PositiveSmallIntegerField(
-        default=constants.TaskStatus.NOT_STARTED, choices=constants.TaskStatus.choices
+        default=constants.TaskStatus.NOT_STARTED, choices=constants.TaskStatus
     )
     open = models.BooleanField(default=False)
     due_date = models.DateTimeField(blank=True, null=True)

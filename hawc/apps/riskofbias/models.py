@@ -75,7 +75,7 @@ class RiskOfBiasMetric(models.Model):
     description = models.TextField(
         blank=True, help_text="Detailed instructions for how to apply this metric."
     )
-    responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
+    responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses)
     required_animal = models.BooleanField(
         default=True,
         verbose_name="Required for bioassay?",
@@ -363,7 +363,7 @@ class RiskOfBiasScore(models.Model):
     label = models.CharField(max_length=128, blank=True)
     score = models.PositiveSmallIntegerField(choices=constants.SCORE_CHOICES)
     bias_direction = models.PositiveSmallIntegerField(
-        choices=constants.BiasDirections.choices,
+        choices=constants.BiasDirections,
         default=constants.BiasDirections.BIAS_DIRECTION_UNKNOWN,
         help_text="Judgment of direction of bias (⬆ = away from null, ⬇ = towards null); only add entry if important to show in visuals",
     )
