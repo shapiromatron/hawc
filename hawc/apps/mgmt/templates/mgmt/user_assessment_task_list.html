@@ -26,7 +26,7 @@
 {% endif %}
 
 {% with rob_name=assessment.get_rob_name_display %}
-<h3>Assigned {{rob_name|title}} Reviews</h3>
+<h3 class="mb-0">Assigned {{rob_name|title}} Reviews</h3>
 {% include "mgmt/fragments/rob_reviews.html" with show_assessment=False %}
 {% endwith %}
 
