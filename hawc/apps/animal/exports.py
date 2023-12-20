@@ -1,16 +1,59 @@
 import math
 
 import pandas as pd
+import numpy as np
+from scipy import stats
 from django.db.models import Exists, OuterRef, F
 from django.db.models.lookups import Exact
 
 
+
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
+from ..common.helper import cleanHTML
 from ..common.models import sql_display, str_m2m, sql_format
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.exports import StudyExport
 from . import constants, models
+
+
+def cont_ci(stdev,n,response):
+    """
+    Two-tailed t-test, assuming 95% confidence interval.
+    """
+    se = stdev / math.sqrt(n)
+    change = stats.t.ppf(0.975, max(n - 1, 1)) * se
+    lower_ci = response - change
+    upper_ci = response + change
+    return lower_ci, upper_ci
+
+def dich_ci(incidence,n):
+    """
+    Add confidence intervals to dichotomous datasets.
+    https://www.epa.gov/sites/production/files/2020-09/documents/bmds_3.2_user_guide.pdf
+
+    The error bars shown in BMDS plots use alpha = 0.05 and so
+    represent the 95% confidence intervals on the observed
+    proportions (independent of model).
+    """
+    p = incidence / float(n)
+    z = stats.norm.ppf(1 - 0.05 / 2)
+    z2 = z * z
+    q = 1.0 - p
+    tmp1 = 2 * n * p + z2
+    lower_ci = ((tmp1 - 1) - z * np.sqrt(z2 - (2 + 1 / n) + 4 * p * (n * q + 1))) / (
+        2 * (n + z2)
+    )
+    upper_ci = ((tmp1 + 1) + z * np.sqrt(z2 + (2 + 1 / n) + 4 * p * (n * q - 1))) / (
+        2 * (n + z2)
+    )
+    return lower_ci, upper_ci
+
+
+
+
+
+
 
 
 def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
@@ -38,7 +81,7 @@ class ExperimentExport(ModelExport):
             "id":"id",
             "url":"url",
             "name":"name",
-            "type":"type",
+            "type":"type_display",
             "has_multiple_generations":"has_multiple_generations",
             "chemical":"chemical",
             "cas":"cas",
@@ -54,8 +97,18 @@ class ExperimentExport(ModelExport):
 
     def get_annotation_map(self, query_prefix):
         return {
-            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+            "url": sql_format("/ani/experiment/{}/", query_prefix + "id"),  # hardcoded URL
+            "type_display": sql_display(
+                query_prefix + "type", constants.ExperimentType
+            ),
         }
+
+    def prepare_df(self, df):
+        # clean html text
+        description = self.get_column_name("description")
+        if description in df.columns:
+            df.loc[:, description] = df[description].apply(cleanHTML)
+        return df
 
 class AnimalGroupExport(ModelExport):
     # animal_group
@@ -64,22 +117,38 @@ class AnimalGroupExport(ModelExport):
             "id":"id",
             "url":"url",
             "name":"name",
-            "sex":"sex",
+            "sex":"sex_display",
+            "sex_symbol":"sex_symbol",
             "animal_source":"animal_source",
             "lifestage_exposed":"lifestage_exposed",
             "lifestage_assessed":"lifestage_assessed",
             "siblings":"siblings",
-            "parents":"parents",
+            "parents":"parents_display",
             "generation":"generation",
             "comments":"comments",
             "diet":"diet",
-            "species":"species",
-            "strain":"strain",
+            "species":"species__name",
+            "strain":"strain__name",
         }
     def get_annotation_map(self, query_prefix):
+        SexSymbol = type("SexSymbol", (object,), {"choices": models.AnimalGroup.SEX_SYMBOLS.items()})
         return {
-            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+            "url": sql_format("/ani/animal-group/{}/", query_prefix + "id"),  # hardcoded URL
+            "sex_display": sql_display(
+                query_prefix + "sex", constants.Sex
+            ),
+            "sex_symbol": sql_display(
+                query_prefix + "sex", SexSymbol
+            ),
+            "parents_display": str_m2m(query_prefix + "parents__name"),
         }
+
+    def prepare_df(self, df):
+        # clean html text
+        comments = self.get_column_name("comments")
+        if comments in df.columns:
+            df.loc[:, comments] = df[comments].apply(cleanHTML)
+        return df
 
 
 class DosingRegimeExport(ModelExport):
@@ -88,17 +157,36 @@ class DosingRegimeExport(ModelExport):
         return {
             "id":"id",
             "dosed_animals":"dosed_animals",
-            "route_of_exposure":"route_of_exposure",
+            "route_of_exposure":"route_of_exposure_display",
             "duration_exposure":"duration_exposure",
             "duration_exposure_text":"duration_exposure_text",
             "duration_observation":"duration_observation",
             "num_dose_groups":"num_dose_groups",
-            "positive_control":"positive_control",
-            "negative_control":"negative_control",
+            "positive_control":"positive_control_display",
+            "negative_control":"negative_control_display",
             "description":"description",
         }
 
+    def get_annotation_map(self, query_prefix):
+        PositiveControl = type("PositiveControl", (object,), {"choices": constants.POSITIVE_CONTROL_CHOICES})
+        return {
+            "route_of_exposure_display": sql_display(
+                query_prefix + "route_of_exposure", constants.RouteExposure
+            ),
+            "positive_control_display": sql_display(
+                query_prefix + "positive_control", PositiveControl
+            ),
+            "negative_control_display": sql_display(
+                query_prefix + "negative_control", constants.NegativeControl
+            ),
+        }
 
+    def prepare_df(self, df):
+        # clean html text
+        description = self.get_column_name("description")
+        if description in df.columns:
+            df.loc[:, description] = df[description].apply(cleanHTML)
+        return df
 
 class EndpointExport(ModelExport):
     # endpoint
@@ -107,7 +195,7 @@ class EndpointExport(ModelExport):
             "id":"id",
             "url":"url",
             "name":"name",
-            "effects":"effects",
+            "effects":"effects_display",
             "system":"system",
             "organ":"organ",
             "effect":"effect",
@@ -120,21 +208,22 @@ class EndpointExport(ModelExport):
             "litter_effects":"litter_effects",
             "litter_effect_notes":"litter_effect_notes",
             "observation_time":"observation_time",
-            "observation_time_units":"observation_time_units",
+            "observation_time_units":"observation_time_units_display",
             "observation_time_text":"observation_time_text",
             "data_location":"data_location",
             "response_units":"response_units",
             "data_type":"data_type",
             "variance_type":"variance_type",
+            "variance_type_name":"variance_type_name",
             "confidence_interval":"confidence_interval",
             "data_reported":"data_reported",
             "data_extracted":"data_extracted",
             "values_estimated":"values_estimated",
-            "expected_adversity_direction":"expected_adversity_direction",
-            "monotonicity":"monotonicity",
+            "expected_adversity_direction":"expected_adversity_direction_display",
+            "monotonicity":"monotonicity_display",
             "statistical_test":"statistical_test",
             "trend_value":"trend_value",
-            "trend_result":"trend_result",
+            "trend_result":"trend_result_display",
             "diagnostic":"diagnostic",
             "power_notes":"power_notes",
             "results_notes":"results_notes",
@@ -143,10 +232,38 @@ class EndpointExport(ModelExport):
         }
 
     def get_annotation_map(self, query_prefix):
+        VarianceName = type("VarianceName", (object,), {"choices": models.Endpoint.VARIANCE_NAME.items()})
         return {
-            "url": sql_format("/epi/study-population/{}/", query_prefix + "id"),  # hardcoded URL
+            "url": sql_format("/ani/endpoint/{}/", query_prefix + "id"),  # hardcoded URL
+            "effects_display": str_m2m(query_prefix + "effects__name"),
+            "observation_time_units_display": sql_display(
+                query_prefix + "observation_time_units", constants.ObservationTimeUnits
+            ),
+            "variance_type_name": sql_display(
+                query_prefix + "variance_type", VarianceName
+            ),
+            "expected_adversity_direction_display": sql_display(
+                query_prefix + "expected_adversity_direction", constants.AdverseDirection
+            ),
+            "monotonicity_display": sql_display(
+                query_prefix + "monotonicity", constants.Monotonicity
+            ),
+            "trend_result_display": sql_display(
+                query_prefix + "trend_result", constants.TrendResult
+            ),
         }
 
+    def prepare_df(self, df):
+        # clean html text
+        results_notes = self.get_column_name("results_notes")
+        if results_notes in df.columns:
+            df.loc[:, results_notes] = df[results_notes].apply(cleanHTML)
+
+        endpoint_notes = self.get_column_name("endpoint_notes")
+        if results_notes in df.columns:
+            df.loc[:, endpoint_notes] = df[endpoint_notes].apply(cleanHTML)
+
+        return df
 
 class EndpointGroupExport(ModelExport):
     # endpoint_group
@@ -175,6 +292,16 @@ class EndpointGroupExport(ModelExport):
             "FEL": Exact(F(query_prefix+"dose_group_id"),F(query_prefix+"endpoint__FEL")),
         }
 
+class DoseGroupExport(ModelExport):
+    # dose_group
+    def get_value_map(self):
+        return {
+            "id":"id",
+            "dose_units_id":"dose_units__id",
+            "dose_units_name":"dose_units__name",
+            "dose_group_id":"dose_group_id",
+            "dose":"dose",
+        }
 
 
 class AnimalExporter(Exporter):
@@ -204,11 +331,83 @@ class AnimalExporter(Exporter):
                 "endpoint_group",
                 "groups",
             ),
+            DoseGroupExport(
+                "dose_group",
+                "animal_group__dosing_regime__doses",
+            )
         ]
 
 ### FIRST
 class EndpointGroupFlatComplete2(FlatFileExporter):
-    # add flat doses, otherwise good?
+
+
+
+    def handle_doses(self,df: pd.DataFrame) -> pd.DataFrame:
+        # this is really slow; maybe its the filtering to find matching dose group ids?
+        # solutions: ?, put the burden on SQL w/ Prefetch and Subquery (messy)
+        # long term solutions: group and dose group should be related
+        def _func(group_df: pd.DataFrame) -> pd.DataFrame:
+            # handle case with no dose data
+            if group_df["dose_group-id"].isna().all():
+                return group_df
+
+            # add dose data
+            group_df["doses-"+group_df["dose_group-dose_units_name"]] = group_df["dose_group-dose"].tolist()
+
+            # return a df that is dose agnostic
+            return group_df.drop_duplicates(
+                subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(
+                    ["dose_group-id"]
+                )
+            )
+
+        return (
+            df.groupby("endpoint_group-id", group_keys=False)
+            .apply(_func)
+            .drop(columns=["dose_group-id", "dose_group-dose_units_name", "dose_group-dose_group_id","dose_group-dose"])
+            .reset_index(drop=True)
+        )
+
+    def handle_stdev(self, df: pd.DataFrame) -> pd.DataFrame:
+        df["endpoint_group-stdev"] = df.apply(
+            lambda x: models.EndpointGroup.stdev(
+                x["endpoint-variance_type"],
+                x["endpoint_group-variance"],
+                x["endpoint_group-n"],
+            ),
+            axis="columns",
+        )
+        return df.drop(columns=["endpoint-variance_type"])
+
+    def handle_ci(self, df: pd.DataFrame) -> pd.DataFrame:
+ 
+
+        def _func(row: pd.Series) -> pd.Series:
+            # logic used from EndpointGroup.getConfidenceIntervals()
+            data_type = row["endpoint-data_type"]
+            lower_ci = row["endpoint_group-lower_ci"]
+            upper_ci = row["endpoint_group-upper_ci"]
+            n = row["endpoint_group-n"]
+
+            response = row["endpoint_group-response"]
+            stdev = row["endpoint_group-stdev"]
+            incidence = row["endpoint_group-incidence"]
+            if lower_ci is not None or upper_ci is not None or n is None or n <= 0:
+                pass
+            elif data_type == constants.DataType.CONTINUOUS and response is not None and stdev is not None:
+                (
+                    row["endpoint_group-lower_ci"],
+                    row["endpoint_group-upper_ci"],
+                ) = cont_ci(stdev,n,response)
+            elif data_type in [constants.DataType.DICHOTOMOUS,constants.DataType.DICHOTOMOUS_CANCER] and incidence is not None:
+                (
+                    row["endpoint_group-lower_ci"],
+                    row["endpoint_group-upper_ci"],
+                ) = dich_ci(incidence,n)
+            return row
+
+        return df.apply(_func, axis="columns").drop(columns=["endpoint_group-stdev"])
+
     def build_df(self) -> pd.DataFrame:
         df = AnimalExporter().get_df(
             self.queryset.select_related(
@@ -217,20 +416,198 @@ class EndpointGroupFlatComplete2(FlatFileExporter):
             .prefetch_related("groups",)
             .order_by("id", "groups",)
         )
+        df = df[pd.isna(df["dose_group-id"])|(df["endpoint_group-dose_group_id"]==df["dose_group-dose_group_id"])]
+        if obj := self.queryset.first():
+            doses = DoseUnits.objects.get_animal_units_names(obj.assessment_id)
+
+            df = df.assign(**{f"doses-{d}":None for d in doses})
+            df = self.handle_doses(df) # really slow
+        df = self.handle_stdev(df)
+        df = self.handle_ci(df)
+
+        df = df.rename(
+            columns={
+                "endpoint-variance_type_name":"endpoint-variance_type",
+                "animal_group-species": "species-name",
+                "animal_group-strain": "strain-name",
+            }
+        )
+
+
 
         return df
+
+
+class AnimalExporter2(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            StudyExport(
+                "study",
+                "animal_group__experiment__study",
+                include=("id","short_citation","study_identifier","published")
+            ),
+            ExperimentExport(
+                "experiment",
+                "animal_group__experiment",
+                include=("id","name","type","chemical")
+            ),
+            AnimalGroupExport(
+                "animal_group",
+                "animal_group",
+                include=("id","name","lifestage_exposed","lifestage_assessed","species","strain","generation","sex","sex_symbol")
+            ),
+            DosingRegimeExport(
+                "dosing_regime",
+                "animal_group__dosing_regime",
+                include=("route_of_exposure","duration_exposure_text","duration_exposure")
+            ),
+            EndpointExport(
+                "endpoint",
+                "",
+                include=("id","name","system","organ","effect","effect_subtype","diagnostic","effects","observation_time","observation_time_units","observation_time_text")
+            ),
+            EndpointGroupExport(
+                "endpoint_group",
+                "groups",
+                include=("id","dose_group_id","n","incidence","response","lower_ci","upper_ci","significant","significance_level","treatment_effect","NOEL","LOEL","FEL")
+            ),
+            DoseGroupExport(
+                "dose_group",
+                "animal_group__dosing_regime__doses",
+                include=("id","dose_units_id","dose_units_name","dose_group_id","dose")
+            )
+        ]
 
 ### SECOND
 class EndpointGroupFlatDataPivot2(FlatFileExporter):
 
+    def get_preferred_units(self,df:pd.DataFrame):
+        preferred_units = self.kwargs.get("preferred_units", None)
+        available_units = df["dose_group-dose_units_id"].dropna().unique()
+        if available_units.size == 0:
+            return None
+        if preferred_units:
+            for units in preferred_units:
+                if units in available_units:
+                    return units
+        return available_units[0]
+
+
+    def handle_animal_description(self,df:pd.DataFrame):
+        def _func(group_df: pd.DataFrame) -> pd.Series:
+            gen = group_df["animal_group-generation"].iloc[0]
+            if len(gen) > 0:
+                gen += " "
+            ns_txt = ""
+            ns = group_df["endpoint_group-n"].dropna().tolist()
+            if len(ns) > 0:
+                ns_txt = ", N=" + models.EndpointGroup.getNRangeText(ns)
+
+            sex_symbol = group_df["animal_group-sex_symbol"].iloc[0]
+            if sex_symbol == "NR":
+                sex_symbol = "sex=NR"
+            species = group_df["animal_group-species"].iloc[0]
+            strain = group_df["animal_group-strain"].iloc[0]
+            group_df["animal description"] = f"{gen}{species}, {strain} ({sex_symbol})"
+            group_df["animal description (with N)"] = f"{gen}{species}, {strain} ({sex_symbol}{ns_txt})"
+
+            return group_df
+
+
+        return (
+            df.groupby("endpoint-id", group_keys=False)
+            .apply(_func)
+            .drop(
+                columns=[
+                ]
+            )
+            .reset_index(drop=True)
+        )
+
+
+
+    def handle_treatment_period(self,df:pd.DataFrame):
+        txt = df["experiment-type"].str.lower()
+        txt_index =txt.str.find("(")
+        txt_updated = txt.to_frame(name="txt").join(txt_index.to_frame(name="txt_index")).apply(lambda x: x["txt"] if x["txt_index"] < 0 else x["txt"][:x["txt_index"]],axis="columns")
+        df["treatment period"] = (txt_updated + df["dosing_regime-duration_exposure_text"]).where(df["dosing_regime-duration_exposure_text"])
+        return df
+
+    def handle_dose_groups(self, df: pd.DataFrame) -> pd.DataFrame:
+        noel_names = self.kwargs["assessment"].get_noel_names()
+        def _func(group_df: pd.DataFrame) -> pd.Series:
+            if group_df.shape[0] <= 1:
+                group_df["low_dose"] = None
+                group_df["high_dose"] = None
+                group_df[noel_names.noel] = None
+                group_df[noel_names.loel] = None
+                group_df["FEL"] = None
+                return group_df
+            group_df["low_dose"] = group_df["dose_group-dose"].iloc[1]
+            group_df["high_dose"] = group_df["dose_group-dose"].iloc[-1]
+            NOEL_series = group_df["dose_group-dose"][group_df["endpoint_group-NOEL"]]
+            group_df[noel_names.noel] = NOEL_series.iloc[0] if NOEL_series.size > 0 else None
+            LOEL_series = group_df["dose_group-dose"][group_df["endpoint_group-LOEL"]]
+            group_df[noel_names.loel] = LOEL_series.iloc[0] if LOEL_series.size > 0 else None
+            FEL_series = group_df["dose_group-dose"][group_df["endpoint_group-FEL"]]
+            group_df["FEL"] = FEL_series.iloc[0] if FEL_series.size > 0 else None
+            return group_df
+
+
+        return (
+            df.groupby("endpoint-id", group_keys=False)
+            .apply(_func)
+            .drop(
+                columns=[
+                ]
+            )
+            .reset_index(drop=True)
+        )
+
+
+
+
+
+
+
     def build_df(self) -> pd.DataFrame:
-        df = AnimalExporter().get_df(
+        df = AnimalExporter2().get_df(
             self.queryset.select_related(
                 "animal_group__experiment__study", "animal_group__dosing_regime",
             )
             .prefetch_related("groups",)
             .order_by("id", "groups",)
         )
+        df = df[pd.isna(df["dose_group-id"])|(df["endpoint_group-dose_group_id"]==df["dose_group-dose_group_id"])]
+
+        preferred_units = self.get_preferred_units(df)
+        df = df[df["dose_group-dose_units_id"]==preferred_units]
+
+
+        if obj := self.queryset.first():
+            endpoint_ids = list(df["endpoint-id"].unique())
+            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
+                obj.assessment_id,
+                endpoint_ids,
+                "animal",
+            )
+            rob_df = pd.DataFrame(
+                data=[
+                    [rob_data[(endpoint_id, metric_id)] for metric_id in rob_headers.keys()]
+                    for endpoint_id in endpoint_ids
+                ],
+                columns=list(rob_headers.values()),
+                index=endpoint_ids,
+            )
+            df = df.join(rob_df, on="study-id")
+
+        df["species strain"] = df["animal_group-species"] + " " +df["animal_group-strain"]
+
+        df["observation time"] = df["endpoint-observation_time"].astype(str) + " " + df["endpoint-observation_time_units"]
+
+        df = self.handle_dose_groups(df)
+        df = self.handle_animal_description(df)
+        df = self.handle_treatment_period(df)
 
         df = df.rename(
             columns={
@@ -238,6 +615,56 @@ class EndpointGroupFlatDataPivot2(FlatFileExporter):
                 "study-short_citation": "study name",
                 "study-study_identifier": "study identifier",
                 "study-published": "study published",
+                "experiment-id":"experiment id",
+                "experiment-name":"experiment name",
+                "experiment-chemical":"chemical",
+                "animal_group-id":"animal group id",
+                "animal_group-name":"animal group name",
+                "animal_group-lifestage_exposed":"lifestage exposed",
+                "animal_group-lifestage_assessed":"lifestage assessed",
+                "animal_group-species":"species",
+                "animal_group-generation":"generation",
+                "animal_group-sex":"sex",
+                "dosing_regime-route_of_exposure":"route",
+                "dosing_regime-duration_exposure_text":"duration exposure",
+                "dosing_regime-duration_exposure":"duration exposure (days)",
+                "endpoint-id":"endpoint id",
+                "endpoint-name":"endpoint name",
+                "endpoint-system":"system",
+                "endpoint-organ":"organ",
+                "endpoint-effect":"effect",
+                "endpoint-effect_subtype":"effect subtype",
+                "endpoint-diagnostic":"diagnostic",
+                "endpoint-effects":"tags",
+                #"observation time",
+                "endpoint-observation_time_text":"observation time text",
+                #"data type",
+                #"doses",
+                #"dose units",
+                "endpoint-response_units":"response units",
+                "endpoint-expected_adversity_direction":"expected adversity direction",
+                #"maximum endpoint change",
+                "endpoint-trend_value":"trend test value",
+                "endpoint-trend_result":"trend test result",
+                #"key",
+                "endpoint_group-dose_group_id":"dose index",
+                #"dose",
+                "endpoint_group-n":"N",
+                "endpoint_group-incidence":"incidence",
+                "endpoint_group-response":"response",
+                #"stdev",
+                "endpoint_group-lower_ci":"lower_ci",
+                "endpoint_group-upper_ci":"upper_ci",
+                "endpoint_group-significant":"pairwise significant",
+                "endpoint_group-significance_level":"pairwise significant value",
+                "endpoint_group-treatment_effect":"treatment related effect",
+                #"percent control mean",
+                #"percent control low",
+                #"percent control high",
+                #"dichotomous summary",
+                #"percent affected",
+                #"percent lower ci",
+                #"percent upper ci",
             }
         )
 
