@@ -1,7 +1,4 @@
 """A client for the Health Assessment Workspace Collaborative (HAWC)."""
-from io import BytesIO
-
-from Playwright.sync_api._context_manager import PlaywrightContextManager as pcm
 
 from .animal import AnimalClient
 from .assessment import AssessmentClient
@@ -15,7 +12,6 @@ from .literature import LiteratureClient
 from .riskofbias import RiskOfBiasClient
 from .session import HawcSession
 from .study import StudyClient
-from .summary import PathLike, SummaryClient, fetch_png, write_to_file
 from .vocab import VocabClient
 
 __version__ = "2023.2"
@@ -77,59 +73,3 @@ class HawcClient(BaseClient):
             bool: Returns true if session is valid
         """
         return self.session.set_authentication_token(token, login)
-
-
-class InteractiveHawcClient:
-    """
-    A context manager for downloading assessment visuals.
-    """
-
-    def __init__(self, client: BaseClient):
-        self.client = client
-
-    def __enter__(self):
-        self.playwright = pcm().start()
-        self.web_browser = self.playwright.chromium.launch(headless=True)
-        self.page = self.web_browser.new_page()
-        if token := self.client.session._session.headers.get("Authorization"):
-            self.page.set_extra_http_headers({"Authorization": str(token)})
-        return self
-
-    def download_visual(self, id: int, is_tableau: bool = False, fn: PathLike = None) -> BytesIO:
-        """Download a single visualization given a visual ID
-
-        Args:
-            id (int): The visual ID
-            is_tableau (bool): Is the visual a tableau visual (default False)
-            fn (PathLike, optional): If a path or string is specified, the PNG is written to
-                that location. If None (default), no data is written to a Path.
-
-        Returns:
-            BytesIO: the PNG representation of the visual, in bytes.
-        """
-        url = f"{self.session.root_url}/summary/visual/{id}/"
-        self.page.goto(url)
-        data = fetch_png(self.page, is_tableau)
-        write_to_file(data, fn)
-
-        return data
-
-    def download_data_pivot(self, id: int, fn: PathLike = None) -> BytesIO:
-        """Download a single data pivot given a data pivot ID
-
-        Args:
-            id (int): The data pivot ID
-            fn (PathLike, optional): If a path or string is specified, the a PNG is written to
-                that location. If None (default), no data is written to a Path.
-
-        Returns:
-            BytesIO: the PNG representation of the data pivot, in bytes.
-        """
-        url = f"{self.session.root_url}/summary/data-pivot/{id}/"
-        self.page.goto(url)
-        data = fetch_png(self.page)
-        write_to_file(data, fn)
-        return data
-
-    def __exit__(self, *args) -> None:
-        self.playwright.stop()

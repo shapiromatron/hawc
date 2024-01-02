@@ -1,60 +1,6 @@
-from io import BytesIO
-from pathlib import Path
-
 import pandas as pd
-from playwright.sync_api import Page
 
-from hawc_client import InteractiveHawcClient
-
-from .client import BaseClient
-
-
-def fetch_png(page: Page, is_tableau: bool = False) -> BytesIO:
-    """Helper method to download a PNG from a visualization page
-
-    Args:
-        page (Page): a page instance
-        is_tableau (bool, optional): If the visual is a Tableau image (default False)
-
-    Returns:
-        BytesIO: The PNG image, in bytes
-    """
-    if is_tableau:
-        download_button = page.frame_locator("iframe").locator(
-            'div[role="button"]:has-text("Download")'
-        )
-        download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
-    else:
-        download_button = page.locator("button", has=page.locator("i.fa-download"))
-        download_confirm = page.locator("text=Download as a PNG")
-    download_button.click()
-    with page.expect_download() as download_info:
-        download_confirm.click()
-        download = download_info.value
-        return BytesIO(download.path().read_bytes())
-
-
-PathLike = Path | str | None
-
-
-def write_to_file(data: BytesIO, path: PathLike):
-    """Write to a file, given a path-like object
-
-    Args:
-        data (BytesIO): _description_
-        path (PathLike): _description_
-    """
-    match path:
-        case Path():
-            path.write_bytes(data.getvalue())
-            return
-        case str():
-            Path(path).write_bytes(data.getvalue())
-            return
-        case None:
-            return
-        case _:
-            raise ValueError("Unknown type", path)
+from .client import BaseClient, InteractiveHawcClient
 
 
 class SummaryClient(BaseClient):
