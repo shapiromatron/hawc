@@ -2,7 +2,7 @@
 from enum import Enum
 
 from django.forms import HiddenInput, JSONField
-from pydantic import BaseModel, conlist, root_validator, validator
+from pydantic import BaseModel, conlist, field_validator, model_validator
 
 from ..forms import DynamicFormField
 from . import fields, forms
@@ -51,13 +51,8 @@ class Condition(BaseModel):
     subject: str
     observers: list[str]
     comparison: Comparison = Comparison.EQUALS
-    comparison_value: bool | str | int | conlist(bool | str | int, min_items=1)
+    comparison_value: bool | str | int | conlist(bool | str | int, min_length=1)
     behavior: Behavior = Behavior.SHOW
-
-    class Config:
-        """Schema config."""
-
-        smart_union = True
 
 
 class Schema(BaseModel):
@@ -66,22 +61,21 @@ class Schema(BaseModel):
     fields: list[fields.Field]
     conditions: list[Condition] = []
 
-    @root_validator(skip_on_failure=True)
-    def validate_conditions(cls, values):
+    @model_validator(mode="after")
+    def validate_conditions(self):
         """Validate conditions."""
         # condition subjects and observers should be existing fields
-        fields = values["fields"]
-        field_names = {field.name for field in fields}
-        conditions = values["conditions"]
+        field_names = {field.name for field in self.fields}
+        conditions = self.conditions
         subjects = {condition.subject for condition in conditions}
         observers = {observer for condition in conditions for observer in condition.observers}
         if bad_subjects := (subjects - field_names):
             raise ValueError(f"Invalid condition subject(s): {', '.join(bad_subjects)}")
         if bad_observers := (observers - field_names):
             raise ValueError(f"Invalid condition observer(s): {', '.join(bad_observers)}")
-        return values
+        return self
 
-    @validator("fields")
+    @field_validator("fields")
     def unique_field_names(cls, v):
         """Validate field names."""
         unique_names = {field.name for field in v}

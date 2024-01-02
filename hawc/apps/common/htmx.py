@@ -194,3 +194,51 @@ class HtmxViewSet(View):
     def str_response(self, text: str = "") -> HttpResponse:
         """Return a string-based response; by default an empty string"""
         return HttpResponse(text)
+
+
+class HtmxView(View):
+    """Build a generic HtmxView which returns a index full page and multiple fragments.
+
+    If a valid "action" is specified via a GET parameter, a partial is returned, otherwise
+    the default_action ("index") is returned. It is generally assumed that the default_action
+    is a full page, while all other pages are fragments.
+    """
+
+    actions: set[str]
+    default_action: str = "index"
+
+    def get_handler(self, request: HttpRequest):
+        request.action = request.GET.get("action", "")
+        if request.action not in self.actions:
+            request.action = self.default_action
+        return getattr(self, request.action, self.http_method_not_allowed)
+
+    def dispatch(self, request, *args, **kwargs):
+        handler = self.get_handler(request)
+        return handler(request, *args, **kwargs)
+
+
+class HtmxGetMixin:
+    """Returns a either a full template or partial based on GET parameter in request.
+
+    If a valid "action" is specified via a GET parameter, a partial is returned, otherwise
+    the default_action ("index") is returned. It is generally assumed that the default_action
+    is a full page, while all other pages are fragments.
+
+    The default context is provided for all actions.
+    """
+
+    actions: set[str]
+    default_action: str = "index"
+
+    def get_handler(self, request: HttpRequest):
+        request.action = request.GET.get("action", "")
+        if request.action not in self.actions:
+            request.action = self.default_action
+        return getattr(self, request.action, self.http_method_not_allowed)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        handler = self.get_handler(request)
+        return handler(request, context)

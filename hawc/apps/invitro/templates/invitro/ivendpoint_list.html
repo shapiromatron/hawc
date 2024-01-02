@@ -1,9 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load bs4 %}
-
 {% block content %}
-<h2><i>In vitro</i> endpoints ({{page_obj.paginator.count}} found)</h2>
+<div class="d-flex mb-2">
+    <h2 class="mb-0"><i>In vitro</i> endpoints ({{page_obj.paginator.count}} found)</h2>
+    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+    {% actions %}
+        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+    {% endactions %}
+    {% endif %}
+</div>
 {% include 'common/inline_filter_form.html' %}
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '10,13,12,20,16,13,8,8' %}
@@ -12,17 +17,17 @@
         {% for object in object_list %}
         <tr>
             <td>
-                <a href="{{object.experiment.study.get_absolute_url}}">{{object.experiment.study.short_citation}}</a>
+                <a href="{{object.experiment.study.get_absolute_url}}">{{object.experiment.study.short_citation}}</a>{% debug_badge object.experiment.study_id %}
             </td>
             <td>
-                <a href="{{object.experiment.get_absolute_url}}">{{object.experiment.name}}</a>
+                <a href="{{object.experiment.get_absolute_url}}">{{object.experiment.name}}</a>{% debug_badge object.experiment_id %}
             </td>
             <td>
-                <a href="{{object.chemical.get_absolute_url}}">{{object.chemical.name}}</a>
+                <a href="{{object.chemical.get_absolute_url}}">{{object.chemical.name}}</a>{% debug_badge object.chemical_id %}
             </td>
             <td  class="previewModalParent">
                 <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
-                <a href="{{object.get_absolute_url}}">{{object.name}}</a>
+                <a href="{{object.get_absolute_url}}">{{object.name}}</a>{% debug_badge object.id %}
             </td>
             <td>
                 {{object.effect|default:"--"}}

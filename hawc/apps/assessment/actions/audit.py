@@ -3,6 +3,8 @@ from enum import StrEnum
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
+from pydantic import ConfigDict
+from rest_framework.response import Response
 from reversion.models import Version
 
 from ...common.helper import FlatExport
@@ -40,8 +42,7 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
     assessment: Assessment
     type: AuditType
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def get_assessment_queryset(self):
         # assessments
@@ -246,7 +247,7 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         qs = getattr(self, method)()
         return qs.select_related("content_type", "revision")
 
-    def export(self) -> FlatExport:
+    def export(self) -> Response:
         qs = self.get_queryset()
         df = pd.DataFrame(
             qs.values_list(

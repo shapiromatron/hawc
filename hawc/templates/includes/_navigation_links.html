@@ -8,6 +8,11 @@
 <li class="nav-item">
     <a class="nav-link" href="{% url 'resources' %}">Resources</a>
 </li>
+{% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
+</li>
+{% endif %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
 </li>

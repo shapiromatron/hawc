@@ -1,7 +1,4 @@
 {% extends 'assessment-rooted.html' %}
-{% load bs4 %}
-
-{% load bs4 %}
 
 {% block content %}
   <div class="d-flex">
@@ -31,6 +28,7 @@
           {% if not visual.published %}
           <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
           {% endif %}
+          {% debug_badge visual.id %}
           {% if visual.caption %}
           <div class='text-muted'>{{visual.captionstriptags|striptags|truncatewords:20|safe}}</div>
           {% endif %}

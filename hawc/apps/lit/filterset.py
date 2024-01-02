@@ -1,5 +1,5 @@
 import django_filters as df
-from django.db.models import Count, Q
+from django.db.models import Count, F, Q, Value
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
 
@@ -25,7 +25,7 @@ class ReferenceFilterSet(BaseFilterSet):
     ref_search = df.CharFilter(
         method="filter_search",
         label="Title/Author/Year",
-        help_text="Filter citations (author, year, title, ID)",
+        help_text="Filter citations (authors, year, title)",
     )
     search = df.ModelChoiceFilter(
         field_name="searches", queryset=models.Search.objects.all(), label="Search/Import"
@@ -37,7 +37,6 @@ class ReferenceFilterSet(BaseFilterSet):
         null_value="untagged",
         null_label="[Untagged]",
         method="filter_tags",
-        conjoined=True,
         label="Tags",
         help_text="Select a tag to view references with that specific tag. Choose [Untagged] to view references without any tags. If multiple tags are selected, references must include all selected tags.",
     )
@@ -58,7 +57,6 @@ class ReferenceFilterSet(BaseFilterSet):
         null_value="untagged",
         null_label="[Untagged]",
         method="filter_my_tags",
-        conjoined=True,
         label="My Tags",
         help_text="Select a tag to view references you have applied that specific tag to. Choose [Untagged] to view references that you have not tagged. If multiple tags are selected, references must include all selected tags.",
     )
@@ -73,6 +71,30 @@ class ReferenceFilterSet(BaseFilterSet):
         widget=CheckboxInput(),
         label="Tagged by me",
         help_text="All references that you have tagged",
+    )
+    addition_tags = df.ModelMultipleChoiceFilter(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        method="filter_tag_additions",
+        label="Candidate Tag Additions",
+        help_text="Select a tag to view references with that tag as a candidate tag (but not as a consensus tag). If multiple tags are selected, all tags must be 'candidate additions', i.e., all tags are candidate/user tags for the reference but not yet consensus tags.",
+    )
+    include_additiontag_descendants = df.BooleanFilter(
+        method=filter_noop,
+        widget=CheckboxInput(),
+        label="Include tag descendants",
+        help_text="Applies to tags selected above. By default, only references with the specific selected candidate tag(s) are shown; checking this box includes references that are tagged with any descendant of the selected tag",
+    )
+    deletion_tags = df.ModelMultipleChoiceFilter(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        method="filter_tag_deletions",
+        label="Candidate Tag Deletions",
+        help_text="Select a tag to view references where that tag is a candidate deletion. If multiple tags are selected, all tags must be candidate deletions, i.e., all selected tags must be consensus tags on the reference and have been selected for removal by a user.",
+    )
+    include_deletiontag_descendants = df.BooleanFilter(
+        method=filter_noop,
+        widget=CheckboxInput(),
+        label="Include tag descendants",
+        help_text="Applies to tags selected above. By default, only references with the specific selected tag(s) as candidate deletions are shown; checking this box includes references with candidate deletions of any descendant of the selected tag",
     )
     order_by = ArrowOrderingFilter(
         initial="-year",
@@ -112,6 +134,10 @@ class ReferenceFilterSet(BaseFilterSet):
             "my_tags",
             "include_mytag_descendants",
             "anything_tagged_me",
+            "addition_tags",
+            "include_additiontag_descendants",
+            "deletion_tags",
+            "include_deletiontag_descendants",
             "order_by",
             "paginate_by",
             "partially_tagged",
@@ -127,15 +153,7 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.filter(query)
 
     def filter_search(self, queryset, name, value):
-        query = (
-            Q(title__icontains=value)
-            | Q(abstract__icontains=value)
-            | Q(authors_short__unaccent__icontains=value)
-            | Q(authors__unaccent__icontains=value)
-            | Q(year__icontains=value)
-            | Q(identifiers__unique_id=value)
-        )
-        return queryset.filter(query)
+        return queryset.full_text_search(value)
 
     def filter_tags(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)
@@ -196,6 +214,52 @@ class ReferenceFilterSet(BaseFilterSet):
         ).filter(my_tag_count__gt=0)
         return queryset.distinct()
 
+    def filter_tag_additions(self, queryset, name, value):
+        if not value:
+            return queryset
+        include_descendants = self.data.get("include_additiontag_descendants", False)
+        for tag in value:
+            queryset = queryset.annotate(addtag_count=Value(0))
+            tag_ids = (
+                list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                if include_descendants
+                else [tag.id]
+            )
+            for tag_id in tag_ids:
+                queryset = queryset.annotate(
+                    addtag_count=F("addtag_count")
+                    + Count(
+                        "user_tags",
+                        filter=Q(user_tags__is_resolved=False)
+                        & Q(user_tags__tags=tag_id)
+                        & ~Q(tags=tag_id),
+                    )
+                )
+            queryset = queryset.filter(addtag_count__gt=0)
+        return queryset.distinct()
+
+    def filter_tag_deletions(self, queryset, name, value):
+        if not value:
+            return queryset
+        include_descendants = self.data.get("include_deletiontag_descendants", False)
+        for tag in value:
+            queryset = queryset.annotate(deltag_count=Value(0))
+            tag_ids = (
+                list(tag.get_tree(parent=tag).values_list("id", flat=True))
+                if include_descendants
+                else [tag.id]
+            )
+            for tag_id in tag_ids:
+                queryset = queryset.annotate(
+                    deltag_count=F("deltag_count")
+                    + Count(
+                        "user_tags",
+                        filter=Q(user_tags__deleted_tags__contains=[tag_id]),
+                    )
+                )
+            queryset = queryset.filter(deltag_count__gt=0)
+        return queryset.distinct()
+
     def filter_partially_tagged(self, queryset, name, value):
         if not value:
             return queryset
@@ -223,21 +287,26 @@ class ReferenceFilterSet(BaseFilterSet):
             "anything_tagged_me",
             "include_mytag_descendants",
             "include_descendants",
+            "addition_tags",
+            "include_additiontag_descendants",
+            "deletion_tags",
+            "include_deletiontag_descendants",
             "needs_tagging",
         ]:
             if field in form.fields:
                 form.fields[field].hover_help = True
-        if "tags" in form.fields:
+
+        tag_fields = [
+            f for f in ("tags", "my_tags", "addition_tags", "deletion_tags") if f in form.fields
+        ]
+        if tag_fields:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            form.fields["tags"].queryset = tags
-            form.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
-            form.fields["tags"].widget.attrs["size"] = 8
-        if "my_tags" in form.fields:
-            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            form.fields["my_tags"].queryset = tags
-            form.fields["my_tags"].label_from_instance = lambda tag: tag.get_nested_name()
-            form.fields["my_tags"].widget.attrs["size"] = 8
-            form.fields["tags"].label = "Consensus Tags"
+            for field in tag_fields:
+                form.fields[field].queryset = tags
+                form.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
+                form.fields[field].widget.attrs["size"] = 8
+                if field == "my_tags":
+                    form.fields["tags"].label = "Consensus Tags"
         if "search" in form.fields:
             form.fields["search"].queryset = models.Search.objects.filter(
                 assessment=self.assessment

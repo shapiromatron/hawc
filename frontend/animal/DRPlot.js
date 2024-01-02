@@ -36,16 +36,8 @@ class DRPlot extends D3Plot {
 
         //update if plot is live
         if (this.parent && this.parent.plot === this) {
-            if (this.x_axis_settings.scale_type == "linear") {
-                this.x_axis_settings.domain = [
-                    this.min_x - this.max_x * this.buff,
-                    this.max_x * (1 + this.buff),
-                ];
-            } else {
-                this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
-            }
+            this.x_axis_settings.domain = [this.min_x, this.max_x];
             this.x_scale = this._build_scale(this.x_axis_settings);
-
             this.build_x_label();
             this.add_selected_endpoint_BMD();
             this.x_axis_change_chart_update();
@@ -71,7 +63,7 @@ class DRPlot extends D3Plot {
         this.render_bmd_lines();
         this.build_x_label();
         this.build_y_label();
-        this.add_title();
+        this.add_title(null, null, {wrapWidth: 325});
         this.add_legend();
         this.customize_menu();
         this.trigger_resize();
@@ -167,21 +159,16 @@ class DRPlot extends D3Plot {
     _setPlottableDoseValues() {
         if (this.x_axis_settings.scale_type == "linear") {
             this.min_x = d3.min(_.map(this.values, "x"));
-            this.x_axis_settings.domain = [
-                this.min_x - this.max_x * this.buff,
-                this.max_x * (1 + this.buff),
-            ];
         } else {
             this.min_x = d3.min(_.map(this.values, "x_log"));
-            this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
         }
+        this.x_axis_settings.domain = [this.min_x, this.max_x];
     }
 
     set_defaults() {
         // Default settings for a DR plot instance
         this.line_colors = ["#BF3F34", "#545FF2", "#D9B343", "#228C5E", "#B27373"]; //bmd lines
         this.padding = {top: 40, right: 20, bottom: 40, left: 60};
-        this.buff = 0.05; // addition numerical-spacing around dose/response units
         this.radius = 7;
         this.x_axis_settings = {
             scale_type: this.endpoint.defaultDoseAxis(),
@@ -319,18 +306,14 @@ class DRPlot extends D3Plot {
                     significance_level: v.significance_level,
                 };
             })
-            .filter(function(d) {
-                return d.isReported;
-            })
+            .filter(d => d.isReported)
             .value();
 
         if (values.length > 2) values[0].x_log = values[1].x_log / 10;
 
         sigs_data = _.chain(values)
-            .filter(function(d) {
-                return d.significance_level > 0;
-            })
-            .map(function(v) {
+            .filter(d => d.significance_level > 0)
+            .map(v => {
                 return {
                     x: v.x,
                     significance_level: v.significance_level,
@@ -345,39 +328,32 @@ class DRPlot extends D3Plot {
             y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
             sigs_data,
-            max_x: d3.max(ep.groups, function(datum) {
-                return datum.dose;
-            }),
+            max_x: d3.max(ep.groups, d => d.dose),
         });
 
         this._setPlottableDoseValues();
 
         if (ep.groups.length > 0) {
-            var max_upper = d3.max(values, function(d) {
-                    return d.y_upper || d.y;
-                }),
-                max_sig = d3.max(sigs_data, function(d) {
-                    return d.y;
-                });
+            var max_upper = d3.max(values, d => d.y_upper || d.y),
+                max_sig = d3.max(sigs_data, d => d.y);
 
-            this.min_y = d3.min(values, function(d) {
-                return d.y_lower || d.y;
-            });
+            this.min_y = d3.min(values, d => d.y_lower || d.y);
             this.max_y = d3.max([max_upper, max_sig]);
         }
     }
 
     add_axes() {
+        const BUFFER = 10;
         // customizations for axis updates
         $.extend(this.x_axis_settings, {
-            rangeRound: [0, this.w],
+            rangeRound: [BUFFER, this.w - BUFFER],
             x_translate: 0,
             y_translate: this.h,
         });
 
         $.extend(this.y_axis_settings, {
-            domain: [this.min_y - this.max_y * this.buff, this.max_y * (1 + this.buff)],
-            rangeRound: [this.h, 0],
+            domain: [this.min_y, this.max_y],
+            rangeRound: [this.h - BUFFER, BUFFER],
             x_translate: 0,
             y_translate: 0,
         });
@@ -397,7 +373,7 @@ class DRPlot extends D3Plot {
     add_dr_error_bars(update) {
         var x = this.x_scale,
             y = this.y_scale,
-            hline_width = x.range()[1] * 0.02;
+            hline_width = x.range()[1] * 0.01;
         this.hline_width = hline_width;
 
         try {
@@ -565,7 +541,6 @@ class DRPlot extends D3Plot {
             });
 
         legend_settings.item_height = 20;
-        legend_settings.box_w = 110;
         legend_settings.box_h = legend_settings.items.length * legend_settings.item_height;
 
         legend_settings.box_padding = 5;
@@ -574,13 +549,11 @@ class DRPlot extends D3Plot {
         if (this.legend_left) {
             legend_settings.box_l = this.legend_left;
         } else {
-            legend_settings.box_l = this.w - legend_settings.box_w - 10;
+            legend_settings.box_l = 10;
         }
 
         if (this.legend_top) {
             legend_settings.box_t = this.legend_top;
-        } else if (this.endpoint.data.dataset_increasing) {
-            legend_settings.box_t = this.h - legend_settings.box_h - 20;
         } else {
             legend_settings.box_t = 10;
         }
@@ -610,6 +583,9 @@ class DRPlot extends D3Plot {
 
     render_bmd_lines() {
         this.remove_bmd_lines();
+        if (!this.x_scale) {
+            return;
+        }
         const doseUnits = this.endpoint.doseUnits.activeUnit.id,
             lines = this.bmd.filter(d => d.dose_units_id === doseUnits),
             x = this.x_scale,
@@ -622,36 +598,37 @@ class DRPlot extends D3Plot {
             bmd_lines = _.chain(lines)
                 .filter(d => d.bmd_line !== undefined)
                 .map(d => {
-                    return [
-                        {
-                            x1: x(d.bmd_line.x),
-                            x2: x(d.bmd_line.x),
-                            y1: y.range()[0],
-                            y2: y(d.bmd_line.y),
-                            stroke: d.stroke,
-                        },
-                        {
-                            x1: x.range()[0],
-                            x2: x(d.bmd_line.x),
-                            y1: y(d.bmd_line.y),
-                            y2: y(d.bmd_line.y),
-                            stroke: d.stroke,
-                        },
-                        {
+                    const data = [];
+                    if (d.bmd_line) {
+                        data.push(
+                            ...[
+                                {
+                                    x1: x(d.bmd_line.x),
+                                    x2: x(d.bmd_line.x),
+                                    y1: y.range()[0],
+                                    y2: y(d.bmd_line.y),
+                                    stroke: d.stroke,
+                                },
+                                {
+                                    x1: x.range()[0],
+                                    x2: x(d.bmd_line.x),
+                                    y1: y(d.bmd_line.y),
+                                    y2: y(d.bmd_line.y),
+                                    stroke: d.stroke,
+                                },
+                            ]
+                        );
+                    }
+                    if (d.bmdl_line) {
+                        data.push({
                             x1: x(d.bmdl_line.x),
                             x2: x(d.bmdl_line.x),
                             y1: y.range()[0],
-                            y2: y(d.bmdl_line.y),
+                            y2: y(d.bmd_line.y),
                             stroke: d.stroke,
-                        },
-                        {
-                            x1: x.range()[0],
-                            x2: x(d.bmdl_line.x),
-                            y1: y(d.bmdl_line.y),
-                            y2: y(d.bmdl_line.y),
-                            stroke: d.stroke,
-                        },
-                    ];
+                        });
+                    }
+                    return data;
                 })
                 .flattenDeep()
                 .value(),
@@ -690,6 +667,10 @@ class DRPlot extends D3Plot {
     }
 
     remove_bmd_lines() {
+        // only attempt if vis exists
+        if (!this.vis) {
+            return;
+        }
         this.vis.selectAll("g.bmd").remove();
     }
 }

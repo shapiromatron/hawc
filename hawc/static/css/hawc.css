@@ -191,15 +191,6 @@ input[type='number'] {
     background-color: #cccccc
 }
 
-/* Tooltips */
-.hawcTooltip {
-    position: absolute !important;
-    border: 3px solid gray;
-    border-radius: 8px;
-    overflow: auto;
-    z-index: 1150;
-}
-
 /* About-us page */
 .videoTab iframe {
     border: 2px black solid;
@@ -555,6 +546,9 @@ div.smart-tag.active {
     height: fit-content;
     cursor: unset;
 }
+.referenceDetail.expanded .abstracts:hover{
+    background-color: unset;
+}
 .refTag {
     color: #ffffff !important;
     background-color: #162e51;
@@ -846,6 +840,10 @@ table.bordered td {
     border: none;
     padding: 0;
 }
+.smaller {
+    font-size: .8em;
+    font-weight: 400;
+}
 
 /* table column text alignment */
 .col-r-1 td:nth-child(1),
@@ -899,6 +897,21 @@ table.bordered td {
 .col-l-12 td:nth-child(12),
 .col-l-12 th:nth-child(12) {
     text-align: left;
+}
+
+/* anchor links */
+.anchor-link {
+    opacity: 0;
+    text-decoration: none;
+    color: #738ffe;
+    transition: 0.5s;
+}
+h2:hover > .anchor-link,
+h3:hover > .anchor-link,
+h4:hover > .anchor-link,
+h5:hover > .anchor-link,
+h6:hover > .anchor-link {
+    opacity: 1;
 }
 
 /* vendor data table css: https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css */

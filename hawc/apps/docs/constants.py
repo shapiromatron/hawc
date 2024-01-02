@@ -1,0 +1,15 @@
+RICH_TEXT_FEATURES = [
+    "anchor-identifier",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "bold",
+    "italic",
+    "link",
+    "ol",
+    "ul",
+    "hr",
+    "image",
+    "document-link",
+]

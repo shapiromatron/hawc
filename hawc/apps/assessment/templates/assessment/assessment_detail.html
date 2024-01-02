@@ -1,12 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load hawc %}
-{% load bs4 %}
-{% load hastext %}
-
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{object}}{% debug_badge object.id %}</h2>
     {% if crud == "Read" %}
       {% actions %}
           <!-- assessment editing -->

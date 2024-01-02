@@ -1,8 +1,5 @@
 {% extends "crumbless.html" %}
 
-{% load hawc %}
-{% load bs4 %}
-
 {% block content %}
 <div class="d-flex">
   <h2>User Profile</h2>
@@ -43,10 +40,21 @@
         <p class="text-muted mb-0">Token is only valid during the current login session.</p>
       </td>
     </tr>
+    <tr>
+      <th>Show debug information</th>
+      <td>
+        <span id="id_debug"></span><br/>
+        <p class="text-muted mb-0">Show additional debug information on views throughout HAWC.</p>
+      </td>
+    </tr>
   </tbody>
 </table>
 {% endblock content %}
 
 {% block extrajs %}
   {% include "includes/hero_access.html" %}
+  <script>
+    const value = (window.localStorage.getItem('hawc-debug-badge') || "false");
+    $('#id_debug').text(value.charAt(0).toUpperCase() + value.slice(1));
+  </script>
 {% endblock extrajs %}

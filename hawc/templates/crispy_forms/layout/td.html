@@ -1,5 +1,0 @@
-<td {% if td.css_id %}id="{{ td.css_id }}"{% endif %}
-    {% if td.css_class or form_style %}class="{{ td.css_class }} {{ form_style }}"{% endif %}
-    {{ td.flat_attrs|safe }}>
-    {{ fields|safe }}
-</td>

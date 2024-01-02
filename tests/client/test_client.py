@@ -5,6 +5,8 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
+import hawc.apps.epiv2.constants as epiv2constants
+import hawc.apps.epiv2.models as epiv2models
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment import constants
 from hawc.apps.assessment.models import DoseUnits, Strain
@@ -22,6 +24,8 @@ from hawc.apps.epi.models import (
 )
 from hawc.apps.lit.models import Reference
 from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.study import constants as studyconstants
+from hawc.apps.study.models import Study
 from hawc_client import BaseClient, HawcClient, HawcClientException, InteractiveHawcClient
 
 
@@ -233,6 +237,7 @@ class TestClient(LiveServerTestCase, TestCase):
             power_notes="...",
             results_notes="...",
             endpoint_notes="...",
+            effects=["tag1"],
             groups=[
                 dict(
                     dose_group_id=0,
@@ -265,6 +270,9 @@ class TestClient(LiveServerTestCase, TestCase):
         )
         endpoint = client.animal.create_endpoint(data)
         assert isinstance(endpoint, dict) and endpoint["id"] > 0
+        assert len(endpoint["effects"]) == 1
+        assert endpoint["effects"][0] == {"name": "tag1", "slug": "tag1"}
+        assert len(endpoint["groups"]) == 3
 
         # test cleanup; remove what we just created
         Experiment.objects.filter(id=experiment["id"]).delete()
@@ -310,6 +318,21 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.all_values()
         assert isinstance(response, list)
         assert len(response) == 3
+
+    def test_effect_tag(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        # test create
+        response = client.assessment.effect_tag_create(name="foo", slug="foo")
+        assert response == {"name": "foo", "slug": "foo"}
+
+        # test list
+        response = client.assessment.effect_tag_list()
+        assert response["count"] >= 3
+
+        response = client.assessment.effect_tag_list(name="foo")
+        assert response["count"] == 1
+        assert response["results"] == [{"name": "foo", "slug": "foo"}]
 
     ###################
     # EpiClient tests #
@@ -465,10 +488,13 @@ class TestClient(LiveServerTestCase, TestCase):
                 "summary": "my dsummary",
                 "effect": "my effect",
                 "effect_subtype": "my subtype",
+                "effects": ["tag1"],
             }
         )
         assert isinstance(outcome, dict) and outcome["name"] == outcome_name
         outcome_id = outcome["id"]
+        assert len(outcome["effects"]) == 1
+        assert outcome["effects"][0] == {"name": "tag1", "slug": "tag1"}
 
         # result
         result_name = "test result"
@@ -495,10 +521,13 @@ class TestClient(LiveServerTestCase, TestCase):
                 "factors_applied": ["birth order"],
                 "factors_considered": ["dynamic factor", "study center"],
                 "comments": "comments go here",
+                "resulttags": ["tag2"],
             }
         )
         assert isinstance(result, dict) and result["name"] == result_name
         result_id = result["id"]
+        assert len(result["resulttags"]) == 1
+        assert result["resulttags"][0] == {"name": "tag2", "slug": "tag2"}
 
         # group result
         gr_pval = 0.432
@@ -532,6 +561,348 @@ class TestClient(LiveServerTestCase, TestCase):
         ComparisonSet.objects.filter(id=comparison_set_id).delete()
         Exposure.objects.filter(id=exposure_id).delete()
         StudyPopulation.objects.filter(id=study_pop_id).delete()
+
+    #####################
+    # EpiV2Client tests #
+    #####################
+
+    def test_epiv2_crud(self):
+        """
+        Test all the create/read/update/delete methods for epi v2
+        """
+
+        def common_result_check(result, payload, key):
+            assert isinstance(result, dict) and result[key] == payload[key]
+
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        epi_client = client.epiv2
+
+        ###
+        ### design
+        ###
+        design_payload = {
+            "study_id": self.db_keys.study_working,
+            "summary": "D summary",
+            "study_name": "D study name",
+            "study_design": "Cohort",
+            "source": "General Population",
+            "age_profile": ["Adults"],
+            "age_description": "D age",
+            "sex": "Male and Female",
+            "countries": ["JP"],
+            "race": "D race",
+            "participant_n": 99,
+            "criteria": "D criteria",
+            "susceptibility": "D susceptibility",
+            "region": "D region",
+            "years_enrolled": "D years enrolled",
+            "years_followup": "D years followup",
+            "comments": "D comments",
+        }
+
+        # create
+        design_result = epi_client.create_design(design_payload)
+
+        common_result_check(design_result, design_payload, "summary")
+
+        design_id = design_result["id"]
+
+        # update
+        design_payload["summary"] = "modified summary"
+        design_result = epi_client.update_design(design_id, design_payload)
+        common_result_check(design_result, design_payload, "summary")
+
+        # read
+        design_result = epi_client.get_design(design_id)
+        common_result_check(design_result, design_payload, "summary")
+
+        # list
+        study = Study.objects.get(id=self.db_keys.study_working)
+        list_by_assessment_result = epi_client.get_designs_for_assessment(
+            assessment_id=study.assessment_id
+        )
+        list_by_study_result = epi_client.get_designs_for_study(
+            assessment_id=study.assessment_id, study_id=study.id
+        )
+        assert (
+            list_by_study_result["count"].tolist()[0]
+            == list_by_assessment_result["count"].tolist()[0]
+        )
+
+        ###
+        ### chemical
+        ###
+        chemical_payload = {
+            "design": design_id,
+            "name": "C name",
+            "dsstox_id": "DTXSID6026296",
+        }
+
+        # create
+        chemical_result = epi_client.create_chemical(chemical_payload)
+        common_result_check(chemical_result, chemical_payload, "name")
+
+        assert chemical_result["dsstox"]["dtxsid"] == chemical_payload["dsstox_id"]
+        chemical_id = chemical_result["id"]
+
+        # update
+        chemical_payload["name"] = "modified name"
+        chemical_result = epi_client.update_chemical(chemical_id, chemical_payload)
+        common_result_check(chemical_result, chemical_payload, "name")
+
+        # read
+        chemical_result = epi_client.get_chemical(chemical_id)
+        common_result_check(chemical_result, chemical_payload, "name")
+
+        ###
+        ### exposure (measurement)
+        ###
+        exposure_payload = {
+            "design": design_id,
+            "name": "E name",
+            "measurement_type": ["Biomonitoring", "Air"],
+            "biomonitoring_matrix": "BLP",
+            "biomonitoring_source": "PT",
+            "measurement_timing": "E timing",
+            "exposure_route": "IH",
+            "measurement_method": "E meas method",
+            "comments": "E comments",
+        }
+
+        # create
+        exposure_result = epi_client.create_exposure(exposure_payload)
+        common_result_check(exposure_result, exposure_payload, "name")
+
+        exposure_id = exposure_result["id"]
+
+        # update
+        exposure_payload["name"] = "modified name"
+        exposure_result = epi_client.update_exposure(exposure_id, exposure_payload)
+        common_result_check(exposure_result, exposure_payload, "name")
+
+        # read
+        exposure_result = epi_client.get_exposure(exposure_id)
+        common_result_check(exposure_result, exposure_payload, "name")
+
+        ###
+        ### exposure level
+        ###
+        exposure_level_payload = {
+            "design": design_id,
+            "name": "EL name",
+            "chemical_id": chemical_id,
+            "exposure_measurement_id": exposure_id,
+            "sub_population": "EL subpop",
+            "median": 1.1,
+            "mean": 1.2,
+            "variance": 1.3,
+            "variance_type": "SD",
+            "units": "EL units",
+            "ci_lcl": "1.4",
+            "percentile_25": "1.5",
+            "percentile_75": "1.6",
+            "ci_ucl": "1.7",
+            "ci_type": "Rng",
+            "negligible_exposure": "EL neg expo",
+            "data_location": "EL dataloc",
+            "comments": "EL comments",
+        }
+
+        # create
+        exposure_level_result = epi_client.create_exposure_level(exposure_level_payload)
+        common_result_check(exposure_level_result, exposure_level_payload, "name")
+
+        exposure_level_id = exposure_level_result["id"]
+
+        # update
+        exposure_level_payload["name"] = "modified name"
+        exposure_level_result = epi_client.update_exposure_level(
+            exposure_level_id, exposure_level_payload
+        )
+        common_result_check(exposure_level_result, exposure_level_payload, "name")
+
+        # read
+        exposure_level_result = epi_client.get_exposure_level(exposure_level_id)
+        common_result_check(exposure_level_result, exposure_level_payload, "name")
+
+        ###
+        ### outcome
+        ###
+        outcome_payload = {
+            "design": design_id,
+            "system": "Reproductive",
+            "effect": "O effect",
+            "effect_detail": "O detail",
+            "endpoint": "O endpoint",
+            "comments": "O comments",
+        }
+
+        # create
+        outcome_result = epi_client.create_outcome(outcome_payload)
+        common_result_check(outcome_result, outcome_payload, "effect")
+
+        outcome_id = outcome_result["id"]
+
+        # update
+        outcome_payload["effect"] = "modified effect"
+        outcome_result = epi_client.update_outcome(outcome_id, outcome_payload)
+        common_result_check(outcome_result, outcome_payload, "effect")
+
+        # read
+        outcome_result = epi_client.get_outcome(outcome_id)
+        common_result_check(outcome_result, outcome_payload, "effect")
+
+        ###
+        ### adjustment factor
+        ###
+        adjustment_factor_payload = {
+            "design": design_id,
+            "name": "AF name",
+            "description": "AF description",
+            "comments": "AF comments",
+        }
+
+        # create
+        adjustment_factor_result = epi_client.create_adjustment_factor(adjustment_factor_payload)
+        common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
+
+        adj_factor_id = adjustment_factor_result["id"]
+
+        # update
+        adjustment_factor_payload["name"] = "modified name"
+        adjustment_factor_result = epi_client.update_adjustment_factor(
+            adj_factor_id, adjustment_factor_payload
+        )
+        common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
+
+        # read
+        adjustment_factor_result = epi_client.get_adjustment_factor(adj_factor_id)
+        common_result_check(adjustment_factor_result, adjustment_factor_payload, "name")
+
+        ###
+        ### data extraction
+        ###
+        data_extraction_payload = {
+            "design": design_id,
+            "outcome_id": outcome_id,
+            "exposure_level_id": exposure_level_id,
+            "sub_population": "DE subpop",
+            "outcome_measurement_timing": "DE meas timing",
+            "effect_estimate_type": "Absolute Risk %",
+            "effect_estimate": 1.1,
+            "ci_lcl": 1.2,
+            "ci_ucl": 1.3,
+            "ci_type": "Rng",
+            "units": "DE units",
+            "variance_type": "SD",
+            "variance": 1.4,
+            "n": 99,
+            "p_value": "DE pval",
+            "significant": "No",
+            "group": "DE group",
+            "exposure_rank": 1,
+            "exposure_transform": "DE expo transform",
+            "outcome_transform": "DE outcome transform",
+            "factors": adj_factor_id,
+            "confidence": "DE confidence",
+            "adverse_direction": "up",
+            "data_location": "DE loc",
+            "effect_description": "DE effect desc",
+            "statistical_method": "DE stat method",
+            "comments": "DE comments",
+        }
+
+        # create
+        data_extraction_result = epi_client.create_data_extraction(data_extraction_payload)
+        common_result_check(data_extraction_result, data_extraction_payload, "comments")
+
+        data_extraction_id = data_extraction_result["id"]
+
+        # update
+        data_extraction_payload["comments"] = "modified comments"
+        data_extraction_result = epi_client.update_data_extraction(
+            data_extraction_id, data_extraction_payload
+        )
+        common_result_check(data_extraction_result, data_extraction_payload, "comments")
+
+        # read
+        data_extraction_result = epi_client.get_data_extraction(data_extraction_id)
+        common_result_check(data_extraction_result, data_extraction_payload, "comments")
+
+        ###
+        ### all
+        ###
+        # delete
+        deletions = (
+            (data_extraction_id, epi_client.delete_data_extraction, epiv2models.DataExtraction),
+            (exposure_level_id, epi_client.delete_exposure_level, epiv2models.ExposureLevel),
+            (outcome_id, epi_client.delete_outcome, epiv2models.Outcome),
+            (adj_factor_id, epi_client.delete_adjustment_factor, epiv2models.AdjustmentFactor),
+            (chemical_id, epi_client.delete_chemical, epiv2models.Chemical),
+            (exposure_id, epi_client.delete_exposure, epiv2models.Exposure),
+            (design_id, epi_client.delete_design, epiv2models.Design),
+        )
+
+        for primary_key, client_delete_method, model_class in deletions:
+            deletion_response = client_delete_method(primary_key)
+            assert deletion_response.status_code == 204
+            assert not model_class.objects.filter(id=primary_key).exists()
+
+    def test_epiv2_metadata(self):
+        """
+        Test metadata retrieval for epi v2
+        """
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        epi_client = client.epiv2
+
+        metadata = epi_client.metadata()
+        assert isinstance(metadata, dict)
+
+        # spotcheck a few items in the returned metadata
+        things_to_check = [
+            {"model": "study", "props": {"coi_reported": studyconstants.CoiReported}},
+            {
+                "model": "design",
+                "props": {
+                    "study_design": epiv2constants.StudyDesign,
+                    "source": epiv2constants.Source,
+                },
+            },
+            {
+                "model": "exposure_level",
+                "props": {
+                    "variance_type": epiv2constants.VarianceType,
+                    "ci_type": epiv2constants.ConfidenceIntervalType,
+                },
+            },
+        ]
+
+        for thing_to_check in things_to_check:
+            model_name = thing_to_check.get("model")
+            assert model_name in metadata
+            metadata_details = metadata.get(model_name)
+            props = thing_to_check.get("props")
+            for prop_name in props:
+                assert prop_name in metadata_details
+                metadata_vals = metadata_details.get(prop_name)
+                legal_vals_to_check = props.get(prop_name)
+
+                for legal_val_to_check in legal_vals_to_check:
+                    assert str(legal_val_to_check.value) in metadata_vals
+                    metadata_display = metadata_vals.get(str(legal_val_to_check.value))
+                    assert metadata_display == legal_val_to_check.label
+
+    def test_epiv2_data_export(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        epi_client = client.epiv2
+
+        df = epi_client.data(
+            assessment_id=self.db_keys.assessment_working, retrieve_unpublished_data=True
+        )
+        assert isinstance(df, pd.DataFrame) and df.shape == (12, 116)
 
     #######################
     # EpiMetaClient tests #
@@ -785,10 +1156,19 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
         response = client.riskofbias.reviews(self.db_keys.assessment_final)
         assert isinstance(response, list) and len(response) > 0
         assert len(response) == 6
         assert response[0]["scores"][0]["score_symbol"] == "++"
+
+    def test_riskofbias_final_reviews(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.final_reviews(self.db_keys.assessment_final)
+        assert isinstance(response, list) and len(response) > 0
+        assert len(response) > 0
+        assert all(review["final"] is True for review in response)
 
     #######################
     # SummaryClient tests #

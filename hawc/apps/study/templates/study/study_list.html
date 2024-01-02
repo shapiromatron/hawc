@@ -1,7 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load bs4 %}
-
 {% block content %}
 <div class="d-flex">
     <h2>Available studies ({{page_obj.paginator.count}} found)</h2>
@@ -33,6 +31,7 @@
                 {% if not object.published %}
                 <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
                 {% endif %}
+                {% debug_badge object.id %}
             </td>
             <td>
                 {{object.full_citation}}

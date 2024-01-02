@@ -79,7 +79,7 @@ For configurable parameters, we use environment variables which are loaded in th
     - The "django" authentication provider means accounts can be created in hawc and passwords are managed in hawc
     - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration via `/user/login/wam/`.  If used, `hawc.apps.myuser.views.ExternalAuth.get_user_metadata` requires a custom implementation.
 - `HAWC_LOGOUT_REDIRECT` [str, optional]. URL to redirect to after logout. Defaults to the homepage of hawc; this may need to be modified with some authentication providers.
-- `HAWC_LOAD_TEST_DB` [0/1/2; default 0]. Load a test database with pre-populated fake data: always (2), if empty (1), or never (0; default). This setting is only used in staging and production django settings.
+- `HAWC_LOAD_TEST_DB` [0/1; default 0]. Load a test database with pre-populated fake data (1), or never ( default). This setting is only used in staging and production django settings.
 
 ### Feature flags
 

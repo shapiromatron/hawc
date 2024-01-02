@@ -1,5 +1,4 @@
 {% extends 'assessment-rooted.html' %}
-{% load bs4 %}
 
 {% block content %}
     <div class="d-flex">
@@ -40,7 +39,7 @@
         </tr>
       {% empty %}
         <tr>
-          <td colspan="3"><p class='form-text text-muted'><i>No BMD modeling sessions available.</i></p></td>
+          <td colspan="5"><p class='form-text text-muted'><i>No BMD modeling sessions available.</i></p></td>
         </tr>
       {% endfor %}
       </tbody>

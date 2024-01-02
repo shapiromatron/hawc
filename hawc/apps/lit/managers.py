@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.search import SearchQuery
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count, Q, QuerySet
@@ -72,6 +73,14 @@ class SearchManager(BaseManager):
             )
         except Exception:
             return None
+
+    def copyable(self, user) -> models.QuerySet:
+        assessments = user.get_assessments().values_list("id", flat=True)
+        return (
+            self.model.objects.filter(assessment__in=assessments)
+            .exclude(title="Manual import")
+            .order_by("assessment_id")
+        )
 
 
 class PubMedQueryManager(BaseManager):
@@ -558,6 +567,19 @@ class ReferenceQuerySet(models.QuerySet):
             published=published("assessment__"),
         ).values_list(*mapping.values())
         return pd.DataFrame(list(qs), columns=list(mapping.keys()))
+
+    def full_text_search(self, search_text: str):
+        """Filter queryset using a full text search.
+
+        Args:
+            search_text: Text to use in the full text search filter.
+
+        Returns:
+            Queryset: The filtered ReferenceQueryset
+        """
+        return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
+            search=SearchQuery(search_text, search_type="websearch", config="english")
+        )
 
 
 class ReferenceManager(BaseManager):

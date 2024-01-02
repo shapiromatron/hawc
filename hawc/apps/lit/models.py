@@ -10,6 +10,8 @@ from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
 from django.urls import reverse
@@ -192,9 +194,9 @@ class Search(models.Model):
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
     )
-    search_type = models.CharField(max_length=1, choices=constants.SearchType.choices)
+    search_type = models.CharField(max_length=1, choices=constants.SearchType)
     source = models.PositiveSmallIntegerField(
-        choices=constants.ReferenceDatabase.choices,
+        choices=constants.ReferenceDatabase,
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
@@ -607,7 +609,7 @@ class Identifiers(models.Model):
     unique_id = models.CharField(
         max_length=256, db_index=True
     )  # DOI has no limit; we make this relatively large
-    database = models.IntegerField(choices=constants.ReferenceDatabase.choices)
+    database = models.IntegerField(choices=constants.ReferenceDatabase)
     content = models.TextField()
     url = models.URLField(blank=True)
 
@@ -835,6 +837,48 @@ class Reference(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    class Meta:
+        indexes = [
+            GinIndex(
+                constants.REFERENCE_SEARCH_VECTOR,
+                name="search_vector_idx",
+            )
+        ]
+
+    @transaction.atomic
+    def merge_tags(self, user):
+        """Merge all unresolved user tags and apply to the reference.
+
+        Args:
+            user: The user requesting the tag change
+        """
+
+        # if there are no unresolved user tags, do nothing
+        n_user_tags = self.user_tags.filter(is_resolved=False).count()
+        if n_user_tags == 0:
+            return
+
+        tag_pks = list(
+            self.user_tags.filter(is_resolved=False)
+            .values_list("tags", flat=True)
+            .distinct()
+            .filter(tags__isnull=False)
+        )
+        Log.objects.create(
+            assessment_id=self.assessment_id,
+            user_id=user.id,
+            message=f"lit.Reference {self.id}: merge all user tags {tag_pks}.",
+            content_object=self,
+        )
+        user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
+        user_tag.tags.set(tag_pks)
+        user_tag.save()
+
+        self.user_tags.update(is_resolved=True)
+        self.tags.set(tag_pks)
+        self.last_updated = timezone.now()
+        self.save()
+
     def update_tags(self, user, tag_pks: list[int]) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
@@ -853,6 +897,8 @@ class Reference(models.Model):
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
+        deleted_tags = set(self.tags.all().values_list("pk", flat=True)).difference(set(tag_pks))
+        user_tag.deleted_tags = list(deleted_tags) if deleted_tags else []
         user_tag.save()
 
         # determine if we should save the reference-level tags
@@ -1120,7 +1166,7 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def annotate_tag_parents(cls, references: list, tags: models.QuerySet):
+    def annotate_tag_parents(cls, references: list, tags: models.QuerySet, user_tags: bool = True):
         """Annotate tag parents for all tags and user tags.
 
         Sets a new attribute (parents: list[Tag]) for each tag.
@@ -1128,6 +1174,7 @@ class Reference(models.Model):
         Args:
             references (list): a list of references
             tags (models.QuerySet): the full tag list for an assessment
+            user_tags (bool): set parents for user tags as well as consensus tags
         """
         tag_map = {tag.path: tag for tag in tags}
 
@@ -1143,9 +1190,10 @@ class Reference(models.Model):
         for reference in references:
             for tag in reference.tags.all():
                 _set_parents(tag)
-            for user_tag in reference.user_tags.all():
-                for tag in user_tag.tags.all():
-                    _set_parents(tag)
+            if user_tags:
+                for user_tag in reference.user_tags.all():
+                    for tag in user_tag.tags.all():
+                        _set_parents(tag)
 
 
 class UserReferenceTags(ItemBase):
@@ -1161,6 +1209,7 @@ class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    deleted_tags = ArrayField(models.IntegerField(), default=list)
     is_resolved = models.BooleanField(
         default=False, help_text="User specific tag differences are resolved for this reference"
     )

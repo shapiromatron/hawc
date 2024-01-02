@@ -44,20 +44,6 @@ class HAWCUtils {
         return links.join("<span> / </span>");
     }
 
-    static InitialForm(config) {
-        var selector = config.form.find("select[name='selector']"),
-            submitter = config.form.find("#submit_form");
-
-        submitter.on("click", function() {
-            var val = parseInt(selector.select2("data")[0].id);
-            if (val) {
-                submitter.attr("href", `${config.base_url}?initial=${val}`);
-                return true;
-            }
-            return false;
-        });
-    }
-
     static prettifyVariableName(str) {
         str = str.replace(/_/g, " ");
         return str.charAt(0).toUpperCase() + str.substr(1);
@@ -316,7 +302,12 @@ class HAWCUtils {
             handleChange = () => {
                 const selector = `#detail-${$selectEl.val()}`,
                     clone = $insertItems.find(selector).clone();
-                $insertEl.fadeOut(() => $insertEl.html(clone).fadeIn());
+                $insertEl.fadeOut(() =>
+                    $insertEl
+                        .html(clone)
+                        .trigger("select:change")
+                        .fadeIn()
+                );
             };
         $selectEl.on("change", handleChange).trigger("change");
     }
@@ -341,6 +332,19 @@ class HAWCUtils {
                 }
             })
             .trigger("change");
+    }
+
+    static addAnchorLinks(parent, selector) {
+        $(parent)
+            .find(selector)
+            .each(function(index) {
+                const id = $(this).attr("id");
+                if (id) {
+                    $(this).append(
+                        `<a href="#${id}" class="ml-2 anchor-link" title="Section link"><span class="fa fa-fw fa-chain"></span></a>`
+                    );
+                }
+            });
     }
 }
 export default HAWCUtils;

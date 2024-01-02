@@ -1,0 +1,25 @@
+<div id="{{ modal_id }}" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{ modal_id }}-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% block modal_header %}
+                <h5 class="modal-title" id="{{ modal_id }}-label">
+                    {% block modal_title %}{% endblock modal_title %}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {% endblock modal_header %}
+            </div>
+            <div class="modal-body">
+                {% block modal_body %}
+                {% endblock modal_body %}
+            </div>
+            <div class="modal-footer">
+                {% block modal_footer %}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                {% endblock modal_footer %}
+            </div>
+        </div>
+    </div>
+</div>

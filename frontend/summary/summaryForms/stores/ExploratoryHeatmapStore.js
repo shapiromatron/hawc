@@ -41,6 +41,7 @@ class ExploratoryHeatmapStore {
             filter_widgets: [],
             padding: {top: 30, left: 30, bottom: 30, right: 30},
             show_axis_border: true,
+            show_counts: 1,
             show_grid: true,
             show_tooltip: true,
             show_totals: true,

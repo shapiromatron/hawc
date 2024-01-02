@@ -1,6 +1,7 @@
 import django_filters as df
 from django.db.models import Q
 
+from ..assessment.constants import RobName
 from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import constants, models
 
@@ -35,7 +36,7 @@ class VisualFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
+        return queryset.filter(query).order_by("id")
 
     def get_type_choices(self):
         choices = (
@@ -44,7 +45,14 @@ class VisualFilterSet(BaseFilterSet):
             .distinct()
         )
         choices = [constants.VisualType(choice) for choice in sorted(set(choices))]
-        return [(choice.value, choice.label) for choice in choices]
+
+        choices = [(choice.value, choice.label) for choice in choices]
+        if self.assessment.rob_name == RobName.SE:
+            choices = [
+                (value, label.replace("risk of bias", "study evaluation"))
+                for value, label in choices
+            ]
+        return choices
 
     def create_form(self):
         form = super().create_form()
@@ -119,7 +127,7 @@ class SummaryTableFilterSet(BaseFilterSet):
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
-        return queryset.filter(query)
+        return queryset.filter(query).order_by("id")
 
     def create_form(self):
         form = super().create_form()
