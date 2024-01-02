@@ -4,6 +4,8 @@ from pathlib import Path
 import pandas as pd
 from playwright.sync_api import Page
 
+from hawc_client import InteractiveHawcClient
+
 from .client import BaseClient
 
 
@@ -255,59 +257,8 @@ class SummaryClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def download_visual(
-        self, id: int, is_tableau: bool = False, fn: PathLike = None, page: Page | None = None
-    ) -> BytesIO:
-        """Download a single visualization given a visual ID
-
-        Args:
-            id (int): The visual ID
-            is_tableau (bool): Is the visual a tableau visual (default False)
-            fn (PathLike, optional): If a path or string is specified, the a PNG is written to
-                that location. If None (default), no data is written to a Path.
-            page (Page, optional): an existing Page, if one exists
-
-        Returns:
-            BytesIO: the PNG representation of the visual, in bytes.
-        """
-        url = f"{self.session.root_url}/summary/visual/{id}/"
-        reuse_page = page is not None
-        if page is None:
-            page = self.session.create_ui_page()
-        page.goto(url)
-        data = fetch_png(page, is_tableau)
-        write_to_file(data, fn)
-        if not reuse_page:
-            page.close()
-        return data
-
-    def download_data_pivot(
-        self, id: int, fn: PathLike = None, page: Page | None = None
-    ) -> BytesIO:
-        """Download a single data pivot given a data pivot ID
-
-        Args:
-            id (int): The data pivot ID
-            fn (PathLike, optional): If a path or string is specified, the a PNG is written to
-                that location. If None (default), no data is written to a Path.
-            page (Page, optional): an existing Page, if one exists
-
-        Returns:
-            BytesIO: the PNG representation of the data pivot, in bytes.
-        """
-        url = f"{self.session.root_url}/summary/data-pivot/{id}/"
-        reuse_page = page is not None
-        if page is None:
-            page = self.session.create_ui_page()
-        page.goto(url)
-        data = fetch_png(page)
-        write_to_file(data, fn)
-        if not reuse_page:
-            page.close()
-        return data
-
     def download_all_visuals(self, assessment_id: int) -> list[dict]:
-        """Download all visuals for an assessment
+        """Download all visuals and data pivots for an assessment
 
         Args:
             id (int): The data pivot ID
@@ -318,11 +269,12 @@ class SummaryClient(BaseClient):
         visuals = self.visual_list(assessment_id)
         dp = self.datapivot_list(assessment_id)
         visuals = pd.concat([visuals, dp]).to_dict(orient="records")
-        page = self.session.create_ui_page()
-        for visual in visuals:
-            if "data pivot" in visual["visual_type"].lower():
-                visual["png"] = self.download_data_pivot(visual["id"], page=page)
-            else:
-                is_tableau = "embedded external website" in visual["visual_type"].lower()
-                visual["png"] = self.download_visual(visual["id"], is_tableau=is_tableau, page=page)
+
+        with InteractiveHawcClient(self) as iclient:
+            for visual in visuals:
+                if "data pivot" in visual["visual_type"].lower():
+                    visual["png"] = iclient.download_data_pivot(visual["id"])
+                else:
+                    is_tableau = "embedded external website" in visual["visual_type"].lower()
+                    visual["png"] = iclient.download_visual(visual["id"], is_tableau=is_tableau)
         return visuals
