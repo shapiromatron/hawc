@@ -22,7 +22,7 @@ from hawc.apps.epi.models import (
 )
 from hawc.apps.lit.models import Reference
 from hawc.apps.myuser.models import HAWCUser
-from hawc_client import BaseClient, HawcClient, HawcClientException
+from hawc_client import BaseClient, HawcClient, HawcClientException, InteractiveHawcClient
 
 
 @pytest.mark.usefixtures("set_db_keys")
@@ -801,26 +801,24 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_summary_download_visual(self):
         client = HawcClient(self.live_server_url)
-        with client.session.create_ui_browser():
-            result = client.summary.download_visual(3)
+        with InteractiveHawcClient(client) as iclient:
+            result = iclient.download_visual(1)
         assert isinstance(result, BytesIO)
 
     def test_summary_download_data_pivot(self):
         client = HawcClient(self.live_server_url)
-        with client.session.create_ui_browser():
-            result = client.summary.download_data_pivot(1)
+        with InteractiveHawcClient(client) as iclient:
+            result = iclient.download_data_pivot(1)
         assert isinstance(result, BytesIO)
 
-    # TODO - fix
-    # def test_download_all_visuals(self):
-    #     client = HawcClient(self.live_server_url)
-    #     token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
-    #     client.set_authentication_token(token, login=False)
-    #     with client.session.create_ui_browser():
-    #         results = client.summary.download_all_visuals(self.db_keys.assessment_working)
-    #     assert len(results) == 2
-    #     for result in results:
-    #         assert isinstance(result["png"], BytesIO)
+    def test_download_all_visuals(self):
+        client = HawcClient(self.live_server_url)
+        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
+        client.set_authentication_token(token, login=False)
+        results = client.summary.download_all_visuals(self.db_keys.assessment_working)
+        assert len(results) == 2
+        for result in results:
+            assert isinstance(result["png"], BytesIO)
 
     #####################
     # StudyClient tests #
