@@ -1,7 +1,6 @@
 """A client for the Health Assessment Workspace Collaborative (HAWC)."""
 from io import BytesIO
 
-from Playwright.sync_api import Page
 from Playwright.sync_api._context_manager import PlaywrightContextManager as pcm
 
 from .animal import AnimalClient
