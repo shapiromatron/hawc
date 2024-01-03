@@ -167,17 +167,3 @@ class HawcSession:
                 response_json = self.get(response_json["next"]).json()
                 progress_bar.update(1)
                 yield response_json["results"]
-
-    @contextmanager
-    def create_ui_browser(self) -> Generator[Browser, None, None]:
-        with sync_playwright() as p:
-            self.web_browser = p.chromium.launch(headless=True)
-            yield self.web_browser
-
-    def create_ui_page(self) -> Page:
-        if self.web_browser is None:
-            raise ValueError("Must create a browser instance")
-        page = self.web_browser.new_page()
-        if token := self._session.headers.get("Authorization"):
-            page.set_extra_http_headers({"Authorization": str(token)})
-        return page
