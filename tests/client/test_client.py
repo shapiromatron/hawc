@@ -1181,12 +1181,16 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_summary_download_visual(self):
         client = HawcClient(self.live_server_url)
+        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
+        client.set_authentication_token(token, login=False)
         with InteractiveHawcClient(client) as iclient:
             result = iclient.download_visual(1)
         assert isinstance(result, BytesIO)
 
     def test_summary_download_data_pivot(self):
         client = HawcClient(self.live_server_url)
+        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
+        client.set_authentication_token(token, login=False)
         with InteractiveHawcClient(client) as iclient:
             result = iclient.download_data_pivot(1)
         assert isinstance(result, BytesIO)
