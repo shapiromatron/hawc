@@ -1,6 +1,6 @@
+import warnings
 from io import BytesIO, StringIO
 from pathlib import Path
-import warnings
 
 import pandas as pd
 from playwright._impl._api_structures import SetCookieParam

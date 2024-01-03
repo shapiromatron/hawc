@@ -1,10 +1,7 @@
 import json
 import math
 from collections.abc import Generator
-from contextlib import contextmanager
 
-from playwright.sync_api import sync_playwright
-from playwright.sync_api._generated import Browser, Page
 from requests import Response, Session
 from tqdm import tqdm
 
@@ -21,7 +18,6 @@ class HawcSession:
     def __init__(self, root_url: str = "https://hawcproject.org"):
         self.root_url = root_url
         self._session = Session()
-        self.web_browser: None | Browser = None
 
     def _handle_hawc_response(self, response: Response) -> None:
         """
