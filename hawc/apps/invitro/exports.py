@@ -5,7 +5,7 @@ from django.db.models import Exists, OuterRef
 
 from ..assessment.exports import DSSToxExport
 from ..common.exports import Exporter, ModelExport
-from ..common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter, df_move_column
 from ..common.models import sql_display, str_m2m
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.exports import StudyExport
@@ -28,6 +28,13 @@ def percent_control(n_1, mu_1, sd_1, n_2, mu_2, sd_2):
             high = rng[1]
 
     return mean, low, high
+
+
+def assessment_categories(assessment_id: int) -> pd.DataFrame:
+    df = models.IVEndpointCategory.as_dataframe(assessment_id, include_root=False).set_index("id")
+    df2 = pd.DataFrame(df.nested_name.str.split("|").tolist(), index=df.index).fillna("-")
+    df2.columns = [f"Category {i}" for i in range(1, len(df2.columns) + 1)]
+    return df2
 
 
 class IVChemicalExport(ModelExport):
@@ -80,6 +87,7 @@ class IVEndpointExport(ModelExport):
             "id": "id",
             "name": "name",
             "data_type": "data_type",
+            "category_id": "category_id",
             "variance_type": "variance_type",
             "effects": "effects__name",
             "assay_type": "assay_type",
@@ -214,8 +222,6 @@ class InvitroExporter(Exporter):
 
 
 class DataPivotEndpoint(FlatFileExporter):
-    # TODO add category, otherwise done
-
     def handle_dsstox(self, df: pd.DataFrame) -> pd.DataFrame:
         # condenses the dsstox info into one column
         dsstox_cols = [col for col in df.columns if col.startswith("dsstox-")]
@@ -265,6 +271,7 @@ class DataPivotEndpoint(FlatFileExporter):
                 group_df[f"Cytotoxicity {i}"] = row[
                     non_control_df.columns.get_loc("iv_endpoint_group-cytotoxicity_observed")
                 ]
+
             # return a df that is dose group agnostic
             return group_df.drop_duplicates(
                 subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(
@@ -318,6 +325,15 @@ class DataPivotEndpoint(FlatFileExporter):
             .reset_index(drop=True)
         )
 
+    def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
+        category_df = assessment_categories(self.kwargs["assessment"].id)
+        df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
+        if "Category 1" in df2.columns:
+            df2 = df_move_column(
+                df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
+            )
+        return df2
+
     def build_df(self) -> pd.DataFrame:
         df = InvitroExporter().get_df(
             self.queryset.select_related(
@@ -348,6 +364,7 @@ class DataPivotEndpoint(FlatFileExporter):
         df = self.handle_dose_groups(df)
         df = self.handle_benchmarks(df)
         df = self.handle_dsstox(df)
+        df = self.handle_categories(df)
 
         df = df.rename(
             columns={
@@ -502,6 +519,15 @@ class DataPivotEndpointGroup(FlatFileExporter):
         )
         return df.drop(columns=dsstox_cols)
 
+    def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
+        category_df = assessment_categories(self.kwargs["assessment"].id)
+        df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
+        if "Category 1" in df2.columns:
+            df2 = df_move_column(
+                df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
+            )
+        return df2
+
     def build_df(self) -> pd.DataFrame:
         df = InvitroGroupExporter().get_df(
             self.queryset.select_related(
@@ -534,6 +560,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
         df = self.handle_stdev(df)
         df = self.handle_dose_groups(df)
         df = self.handle_dsstox(df)
+        df = self.handle_categories(df)
 
         df["iv_endpoint_group-difference_control"] = df["iv_endpoint_group-difference_control"].map(
             models.IVEndpointGroup.DIFFERENCE_CONTROL_SYMBOLS
