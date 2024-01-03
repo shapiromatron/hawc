@@ -7,5 +7,4 @@ The Health Assessment Workspace Collaborative (HAWC) is a website designed to ca
 The public website is currently available on <https://hawcproject.org>, though there are additional versions available in other locations, including private deployments.
 
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fhawcproject.org)](https://hawcproject.org)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1414622.svg)](https://doi.org/10.5281/zenodo.1414622)
 [![Github](https://img.shields.io/github/last-commit/shapiromatron/hawc.svg)](https://github.com/shapiromatron/hawc)

@@ -506,4 +506,4 @@ class PydanticValidator:
     def __call__(self, value):
         """Validate the field with the pydantic model."""
         with PydanticToDjangoError(include_field=False):
-            self.schema.parse_obj(value)
+            self.schema.model_validate(value)

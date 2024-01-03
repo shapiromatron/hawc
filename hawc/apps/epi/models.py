@@ -98,7 +98,7 @@ class StudyPopulationCriteria(models.Model):
     study_population = models.ForeignKey(
         "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
     )
-    criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
+    criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType)
 
 
 class StudyPopulation(models.Model):
@@ -137,7 +137,7 @@ class StudyPopulation(models.Model):
     )
     design = models.CharField(
         max_length=2,
-        choices=constants.Design.choices,
+        choices=constants.Design,
         help_text="Choose the most specific description of study design." + HAWC_VIS_NOTE,
     )
     age_profile = models.CharField(
@@ -319,7 +319,7 @@ class Outcome(BaseEndpoint):
         help_text="Effect subtype, using common-vocabulary. Use title style (capitalize all words). Ex. Absolute"
         + formatHelpTextNotes("This field is not mandatory; often no effect subtype is necessary"),
     )
-    diagnostic = models.PositiveSmallIntegerField(choices=constants.Diagnostic.choices)
+    diagnostic = models.PositiveSmallIntegerField(choices=constants.Diagnostic)
     diagnostic_description = models.TextField(
         help_text='Copy and paste diagnostic methods directly from study. Ex. "Birth weight (grams) was measured by trained midwives at delivery." '
         + formatHelpTextNotes("Use quotation marks around direct quotes from a study")
@@ -547,7 +547,7 @@ class Group(models.Model):
         + "typically the group with the lowest or no exposure",
         blank=True,
     )
-    sex = models.CharField(max_length=1, default=constants.Sex.U, choices=constants.Sex.choices)
+    sex = models.CharField(max_length=1, default=constants.Sex.U, choices=constants.Sex)
     ethnicities = models.ManyToManyField(Ethnicity, blank=True, help_text="Optional")
     eligible_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Eligible N", help_text="Optional"
@@ -850,13 +850,13 @@ class CentralTendency(models.Model):
         + HAWC_VIS_NOTE,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=constants.EstimateType.choices,
+        choices=constants.EstimateType,
         verbose_name="Central estimate type",
         default=constants.EstimateType.NONE,
     )
     variance = models.FloatField(blank=True, null=True, verbose_name="Variance")
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+        choices=constants.VarianceType, default=constants.VarianceType.NONE
     )
     lower_ci = models.FloatField(
         blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value"
@@ -939,7 +939,7 @@ class GroupNumericalDescriptions(models.Model):
     )
     mean = models.FloatField(blank=True, null=True, verbose_name="Central estimate")
     mean_type = models.PositiveSmallIntegerField(
-        choices=constants.GroupMeanType.choices,
+        choices=constants.GroupMeanType,
         verbose_name="Central estimate type",
         default=constants.GroupMeanType.NONE,
     )
@@ -948,15 +948,15 @@ class GroupNumericalDescriptions(models.Model):
     )
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.GroupVarianceType.choices, default=constants.GroupVarianceType.NONE
+        choices=constants.GroupVarianceType, default=constants.GroupVarianceType.NONE
     )
     lower = models.FloatField(blank=True, null=True)
     lower_type = models.PositiveSmallIntegerField(
-        choices=constants.LowerLimit.choices, default=constants.LowerLimit.NONE
+        choices=constants.LowerLimit, default=constants.LowerLimit.NONE
     )
     upper = models.FloatField(blank=True, null=True)
     upper_type = models.PositiveSmallIntegerField(
-        choices=constants.UpperLimit.choices, default=constants.UpperLimit.NONE
+        choices=constants.UpperLimit, default=constants.UpperLimit.NONE
     )
 
     class Meta:
@@ -1055,7 +1055,7 @@ class Result(models.Model):
         verbose_name="Dose Response Trend",
         help_text=OPTIONAL_NOTE,
         default=constants.DoseResponse.NA,
-        choices=constants.DoseResponse.choices,
+        choices=constants.DoseResponse,
     )
     dose_response_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     prevalence_incidence = models.CharField(
@@ -1067,7 +1067,7 @@ class Result(models.Model):
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE,
         default=constants.StatisticalPower.NR,
-        choices=constants.StatisticalPower.choices,
+        choices=constants.StatisticalPower,
     )
     statistical_power_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     statistical_test_results = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1085,12 +1085,12 @@ class Result(models.Model):
         blank=True,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=constants.EstimateType.choices,
+        choices=constants.EstimateType,
         verbose_name="Central estimate type",
         default=constants.EstimateType.NONE,
     )
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+        choices=constants.VarianceType, default=constants.VarianceType.NONE
     )
     ci_units = models.FloatField(
         blank=True,
@@ -1368,7 +1368,7 @@ class GroupResult(models.Model):
     )
     p_value_qualifier = models.CharField(
         max_length=1,
-        choices=constants.PValueQualifier.choices,
+        choices=constants.PValueQualifier,
         default="-",
         verbose_name="p-value qualifier",
         help_text="Select n.s. if results are not statistically significant; otherwise, choose the appropriate qualifier. "
@@ -1395,7 +1395,7 @@ class GroupResult(models.Model):
         + HAWC_VIS_NOTE_UNSTYLED,
     )
     main_finding_support = models.PositiveSmallIntegerField(
-        choices=constants.MainFinding.choices,
+        choices=constants.MainFinding,
         help_text="Select appropriate level of support for the main finding."
         + 'See "Results" section of https://ehp.niehs.nih.gov/1205502/ for examples and further details. '
         + 'Choose between "inconclusive" vs. "not-supportive" based on chemical- and study-specific context. '

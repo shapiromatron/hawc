@@ -115,6 +115,6 @@ class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
         self.instance.deactivate_similar_sessions()
 
         # set selected model
-        selected = constants.SelectedModel.parse_obj(self.validated_data["selected"])
+        selected = constants.SelectedModel.model_validate(self.validated_data["selected"])
         self.instance.set_selected_model(selected)
         self.instance.save()

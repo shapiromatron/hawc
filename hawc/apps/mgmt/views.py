@@ -7,13 +7,14 @@ from django.views.generic import ListView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, cacheable
 from ..common.htmx import HtmxGetMixin, HtmxViewSet, action, can_edit
 from ..common.views import BaseDetail, BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
 from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
 from . import constants, filterset, forms, models
+from .analytics import overview, time_series, time_spent
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -182,19 +183,31 @@ class AssessmentTaskList(BaseFilterList):
 class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
     model = Assessment
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-    actions: set[str] = {"index", "time_series", "time_spent", "growth"}
+    actions: set[str] = {"index", "time_series", "time_spent", "overview"}
 
     def index(self, request: HttpRequest, context: dict):
         return render(request, "mgmt/analytics.html", context)
 
     def time_series(self, request: HttpRequest, context: dict):
+        context = cacheable(
+            lambda: time_series.get_context_data(self.assessment.id),
+            f"mgmt:analytics:time_series:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/time_series.html", context)
 
     def time_spent(self, request: HttpRequest, context: dict):
+        context = cacheable(
+            lambda: time_spent.get_context_data(self.assessment.id),
+            f"mgmt:analytics:time_spent:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/time_spent.html", context)
 
-    def growth(self, request: HttpRequest, context: dict):
-        return render(request, "mgmt/analytics/growth.html", context)
+    def overview(self, request: HttpRequest, context: dict):
+        context = cacheable(
+            lambda: overview.get_context_data(self.assessment.id),
+            f"mgmt:analytics:overview:{self.assessment.id}",
+        )
+        return render(request, "mgmt/analytics/overview.html", context)
 
 
 class TaskViewSet(HtmxViewSet):

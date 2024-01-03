@@ -75,6 +75,11 @@ urlpatterns = [
         name="visualization_create",
     ),
     path(
+        "assessment/<int:pk>/visuals/<int:visual_type>/create/<int:study_type>/",
+        views.VisualizationCreate.as_view(),
+        name="visualization_create",
+    ),
+    path(
         "assessment/<int:pk>/visuals/copy/",
         views.VisualizationCopySelector.as_view(),
         name="visualization_copy_selector",
@@ -85,7 +90,7 @@ urlpatterns = [
         name="visualization_copy",
     ),
     path(
-        "assessment/<int:pk>/type/<int:visual_type>/data/",
+        "assessment/<int:pk>/type/<int:visual_type>/<int:study_type>/data/",
         views.VisualizationCreateTester.as_view(),
         name="visualization_create_tester",
     ),

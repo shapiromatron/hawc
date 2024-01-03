@@ -75,7 +75,7 @@ class ModelBinding(models.Model):
         )
 
     def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form(*args, **kwargs)
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_assessment(self):
         return self.assessment
@@ -112,7 +112,7 @@ class TagBinding(models.Model):
         )
 
     def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form(*args, **kwargs)
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_form_html(self, **kwargs) -> SafeText:
         form = dynamic_forms.Schema.parse_obj(self.form.schema).to_form(

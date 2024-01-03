@@ -23,8 +23,8 @@ class Column(BaseModel):
     label: str
     attribute: AttributeChoices
     width: int = 1
-    metric_id: int | None
-    dose_unit: str | None
+    metric_id: int | None = None
+    dose_unit: str | None = None
     key: str
 
     def get_free_html(self, selection: pd.Series) -> BaseCell:
@@ -107,14 +107,14 @@ class StudyEvaluationTable(BaseTable):
             cells.append(
                 GenericCell.parse_args(True, 0, subheader.start - 1, 1, subheader.length, html)
             )
-        return BaseCellGroup.construct(cells=cells)
+        return BaseCellGroup.model_construct(cells=cells)
 
     def _columns_group(self):
         cells = []
         for i, col in enumerate(self.cell_columns):
             html = tag_wrapper(col.label, "p", "strong")
             cells.append(GenericCell.parse_args(True, 0, i, 1, 1, html))
-        return BaseCellGroup.construct(cells=cells)
+        return BaseCellGroup.model_construct(cells=cells)
 
     def _set_override(self, cell: BaseCell, row: Row, column: Column):
         for custom in [custom for custom in row.customized if custom["key"] == column.key]:
@@ -157,7 +157,7 @@ class StudyEvaluationTable(BaseTable):
                 cell.row = i
                 cell.column = j
                 cells.append(cell)
-        return BaseCellGroup.construct(cells=cells)
+        return BaseCellGroup.model_construct(cells=cells)
 
     def _set_cells(self):
         # get cell groups

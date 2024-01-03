@@ -1,6 +1,10 @@
 from contextlib import contextmanager
+from itertools import chain
 
-from django.db.models.signals import m2m_changed, post_delete, post_save, pre_delete, pre_save
+from django.db.models import signals as dsignals
+from django.dispatch import Signal
+from wagtail import signals as wts
+from wagtail.admin import signals as wtas
 
 
 @contextmanager
@@ -10,7 +14,15 @@ def ignore_signals():
 
     Originally taken from: https://www.cameronmaske.com/muting-django-signals-with-a-pytest-fixture/
     """
-    signals = [pre_save, post_save, pre_delete, post_delete, m2m_changed]
+    signals = [
+        signal
+        for signal in chain(
+            dsignals.__dict__.values(),
+            wts.__dict__.values(),
+            wtas.__dict__.values(),
+        )
+        if isinstance(signal, Signal)
+    ]
     restore = {}
     for signal in signals:
         restore[signal] = signal.receivers

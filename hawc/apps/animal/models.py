@@ -48,7 +48,7 @@ class Experiment(models.Model):
     )
     type = models.CharField(
         max_length=2,
-        choices=constants.ExperimentType.choices,
+        choices=constants.ExperimentType,
         help_text="Type of study being performed; be as specific as possible",
     )
     has_multiple_generations = models.BooleanField(default=False)
@@ -84,7 +84,7 @@ class Experiment(models.Model):
     purity_available = models.BooleanField(default=True, verbose_name="Chemical purity available?")
     purity_qualifier = models.CharField(
         max_length=1,
-        choices=constants.PurityQualifier.choices,
+        choices=constants.PurityQualifier,
         blank=True,
         default=constants.PurityQualifier.NA,
     )
@@ -220,7 +220,7 @@ class AnimalGroup(models.Model):
         help_text="When adding a new strain, put the stock in parenthesis, e.g., "
         + '"Sprague-Dawley (Harlan)."',
     )
-    sex = models.CharField(max_length=1, choices=constants.Sex.choices)
+    sex = models.CharField(max_length=1, choices=constants.Sex)
     animal_source = models.CharField(
         max_length=128, help_text="Source from where animals were acquired", blank=True
     )
@@ -250,7 +250,7 @@ class AnimalGroup(models.Model):
     )
     siblings = models.ForeignKey("self", blank=True, null=True, on_delete=models.SET_NULL)
     generation = models.CharField(
-        blank=True, default="", max_length=2, choices=constants.Generation.choices
+        blank=True, default="", max_length=2, choices=constants.Generation
     )
     parents = models.ManyToManyField("self", related_name="children", symmetrical=False, blank=True)
     dosing_regime = models.ForeignKey(
@@ -381,7 +381,7 @@ class DosingRegime(models.Model):
     )
     route_of_exposure = models.CharField(
         max_length=2,
-        choices=constants.RouteExposure.choices,
+        choices=constants.RouteExposure,
         help_text="Primary route of exposure. If multiple primary-exposures, describe in notes-field below",
     )
     duration_exposure = models.FloatField(
@@ -429,7 +429,7 @@ class DosingRegime(models.Model):
     negative_control = models.CharField(
         max_length=2,
         default=constants.NegativeControl.VT,
-        choices=constants.NegativeControl.choices,
+        choices=constants.NegativeControl,
         help_text="Description of negative-controls used",
     )
     description = models.TextField(
@@ -626,7 +626,7 @@ class Endpoint(BaseEndpoint):
     )
     litter_effects = models.CharField(
         max_length=2,
-        choices=constants.LitterEffect.choices,
+        choices=constants.LitterEffect,
         default=constants.LitterEffect.NA,
         help_text='Type of controls used for litter-effects. The "No" response '
         + "will be infrequently used. More typically the information will be "
@@ -645,7 +645,7 @@ class Endpoint(BaseEndpoint):
         "optional, should be recorded if the same effect was measured multiple times.",
     )
     observation_time_units = models.PositiveSmallIntegerField(
-        default=constants.ObservationTimeUnits.NR, choices=constants.ObservationTimeUnits.choices
+        default=constants.ObservationTimeUnits.NR, choices=constants.ObservationTimeUnits
     )
     observation_time_text = models.CharField(
         max_length=64,
@@ -660,7 +660,7 @@ class Endpoint(BaseEndpoint):
         '1 and Text, p.24")',
     )
     expected_adversity_direction = models.PositiveSmallIntegerField(
-        choices=constants.AdverseDirection.choices,
+        choices=constants.AdverseDirection,
         default=constants.AdverseDirection.NR,
         verbose_name="Expected response adversity direction",
         help_text="Response direction which would be considered adverse",
@@ -673,12 +673,12 @@ class Endpoint(BaseEndpoint):
     )
     data_type = models.CharField(
         max_length=2,
-        choices=constants.DataType.choices,
+        choices=constants.DataType,
         default=constants.DataType.CONTINUOUS,
         verbose_name="Dataset type",
     )
     variance_type = models.PositiveSmallIntegerField(
-        default=constants.VarianceType.SD, choices=constants.VarianceType.choices
+        default=constants.VarianceType.SD, choices=constants.VarianceType
     )
     confidence_interval = models.FloatField(
         blank=True,
@@ -706,7 +706,7 @@ class Endpoint(BaseEndpoint):
         help_text="Response values were estimated using a digital ruler or other methods",
     )
     monotonicity = models.PositiveSmallIntegerField(
-        default=constants.Monotonicity.NR, choices=constants.Monotonicity.choices
+        default=constants.Monotonicity.NR, choices=constants.Monotonicity
     )
     statistical_test = models.CharField(
         max_length=256,
@@ -718,7 +718,7 @@ class Endpoint(BaseEndpoint):
         null=True, blank=True, help_text="Numerical result for trend-test, if available"
     )
     trend_result = models.PositiveSmallIntegerField(
-        default=constants.TrendResult.NR, choices=constants.TrendResult.choices
+        default=constants.TrendResult.NR, choices=constants.TrendResult
     )
     diagnostic = models.TextField(
         verbose_name="Diagnostic (as reported)",
@@ -1359,7 +1359,7 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
         null=True,
         blank=True,
         default=None,
-        choices=constants.TreatmentEffect.choices,
+        choices=constants.TreatmentEffect,
         help_text="Expert judgement based report of treatment related effects (add direction if known). Use when statistical analysis not available. In results comments, indicate whether it was author judgment or assessment team judgement",
     )
 

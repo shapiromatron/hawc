@@ -10,6 +10,7 @@ from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
@@ -195,9 +196,9 @@ class Search(models.Model):
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
     )
-    search_type = models.CharField(max_length=1, choices=constants.SearchType.choices)
+    search_type = models.CharField(max_length=1, choices=constants.SearchType)
     source = models.PositiveSmallIntegerField(
-        choices=constants.ReferenceDatabase.choices,
+        choices=constants.ReferenceDatabase,
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
@@ -610,7 +611,7 @@ class Identifiers(models.Model):
     unique_id = models.CharField(
         max_length=256, db_index=True
     )  # DOI has no limit; we make this relatively large
-    database = models.IntegerField(choices=constants.ReferenceDatabase.choices)
+    database = models.IntegerField(choices=constants.ReferenceDatabase)
     content = models.TextField()
     url = models.URLField(blank=True)
 
@@ -898,6 +899,8 @@ class Reference(models.Model):
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
+        deleted_tags = set(self.tags.all().values_list("pk", flat=True)).difference(set(tag_pks))
+        user_tag.deleted_tags = list(deleted_tags) if deleted_tags else []
         user_tag.save()
 
         # save udf data if applicable
@@ -1229,6 +1232,7 @@ class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    deleted_tags = ArrayField(models.IntegerField(), default=list)
     is_resolved = models.BooleanField(
         default=False, help_text="User specific tag differences are resolved for this reference"
     )

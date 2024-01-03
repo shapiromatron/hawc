@@ -418,6 +418,10 @@ class ConflictResolution(BaseFilterList):
                 "my_tags",
                 "include_mytag_descendants",
                 "anything_tagged_me",
+                "addition_tags",
+                "include_additiontag_descendants",
+                "deletion_tags",
+                "include_deletiontag_descendants",
             ],
             grid_layout={
                 "rows": [
@@ -436,25 +440,47 @@ class ConflictResolution(BaseFilterList):
                     {
                         "columns": [
                             {
-                                "width": 6,
+                                "width": 3,
                                 "rows": [
                                     {
                                         "columns": [
                                             {"width": 12},
-                                            {"width": 6},
-                                            {"width": 6},
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
                             },
                             {
-                                "width": 6,
+                                "width": 3,
                                 "rows": [
                                     {
                                         "columns": [
                                             {"width": 12},
-                                            {"width": 6},
-                                            {"width": 6},
+                                            {"width": 12},
+                                            {"width": 12},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 3,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12},
+                                            {"width": 12},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 3,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
@@ -472,7 +498,9 @@ class ConflictResolution(BaseFilterList):
             super()
             .get_queryset()
             .annotate(
-                n_unapplied_reviews=Count("user_tags__user", filter=Q(user_tags__is_resolved=False))
+                n_unapplied_reviews=Count(
+                    "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
+                )
             )
             .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
