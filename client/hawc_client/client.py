@@ -7,6 +7,7 @@ from playwright._impl._api_structures import SetCookieParam
 from playwright.sync_api import Page
 from playwright.sync_api._context_manager import PlaywrightContextManager as pcm
 
+from .exceptions import HawcClientException
 from .session import HawcSession
 
 
@@ -128,7 +129,10 @@ class InteractiveHawcClient:
             BytesIO: the PNG representation of the visual, in bytes.
         """
         url = f"{self.client.session.root_url}/summary/visual/{id}/"
-        self.page.goto(url)
+        # ensure response is OK before waiting
+        response = self.page.goto(url)
+        if response and not response.ok:
+            raise HawcClientException(response.status, response.status_text)
         data = fetch_png(self.page, is_tableau)
         write_to_file(data, fn)
 
@@ -146,7 +150,10 @@ class InteractiveHawcClient:
             BytesIO: the PNG representation of the data pivot, in bytes.
         """
         url = f"{self.client.session.root_url}/summary/data-pivot/{id}/"
-        self.page.goto(url)
+        # ensure response is OK before waiting
+        response = self.page.goto(url)
+        if response and not response.ok:
+            raise HawcClientException(response.status, response.status_text)
         data = fetch_png(self.page)
         write_to_file(data, fn)
         return data
