@@ -1,7 +1,9 @@
 from io import BytesIO, StringIO
 from pathlib import Path
+import warnings
 
 import pandas as pd
+from playwright._impl._api_structures import SetCookieParam
 from playwright.sync_api import Page
 from playwright.sync_api._context_manager import PlaywrightContextManager as pcm
 
@@ -90,10 +92,27 @@ class InteractiveHawcClient:
 
     def __enter__(self):
         self.playwright = pcm().start()
-        self.web_browser = self.playwright.chromium.launch(headless=True)
-        self.page = self.web_browser.new_page()
+        browser = self.playwright.chromium.launch(headless=True)
+        self.context = browser.new_context()
+        self.page = self.context.new_page()
+        # if client has a token, establish a cookie-based session
         if token := self.client.session._session.headers.get("Authorization"):
             self.page.set_extra_http_headers({"Authorization": str(token)})
+            self.page.goto(f"{self.client.session.root_url}/user/api/validate-token/?login=1")
+            self.page.set_extra_http_headers({})
+        # if client is already in a cookie-based session, copy the cookies
+        else:
+            cookies = [
+                SetCookieParam(name=k, value=v, url=self.client.session.root_url)
+                for k, v in self.client.session._session.cookies.items()
+            ]
+            if cookies == []:
+                warnings.warn(
+                    "Unable to login. Unable to access unpublished assessments or visuals.",
+                    stacklevel=1,
+                )
+                return self
+            self.context.add_cookies(cookies)
         return self
 
     def download_visual(self, id: int, is_tableau: bool = False, fn: PathLike = None) -> BytesIO:
@@ -133,4 +152,5 @@ class InteractiveHawcClient:
         return data
 
     def __exit__(self, *args) -> None:
+        self.context.close()
         self.playwright.stop()
