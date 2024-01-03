@@ -17,7 +17,7 @@ class AssessmentSettings(models.Model):
     )
     version = models.CharField(
         max_length=10,
-        choices=constants.BmdsVersion.choices,
+        choices=constants.BmdsVersion,
         default=constants.BmdsVersion.BMDS330,
         help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
     )
@@ -56,7 +56,7 @@ class Session(models.Model):
     dose_units = models.ForeignKey(
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
-    version = models.CharField(max_length=10, choices=constants.BmdsVersion.choices)
+    version = models.CharField(max_length=10, choices=constants.BmdsVersion)
     inputs = models.JSONField(default=dict)
     outputs = models.JSONField(default=dict)
     errors = models.JSONField(default=dict)
@@ -104,8 +104,8 @@ class Session(models.Model):
             endpoint_id=endpoint.id,
             dose_units_id=inputs.settings.dose_units_id,
             version=version,
-            inputs=inputs.dict(),
-            selected=constants.SelectedModel().dict(),
+            inputs=inputs.model_dump(),
+            selected=constants.SelectedModel().model_dump(by_alias=True),
         )
 
     @property
@@ -134,12 +134,12 @@ class Session(models.Model):
     def reset_execution(self):
         self.outputs = {}
         self.errors = {}
-        self.selected = constants.SelectedModel().dict()
+        self.selected = constants.SelectedModel().model_dump(by_alias=True)
         self.active = False
         self.date_executed = None
 
     def get_settings(self) -> constants.BmdInputSettings:
-        return constants.BmdInputSettings.parse_obj(self.inputs)
+        return constants.BmdInputSettings.model_validate(self.inputs)
 
     def get_session(self, with_models=False):
         session = getattr(self, "_session", None)
@@ -196,7 +196,7 @@ class Session(models.Model):
         return selected
 
     def set_selected_model(self, selected: constants.SelectedModel):
-        self.selected = selected.dict()
+        self.selected = selected.model_dump(by_alias=True)
         self.active = True
         self.outputs["selected"] = selected.to_bmd_output()
 

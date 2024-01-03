@@ -55,7 +55,7 @@ class TestDatasetForm:
         )
         assert form.is_valid()
         assert isinstance(form.revision_df, pd.DataFrame)
-        assert form.revision_metadata.dict() == {
+        assert form.revision_metadata.model_dump() == {
             "filename": "test-data.csv",
             "extension": ".csv",
             "num_rows": 150,

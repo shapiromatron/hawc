@@ -302,7 +302,12 @@ class HAWCUtils {
             handleChange = () => {
                 const selector = `#detail-${$selectEl.val()}`,
                     clone = $insertItems.find(selector).clone();
-                $insertEl.fadeOut(() => $insertEl.html(clone).fadeIn());
+                $insertEl.fadeOut(() =>
+                    $insertEl
+                        .html(clone)
+                        .trigger("select:change")
+                        .fadeIn()
+                );
             };
         $selectEl.on("change", handleChange).trigger("change");
     }
@@ -412,6 +417,19 @@ class HAWCUtils {
                 $subjectInput.trigger("input");
             }
         }
+    }
+
+    static addAnchorLinks(parent, selector) {
+        $(parent)
+            .find(selector)
+            .each(function(index) {
+                const id = $(this).attr("id");
+                if (id) {
+                    $(this).append(
+                        `<a href="#${id}" class="ml-2 anchor-link" title="Section link"><span class="fa fa-fw fa-chain"></span></a>`
+                    );
+                }
+            });
     }
 }
 export default HAWCUtils;

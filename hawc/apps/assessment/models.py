@@ -24,7 +24,7 @@ from reversion import revisions as reversion
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.exceptions import AssessmentNotFound
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, new_window_a
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
 from ..common.models import get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
@@ -260,13 +260,13 @@ class Assessment(models.Model):
     )
     noel_name = models.PositiveSmallIntegerField(
         default=get_noel_name_default,
-        choices=constants.NoelName.choices,
+        choices=constants.NoelName,
         verbose_name="NEL/NOEL/NOAEL name",
         help_text="What term should be used to refer to NEL/NOEL/NOAEL and LEL/LOEL/LOAEL?",
     )
     rob_name = models.PositiveSmallIntegerField(
         default=get_rob_name_default,
-        choices=constants.RobName.choices,
+        choices=constants.RobName,
         verbose_name="Risk of bias/Study evaluation name",
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
@@ -289,7 +289,7 @@ class Assessment(models.Model):
         needed.""",
     )
     epi_version = models.PositiveSmallIntegerField(
-        choices=constants.EpiVersion.choices,
+        choices=constants.EpiVersion,
         default=constants.EpiVersion.V2,
         verbose_name="Epidemiology schema version",
         help_text="Data extraction schema version used for epidemiology studies",
@@ -529,7 +529,7 @@ class AssessmentDetail(models.Model):
         help_text="If part of a product line, the name of the project type",
     )
     project_status = models.PositiveSmallIntegerField(
-        choices=constants.Status.choices,
+        choices=constants.Status,
         default=constants.Status.SCOPING,
         help_text="High-level project management milestones for this assessment",
     )
@@ -541,7 +541,7 @@ class AssessmentDetail(models.Model):
     )
     peer_review_status = models.PositiveSmallIntegerField(
         verbose_name="Peer Review Status",
-        choices=constants.PeerReviewType.choices,
+        choices=constants.PeerReviewType,
         help_text="Define the current status of peer review of this assessment, if any",
         default=constants.PeerReviewType.NONE,
     )
@@ -596,7 +596,7 @@ class AssessmentValue(models.Model):
 
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="values")
     evaluation_type = models.PositiveSmallIntegerField(
-        choices=constants.EvaluationType.choices,
+        choices=constants.EvaluationType,
         default=constants.EvaluationType.CANCER,
         help_text="Substance evaluation conducted",
     )
@@ -606,7 +606,7 @@ class AssessmentValue(models.Model):
         help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
     )
     value_type = models.PositiveSmallIntegerField(
-        choices=constants.ValueType.choices,
+        choices=constants.ValueType,
         help_text="Type of derived value",
     )
     value = models.FloatField(
@@ -654,7 +654,7 @@ class AssessmentValue(models.Model):
     uncertainty = models.IntegerField(
         blank=True,
         null=True,
-        choices=constants.UncertaintyChoices.choices,
+        choices=constants.UncertaintyChoices,
         verbose_name="Uncertainty factor",
         help_text="Composite uncertainty factor applied to POD to derive the final value",
     )
@@ -1135,10 +1135,10 @@ class Job(models.Model):
         Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
     )
     status = models.PositiveSmallIntegerField(
-        choices=constants.JobStatus.choices, default=constants.JobStatus.PENDING, editable=False
+        choices=constants.JobStatus, default=constants.JobStatus.PENDING, editable=False
     )
     job = models.PositiveSmallIntegerField(
-        choices=constants.JobType.choices, default=constants.JobType.TEST
+        choices=constants.JobType, default=constants.JobType.TEST
     )
 
     kwargs = models.JSONField(default=dict, blank=True, null=True)
@@ -1282,7 +1282,7 @@ class ContentTypeChoices(models.IntegerChoices):
 
 
 class Content(models.Model):
-    content_type = models.PositiveIntegerField(choices=ContentTypeChoices.choices, unique=True)
+    content_type = models.PositiveIntegerField(choices=ContentTypeChoices, unique=True)
     template = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -1319,13 +1319,11 @@ class Content(models.Model):
         the current context provided, cache, and return.
         """
         key = cls.get_cache_key(content_type)
-        html = cache.get(key)
-        if html is None:
-            context = RequestContext(request, context)
-            content = cls.objects.get(content_type=content_type)
-            html = Template(content.template).render(context)
-            cache.set(key, html, settings.CACHE_10_MIN)
-        return html
+        context = RequestContext(request, context)
+        content = cls.objects.get(content_type=content_type)
+        html = Template(content.template).render(context)
+        cache_html = cacheable(lambda: html, key, cache_duration=settings.CACHE_10_MIN)
+        return cache_html
 
 
 reversion.register(DSSTox)

@@ -18,18 +18,18 @@
         <tr>
             <td>
                 <a
-                    href="{{object.animal_group.experiment.study.get_absolute_url}}">{{object.animal_group.experiment.study.short_citation}}</a>
+                    href="{{object.animal_group.experiment.study.get_absolute_url}}">{{object.animal_group.experiment.study.short_citation}}</a>{% debug_badge object.animal_group.experiment.study_id %}
             </td>
             <td>
                 <a
-                    href="{{object.animal_group.experiment.get_absolute_url }}">{{object.animal_group.experiment.name}}</a>
+                    href="{{object.animal_group.experiment.get_absolute_url }}">{{object.animal_group.experiment.name}}</a>{% debug_badge object.animal_group.experiment_id %}
             </td>
             <td>
-                <a href="{{object.animal_group.get_absolute_url}}">{{object.animal_group.name}}</a>
+                <a href="{{object.animal_group.get_absolute_url}}">{{object.animal_group.name}}</a>{% debug_badge object.animal_group_id %}
             </td>
             <td class="previewModalParent">
                 <i data-id={{object.pk}} class="float-right fa fa-fixed fa-external-link previewModalIcon mr-2" title="preview"></i>
-                <a href="{{object.get_absolute_url}}">{{object.name}}</a>
+                <a href="{{object.get_absolute_url}}">{{object.name}}</a>{% debug_badge object.id %}
             </td>
             <td>{{object.units_name|default:"-"}}</td>
             <td>{{object.noel_value|default:"-"}}</td>

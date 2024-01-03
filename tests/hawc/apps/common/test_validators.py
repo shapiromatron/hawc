@@ -46,6 +46,7 @@ def test_validate_hyperlinks():
         '<a href="https://oehha.ca.gov/">Valid</a>',
         '<a href="https://hawcproject.org">Valid</a>',
         '<a href="https://zenodo.org/record/8418719">Valid</a>',
+        '<a href="https://foo.sharepoint.com/sites/bloop/">Valid</a>',
         '<a href="http://epa.gov">Valid</a>',
         '<a href="/local-path/#test?foo=T&bar=F">Valid</a>',
     ]:
