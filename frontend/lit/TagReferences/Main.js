@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -55,7 +56,7 @@ class ReferenceUDF extends Component {
         const {currentUDF, UDFValues} = this.props;
         // Use UDFValues to appease the linter for now
         let tmp_message;
-        if (UDFValues) {
+        if (!_.isEmpty(UDFValues)) {
             tmp_message = <p>UDF has initial content</p>;
         } else {
             tmp_message = <p>UDF does not have initial content</p>;
@@ -242,7 +243,7 @@ class TagReferencesMain extends Component {
                             />
                             <ReferenceUDF
                                 currentUDF={currentUDF}
-                                intitialValues={reference.tag_udf_contents}
+                                UDFValues={reference.data.tag_udf_contents}
                             />
                         </div>
                     ) : (

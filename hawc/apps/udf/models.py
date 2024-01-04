@@ -104,6 +104,9 @@ class TagBinding(models.Model):
         indexes = (models.Index(fields=["assessment", "tag"]),)
         unique_together = (("assessment", "tag"),)
 
+    def __str__(self):
+        return f"{self.form} form bound to {self.tag} tag"
+
     def form_field(
         self, prefix="", form_kwargs=None, *args, **kwargs
     ) -> JSONField | DynamicFormField:

@@ -40,17 +40,18 @@ class Store {
         this.setUDF();
     }
     @action.bound setUDF() {
+        const intersects = (a, b) => a.some(x => b.includes(x));
+        const referenceUserTagIDs = this.referenceUserTags.map(tag => tag.data.pk)
         var udf_html = "";
-        // TODO: for now, we are just adding all UDFs to the page, regardless of selected tags
-        // TODO: update udf when tags are selected/deselected
-        for (const udf of Object.values(this.config.udfs)) {
-            udf_html += udf;
+        for (const [tag_id, udf] of Object.entries(this.config.udfs)) {
+            udf_html += `${intersects(this.config.descendant_tags[tag_id], referenceUserTagIDs) ? udf : ""}`
         }
         this.currentUDF = udf_html;
+        this.UDFValues = this.reference.data.tag_udf_contents;
     }
     @action.bound getUDFContent() {
         // TODO: get the actual UDF content from the form, if applicable
-        return null;
+        return {41: {"41-number": 4, "41-Text": "text"}};
     }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
@@ -62,11 +63,11 @@ class Store {
         ) {
             this.referenceUserTags.push(tag);
         }
-        // this.setUDF()
+        this.setUDF()
     }
     @action.bound removeTag(tag) {
         _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
-        // this.setUDF()
+        this.setUDF()
     }
     @action.bound toggleTag(tag) {
         return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);
@@ -102,7 +103,7 @@ class Store {
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
-                udf_content: this.getUDFContent(),
+                udf_data: this.getUDFContent(),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
         h.handleSubmit(

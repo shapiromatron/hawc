@@ -380,6 +380,10 @@ class TagReferences(BaseFilterList):
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
+        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+        for tag in descendant_tags:
+            descendant_tags[tag] = list(descendant_tags[tag])
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
         return WebappConfig(
@@ -389,7 +393,8 @@ class TagReferences(BaseFilterList):
                 conflict_resolution=self.assessment.literature_settings.conflict_resolution,
                 keywords=self.assessment.literature_settings.get_keyword_data(),
                 instructions=self.assessment.literature_settings.screening_instructions,
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                tags=tags,
+                descendant_tags=descendant_tags,
                 refs=references,
                 csrf=get_token(self.request),
                 udfs=self.assessment.get_tag_udfs(),
