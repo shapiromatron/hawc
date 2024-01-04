@@ -16,10 +16,10 @@
     <tbody>
         {% for object in object_list %}
         <tr>
-            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a></td>
-            <td><a href="{{object.design.get_absolute_url}}">{{object.design}}</a></td>
+            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a>{% debug_badge object.design.study_id %}</td>
+            <td><a href="{{object.design.get_absolute_url}}">{{object.design}}</a>{% debug_badge object.design_id %}</td>
             <td>{{object.design.get_study_design_display}}</td>
-            <td>{{object}}</td>
+            <td>{{object}}{% debug_badge object.id %}</td>
         </tr>
         {% empty %}
         <tr>

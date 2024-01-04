@@ -18,14 +18,14 @@
         <tr>
             <td>
                 <a
-                    href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>
+                    href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>{% debug_badge object.protocol.study_id %}
             </td>
             <td class="previewModalParent">
                 <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
-                <a href="{{object.get_absolute_url}}">{{object.label}}</a>
+                <a href="{{object.get_absolute_url}}">{{object.label}}</a>{% debug_badge object.id %}
             </td>
             <td>
-                <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>
+                <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>{% debug_badge object.protocol_id %}
             </td>
             <td>
                 {{object.health_outcome|default:"--"}}

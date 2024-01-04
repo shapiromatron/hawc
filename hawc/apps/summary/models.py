@@ -140,7 +140,7 @@ class SummaryTable(models.Model):
     )
     content = models.JSONField(default=dict)
     table_type = models.PositiveSmallIntegerField(
-        choices=constants.TableType.choices, default=constants.TableType.GENERIC
+        choices=constants.TableType, default=constants.TableType.GENERIC
     )
     published = models.BooleanField(
         default=False,
@@ -281,8 +281,8 @@ class Visual(models.Model):
         "(no spaces or special-characters).",
     )
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
-    visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
-    evidence_type = models.PositiveSmallIntegerField(choices=constants.StudyType.choices)
+    visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType)
+    evidence_type = models.PositiveSmallIntegerField(choices=constants.StudyType)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
@@ -299,10 +299,16 @@ class Visual(models.Model):
     )
     sort_order = models.CharField(
         max_length=40,
-        choices=constants.SortOrder.choices,
+        choices=constants.SortOrder,
         default=constants.SortOrder.SC,
     )
     prefilters = models.JSONField(default=dict)
+    image = models.ImageField(
+        upload_to="summary/visual/images",
+        blank=True,
+        null=True,
+        help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -714,10 +720,10 @@ class DataPivotQuery(DataPivot):
     MAXIMUM_QUERYSET_COUNT = 1000
 
     evidence_type = models.PositiveSmallIntegerField(
-        choices=constants.StudyType.choices, default=constants.StudyType.BIOASSAY
+        choices=constants.StudyType, default=constants.StudyType.BIOASSAY
     )
     export_style = models.PositiveSmallIntegerField(
-        choices=constants.ExportStyle.choices,
+        choices=constants.ExportStyle,
         default=constants.ExportStyle.EXPORT_GROUP,
         help_text="The export style changes the level at which the "
         "data are aggregated, and therefore which columns and types "

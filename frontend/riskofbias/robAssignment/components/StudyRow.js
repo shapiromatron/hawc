@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import DebugBadge from "shared/components/DebugBadge";
 import PublishedIcon from "shared/components/PublishedIcon";
 
 import CreateNewRob from "./CreateNewRob";
@@ -23,6 +24,7 @@ class StudyRow extends Component {
                     <a href={study.url} target="_blank" rel="noreferrer">
                         {study.short_citation}
                     </a>
+                    <DebugBadge text={study.id} />
                     <br />
                     <PublishedIcon isPublished={study.published} />
                 </td>

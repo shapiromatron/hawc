@@ -39,6 +39,20 @@ def studies_with_active_user_reviews(user, task_qs: QuerySet[models.Task]) -> Qu
     )
 
 
+def incomplete_rob_reviews(user, assessment: Assessment | None) -> list[RiskOfBias]:
+    """Return RiskOfBias objects that have an incomplete RiskOfBias review by the current user."""
+    qs = RiskOfBias.objects.all()
+    if assessment:
+        qs = qs.filter(study__assessment=assessment)
+    qs = (
+        qs.filter(active=True, author_id=user.id)
+        .prefetch_related("scores")
+        .select_related("study__assessment")
+        .order_by("study__assessment_id", "study__short_citation")
+    )
+    return [rob for rob in qs if not rob.is_complete]
+
+
 # View mixins for ensuring tasks are started
 class EnsurePreparationStartedMixin:
     """Ensure the preparation task has been started if form is valid."""
@@ -82,6 +96,7 @@ class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
                 self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
             )
         }
+        context["rob_reviews"] = incomplete_rob_reviews(self.request.user, None)
         context["TaskType"] = constants.TaskType
         return context
 
@@ -113,6 +128,7 @@ class UserAssessmentTaskList(BaseFilterList):
                 self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
             )
         }
+        context["rob_reviews"] = incomplete_rob_reviews(self.request.user, self.assessment)
         return context
 
 
