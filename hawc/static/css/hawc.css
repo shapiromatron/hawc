@@ -93,6 +93,9 @@ tfoot > tr > td {
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.dark-link, .dark-link:visited {
+    color: #495057;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
