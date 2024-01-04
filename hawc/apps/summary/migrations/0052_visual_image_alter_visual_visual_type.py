@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("summary", "0050_heatmap_counts"),
+        ("summary", "0051_visual_evidence_type"),
     ]
 
     operations = [
