@@ -352,7 +352,6 @@ class IdentifiersManager(BaseManager):
                 pd.DataFrame(
                     [
                         {
-                            "ref_id": ref["json"]["REFERENCE_ID"],
                             "HEROID": ref["json"]["HEROID"],
                             "PMID": ref["json"].get("PMID", ""),
                             "doi": ref["json"].get("doi", ""),
@@ -362,7 +361,6 @@ class IdentifiersManager(BaseManager):
                     ]
                 )
                 .replace("", np.nan)
-                .set_index("ref_id")
             )
             hero_dupes = df[df.HEROID.notna() & df.HEROID.duplicated(keep=False)]
             pubmed_dupes = df[df.PMID.notna() & df.PMID.duplicated(keep=False)]
