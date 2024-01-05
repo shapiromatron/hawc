@@ -55,6 +55,6 @@ a.btn-warning:visited, a.badge-warning:visited {
   padding: 0 0 0 1em;
 }
 .dropdown-item.active,
-.dropdown-item:active {
+.dropdown-item:active, .logout-btn:active {
   color: #fff !important;
 }

@@ -1,11 +1,14 @@
 import json
 from copy import deepcopy
+from io import BytesIO
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+from PIL import Image
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.summary.constants import VisualType
-from hawc.apps.summary.forms import ExternalSiteForm, PlotlyVisualForm
+from hawc.apps.summary.forms import ExternalSiteForm, ImageVisualForm, PlotlyVisualForm
 
 
 @pytest.mark.django_db
@@ -128,3 +131,51 @@ class TestPlotlyVisualForm:
             form = self._build_form(data)
             assert not form.is_valid()
             assert "settings" in form.errors
+
+
+def create_image(
+    size: tuple[int, int], image_mode: str = "RGB", image_format: str = "PNG"
+) -> bytes:
+    """
+    Generate a test image, returning a BytesIO of the image data.
+
+    from https://stackoverflow.com/questions/11170425/how-to-unit-test-file-upload-in-django
+    """
+    data = BytesIO()
+    Image.new(image_mode, size).save(data, image_format)
+    return data.getvalue()
+
+
+@pytest.mark.django_db
+class TestImageVisualForm:
+    def test_valid(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        visual_type = VisualType.IMAGE
+        file = SimpleUploadedFile("file.png", create_image((2000, 2000)), content_type="image/png")
+        data = dict(title="title", slug="slug", caption="hi")
+        form = ImageVisualForm(
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        )
+        assert form.is_valid()
+
+    def test_clean_image(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        visual_type = VisualType.IMAGE
+
+        # wrong extension
+        file = SimpleUploadedFile("file.txt", create_image((2000, 2000)), content_type="image/png")
+        data = dict(title="title", slug="slug", caption="hi")
+        form = ImageVisualForm(
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        )
+        assert form.is_valid() is False
+        assert "File extension “txt” is not allowed." in form.errors["image"][0]
+
+        # wrong size
+        file = SimpleUploadedFile("file.png", create_image((5, 5)), content_type="image/png")
+        data = dict(title="title", slug="slug", caption="hi")
+        form = ImageVisualForm(
+            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        )
+        assert form.is_valid() is False
+        assert "Image must be >10KB and <3 MB in size." in form.errors["image"][0]
