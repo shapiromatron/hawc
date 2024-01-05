@@ -35,6 +35,20 @@ class TestFlatFileExporter:
         )
 
 
+@pytest.mark.parametrize(
+    "kw,expected",
+    [
+        [dict(items=list("abcde"), target="c", after="b", n_cols=2), "abcde"],
+        [dict(items=list("abcde"), target="b", after=None), "bacde"],
+        [dict(items=list("abcde"), target="c", after="a", n_cols=2), "acdbe"],
+        [dict(items=list("abcde"), target="d", after="b"), "abdce"],
+        [dict(items=list("abcde"), target="b", after="d", n_cols=2), "adbce"],
+    ],
+)
+def test_reorder_list(kw, expected):
+    assert "".join(helper.reorder_list(**kw)) == expected
+
+
 def test_df_move_column():
     df = pd.read_csv(StringIO("a,b,c\n1,2,3"))
 
