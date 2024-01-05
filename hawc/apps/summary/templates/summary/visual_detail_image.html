@@ -1,4 +1,5 @@
 {% extends 'assessment-rooted.html' %}
+{% load static %}
 
 {% block content %}
 <div class="visualization">
@@ -13,7 +14,9 @@
       {% endactions %}
     {% endif %}
   </div>
-  {% plotly object.get_plotly_from_json %}
+  <div id="visual-image">
+    <img src="{{object.image.url}}" style="max-width: 100%" />
+  </div>
   <p>{{object.caption|safe}}</p>
 </div>
 {% endblock %}

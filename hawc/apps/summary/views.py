@@ -386,6 +386,8 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
     def get_template_names(self):
         if self.object.visual_type == constants.VisualType.PLOTLY:
             return "summary/visual_detail_plotly.html"
+        elif self.object.visual_type == constants.VisualType.IMAGE:
+            return "summary/visual_detail_image.html"
         else:
             return super().get_template_names()
 
@@ -457,6 +459,7 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
+            constants.VisualType.IMAGE,
         }:
             if (
                 visual_type == constants.VisualType.PLOTLY
@@ -559,6 +562,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
+            constants.VisualType.IMAGE,
         }:
             if (
                 visual_type == constants.VisualType.PLOTLY
