@@ -348,20 +348,17 @@ class IdentifiersManager(BaseManager):
             failed_join = ", ".join(str(el) for el in fetched_content["failure"])
             raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_join}")
         if len(fetched_content["success"]) > 0:
-            df = (
-                pd.DataFrame(
-                    [
-                        {
-                            "HEROID": ref["json"]["HEROID"],
-                            "PMID": ref["json"].get("PMID", ""),
-                            "doi": ref["json"].get("doi", ""),
-                            "wosid": ref["json"].get("wosid", ""),
-                        }
-                        for ref in fetched_content["success"]
-                    ]
-                )
-                .replace("", np.nan)
-            )
+            df = pd.DataFrame(
+                [
+                    {
+                        "HEROID": ref["json"]["HEROID"],
+                        "PMID": ref["json"].get("PMID", ""),
+                        "doi": ref["json"].get("doi", ""),
+                        "wosid": ref["json"].get("wosid", ""),
+                    }
+                    for ref in fetched_content["success"]
+                ]
+            ).replace("", np.nan)
             hero_dupes = df[df.HEROID.notna() & df.HEROID.duplicated(keep=False)]
             pubmed_dupes = df[df.PMID.notna() & df.PMID.duplicated(keep=False)]
             doi_dupes = df[df.doi.notna() & df.doi.duplicated(keep=False)]
