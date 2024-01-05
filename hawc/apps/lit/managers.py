@@ -1,6 +1,7 @@
 import json
 import logging
 
+import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -346,6 +347,32 @@ class IdentifiersManager(BaseManager):
         if len(fetched_content["failure"]) > 0:
             failed_join = ", ".join(str(el) for el in fetched_content["failure"])
             raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_join}")
+        if len(fetched_content["success"]) > 0:
+            df = pd.DataFrame(
+                [
+                    {
+                        "HEROID": ref["json"]["HEROID"],
+                        "PMID": ref["json"].get("PMID", ""),
+                        "doi": ref["json"].get("doi", ""),
+                        "wosid": ref["json"].get("wosid", ""),
+                    }
+                    for ref in fetched_content["success"]
+                ]
+            ).replace("", np.nan)
+            hero_dupes = df[df.HEROID.notna() & df.HEROID.duplicated(keep=False)]
+            pubmed_dupes = df[df.PMID.notna() & df.PMID.duplicated(keep=False)]
+            doi_dupes = df[df.doi.notna() & df.doi.duplicated(keep=False)]
+            wos_dupes = df[df.wosid.notna() & df.wosid.duplicated(keep=False)]
+            for dupes, id_type in [
+                (hero_dupes, "HERO IDs"),
+                (pubmed_dupes, "PubMed IDs"),
+                (doi_dupes, "DOIs"),
+                (wos_dupes, "WoS IDs"),
+            ]:
+                if dupes.shape[0] > 0:
+                    raise ValidationError(
+                        f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}"
+                    )
         return fetched_content
 
     def bulk_create_hero_ids(self, content):
