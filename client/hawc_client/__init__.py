@@ -80,3 +80,6 @@ class HawcClient(BaseClient):
             bool: Returns true if session is valid
         """
         return self.session.set_authentication_token(token, login)
+
+    def interactive(self, headless: bool = True) -> InteractiveHawcClient:
+        return InteractiveHawcClient(client=self, headless=headless)
