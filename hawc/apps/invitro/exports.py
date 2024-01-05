@@ -3,7 +3,6 @@ import math
 import pandas as pd
 from django.db.models import Exists, OuterRef
 
-from ..assessment.exports import DSSToxExport
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter, df_move_column
 from ..common.models import sql_display, str_m2m
@@ -43,6 +42,7 @@ class IVChemicalExport(ModelExport):
             "id": "id",
             "name": "name",
             "cas": "cas",
+            "dtxsid_id": "dtxsid_id",
             "purity": "purity",
         }
 
@@ -183,10 +183,6 @@ class InvitroExporter(Exporter):
                 "iv_chemical",
                 "chemical",
             ),
-            DSSToxExport(
-                "dsstox",
-                "chemical__dtxsid",
-            ),
             IVExperimentExport(
                 "iv_experiment",
                 "experiment",
@@ -222,17 +218,6 @@ class InvitroExporter(Exporter):
 
 
 class DataPivotEndpoint(FlatFileExporter):
-    def handle_dsstox(self, df: pd.DataFrame) -> pd.DataFrame:
-        # condenses the dsstox info into one column
-        dsstox_cols = [col for col in df.columns if col.startswith("dsstox-")]
-        dsstox_df = df[dsstox_cols]
-        dsstox_df.columns = dsstox_df.columns.str[7:]
-        df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
-        df["chemical DTXSID"] = df["chemical DTXSID"].apply(
-            lambda x: None if pd.isna(x["dtxsid"]) else x
-        )
-        return df.drop(columns=dsstox_cols)
-
     def handle_dose_groups(self, df: pd.DataFrame) -> pd.DataFrame:
         def _func(group_df: pd.DataFrame) -> pd.Series:
             # handle case with no dose groups
@@ -363,7 +348,6 @@ class DataPivotEndpoint(FlatFileExporter):
 
         df = self.handle_dose_groups(df)
         df = self.handle_benchmarks(df)
-        df = self.handle_dsstox(df)
         df = self.handle_categories(df)
 
         df = df.rename(
@@ -382,6 +366,7 @@ class DataPivotEndpoint(FlatFileExporter):
                 "iv_chemical-id": "chemical id",
                 "iv_chemical-name": "chemical name",
                 "iv_chemical-cas": "chemical CAS",
+                "iv_chemical-dtxsid_id": "chemical DTXSID",
                 "iv_chemical-purity": "chemical purity",
                 "iv_experiment-id": "IVExperiment id",
                 "iv_experiment-dose_units": "Dose units",
@@ -423,10 +408,6 @@ class InvitroGroupExporter(Exporter):
             IVChemicalExport(
                 "iv_chemical",
                 "chemical",
-            ),
-            DSSToxExport(
-                "dsstox",
-                "chemical__dtxsid",
             ),
             IVExperimentExport(
                 "iv_experiment",
@@ -508,17 +489,6 @@ class DataPivotEndpointGroup(FlatFileExporter):
             .reset_index(drop=True)
         )
 
-    def handle_dsstox(self, df: pd.DataFrame) -> pd.DataFrame:
-        # condenses the dsstox info into one column
-        dsstox_cols = [col for col in df.columns if col.startswith("dsstox-")]
-        dsstox_df = df[dsstox_cols]
-        dsstox_df.columns = dsstox_df.columns.str[7:]
-        df["chemical DTXSID"] = dsstox_df.to_dict(orient="records")
-        df["chemical DTXSID"] = df["chemical DTXSID"].apply(
-            lambda x: None if pd.isna(x["dtxsid"]) else x
-        )
-        return df.drop(columns=dsstox_cols)
-
     def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
         category_df = assessment_categories(self.kwargs["assessment"].id)
         df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
@@ -559,7 +529,6 @@ class DataPivotEndpointGroup(FlatFileExporter):
 
         df = self.handle_stdev(df)
         df = self.handle_dose_groups(df)
-        df = self.handle_dsstox(df)
         df = self.handle_categories(df)
 
         df["iv_endpoint_group-difference_control"] = df["iv_endpoint_group-difference_control"].map(
@@ -579,7 +548,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
                 "iv_chemical-id": "chemical id",
                 "iv_chemical-name": "chemical name",
                 "iv_chemical-cas": "chemical CAS",
-                "iv_chemical-dtxsid": "chemical DTXSID",
+                "iv_chemical-dtxsid_id": "chemical DTXSID",
                 "iv_chemical-purity": "chemical purity",
                 "iv_experiment-id": "IVExperiment id",
                 "iv_experiment-dose_units": "dose units",
