@@ -10286,6 +10286,24 @@
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
     endpoints: []
+- model: summary.visual
+  pk: 12
+  fields:
+    title: image
+    slug: image
+    assessment: 2
+    visual_type: 8
+    evidence_type: 3
+    dose_units: null
+    prefilters: {}
+    settings: {}
+    caption: ''
+    image: "iris.png"
+    published: true
+    sort_order: short_citation
+    created: 2023-11-15 14:25:27.528283+00:00
+    last_updated: 2023-11-15 14:25:27.528283+00:00
+    endpoints: []
 - model: summary.datapivot
   pk: 1
   fields:
