@@ -83,7 +83,6 @@ def maximum_percent_control_change(changes: list):
 
 
 class ExperimentExport(ModelExport):
-    # experiment
     def get_value_map(self):
         return {
             "id": "id",
@@ -118,7 +117,6 @@ class ExperimentExport(ModelExport):
 
 
 class AnimalGroupExport(ModelExport):
-    # animal_group
     def get_value_map(self):
         return {
             "id": "id",
@@ -158,7 +156,6 @@ class AnimalGroupExport(ModelExport):
 
 
 class DosingRegimeExport(ModelExport):
-    # dosing_regime
     def get_value_map(self):
         return {
             "id": "id",
@@ -198,7 +195,6 @@ class DosingRegimeExport(ModelExport):
 
 
 class EndpointExport(ModelExport):
-    # endpoint
     def get_value_map(self):
         return {
             "id": "id",
@@ -279,7 +275,6 @@ class EndpointExport(ModelExport):
 
 
 class EndpointGroupExport(ModelExport):
-    # endpoint_group
     def get_value_map(self):
         return {
             "id": "id",
@@ -311,7 +306,6 @@ class EndpointGroupExport(ModelExport):
 
 
 class DoseGroupExport(ModelExport):
-    # dose_group
     def get_value_map(self):
         return {
             "id": "id",
@@ -348,7 +342,6 @@ class AnimalExporter(Exporter):
         ]
 
 
-### FIRST
 class EndpointGroupFlatComplete(FlatFileExporter):
     def handle_doses(self, df: pd.DataFrame) -> pd.DataFrame:
         # this is really slow; maybe its the filtering to find matching dose group ids?
@@ -449,7 +442,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
             doses = DoseUnits.objects.get_animal_units_names(obj.assessment_id)
 
             df = df.assign(**{f"doses-{d}": None for d in doses})
-            df = self.handle_doses(df)  # really slow
+            df = self.handle_doses(df)
         df["dosing_regime-dosed_animals"] = df["dosing_regime-dosed_animals"].astype(str)
         df = self.handle_stdev(df)
         df = self.handle_ci(df)
@@ -566,7 +559,6 @@ class AnimalExporter2(Exporter):
         ]
 
 
-### SECOND
 class EndpointGroupFlatDataPivot(FlatFileExporter):
     def get_preferred_units(self, df: pd.DataFrame) -> int | None:
         preferred_units = self.kwargs.get("preferred_units", None)
@@ -1017,7 +1009,6 @@ class AnimalExporter3(Exporter):
         ]
 
 
-### THIRD
 class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
     def handle_bmd(self, df: pd.DataFrame) -> pd.DataFrame:
         endpoint_ids = df["endpoint-id"].unique()
@@ -1165,7 +1156,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         df = self.handle_animal_description(df)
         df = self.handle_treatment_period(df)
         df = self.handle_bmd(df)
-        # df = self.handle_percent_control(df)
 
         df = df.drop_duplicates(subset="endpoint-id")
 
@@ -1204,8 +1194,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 "endpoint-trend_result_display": "trend test result",
             }
         )
-        # TODO many of these are imported unused and then droped;
-        # prune this list and remove from exporter
         df = df.drop(
             columns=[
                 "endpoint_group-stdev",
@@ -1309,7 +1297,6 @@ class AnimalExporter4(Exporter):
         ]
 
 
-### FOURTH
 class EndpointSummary(EndpointGroupFlatDataPivot):
     def _set_responses(self, df: pd.DataFrame):
         df["responses"] = None
