@@ -41,10 +41,12 @@ class Store {
     }
     @action.bound setUDF() {
         const intersects = (a, b) => a.some(x => b.includes(x));
-        const referenceUserTagIDs = this.referenceUserTags.map(tag => tag.data.pk)
+        const referenceUserTagIDs = this.referenceUserTags.map(tag => tag.data.pk);
         var udf_html = "";
         for (const [tag_id, udf] of Object.entries(this.config.udfs)) {
-            udf_html += `${intersects(this.config.descendant_tags[tag_id], referenceUserTagIDs) ? udf : ""}`
+            udf_html += `${
+                intersects(this.config.descendant_tags[tag_id], referenceUserTagIDs) ? udf : ""
+            }`;
         }
         this.currentUDF = udf_html;
         this.UDFValues = this.reference.data.tag_udf_contents;
@@ -63,11 +65,11 @@ class Store {
         ) {
             this.referenceUserTags.push(tag);
         }
-        this.setUDF()
+        this.setUDF();
     }
     @action.bound removeTag(tag) {
         _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
-        this.setUDF()
+        this.setUDF();
     }
     @action.bound toggleTag(tag) {
         return this.hasTag(this.referenceUserTags, tag) ? this.removeTag(tag) : this.addTag(tag);

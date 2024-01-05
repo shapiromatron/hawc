@@ -908,17 +908,21 @@ class Reference(models.Model):
             # TODO: cache descendant_tags
             tags = ReferenceFilterTag.get_all_tags(self.assessment_id)
             descendant_tags = ReferenceFilterTag.get_tree_descendants(tags)
-            for (udf_tag, udf) in udf_data.items():
+            for udf_tag, udf in udf_data.items():
                 # if there's any intersection between the descendant tags of the UDf tag and the tag_pks, create the udf
                 if not descendant_tags[int(udf_tag)].isdisjoint(tag_pks):
                     try:
                         # Get form from tag binding
-                        binding = TagBinding.objects.get(assessment=self.assessment_id, tag=int(udf_tag))
+                        binding = TagBinding.objects.get(
+                            assessment=self.assessment_id, tag=int(udf_tag)
+                        )
                         # use tag_pk prefix (same as form creation)
                         form = binding.form_instance(prefix=int(udf_tag), data=udf)
                         if form.is_valid():
                             TagUDFContent.objects.update_or_create(
-                                reference_id=self.id, tag_binding_id=binding.id, content=form.cleaned_data
+                                reference_id=self.id,
+                                tag_binding_id=binding.id,
+                                content=form.cleaned_data,
                             )
                     except TagBinding.DoesNotExist:
                         pass
