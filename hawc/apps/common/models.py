@@ -518,19 +518,20 @@ def include_related(
     return queryset | queryset.model.objects.filter(filters)
 
 
-def sql_display(name: str, Choice: type[Choices]) -> Case:
-    """Create a annotation to return the display name via SQL
+def sql_display(name: str, Choice: type[Choices], default="?") -> Case:
+    """Create an annotation to return the display name via SQL
 
     Args:
         name (str): the field name
         Choice (type[Choices]): a choice field
+        default: default value if display value is not found
 
     Returns:
         Case: the case statement for use in an annotation
     """
     return Case(
         *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
-        default=Value("?"),
+        default=Value(default),
     )
 
 
