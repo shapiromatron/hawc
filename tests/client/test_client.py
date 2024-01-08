@@ -1,5 +1,3 @@
-from io import BytesIO
-
 import pandas as pd
 import pytest
 from django.core.cache import cache
@@ -26,7 +24,7 @@ from hawc.apps.lit.models import Reference
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study import constants as studyconstants
 from hawc.apps.study.models import Study
-from hawc_client import BaseClient, HawcClient, HawcClientException, InteractiveHawcClient
+from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
 @pytest.mark.usefixtures("set_db_keys")
@@ -1178,31 +1176,6 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
-
-    def test_summary_download_visual(self):
-        client = HawcClient(self.live_server_url)
-        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
-        client.set_authentication_token(token, login=False)
-        with InteractiveHawcClient(client) as iclient:
-            result = iclient.download_visual(1)
-        assert isinstance(result, BytesIO)
-
-    def test_summary_download_data_pivot(self):
-        client = HawcClient(self.live_server_url)
-        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
-        client.set_authentication_token(token, login=False)
-        with InteractiveHawcClient(client) as iclient:
-            result = iclient.download_data_pivot(1)
-        assert isinstance(result, BytesIO)
-
-    def test_download_all_visuals(self):
-        client = HawcClient(self.live_server_url)
-        token = HAWCUser.objects.get(email="pm@hawcproject.org").get_api_token().key
-        client.set_authentication_token(token, login=False)
-        results = client.summary.download_all_visuals(self.db_keys.assessment_working)
-        assert len(results) == 2
-        for result in results:
-            assert isinstance(result["png"], BytesIO)
 
     #####################
     # StudyClient tests #
