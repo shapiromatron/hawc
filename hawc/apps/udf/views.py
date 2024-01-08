@@ -1,5 +1,4 @@
-from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
@@ -19,6 +18,7 @@ from hawc.apps.common.views import (
 )
 
 from . import forms, models
+from .cache import UDFCache
 
 
 # UDF views
@@ -208,10 +208,6 @@ class UDFDetailMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        content_type = ContentType.objects.get_for_model(self.model)
-        try:
-            udf_binding = self.assessment.udf_bindings.get(content_type=content_type)
-            context["udf_content"] = udf_binding.saved_contents.get(object_id=self.object.pk)
-        except ObjectDoesNotExist:
-            context["udf_content"] = None
+        model_binding = UDFCache.get_model_binding_cache(self.assessment, self.model)
+        context["udf_content"] = UDFCache.get_udf_contents_cache(model_binding, self.object.pk)
         return context
