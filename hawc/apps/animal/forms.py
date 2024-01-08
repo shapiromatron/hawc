@@ -457,7 +457,6 @@ class EndpointForm(ModelForm):
         # User Defined Form
         if assessment is None:
             assessment = self.instance.get_assessment()
-
         self.model_binding = UDFCache.get_model_binding_cache(
             assessment=assessment, model=self.Meta.model
         )
@@ -618,13 +617,13 @@ class EndpointForm(ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=commit)
         if commit and "udf" in self.changed_data:
-            content, _ = ModelUDFContent.objects.update_or_create(
+            udf_content, _ = ModelUDFContent.objects.update_or_create(
                 defaults=dict(content=self.cleaned_data["udf"]),
                 model_binding=self.model_binding,
                 content_type=self.model_binding.content_type,
                 object_id=instance.id,
             )
-            UDFCache.set_udf_contents_cache(self.model_binding, instance.id, content.content)
+            UDFCache.set_udf_contents_cache(udf_content)
         return instance
 
 

@@ -1,4 +1,6 @@
 # Cache class for User Defined Forms.
+from django.core.cache import cache
+
 from hawc.apps.udf.models import ModelUDFContent
 
 from ..common.helper import cacheable
@@ -38,6 +40,11 @@ class UDFCache:
         )
 
     @classmethod
+    def clear_model_binding_cache(cls, model_binding):
+        cache_key = f"assessment-{model_binding.assessment_id}-{model_binding.content_type.model}-model-binding"
+        cache.delete(cache_key)
+
+    @classmethod
     def get_udf_contents_cache(
         cls,
         model_binding,
@@ -59,6 +66,12 @@ class UDFCache:
         )
 
     @classmethod
-    def set_udf_contents_cache(cls, model_binding, object_id, content):
-        cache_key = f"model-binding-{model_binding.pk}-object-{object_id}-udf-contents"
-        return cacheable(lambda c: c, cache_key=cache_key, flush=True, c=content)
+    def set_udf_contents_cache(
+        cls,
+        udf_content: ModelUDFContent,
+        cache_duration: int = -1,
+    ):
+        cache_key = f"model-binding-{udf_content.model_binding_id}-object-{udf_content.object_id}-udf-contents"
+        return cacheable(
+            lambda c: c, cache_key, flush=True, cache_duration=cache_duration, c=udf_content.content
+        )
