@@ -460,9 +460,10 @@ class EndpointForm(ModelForm):
             assessment=assessment, model=self.Meta.model
         )
         if self.model_binding:
-            initial = UDFCache.get_udf_contents_cache(
+            udf_content = UDFCache.get_udf_contents_cache(
                 model_binding=self.model_binding, object_id=self.instance.id
             )
+            initial = udf_content.content if udf_content is not None else None
 
             udf = self.model_binding.form_field(label="User defined fields", initial=initial)
             self.fields["udf"] = udf

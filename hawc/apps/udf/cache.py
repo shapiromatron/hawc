@@ -46,7 +46,7 @@ class UDFCache:
             # get saved UDF contents for this object id, if it exists
             try:
                 udf_content = model_binding.saved_contents.get(object_id=object_id)
-                return udf_content.content
+                return udf_content
             except ModelUDFContent.DoesNotExist:
                 return None
 
@@ -71,5 +71,5 @@ class UDFCache:
     ):
         cache_key = f"model-binding-{udf_content.model_binding_id}-object-{udf_content.object_id}-udf-contents"
         return cacheable(
-            lambda c: c, cache_key, flush=True, cache_duration=cache_duration, c=udf_content.content
+            lambda c: c, cache_key, flush=True, cache_duration=cache_duration, c=udf_content
         )
