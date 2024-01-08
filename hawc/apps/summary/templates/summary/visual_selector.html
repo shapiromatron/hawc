@@ -28,6 +28,8 @@
           Data pivot</option>
         <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
           Bioassay endpoint crossview</option>
+        <option value="8" data-url="{% url viz_url_pattern assessment.id 8 %}">
+          Static image</option>
       </select>
     </div>
     <div class="col-md-3">
@@ -163,6 +165,12 @@
       </div>
       <p class="form-text text-muted">
         Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
+      </p>
+    </div>
+    <div id="detail-8" class="col-md-12">
+      <h3>Static image</h3>
+      <p class="form-text text-muted">
+        Upload an image to be displayed as a visual. The file formats .jpeg, .jpg, and .png are supported.
       </p>
     </div>
   </div>
