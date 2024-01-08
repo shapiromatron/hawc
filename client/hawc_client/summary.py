@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .client import BaseClient, InteractiveHawcClient
+from .client import BaseClient
 
 
 class SummaryClient(BaseClient):
@@ -202,25 +202,3 @@ class SummaryClient(BaseClient):
         url = f"{self.session.root_url}/summary/api/summary-table/?assessment_id={assessment_id}"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
-
-    def download_all_visuals(self, assessment_id: int) -> list[dict]:
-        """Download all visuals and data pivots for an assessment
-
-        Args:
-            id (int): The data pivot ID
-
-        Returns:
-            list[dict]: a list of visualizations
-        """
-        visuals = self.visual_list(assessment_id)
-        dp = self.datapivot_list(assessment_id)
-        visuals = pd.concat([visuals, dp]).to_dict(orient="records")
-
-        with InteractiveHawcClient(self) as iclient:
-            for visual in visuals:
-                if "data pivot" in visual["visual_type"].lower():
-                    visual["png"] = iclient.download_data_pivot(visual["id"])
-                else:
-                    is_tableau = "embedded external website" in visual["visual_type"].lower()
-                    visual["png"] = iclient.download_visual(visual["id"], is_tableau=is_tableau)
-        return visuals

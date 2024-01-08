@@ -40,11 +40,11 @@ async def check(method: Callable, id: int):
 
 
 async def test_iclient():
-    stdout.write("Starting client\n")
+    stdout.write("Starting HawcClient \n")
     client = HawcClient("http://127.0.0.1:8000")
     client.set_authentication_token("cef32b9abcbe1a6e9c8460099403e9cd77e12c79", login=True)
     async with client.interactive(headless=True) as iclient:
-        stdout.write("Client startup complete; running tests\n")
+        stdout.write("Running tests\n")
         # taken from assessment #2 (public) - Chemical X
         await check(iclient.download_visual, 6)  # tagtree
         await check(iclient.download_visual, 3)  # risk of bias heatmap
@@ -57,7 +57,7 @@ async def test_iclient():
         # check permissions work
         await check(iclient.download_visual, 1)  # risk of bias heatmap
 
-        stdout.write(green_text("\nComplete - all assertions passed!\n"))
+        stdout.write(green_text("\nComplete - all tests passed!\n"))
 
 
 if __name__ == "__main__":
