@@ -6,6 +6,7 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
+from hawc.apps.udf.cache import UDFCache
 
 from hawc.apps.udf.models import ModelUDFContent
 
@@ -16,6 +17,7 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, CopyForm, QuillField
+from ..common.helper import cacheable
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
@@ -455,13 +457,14 @@ class EndpointForm(ModelForm):
         # User Defined Form
         if assessment is None:
             assessment = self.instance.get_assessment()
-        self.model_binding = assessment.get_model_binding(self.Meta.model)
+
+        self.model_binding = UDFCache.get_model_binding_cache(
+            assessment=assessment, model=self.Meta.model
+        )
         if self.model_binding:
-            try:
-                udf_content = self.model_binding.saved_contents.get(object_id=self.instance.id)
-                initial = udf_content.content
-            except ModelUDFContent.DoesNotExist:
-                initial = None
+            initial = UDFCache.get_udf_contents_cache(
+                model_binding=self.model_binding, object_id=self.instance.id
+            )
 
             udf = self.model_binding.form_field(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
