@@ -57,3 +57,8 @@ class UDFCache:
             model_binding=model_binding,
             object_id=object_id,
         )
+
+    @classmethod
+    def set_udf_contents_cache(cls, model_binding, object_id, content):
+        cache_key = f"model-binding-{model_binding.pk}-object-{object_id}-udf-contents"
+        return cacheable(lambda content: content, cache_key=cache_key, flush=True, content=content)
