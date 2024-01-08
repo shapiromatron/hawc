@@ -209,5 +209,9 @@ class UDFDetailMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         model_binding = UDFCache.get_model_binding_cache(self.assessment, self.model)
-        context["udf_content"] = UDFCache.get_udf_contents_cache(model_binding, self.object.pk)
+        context["udf_content"] = (
+            UDFCache.get_udf_contents_cache(model_binding, self.object.pk)
+            if model_binding is not None
+            else None
+        )
         return context

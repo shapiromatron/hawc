@@ -1,7 +1,9 @@
 # Cache class for User Defined Forms.
 from django.core.cache import cache
+from django.db.models import Model
 
-from hawc.apps.udf.models import ModelUDFContent
+from hawc.apps.assessment.models import Assessment
+from hawc.apps.udf.models import ModelBinding, ModelUDFContent
 
 from ..common.helper import cacheable
 
@@ -10,12 +12,12 @@ class UDFCache:
     @classmethod
     def get_model_binding_cache(
         cls,
-        assessment,
-        model,
+        assessment: Assessment,
+        model: type[Model],
         flush: bool = False,
         cache_duration: int = -1,
     ):
-        def _get_model_binding(assessment, model):
+        def _get_model_binding(assessment: Assessment, model: type[Model]):
             # get UDF model binding for given assessment/model combo
             return assessment.get_model_binding(model)
 
@@ -30,15 +32,15 @@ class UDFCache:
         )
 
     @classmethod
-    def clear_model_binding_cache(cls, model_binding):
+    def clear_model_binding_cache(cls, model_binding: ModelBinding):
         cache_key = f"assessment-{model_binding.assessment_id}-{model_binding.content_type.model}-model-binding"
         cache.delete(cache_key)
 
     @classmethod
     def get_udf_contents_cache(
         cls,
-        model_binding,
-        object_id,
+        model_binding: ModelBinding,
+        object_id: int | None,
         flush: bool = False,
         cache_duration: int = -1,
     ):
@@ -50,7 +52,7 @@ class UDFCache:
             except ModelUDFContent.DoesNotExist:
                 return None
 
-        # if this is a new instance, don't bother trying to fetch from the cache
+        # if this is a new instance don't bother trying to fetch from the cache
         if object_id is None:
             return None
         cache_key = f"model-binding-{model_binding.pk}-object-{object_id}-udf-contents"
