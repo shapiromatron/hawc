@@ -3,13 +3,13 @@ from django import forms
 from django.forms.widgets import TextInput
 from django.urls import reverse
 
-from hawc.apps.udf.models import ModelUDFContent
-
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessment
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
+from ..udf.cache import UDFCache
+from ..udf.models import ModelUDFContent
 from . import models
 
 
@@ -51,13 +51,13 @@ class BaseStudyForm(forms.ModelForm):
 
         # User Definied Form
         assessment = self.instance.get_assessment()
-        self.model_binding = assessment.get_model_binding(self.Meta.model)
+        self.model_binding = UDFCache.get_model_binding_cache(
+            assessment=assessment, model=self.Meta.model
+        )
         if self.model_binding:
-            try:
-                udf_content = self.model_binding.saved_contents.get(object_id=self.instance.id)
-                initial = udf_content.content
-            except ModelUDFContent.DoesNotExist:
-                initial = None
+            initial = UDFCache.get_udf_contents_cache(
+                model_binding=self.model_binding, object_id=self.instance.id
+            )
 
             udf = self.model_binding.form_field(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
@@ -108,12 +108,13 @@ class BaseStudyForm(forms.ModelForm):
         if commit and "internal_communications" in self.changed_data:
             instance.set_communications(self.cleaned_data["internal_communications"])
         if commit and "udf" in self.changed_data:
-            ModelUDFContent.objects.update_or_create(
+            udf_content, _ = ModelUDFContent.objects.update_or_create(
                 defaults=dict(content=self.cleaned_data["udf"]),
                 model_binding=self.model_binding,
                 content_type=self.model_binding.content_type,
                 object_id=instance.id,
             )
+            UDFCache.set_udf_contents_cache(udf_content)
         return instance
 
 

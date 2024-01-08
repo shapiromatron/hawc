@@ -6,8 +6,8 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
-from hawc.apps.udf.cache import UDFCache
 
+from hawc.apps.udf.cache import UDFCache
 from hawc.apps.udf.models import ModelUDFContent
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
@@ -17,7 +17,6 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, CopyForm, QuillField
-from ..common.helper import cacheable
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
