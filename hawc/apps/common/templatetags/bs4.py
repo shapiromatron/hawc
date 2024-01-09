@@ -105,7 +105,7 @@ def plotly(fig: Figure | None, **kw) -> str:
     return mark_safe(
         dedent(
             f"""
-    <div id="{id}"><span class="text-muted">Loading...</span></div>
+    <div id="{id}"><span class="is-loading text-muted">Loading, please wait...</span></div>
     <script>document.addEventListener("{event}", {func}, false);</script>"""
         )
     )
