@@ -2,7 +2,7 @@
     <h4 class="modal-title" id="bulk-merge-modal-label">
         Bulk Merge Tag Conflicts?
     </h4>
-    {% if merged == True %}
+    {% if merged %}
     <a type="button" class="close text-dark" aria-label="Close" href=".">
         <span aria-hidden="true">&times;</span>
     </a>
@@ -73,7 +73,7 @@
     Preview Bulk Merge
     </button>
     {% endif %}
-    {% if merged == True %}
+    {% if merged %}
     <a type="button" class="btn btn-light" aria-label="Close" href=".">
         Close
     </a>
