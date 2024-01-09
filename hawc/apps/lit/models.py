@@ -1186,6 +1186,7 @@ class Reference(models.Model):
             references (list): a list of references
             tags (models.QuerySet): the full tag list for an assessment
             user_tags (bool): set parents for user tags as well as consensus tags
+            check_bulk (bool): add tag to bulk_merge_tag_names list if in bulk_merge_tags
         """
         tag_map = {tag.path: tag for tag in tags}
 
