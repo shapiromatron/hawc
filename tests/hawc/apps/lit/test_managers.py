@@ -1,4 +1,3 @@
-import numpy as n
 import pytest
 
 from hawc.apps.lit import models
@@ -36,34 +35,34 @@ class TestReferenceManager:
         references_before = {}
         for ref in references_check:
             references_before[ref.id] = {}
-            references_before[ref.id]["tags"] = n.array(ref.tags.all().values_list("id", flat=True))
-            references_before[ref.id]["users_resolved"] = n.array(
-                [user_tag.is_resolved for user_tag in ref.user_tags.all()]
+            references_before[ref.id]["tags"] = set(ref.tags.all().values_list("id", flat=True))
+            references_before[ref.id]["users_resolved"] = set(
+                user_tag.is_resolved for user_tag in ref.user_tags.all()
             )
 
         merge_result = all_assessment_refs.merge_tag_conflicts(
-            tag_ids, db_keys.pm_user_id, False, True
+            tag_ids, db_keys.pm_user_id, include_without_conflicts=False, preview=True
         )  # preview mode enabled
         assert merge_result["message"] == "Preview mode enabled."
 
         # no change with preview mode
         for ref in references_check:
-            tags_after = n.array(ref.tags.all().values_list("id", flat=True))
-            assert n.array_equal(references_before[ref.id]["tags"], tags_after)
-            resolved_after = n.array([user_tag.is_resolved for user_tag in ref.user_tags.all()])
-            assert n.array_equal(references_before[ref.id]["users_resolved"], resolved_after)
+            tags_after = set(ref.tags.all().values_list("id", flat=True))
+            assert references_before[ref.id]["tags"] == tags_after
+            resolved_after = set([user_tag.is_resolved for user_tag in ref.user_tags.all()])
+            assert references_before[ref.id]["users_resolved"] == resolved_after
 
         merge_result = all_assessment_refs.merge_tag_conflicts(
-            tag_ids, db_keys.pm_user_id, False, False
+            tag_ids, db_keys.pm_user_id, include_without_conflicts=False, preview=False
         )  # merge mode
         assert "references updated" in merge_result["message"]
 
         # changes after merge mode
         for ref in references_check:
-            tags_after = list(ref.tags.all().values_list("id", flat=True))
-            assert not n.array_equal(references_before[ref.id]["tags"], tags_after)
-            resolved_after = n.array([user_tag.is_resolved for user_tag in ref.user_tags.all()])
-            assert not n.array_equal(references_before[ref.id]["users_resolved"], resolved_after)
+            tags_after = set(ref.tags.all().values_list("id", flat=True))
+            assert references_before[ref.id]["tags"] != tags_after
+            resolved_after = set([user_tag.is_resolved for user_tag in ref.user_tags.all()])
+            assert references_before[ref.id]["users_resolved"] != resolved_after
 
         assert (
             models.Reference.objects.filter(assessment=assessment, tags__in=tag_ids).count()
