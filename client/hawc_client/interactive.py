@@ -18,8 +18,6 @@ async def fetch_png(page: Page) -> BytesIO:
     Returns:
         BytesIO: The PNG image, in bytes
     """
-    download_button = None
-
     await page.wait_for_load_state("load")
     await expect(page.locator(".is-loading")).to_have_count(0)
 
@@ -44,14 +42,8 @@ async def fetch_png(page: Page) -> BytesIO:
             )
             download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
         case "plotly":
-            await page.locator(".js-plotly-plot").hover()
-            async with page.expect_download() as download_info:
-                await page.locator(".js-plotly-plot .modebar-btn").first.click(force=True)
-            download = await download_info.value
-            path = await download.path()
-            if path is None:
-                raise ValueError("Download failed")
-            return BytesIO(path.read_bytes())
+            download_button = None
+            download_confirm = page.locator(".js-plotly-plot .modebar-btn").first
         case "static image":
             b = await page.locator("#visual-image img").screenshot(type="png")
             return BytesIO(b)
