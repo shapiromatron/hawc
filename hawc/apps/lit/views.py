@@ -439,9 +439,11 @@ class BulkMerge(HtmxView):
         )
         if merge_result["queryset"]:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            tags = models.Reference.annotate_tag_parents(merge_result["queryset"], tags, True, True)
-            cache_duration = 60 * 30  # half hour
-            cache.set(key, (merge_result["queryset"], request.POST), cache_duration)
+            tags = models.Reference.annotate_tag_parents(
+                merge_result["queryset"], tags, user_tags=True, check_bulk=True
+            )
+            cache.set(key, (merge_result["queryset"], request.POST), 60 * 30)  # 30 min
+
         context = dict(
             object_list=merge_result["queryset"],
             assessment=self.assessment,
@@ -453,7 +455,7 @@ class BulkMerge(HtmxView):
         return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
     def merge(self, request: HttpRequest, *args, **kwargs):
-        cache_key = request.POST.get("cache_key")
+        cache_key = request.POST.get("cache_key", "")
         queryset, data = cache.get(cache_key)
         assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
         if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
