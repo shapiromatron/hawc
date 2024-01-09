@@ -21,40 +21,42 @@ async def fetch_png(page: Page) -> BytesIO:
     download_button = None
 
     await page.wait_for_load_state("load")
-    await expect(page.locator(".is-loading")).to_be_hidden()
+    await expect(page.locator(".is-loading")).to_have_count(0)
 
-    # has plotly
-    if await page.evaluate("document.querySelector('.visualization .js-plotly-plot') !== null"):
-        await page.locator(".js-plotly-plot").hover()
-        async with page.expect_download() as download_info:
-            await page.locator(".js-plotly-plot .modebar-btn").first.click(force=True)
-        download = await download_info.value
-        path = await download.path()
-        if path is None:
-            raise ValueError("Download failed")
-        return BytesIO(path.read_bytes())
-
-    # has tableau
-    elif await page.evaluate("document.querySelector('.tableau-viz') !== null"):
-        download_button = page.frame_locator("iframe").locator(
-            'div[role="button"]:has-text("Download")'
-        )
-        download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
-
-    # has d3-based image
-    elif await page.evaluate(
-        "document.querySelector('.visualization svg') || document.querySelector('#dp_display > svg') !== null"
-    ):
-        download_button = page.locator("button", has=page.locator("i.fa-download"))
-        download_confirm = page.locator("text=Download as a PNG")
-
-    # has image
-    elif await page.evaluate("document.querySelector('#visual-image img') !== null"):
-        b = await page.locator("#visual-image img").screenshot(type="png")
-        return BytesIO(b)
-
-    else:
-        raise ValueError("Cannot find an image to download.")
+    viz_type = await page.evaluate(
+        "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"
+    )
+    match viz_type:
+        case (
+            "data pivot"
+            | "animal bioassay endpoint aggregation"
+            | "animal bioassay endpoint crossview"
+            | "risk of bias heatmap"
+            | "risk of bias barchart"
+            | "literature tagtree"
+            | "exploratory heatmap"
+        ):
+            download_button = page.locator("button", has=page.locator("i.fa-download"))
+            download_confirm = page.locator("text=Download as a PNG")
+        case "embedded external website":
+            download_button = page.frame_locator("iframe").locator(
+                'div[role="button"]:has-text("Download")'
+            )
+            download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
+        case "plotly":
+            await page.locator(".js-plotly-plot").hover()
+            async with page.expect_download() as download_info:
+                await page.locator(".js-plotly-plot .modebar-btn").first.click(force=True)
+            download = await download_info.value
+            path = await download.path()
+            if path is None:
+                raise ValueError("Download failed")
+            return BytesIO(path.read_bytes())
+        case "static image":
+            b = await page.locator("#visual-image img").screenshot(type="png")
+            return BytesIO(b)
+        case _:
+            raise ValueError(f"Unknown visual type: {viz_type}")
 
     if download_button:
         await download_button.click()

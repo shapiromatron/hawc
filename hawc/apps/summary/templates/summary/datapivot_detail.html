@@ -2,6 +2,10 @@
 
 {% load static %}
 
+{% block extrahead %}
+<meta name="hawc-viz-type" data-viz-type="data pivot" />
+{% endblock %}
+
 {% block content %}
 <div class="d-flex">
   <h2>{{object}}</h2>
