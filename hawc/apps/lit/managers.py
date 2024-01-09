@@ -20,6 +20,7 @@ from hawc.services.utils.doi import get_doi_from_identifier
 from ...services.epa import hero
 from ...services.nih import pubmed
 from ..assessment.managers import published
+from ..common.helper import flatten
 from ..common.models import BaseManager, replace_null, str_m2m
 from ..study.managers import study_df_annotations
 from . import constants
@@ -557,21 +558,20 @@ class ReferenceQuerySet(models.QuerySet):
     @transaction.atomic
     def merge_tag_conflicts(
         self,
-        tags: list[int],
-        user_id,
+        tag_ids: list[int],
+        user_id: int,
         include_without_conflicts: bool = False,
         preview: bool = False,
         cached: bool = False,
     ):
         # get all relevant tag ids
         ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
-        tags = ReferenceFilterTag.objects.filter(id__in=tags)
-        tag_ids = []
+        tags = ReferenceFilterTag.objects.filter(id__in=tag_ids)
 
-        # tags always include descendants; we're bulk merging by tag tree branch
-        for tag in tags:
-            tag_ids = tag_ids + list(tag.get_tree(parent=tag).values_list("id", flat=True))
-
+        # include descendants; we're bulk merging by tag branch
+        tag_ids = list(
+            flatten(tag.get_tree(parent=tag).values_list("id", flat=True) for tag in tags)
+        )
         # annotate references with tags to be added per bulk merge request
         # this includes any of the tag_ids on an unresolved UserReferenceTag
         if not cached:
