@@ -13,7 +13,7 @@ from django.views.generic import TemplateView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, tryParseInt
+from ..common.helper import WebappConfig, cacheable, tryParseInt
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -381,7 +381,10 @@ class TagReferences(BaseFilterList):
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
         tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+        descendant_tags = cacheable(
+            lambda: models.ReferenceFilterTag.get_tree_descendants(tags),
+            f"assessment-{self.assessment.id}-tag-descendants",
+        )
         for tag in descendant_tags:
             descendant_tags[tag] = list(descendant_tags[tag])
         for reference in references:

@@ -64,7 +64,15 @@ var ReferenceUDF = ({currentUDF, UDFValues}) => {
         }
     });
 
-    return <div id="udf-div" dangerouslySetInnerHTML={{__html: currentUDF}} />;
+    return currentUDF.length > 0 ? (
+        <div className="well" id="udf-div">
+            <h4 className="mb-0 p-2">Tag Forms</h4>
+            <hr className="m-0 mx-2 p-1"></hr>
+            <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
+        </div>
+    ) : (
+        ""
+    );
 };
 
 ReferenceUDF.propTypes = {

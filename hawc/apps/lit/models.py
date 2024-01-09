@@ -28,7 +28,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..assessment.models import Log
-from ..common.helper import SerializerHelper
+from ..common.helper import SerializerHelper, cacheable
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -905,9 +905,11 @@ class Reference(models.Model):
 
         # save udf data if applicable
         if udf_data is not None:
-            # TODO: cache descendant_tags
             tags = ReferenceFilterTag.get_all_tags(self.assessment_id)
-            descendant_tags = ReferenceFilterTag.get_tree_descendants(tags)
+            descendant_tags = cacheable(
+                lambda: ReferenceFilterTag.get_tree_descendants(tags),
+                f"assessment-{self.assessment_id}-tag-descendants",
+            )
             for udf_tag, udf in udf_data.items():
                 # if there's any intersection between the descendant tags of the UDf tag and the tag_pks, create the udf
                 if not descendant_tags[int(udf_tag)].isdisjoint(tag_pks):
