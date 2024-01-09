@@ -49,25 +49,28 @@ ReferenceListItem.propTypes = {
     store: PropTypes.object,
 };
 
-var ReferenceUDF = inject("store")(
-    observer(({currentUDF, UDFValues}) => {
-        useEffect(() => {
-            if (Object.keys(UDFValues) > 0) {
-                for (const [tag_id, input] of Object.entries(UDFValues)) {
-                    for (const [field, value] of Object.entries(input)) {
-                        $(`input[name="${tag_id}-${field}"]`).val(`${value}`);
-                    }
+var ReferenceUDF = ({currentUDF, UDFValues}) => {
+    useEffect(() => {
+        if (Object.keys(UDFValues) > 0) {
+            for (const [tag_id, input] of Object.entries(UDFValues)) {
+                for (const [field, value] of Object.entries(input)) {
+                    $(`input[name="${tag_id}-${field}"]`).val(`${value}`);
                 }
-            } else {
-                $("#udf-div :input").each(function() {
-                    $(this).val("");
-                });
             }
-        });
+        } else {
+            $("#udf-div :input").each(function() {
+                $(this).val("");
+            });
+        }
+    });
 
-        return <div id="udf-div" dangerouslySetInnerHTML={{__html: currentUDF}} />;
-    })
-);
+    return <div id="udf-div" dangerouslySetInnerHTML={{__html: currentUDF}} />;
+};
+
+ReferenceUDF.propTypes = {
+    currentUDF: PropTypes.string.isRequired,
+    UDFValues: PropTypes.object.isRequired,
+};
 
 @inject("store")
 @observer
