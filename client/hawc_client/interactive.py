@@ -9,6 +9,11 @@ from .client import BaseClient
 from .exceptions import HawcClientException
 
 
+async def remove_dj_toolbar(page: Page):
+    if await page.evaluate("document.querySelector('#djDebug')"):
+        await page.evaluate("document.querySelector('#djDebug').remove()")
+
+
 async def fetch_png(page: Page) -> BytesIO:
     """Helper method to download a PNG from a visualization page
 
@@ -20,6 +25,7 @@ async def fetch_png(page: Page) -> BytesIO:
     """
     await page.wait_for_load_state("load")
     await expect(page.locator(".is-loading")).to_have_count(0)
+    await remove_dj_toolbar(page)
 
     viz_type = await page.evaluate(
         "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"
