@@ -592,7 +592,7 @@ class ReferenceQuerySet(models.QuerySet):
             # filter by references that have tags to be added (i.e., user tag(s) contains the tags given, consensus tags do not)
             # then filter out references without conflict (1 unresolved user tag), or keep them, depending on parameter
             # note: the '__contains' filter is overwritten for ArrayField; it filters by subset
-            # see: https://docs.djangoproject.com/en/4.2/ref/contrib/postgres/fields/#contains
+            # see: https://docs.djangoproject.com/en/5.0/ref/contrib/postgres/fields/#contains
             queryset = queryset.filter(
                 Q(bulk_merge_tags__isnull=False),
                 ~Q(ref_tags__contains=models.F("bulk_merge_tags")),
@@ -610,22 +610,22 @@ class ReferenceQuerySet(models.QuerySet):
 
         # Now we start the bulk tag merge process! The order of the procedure below is important:
         # 0. Filter and annotate reference queryset (done above)
-        # 1. Create new 'UserReferenceTag' objects where necessary for the user doing these bulk merges
-        # 2. Create the 'UserReferenceTags' through objects (i.e. add tags to the UserReferenceTag objects created in #2)
-        # 3. Create the 'ReferenceTags' through objects (i.e. add the bulk merged tags to the reference as consensus tags)
+        # 1. Create new UserReferenceTag objects where necessary for the user doing these bulk merges
+        # 2. Create the UserReferenceTags through objects (i.e. add tags to the UserReferenceTag objects created in #2)
+        # 3. Create the ReferenceTags through objects (i.e. add the bulk merged tags to the reference as consensus tags)
         # 4. Resolve any UserReferenceTag objects where possible
 
         # 1. Create new UserReferenceTag objects for the user performing the bulk merge
-        # we do this first since we need to continue annotating the reference queryset, and every time you annotate a queryset,
-        # it is re-evaluated. creating these UserReferenceTag objs does not change the result of the above filtering
+        # Do this first since we need to continue annotating the reference queryset, and every time you annotate a
+        # queryset, it is re-evaluated. Creating these UserReferenceTag objects does not change the filters above.
         updatetime = now()
         UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
         new_user_ref_tags = [
             UserReferenceTag(user_id=user_id, reference_id=ref.id, last_updated=updatetime)
             for ref in queryset
         ]
-        # UserReferenceTags have a unique constriction on user_id & reference_id (which is good, we don't want dupes)
-        # so if it tries to insert a dupe, instead it updates (update_conflicts=True) the last_updated field (update_fields).
+        # UserReferenceTags have a unique constriction on user_id & reference_id (which is good, we don't want dupes),
+        # so if it tries to insert a dupe, instead it updates the last_updated field (see update_conflicts docs).
         UserReferenceTag.objects.bulk_create(
             new_user_ref_tags,
             update_conflicts=True,
@@ -633,8 +633,8 @@ class ReferenceQuerySet(models.QuerySet):
             unique_fields=["user_id", "reference_id"],
         )
 
-        # Now we can annotate the reference queryset with the UserReferenceTag id with the user ID for the user performing
-        # this bulk merge operation, since we created these UserReferenceTag objects in the previous step
+        # Annotate the reference queryset with the UserReferenceTag id with the user ID for the user performing
+        # this bulk merge operation, since we created these UserReferenceTag objects in the previous step.
         bulk_user_query = UserReferenceTag.objects.filter(
             reference=models.OuterRef("pk"), user=user_id
         )
@@ -642,9 +642,9 @@ class ReferenceQuerySet(models.QuerySet):
             bulk_user_ref_id=models.Subquery(bulk_user_query.values("pk")[:1])
         )
 
-        # 2. Create the UserReferenceTag tag 'through' objects for the user performing the bulk merge (i.e., add the new
-        # tags to the user's UserReferenceTag). this requires the previous 'bulk_user_ref_id' annotation and the original
-        # 'bulk_merge_tag_id' annotations
+        # 2. Create the UserReferenceTag tag 'through' objects for the user performing the bulk merge (i.e., add the
+        # new tags to the user's UserReferenceTag). this requires the previous 'bulk_user_ref_id' annotation and the
+        # original bulk_merge_tag_id annotations.
         UserReferenceTags = apps.get_model("lit", "UserReferenceTags")
         new_user_ref_tag_throughs = []
         for ref in queryset:
