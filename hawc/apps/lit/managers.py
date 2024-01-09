@@ -1,6 +1,5 @@
 import json
 import logging
-from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -11,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Count, Q, QuerySet
 from django.db.models.functions import Cast
+from django.utils.timezone import now
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
@@ -618,7 +618,7 @@ class ReferenceQuerySet(models.QuerySet):
         # 1. Create new UserReferenceTag objects for the user performing the bulk merge
         # we do this first since we need to continue annotating the reference queryset, and every time you annotate a queryset,
         # it is re-evaluated. creating these UserReferenceTag objs does not change the result of the above filtering
-        updatetime = datetime.now()
+        updatetime = now()
         UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
         new_user_ref_tags = [
             UserReferenceTag(user_id=user_id, reference_id=ref.id, last_updated=updatetime)
@@ -662,9 +662,7 @@ class ReferenceQuerySet(models.QuerySet):
         # Save the list of reference IDs in the queryset, we need them for filtering & resolving user tags later
         # and we can't do this after we create the ReferenceTags, since the queryset will re-evaluate and be empty
         references = list(queryset.values_list("id", flat=True))
-        queryset.update(
-            last_updated=datetime.now()
-        )  # update last_updated field (since bulk_create won't call .save())
+        queryset.update(last_updated=updatetime)  # update since bulk_create does not
 
         # 3. Create the new reference tags/consensus tags
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
@@ -698,9 +696,7 @@ class ReferenceQuerySet(models.QuerySet):
                 ref_tags__contains=ArrayAgg("tags", distinct=True),
             )
         )
-        updated_user_tag_count = resolve_user_tags.update(
-            is_resolved=True, last_updated=datetime.now()
-        )
+        updated_user_tag_count = resolve_user_tags.update(is_resolved=True, last_updated=updatetime)
 
         # log the changes
         Log = apps.get_model("assessment", "Log")
