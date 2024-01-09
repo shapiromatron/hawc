@@ -6,6 +6,7 @@ from .epi import EpiClient
 from .epimeta import EpiMetaClient
 from .epiv2 import EpiV2Client
 from .exceptions import HawcClientException, HawcServerException
+from .interactive import InteractiveHawcClient
 from .invitro import InvitroClient
 from .literature import LiteratureClient
 from .riskofbias import RiskOfBiasClient
@@ -73,3 +74,6 @@ class HawcClient(BaseClient):
             bool: Returns true if session is valid
         """
         return self.session.set_authentication_token(token, login)
+
+    def interactive(self, headless: bool = True) -> InteractiveHawcClient:
+        return InteractiveHawcClient(client=self, headless=headless)

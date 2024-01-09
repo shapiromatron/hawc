@@ -32,7 +32,7 @@ class TableauDashboard extends Component {
         let fullPath = queryArgs && queryArgs.length > 0 ? `${path}?${queryArgs.join("&")}` : path;
 
         return (
-            <tableau-viz src={hostUrl + fullPath} height={height} width={width}>
+            <tableau-viz src={hostUrl + fullPath} height={height} width={width} class="tableau-viz">
                 {filters.map((filter, i) => {
                     return (
                         <viz-filter key={i} field={filter.field} value={filter.value}></viz-filter>

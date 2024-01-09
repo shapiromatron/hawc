@@ -29,7 +29,20 @@ client.set_authentication_token(token=getpass())
 
 # get all references for an assessment
 client.lit.references(assessment_id=123)
+```
 
+An interactive client also exists which downloads figures or visualizations:
+
+```python
+from getpass import getpass
+from hawc_client import HawcClient
+
+client = HawcClient("https://hawcproject.org")
+client.set_authentication_token(getpass(), login=True)  # must set login to True
+
+with client.interactive(headless=False) as iclient:
+    iclient.download_visual(123, 'visual.png')
+    iclient.download_data_pivot(456, 'data-pivot.png')
 ```
 
 There are many more commands available in the HAWC client that aren't documented here. It is recommended to use an interactive terminal session using a jupyter notebook to browse the available methods and their docstrings for more details.
