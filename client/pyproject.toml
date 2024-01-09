@@ -22,6 +22,7 @@ dependencies = [
   "rapidfuzz",
   "requests",
   "pandas",
+  "playwright",
   "tqdm",
 ]
 

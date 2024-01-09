@@ -47,7 +47,6 @@ jobs:
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         pip install -U pip wheel
         pip install -r requirements/dev.txt
-        playwright install --with-deps chromium
     - name: lint
       run: |
         make lint-py

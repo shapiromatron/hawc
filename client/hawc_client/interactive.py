@@ -10,12 +10,11 @@ from .client import BaseClient
 from .exceptions import HawcClientException
 
 
-async def fetch_png(page: Page, is_tableau: bool = False) -> BytesIO:
+async def fetch_png(page: Page) -> BytesIO:
     """Helper method to download a PNG from a visualization page
 
     Args:
         page (Page): a page instance
-        is_tableau (bool, optional): If the visual is a Tableau image (default False)
 
     Returns:
         BytesIO: The PNG image, in bytes
@@ -26,15 +25,43 @@ async def fetch_png(page: Page, is_tableau: bool = False) -> BytesIO:
     except PlaywrightTimeoutError:
         pass
 
-    if is_tableau:
+    download_button = None
+
+    # has plotly
+    if await page.evaluate("document.querySelector('.visualization .js-plotly-plot') !== null"):
+        await page.locator(".js-plotly-plot").hover()
+        async with page.expect_download() as download_info:
+            await page.locator(".js-plotly-plot .modebar-btn").first.click(force=True)
+        download = await download_info.value
+        path = await download.path()
+        if path is None:
+            raise ValueError("Download failed")
+        return BytesIO(path.read_bytes())
+
+    # has tableau
+    elif await page.evaluate("document.querySelector('.tableau-viz') !== null"):
         download_button = page.frame_locator("iframe").locator(
             'div[role="button"]:has-text("Download")'
         )
         download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
-    else:
+
+    # has d3-based image
+    elif await page.evaluate(
+        "document.querySelector('.visualization svg') || document.querySelector('#dp_display > svg') !== null"
+    ):
         download_button = page.locator("button", has=page.locator("i.fa-download"))
         download_confirm = page.locator("text=Download as a PNG")
-    await download_button.click()
+
+    # has image
+    elif await page.evaluate("document.querySelector('#visual-image img') !== null"):
+        b = await page.locator("#visual-image img").screenshot(type="png")
+        return BytesIO(b)
+
+    else:
+        raise ValueError("Cannot find an image to download.")
+
+    if download_button:
+        await download_button.click()
     async with page.expect_download() as download_info:
         await download_confirm.click()
     download = await download_info.value
@@ -47,7 +74,7 @@ async def fetch_png(page: Page, is_tableau: bool = False) -> BytesIO:
 PathLike = Path | str | None
 
 
-def write_to_file(data: BytesIO, path: PathLike):
+def write_to_file(data: BytesIO, path: PathLike) -> None:
     """Write to a file, given a path-like object"""
     if path is None:
         return
@@ -86,14 +113,11 @@ class InteractiveHawcClient:
         await self.context.close()
         await self.playwright.stop()
 
-    async def download_visual(
-        self, id: int, is_tableau: bool = False, fn: PathLike = None
-    ) -> BytesIO:
+    async def download_visual(self, id: int, fn: PathLike = None) -> BytesIO:
         """Download a PNG visualization given a visual ID
 
         Args:
             id (int): The visual ID
-            is_tableau (bool): Is the visual a tableau visual (default False)
             fn (PathLike, optional): If a path or string is specified, the PNG is written to
                 that location. If None (default), no data is written to a Path.
 
@@ -105,7 +129,7 @@ class InteractiveHawcClient:
         response = await self.page.goto(url)
         if response and not response.ok:
             raise HawcClientException(response.status, response.status_text)
-        data = await fetch_png(self.page, is_tableau)
+        data = await fetch_png(self.page)
         write_to_file(data, fn)
         return data
 
@@ -125,6 +149,7 @@ class InteractiveHawcClient:
         response = await self.page.goto(url)
         if response and not response.ok:
             raise HawcClientException(response.status, response.status_text)
+        # attempt to fetch PNG
         data = await fetch_png(self.page)
         write_to_file(data, fn)
         return data
