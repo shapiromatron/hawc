@@ -369,6 +369,12 @@ set INTEGRATION_TESTS=1
 py.test -sv tests/integration/ --pdb
 ```
 
+It can be helpful to record interactions initially when writing an integration test. This can be done using this command:
+
+```bash
+playwright codegen 127.0.0.1:8000
+```
+
 By default, the integration tests run in "headless" mode, or without a browser being shown. When editing integration tests, use the interactive mode to capture user operations:
 
 ```bash
@@ -377,7 +383,7 @@ make test-integration-debug
 # use set instead of export on windows
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
-py.test -sv tests/integration/test_login.py --pdb
+py.test -sv tests/integration/test_myuser.py --pdb
 ```
 
 
@@ -476,13 +482,14 @@ A few major revisions were made to the compiled USWDS assets, most notably:
 
 ### Updating EPA.gov style
 
-THere are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
+There are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
 
 1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
 2.  Right click the page and select "Save As" to download the page as an .html file.
 3. Open the downloaded `EPA Template_US EPA_files` folder.
 4. Open `styles.css` in VS Code.
 5. Replace the contents of `hawc/static/css/epa/core/style.css` with the updated `styles.css`.
+    *  Edit font locations in style sheet to point to `//www.epa.gov/themes/epa_theme/` instead of relative paths
 6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
 7. Test changes locally to ensure HAWC matches EPA.gov styling.  On the base.html, you may want to disable caching for the header and footer components (or cache for 1 second) so it makes it easier to see the changes.
 

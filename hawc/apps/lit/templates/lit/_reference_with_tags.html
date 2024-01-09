@@ -75,7 +75,7 @@
                             <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
                         </form>
                     {% endif %}
-                    <b>{{user_tag.user.get_full_name}}</b> <i class="small">{{user_tag.last_updated}} </i>
+                    <b>{{user_tag.user.get_full_name}}</b>{% debug_badge user_tag.id %} <i class="small">{{user_tag.last_updated}} </i>
                 </div>
                 {% if show_resolved_badge %}
                 <span class="badge badge-secondary align-self-start">{{user_tag.is_resolved|yesno:"Resolved,Unresolved"}}</span>

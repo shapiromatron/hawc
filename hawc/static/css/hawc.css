@@ -93,6 +93,9 @@ tfoot > tr > td {
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.dark-link, .dark-link:visited {
+    color: #495057;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
@@ -905,6 +908,21 @@ table.bordered td {
 .col-l-12 td:nth-child(12),
 .col-l-12 th:nth-child(12) {
     text-align: left;
+}
+
+/* anchor links */
+.anchor-link {
+    opacity: 0;
+    text-decoration: none;
+    color: #738ffe;
+    transition: 0.5s;
+}
+h2:hover > .anchor-link,
+h3:hover > .anchor-link,
+h4:hover > .anchor-link,
+h5:hover > .anchor-link,
+h6:hover > .anchor-link {
+    opacity: 1;
 }
 
 /* vendor data table css: https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css */

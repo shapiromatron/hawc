@@ -4,6 +4,7 @@
 <div class="visualization">
   <div class='d-flex'>
     <h2>{{object.title}}</h2>
+    {% include "common/unpublished_badge.html" %}
     {% if obj_perms.edit %}
       {% actions %}
         <span class="dropdown-header">Visualization editing</span>

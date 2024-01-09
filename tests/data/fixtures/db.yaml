@@ -4,6 +4,110 @@
     name: localhost
 - model: contenttypes.contenttype
   fields:
+    app_label: wagtailcore
+    model: page
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailadmin
+    model: admin
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: groupapprovaltask
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: locale
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: site
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: modellogentry
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: collectionviewrestriction
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: collection
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: groupcollectionpermission
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: referenceindex
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: revision
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: grouppagepermission
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: pageviewrestriction
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowpage
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowcontenttype
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowtask
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: task
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflow
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowstate
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: taskstate
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: pagelogentry
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: comment
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: commentreply
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: pagesubscription
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtaildocs
+    model: document
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailimages
+    model: image
+- model: contenttypes.contenttype
+  fields:
     app_label: auth
     model: permission
 - model: contenttypes.contenttype
@@ -44,6 +148,46 @@
     model: version
 - model: contenttypes.contenttype
   fields:
+    app_label: wagtailforms
+    model: formsubmission
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailredirects
+    model: redirect
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailembeds
+    model: embed
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailusers
+    model: userprofile
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtaildocs
+    model: uploadeddocument
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailimages
+    model: rendition
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailimages
+    model: uploadedimage
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailsearch
+    model: query
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailsearch
+    model: querydailyhits
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailsearch
+    model: indexentry
+- model: contenttypes.contenttype
+  fields:
     app_label: taggit
     model: tag
 - model: contenttypes.contenttype
@@ -61,23 +205,19 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: dsstox
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: assessment
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: AssessmentDetail
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
-    model: values
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: attachment
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: baseendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: effecttag
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -93,14 +233,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: effecttag
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
-    model: baseendpoint
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: timespentediting
 - model: contenttypes.contenttype
   fields:
@@ -113,11 +245,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: job
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
-    model: communication
+    model: dsstox
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -125,11 +253,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
+    model: job
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
     model: content
 - model: contenttypes.contenttype
   fields:
-    app_label: vocab
-    model: term
+    app_label: assessment
+    model: communication
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessmentvalue
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessmentdetail
 - model: contenttypes.contenttype
   fields:
     app_label: vocab
@@ -137,15 +277,15 @@
 - model: contenttypes.contenttype
   fields:
     app_label: vocab
+    model: term
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
     model: entitytermrelation
 - model: contenttypes.contenttype
   fields:
     app_label: lit
-    model: literatureassessment
-- model: contenttypes.contenttype
-  fields:
-    app_label: lit
-    model: search
+    model: identifiers
 - model: contenttypes.contenttype
   fields:
     app_label: lit
@@ -153,7 +293,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: lit
-    model: identifiers
+    model: reference
 - model: contenttypes.contenttype
   fields:
     app_label: lit
@@ -165,15 +305,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: lit
-    model: reference
+    model: search
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: literatureassessment
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: userreferencetag
 - model: contenttypes.contenttype
   fields:
     app_label: lit
     model: userreferencetags
 - model: contenttypes.contenttype
   fields:
-    app_label: lit
-    model: userreferencetag
+    app_label: riskofbias
+    model: riskofbias
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
@@ -185,31 +333,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
-    model: riskofbias
-- model: contenttypes.contenttype
-  fields:
-    app_label: riskofbias
     model: riskofbiasscore
-- model: contenttypes.contenttype
-  fields:
-    app_label: riskofbias
-    model: riskofbiasscoreoverrideobject
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
     model: riskofbiasassessment
 - model: contenttypes.contenttype
   fields:
-    app_label: study
-    model: study
+    app_label: riskofbias
+    model: riskofbiasscoreoverrideobject
 - model: contenttypes.contenttype
   fields:
     app_label: study
     model: attachment
 - model: contenttypes.contenttype
   fields:
-    app_label: animal
-    model: experiment
+    app_label: study
+    model: study
 - model: contenttypes.contenttype
   fields:
     app_label: animal
@@ -217,11 +357,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: animal
-    model: dosingregime
+    model: dosegroup
 - model: contenttypes.contenttype
   fields:
     app_label: animal
-    model: dosegroup
+    model: dosingregime
 - model: contenttypes.contenttype
   fields:
     app_label: animal
@@ -232,12 +372,36 @@
     model: endpointgroup
 - model: contenttypes.contenttype
   fields:
-    app_label: epi
-    model: criteria
+    app_label: animal
+    model: experiment
 - model: contenttypes.contenttype
   fields:
-    app_label: epi
-    model: country
+    app_label: eco
+    model: nestedterm
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: state
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: vocab
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: effect
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: design
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: cause
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: result
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -245,27 +409,19 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: ethnicity
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
-    model: studypopulationcriteria
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
-    model: studypopulation
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
-    model: outcome
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
     model: comparisonset
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: group
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: criteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: ethnicity
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -273,7 +429,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: centraltendency
+    model: group
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -281,11 +437,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: resultmetric
+    model: groupresult
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: resultadjustmentfactor
+    model: outcome
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -293,7 +449,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: groupresult
+    model: resultadjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: resultmetric
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: studypopulation
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: studypopulationcriteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: centraltendency
 - model: contenttypes.contenttype
   fields:
     app_label: epimeta
@@ -309,7 +481,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
-    model: ivchemical
+    model: ivbenchmark
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
@@ -317,11 +489,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
-    model: ivexperiment
-- model: contenttypes.contenttype
-  fields:
-    app_label: invitro
-    model: ivendpointcategory
+    model: ivchemical
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
@@ -329,11 +497,15 @@
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
+    model: ivendpointcategory
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
     model: ivendpointgroup
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
-    model: ivbenchmark
+    model: ivexperiment
 - model: contenttypes.contenttype
   fields:
     app_label: bmd
@@ -345,19 +517,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: summarytext
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
-    model: summarytable
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
-    model: visual
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
     model: datapivot
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: datapivotquery
 - model: contenttypes.contenttype
   fields:
     app_label: summary
@@ -365,7 +529,15 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: datapivotquery
+    model: summarytext
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: visual
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: summarytable
 - model: contenttypes.contenttype
   fields:
     app_label: mgmt
@@ -377,11 +549,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: country
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
-    model: design
+    model: adjustmentfactor
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -389,7 +557,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: criteria
+    model: design
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -397,71 +565,688 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: exposurelevel
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
     model: outcome
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: adjustmentfactor
+    model: exposurelevel
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
     model: dataextraction
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: country
+    app_label: udf
+    model: userdefinedform
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: state
+    app_label: udf
+    model: tagbinding
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: climate
+    app_label: udf
+    model: modelbinding
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: ecoregion
+    app_label: docs
+    model: documentationpage
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: reference
-- model: contenttypes.contenttype
+    app_label: docs
+    model: documentationpagetag
+- model: auth.permission
   fields:
-    app_label: eco
-    model: metadata
-- model: contenttypes.contenttype
+    name: Can access Wagtail admin
+    content_type:
+    - wagtailadmin
+    - admin
+    codename: access_admin
+- model: auth.permission
   fields:
-    app_label: eco
-    model: result
-- model: contenttypes.contenttype
+    name: Lock/unlock pages you've locked
+    content_type:
+    - wagtailcore
+    - page
+    codename: lock_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: country
-- model: contenttypes.contenttype
+    name: Publish any page
+    content_type:
+    - wagtailcore
+    - page
+    codename: publish_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: climate
-- model: contenttypes.contenttype
+    name: Unlock any page
+    content_type:
+    - wagtailcore
+    - page
+    codename: unlock_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: ecoregion
-- model: contenttypes.contenttype
+    name: Can change page
+    content_type:
+    - wagtailcore
+    - page
+    codename: change_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: reference
-- model: contenttypes.contenttype
+    name: Can add page
+    content_type:
+    - wagtailcore
+    - page
+    codename: add_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: metadata
-- model: contenttypes.contenttype
+    name: Can change document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: change_document
+- model: auth.permission
   fields:
-    app_label: eco
-    model: quantitative
+    name: Can delete document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: delete_document
+- model: auth.permission
+  fields:
+    name: Can choose document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: choose_document
+- model: auth.permission
+  fields:
+    name: Can add document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: add_document
+- model: auth.permission
+  fields:
+    name: Can add image
+    content_type:
+    - wagtailimages
+    - image
+    codename: add_image
+- model: auth.permission
+  fields:
+    name: Can change image
+    content_type:
+    - wagtailimages
+    - image
+    codename: change_image
+- model: auth.permission
+  fields:
+    name: Can delete image
+    content_type:
+    - wagtailimages
+    - image
+    codename: delete_image
+- model: auth.permission
+  fields:
+    name: Can choose image
+    content_type:
+    - wagtailimages
+    - image
+    codename: choose_image
+- model: auth.group
+  fields:
+    name: Moderators
+    permissions:
+    - - access_admin
+      - wagtailadmin
+      - admin
+    - - add_document
+      - wagtaildocs
+      - document
+    - - change_document
+      - wagtaildocs
+      - document
+    - - choose_document
+      - wagtaildocs
+      - document
+    - - delete_document
+      - wagtaildocs
+      - document
+    - - add_image
+      - wagtailimages
+      - image
+    - - change_image
+      - wagtailimages
+      - image
+    - - choose_image
+      - wagtailimages
+      - image
+    - - delete_image
+      - wagtailimages
+      - image
+- model: auth.group
+  fields:
+    name: Editors
+    permissions:
+    - - access_admin
+      - wagtailadmin
+      - admin
+    - - add_document
+      - wagtaildocs
+      - document
+    - - change_document
+      - wagtaildocs
+      - document
+    - - choose_document
+      - wagtaildocs
+      - document
+    - - delete_document
+      - wagtaildocs
+      - document
+    - - add_image
+      - wagtailimages
+      - image
+    - - change_image
+      - wagtailimages
+      - image
+    - - choose_image
+      - wagtailimages
+      - image
+    - - delete_image
+      - wagtailimages
+      - image
+- model: wagtailcore.locale
+  pk: 1
+  fields:
+    language_code: en
+- model: wagtailcore.site
+  fields:
+    hostname: localhost
+    port: 8000
+    site_name: HAWC
+    root_page: 3
+    is_default_site: true
+- model: wagtailcore.collection
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 0
+    name: Root
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - add_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - add_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - change_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - change_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - choose_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - choose_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - add_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - add_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - change_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - change_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - choose_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - choose_image
+    - wagtailimages
+    - image
+- model: wagtailcore.page
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 1
+    translation_key: f3a37d2d-b672-4e29-967d-05d22ba816af
+    locale: 1
+    latest_revision: null
+    live: true
+    has_unpublished_changes: false
+    first_published_at: null
+    last_published_at: null
+    live_revision: null
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: Root
+    draft_title: Root
+    slug: root
+    content_type:
+    - wagtailcore
+    - page
+    url_path: /
+    owner: null
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: null
+    alias_of: null
+- model: wagtailcore.page
+  pk: 3
+  fields:
+    path: '00010001'
+    depth: 2
+    numchild: 2
+    translation_key: 6f152189-4b4a-4e44-8b81-28640717b408
+    locale: 1
+    latest_revision: 1
+    live: true
+    has_unpublished_changes: false
+    first_published_at: 2023-11-22 14:56:19.512229+00:00
+    last_published_at: 2023-11-22 14:56:19.512229+00:00
+    live_revision: 1
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: HAWC Documentation
+    draft_title: HAWC Documentation
+    slug: hawc-documentation
+    content_type:
+    - docs
+    - documentationpage
+    url_path: /hawc-documentation/
+    owner:
+    - admin@hawcproject.org
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: 2023-11-22 14:56:19.464008+00:00
+    alias_of: null
+- model: wagtailcore.page
+  pk: 4
+  fields:
+    path: '000100010001'
+    depth: 3
+    numchild: 0
+    translation_key: f62eccfa-fe8b-429d-ba9c-6cffb41a68a6
+    locale: 1
+    latest_revision: 2
+    live: true
+    has_unpublished_changes: false
+    first_published_at: 2023-11-22 14:57:48.877055+00:00
+    last_published_at: 2023-11-22 14:57:48.877055+00:00
+    live_revision: 2
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: Public Page
+    draft_title: Public Page
+    slug: public-page
+    content_type:
+    - docs
+    - documentationpage
+    url_path: /hawc-documentation/public-page/
+    owner:
+    - admin@hawcproject.org
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: 2023-11-22 14:57:48.850356+00:00
+    alias_of: null
+- model: wagtailcore.page
+  pk: 5
+  fields:
+    path: '000100010002'
+    depth: 3
+    numchild: 0
+    translation_key: e36aa9ca-62a5-4d93-a13f-c9b2fd36e598
+    locale: 1
+    latest_revision: 3
+    live: false
+    has_unpublished_changes: true
+    first_published_at: null
+    last_published_at: null
+    live_revision: null
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: Draft Page
+    draft_title: Draft Page
+    slug: draft-page
+    content_type:
+    - docs
+    - documentationpage
+    url_path: /hawc-documentation/draft-page/
+    owner:
+    - admin@hawcproject.org
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: 2023-11-22 14:58:09.626465+00:00
+    alias_of: null
+- model: wagtailcore.revision
+  pk: 1
+  fields:
+    content_type:
+    - docs
+    - documentationpage
+    base_content_type:
+    - wagtailcore
+    - page
+    object_id: '3'
+    submitted_for_moderation: false
+    created_at: 2023-11-22 14:56:19.464008+00:00
+    user:
+    - admin@hawcproject.org
+    object_str: HAWC Documentation
+    content:
+      pk: 3
+      body: ''
+      live: true
+      path: '00010001'
+      slug: hawc-documentation
+      depth: 2
+      intro: Click the links below for helpful guides on how to use the features in
+        HAWC.
+      owner: 1
+      title: HAWC Documentation
+      locale: 1
+      locked: false
+      expired: false
+      alias_of: null
+      numchild: 0
+      url_path: /hawc-documentation/
+      expire_at: null
+      locked_at: null
+      locked_by: null
+      seo_title: ''
+      go_live_at: null
+      draft_title: HAWC Documentation
+      content_type: 157
+      live_revision: null
+      show_in_menus: false
+      latest_revision: null
+      translation_key: 6f152189-4b4a-4e44-8b81-28640717b408
+      last_published_at: null
+      first_published_at: null
+      search_description: ''
+      wagtail_admin_comments: []
+      has_unpublished_changes: false
+      latest_revision_created_at: null
+    approved_go_live_at: null
+- model: wagtailcore.revision
+  pk: 2
+  fields:
+    content_type:
+    - docs
+    - documentationpage
+    base_content_type:
+    - wagtailcore
+    - page
+    object_id: '4'
+    submitted_for_moderation: false
+    created_at: 2023-11-22 14:57:48.850356+00:00
+    user:
+    - admin@hawcproject.org
+    object_str: Public Page
+    content:
+      pk: 4
+      body: <p data-block-key="n2xsw">Instructions on how to use HAWC.</p>
+      live: true
+      path: '000100010001'
+      slug: public-page
+      depth: 3
+      intro: This page is has been published.
+      owner: 1
+      title: Public Page
+      locale: 1
+      locked: false
+      expired: false
+      alias_of: null
+      numchild: 0
+      url_path: /hawc-documentation/public-page/
+      expire_at: null
+      locked_at: null
+      locked_by: null
+      seo_title: ''
+      go_live_at: null
+      draft_title: Public Page
+      content_type: 158
+      live_revision: null
+      show_in_menus: false
+      latest_revision: null
+      translation_key: f62eccfa-fe8b-429d-ba9c-6cffb41a68a6
+      last_published_at: null
+      first_published_at: null
+      search_description: ''
+      wagtail_admin_comments: []
+      has_unpublished_changes: false
+      latest_revision_created_at: null
+    approved_go_live_at: null
+- model: wagtailcore.revision
+  pk: 3
+  fields:
+    content_type:
+    - docs
+    - documentationpage
+    base_content_type:
+    - wagtailcore
+    - page
+    object_id: '5'
+    submitted_for_moderation: false
+    created_at: 2023-11-22 14:58:09.626465+00:00
+    user:
+    - admin@hawcproject.org
+    object_str: Draft Page
+    content:
+      pk: 5
+      body: ''
+      live: false
+      path: '000100010002'
+      slug: draft-page
+      depth: 3
+      intro: This page isn't finished.
+      owner: 1
+      title: Draft Page
+      locale: 1
+      locked: false
+      expired: false
+      alias_of: null
+      numchild: 0
+      url_path: /hawc-documentation/draft-page/
+      expire_at: null
+      locked_at: null
+      locked_by: null
+      seo_title: ''
+      go_live_at: null
+      draft_title: Draft Page
+      content_type: 158
+      live_revision: null
+      show_in_menus: false
+      latest_revision: null
+      translation_key: e36aa9ca-62a5-4d93-a13f-c9b2fd36e598
+      last_published_at: null
+      first_published_at: null
+      search_description: ''
+      wagtail_admin_comments: []
+      has_unpublished_changes: false
+      latest_revision_created_at: null
+    approved_go_live_at: null
+- model: wagtailcore.grouppagepermission
+  pk: 1
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - add_page
+    - wagtailcore
+    - page
+    permission_type: add
+- model: wagtailcore.grouppagepermission
+  pk: 2
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - change_page
+    - wagtailcore
+    - page
+    permission_type: change
+- model: wagtailcore.grouppagepermission
+  pk: 3
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - publish_page
+    - wagtailcore
+    - page
+    permission_type: publish
+- model: wagtailcore.grouppagepermission
+  pk: 4
+  fields:
+    group:
+    - Editors
+    page: 1
+    permission:
+    - add_page
+    - wagtailcore
+    - page
+    permission_type: add
+- model: wagtailcore.grouppagepermission
+  pk: 5
+  fields:
+    group:
+    - Editors
+    page: 1
+    permission:
+    - change_page
+    - wagtailcore
+    - page
+    permission_type: change
+- model: wagtailcore.grouppagepermission
+  pk: 6
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - lock_page
+    - wagtailcore
+    - page
+    permission_type: lock
+- model: wagtailcore.grouppagepermission
+  pk: 7
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - unlock_page
+    - wagtailcore
+    - page
+    permission_type: unlock
+- model: wagtailcore.pageviewrestriction
+  pk: 1
+  fields:
+    restriction_type: login
+    password: ''
+    page: 3
+    groups: []
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
@@ -9295,6 +10080,7 @@
     slug: example-heatmap
     assessment: 1
     visual_type: 2
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9313,6 +10099,7 @@
     slug: example-barchart
     assessment: 1
     visual_type: 3
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9331,6 +10118,7 @@
     slug: rob-heatmap
     assessment: 2
     visual_type: 2
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9349,6 +10137,7 @@
     slug: crossview
     assessment: 2
     visual_type: 1
+    evidence_type: 0
     dose_units: 1
     prefilters:
       published_only: true
@@ -9368,6 +10157,7 @@
     slug: rob-barchart
     assessment: 2
     visual_type: 3
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9386,6 +10176,7 @@
     slug: tagtree
     assessment: 2
     visual_type: 4
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}
@@ -9402,6 +10193,7 @@
     slug: embedded-tableau
     assessment: 2
     visual_type: 5
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
@@ -9421,6 +10213,7 @@
     slug: exploratory-heatmap
     assessment: 2
     visual_type: 6
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":"and"}
@@ -9437,6 +10230,7 @@
     slug: plotly
     assessment: 2
     visual_type: 7
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}
@@ -9453,6 +10247,7 @@
     slug: bioassay-aggregation
     assessment: 2
     visual_type: 0
+    evidence_type: 0
     dose_units: 1
     prefilters: {}
     settings: {}
@@ -9470,6 +10265,7 @@
     slug: smart-tags
     assessment: 2
     visual_type: 2
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9489,6 +10285,24 @@
     sort_order: short_citation
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
+    endpoints: []
+- model: summary.visual
+  pk: 12
+  fields:
+    title: image
+    slug: image
+    assessment: 2
+    visual_type: 8
+    evidence_type: 3
+    dose_units: null
+    prefilters: {}
+    settings: {}
+    caption: ''
+    image: "iris.png"
+    published: true
+    sort_order: short_citation
+    created: 2023-11-15 14:25:27.528283+00:00
+    last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
 - model: summary.datapivot
   pk: 1
@@ -10204,6 +11018,33 @@
     preferred_units: '[]'
     prefilters:
       published_only: true
+- model: docs.documentationpage
+  pk: 3
+  fields:
+    page_ptr: 3
+    tagline: Click the links below for helpful guides on how to use the features in HAWC.
+    body:
+      - type: content
+        value: <p data-block-key="ai8dg">This is the root page.</p>
+        id: 1cd2f6cf-39e4-4a1b-a44f-7150986568d5
+- model: docs.documentationpage
+  pk: 4
+  fields:
+    page_ptr: 4
+    tagline: This page is has been published.
+    body:
+      - type: content
+        value: <p data-block-key="bi8dg">This is the child page.</p>
+        id: 2cd2f6cf-39e4-4a1b-a44f-7150986568d5
+- model: docs.documentationpage
+  pk: 5
+  fields:
+    page_ptr: 5
+    tagline: This page isn't finished.
+    body:
+      - type: content
+        value: <p data-block-key="ci8dg">This is the child page too.</p>
+        id: 3cd2f6cf-39e4-4a1b-a44f-7150986568d5
 - model: mgmt.task
   pk: 1
   fields:

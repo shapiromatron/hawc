@@ -28,6 +28,8 @@
           Data pivot</option>
         <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
           Bioassay endpoint crossview</option>
+        <option value="8" data-url="{% url viz_url_pattern assessment.id 8 %}">
+          Static image</option>
       </select>
     </div>
     <div class="col-md-3">
@@ -81,6 +83,14 @@
       </p>
     </div>
     <div id="detail-2" class="col-md-12">
+      {% if action == "Create" %}
+      <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 2 0 %}" />
+      <label for="bio">Bioassay</label>
+      <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 2 1 %}" />
+      <label for="epi">Epidemiology</label>
+      <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 2 2 %}" />
+      <label for="invitro">In vitro</label>
+      {% endif %}
       <h3>{{assessment.get_rob_name_display}} heatmap</h3>
       <div class="row">
         <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
@@ -94,6 +104,14 @@
       </p>
     </div>
     <div id="detail-3" class="col-md-12">
+      {% if action == "Create" %}
+      <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 3 0 %}" />
+      <label for="bio">Bioassay</label>
+      <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 3 1 %}" />
+      <label for="epi">Epidemiology</label>
+      <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 3 2 %}" />
+      <label for="invitro">In vitro</label>
+      {% endif %}
       <h3>{{assessment.get_rob_name_display}} barchart</h3>
       <div class="row">
         <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
@@ -149,6 +167,12 @@
         Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
       </p>
     </div>
+    <div id="detail-8" class="col-md-12">
+      <h3>Static image</h3>
+      <p class="form-text text-muted">
+        Upload an image to be displayed as a visual. The file formats .jpeg, .jpg, and .png are supported.
+      </p>
+    </div>
   </div>
 </div>
 {% endblock %}
@@ -162,13 +186,20 @@
         document.getElementById("detail_display"),
         document.getElementById("detail_library")
       );
-
+      
     // change the url when selector changes
-    var selector = $('#vis_selector'),
-      btn = $('#create_btn');
-    selector.on('change', function () {
-      btn.attr('href', selector.find(":selected").data('url'));
-    }).trigger('change')
+    $("#detail_display").on("subselect:change", function () {
+      let selection = $("#vis_selector option:selected"),
+          subselection = $("#detail_display input[type=radio][name=evidence-type]:checked"),
+          url = subselection.length ? subselection.data("url") : selection.data("url");
+      $("#create_btn").attr("href",url||"");
+    });
+    $("#detail_display").on("select:change", function () {
+      $("#detail_display input[type=radio][name=evidence-type]").first().prop("checked",true)
+      $("#detail_display input[type=radio][name=evidence-type]").on("change",()=>$("#detail_display").trigger("subselect:change"));
+      $("#detail_display").trigger("subselect:change");
+    });
+    $("#detail_display").trigger("select:change");
   });
 </script>
 {% endblock %}

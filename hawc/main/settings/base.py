@@ -84,6 +84,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
 )
@@ -112,6 +113,19 @@ INSTALLED_APPS = (
     "crispy_forms",
     "crispy_bootstrap4",
     "webpack_loader",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail_draftail_anchors",
+    "wagtail",
+    "modelcluster",
     # Custom apps
     "hawc.apps.common",
     "hawc.apps.myuser",
@@ -132,6 +146,7 @@ INSTALLED_APPS = (
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
     "hawc.apps.udf",
+    "hawc.apps.docs",
 )
 # DB settings
 DATABASES = {
@@ -218,6 +233,17 @@ STATICFILES_FINDERS = (
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
+
+# Wagtail setup
+WAGTAIL_SITE_NAME = "HAWC"
+WAGTAILADMIN_BASE_URL = ""
+WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
+DRAFTAIL_ANCHORS_RENDERER = "wagtail_draftail_anchors.rich_text.render_span"
+WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
+WAGTAILUSERS_PASSWORD_ENABLED = False
+WAGTAIL_EMAIL_MANAGEMENT_ENABLED = False
+WAGTAIL_ENABLE_UPDATE_CHECK = False
+WAGTAIL_ALLOW_UNICODE_SLUGS = False
 
 # Logging configuration
 LOGGING = {
@@ -346,3 +372,5 @@ IS_TESTING = False
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 DISCLAIMER_TEXT = ""
+
+FORMS_URLFIELD_ASSUME_HTTPS = True

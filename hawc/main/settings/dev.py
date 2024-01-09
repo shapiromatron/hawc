@@ -42,6 +42,8 @@ LOGGING["loggers"]["hawc"]["handlers"] = ["console"]
 
 COMPRESS_ENABLED = False
 
+HAWC_FEATURES.ENABLE_DOCS_LINK = True
+
 try:
     # load local settings from `local.py` if they exist
     from .local import *

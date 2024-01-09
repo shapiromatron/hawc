@@ -2,12 +2,19 @@
     <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
 </li>
 {% if not contact_only %}
+{% if feature_flags.ENABLE_DOCS_LINK and not user.is_authenticated %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'about' %}">About</a>
 </li>
 <li class="nav-item">
     <a class="nav-link" href="{% url 'resources' %}">Resources</a>
 </li>
+{% endif %}
+{% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
+</li>
+{% endif %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
 </li>
@@ -30,7 +37,7 @@
         <div class="dropdown-divider"></div>
         <form class="dropdown-item" method="post" action="{% url 'user:logout' %}">
             {% csrf_token %}
-            <button class="unstyled-action-button" type="submit">Logout</button>
+            <button class="unstyled-action-button logout-btn" type="submit">Logout</button>
         </form>
     </div>
 </li>
