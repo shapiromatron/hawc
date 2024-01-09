@@ -2,6 +2,7 @@ from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.express as px
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, mixins, permissions, status
@@ -375,6 +376,8 @@ class ReferenceViewSet(
                 resolved = instance.update_tags(request.user, tags, udf_data)
             except ValueError:
                 return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
+            except DjangoValidationError as err:
+                return Response(err, status=400)
             response["status"] = "success"
             response["resolved"] = resolved
         return Response(response)

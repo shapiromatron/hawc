@@ -12,7 +12,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -924,6 +924,8 @@ class Reference(models.Model):
                                 tag_binding_id=binding.id,
                                 content=form.cleaned_data,
                             )
+                        else:
+                            raise ValidationError(form.errors)
                     except TagBinding.DoesNotExist:
                         pass
 
