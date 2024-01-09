@@ -2,8 +2,7 @@ from io import BytesIO
 from pathlib import Path
 
 from playwright._impl._api_structures import SetCookieParam
-from playwright.async_api import Page
-from playwright.async_api import TimeoutError as PlaywrightTimeoutError
+from playwright.async_api import Page, expect
 from playwright.async_api._context_manager import PlaywrightContextManager as pcm
 
 from .client import BaseClient
@@ -19,13 +18,10 @@ async def fetch_png(page: Page) -> BytesIO:
     Returns:
         BytesIO: The PNG image, in bytes
     """
-    try:
-        if await page.wait_for_selector("#djHideToolBarButton", strict=True, timeout=1000):
-            await page.locator("#djHideToolBarButton").click()
-    except PlaywrightTimeoutError:
-        pass
-
     download_button = None
+
+    await page.wait_for_load_state("load")
+    await expect(page.locator(".is-loading")).to_be_hidden()
 
     # has plotly
     if await page.evaluate("document.querySelector('.visualization .js-plotly-plot') !== null"):
