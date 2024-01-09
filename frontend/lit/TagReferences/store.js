@@ -1,3 +1,4 @@
+import $ from "jquery";
 import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
@@ -42,18 +43,35 @@ class Store {
     @action.bound setUDF() {
         const intersects = (a, b) => a.some(x => b.includes(x));
         const referenceUserTagIDs = this.referenceUserTags.map(tag => tag.data.pk);
-        var udf_html = "";
-        for (const [tag_id, udf] of Object.entries(this.config.udfs)) {
-            udf_html += `${
-                intersects(this.config.descendant_tags[tag_id], referenceUserTagIDs) ? udf : ""
-            }`;
+        var udfHTML = "";
+        this.udfIDs = [];
+        if (this.config.udfs) {
+            for (const [tagID, udf] of Object.entries(this.config.udfs)) {
+                if (intersects(this.config.descendant_tags[tagID], referenceUserTagIDs)) {
+                    udfHTML += udf;
+                    this.udfIDs.push(tagID);
+                }
+            }
         }
-        this.currentUDF = udf_html;
+        this.currentUDF = udfHTML;
         this.UDFValues = this.reference.data.tag_udf_contents;
     }
     @action.bound getUDFContent() {
-        // TODO: get the actual UDF content from the form, if applicable
-        return {41: {"41-number": 4, "41-Text": "text"}};
+        var newValuesLocal = {};
+        var newValuesSubmit = {};
+        for (const tagID of this.udfIDs) {
+            newValuesLocal[tagID] = {};
+            newValuesSubmit[tagID] = {};
+            $(`input[name*='${tagID}-']`).each(function() {
+                var field = $(this)
+                    .attr("name")
+                    .substring(tagID.length + 1);
+                newValuesLocal[tagID][field] = $(this).val();
+                newValuesSubmit[tagID][`${tagID}-${field}`] = $(this).val();
+            });
+        }
+        this.UDFValues = newValuesLocal;
+        return newValuesSubmit;
     }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
@@ -78,6 +96,7 @@ class Store {
         const {resolved} = response;
         this.errorOnSave = false;
         this.reference.userTags = resolved ? null : toJS(this.referenceUserTags);
+        this.reference.data.tag_udf_contents = toJS(this.UDFValues);
         if (!this.config.conflict_resolution || resolved) {
             this.reference.tags = toJS(this.referenceUserTags);
         }

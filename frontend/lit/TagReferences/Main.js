@@ -1,8 +1,8 @@
-import _ from "lodash";
+import $ from "jquery";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, {Component} from "react";
+import React, {Component, useEffect} from "react";
 import Alert from "shared/components/Alert";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import Modal from "shared/components/Modal";
@@ -49,33 +49,25 @@ ReferenceListItem.propTypes = {
     store: PropTypes.object,
 };
 
-@inject("store")
-@observer
-class ReferenceUDF extends Component {
-    render() {
-        const {currentUDF, UDFValues} = this.props;
-        // Use UDFValues to appease the linter for now
-        let tmp_message;
-        if (!_.isEmpty(UDFValues)) {
-            tmp_message = <p>UDF has initial content</p>;
-        } else {
-            tmp_message = <p>UDF does not have initial content</p>;
-        }
-        // TODO: inject initial values into form
-        return (
-            <div>
-                <br />
-                {tmp_message}
-                <br />
-                <div dangerouslySetInnerHTML={{__html: currentUDF}} />
-            </div>
-        );
-    }
-}
-ReferenceUDF.propTypes = {
-    currentUDF: PropTypes.string.isRequired,
-    UDFValues: PropTypes.object,
-};
+var ReferenceUDF = inject("store")(
+    observer(({currentUDF, UDFValues}) => {
+        useEffect(() => {
+            if (Object.keys(UDFValues) > 0) {
+                for (const [tag_id, input] of Object.entries(UDFValues)) {
+                    for (const [field, value] of Object.entries(input)) {
+                        $(`input[name="${tag_id}-${field}"]`).val(`${value}`);
+                    }
+                }
+            } else {
+                $("#udf-div :input").each(function() {
+                    $(this).val("");
+                });
+            }
+        });
+
+        return <div id="udf-div" dangerouslySetInnerHTML={{__html: currentUDF}} />;
+    })
+);
 
 @inject("store")
 @observer
