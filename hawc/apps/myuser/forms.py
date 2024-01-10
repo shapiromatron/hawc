@@ -185,10 +185,15 @@ class RegisterForm(PasswordForm):
 class UserProfileForm(ModelForm):
     first_name = forms.CharField(label="First name", required=True)
     last_name = forms.CharField(label="Last name", required=True)
+    debug = forms.BooleanField(
+        label="Show debug information",
+        required=False,
+        help_text="Show additional debug information on views throughout HAWC.",
+    )
 
     class Meta:
         model = models.UserProfile
-        fields = ("first_name", "last_name", "HERO_access")
+        fields = ("first_name", "last_name", "HERO_access", "debug")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -191,6 +191,7 @@ make startdb
 ```
 
 ## Local Settings
+
 ### Django settings inheritance
 
 HAWC settings are structured according to the django settings framework. Within ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
@@ -217,7 +218,6 @@ HAWC settings are structured according to the django settings framework. Within 
 ```
 
 To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make changes to this file to configure your local environment, such as which database is used or the "flavor" of HAWC (see "More Settings").
-
 
 ## Testing HAWC
 
@@ -272,7 +272,6 @@ If tests aren't working after the database has changed (ie., migrated); try drop
 
 Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
 
-
 ### Loading a database dump
 
 If you have a database dump saved locally, you can load that in instead. If you have multiple databases, you can switch them on the fly in your local.py settings (see Django Settings Inheritance above).
@@ -300,7 +299,6 @@ manage scrub_db
 # dump in gzipped format
 pg_dump -U hawc hawc | gzip > db_dump.sql.gz
 ```
-
 
 ### Mocking external resources in tests
 
@@ -369,6 +367,12 @@ set INTEGRATION_TESTS=1
 py.test -sv tests/integration/ --pdb
 ```
 
+It can be helpful to record interactions initially when writing an integration test. This can be done using this command:
+
+```bash
+playwright codegen 127.0.0.1:8000
+```
+
 By default, the integration tests run in "headless" mode, or without a browser being shown. When editing integration tests, use the interactive mode to capture user operations:
 
 ```bash
@@ -377,9 +381,8 @@ make test-integration-debug
 # use set instead of export on windows
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
-py.test -sv tests/integration/test_login.py --pdb
+py.test -sv tests/integration/test_myuser.py --pdb
 ```
-
 
 ## More settings
 
@@ -483,6 +486,7 @@ There are multiple styles available when using HAWC; and the EPA style has to be
 3. Open the downloaded `EPA Template_US EPA_files` folder.
 4. Open `styles.css` in VS Code.
 5. Replace the contents of `hawc/static/css/epa/core/style.css` with the updated `styles.css`.
+    *  Edit font locations in style sheet to point to `//www.epa.gov/themes/epa_theme/` instead of relative paths
 6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
 7. Test changes locally to ensure HAWC matches EPA.gov styling.  On the base.html, you may want to disable caching for the header and footer components (or cache for 1 second) so it makes it easier to see the changes.
 
@@ -514,3 +518,18 @@ To generate a report on the lines of code, install [cloc](https://github.com/AlD
 ```bash
 make loc
 ```
+
+### Testing the client
+
+Most tests for the `hawc-client` package are integrated into our standard test suite using pytest. However, the interactive tests which require interacting with the HTML DOM to download figures and images couldn't be integrated into the standard test suite without significant effort. Therefore, it requires manually running a test using our test fixture.
+
+To run this script, start the django webserver using the hawc-fixture database. It must be running on port 8000, and the django webserver as well as the node javascript server. Make sure that the django debug toolbar is not enabled:
+
+```bash
+export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
+createdb -U hawc-fixture
+python manage.py load_test_db
+python scripts/test_iclient.py
+```
+
+Make sure the standard unit tests pass as well as the addition `test_iclient.py` tests before distributing a new version of the `hawc-client` package.

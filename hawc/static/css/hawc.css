@@ -126,6 +126,9 @@ tfoot > tr > td {
 .text-black {
     color: black !important;
 }
+.dark-link, .dark-link:visited {
+    color: #495057;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;

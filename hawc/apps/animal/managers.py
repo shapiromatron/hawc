@@ -18,6 +18,14 @@ from . import constants
 class ExperimentManager(BaseManager):
     assessment_relation = "study__assessment"
 
+    def get_type_choices(self, assessment_id: int):
+        types = set(
+            self.model.objects.filter(study__assessment_id=assessment_id)
+            .values_list("type", flat=True)
+            .distinct()
+        )
+        return [c for c in constants.ExperimentType.choices if c[0] in types]
+
 
 class AnimalGroupManager(BaseManager):
     assessment_relation = "experiment__study__assessment"
