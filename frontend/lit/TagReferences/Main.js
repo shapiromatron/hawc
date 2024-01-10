@@ -248,16 +248,18 @@ class TagReferencesMain extends Component {
                                             : "Show full tag"}
                                     </div>,
                                     <div
-                                    className="dropdown-item cursor-pointer"
-                                    key={6}
-                                    onClick={() => {
-                                        this.expandAbstract.toggle();
-                                        this.setState({expandAbstract: this.expandAbstract.value});
-                                    }}>
-                                    &nbsp;
-                                    {this.state.expandAbstract
-                                        ? "Use collapsed view"
-                                        : "Use expanded view"}
+                                        className="dropdown-item cursor-pointer"
+                                        key={6}
+                                        onClick={() => {
+                                            this.expandAbstract.toggle();
+                                            this.setState({
+                                                expandAbstract: this.expandAbstract.value,
+                                            });
+                                        }}>
+                                        &nbsp;
+                                        {this.state.expandAbstract
+                                            ? "Use collapsed view"
+                                            : "Use expanded view"}
                                     </div>,
                                     store.config.instructions.length > 0 ? (
                                         <div

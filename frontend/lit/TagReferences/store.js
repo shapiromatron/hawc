@@ -69,18 +69,22 @@ class Store {
         }
         return newValuesSubmit;
     }
-    @action.bound recordUDFValues() {
+    @action.bound recordUDFValues(final = false) {
         var newValuesLocal = {};
+        var newValuesSubmit = {};
         for (const tagID of this.udfIDs) {
             newValuesLocal[tagID] = {};
+            newValuesSubmit[tagID] = {};
             $(`input[name*='${tagID}-']`).each(function() {
                 var field = $(this)
                     .attr("name")
                     .substring(tagID.length + 1);
                 newValuesLocal[tagID][field] = $(this).val();
+                newValuesSubmit[tagID][`${tagID}-${field}`] = $(this).val();
             });
         }
-        Object.assign(this.UDFValues, newValuesLocal);
+        final ? (this.UDFValues = newValuesLocal) : Object.assign(this.UDFValues, newValuesLocal);
+        return newValuesSubmit;
     }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
@@ -135,7 +139,7 @@ class Store {
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
-                udf_data: this.getFinalUDFValues(),
+                udf_data: this.recordUDFValues(true),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
         h.handleSubmit(
