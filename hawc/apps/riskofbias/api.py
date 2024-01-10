@@ -58,7 +58,6 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
             assessment_id=self.assessment.id,
             published_only=published_only,
         )
-
         return Response(exporter.build_export())
 
     @action(
