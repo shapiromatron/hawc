@@ -9,7 +9,7 @@ import hawc.apps.lit.managers
 class Migration(migrations.Migration):
     dependencies = [
         ("assessment", "0037_delete_blog"),
-        ("lit", "0022_userreferencetag_deleted_tags"),
+        ("lit", "0023_referencetags_reference_tag_and_more"),
     ]
 
     operations = [
