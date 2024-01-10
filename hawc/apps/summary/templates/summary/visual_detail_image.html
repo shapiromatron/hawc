@@ -1,6 +1,10 @@
 {% extends 'assessment-rooted.html' %}
 {% load static %}
 
+{% block extrahead %}
+<meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
+{% endblock %}
+
 {% block content %}
 <div class="visualization">
   <div class='d-flex'>
