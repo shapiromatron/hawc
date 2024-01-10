@@ -12,7 +12,7 @@
       return false;
     });
     $(`.unpublished-checkbox`).on('change', function () {
-      var unpublished = $(this).is(':checked'),
+      var unpublished = $(this).prop('checked'),
         url = $(`#${this.dataset.url}`).attr("href");
       if (url) {
         $(`#${this.dataset.url}`).attr(

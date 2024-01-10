@@ -56,8 +56,8 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
             self.get_queryset().none(),
             filename=f"{self.assessment}-{rob_name}",
             assessment_id=self.assessment.id,
+            published_only=published_only,
         )
-        exporter.published_only = published_only
 
         return Response(exporter.build_export())
 
@@ -80,8 +80,8 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
             self.get_queryset().none(),
             filename=f"{self.assessment}-{rob_name}-complete",
             assessment_id=self.assessment.id,
+            published_only=published_only,
         )
-        exporter.published_only = published_only
 
         return Response(exporter.build_export())
 
