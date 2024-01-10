@@ -39,6 +39,7 @@ class Store {
             ? reference.userTags.slice(0)
             : reference.tags.slice(0);
         this.setUDF();
+        this.UDFValues = this.reference.data.tag_udf_contents;
     }
     @action.bound setUDF() {
         const intersects = (a, b) => a.some(x => b.includes(x));
@@ -54,29 +55,38 @@ class Store {
             }
         }
         this.currentUDF = udfHTML;
-        this.UDFValues = this.reference.data.tag_udf_contents;
     }
-    @action.bound getUDFContent() {
-        var newValuesLocal = {};
+    @action.bound getFinalUDFValues() {
         var newValuesSubmit = {};
         for (const tagID of this.udfIDs) {
-            newValuesLocal[tagID] = {};
             newValuesSubmit[tagID] = {};
             $(`input[name*='${tagID}-']`).each(function() {
                 var field = $(this)
                     .attr("name")
                     .substring(tagID.length + 1);
-                newValuesLocal[tagID][field] = $(this).val();
                 newValuesSubmit[tagID][`${tagID}-${field}`] = $(this).val();
             });
         }
-        this.UDFValues = newValuesLocal;
         return newValuesSubmit;
+    }
+    @action.bound recordUDFValues() {
+        var newValuesLocal = {};
+        for (const tagID of this.udfIDs) {
+            newValuesLocal[tagID] = {};
+            $(`input[name*='${tagID}-']`).each(function() {
+                var field = $(this)
+                    .attr("name")
+                    .substring(tagID.length + 1);
+                newValuesLocal[tagID][field] = $(this).val();
+            });
+        }
+        Object.assign(this.UDFValues, newValuesLocal);
     }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
     }
     @action.bound addTag(tag) {
+        this.recordUDFValues();
         if (
             this.hasReference &&
             !_.find(this.referenceUserTags, el => el.data.pk === tag.data.pk)
@@ -86,6 +96,7 @@ class Store {
         this.setUDF();
     }
     @action.bound removeTag(tag) {
+        this.recordUDFValues();
         _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
         this.setUDF();
     }
@@ -124,7 +135,7 @@ class Store {
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
-                udf_data: this.getUDFContent(),
+                udf_data: this.getFinalUDFValues(),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
         h.handleSubmit(
@@ -139,6 +150,8 @@ class Store {
     }
     @action.bound removeAllTags() {
         this.referenceUserTags = [];
+        this.recordUDFValues();
+        this.setUDF();
     }
     @action.bound toggleSlideAway() {
         this.filterClass = this.filterClass == "" ? "slideAway" : "";

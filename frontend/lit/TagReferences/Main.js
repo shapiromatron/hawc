@@ -29,12 +29,14 @@ class ReferenceListItem extends Component {
                     {store.config.conflict_resolution && reference.userTags ? (
                         <i
                             className="fa fa-fw fa-tags small-tag-icon user"
+                            style={{margin: "0.1rem"}}
                             title={"has tags from you"}
                             aria-hidden="true"></i>
                     ) : null}
                     {reference.tags.length > 0 ? (
                         <i
-                            className="fa fa-fw fa-tags small-tag-icon consensus mr-1"
+                            className="fa fa-fw fa-tags small-tag-icon consensus"
+                            style={{margin: "0.1rem"}}
                             title={title}
                             aria-hidden="true"></i>
                     ) : null}
@@ -49,31 +51,33 @@ ReferenceListItem.propTypes = {
     store: PropTypes.object,
 };
 
-var ReferenceUDF = ({currentUDF, UDFValues}) => {
-    useEffect(() => {
-        if (Object.keys(UDFValues) > 0) {
-            for (const [tag_id, input] of Object.entries(UDFValues)) {
-                for (const [field, value] of Object.entries(input)) {
-                    $(`input[name="${tag_id}-${field}"]`).val(`${value}`);
+var ReferenceUDF = inject("store")(
+    observer(({currentUDF, UDFValues}) => {
+        useEffect(() => {
+            if (Object.keys(UDFValues).length > 0) {
+                for (const [tag_id, input] of Object.entries(UDFValues)) {
+                    for (const [field, value] of Object.entries(input)) {
+                        $(`input[name="${tag_id}-${field}"]`).val(`${value}`);
+                    }
                 }
+            } else {
+                $("#udf-div :input").each(function() {
+                    $(this).val("");
+                });
             }
-        } else {
-            $("#udf-div :input").each(function() {
-                $(this).val("");
-            });
-        }
-    });
+        });
 
-    return currentUDF.length > 0 ? (
-        <div className="well" id="udf-div">
-            <h4 className="mb-0 p-2">Tag Forms</h4>
-            <hr className="m-0 mx-2 p-1"></hr>
-            <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
-        </div>
-    ) : (
-        ""
-    );
-};
+        return currentUDF.length > 0 ? (
+            <div className="well" id="udf-div">
+                <h4 className="mb-0 p-2">Tag Forms</h4>
+                <hr className="m-0 mx-2 p-1"></hr>
+                <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
+            </div>
+        ) : (
+            ""
+        );
+    })
+);
 
 ReferenceUDF.propTypes = {
     currentUDF: PropTypes.string.isRequired,
@@ -94,7 +98,14 @@ class TagReferencesMain extends Component {
     }
     render() {
         const {store} = this.props,
-            {hasReference, reference, referenceTags, referenceUserTags, currentUDF} = store,
+            {
+                hasReference,
+                reference,
+                referenceTags,
+                referenceUserTags,
+                currentUDF,
+                UDFValues,
+            } = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
 
         return (
@@ -244,10 +255,7 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
-                            <ReferenceUDF
-                                currentUDF={currentUDF}
-                                UDFValues={reference.data.tag_udf_contents}
-                            />
+                            <ReferenceUDF currentUDF={currentUDF} UDFValues={UDFValues} />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>
