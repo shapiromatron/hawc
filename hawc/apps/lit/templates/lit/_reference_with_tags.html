@@ -35,12 +35,22 @@
         {% endif %}
     </div>
     <div>
-        {% with ref.tags.all as tags %}{% if tags %}
-        <div class="consensus-tag">
-            {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
-            {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
+        <div class="d-flex">
+            {% with ref.tags.all as tags %}{% if tags or show_consensus_tag_after %}
+            <div class="consensus-tag {% if show_consensus_tag_after %} col-md-6 {% endif %}">
+                {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
+                {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
+            </div>
+            {% endif %}
+            {% if show_consensus_tag_after %}
+            <div class="consensus-tag col-md-6 border-left">
+                <p class="my-2"><b>Consensus tags after merge:</b></p>
+                {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
+                {% for tag in ref.bulk_merge_tag_names %}{% if tag not in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endif %}{% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
         </div>
-        {% endif %}{% endwith %}
         {% if conflict_resolution %}
         <div class="d-flex align-flex-end">
             <form class="ml-auto"
@@ -54,19 +64,22 @@
         {% endif %}
         {% if show_user_tags %}{% for user_tag in ref.user_tags.all %}
         <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
-            <div>
-                {% if conflict_resolution %}
-                <form class="d-inline-block"
-                    hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
-                    <button class="approve btn btn-sm btn-success mr-2 align-center">
-                        <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve
-                    </button>
-                    <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
-                </form>
-                {% endif %}
-                <div class="d-inline-block my-2">
-                    <b>{{user_tag.user.get_full_name}}</b>{% debug_badge user_tag.id %} <i class="small">{{user_tag.last_updated}}</i>
+            <div class="d-flex justify-content-between my-2">
+                <div>
+                    {% if conflict_resolution %}
+                        <form class="d-inline-block"
+                            hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
+                            <button class="approve btn btn-sm btn-success mr-2 align-center">
+                                <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve
+                            </button>
+                            <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
+                        </form>
+                    {% endif %}
+                    <b>{{user_tag.user.get_full_name}}</b>{% debug_badge user_tag.id %} <i class="small">{{user_tag.last_updated}} </i>
                 </div>
+                {% if show_resolved_badge %}
+                <span class="badge badge-secondary align-self-start">{{user_tag.is_resolved|yesno:"Resolved,Unresolved"}}</span>
+                {% endif %}
             </div>
             {% with user_tag.consensus_diff as diff %}
                 {% for tag in ref.tags.all %}

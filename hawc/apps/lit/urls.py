@@ -137,6 +137,11 @@ urlpatterns = [
         name="tag-conflicts",
     ),
     path(
+        "assessment/<int:pk>/bulk-merge-conflicts/",
+        views.BulkMerge.as_view(),
+        name="bulk-merge-conflicts",
+    ),
+    path(
         "assessment/<int:pk>/user-tags/",
         views.UserTagList.as_view(),
         name="user-tag-list",

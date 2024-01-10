@@ -1,5 +1,6 @@
 <div id="{{ modal_id }}" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{ modal_id }}-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
+        {% block modal_content_wrapper %}
         <div class="modal-content">
             <div class="modal-header">
                 {% block modal_header %}
@@ -21,5 +22,6 @@
                 {% endblock modal_footer %}
             </div>
         </div>
+        {% endblock modal_content_wrapper %}
     </div>
 </div>

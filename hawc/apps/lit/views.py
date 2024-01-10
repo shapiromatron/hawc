@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Q, prefetch_related_objects
@@ -8,13 +9,14 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, tryParseInt
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -24,6 +26,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     create_object_log,
+    htmx_required,
 )
 from . import constants, filterset, forms, models
 
@@ -399,6 +402,87 @@ class TagReferences(BaseFilterList):
                 csrf=get_token(self.request),
             ),
         )
+
+
+@method_decorator(htmx_required, name="dispatch")
+class BulkMerge(HtmxView):
+    actions = {"preview", "merge"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def index(self, request: HttpRequest, *args, **kwargs):
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment)
+        context = dict(
+            form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+    def preview(self, request: HttpRequest, *args, **kwargs):
+        queryset = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+        key = (
+            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
+        )
+        form = forms.BulkMergeConflictsForm(
+            assessment=self.assessment, initial={**request.POST, "cache_key": key}
+        )
+        for field in "tags", "include_without_conflict":
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            request.POST.getlist("tags"),
+            request.user.id,
+            request.POST.get("include_without_conflict", False),
+            preview=True,
+        )
+        if merge_result["queryset"]:
+            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+            tags = models.Reference.annotate_tag_parents(
+                merge_result["queryset"], tags, user_tags=True, check_bulk=True
+            )
+            cache.set(key, (merge_result["queryset"], request.POST), 60 * 30)  # 30 min
+
+        context = dict(
+            object_list=merge_result["queryset"],
+            assessment=self.assessment,
+            action="preview",
+            message=merge_result["message"],
+            form=form,
+            cache_key=key,
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+    def merge(self, request: HttpRequest, *args, **kwargs):
+        cache_key = request.POST.get("cache_key", "")
+        queryset, data = cache.get(cache_key)
+        assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
+        if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
+            raise PermissionDenied()
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
+        for field in "tags", "include_without_conflict":
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            data.getlist("tags"),
+            request.user.id,
+            data.get("include_without_conflict", False),
+            preview=False,
+            cached=True,
+        )
+        context = dict(
+            object_list=merge_result["queryset"],
+            assessment=self.assessment,
+            action="merge",
+            message=merge_result["message"],
+            merged=merge_result["merged"],
+            form=form,
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
 
 class ConflictResolution(BaseFilterList):

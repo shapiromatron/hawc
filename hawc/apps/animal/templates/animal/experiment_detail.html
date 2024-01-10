@@ -7,7 +7,7 @@
         {% actions %}
             <span class="dropdown-header">Experiment Editing</span>
             <a class="dropdown-item" href="{% url 'animal:experiment_update' object.pk %}">Update</a>
-            <a class="dropdown-item" href="{% audit_url object %}">Change logs</a>
+            <a class="dropdown-item" href="{% audit_url object %}">View change logs</a>
             <a class="dropdown-item" href="{% url 'animal:experiment_delete' object.pk %}">Delete</a>
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Animal Group Editing</span>
