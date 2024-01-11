@@ -2,7 +2,7 @@
 <tr hx-target="this" hx-swap="outerHTML">
     {% if form %}
     <td colspan="3">
-        <form class="attachment-form" method=post enctype="multipart/form-data">
+        <form class="attachment-form" method="post" enctype="multipart/form-data">
             {% crispy form %}
             <div class="form-row d-flex flex-row-reverse px-3 pb-3">
                 {% if form.instance.id %}
