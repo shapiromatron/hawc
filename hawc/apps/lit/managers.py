@@ -865,9 +865,9 @@ class ReferenceManager(BaseManager):
             Q(assessment=assessment) & (Q(link_conflict_resolution=True) | Q(link_tagging=True))
         )
         total = refs.count()
-        tagged_refs = refs.annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0)
-        total_tagged = tagged_refs.count()
-        total_untagged = total - total_tagged
+        untagged_refs = refs.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
+        total_untagged = untagged_refs.count()
+        total_tagged = total - total_untagged
         total_searched = refs.all().filter(searches__search_type="s").distinct().count()
         total_imported = total - total_searched
         overview = {
@@ -906,7 +906,7 @@ class ReferenceManager(BaseManager):
             )
         else:
             for workflow in workflows:
-                workflow.needs_tagging = tagged_refs.filter(workflow.get_filters()).count()
+                workflow.needs_tagging = untagged_refs.filter(workflow.get_filters()).count()
         return overview, list(workflows)
 
     def get_pubmed_references(self, search, identifiers):
