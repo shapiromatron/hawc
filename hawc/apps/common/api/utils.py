@@ -15,7 +15,7 @@ def get_published_only(assessment: Assessment, request: Request) -> bool:
         request (Request): a DRF request instance
     """
     unpublished_requested = request.query_params.get("unpublished", "").lower() == "true"
-    can_edit = assessment.user_can_edit_object(request.user)
+    can_edit = assessment.user_is_team_member_or_higher(request.user)
     if unpublished_requested and not can_edit:
         raise PermissionDenied("You must be part of the team to view unpublished data")
     return not (can_edit and unpublished_requested)
