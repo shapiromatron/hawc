@@ -7,6 +7,7 @@ from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
+from hawc.apps.udf.cache import UDFCache
 from hawc.apps.udf.models import ModelUDFContent
 
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
@@ -455,13 +456,14 @@ class EndpointForm(ModelForm):
         # User Defined Form
         if assessment is None:
             assessment = self.instance.get_assessment()
-        self.model_binding = assessment.get_model_binding(self.Meta.model)
+        self.model_binding = UDFCache.get_model_binding_cache(
+            assessment=assessment, model=self.Meta.model
+        )
         if self.model_binding:
-            try:
-                udf_content = self.model_binding.saved_contents.get(object_id=self.instance.id)
-                initial = udf_content.content
-            except ModelUDFContent.DoesNotExist:
-                initial = None
+            udf_content = UDFCache.get_udf_contents_cache(
+                model_binding=self.model_binding, object_id=self.instance.id
+            )
+            initial = udf_content.content if udf_content is not None else None
 
             udf = self.model_binding.form_field(label="User defined fields", initial=initial)
             self.fields["udf"] = udf
@@ -615,12 +617,13 @@ class EndpointForm(ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=commit)
         if commit and "udf" in self.changed_data:
-            ModelUDFContent.objects.update_or_create(
+            udf_content, _ = ModelUDFContent.objects.update_or_create(
                 defaults=dict(content=self.cleaned_data["udf"]),
                 model_binding=self.model_binding,
                 content_type=self.model_binding.content_type,
                 object_id=instance.id,
             )
+            UDFCache.set_udf_contents_cache(udf_content)
         return instance
 
 

@@ -93,6 +93,9 @@ tfoot > tr > td {
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.dark-link, .dark-link:visited {
+    color: #495057;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
@@ -167,7 +170,7 @@ input[type='number'] {
 }
 
 .modal-body {
-    max-height: 600px;
+    max-height: 75vh;
     overflow-y: auto;
 }
 .modal.fade.in {
@@ -802,6 +805,14 @@ table.bordered td {
 .htmx-swapping {
     opacity: 0;
     transition: opacity 1s ease-out;
+}
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1
 }
 
 /* fade in/out */

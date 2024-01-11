@@ -2,8 +2,9 @@ import decimal
 import logging
 import re
 from collections import defaultdict
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import timedelta
+from itertools import chain
 from math import inf
 from typing import Any, NamedTuple
 
@@ -526,3 +527,8 @@ def cacheable(
             cache_duration = settings.CACHE_1_HR
         cache.set(cache_key, result, cache_duration)
     return result
+
+
+def flatten(lst: Iterable[Iterable]) -> Iterable:
+    # given a list of lists (or other iterables), flatten the top-level iterable
+    return chain(*(item for item in lst))

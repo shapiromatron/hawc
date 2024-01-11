@@ -1,4 +1,5 @@
 {% extends 'assessment-rooted.html' %}
+{% load static %}
 
 {% block extrahead %}
 <meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
@@ -17,7 +18,9 @@
       {% endactions %}
     {% endif %}
   </div>
-  {% plotly object.get_plotly_from_json %}
+  <div id="visual-image">
+    <img src="{{object.image.url}}" style="max-width: 100%" />
+  </div>
   <p>{{object.caption|safe}}</p>
 </div>
 {% endblock %}
