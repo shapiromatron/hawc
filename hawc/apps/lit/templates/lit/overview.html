@@ -136,11 +136,11 @@
               {% if show_conflicts and show_tags %}
                 <div class="lit-review-box box-shadow w-30 d-flex flex-column justify-content-between py-0" style="padding-bottom: 8px">
                   <div class="d-flex row justify-content-between flex-grow-1">
-                      <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom" 
+                      <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom"
                         {% if assessment.literature_settings.conflict_resolution %}
-                        href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" 
+                        href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged"
                         {% else %}
-                        href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}" 
+                        href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}"
                         {% endif %}
                         style="padding-top: 12px;">
                         <div class="d-flex pl-0">
@@ -171,11 +171,11 @@
                   </div>
                 </div>
               {% elif show_tags %}
-                <a class="lit-review-box box-shadow with-icon clickable w-30" 
+                <a class="lit-review-box box-shadow with-icon clickable w-30"
                   {% if assessment.literature_settings.conflict_resolution %}
-                    href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged" 
+                    href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged"
                     {% else %}
-                    href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}" 
+                    href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}"
                     {% endif %}
                   >
                   <div class="text-truncate">

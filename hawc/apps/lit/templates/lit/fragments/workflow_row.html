@@ -1,11 +1,11 @@
 <div
-    {% if obj_perms.edit_assessment or permissions.edit_assessment %}    
-    hx-get="{{ object.get_edit_url }}" 
+    {% if obj_perms.edit_assessment or permissions.edit_assessment %}
+    hx-get="{{ object.get_edit_url }}"
     class="box-shadow p-3 rounded mb-4 clickable"
     hx-indicator="#spinner-{{object.pk}}"
     title="Click to update" hx-swap="outerHTML"
     {% else %}
-    class="box-shadow p-3 rounded mb-4" 
+    class="box-shadow p-3 rounded mb-4"
     {% endif %}
     style="width: fit-content;">
     <div class="d-flex">
@@ -25,7 +25,7 @@
                 <p class="text-center mb-2">Admission Criteria</p>
                 <div class="d-flex flex-wrap justify-content-center vw50">
                     {% if object.admission_tags.exists %}
-                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">Tagged with 
+                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">Tagged with
                             {% for tag in object.admission_tags.all %}
                                 {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
                                 {% if forloop.revcounter0 > 1 %}
@@ -66,7 +66,7 @@
                 <p class="text-center mb-2">Removal Criteria</p>
                 <div class="d-flex flex-wrap justify-content-center vw50">
                     {% if object.removal_tags.exists %}
-                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center flex-wrap align-items-center">Tagged with 
+                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center flex-wrap align-items-center">Tagged with
                             {% for tag in object.removal_tags.all %}
                                 {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
                                 {% if forloop.revcounter0 > 1 %}
@@ -86,7 +86,7 @@
                             <span class="font-weight-bold py-1 px-2 m-1 flex-shrink-0">or</span>
                         </span>
                         {% endif %}
-                        <span class="bg-gray rounded px-3 py-2 m-1 justify-content-center d-flex align-items-center text-center">Sourced from 
+                        <span class="bg-gray rounded px-3 py-2 m-1 justify-content-center d-flex align-items-center text-center">Sourced from
                             {% for source in object.removal_source.all %}
                             <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{source}}</span>
                                 {% if forloop.revcounter0 > 1 %}
