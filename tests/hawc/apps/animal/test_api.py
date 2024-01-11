@@ -14,7 +14,7 @@ from ..test_utils import check_api_json_data, check_details_of_last_log_entry, g
 class TestAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
         client = APIClient()
-        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
         check_api_json_data(resp.json(), fn, rewrite_data_files)

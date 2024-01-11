@@ -20,12 +20,12 @@
           {% else %}
           <li class="list-group-item">
             {% url 'lit:api:assessment-reference-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references' button_text="Reference Export" help_text="All references and tags." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references' button_text="Reference Export" help_text="All references and tags." allow_unpublished=False %}
           </li>
           {% if obj_perms.edit and assessment.literature_settings.conflict_resolution %}
           <li class="list-group-item">
             {% url 'lit:api:assessment-user-tag-export' assessment.pk as the_url %}
-            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references-usertags' button_text='User Tag Reference Export' help_text="All references and tags, including user tags. Team members only." %}
+            {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references-usertags' button_text='User Tag Reference Export' help_text="All references and tags, including user tags. Team members only." allow_unpublished=False %}
           </li>
           {% endif %}
           {% endif %}
