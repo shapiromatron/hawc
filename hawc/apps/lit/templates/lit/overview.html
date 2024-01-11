@@ -5,12 +5,13 @@
     <h2>Literature Review</h2>
     {% if obj_perms.edit %}
       {% actions %}
+        <span class="dropdown-header">Literature Review</span>
         {% if obj_perms.edit_assessment %}
-          <span class="dropdown-header">Literature Review</span>
           <a class="dropdown-item" href="{{assessment.literature_settings.get_update_url}}">Update settings</a>
           <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update tags</a>
-          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">Workflows</a>
         {% endif %}
+        <div class="dropdown-divider"></div>
         <span class="dropdown-header">Searches and Imports</span>
         <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
         <a class="dropdown-item" href="{% url 'lit:import_new' assessment.pk %}">New import by ID</a>
@@ -19,7 +20,6 @@
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">References</span>
         <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
-        <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         {% if assessment.literature_settings.conflict_resolution %}
           <a class="dropdown-item" href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a>
         {% endif %}
