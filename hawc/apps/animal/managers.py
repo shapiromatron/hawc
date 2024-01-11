@@ -178,15 +178,17 @@ class EndpointQuerySet(QuerySet):
             .only("id")  # https://code.djangoproject.com/ticket/30052
         )
 
+    def published_only(self, published_only=True):
+        return (
+            self.filter(animal_group__experiment__study__published=True) if published_only else self
+        )
+
 
 class EndpointManager(BaseManager):
     assessment_relation = "assessment"
 
     def get_queryset(self):
         return EndpointQuerySet(self.model, using=self._db)
-
-    def published(self, assessment_id=None):
-        return self.get_qs(assessment_id).filter(animal_group__experiment__study__published=True)
 
     def optimized_qs(self, **filters):
         return (
