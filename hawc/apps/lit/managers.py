@@ -648,15 +648,14 @@ class ReferenceQuerySet(models.QuerySet):
         UserReferenceTags = apps.get_model("lit", "UserReferenceTags")
         new_user_ref_tag_throughs = []
         for ref in queryset:
-            if ref in queryset:
-                new_user_ref_tag_throughs.extend(
-                    [
-                        UserReferenceTags(
-                            tag_id=bulk_merge_tag_id, content_object_id=ref.bulk_user_ref_id
-                        )
-                        for bulk_merge_tag_id in ref.bulk_merge_tags
-                    ]
-                )
+            new_user_ref_tag_throughs.extend(
+                [
+                    UserReferenceTags(
+                        tag_id=bulk_merge_tag_id, content_object_id=ref.bulk_user_ref_id
+                    )
+                    for bulk_merge_tag_id in ref.bulk_merge_tags
+                ]
+            )
         UserReferenceTags.objects.bulk_create(new_user_ref_tag_throughs, ignore_conflicts=True)
 
         # Save the list of reference IDs in the queryset, we need them for filtering & resolving user tags later

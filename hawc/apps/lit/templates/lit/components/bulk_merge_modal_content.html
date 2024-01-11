@@ -32,7 +32,11 @@
     <ul class="list-group list-group-flush">
         {% for ref in object_list %}
             <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
+            {% if merged %}
+            {% include 'lit/_reference_with_tags.html' with conflict_resolution=False show_actions=False show_user_tags=True show_consensus_tag_after=False hide_abstract=True show_resolved_badge=True %}
+            {% else %}
             {% include 'lit/_reference_with_tags.html' with conflict_resolution=False show_actions=False show_user_tags=True show_consensus_tag_after=True hide_abstract=True show_resolved_badge=True %}
+            {% endif %}
             </li>
         {% endfor %}
     </ul>

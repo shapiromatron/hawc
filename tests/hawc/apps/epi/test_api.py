@@ -14,9 +14,11 @@ from ..test_utils import check_api_json_data, check_details_of_last_log_entry
 
 @pytest.mark.django_db
 class TestEpiAssessmentViewSet:
-    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
+    def _test_flat_export(
+        self, rewrite_data_files: bool, fn: str, url: str, user: str = "reviewer"
+    ):
         client = APIClient()
-        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        assert client.login(username=f"{user}@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
         check_api_json_data(resp.json(), fn, rewrite_data_files)
@@ -35,10 +37,28 @@ class TestEpiAssessmentViewSet:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
+        # test unpublished data request
+        team_client = APIClient()
+        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+        for url in urls:
+            url += "?format=json&unpublished=true"
+            assert rev_client.get(url).status_code == 403
+            assert team_client.get(url).status_code == 200
+
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        fn = "api-epi-assessment-export.json"
+        rewrite_data_files = True
+        # published
+        fn = "api-epi-assessment-export-unpublished-False.json"
         url = reverse("epi:api:assessment-export", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
+
+        # unpublished (requires team or higher)
+        fn = "api-epi-assessment-export-unpublished-True.json"
+        url = (
+            reverse("epi:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=true"
+        )
+        self._test_flat_export(rewrite_data_files, fn, url, "team")
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
@@ -46,13 +66,13 @@ class TestEpiAssessmentViewSet:
         url = reverse("epi:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
 
-        # unpublished
+        # unpublished (requires team or higher)
         fn = "api-epi-assessment-study-heatmap-unpublished-True.json"
         url = (
             reverse("epi:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
-        self._test_flat_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url, "team")
 
     def test_result_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
@@ -60,13 +80,13 @@ class TestEpiAssessmentViewSet:
         url = reverse("epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
 
-        # unpublished
+        # unpublished (requires team or higher)
         fn = "api-epi-assessment-result-heatmap-unpublished-True.json"
         url = (
             reverse("epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
-        self._test_flat_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url, "team")
 
 
 @pytest.mark.django_db

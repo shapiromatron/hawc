@@ -212,7 +212,7 @@ input[type='number'] {
 }
 
 .modal-body {
-    max-height: 600px;
+    max-height: 75vh;
     overflow-y: auto;
 }
 .modal.fade.in {

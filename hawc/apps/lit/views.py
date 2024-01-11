@@ -443,7 +443,7 @@ class BulkMerge(HtmxView):
         )
         if merge_result["queryset"]:
             tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            tags = models.Reference.annotate_tag_parents(
+            models.Reference.annotate_tag_parents(
                 merge_result["queryset"], tags, user_tags=True, check_bulk=True
             )
             cache.set(key, (merge_result["queryset"], request.POST), 60 * 30)  # 30 min
@@ -462,6 +462,7 @@ class BulkMerge(HtmxView):
         cache_key = request.POST.get("cache_key", "")
         queryset, data = cache.get(cache_key)
         assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
+        reference_ids = list(queryset.values_list("id", flat=True))
         if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
             raise PermissionDenied()
         form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
@@ -474,8 +475,13 @@ class BulkMerge(HtmxView):
             preview=False,
             cached=True,
         )
+        final_qs = models.Reference.objects.filter(id__in=reference_ids).prefetch_related(
+            "identifiers", "tags", "user_tags__user", "user_tags__tags"
+        )
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Reference.annotate_tag_parents(final_qs, tags, user_tags=True, check_bulk=False)
         context = dict(
-            object_list=merge_result["queryset"],
+            object_list=final_qs,
             assessment=self.assessment,
             action="merge",
             message=merge_result["message"],
