@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -24,6 +25,10 @@ from ..common.helper import flatten
 from ..common.models import BaseManager, replace_null, str_m2m
 from ..study.managers import study_df_annotations
 from . import constants
+
+if TYPE_CHECKING:
+    from .models import Workflow
+
 
 logger = logging.getLogger(__name__)
 
@@ -765,6 +770,9 @@ class ReferenceQuerySet(models.QuerySet):
             search=SearchQuery(search_text, search_type="websearch", config="english")
         )
 
+    def in_workflow(self, workflow: "Workflow"):
+        return self.filter(workflow.reference_filter())
+
 
 class ReferenceManager(BaseManager):
     assessment_relation = "assessment"
@@ -846,12 +854,27 @@ class ReferenceManager(BaseManager):
 
         return refs
 
-    def get_overview_details(self, assessment) -> dict[str, int]:
+    def get_overview_details(self, assessment) -> (dict[str, int], list):
+        """Generates statistics for literature overview page.
+
+        Args:
+            assessment (models.Assessment): The assessment to fetch data from
+
+        Returns:
+            (dict[str, int], list(models.Workflows)): A tuple, where the first object
+            is a dictionary of relevant literature statistics, and the second object is
+            a list of Workflow objects with added data attributes.
+        """
         # Get an overview of tagging progress for an assessment
         refs = self.get_qs(assessment)
+        Workflow = apps.get_model("lit", "Workflow")
+        workflows = Workflow.objects.filter(
+            Q(assessment=assessment) & (Q(link_conflict_resolution=True) | Q(link_tagging=True))
+        )
         total = refs.count()
-        total_tagged = refs.annotate(tag_count=models.Count("tags")).filter(tag_count__gt=0).count()
-        total_untagged = total - total_tagged
+        untagged_refs = refs.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
+        total_untagged = untagged_refs.count()
+        total_tagged = total - total_untagged
         total_searched = refs.all().filter(searches__search_type="s").distinct().count()
         total_imported = total - total_searched
         overview = {
@@ -864,27 +887,34 @@ class ReferenceManager(BaseManager):
         if assessment.literature_settings.conflict_resolution:
             UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
             user_refs = UserReferenceTag.objects.filter(reference__in=refs)
+            refs = refs.annotate(
+                user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
+                n_unapplied_reviews=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
+            )
+            needs_tagging = refs.filter(user_tag_count__lt=2)
+            conflicts = refs.filter(n_unapplied_reviews__gt=1)
+            for workflow in workflows:
+                workflow_refs = refs.in_workflow(workflow)
+                workflow.needs_tagging = (
+                    needs_tagging.intersection(workflow_refs).count()
+                    if workflow.link_tagging
+                    else None
+                )
+                workflow.conflicts = (
+                    conflicts.intersection(workflow_refs).count()
+                    if workflow.link_conflict_resolution
+                    else None
+                )
             overview.update(
-                needs_tagging=(
-                    refs.annotate(
-                        user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
-                    )
-                    .filter(user_tag_count__lt=2)
-                    .count()
-                ),
-                conflicts=(
-                    refs.annotate(
-                        n_unapplied_reviews=Count(
-                            "user_tags", filter=Q(user_tags__is_resolved=False)
-                        )
-                    )
-                    .filter(n_unapplied_reviews__gt=1)
-                    .count()
-                ),
+                needs_tagging=needs_tagging.count(),
+                conflicts=conflicts.count(),
                 total_reviews=user_refs.count(),
                 total_users=user_refs.distinct("user_id").count(),
             )
-        return overview
+        else:
+            for workflow in workflows:
+                workflow.needs_tagging = refs.in_workflow(workflow).count()
+        return overview, list(workflows)
 
     def get_pubmed_references(self, search, identifiers):
         """
