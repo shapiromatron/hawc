@@ -1163,7 +1163,3 @@ class ReferenceTagsManager(BaseManager):
 
 class UserReferenceTagsManager(BaseManager):
     assessment_relation = "content_object__reference__assessment"
-
-
-class WorkflowTagsManager(BaseManager):
-    assessment_relation = "content_object__assessment"
