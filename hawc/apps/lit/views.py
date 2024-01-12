@@ -393,6 +393,15 @@ class TagReferences(BaseFilterList):
             descendant_tags[tag] = list(descendant_tags[tag])
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
+            flattened_contents = []
+            for tag_id, field in reference["tag_udf_contents"].items():
+                for name, value in field.items():
+                    if isinstance(value, list):
+                        for val in value:
+                            flattened_contents.append({"name": f"{tag_id}-{name}", "value": val})
+                    else:
+                        flattened_contents.append({"name": f"{tag_id}-{name}", "value": value})
+            reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
@@ -407,93 +416,6 @@ class TagReferences(BaseFilterList):
                 udfs=self.assessment.get_tag_udfs(),
             ),
         )
-
-
-@method_decorator(htmx_required, name="dispatch")
-class BulkMerge(HtmxView):
-    actions = {"preview", "merge"}
-
-    def dispatch(self, request, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
-        if not self.assessment.user_can_edit_object(request.user):
-            raise PermissionDenied()
-        return super().dispatch(request, *args, **kwargs)
-
-    def index(self, request: HttpRequest, *args, **kwargs):
-        form = forms.BulkMergeConflictsForm(assessment=self.assessment)
-        context = dict(
-            form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
-        )
-        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
-
-    def preview(self, request: HttpRequest, *args, **kwargs):
-        queryset = (
-            models.Reference.objects.filter(assessment=self.assessment)
-            .order_by("-last_updated")
-            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
-        )
-        key = (
-            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
-        )
-        form = forms.BulkMergeConflictsForm(
-            assessment=self.assessment, initial={**request.POST, "cache_key": key}
-        )
-        for field in "tags", "include_without_conflict":
-            form.fields[field].disabled = True
-        merge_result = queryset.merge_tag_conflicts(
-            request.POST.getlist("tags"),
-            request.user.id,
-            request.POST.get("include_without_conflict", False),
-            preview=True,
-        )
-        if merge_result["queryset"]:
-            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-            models.Reference.annotate_tag_parents(
-                merge_result["queryset"], tags, user_tags=True, check_bulk=True
-            )
-            cache.set(key, (merge_result["queryset"], request.POST), 60 * 30)  # 30 min
-
-        context = dict(
-            object_list=merge_result["queryset"],
-            assessment=self.assessment,
-            action="preview",
-            message=merge_result["message"],
-            form=form,
-            cache_key=key,
-        )
-        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
-
-    def merge(self, request: HttpRequest, *args, **kwargs):
-        cache_key = request.POST.get("cache_key", "")
-        queryset, data = cache.get(cache_key)
-        assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
-        reference_ids = list(queryset.values_list("id", flat=True))
-        if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
-            raise PermissionDenied()
-        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
-        for field in "tags", "include_without_conflict":
-            form.fields[field].disabled = True
-        merge_result = queryset.merge_tag_conflicts(
-            data.getlist("tags"),
-            request.user.id,
-            data.get("include_without_conflict", False),
-            preview=False,
-            cached=True,
-        )
-        final_qs = models.Reference.objects.filter(id__in=reference_ids).prefetch_related(
-            "identifiers", "tags", "user_tags__user", "user_tags__tags"
-        )
-        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-        models.Reference.annotate_tag_parents(final_qs, tags, user_tags=True, check_bulk=False)
-        context = dict(
-            object_list=final_qs,
-            assessment=self.assessment,
-            action="merge",
-            message=merge_result["message"],
-            merged=merge_result["merged"],
-            form=form,
-        )
-        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
 
 @method_decorator(htmx_required, name="dispatch")

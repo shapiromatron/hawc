@@ -924,15 +924,23 @@ class Reference(models.Model):
                             assessment=self.assessment_id, tag=int(udf_tag)
                         )
                         # use tag_pk prefix (same as form creation)
-                        form = binding.form_instance(prefix=int(udf_tag), data=udf)
-                        if form.is_valid():
-                            TagUDFContent.objects.update_or_create(
-                                reference_id=self.id,
-                                tag_binding_id=binding.id,
-                                content=form.cleaned_data,
-                            )
-                        else:
-                            raise ValidationError(form.errors)
+                        keepTrying = True
+                        while keepTrying:
+                            form = binding.form_instance(prefix=int(udf_tag), data=udf)
+                            if form.is_valid():
+                                keepTrying = False
+                                TagUDFContent.objects.update_or_create(
+                                    reference_id=self.id,
+                                    tag_binding_id=binding.id,
+                                    content=form.cleaned_data,
+                                )
+                            else:
+                                for field, errors in form.errors.items():
+                                    for error in errors:
+                                        if error == "Enter a list of values.":
+                                            udf[f"{udf_tag}-{field}"] = [udf[f"{udf_tag}-{field}"]]
+                                        else:
+                                            raise ValidationError(form.errors)
                     except TagBinding.DoesNotExist:
                         pass
 

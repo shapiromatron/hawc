@@ -56,34 +56,30 @@ class Store {
         }
         this.currentUDF = udfHTML;
     }
+    @action.bound recordUDFValues() {
+        this.UDFValues = $("#udf-form").serializeArray();
+    }
     @action.bound getFinalUDFValues() {
         var newValuesSubmit = {};
+        var formArrayData = $("#udf-form").serializeArray();
         for (const tagID of this.udfIDs) {
             newValuesSubmit[tagID] = {};
-            $(`input[name*='${tagID}-']`).each(function() {
-                var field = $(this)
-                    .attr("name")
-                    .substring(tagID.length + 1);
-                newValuesSubmit[tagID][`${tagID}-${field}`] = $(this).val();
-            });
+            for (const field of formArrayData) {
+                if (field["name"].includes(`${tagID}-`)) {
+                    if (field["name"] in newValuesSubmit[tagID]) {
+                        var existingValue = Array.isArray(newValuesSubmit[tagID][field["name"]])
+                            ? newValuesSubmit[tagID][field["name"]]
+                            : [newValuesSubmit[tagID][field["name"]]];
+                        newValuesSubmit[tagID][field["name"]] = existingValue.concat([
+                            field["value"],
+                        ]);
+                    } else {
+                        newValuesSubmit[tagID][field["name"]] = field["value"];
+                    }
+                }
+            }
         }
-        return newValuesSubmit;
-    }
-    @action.bound recordUDFValues(final = false) {
-        var newValuesLocal = {};
-        var newValuesSubmit = {};
-        for (const tagID of this.udfIDs) {
-            newValuesLocal[tagID] = {};
-            newValuesSubmit[tagID] = {};
-            $(`input[name*='${tagID}-']`).each(function() {
-                var field = $(this)
-                    .attr("name")
-                    .substring(tagID.length + 1);
-                newValuesLocal[tagID][field] = $(this).val();
-                newValuesSubmit[tagID][`${tagID}-${field}`] = $(this).val();
-            });
-        }
-        final ? (this.UDFValues = newValuesLocal) : Object.assign(this.UDFValues, newValuesLocal);
+        this.UDFValues = formArrayData;
         return newValuesSubmit;
     }
     hasTag(tags, tag) {
@@ -130,7 +126,7 @@ class Store {
         );
         this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
     }
-    @action.bound handleSaveFailure() {
+    @action.bound handleSaveFailure(response) {
         this.errorOnSave = true;
     }
     @action.bound saveAndNext() {
@@ -139,7 +135,7 @@ class Store {
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
-                udf_data: this.recordUDFValues(true),
+                udf_data: this.getFinalUDFValues(),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
         h.handleSubmit(

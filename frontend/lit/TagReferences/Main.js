@@ -54,24 +54,36 @@ ReferenceListItem.propTypes = {
 var ReferenceUDF = inject("store")(
     observer(({currentUDF, UDFValues}) => {
         useEffect(() => {
-            if (Object.keys(UDFValues).length > 0) {
-                for (const [tag_id, input] of Object.entries(UDFValues)) {
-                    for (const [field, value] of Object.entries(input)) {
-                        $(`input[name="${tag_id}-${field}"]`).val(`${value}`);
+            if (UDFValues.length > 0) {
+                $.each(UDFValues, function(i, field) {
+                    var ctrl = $("[name=" + field["name"] + "]");
+                    if (ctrl.prop("multiple")) {
+                        ctrl.children(`option[value="${field["value"]}"]`).prop("selected", true);
+                    } else {
+                        switch (ctrl.prop("type")) {
+                            case "radio":
+                            case "checkbox":
+                                ctrl.each(function() {
+                                    if ($(this).attr("value") == field["value"])
+                                        $(this).attr("checked", field["value"]);
+                                });
+                                break;
+                            default:
+                                ctrl.val(field["value"]);
+                        }
                     }
-                }
-            } else {
-                $("#udf-div :input").each(function() {
-                    $(this).val("");
                 });
             }
         });
 
         return currentUDF.length > 0 ? (
-            <div className="well" id="udf-div">
+            <div className="well">
                 <h4 className="mb-0 p-2">Tag Forms</h4>
                 <hr className="m-0 mx-2 p-1"></hr>
-                <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
+                <form id="udf-form">
+                    <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
+                </form>
+                <div id="#output"></div>
             </div>
         ) : (
             ""
@@ -81,7 +93,7 @@ var ReferenceUDF = inject("store")(
 
 ReferenceUDF.propTypes = {
     currentUDF: PropTypes.string.isRequired,
-    UDFValues: PropTypes.object.isRequired,
+    UDFValues: PropTypes.array.isRequired,
 };
 
 @inject("store")
