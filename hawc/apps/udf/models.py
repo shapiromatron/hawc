@@ -176,6 +176,9 @@ class TagUDFContent(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = (("reference", "tag_binding"),)
+
     def get_content_as_list(self):
         schema = dynamic_forms.Schema.parse_obj(self.tag_binding.form.schema)
 
