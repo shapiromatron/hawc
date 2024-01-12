@@ -136,20 +136,15 @@
               {% if show_conflicts and show_tags %}
                 <div class="lit-review-box box-shadow w-30 d-flex flex-column justify-content-between py-0" style="padding-bottom: 8px">
                   <div class="d-flex row justify-content-between flex-grow-1">
-                      <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom"
-                        {% if assessment.literature_settings.conflict_resolution %}
-                        href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged"
-                        {% else %}
-                        href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}"
-                        {% endif %}
-                        style="padding-top: 12px;">
+                      <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom" style="padding-top: 12px;"
+                        href="{{workflow.tag_url}}{% if assessment.literature_settings.conflict_resolution %}&needs_tagging=on&my_tags=untagged{% endif %}">
                         <div class="d-flex pl-0">
                           <p class="h3 m-0 text-black">{{workflow.needs_tagging}}</p>
                           <div class="lit-icon px-2 text-black"><i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: .9em; border-radius: 5px;"></i></div>
                         </div>
                         <p class="m-0 small text-black">need{{ workflow.needs_tagging|pluralize:"s," }} tagging&nbsp;</p>
                       </a>
-                    <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-minor border-left border-bottom" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}" style="padding-top: 12px;">
+                    <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-minor border-left border-bottom" href="{{workflow.tag_conflicts_url}}" style="padding-top: 12px;">
                       <div class="d-flex flex-row-reverse pl-0">
                         <p class="h3 m-0 text-black">{{workflow.conflicts}}</p>
                         <div class="lit-icon px-2 text-black"><div class="icon-bg" style="color: white; background-color: #ff9393; height: 25px; width: 25px; font-size: 1.2em; border-radius: 5px;">&#8800;</div></div>
@@ -168,12 +163,7 @@
                 </div>
               {% elif show_tags %}
                 <a class="lit-review-box box-shadow with-icon clickable w-30"
-                  {% if assessment.literature_settings.conflict_resolution %}
-                    href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&workflow={{workflow.id}}&my_tags=untagged"
-                    {% else %}
-                    href="{% url 'lit:tag' assessment.pk %}?workflow={{workflow.id}}"
-                    {% endif %}
-                  >
+                  href="{{workflow.tag_url}}{% if assessment.literature_settings.conflict_resolution %}&needs_tagging=on&my_tags=untagged{% endif %}">
                   <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{workflow.needs_tagging}}</p>
                     <div class="d-flex flex-row">
@@ -188,7 +178,7 @@
                   </div>
                 </a>
               {% elif show_conflicts %}
-                <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag-conflicts' assessment.pk %}?workflow={{workflow.id}}">
+                <a class="lit-review-box box-shadow with-icon clickable w-30" href="{{workflow.tag_conflicts_url}}">
                   <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{workflow.conflicts}}</p>
                     <div class="d-flex flex-row">

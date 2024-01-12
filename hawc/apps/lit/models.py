@@ -1389,6 +1389,12 @@ class Workflow(models.Model):
             for tag in workflow.removal_tags.all():
                 tag._set_tag_parents(tag_map)
 
+    def tag_url(self) -> str:
+        return reverse("lit:tag", args=(self.assessment_id,)) + f"?workflow={self.id}"
+
+    def tag_conflicts_url(self) -> str:
+        return reverse("lit:tag-conflicts", args=(self.assessment_id,)) + f"?workflow={self.id}"
+
     def get_description(self) -> str:
         return (
             self.description
