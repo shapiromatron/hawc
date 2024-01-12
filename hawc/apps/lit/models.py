@@ -4,6 +4,7 @@ import logging
 import re
 from copy import copy
 from math import ceil
+from typing import Self
 from urllib import parse
 
 from celery import chain
@@ -792,6 +793,15 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 
         return descendants
 
+    def _set_tag_parents(self, tag_map: dict[str, Self]):
+        self.parents = []
+        current_path = self.path
+        while True:
+            current_path = self._get_parent_path_from_path(current_path)
+            if len(current_path) == 4:
+                break
+            self.parents.append(tag_map[current_path])
+
 
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
@@ -805,16 +815,6 @@ class ReferenceTags(ItemBase):
         constraints = [
             models.UniqueConstraint(fields=["content_object", "tag"], name="reference_tag"),
         ]
-
-
-def _set_tag_parents(tag, tag_map):
-    tag.parents = []
-    current_path = tag.path
-    while True:
-        current_path = tag._get_parent_path_from_path(current_path)
-        if len(current_path) == 4:
-            break
-        tag.parents.append(tag_map[current_path])
 
 
 class Reference(models.Model):
@@ -1207,11 +1207,11 @@ class Reference(models.Model):
         for reference in references:
             reference.bulk_merge_tag_names = []
             for tag in reference.tags.all():
-                _set_tag_parents(tag, tag_map)
+                tag._set_tag_parents(tag_map)
             if user_tags:
                 for user_tag in reference.user_tags.all():
                     for tag in user_tag.tags.all():
-                        _set_tag_parents(tag, tag_map)
+                        tag._set_tag_parents(tag_map)
                         if (
                             check_bulk
                             and tag.id in reference.bulk_merge_tags
@@ -1385,9 +1385,9 @@ class Workflow(models.Model):
 
         for workflow in workflows:
             for tag in workflow.admission_tags.all():
-                _set_tag_parents(tag, tag_map)
+                tag._set_tag_parents(tag_map)
             for tag in workflow.removal_tags.all():
-                _set_tag_parents(tag, tag_map)
+                tag._set_tag_parents(tag_map)
 
 
 reversion.register(LiteratureAssessment)
