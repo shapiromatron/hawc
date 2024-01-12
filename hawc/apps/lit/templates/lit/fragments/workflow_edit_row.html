@@ -1,4 +1,3 @@
-
 <div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form">
     {% if form %}
     <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
@@ -27,10 +26,9 @@
                 hx-get="{{ object.get_delete_url }}">
                 <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
                 {% endif %}
-
             </div>
             {% else %}
-            <h3 class="py-2">Create Workflow</h3>
+                <h3 class="py-2">Create Workflow</h3>
             {% endif %}
             {% crispy form %}
             <div class="form-row d-flex flex-row-reverse justify-content-center align-items-center px-3 pb-3">
@@ -76,9 +74,7 @@
 </div>
 {% if form %}
 <script type="text/javascript">
-    $(document).ready(() => {
-            $('#id_title').focus();
-    });
+document.querySelector('#id_title').focus();
 </script>
 {% include "common/helptext_popup_js.html" %}
 {% endif %}
