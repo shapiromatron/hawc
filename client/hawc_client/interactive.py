@@ -84,13 +84,16 @@ class InteractiveHawcClient:
     A context manager for downloading assessment visuals.
     """
 
-    def __init__(self, client: BaseClient, headless: bool = True):
+    def __init__(self, client: BaseClient, headless: bool = True, timeout: float | None = None):
         self.client = client
         self.headless = headless
+        self.timeout = timeout
 
     async def __aenter__(self):
         self.playwright = await pcm().start()
-        browser = await self.playwright.chromium.launch(headless=self.headless)
+        browser = await self.playwright.chromium.launch(
+            headless=self.headless, timeout=self.timeout
+        )
         self.context = await browser.new_context()
         self.page = await self.context.new_page()
         cookies = [

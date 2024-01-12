@@ -75,5 +75,7 @@ class HawcClient(BaseClient):
         """
         return self.session.set_authentication_token(token, login)
 
-    def interactive(self, headless: bool = True) -> InteractiveHawcClient:
-        return InteractiveHawcClient(client=self, headless=headless)
+    def interactive(
+        self, headless: bool = True, timeout: float | None = None
+    ) -> InteractiveHawcClient:
+        return InteractiveHawcClient(client=self, headless=headless, timeout=timeout)
