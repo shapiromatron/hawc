@@ -552,7 +552,6 @@ class WorkflowForm(forms.ModelForm):
 
         tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment.id)
         for field in ["admission_tags", "removal_tags"]:
-            self.fields[field].label = "Tagged With:"
             self.fields[field].queryset = tags
             self.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
             self.fields[field].widget.attrs["size"] = 5
