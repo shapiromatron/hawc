@@ -1120,14 +1120,12 @@ class WorkflowViewSet(HtmxViewSet):
     detail_fragment = "lit/fragments/workflow_row.html"
     list_fragment = "lit/fragments/workflow_list.html"
 
-    @action(permission=can_view, htmx_only=False)
+    @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
         tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
         prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
         models.Workflow.annotate_tag_parents([request.item.object], tags)
-        if request.is_htmx:
-            return render(request, self.detail_fragment, self.get_context_data())
-        raise Http404()
+        return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
