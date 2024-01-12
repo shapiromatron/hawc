@@ -112,7 +112,7 @@ class TestLiterature(PlaywrightTestCase):
         page.locator("#workflow-create").click()
 
         # Check workflow exists as expected
-        expect(page.get_by_role("heading", name="Title/Abstract Workflow")).to_be_visible()
+        expect(page.get_by_role("heading", name="Title/Abstract")).to_be_visible()
         expect(page.get_by_text("No admission criteria selected.")).to_be_visible()
         expect(
             page.get_by_text("Tagged with Inclusion (including descendant tags)")
@@ -127,11 +127,11 @@ class TestLiterature(PlaywrightTestCase):
         page.locator("#workflow-update").click()
 
         # check update worked
-        expect(page.get_by_role("heading", name="Title/Abstract 2 Workflow")).to_be_visible()
+        expect(page.get_by_role("heading", name="Title/Abstract 2")).to_be_visible()
 
         # Check that new Literature Review tiles have been added
         page.get_by_label("breadcrumb").get_by_role("link", name="Literature review").click()
-        expect(page.get_by_text("in Title/Abstract 2 Workflow")).to_be_visible()
+        expect(page.get_by_text("in Title/Abstract 2")).to_be_visible()
         expect(page.get_by_role("link", name="1  needs tagging")).to_be_visible()
         expect(page.get_by_role("link", name="1 ≠ with conflicts")).to_be_visible()
 
