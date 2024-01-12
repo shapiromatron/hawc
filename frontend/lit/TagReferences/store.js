@@ -57,15 +57,30 @@ class Store {
         this.currentUDF = udfHTML;
     }
     @action.bound recordUDFValues() {
-        this.UDFValues = $("#udf-form").serializeArray();
+        var newValues = {};
+        // Save form data as a dictionary of field-name: field-value pairs
+        // This makes it easy to set the form fields in the ReferenceUDF component
+        _.each($("#udf-form").serializeArray(), function(field) {
+            newValues[field["name"]] =
+                field["name"] in newValues
+                    ? newValues[field["name"]].concat(field["value"])
+                    : [].concat(field["value"]);
+        });
+        // Using dictionary means we can overwrite changed fields while keeping data from fields removed from the form
+        // this allows a user to remove and readd a tag and still use existing UDF data for that tag
+        Object.assign(this.UDFValues, newValues);
     }
     @action.bound getFinalUDFValues() {
         var newValuesSubmit = {};
-        var formArrayData = $("#udf-form").serializeArray();
+        var newValues = {};
         for (const tagID of this.udfIDs) {
             newValuesSubmit[tagID] = {};
-            for (const field of formArrayData) {
+            for (const field of $("#udf-form").serializeArray()) {
                 if (field["name"].includes(`${tagID}-`)) {
+                    newValues[field["name"]] =
+                        field["name"] in newValues
+                            ? newValues[field["name"]].concat(field["value"])
+                            : [].concat(field["value"]);
                     if (field["name"] in newValuesSubmit[tagID]) {
                         var existingValue = Array.isArray(newValuesSubmit[tagID][field["name"]])
                             ? newValuesSubmit[tagID][field["name"]]
@@ -79,7 +94,8 @@ class Store {
                 }
             }
         }
-        this.UDFValues = formArrayData;
+        // here we overwrite the local values with the final saved data instead of using Object.assign (see recordUDFvalues() above)
+        this.UDFValues = newValues;
         return newValuesSubmit;
     }
     hasTag(tags, tag) {

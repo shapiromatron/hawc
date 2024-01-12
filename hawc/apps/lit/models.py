@@ -932,7 +932,7 @@ class Reference(models.Model):
                                 TagUDFContent.objects.update_or_create(
                                     reference_id=self.id,
                                     tag_binding_id=binding.id,
-                                    content=form.cleaned_data,
+                                    defaults={"content": form.cleaned_data},
                                 )
                             else:
                                 for field, errors in form.errors.items():

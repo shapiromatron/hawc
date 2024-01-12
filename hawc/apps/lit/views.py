@@ -393,14 +393,12 @@ class TagReferences(BaseFilterList):
             descendant_tags[tag] = list(descendant_tags[tag])
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
-            flattened_contents = []
+            flattened_contents = {}
             for tag_id, field in reference["tag_udf_contents"].items():
                 for name, value in field.items():
-                    if isinstance(value, list):
-                        for val in value:
-                            flattened_contents.append({"name": f"{tag_id}-{name}", "value": val})
-                    else:
-                        flattened_contents.append({"name": f"{tag_id}-{name}", "value": value})
+                    flattened_contents[f"{tag_id}-{name}"] = (
+                        value if isinstance(value, list) else [value]
+                    )
             reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(
             app="litStartup",

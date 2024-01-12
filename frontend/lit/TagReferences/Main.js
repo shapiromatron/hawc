@@ -1,4 +1,5 @@
 import $ from "jquery";
+import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -54,26 +55,48 @@ ReferenceListItem.propTypes = {
 var ReferenceUDF = inject("store")(
     observer(({currentUDF, UDFValues}) => {
         useEffect(() => {
-            if (UDFValues.length > 0) {
-                $.each(UDFValues, function(i, field) {
-                    var ctrl = $("[name=" + field["name"] + "]");
+            // clear the entire form of existing data
+            $("#udf-form :input").each(function() {
+                switch ($(this).prop("type")) {
+                    case "radio":
+                    case "checkbox":
+                        $(this).attr("checked", false);
+                        break;
+                    default:
+                        $(this).val("");
+                }
+            });
+            // add data for current tags/reference
+            _.forEach(UDFValues, function(value, name) {
+                _.forEach(value, function(val) {
+                    var ctrl = $(`[name="${name}"]`);
                     if (ctrl.prop("multiple")) {
-                        ctrl.children(`option[value="${field["value"]}"]`).prop("selected", true);
+                        ctrl.children(`option[value="${val}"]`).prop("selected", true);
                     } else {
                         switch (ctrl.prop("type")) {
                             case "radio":
                             case "checkbox":
                                 ctrl.each(function() {
-                                    if ($(this).attr("value") == field["value"])
-                                        $(this).attr("checked", field["value"]);
+                                    // multiple select checkbox
+                                    if ($(this).attr("value") == val) {
+                                        $(this).attr("checked", val);
+                                    }
+                                    // single checkbox
+                                    else if (
+                                        $(this).attr("value") == undefined &&
+                                        (val == "on" || val == true)
+                                    ) {
+                                        $(this).attr("checked", true);
+                                    }
                                 });
                                 break;
                             default:
-                                ctrl.val(field["value"]);
+                                // text/number fields
+                                ctrl.val(val);
                         }
                     }
                 });
-            }
+            });
         });
 
         return currentUDF.length > 0 ? (
@@ -93,7 +116,7 @@ var ReferenceUDF = inject("store")(
 
 ReferenceUDF.propTypes = {
     currentUDF: PropTypes.string.isRequired,
-    UDFValues: PropTypes.array.isRequired,
+    UDFValues: PropTypes.object.isRequired,
 };
 
 @inject("store")
