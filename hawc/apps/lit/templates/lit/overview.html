@@ -161,11 +161,7 @@
                       <div class="d-flex flex-row justify-content-center">
                         <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
                         <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
-                          {% if workflow.description %}
-                          {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
-                          {% else %}
-                          {% include "common/helptext_popup.html" with text="Go to 'View Workflows' under the actions button for more information." title=workflow %}
-                          {% endif %}
+                          {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
                         </i>
                       </div>
                   </div>
@@ -183,11 +179,7 @@
                     <div class="d-flex flex-row">
                       <p class="small mt-0 d-flex flex-column text-truncate">need{{ workflow.needs_tagging|pluralize:"s," }} tagging in <i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
                       <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
-                        {% if workflow.description %}
-                        {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
-                        {% else %}
-                        {% include "common/helptext_popup.html" with text="Go to 'View Workflows' under the actions button for more information." title=workflow %}
-                        {% endif %}
+                        {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
                       </i>
                     </div>
                   </div>
@@ -202,11 +194,7 @@
                     <div class="d-flex flex-row">
                       <p class="small mt-0 d-flex flex-column text-truncate">with tag conflicts in <i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
                       <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
-                        {% if workflow.description %}
-                        {% include "common/helptext_popup.html" with text=workflow.description title=workflow %}
-                        {% else %}
-                        {% include "common/helptext_popup.html" with text="Go to 'View Workflows' under the actions button for more information." title=workflow %}
-                        {% endif %}
+                        {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
                       </i>
                     </div>
                   </div>

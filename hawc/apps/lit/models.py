@@ -1389,6 +1389,12 @@ class Workflow(models.Model):
             for tag in workflow.removal_tags.all():
                 tag._set_tag_parents(tag_map)
 
+    def get_description(self) -> str:
+        return (
+            self.description
+            or "Go to 'View Workflows' under the actions button for more information."
+        )
+
 
 reversion.register(LiteratureAssessment)
 reversion.register(Search)

@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Q, prefetch_related_objects
 from django.forms.models import model_to_dict
-from django.http import Http404, HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
