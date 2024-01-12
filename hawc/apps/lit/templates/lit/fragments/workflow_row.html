@@ -9,7 +9,7 @@
     {% endif %}
     style="width: fit-content;">
     <div class="d-flex">
-        <h4 class="mb-3">{{object.title}} Workflow &nbsp;<i class="fa fa-spinner fa-spin htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i></h4>
+        <h4 class="mb-3">{{object.title}}&nbsp;<i class="fa fa-spinner fa-spin htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i></h4>
         <div class="ml-auto align-self-start d-flex flex-shrink-0 flex-wrap-0">
         {% if object.link_conflict_resolution %}
             <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Conflict Resolution linked on Literature Review</span>
@@ -28,11 +28,7 @@
                         <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">Tagged with
                             {% for tag in object.admission_tags.all %}
                                 {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
-                                {% if forloop.revcounter0 > 1 %}
-                                    ,&nbsp;
-                                {% elif forloop.revcounter0 == 1 %}
-                                    or
-                                {% endif %}
+                                {% list_punctuation forloop "or" %}
                             {% endfor %}
                             {% if object.admission_tags_descendants %}
                                 (including descendant tags)
@@ -49,11 +45,7 @@
                             Sourced from
                             {% for source in object.admission_source.all %}
                                 <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{source}}</span>
-                                {% if forloop.revcounter0 > 1 %}
-                                    ,&nbsp;
-                                {% elif forloop.revcounter0 == 1 %}
-                                    or
-                                {% endif %}
+                                {% list_punctuation forloop "or" %}
                             {% endfor %}
                         </span>
                     {% endif %}
@@ -69,11 +61,7 @@
                         <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center flex-wrap align-items-center">Tagged with
                             {% for tag in object.removal_tags.all %}
                                 {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
-                                {% if forloop.revcounter0 > 1 %}
-                                    ,&nbsp;
-                                {% elif forloop.revcounter0 == 1 %}
-                                    or
-                                {% endif %}
+                                {% list_punctuation forloop "or" %}
                             {% endfor %}
                             {% if object.removal_tags_descendants %}
                                 (including descendant tags)
@@ -88,12 +76,8 @@
                         {% endif %}
                         <span class="bg-gray rounded px-3 py-2 m-1 justify-content-center d-flex align-items-center text-center">Sourced from
                             {% for source in object.removal_source.all %}
-                            <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{source}}</span>
-                                {% if forloop.revcounter0 > 1 %}
-                                    ,&nbsp;
-                                {% elif forloop.revcounter0 == 1 %}
-                                    or
-                                {% endif %}
+                                <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{source}}</span>
+                                {% list_punctuation forloop "or" %}
                             {% endfor %}
                         </span>
                     {% endif %}
