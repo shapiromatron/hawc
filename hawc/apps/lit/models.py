@@ -1340,8 +1340,8 @@ class Workflow(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_filters(self):
-        filters = models.Q(assessment=self.assessment)
+    def reference_filter(self) -> models.Q:
+        filters = models.Q()
 
         removal_tags = []
         if self.removal_tags_descendants:
@@ -1350,7 +1350,7 @@ class Workflow(models.Model):
             removal_tags = list(set(removal_tags))
         else:
             removal_tags = self.removal_tags.all().values_list("id", flat=True)
-        if len(removal_tags) > 0:
+        if removal_tags:
             filters &= ~models.Q(tags__in=removal_tags)
 
         admission_tags = []
@@ -1360,7 +1360,7 @@ class Workflow(models.Model):
             admission_tags = list(set(admission_tags))
         else:
             admission_tags = self.admission_tags.all().values_list("id", flat=True)
-        if len(admission_tags) > 0:
+        if admission_tags:
             filters &= models.Q(tags__in=admission_tags)
 
         if self.admission_source.exists():

@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -24,6 +25,10 @@ from ..common.helper import flatten
 from ..common.models import BaseManager, replace_null, str_m2m
 from ..study.managers import study_df_annotations
 from . import constants
+
+if TYPE_CHECKING:
+    from .models import Workflow
+
 
 logger = logging.getLogger(__name__)
 
@@ -765,6 +770,9 @@ class ReferenceQuerySet(models.QuerySet):
             search=SearchQuery(search_text, search_type="websearch", config="english")
         )
 
+    def in_workflow(self, workflow: "Workflow"):
+        return self.filter(workflow.reference_filter())
+
 
 class ReferenceManager(BaseManager):
     assessment_relation = "assessment"
@@ -886,7 +894,7 @@ class ReferenceManager(BaseManager):
             needs_tagging = refs.filter(user_tag_count__lt=2)
             conflicts = refs.filter(n_unapplied_reviews__gt=1)
             for workflow in workflows:
-                workflow_refs = refs.filter(workflow.get_filters())
+                workflow_refs = refs.in_workflow(workflow)
                 workflow.needs_tagging = (
                     needs_tagging.intersection(workflow_refs).count()
                     if workflow.link_tagging
@@ -905,7 +913,7 @@ class ReferenceManager(BaseManager):
             )
         else:
             for workflow in workflows:
-                workflow.needs_tagging = untagged_refs.filter(workflow.get_filters()).count()
+                workflow.needs_tagging = untagged_refs.in_workflow(workflow).count()
         return overview, list(workflows)
 
     def get_pubmed_references(self, search, identifiers):

@@ -287,7 +287,7 @@ class ReferenceFilterSet(BaseFilterSet):
     def filter_workflow(self, queryset, name, value):
         if not value:
             return queryset
-        return queryset.filter(value.get_filters()).distinct()
+        return queryset.in_workflow(value).distinct()
 
     def create_form(self):
         form = super().create_form()
