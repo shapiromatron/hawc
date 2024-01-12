@@ -913,7 +913,7 @@ class ReferenceManager(BaseManager):
             )
         else:
             for workflow in workflows:
-                workflow.needs_tagging = untagged_refs.in_workflow(workflow).count()
+                workflow.needs_tagging = refs.in_workflow(workflow).count()
         return overview, list(workflows)
 
     def get_pubmed_references(self, search, identifiers):
