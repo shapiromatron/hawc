@@ -300,6 +300,26 @@ class TestBulkPublishItems:
         assert study.published is False
 
 
+@pytest.mark.django_db
+class TestUpdateSession:
+    def test_refresh(self):
+        anon = get_client()
+        pm = get_client("reviewer")
+
+        url = reverse("update_session")
+
+        resp = anon.post(url, data={})
+        assert resp.status_code == 200
+        assert resp.json() == {}
+
+        resp = anon.post(url, data={"refresh": 1})
+        assert resp.status_code == 404
+
+        resp = pm.post(url, data={"refresh": 1})
+        assert resp.status_code == 200
+        assert "new_expiry_time" in resp.json()
+
+
 class TestRasterizeCss:
     def test_check_success(self):
         url = reverse("css-rasterize")
