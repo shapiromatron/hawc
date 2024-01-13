@@ -100,9 +100,9 @@ var ReferenceUDF = inject("store")(
         });
 
         return currentUDF.length > 0 ? (
-                <form id="udf-form">
-                    <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
-                </form>
+            <form id="udf-form">
+                <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
+            </form>
         ) : (
             ""
         );
