@@ -100,14 +100,9 @@ var ReferenceUDF = inject("store")(
         });
 
         return currentUDF.length > 0 ? (
-            <div className="well">
-                <h4 className="mb-0 p-2">Tag Forms</h4>
-                <hr className="m-0 mx-2 p-1"></hr>
                 <form id="udf-form">
                     <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
                 </form>
-                <div id="#output"></div>
-            </div>
         ) : (
             ""
         );

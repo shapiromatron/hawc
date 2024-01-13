@@ -23,6 +23,7 @@ class Store {
     constructor(config) {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
+        this.tagNames = config.tag_names;
         this.references = Reference.array(config.refs, this.tagtree, false);
         // set first reference
         if (this.references.length > 0) {
@@ -49,7 +50,17 @@ class Store {
         if (this.config.udfs) {
             for (const [tagID, udf] of Object.entries(this.config.udfs)) {
                 if (intersects(this.config.descendant_tags[tagID], referenceUserTagIDs)) {
-                    udfHTML += udf;
+                    udfHTML += "<div class='box-shadow rounded mt-3 mb-4'>";
+                    udfHTML += `<a class="text-black text-decoration-none clickable bg-gray 
+                                        rounded-top px-3 d-flex justify-content-start 
+                                        align-items-center flex-wrap border-bottom-light" 
+                                        type="button" data-toggle="collapse" 
+                                        data-target="#collapse-${tagID}-udf" 
+                                        aria-expanded="true" aria-controls="collapse-${tagID}-udf">
+                                    <span class="refTag px-1 py-0 my-3">${this.tagNames[tagID]}</span>
+                                    <span class="h5 m-0">Tag Form</span>
+                                </a>`;
+                    udfHTML += `<div class="px-4 py-3 collapse show" id="collapse-${tagID}-udf">${udf}</div></div>`;
                     this.udfIDs.push(tagID);
                 }
             }

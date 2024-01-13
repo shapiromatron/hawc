@@ -182,6 +182,7 @@ class AssessmentRootMixin:
                 node.nested_name = "|".join(names)
 
             last_depth = node.depth
+        return qs
 
     @classmethod
     def as_dataframe(cls, assessment_id: int, include_root=False) -> pd.DataFrame:

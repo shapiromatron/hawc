@@ -108,8 +108,8 @@ tfoot > tr > td {
 .bg-gray {
     background-color: #e8e8e8;
 }
-.clickable:hover .bg-gray {
-    background-color: #d1d1d1;
+.clickable:hover.bg-gray {
+    background-color: #d1d1d1 !important;
 }
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -564,6 +564,10 @@ div.smart-tag.active {
     overflow-wrap: break-word;
     word-break: break-word;
     word-wrap: break-word;
+}
+
+.border-bottom-light {
+    border-bottom: 2px solid #c7c7c7 !important;
 }
 
 .conflict-reference-li {
