@@ -4,7 +4,7 @@
 <div class="d-flex">
   <h2 class="mb-2">Workflows</h2>
   {% if obj_perms.edit_assessment %}
-    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-create' assessment.pk %}" hx-trigger="click" hx-target="#workflow-list" hx-swap="outerHTML" href="/">Create new workflow</a>
+    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-htmx' assessment.pk 'create' %}" hx-trigger="click" hx-target="#workflow-list" hx-swap="outerHTML" href="/">Create new workflow</a>
   {% endif %}
 </div>
 <p class="text-muted vw75 mt-0 mb-2">
