@@ -28,3 +28,10 @@ def test_get_200():
     ]
     for url in urls:
         check_200(client, url)
+
+    client = get_client("admin")
+    urls = [
+        reverse("animal:endpoint_list_v2", args=(1,)),
+    ]
+    for url in urls:
+        check_200(client, url)

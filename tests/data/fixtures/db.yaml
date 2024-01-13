@@ -2714,7 +2714,7 @@
     path: '000400020003'
     depth: 3
     numchild: 0
-    name: Tier III
+    name: Tier III Demo
     slug: tier-iii
 - model: lit.referencetags
   pk: 2
