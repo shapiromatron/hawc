@@ -619,8 +619,8 @@ class TagsCopyForm(forms.Form):
     confirmation = ConfirmationField()
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("instance")
+        user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
