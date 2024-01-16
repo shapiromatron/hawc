@@ -1521,6 +1521,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 2
+    animal_version: 2
 - model: assessment.assessment
   pk: 2
   fields:
@@ -1564,6 +1565,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+    animal_version: 1
 - model: assessment.assessment
   pk: 3
   fields:
@@ -1603,6 +1605,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+    animal_version: 1
 - model: assessment.assessment
   pk: 4
   fields:
@@ -1634,6 +1637,7 @@
     vocabulary: 1
     modify_uncontrolled_vocabulary: true
     epi_version: 2
+    animal_version: 2
     created: 2022-10-27 21:02:28.805681+00:00
     last_updated: 2022-10-27 21:02:28.805695+00:00
     dtxsids: []
