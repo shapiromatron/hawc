@@ -1,19 +1,22 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, prefetch_related_objects
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, tryParseInt
+from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -23,6 +26,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     create_object_log,
+    htmx_required,
 )
 from . import constants, filterset, forms, models
 
@@ -50,7 +54,9 @@ class LitOverview(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
+        context["overview"], context["workflows"] = models.Reference.objects.get_overview_details(
+            self.assessment
+        )
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
             .filter(user_tags__user=self.request.user)
@@ -267,7 +273,7 @@ class TagReferences(BaseFilterList):
         if conflict_resolution:
             return dict(
                 main_field="ref_search",
-                appended_fields=["partially_tagged", "needs_tagging", "order_by"],
+                appended_fields=["partially_tagged", "needs_tagging", "workflow", "order_by"],
                 dynamic_fields=[
                     "ref_search",
                     "needs_tagging",
@@ -283,6 +289,7 @@ class TagReferences(BaseFilterList):
                     "my_tags",
                     "include_mytag_descendants",
                     "anything_tagged_me",
+                    "workflow",
                 ],
                 grid_layout={
                     "rows": [
@@ -333,6 +340,7 @@ class TagReferences(BaseFilterList):
                     "search",
                     "id",
                     "order_by",
+                    "workflow",
                     "authors",
                     "year",
                     "tags",
@@ -340,7 +348,7 @@ class TagReferences(BaseFilterList):
                     "anything_tagged",
                 ],
                 main_field="ref_search",
-                appended_fields=["order_by"],
+                appended_fields=["workflow", "order_by"],
                 grid_layout={
                     "rows": [
                         {"columns": [{"width": 12}]},
@@ -396,6 +404,93 @@ class TagReferences(BaseFilterList):
         )
 
 
+@method_decorator(htmx_required, name="dispatch")
+class BulkMerge(HtmxView):
+    actions = {"preview", "merge"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def index(self, request: HttpRequest, *args, **kwargs):
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment)
+        context = dict(
+            form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+    def preview(self, request: HttpRequest, *args, **kwargs):
+        queryset = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+        key = (
+            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
+        )
+        form = forms.BulkMergeConflictsForm(
+            assessment=self.assessment, initial={**request.POST, "cache_key": key}
+        )
+        for field in "tags", "include_without_conflict":
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            request.POST.getlist("tags"),
+            request.user.id,
+            request.POST.get("include_without_conflict", False),
+            preview=True,
+        )
+        if merge_result["queryset"]:
+            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+            models.Reference.annotate_tag_parents(
+                merge_result["queryset"], tags, user_tags=True, check_bulk=True
+            )
+            cache.set(key, (merge_result["queryset"], request.POST), 60 * 30)  # 30 min
+
+        context = dict(
+            object_list=merge_result["queryset"],
+            assessment=self.assessment,
+            action="preview",
+            message=merge_result["message"],
+            form=form,
+            cache_key=key,
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+    def merge(self, request: HttpRequest, *args, **kwargs):
+        cache_key = request.POST.get("cache_key", "")
+        queryset, data = cache.get(cache_key)
+        assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
+        reference_ids = list(queryset.values_list("id", flat=True))
+        if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
+            raise PermissionDenied()
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
+        for field in "tags", "include_without_conflict":
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            data.getlist("tags"),
+            request.user.id,
+            data.get("include_without_conflict", False),
+            preview=False,
+            cached=True,
+        )
+        final_qs = models.Reference.objects.filter(id__in=reference_ids).prefetch_related(
+            "identifiers", "tags", "user_tags__user", "user_tags__tags"
+        )
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Reference.annotate_tag_parents(final_qs, tags, user_tags=True, check_bulk=False)
+        context = dict(
+            object_list=final_qs,
+            assessment=self.assessment,
+            action="merge",
+            message=merge_result["message"],
+            merged=merge_result["merged"],
+            form=form,
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+
 class ConflictResolution(BaseFilterList):
     template_name = "lit/conflict_resolution.html"
     parent_model = Assessment
@@ -406,6 +501,7 @@ class ConflictResolution(BaseFilterList):
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="ref_search",
+            appended_fields=["workflow"],
             dynamic_fields=[
                 "id",
                 "ref_search",
@@ -417,6 +513,7 @@ class ConflictResolution(BaseFilterList):
                 "my_tags",
                 "include_mytag_descendants",
                 "anything_tagged_me",
+                "workflow",
                 "addition_tags",
                 "include_additiontag_descendants",
                 "deletion_tags",
@@ -987,3 +1084,90 @@ class BulkTagReferences(BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
+
+
+class Workflows(BaseList):
+    parent_model = Assessment
+    model = models.Workflow
+    breadcrumb_active_name = "Workflows"
+    template_name = "lit/workflows.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Workflows"
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related("admission_tags", "removal_tags")
+        )
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Workflow.annotate_tag_parents(queryset, tags)
+        return queryset
+
+
+class WorkflowViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = Assessment
+    model = models.Workflow
+
+    form_fragment = "lit/fragments/workflow_edit_row.html"
+    detail_fragment = "lit/fragments/workflow_row.html"
+    list_fragment = "lit/fragments/workflow_list.html"
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+        prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+        models.Workflow.annotate_tag_parents([request.item.object], tags)
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.WorkflowForm(request.POST, parent=request.item.parent)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.WorkflowForm(parent=request.item.parent)
+            template = self.list_fragment
+        context = self.get_context_data(form=form)
+        object_list = self.model.objects.filter(
+            assessment=request.item.assessment
+        ).prefetch_related("admission_tags", "removal_tags")
+        tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+        models.Workflow.annotate_tag_parents(object_list, tags)
+        context.update(object_list=object_list)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.WorkflowForm(request.POST, instance=request.item.object)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.detail_fragment
+                tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+                prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+                models.Workflow.annotate_tag_parents([request.item.object], tags)
+        else:
+            form = forms.WorkflowForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        form = forms.WorkflowForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, self.form_fragment, context)

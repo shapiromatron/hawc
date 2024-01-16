@@ -46,6 +46,9 @@ class RiskOfBiasQuerySet(models.QuerySet):
             )
         )
 
+    def published_only(self, published_only: bool):
+        return self.filter(study__published=True) if published_only else self
+
 
 class RiskOfBiasScoreOverrideObjectQuerySet(models.QuerySet):
     def _get_orphan_ids(self) -> list[int]:
