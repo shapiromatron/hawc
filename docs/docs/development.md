@@ -384,6 +384,14 @@ export PWDEBUG=1
 py.test -sv tests/integration/test_myuser.py --pdb
 ```
 
+Sometimes you may want to run a test multiple times to check for flakiness:
+
+```bash
+for i in {1..10}; do
+INTEGRATION_TESTS=1 py.test -sv tests/integration/ -k test_example
+done
+```
+
 ## More settings
 
 ### Visual Studio Code
