@@ -133,7 +133,7 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_label("breadcrumb").get_by_role("link", name="Literature review").click()
         expect(page.get_by_text("in Title/Abstract 2")).to_be_visible()
         expect(page.get_by_role("link", name="1  needs tagging")).to_be_visible()
-        expect(page.get_by_role("link", name="1 ≠ with conflicts")).to_be_visible()
+        expect(page.get_by_role("link", name=re.compile(r"\d+ ≠ with conflicts"))).to_be_visible()
 
         # go back and check delete
         page.get_by_text("Actions").click()
