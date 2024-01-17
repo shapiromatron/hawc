@@ -19,6 +19,7 @@ class Store {
     @observable showInstructionsModal = false;
     @observable currentUDF = null;
     @observable UDFValues = null;
+    @observable UDFError = null;
 
     constructor(config) {
         this.config = config;
@@ -41,6 +42,8 @@ class Store {
             : reference.tags.slice(0);
         this.setUDF();
         this.UDFValues = this.reference.data.tag_udf_contents;
+        this.UDFError = null;
+        this.errorOnSave = false;
     }
     @action.bound setUDF() {
         const intersects = (a, b) => a.some(x => b.includes(x));
@@ -133,6 +136,7 @@ class Store {
     @action.bound handleSaveSuccess(response) {
         const {resolved} = response;
         this.errorOnSave = false;
+        this.UDFError = false;
         this.reference.userTags = resolved ? null : toJS(this.referenceUserTags);
         this.reference.data.tag_udf_contents = toJS(this.UDFValues);
         if (!this.config.conflict_resolution || resolved) {
@@ -154,11 +158,15 @@ class Store {
         this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
     }
     @action.bound handleSaveFailure(response) {
+        if (response["UDF-form"]) {
+            this.UDFError = response["UDF-form"];
+        }
         this.errorOnSave = true;
     }
     @action.bound saveAndNext() {
         this.successMessage = "";
         this.errorOnSave = false;
+        this.UDFError = null;
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),

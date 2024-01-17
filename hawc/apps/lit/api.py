@@ -377,7 +377,7 @@ class ReferenceViewSet(
             except ValueError:
                 return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
             except DjangoValidationError as err:
-                return Response(err, status=400)
+                return Response({"UDF-form": err}, status=400)
             response["status"] = "success"
             response["resolved"] = resolved
         return Response(response)

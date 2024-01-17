@@ -954,7 +954,12 @@ class Reference(models.Model):
                                         if error == "Enter a list of values.":
                                             udf[f"{udf_tag}-{field}"] = [udf[f"{udf_tag}-{field}"]]
                                         else:
-                                            raise ValidationError(form.errors)
+                                            raise ValidationError(
+                                                {
+                                                    f"{udf_tag}-{key}": value
+                                                    for (key, value) in form.errors.items()
+                                                }
+                                            )
                     except TagBinding.DoesNotExist:
                         pass
 

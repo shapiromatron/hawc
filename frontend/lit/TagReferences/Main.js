@@ -53,7 +53,7 @@ ReferenceListItem.propTypes = {
 };
 
 var ReferenceUDF = inject("store")(
-    observer(({currentUDF, UDFValues}) => {
+    observer(({currentUDF, UDFValues, UDFError}) => {
         useEffect(() => {
             // clear the entire form of existing data
             $("#udf-form :input").each(function() {
@@ -69,14 +69,14 @@ var ReferenceUDF = inject("store")(
             // add data for current tags/reference
             _.forEach(UDFValues, function(value, name) {
                 _.forEach(value, function(val) {
-                    var ctrl = $(`[name="${name}"]`);
-                    if (ctrl.prop("multiple")) {
-                        ctrl.children(`option[value="${val}"]`).prop("selected", true);
+                    var input = $(`[name="${name}"]`);
+                    if (input.prop("multiple")) {
+                        input.children(`option[value="${val}"]`).prop("selected", true);
                     } else {
-                        switch (ctrl.prop("type")) {
+                        switch (input.prop("type")) {
                             case "radio":
                             case "checkbox":
-                                ctrl.each(function() {
+                                input.each(function() {
                                     // multiple select checkbox
                                     if ($(this).attr("value") == val) {
                                         $(this).attr("checked", val);
@@ -92,11 +92,24 @@ var ReferenceUDF = inject("store")(
                                 break;
                             default:
                                 // text/number fields
-                                ctrl.val(val);
+                                input.val(val);
                         }
                     }
                 });
             });
+            $("#udf-form .invalid-feedback").each(function() {
+                $(this).remove();
+            });
+            $("#udf-form .is-invalid").each(function() {
+                $(this).removeClass("is-invalid");
+            });
+            if (UDFError) {
+                _.forEach(_.fromPairs(UDFError), function(error, field) {
+                    var input = $(`[name="${field}"]`);
+                    input.addClass("is-invalid");
+                    $(`<div class="invalid-feedback">${error.join(" ")}</div>`).insertAfter(input);
+                });
+            }
         });
 
         return currentUDF.length > 0 ? (
@@ -112,6 +125,7 @@ var ReferenceUDF = inject("store")(
 ReferenceUDF.propTypes = {
     currentUDF: PropTypes.string.isRequired,
     UDFValues: PropTypes.object.isRequired,
+    UDFError: PropTypes.array,
 };
 
 @inject("store")
@@ -137,6 +151,7 @@ class TagReferencesMain extends Component {
                 referenceUserTags,
                 currentUDF,
                 UDFValues,
+                UDFError,
             } = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
 
@@ -202,7 +217,11 @@ class TagReferencesMain extends Component {
                             {store.errorOnSave ? (
                                 <Alert
                                     className="alert-danger mt-2"
-                                    message="An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
+                                    message={
+                                        store.UDFError
+                                            ? "An error was found with your tag form data."
+                                            : "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
+                                    }
                                 />
                             ) : null}
                             <div className="well" style={{minHeight: "50px"}}>
@@ -301,7 +320,11 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
-                            <ReferenceUDF currentUDF={currentUDF} UDFValues={UDFValues} />
+                            <ReferenceUDF
+                                currentUDF={currentUDF}
+                                UDFValues={UDFValues}
+                                UDFError={UDFError}
+                            />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>
