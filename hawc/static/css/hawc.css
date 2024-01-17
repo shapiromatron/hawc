@@ -108,8 +108,14 @@ tfoot > tr > td {
 .bg-gray {
     background-color: #e8e8e8;
 }
+.bg-pink {
+    background-color: #ffb3b3;
+}
 .clickable:hover.bg-gray {
     background-color: #d1d1d1 !important;
+}
+.clickable:hover.bg-pink {
+    background-color: #ff9e9e !important;
 }
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;

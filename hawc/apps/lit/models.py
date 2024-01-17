@@ -896,6 +896,7 @@ class Reference(models.Model):
         self.last_updated = timezone.now()
         self.save()
 
+    @transaction.atomic
     def update_tags(self, user, tag_pks: list[int], udf_data: dict | None = None) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
@@ -929,6 +930,7 @@ class Reference(models.Model):
                 lambda: ReferenceFilterTag.get_tree_descendants(tags),
                 f"assessment-{self.assessment_id}-tag-descendants",
             )
+            form_errors = {}
             for udf_tag, udf in udf_data.items():
                 # if there's any intersection between the descendant tags of the UDf tag and the tag_pks, create the udf
                 if not descendant_tags[int(udf_tag)].isdisjoint(tag_pks):
@@ -939,29 +941,33 @@ class Reference(models.Model):
                         )
                         # use tag_pk prefix (same as form creation)
                         keepTrying = True
-                        while keepTrying:
+                        while keepTrying:  # loop so we can attempt to fix errors
                             form = binding.form_instance(prefix=int(udf_tag), data=udf)
                             if form.is_valid():
-                                keepTrying = False
                                 TagUDFContent.objects.update_or_create(
                                     reference_id=self.id,
                                     tag_binding_id=binding.id,
                                     defaults={"content": form.cleaned_data},
                                 )
+                                keepTrying = False
                             else:
                                 for field, errors in form.errors.items():
                                     for error in errors:
                                         if error == "Enter a list of values.":
                                             udf[f"{udf_tag}-{field}"] = [udf[f"{udf_tag}-{field}"]]
                                         else:
-                                            raise ValidationError(
-                                                {
-                                                    f"{udf_tag}-{key}": value
-                                                    for (key, value) in form.errors.items()
-                                                }
-                                            )
+                                            keepTrying = False
+                                if not keepTrying:
+                                    form_errors.update(
+                                        {
+                                            f"{udf_tag}-{key}": value
+                                            for (key, value) in form.errors.items()
+                                        }
+                                    )
                     except TagBinding.DoesNotExist:
                         pass
+            if form_errors:
+                raise ValidationError(form_errors)
 
         # determine if we should save the reference-level tags
         update_reference_tags = False

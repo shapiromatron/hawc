@@ -40,6 +40,7 @@ class Store {
         this.referenceUserTags = reference.userTags
             ? reference.userTags.slice(0)
             : reference.tags.slice(0);
+        this.currentUDF = null;
         this.setUDF();
         this.UDFValues = this.reference.data.tag_udf_contents;
         this.UDFError = null;
@@ -57,13 +58,13 @@ class Store {
                     udfHTML += `<a class="text-black text-decoration-none clickable bg-gray 
                                         rounded-top px-3 d-flex justify-content-start 
                                         align-items-center flex-wrap border-bottom-light" 
-                                        type="button" data-toggle="collapse" 
-                                        data-target="#collapse-${tagID}-udf" 
+                                        type="button" data-toggle="collapse" id="udf-header-${tagID}-${this.reference.data.pk}"
+                                        data-target="#collapse-${tagID}-${this.reference.data.pk}-udf" 
                                         aria-expanded="true" aria-controls="collapse-${tagID}-udf">
                                     <span class="refTag px-1 py-0 my-3">${this.tagNames[tagID]}</span>
                                     <span class="h5 m-0">Tag Form</span>
                                 </a>`;
-                    udfHTML += `<div class="px-4 py-3 collapse show" id="collapse-${tagID}-udf">${udf}</div></div>`;
+                    udfHTML += `<div class="px-4 py-3 collapse show" id="collapse-${tagID}-${this.reference.data.pk}-udf">${udf}</div></div>`;
                     this.udfIDs.push(tagID);
                 }
             }

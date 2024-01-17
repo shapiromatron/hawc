@@ -7,6 +7,7 @@ import React, {Component, useEffect} from "react";
 import Alert from "shared/components/Alert";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import Modal from "shared/components/Modal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
@@ -97,24 +98,26 @@ var ReferenceUDF = inject("store")(
                     }
                 });
             });
-            $("#udf-form .invalid-feedback").each(function() {
-                $(this).remove();
+            HAWCUtils.dynamicFormListeners();
+            $("#udf-form .invalid-feedback").remove();
+            $("#udf-form .is-invalid").removeClass("is-invalid");
+            $("#udf-form .bg-pink").removeClass("bg-pink");
+            _.forEach(_.fromPairs(UDFError), function(error, field) {
+                var input = $(`[name="${field}"]`);
+                input.addClass("is-invalid");
+                input
+                    .closest("div.form-group")
+                    .append(`<div class="invalid-feedback d-block">${error.join(" ")}</div>`);
+                input
+                    .closest('[id^="collapse-"]')
+                    .siblings('[id^="udf-header-"]')
+                    .addClass("bg-pink");
             });
-            $("#udf-form .is-invalid").each(function() {
-                $(this).removeClass("is-invalid");
-            });
-            if (UDFError) {
-                _.forEach(_.fromPairs(UDFError), function(error, field) {
-                    var input = $(`[name="${field}"]`);
-                    input.addClass("is-invalid");
-                    $(`<div class="invalid-feedback">${error.join(" ")}</div>`).insertAfter(input);
-                });
-            }
         });
 
         return currentUDF.length > 0 ? (
             <form id="udf-form">
-                <div className="px-3" dangerouslySetInnerHTML={{__html: currentUDF}} />
+                <div dangerouslySetInnerHTML={{__html: currentUDF}} />
             </form>
         ) : (
             ""
