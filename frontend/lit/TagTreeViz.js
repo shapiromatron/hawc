@@ -3,7 +3,7 @@ import {action, computed, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -118,7 +118,9 @@ class TagTreeViz extends D3Plot {
     }
 
     build_options() {
-        ReactDOM.render(<VizOptions viz={this} store={this.stateStore} />, this.options_div.get(0));
+        createRoot(this.options_div.get(0)).render(
+            <VizOptions viz={this} store={this.stateStore} />
+        );
     }
 
     set_defaults() {

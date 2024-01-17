@@ -1,6 +1,6 @@
 import {Provider} from "mobx-react";
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import $ from "$";
 
@@ -12,11 +12,10 @@ const exploratoryHeatmapFormAppStartup = function(el, config, djangoForm) {
     store.base.setInitialData();
     store.base.setDjangoForm(djangoForm);
     store.subclass.getDatasetOptions();
-    ReactDOM.render(
+    createRoot(el).render(
         <Provider store={store}>
             <App />
-        </Provider>,
-        el
+        </Provider>
     );
     $(el).fadeIn();
 };

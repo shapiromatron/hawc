@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import {getReferenceTagListUrl} from "shared/utils/urls";
 
 import PaginatedReferenceList from "./components/PaginatedReferenceList";
@@ -60,7 +60,7 @@ class NestedTag {
             required_tags: requiredTags,
             pruned_tags: prunedTags,
         };
-        ReactDOM.render(<PaginatedReferenceList settings={settings} canEdit={canEdit} />, el);
+        createRoot(el).render(<PaginatedReferenceList settings={settings} canEdit={canEdit} />);
     }
 
     get_list_link() {
