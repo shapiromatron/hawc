@@ -67,7 +67,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO("Migrating database schema..."))
         setup_databases(verbosity=0, interactive=False, keepdb=True)
         self.stdout.write(self.style.HTTP_INFO("Loading database fixture..."))
-        call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=0)
+        call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=1)
         settings.MIGRATION_MODULES = {}
         self.stdout.write(self.style.HTTP_INFO("Writing migrations (fake)..."))
         call_command("migrate", verbosity=0, fake=True)
