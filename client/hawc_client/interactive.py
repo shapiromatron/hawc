@@ -36,6 +36,7 @@ async def fetch_png(page: Page) -> BytesIO:
             | "animal bioassay endpoint aggregation"
             | "animal bioassay endpoint crossview"
             | "risk of bias heatmap"
+            | "study evaluation heatmap"
             | "risk of bias barchart"
             | "literature tagtree"
             | "exploratory heatmap"
