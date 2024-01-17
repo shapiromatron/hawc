@@ -1,0 +1,19 @@
+<table class="table table-sm table-striped" hx-target="this" id="experiment-table">
+    <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 80%;">
+    </colgroup>
+    <tbody>
+        {% optional_table_row "Experiment name" object.name %}
+        {% optional_table_row "Design" object.get_design_display %}
+        {% optional_table_row "Multiple generations" object.get_has_multiple_generations_display %}
+        {% optional_table_row "Guideline compliance" object.guideline_compliance %}
+
+        {% if object.comments|hastext %}
+        <tr>
+            <th>Comments</th>
+            <td>{{object.comments|safe}}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>

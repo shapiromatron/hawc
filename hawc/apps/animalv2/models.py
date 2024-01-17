@@ -1,6 +1,7 @@
 import reversion
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..vocab.models import Term
@@ -36,14 +37,28 @@ class Experiment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "study"
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("animalv2:experiment_detail", args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse("animalv2:experiment_update", args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse("animalv2:experiment_delete", args=(self.pk,))
 
     def get_assessment(self):
         return self.study.get_assessment()
 
     def get_study(self):
         return self.study
+
+    def get_has_multiple_generations_display(self) -> str:
+        return "Yes" if self.has_multiple_generations else "No"
 
 
 class Chemical(models.Model):

@@ -1,0 +1,18 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<div class="d-flex">
+    <h2>{{object.name}}</h2>
+    {% if obj_perms.edit and crud == "Read" %}
+    {% actions %}
+        <span class="dropdown-header">Experiment editing</span>
+        <a class="dropdown-item" href="{{object.get_update_url}}">Update</a>
+        <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
+    {% endactions %}
+    {% endif %}
+</div>
+{% include "animalv2/fragments/_experiment_table.html" %}
+
+{{object}}
+
+{% endblock %}

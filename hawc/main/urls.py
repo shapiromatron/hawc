@@ -3,6 +3,7 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 import hawc.apps.animal.urls
+import hawc.apps.animalv2.urls
 import hawc.apps.assessment.urls
 import hawc.apps.bmd.urls
 import hawc.apps.common.urls
@@ -39,6 +40,7 @@ urlpatterns = [
     path("common/", include("hawc.apps.common.urls")),
     path("study/", include("hawc.apps.study.urls")),
     path("ani/", include("hawc.apps.animal.urls")),
+    path("ani-bioassay/", include("hawc.apps.animalv2.urls")),
     path("eco/", include("hawc.apps.eco.urls")),
     path("epi/", include("hawc.apps.epi.urls")),
     path("epidemiology/", include("hawc.apps.epiv2.urls")),
