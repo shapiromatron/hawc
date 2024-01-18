@@ -8,3 +8,4 @@ RUN apk update && \
 ADD backup.sh /usr/local/bin/backup
 ADD restore.sh /usr/local/bin/restore
 ADD list-backups.sh /usr/local/bin/list-backups
+ADD init.sh /docker-entrypoint-initdb.d/init-user-db.sh
