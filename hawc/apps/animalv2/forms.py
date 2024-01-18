@@ -51,6 +51,6 @@ class ExperimentForm(ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_row("design", 2, "col-md-4")
+        helper.add_row("name", 3, "col-md-4")
         helper.form_id = "experiment-v2-form"
         return helper
