@@ -65,12 +65,14 @@ class Command(BaseCommand):
         migrate.Command = MigrateSilentCommand
         settings.MIGRATION_MODULES = DisableMigrations()
         self.stdout.write(self.style.HTTP_INFO("Migrating database schema..."))
-        setup_databases(verbosity=0, interactive=False, keepdb=True)
+        setup_databases(verbosity=1, interactive=False, keepdb=True)
         self.stdout.write(self.style.HTTP_INFO("Loading database fixture..."))
         call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=1)
         settings.MIGRATION_MODULES = {}
-        self.stdout.write(self.style.HTTP_INFO("Writing migrations (fake)..."))
-        call_command("migrate", verbosity=0, fake=True)
+        self.stdout.write(self.style.HTTP_INFO("Writing migrations..."))
+        call_command("migrate", verbosity=1, fake=True)
+        self.stdout.write(self.style.HTTP_INFO("Creating cache table..."))
+        call_command("createcachetable", verbosity=1)
 
     def setup_test_environment(self) -> None:
         """Setup test environment within pytest environment."""
