@@ -1,3 +1,4 @@
+import shutil
 import sys
 from pathlib import Path
 
@@ -58,6 +59,15 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.HTTP_INFO(f"Writing {fn}"))
                 fn.parent.mkdir(parents=True, exist_ok=True)
                 df.to_excel(fn, index=False)
+
+        # copy media files
+        media_files = ["summary/visual/images/iris.png"]
+        for media_file in media_files:
+            target = Path(settings.MEDIA_ROOT) / media_file
+            src = Path(settings.PROJECT_ROOT) / f"tests/data/media/{media_file}"
+            if src.exists() and not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(src, target)
 
     def setup_environment(self) -> None:
         """Disable migrations like pytest-django does, but outside of pytest-django."""
