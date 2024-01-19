@@ -248,7 +248,6 @@ class ExploreHeatmap extends BaseVisual {
     }
 
     displayAsModal(options) {
-        // TODO HEATMAP  - check!
         options = options || {};
 
         var captionDiv = $("<div>").html(this.data.caption),
@@ -256,7 +255,7 @@ class ExploreHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             modal = new HAWCModal(),
             callback = resp => {
-                if (resp.error) {
+                if (resp.dataset) {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
