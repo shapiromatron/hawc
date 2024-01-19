@@ -34,7 +34,7 @@
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error"
     },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "parserOptions": {
         "ecmaVersion": 9,
         "ecmaFeatures": {
@@ -55,7 +55,6 @@
         "prettier"
     ],
     "plugins": [
-        "babel",
         "react",
         "prettier",
         "simple-import-sort"
