@@ -13,6 +13,22 @@
 </div>
 {% include "animalv2/fragments/_experiment_table.html" %}
 
-{{object}}
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Chemicals</h3>
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '50,50' %}
+            {% bs4_thead 'Name,CAS,DTXSID' %}
+            <tbody>
+                {% for object in object.v2_chemicals.all %}
+                    {% include "animalv2/fragments/_chemical_row.html" %}
+                {% empty %}
+                    {% bs4_fullrow 'No chemicals available.' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 {% endblock %}

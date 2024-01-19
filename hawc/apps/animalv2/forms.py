@@ -1,8 +1,14 @@
 from django import forms
 from django.forms import ModelForm
+from django.urls import reverse
 
+from ..assessment.autocomplete import DSSToxAutocomplete
+from ..common.autocomplete import (
+    AutocompleteSelectWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import BaseFormHelper, QuillField
-from . import models
+from . import autocomplete, models
 
 
 class ExperimentForm(ModelForm):
@@ -53,4 +59,30 @@ class ExperimentForm(ModelForm):
 
         helper.add_row("name", 3, "col-md-4")
         helper.form_id = "experiment-v2-form"
+        return helper
+
+
+class ChemicalForm(forms.ModelForm):
+    class Meta:
+        model = models.Chemical
+        exclude = ("experiment",)
+        widgets = {
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.ChemicalAutocomplete, field="name"
+            ),
+            "dtxsid": AutocompleteSelectWidget(autocomplete_class=DSSToxAutocomplete),
+        }
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("name", 3, "col-md-4")
+        helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
