@@ -127,3 +127,8 @@ def df_to_form_data(key: str, df: pd.DataFrame) -> dict:
     f = BytesIO()
     df.to_excel(f, index=False)
     return {key: SimpleUploadedFile("test.xlsx", f.getvalue())}
+
+
+# return any random instance of a specified model class
+def generic_get_any(model_class):
+    return model_class.objects.all().first()
