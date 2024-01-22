@@ -3,7 +3,7 @@ import {action, computed, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -118,7 +118,9 @@ class TagTreeViz extends D3Plot {
     }
 
     build_options() {
-        ReactDOM.render(<VizOptions viz={this} store={this.stateStore} />, this.options_div.get(0));
+        createRoot(this.options_div.get(0)).render(
+            <VizOptions viz={this} store={this.stateStore} />
+        );
     }
 
     set_defaults() {
@@ -158,7 +160,7 @@ class TagTreeViz extends D3Plot {
                 .x(d => d.y)
                 .y(d => d.x),
             self = this,
-            buildVizDatasetNode = function(nestedTag) {
+            buildVizDatasetNode = function (nestedTag) {
                 return {
                     id: nestedTag.data.pk,
                     name: nestedTag.data.name,
@@ -182,21 +184,17 @@ class TagTreeViz extends D3Plot {
                     d._children = null;
                 }
             },
-            toggleAll = function(d) {
+            toggleAll = function (d) {
                 if (d.children) {
                     d.children.forEach(toggleAll);
                 }
                 toggle(d);
             },
-            fetch_references = function(tag) {
+            fetch_references = function (tag) {
                 var title = `<h4>${tag.data.name}</h4>`,
                     div = $("<div>");
 
-                self.modal
-                    .addHeader(title)
-                    .addBody(div)
-                    .addFooter("")
-                    .show({maxWidth: 1200});
+                self.modal.addHeader(title).addBody(div).addFooter("").show({maxWidth: 1200});
 
                 tag.renderPaginatedReferenceList(
                     div.get(0),
@@ -205,7 +203,7 @@ class TagTreeViz extends D3Plot {
                     self.stateStore.options.pruned_tags
                 );
             },
-            update = function(event, source) {
+            update = function (event, source) {
                 var duration = event && event.altKey ? 5000 : 500,
                     t = d3.transition().duration(duration);
 
@@ -227,7 +225,7 @@ class TagTreeViz extends D3Plot {
                     .append("svg:g")
                     .attr("class", "tagnode")
                     .attr("transform", () => `translate(${source.y0},${source.x0})`)
-                    .on("click", function(event, d) {
+                    .on("click", function (event, d) {
                         if (event.ctrlKey || event.metaKey) {
                             if (d.depth == 0) {
                                 alert("Cannot view details on root-node.");
@@ -241,7 +239,7 @@ class TagTreeViz extends D3Plot {
                     })
                     .call(
                         HAWCUtils.updateDragLocationTransform(
-                            function(x, y) {
+                            function (x, y) {
                                 var p = d3.select(this),
                                     id = p.data()[0].data.id;
                                 store.updateDragLocation(id, x, y);
@@ -265,7 +263,7 @@ class TagTreeViz extends D3Plot {
                     .attr("text-anchor", "middle")
                     .text(d => d.data.name)
                     .style("fill-opacity", 1e-6)
-                    .each(function() {
+                    .each(function () {
                         HAWCUtils.wrapText(this, 170);
                     });
 
@@ -297,10 +295,7 @@ class TagTreeViz extends D3Plot {
                     .attr("r", d => radius_scale(d.data.numReferencesDeep))
                     .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"));
 
-                nodeUpdate
-                    .selectAll("text")
-                    .transition(t)
-                    .style("fill-opacity", 1);
+                nodeUpdate.selectAll("text").transition(t).style("fill-opacity", 1);
 
                 // Transition exiting nodes to the parent's new position.
                 var nodeExit = node
@@ -323,7 +318,7 @@ class TagTreeViz extends D3Plot {
                 link.enter()
                     .insert("svg:path", "g")
                     .attr("class", "tagslink")
-                    .attr("d", function(d) {
+                    .attr("d", function (d) {
                         self.check_svg_fit(source.y0);
                         var o = {x: source.x0, y: source.y0};
                         return diagonal({source: o, target: o});
@@ -333,15 +328,13 @@ class TagTreeViz extends D3Plot {
                     .attr("d", diagonal);
 
                 // Transition links to their new position.
-                link.transition()
-                    .duration(duration)
-                    .attr("d", diagonal);
+                link.transition().duration(duration).attr("d", diagonal);
 
                 // Transition exiting nodes to the parent's new position.
                 link.exit()
                     .transition()
                     .duration(duration)
-                    .attr("d", function(d) {
+                    .attr("d", function (d) {
                         self.check_svg_fit(source.y);
                         var o = {x: source.x, y: source.y};
                         return diagonal({source: o, target: o});

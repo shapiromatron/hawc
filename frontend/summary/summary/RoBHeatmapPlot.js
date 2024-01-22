@@ -93,7 +93,7 @@ class RoBHeatmapPlot extends D3Visualization {
                 ? this.data.settings.study_label_field
                 : "short_citation"; // use `short_citation` for backwards compatible default
 
-        _.each(this.data.aggregation.metrics_dataset, function(metric) {
+        _.each(this.data.aggregation.metrics_dataset, function (metric) {
             _.chain(metric.rob_scores)
                 .filter(rob => _.includes(included_metrics, rob.data.metric.id))
                 .groupBy(rob => rob.study.data.id)
@@ -214,14 +214,14 @@ class RoBHeatmapPlot extends D3Visualization {
             quarter_width = width * 0.25,
             three_quarter_width = width * 0.75,
             robName = this.data.assessment_rob_name,
-            showSQs = function(v) {
+            showSQs = function (v) {
                 self.print_details(self.modal.getBody(), $(this).data("robs"));
                 self.modal
                     .addHeader(`<h4>${robName}: ${this.textContent}</h4>`)
                     .addFooter("")
                     .show({maxWidth: 900});
             },
-            getMetricSQs = function(i, v) {
+            getMetricSQs = function (i, v) {
                 $(this).data("robs", {
                     type: "metric",
                     robs: self.cells_data
@@ -229,7 +229,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         .map(cell => cell.robArray),
                 });
             },
-            getStudySQs = function(i, v) {
+            getStudySQs = function (i, v) {
                 $(this).data("robs", {
                     type: "study",
                     robs: self.cells_data
@@ -237,7 +237,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         .map(cell => cell.robArray),
                 });
             },
-            hideHovers = function() {
+            hideHovers = function () {
                 self.draw_hovers(this, {draw: false});
             };
 
@@ -269,10 +269,7 @@ class RoBHeatmapPlot extends D3Visualization {
                     type: "cell",
                     robs: v.robArray,
                 });
-                this.modal
-                    .addHeader(`<h4>${robName}</h4>`)
-                    .addFooter("")
-                    .show({maxWidth: 900});
+                this.modal.addHeader(`<h4>${robName}</h4>`).addFooter("").show({maxWidth: 900});
             });
 
         this.score = this.cells_group
@@ -284,7 +281,7 @@ class RoBHeatmapPlot extends D3Visualization {
             .attr("y", d => y(d[self.yField]) + half_width)
             .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
-            .attr("class", function(d) {
+            .attr("class", function (d) {
                 var returnValue = "centeredLabel";
 
                 if (
@@ -363,22 +360,13 @@ class RoBHeatmapPlot extends D3Visualization {
         - (no change to bottom padding; whatever user specifies is used)
         */
         const xlabel_height = Math.ceil(
-                this.vis
-                    .select(".x_axis")
-                    .node()
-                    .getBoundingClientRect().height
+                this.vis.select(".x_axis").node().getBoundingClientRect().height
             ),
             xlabel_width = Math.ceil(
-                this.vis
-                    .select(".x_axis")
-                    .node()
-                    .getBoundingClientRect().width
+                this.vis.select(".x_axis").node().getBoundingClientRect().width
             ),
             ylabel_width = Math.ceil(
-                this.vis
-                    .select(".y_axis")
-                    .node()
-                    .getBoundingClientRect().width
+                this.vis.select(".y_axis").node().getBoundingClientRect().width
             ),
             xlabel_overhang = xlabel_width - this.w + 5,
             top = xlabel_height + this.padding.top_original,
@@ -510,7 +498,7 @@ class RoBHeatmapPlot extends D3Visualization {
 
     print_details($div, d) {
         // delay rendering until modal is displayed, as component depends on accurate width.
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             switch (d.type) {
                 case "cell":
                     renderRiskOfBiasDisplay(

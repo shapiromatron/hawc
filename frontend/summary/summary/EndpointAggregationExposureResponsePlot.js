@@ -80,7 +80,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
         this.data.endpoints
             .filter(d => d.data.groups.length > 0)
-            .forEach(function(e) {
+            .forEach(function (e) {
                 let bmd = e.get_special_bmd_value("BMD"),
                     bmdl = e.get_special_bmd_value("BMDL"),
                     egs = e.data.groups;
@@ -112,7 +112,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                 // setup points information
 
                 // add LOEL/NOEL
-                egs.forEach(function(v2, i2) {
+                egs.forEach(function (v2, i2) {
                     var txt = [
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.name,
@@ -215,11 +215,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             .scale(this.x_scale)
             .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
 
-        this.vis
-            .selectAll(".x_axis")
-            .transition()
-            .duration(1000)
-            .call(this.xAxis);
+        this.vis.selectAll(".x_axis").transition().duration(1000).call(this.xAxis);
 
         this.rebuild_x_gridlines({animate: true});
 
@@ -239,10 +235,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
     resize_plot_dimensions() {
         // Resize plot based on the dimensions of the labels.
-        var ylabel_width = this.vis
-            .select(".y_axis")
-            .node()
-            .getBoundingClientRect().width;
+        var ylabel_width = this.vis.select(".y_axis").node().getBoundingClientRect().width;
         if (this.padding.left < this.padding.left_original + ylabel_width) {
             this.padding.left = this.padding.left_original + ylabel_width;
             this.render(this.plot_div);
@@ -271,9 +264,9 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         var lines_data = this.lines_data;
         d3.select(this.svg)
             .selectAll(".y_axis text")
-            .text(function(v, i) {
+            .text(function (v, i) {
                 var name;
-                lines_data.forEach(function(endpoint) {
+                lines_data.forEach(function (endpoint) {
                     if (v === endpoint.y) {
                         name = endpoint.name;
                         return;
@@ -325,7 +318,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             .style("position", "absolute")
             .style("z-index", "1000")
             .style("visibility", "hidden")
-            .on("click", function() {
+            .on("click", function () {
                 $(this).css("visibility", "hidden");
             });
         this.tooltip = $(tooltip[0]);
@@ -362,7 +355,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
     }
 
     add_legend() {
-        var addItem = function(txt, cls, color) {
+        var addItem = function (txt, cls, color) {
                 return {
                     text: txt,
                     classes: cls,

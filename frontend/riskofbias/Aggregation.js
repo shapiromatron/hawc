@@ -8,9 +8,9 @@ class Aggregation {
 
     build_metrics_dataset() {
         var arr = [];
-        this.studies.forEach(function(study) {
-            study.riskofbias.forEach(function(domain) {
-                domain.criteria.forEach(function(rob) {
+        this.studies.forEach(function (study) {
+            study.riskofbias.forEach(function (domain) {
+                domain.criteria.forEach(function (rob) {
                     arr.push(rob);
                 });
             });
@@ -18,7 +18,7 @@ class Aggregation {
 
         var ds = h.groupNest(arr, d => d.data.metric.id);
 
-        var score_binning = function(d) {
+        var score_binning = function (d) {
             let bins = {};
             d.rob_scores.forEach(rob => {
                 if (bins[rob.data.score] === undefined) {
@@ -34,7 +34,7 @@ class Aggregation {
             return bins;
         };
 
-        ds.forEach(function(v) {
+        ds.forEach(function (v) {
             h.renameProperty(v, "key", "domain");
             h.renameProperty(v, "values", "rob_scores");
             v.domain_text = v.rob_scores[0].data.metric.domain.name;

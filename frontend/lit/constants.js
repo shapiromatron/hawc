@@ -28,7 +28,7 @@ export const ReferenceStorageKey = "sortReferencesBy",
             ["desc", "asc"],
         ],
     },
-    sortReferences = function(refs, sortByKey) {
+    sortReferences = function (refs, sortByKey) {
         const key =
             sortByKey || window.localStorage.getItem(ReferenceStorageKey) || SortBy.YEAR_DESC[0];
         return _.orderBy(refs, SortBy[key][2], SortBy[key][3]);

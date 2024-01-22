@@ -9,8 +9,8 @@ class Completeness extends Component {
                 number === 0
                     ? "All items complete! Ready to submit."
                     : number === 1
-                    ? "1 item still needs input:"
-                    : `${number} items still need input:`;
+                      ? "1 item still needs input:"
+                      : `${number} items still need input:`;
         return (
             <div className={className}>
                 <p>{message}</p>

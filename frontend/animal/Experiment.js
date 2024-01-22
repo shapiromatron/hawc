@@ -44,13 +44,13 @@ class Experiment {
 
     build_details_table() {
         var self = this,
-            getGenerations = function() {
+            getGenerations = function () {
                 return self.data.is_generational ? "Yes" : "No";
             },
-            getPurityText = function() {
+            getPurityText = function () {
                 return self.data.purity_available ? "Chemical purity" : "Chemical purity available";
             },
-            getPurity = function() {
+            getPurity = function () {
                 var qualifier =
                     self.data.purity_qualifier === "=" ? "" : self.data.purity_qualifier;
                 return self.data.purity ? `${qualifier}${self.data.purity}%` : "No";
@@ -96,11 +96,7 @@ class Experiment {
             $details.append(el);
         }
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1000});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1000});
     }
 
     render($div) {

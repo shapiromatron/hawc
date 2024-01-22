@@ -209,7 +209,7 @@ class RobCleanupStore {
     }
 }
 
-const createStore = function(config) {
+const createStore = function (config) {
     const store = new RobCleanupStore(config);
 
     autorun(() => {

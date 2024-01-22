@@ -71,15 +71,10 @@ const BmrHeaderMap = {
             p.v * p.g +
             (p.v - p.v * p.g) / (1 + Math.exp(-1 * p.intercept - p.slope * Math.log(x))),
     },
-    cleanParameters = function(parameters, estimates) {
+    cleanParameters = function (parameters, estimates) {
         const cleanNames = _.chain(parameters)
                 .keys()
-                .map(d =>
-                    d
-                        .toLowerCase()
-                        .replace("(", "_")
-                        .replace(")", "")
-                )
+                .map(d => d.toLowerCase().replace("(", "_").replace(")", ""))
                 .value(),
             paramValues = _.chain(parameters)
                 .values()
@@ -91,12 +86,12 @@ const BmrHeaderMap = {
         return mapping;
     };
 
-export const buildModelFormula = function(name, parameters, estimates) {
+export const buildModelFormula = function (name, parameters, estimates) {
         const params = cleanParameters(parameters, estimates),
             formula = formulas[name];
         return {params, formula};
     },
-    bmdLabelText = function(bmr) {
+    bmdLabelText = function (bmr) {
         let str, val;
         switch (bmr.type) {
             case "Extra":

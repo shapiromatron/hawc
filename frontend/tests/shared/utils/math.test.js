@@ -6,13 +6,13 @@ import {
 
 import assert from "../../helpers";
 
-describe("shared/utils/math", function() {
-    describe("inv_tdist_05", function() {
-        it("handles out of bounds", function() {
+describe("shared/utils/math", function () {
+    describe("inv_tdist_05", function () {
+        it("handles out of bounds", function () {
             assert.ok(isNaN(inv_tdist_05(0)));
             assert.ok(isNaN(inv_tdist_05(351)));
         });
-        it("approximated values are close to expected", function() {
+        it("approximated values are close to expected", function () {
             assert.isClose(inv_tdist_05(1), 12.706, 1e-2);
             assert.isClose(inv_tdist_05(2), 4.302, 1e-2);
             assert.isClose(inv_tdist_05(10), 2.228, 1e-2);
@@ -22,8 +22,8 @@ describe("shared/utils/math", function() {
         });
     });
 
-    describe("addContinuousConfidenceIntervals", function() {
-        it("works with invalid data", function() {
+    describe("addContinuousConfidenceIntervals", function () {
+        it("works with invalid data", function () {
             const endpoint = {
                 data: {
                     groups: [
@@ -40,7 +40,7 @@ describe("shared/utils/math", function() {
                 assert.ok(d.upper_ci === undefined);
             });
         });
-        it("works with valid data", function() {
+        it("works with valid data", function () {
             const endpoint = {
                 data: {
                     groups: [
@@ -59,8 +59,8 @@ describe("shared/utils/math", function() {
         });
     });
 
-    describe("addDichotomousConfidenceIntervals", function() {
-        it("works with invalid data", function() {
+    describe("addDichotomousConfidenceIntervals", function () {
+        it("works with invalid data", function () {
             const endpoint = {
                 data: {
                     groups: [
@@ -76,7 +76,7 @@ describe("shared/utils/math", function() {
                 assert.ok(d.upper_ci === undefined);
             });
         });
-        it("works with valid data", function() {
+        it("works with valid data", function () {
             const endpoint = {
                 data: {
                     groups: [

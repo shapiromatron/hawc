@@ -206,7 +206,7 @@ const NA_KEYS = [10, 20],
         15: "Probably high risk of bias/not reported",
         25: "Deficient/not reported",
     },
-    getMultiScoreDisplaySettings = function(scores) {
+    getMultiScoreDisplaySettings = function (scores) {
         // Return visualization/color settings for situations where multiple scores may exist for
         // a given metric (eg, study-level override settings).
         // By default, if multiple scores exist and show he defaults score label if one exists.
@@ -281,19 +281,19 @@ const NA_KEYS = [10, 20],
         "epi.exposure": "Epidemiological exposures",
         "epi.result": "Epidemiological results",
     },
-    fetchRobSettings = function(assessmentId, success, error) {
+    fetchRobSettings = function (assessmentId, success, error) {
         return fetch(`/rob/api/assessment/${assessmentId}/settings/`, h.fetchGet)
             .then(response => response.json())
             .then(success)
             .catch(error || _.noop);
     },
-    fetchStudy = function(studyId, success, error) {
+    fetchStudy = function (studyId, success, error) {
         return fetch(`/study/api/study/${studyId}/`, h.fetchGet)
             .then(response => response.json())
             .then(success)
             .catch(error || _.noop);
     },
-    fetchRobStudy = function(studyId, success, error) {
+    fetchRobStudy = function (studyId, success, error) {
         return fetch(`/study/api/study/${studyId}/all-rob/`, h.fetchGet)
             .then(response => response.json())
             .then(success)

@@ -8,7 +8,7 @@ class ExploratoryHeatmap {
     }
 }
 
-const createExploratoryHeatmapStore = function(config) {
+const createExploratoryHeatmapStore = function (config) {
     return new ExploratoryHeatmap(config);
 };
 

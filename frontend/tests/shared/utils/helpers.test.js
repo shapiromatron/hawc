@@ -2,9 +2,9 @@ import {addOuterTag, escapeRegex, markKeywords} from "shared/utils/_helpers";
 
 import assert from "../../helpers";
 
-describe("shared/utils/helpers", function() {
-    describe("addOuterTag", function() {
-        it("adds tags when needed", function() {
+describe("shared/utils/helpers", function () {
+    describe("addOuterTag", function () {
+        it("adds tags when needed", function () {
             assert.equal(addOuterTag("", "p"), "<p></p>");
             assert.equal(addOuterTag("hi", "p"), "<p>hi</p>");
             assert.equal(addOuterTag("<li>hi</li>", "p"), "<p><li>hi</li></p>");
@@ -12,13 +12,13 @@ describe("shared/utils/helpers", function() {
             // TODO - fails when tag has an attribute
             assert.equal(addOuterTag('<p class="foo">hi</p>', "p"), '<p><p class="foo">hi</p></p>');
         });
-        it("doesn't add tags when not needed", function() {
+        it("doesn't add tags when not needed", function () {
             assert.equal(addOuterTag("<p></p>", "p"), "<p></p>");
             assert.equal(addOuterTag("<p>hi</p>", "p"), "<p>hi</p>");
         });
     });
-    describe("markKeywords", function() {
-        it("highlights matching text from a keyword list", function() {
+    describe("markKeywords", function () {
+        it("highlights matching text from a keyword list", function () {
             const settings = {
                 set1: {
                     name: "Positive",
@@ -60,8 +60,8 @@ describe("shared/utils/helpers", function() {
             );
         });
     });
-    describe("escapeRegex", function() {
-        it("escapes special regex characters from text", function() {
+    describe("escapeRegex", function () {
+        it("escapes special regex characters from text", function () {
             const regText =
                 "phenylbenzene-1,4-diamine|6-PPDQ|2-anilino-5-[(4-methylpentan-2-yl)amino]cyclohexa-2,5-diene-1,4-dione";
             assert.equal(
@@ -69,7 +69,7 @@ describe("shared/utils/helpers", function() {
                 "phenylbenzene-1,4-diamine\\|6-PPDQ\\|2-anilino-5-\\[\\(4-methylpentan-2-yl\\)amino\\]cyclohexa-2,5-diene-1,4-dione"
             );
         });
-        it("doesn't escape text without any special characters", function() {
+        it("doesn't escape text without any special characters", function () {
             assert.equal(
                 escapeRegex("no special characters to escape"),
                 "no special characters to escape"

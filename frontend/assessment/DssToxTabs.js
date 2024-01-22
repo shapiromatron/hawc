@@ -2,7 +2,7 @@ import DssToxDetailTable from "assessment/components/DssToxDetailTable";
 import DssTox from "assessment/DssTox";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
 class DssToxTabs extends Component {
@@ -37,9 +37,9 @@ DssToxTabs.propTypes = {
     objects: PropTypes.arrayOf(PropTypes.object),
 };
 
-const renderDssToxTabs = function(el, objects) {
+const renderDssToxTabs = function (el, objects) {
     const substances = objects.map(d => new DssTox(d));
-    ReactDOM.render(<DssToxTabs objects={substances} />, el);
+    createRoot(el).render(<DssToxTabs objects={substances} />);
 };
 
 export default renderDssToxTabs;

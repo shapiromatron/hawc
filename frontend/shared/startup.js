@@ -11,7 +11,7 @@ import tryWebAppStartup from "./utils/tryWebAppStartup";
 $.fn.quillify = Quillify;
 
 // Django AJAX with CSRF protection.
-const getCookie = function(name) {
+const getCookie = function (name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== "") {
             var cookies = document.cookie.split(";");
@@ -30,8 +30,8 @@ const getCookie = function(name) {
     sessionid = getCookie("sessionid"),
     csrfSafeMethod = method => /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
 
-d3.selection.prototype.moveToFront = function() {
-    return this.each(function() {
+d3.selection.prototype.moveToFront = function () {
+    return this.each(function () {
         this.parentNode.appendChild(this);
     });
 };
@@ -52,7 +52,7 @@ const setupAjax = document => {
             },
         });
     },
-    debugStartup = function() {
+    debugStartup = function () {
         if (window.localStorage.getItem("hawc-debug-badge") == "true") {
             $(".debug-badge")
                 .on("click", e => {

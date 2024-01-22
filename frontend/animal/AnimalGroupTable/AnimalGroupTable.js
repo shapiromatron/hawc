@@ -71,7 +71,7 @@ const nRow = (endpoint, index) => {
         );
     },
     sortIcons = {0: "&nbsp;", 1: "↑", 2: "↓"},
-    renderIcon = function(current, key, value) {
+    renderIcon = function (current, key, value) {
         if (current !== key) {
             return null;
         }
@@ -82,15 +82,8 @@ const nRow = (endpoint, index) => {
 @observer
 class AnimalGroupTable extends Component {
     renderHeader() {
-        const {
-                doses,
-                units,
-                firstEndpoint,
-                numCols,
-                cycleSort,
-                sortKey,
-                sortValue,
-            } = this.props.store,
+        const {doses, units, firstEndpoint, numCols, cycleSort, sortKey, sortValue} =
+                this.props.store,
             colWidth = Math.round(100 / (numCols + 1));
         let doseUnitsHeader = `Dose [${units[0].name}]`;
         if (units.length > 1) {

@@ -34,7 +34,7 @@ class EndpointDetailRow {
         this.endpoint.build_endpoint_table($("#" + table_id));
         this.endpoint.renderPlot($("#" + plot_div_id), {showBmd: true});
 
-        $(div + " a.close").on("click", function(e) {
+        $(div + " a.close").on("click", function (e) {
             e.preventDefault();
             self.toggle_view(false);
         });

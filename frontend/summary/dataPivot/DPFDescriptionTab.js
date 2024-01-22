@@ -2,7 +2,7 @@ import $ from "$";
 
 import {_DataPivot_settings_description, buildColGroup, buildHeaderTr} from "./DataPivotUtilities";
 
-let buildDescriptionTable = function(tab, dp) {
+let buildDescriptionTable = function (tab, dp) {
         let thead = $("<thead>").html(
                 buildHeaderTr([
                     "Column header",
@@ -18,7 +18,7 @@ let buildDescriptionTable = function(tab, dp) {
             tbody = $("<tbody>"),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.description_settings,
-            addDataRow = function(i) {
+            addDataRow = function (i) {
                 let obj;
                 if (!settings[i]) {
                     settings.push(_DataPivot_settings_description.defaults());
@@ -26,7 +26,7 @@ let buildDescriptionTable = function(tab, dp) {
                 obj = new _DataPivot_settings_description(dp, settings[i]);
                 tbody.append(obj.tr);
             },
-            newDataRow = function() {
+            newDataRow = function () {
                 addDataRow(settings.length);
             },
             newRowBtn = $(
@@ -40,7 +40,7 @@ let buildDescriptionTable = function(tab, dp) {
 
         return tab.append([newRowBtn, $("<h3>Descriptive text columns</h3>")], tbl);
     },
-    buildDescriptionTab = function(dp) {
+    buildDescriptionTab = function (dp) {
         let tab = $('<div class="tab-pane active" id="data_pivot_settings_description">');
         buildDescriptionTable(tab, dp);
         return tab;

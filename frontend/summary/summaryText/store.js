@@ -5,7 +5,7 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
-const getLabelText = function(item) {
+const getLabelText = function (item) {
     return `${_.repeat("—", item.depth - 1)} ${item.title}`;
 };
 

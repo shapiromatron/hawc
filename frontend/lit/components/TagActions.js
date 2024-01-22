@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
 
-const getActionLinks = function(assessmentId, tagId, untagged, canEdit) {
+const getActionLinks = function (assessmentId, tagId, untagged, canEdit) {
     let links = [];
     if (untagged && canEdit) {
         links.push(

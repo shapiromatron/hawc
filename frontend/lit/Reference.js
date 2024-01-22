@@ -6,7 +6,8 @@ import {sortReferences} from "./constants";
 class Reference {
     constructor(data, tagtree) {
         this.data = data;
-        this._quickSearchText = `${data.title}-${data.year}-${data.authors}-${data.authors_short}`.toLowerCase();
+        this._quickSearchText =
+            `${data.title}-${data.year}-${data.authors}-${data.authors_short}`.toLowerCase();
         this.tags = data.tags.map(tagId => tagtree.dict[tagId]);
         this.userTags = data.user_tags ? data.user_tags.map(tagId => tagtree.dict[tagId]) : null;
     }

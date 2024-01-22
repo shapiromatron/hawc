@@ -25,7 +25,7 @@ export const DATA_FILTER_CONTAINS = "contains",
         "Should multiple filter criteria be required for ALL rows (AND), ANY row (OR), or a custom query?",
     filterQueryHelpText =
         "Custom query using criteria row # and logic operators; e.g., 1 AND (2 OR 3) AND NOT 4",
-    filterFunction = function(filterType) {
+    filterFunction = function (filterType) {
         switch (filterType) {
             case "lt":
                 return (val, target) => val < target;
@@ -37,25 +37,18 @@ export const DATA_FILTER_CONTAINS = "contains",
                 return (val, target) => val >= target;
             case DATA_FILTER_CONTAINS:
                 return (val, target) =>
-                    val &&
-                    val
-                        .toString()
-                        .toLowerCase()
-                        .includes(target.toString().toLowerCase());
+                    val && val.toString().toLowerCase().includes(target.toString().toLowerCase());
             case "not_contains":
                 return (val, target) =>
                     _.isEmpty(val) ||
-                    !val
-                        .toString()
-                        .toLowerCase()
-                        .includes(target.toString().toLowerCase());
+                    !val.toString().toLowerCase().includes(target.toString().toLowerCase());
             case "exact":
                 return (val, target) => val == target;
             default:
                 console.error(`Unrecognized filter: ${filterType}`);
         }
     },
-    normalizeTargetValue = function(filter) {
+    normalizeTargetValue = function (filter) {
         switch (filter.type) {
             case "contains":
             case "not_contains":
@@ -71,7 +64,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                 console.error(`Unrecognized filter: ${filter.type}`);
         }
     },
-    applyCustomQueryFilters = function(arr, filters, filter_query) {
+    applyCustomQueryFilters = function (arr, filters, filter_query) {
         let getValue = i => {
                 let filter = filters[i - 1]; // convert 1 to 0 indexing
                 if (filter.column === NULL_VALUE) {
@@ -95,7 +88,7 @@ export const DATA_FILTER_CONTAINS = "contains",
             return [];
         }
     },
-    applyFilterLogic = function(arr, filters, filter_logic, includes, excludes) {
+    applyFilterLogic = function (arr, filters, filter_logic, includes, excludes) {
         filters
             .filter(d => d.column !== NULL_VALUE)
             .forEach(filter => {
@@ -123,7 +116,7 @@ export const DATA_FILTER_CONTAINS = "contains",
             });
         return arr.filter((_, i) => includes.has(i));
     },
-    applyRowFilters = function(arr, filters, filter_logic, filter_query) {
+    applyRowFilters = function (arr, filters, filter_logic, filter_query) {
         if (filters.length === 0 || arr.length == 0) {
             return arr;
         }

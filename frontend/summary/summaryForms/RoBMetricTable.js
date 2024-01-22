@@ -6,18 +6,14 @@ import {TableField} from "./TableFields";
 
 class RoBMetricTable extends TableField {
     renderHeader() {
-        return $("<tr>")
-            .append("<th>Display</th>", "<th>Metric</th>")
-            .appendTo(this.$thead);
+        return $("<tr>").append("<th>Display</th>", "<th>Metric</th>").appendTo(this.$thead);
     }
 
     addRow() {
         var includeTd = this.addTdCheckbox("included", true),
             metricTd = this.addTdP("metric", "");
 
-        return $("<tr>")
-            .append(includeTd, metricTd)
-            .appendTo(this.$tbody);
+        return $("<tr>").append(includeTd, metricTd).appendTo(this.$tbody);
     }
 
     fromSerialized() {
@@ -30,10 +26,10 @@ class RoBMetricTable extends TableField {
         // by default select all metrics if none are selected
         func =
             selected.length === 0
-                ? function(d) {
+                ? function (d) {
                       d.included = true;
                   }
-                : function(d) {
+                : function (d) {
                       d.included = _.includes(selected, d.id);
                   };
 
@@ -45,9 +41,7 @@ class RoBMetricTable extends TableField {
     fromSerializedRow(d) {
         var row = this.addRow();
         row.find(".metric").text(d.name);
-        row.find('input[name="included"]')
-            .prop("checked", d.included)
-            .data("id", d.id);
+        row.find('input[name="included"]').prop("checked", d.included).data("id", d.id);
     }
 
     toSerializedRow(row) {

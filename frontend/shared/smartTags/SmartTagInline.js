@@ -44,19 +44,13 @@ class InlineRendering {
     setTitle($titleContent) {
         let $title = this.renderParent.find(".inlineSmartTagTitle"),
             $body = this.renderParent.find(".inlineSmartTagBody"),
-            expandHideTogger = function() {
+            expandHideTogger = function () {
                 let isMax = $title.find(".fa-minus").length === 1;
                 if (isMax) {
-                    $title
-                        .find(".fa-minus")
-                        .removeClass("fa-minus")
-                        .addClass("fa-plus");
+                    $title.find(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
                     $body.fadeOut("slow");
                 } else {
-                    $title
-                        .find(".fa-plus")
-                        .removeClass("fa-plus")
-                        .addClass("fa-minus");
+                    $title.find(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
                     $body.fadeIn("slow");
                 }
             },

@@ -520,8 +520,8 @@ class Table extends Component {
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? " bg-light"
                                                     : col.attribute == COL_ATTRIBUTE.ROB.id
-                                                    ? " text-center align-middle cursor-pointer"
-                                                    : ""
+                                                      ? " text-center align-middle cursor-pointer"
+                                                      : ""
                                             }`}
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)

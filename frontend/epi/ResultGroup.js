@@ -47,10 +47,7 @@ class ResultGroup {
                 `Main finding as selected by HAWC assessment authors (${this.data.main_finding_support}).`,
             ]);
         }
-        return $("<a>")
-            .attr("href", this.group.url())
-            .text(txt)
-            .popover(this.group.popover());
+        return $("<a>").attr("href", this.group.url()).text(txt).popover(this.group.popover());
     }
 
     build_tr(fn, cols) {

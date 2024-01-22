@@ -47,7 +47,7 @@ class AnimalGroup {
 
     build_details_table() {
         var self = this,
-            getRelations = function(lst) {
+            getRelations = function (lst) {
                 return _.chain(lst)
                     .map(self._getAniRelationLink)
                     .map(d => $("<span>").append(d))
@@ -77,7 +77,7 @@ class AnimalGroup {
         var self = this,
             data = this.data.dosing_regime,
             tbl,
-            getExposureDuration = function(d) {
+            getExposureDuration = function (d) {
                 var txt = data.duration_exposure_text,
                     num = data.duration_exposure;
 
@@ -89,11 +89,11 @@ class AnimalGroup {
                     return undefined;
                 }
             },
-            getDurationObservation = function(d) {
+            getDurationObservation = function (d) {
                 var duration_observation = data.duration_observation;
                 return duration_observation ? `${duration_observation} days` : undefined;
             },
-            getDoses = function(doses) {
+            getDoses = function (doses) {
                 if (doses.length === 0) {
                     return undefined;
                 }
@@ -108,7 +108,7 @@ class AnimalGroup {
                     return `${ds} ${units}`;
                 });
             },
-            getDosedAnimals = function(id_, dosed_animals) {
+            getDosedAnimals = function (id_, dosed_animals) {
                 // only show dosed-animals if dosing-regime not applied to these animals
                 var ag = id_ !== dosed_animals.id ? dosed_animals : undefined;
                 return self._getAniRelationLink(ag);
@@ -138,11 +138,7 @@ class AnimalGroup {
 
         this.render($details);
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1000});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1000});
     }
 
     render($div) {

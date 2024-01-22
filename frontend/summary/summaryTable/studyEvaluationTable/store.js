@@ -600,18 +600,14 @@ class StudyEvaluationTableStore {
             }</a>${robData["label"] ? `: ${robData["label"]}` : ""}</h4>`,
             $content = $('<div class="container-fluid">');
 
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             renderRiskOfBiasDisplay(
                 RiskOfBiasScore.format_for_react([new RiskOfBiasScore(null, robData)], config),
                 $content[0]
             );
         }, 200);
 
-        modal
-            .addHeader(title)
-            .addFooter("")
-            .addBody($content)
-            .show({maxWidth: 1000});
+        modal.addHeader(title).addFooter("").addBody($content).show({maxWidth: 1000});
     }
 }
 

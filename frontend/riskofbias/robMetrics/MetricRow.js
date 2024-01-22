@@ -10,14 +10,8 @@ const metricUpdateUrl = id => `/rob/metric/${id}/update/`,
 @observer
 class MetricRow extends Component {
     render() {
-        const {
-            domainIndex,
-            metricIndex,
-            metric,
-            moveMetric,
-            detailedView,
-            metricCount,
-        } = this.props;
+        const {domainIndex, metricIndex, metric, moveMetric, detailedView, metricCount} =
+            this.props;
         return (
             <tr>
                 <td>&ensp;Metric #{metricIndex + 1}</td>

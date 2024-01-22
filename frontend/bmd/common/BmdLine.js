@@ -2,7 +2,7 @@ import _ from "lodash";
 
 import {buildModelFormula} from "./constants";
 
-const getPlotDataV1 = function(model) {
+const getPlotDataV1 = function (model) {
         let bmd = model.output.BMD,
             bmdl = model.output.BMDL,
             {params, formula} = buildModelFormula(
@@ -29,7 +29,7 @@ const getPlotDataV1 = function(model) {
             bmdl_line: bmdl && bmdl > 0 ? {x: bmdl, y: formula(bmdl, params)} : undefined,
         };
     },
-    getPlotDataV2 = function(model) {
+    getPlotDataV2 = function (model) {
         const {dose_units, name} = model,
             {bmd, bmdl} = model.results,
             {bmd_y, dr_x, dr_y} = model.results.plotting;

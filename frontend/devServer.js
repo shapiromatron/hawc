@@ -5,7 +5,7 @@ const _ = require("lodash"),
     CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin"),
     prodConfig = require("./webpack.config.js");
 
-let getConfig = function(host, port) {
+let getConfig = function (host, port) {
         let config = _.cloneDeep(prodConfig);
         config.mode = "development";
         config.devtool = "eval";
@@ -25,13 +25,13 @@ app.use(
     })
 );
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
-app.listen(port, "0.0.0.0", function(err) {
+app.listen(port, "0.0.0.0", function (err) {
     if (err) {
         console.error(err);
         return;

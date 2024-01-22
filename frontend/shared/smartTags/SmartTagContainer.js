@@ -23,7 +23,7 @@ class SmartTagContainer {
     }
 
     renderInlines() {
-        this.$el.find("div.smart-tag").each(function() {
+        this.$el.find("div.smart-tag").each(function () {
             let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagInline(this);
@@ -33,7 +33,7 @@ class SmartTagContainer {
     }
 
     unrenderInlines($el) {
-        this.$el.find("div.smart-tag").each(function() {
+        this.$el.find("div.smart-tag").each(function () {
             let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagInline(this);
@@ -43,7 +43,7 @@ class SmartTagContainer {
     }
 
     enableModals() {
-        this.$el.find("span.smart-tag").each(function() {
+        this.$el.find("span.smart-tag").each(function () {
             let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagModal(this);
@@ -53,7 +53,7 @@ class SmartTagContainer {
     }
 
     disableModals() {
-        this.$el.find("span.smart-tag").each(function() {
+        this.$el.find("span.smart-tag").each(function () {
             let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagModal(this);

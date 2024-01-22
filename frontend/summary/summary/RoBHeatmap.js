@@ -77,7 +77,7 @@ class RoBHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on("shown.bs.modal", function() {
+        modal.getModal().on("shown.bs.modal", function () {
             new RoBHeatmapPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });

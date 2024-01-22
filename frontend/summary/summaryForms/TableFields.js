@@ -43,9 +43,7 @@ class TableField extends InputField {
     setColgroup() {
         var cw = this.schema.colWidths || [],
             setCol = d => `<col width="${d}%"`;
-        $("<colgroup>")
-            .append(_.map(cw, setCol))
-            .appendTo(this.table);
+        $("<colgroup>").append(_.map(cw, setCol)).appendTo(this.table);
     }
 
     render() {
@@ -74,17 +72,17 @@ class TableField extends InputField {
     }
 
     tdOrdering() {
-        var moveUp = function() {
+        var moveUp = function () {
                 var tr = $(this.parentNode.parentNode),
                     prev = tr.prev();
                 if (prev.length > 0) tr.insertBefore(prev);
             },
-            moveDown = function() {
+            moveDown = function () {
                 var tr = $(this.parentNode.parentNode),
                     next = tr.next();
                 if (next.length > 0) tr.insertAfter(next);
             },
-            del = function() {
+            del = function () {
                 $(this.parentNode.parentNode).remove();
             },
             td = $("<td class='float-right'>");
@@ -104,11 +102,7 @@ class TableField extends InputField {
     }
 
     addTdP(cls, txt) {
-        return $("<td>").append(
-            $("<p>")
-                .attr("class", cls)
-                .text(txt)
-        );
+        return $("<td>").append($("<p>").attr("class", cls).text(txt));
     }
 
     addTdText(name, val) {

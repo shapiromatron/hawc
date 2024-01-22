@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -17,23 +17,21 @@ class ExternalWebsite extends BaseVisual {
         const settings = this.data.settings;
 
         if (settings.external_url_hostname === TABLEAU_HOSTNAME) {
-            ReactDOM.render(
+            createRoot(el).render(
                 <TableauDashboard
                     hostUrl={settings.external_url_hostname}
                     path={settings.external_url_path}
                     queryArgs={settings.external_url_query_args}
                     filters={settings.filters}
-                />,
-                el
+                />
             );
         } else {
-            ReactDOM.render(
+            createRoot(el).render(
                 <div className="alert alert-danger" role="alert">
                     Unable to render this page:
                     <br />
                     <a href={settings.external_url}>{settings.external_url}</a>
-                </div>,
-                el
+                </div>
             );
         }
     }

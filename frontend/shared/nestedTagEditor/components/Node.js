@@ -14,14 +14,8 @@ class Node extends React.Component {
     }
 
     render() {
-        const {
-                parent,
-                parentOptions,
-                node,
-                handleDelete,
-                handleUpdate,
-                sortableGroupDecorator,
-            } = this.props,
+        const {parent, parentOptions, node, handleDelete, handleUpdate, sortableGroupDecorator} =
+                this.props,
             children = node.children || [],
             hasChildren = children.length > 0,
             displayChildren = this.state.showChildren ? "inherit" : "none",

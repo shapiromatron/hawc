@@ -102,7 +102,7 @@ class Study {
     _get_identifiers_hyperlinks_ul() {
         var ul = $("<ul>");
 
-        this.data.identifiers.forEach(function(v) {
+        this.data.identifiers.forEach(function (v) {
             if (v.url) {
                 ul.append(
                     $("<li>").append(
@@ -126,7 +126,7 @@ class Study {
             tr = $("<tr>").append("<th>Attachments</th>"),
             td = $("<td>");
 
-        attachments.forEach(function(v) {
+        attachments.forEach(function (v) {
             ul.append(
                 `<li class="pb-2">
                     <a target="_blank" href="${v.url}">${v.filename}</a>

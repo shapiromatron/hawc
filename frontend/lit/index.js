@@ -1,6 +1,6 @@
 import {Provider} from "mobx-react";
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import BulkTagReferencesMain from "./BulkTagReferences/Main";
 import BulkTagReferencesMainStore from "./BulkTagReferences/store";
@@ -19,7 +19,7 @@ export default {
     startupReferenceTable(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             references = Reference.array(config.references, tagtree, false);
-        ReactDOM.render(<ReferenceTable references={references} showActions={false} />, el);
+        createRoot(el).render(<ReferenceTable references={references} showActions={false} />);
     },
     startupReferenceDetail(el, config) {
         let tagtree = new TagTree(config.tags[0]),
@@ -30,30 +30,27 @@ export default {
                 expanded: true,
             };
 
-        ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);
+        createRoot(el).render(<ReferenceComponent reference={ref} {...options} />);
     },
     startupReferenceList(el, config) {
-        ReactDOM.render(
+        createRoot(el).render(
             <Provider store={new ReferenceTreeMainStore(config)}>
                 <ReferenceTreeMain />
-            </Provider>,
-            el
+            </Provider>
         );
     },
     startupTagReferences(el, config) {
-        ReactDOM.render(
+        createRoot(el).render(
             <Provider store={new TagReferencesMainStore(config)}>
                 <TagReferencesMain />
-            </Provider>,
-            el
+            </Provider>
         );
     },
     startupBulkTagReferences(el, config) {
-        ReactDOM.render(
+        createRoot(el).render(
             <Provider store={new BulkTagReferencesMainStore(config)}>
                 <BulkTagReferencesMain />
-            </Provider>,
-            el
+            </Provider>
         );
     },
     startupTagTreeViz(el, config) {

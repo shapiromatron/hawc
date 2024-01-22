@@ -38,12 +38,9 @@ class CrossviewSelectorField extends TableField {
                 "valuesSome"
             ),
             valuesTd = this.addTdSelectMultiple("values", []),
-            values = valuesTd
-                .find("select")
-                .attr("size", 8)
-                .css("overflow-y", "scroll"),
+            values = valuesTd.find("select").attr("size", 8).css("overflow-y", "scroll"),
             name = nameTd.find("select"),
-            setValues = function(fld) {
+            setValues = function (fld) {
                 var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld, isLog))
                         .map(d => `<option value="${d}" selected>${d}</option>`)
@@ -52,12 +49,12 @@ class CrossviewSelectorField extends TableField {
             },
             allValues,
             headerNameTd = this.addTdText("headerName", ""),
-            setDefaultHeaderName = function(val) {
+            setDefaultHeaderName = function (val) {
                 headerNameTd.find("input").val(CrossviewPlot._filters[val]);
             };
 
         allValues = $('<input class="form-check-input" name="allValues" type="checkbox" checked>')
-            .on("change", function() {
+            .on("change", function () {
                 if ($(this).prop("checked")) {
                     values.hide();
                 } else {
@@ -72,7 +69,7 @@ class CrossviewSelectorField extends TableField {
             .append('<label class="form-check-label" for="defaultCheck1">Use all values</label>')
             .prependTo(valuesTd);
 
-        name.on("change", function() {
+        name.on("change", function () {
             var val = $(this).val();
             setValues(val);
             setDefaultHeaderName(val);
@@ -95,9 +92,7 @@ class CrossviewSelectorField extends TableField {
         var row = this.addRow();
         row.find('select[name="name"]').val(d.name);
         row.find('input[name="headerName"]').val(d.headerName);
-        row.find('input[name="allValues"]')
-            .prop("checked", d.allValues)
-            .trigger("change");
+        row.find('input[name="allValues"]').prop("checked", d.allValues).trigger("change");
         row.find('select[name="values"]').val(d.values);
         row.find('input[name="columns"]').val(d.columns);
         row.find('input[name="x"]').val(d.x);
@@ -142,7 +137,7 @@ class CrossviewColorFilterField extends TableField {
             headerName = headerNameTd.find("input"),
             field = fieldTd.find("select"),
             value = valueTd.find("select"),
-            setValues = function() {
+            setValues = function () {
                 var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     opts = _.chain(
                         CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog)
@@ -151,12 +146,12 @@ class CrossviewColorFilterField extends TableField {
                         .value();
                 value.html(opts);
             },
-            setDefaultHeaderName = function(val) {
+            setDefaultHeaderName = function (val) {
                 headerName.val(value.val());
             };
 
         field
-            .on("change", function() {
+            .on("change", function () {
                 setValues();
                 setDefaultHeaderName();
             })
@@ -176,9 +171,7 @@ class CrossviewColorFilterField extends TableField {
 
     fromSerializedRow(d, i) {
         var row = this.addRow();
-        row.find('select[name="field"]')
-            .val(d.field)
-            .trigger("change");
+        row.find('select[name="field"]').val(d.field).trigger("change");
         row.find('select[name="value"]').val(d.value);
         row.find('input[name="headerName"]').val(d.headerName);
         row.find('input[name="color"]').val(d.color);
@@ -231,9 +224,7 @@ class CrossviewEndpointFilterField extends TableField {
 
     fromSerializedRow(d, i) {
         var row = this.addRow();
-        row.find('select[name="field"]')
-            .val(d.field)
-            .trigger("change");
+        row.find('select[name="field"]').val(d.field).trigger("change");
         row.find('select[name="filterType"]').val(d.filterType);
         row.find('input[name="value"]').val(d.value);
     }
@@ -262,7 +253,7 @@ class CrossviewForm extends BaseVisualForm {
     }
 
     afterGetDataHook(data) {
-        this.endpoints = data.endpoints.map(function(d) {
+        this.endpoints = data.endpoints.map(function (d) {
             var e = new Endpoint(d);
             e.doseUnits.activate(data.dose_units);
             return e;
@@ -279,9 +270,9 @@ class CrossviewForm extends BaseVisualForm {
             ["effect_tag", "effect_tags"],
         ];
 
-        _.each(fields, function(d) {
+        _.each(fields, function (d) {
             $(`#id_prefilter_${d[0]}`)
-                .on("change", function() {
+                .on("change", function () {
                     var div = $(`#div_id_${d[1]}`);
                     $(this).prop("checked") ? div.show(1000) : div.hide(0);
                 })

@@ -12,7 +12,7 @@ import RoBHeatmap from "./RoBHeatmap";
 
 class Visual {
     static get_object(id, cb) {
-        $.get(`/summary/api/visual/${id}/`, function(d) {
+        $.get(`/summary/api/visual/${id}/`, function (d) {
             var Cls;
             switch (d.visual_type) {
                 case "animal bioassay endpoint aggregation":

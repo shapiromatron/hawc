@@ -11,14 +11,8 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 @observer
 class EditForm extends Component {
     render() {
-        const {
-            formData,
-            formErrors,
-            updateFormData,
-            isCreating,
-            parentChoices,
-            siblingChoices,
-        } = this.props.store;
+        const {formData, formErrors, updateFormData, isCreating, parentChoices, siblingChoices} =
+            this.props.store;
         return (
             <form>
                 <NonFieldErrors errors={formErrors.non_field_errors} />

@@ -4,15 +4,8 @@ import React, {Component} from "react";
 
 class FormActions extends Component {
     render() {
-        const {
-            isForm,
-            handleSubmit,
-            submitIcon,
-            submitText,
-            cancel,
-            cancelIcon,
-            cancelText,
-        } = this.props;
+        const {isForm, handleSubmit, submitIcon, submitText, cancel, cancelIcon, cancelText} =
+            this.props;
         return (
             <div className="form-actions">
                 <button

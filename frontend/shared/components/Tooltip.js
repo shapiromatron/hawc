@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import h from "shared/utils/helpers";
 
 class TooltipContainer extends Component {
@@ -20,7 +20,7 @@ TooltipContainer.propTypes = {
     children: PropTypes.element.isRequired,
 };
 
-const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
+const bindTooltip = function ($el, d3Selection, buildChildComponent, options) {
     /*
 
     Add tooltip to d3 selection. To use this method:
@@ -38,18 +38,14 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
     $el.css("position", "absolute");
 
     // unbind existing
-    d3Selection
-        .on("mouseenter", null)
-        .on("mousemove", null)
-        .on("mouseleave", null);
+    d3Selection.on("mouseenter", null).on("mousemove", null).on("mouseleave", null);
 
     // bind new
     d3Selection
-        .on("mouseenter", function() {
+        .on("mouseenter", function () {
             $el.css("display", "block");
-            ReactDOM.render(
-                <TooltipContainer>{buildChildComponent(...arguments)}</TooltipContainer>,
-                $el[0]
+            createRoot($el[0]).render(
+                <TooltipContainer>{buildChildComponent(...arguments)}</TooltipContainer>
             );
             if (opts.mouseEnterExtra) {
                 opts.mouseEnterExtra(...arguments);

@@ -28,7 +28,7 @@ const tableStoreLookup = {
     tableDataComponentLookup = {
         [TableType.STUDY_EVALUATION_TABLE]: StudyEvaluationData,
     },
-    getTableStore = function(table, editStore) {
+    getTableStore = function (table, editStore) {
         const Cls = tableStoreLookup[table.table_type];
         if (!Cls) {
             throw `Unknown table type: ${table.table_type}`;
@@ -40,21 +40,21 @@ const tableStoreLookup = {
             return new Cls(false, table);
         }
     },
-    getViewTableComponent = function(table) {
+    getViewTableComponent = function (table) {
         const Component = tableViewComponentLookup[table.table_type];
         if (!Component) {
             throw `Unknown table type: ${table.table_type}`;
         }
         return Component;
     },
-    getEditTableComponent = function(table) {
+    getEditTableComponent = function (table) {
         const Component = tableEditComponentLookup[table.table_type];
         if (!Component) {
             throw `Unknown table type: ${table.table_type}`;
         }
         return Component;
     },
-    getTableDataComponent = function(table) {
+    getTableDataComponent = function (table) {
         const Component = tableDataComponentLookup[table.table_type];
         return Component;
     };

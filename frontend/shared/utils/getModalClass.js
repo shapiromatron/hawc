@@ -21,7 +21,7 @@ const modalClasses = {
         IVChemical,
         Study,
     },
-    getModalClass = function(key) {
+    getModalClass = function (key) {
         return modalClasses[key];
     };
 

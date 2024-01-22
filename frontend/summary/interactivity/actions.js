@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import {NULL_VALUE} from "../summary/constants";
 import config from "./config";
@@ -28,7 +28,7 @@ class ExtensionTableBody extends Component {
     }
 }
 
-const getInteractivityOptions = function(columnNames) {
+const getInteractivityOptions = function (columnNames) {
         const names = new Set(columnNames),
             options = [];
         _.forEach(config, val => {
@@ -39,8 +39,8 @@ const getInteractivityOptions = function(columnNames) {
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
     },
-    renderExtensionTableBody = function(el) {
-        ReactDOM.render(<ExtensionTableBody />, el);
+    renderExtensionTableBody = function (el) {
+        createRoot(el).render(<ExtensionTableBody />);
     },
     _getId = (settings, data) => {
         for (const column of settings.columns) {

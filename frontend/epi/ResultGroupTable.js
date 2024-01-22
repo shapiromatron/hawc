@@ -10,12 +10,8 @@ class ResultGroupTable {
     }
 
     setVisibleCols() {
-        let hasData = function(rgs, fld) {
-            return _.chain(_.map(rgs, "data"))
-                .map(fld)
-                .map(_.isNumber)
-                .some()
-                .value();
+        let hasData = function (rgs, fld) {
+            return _.chain(_.map(rgs, "data")).map(fld).map(_.isNumber).some().value();
         };
 
         this.visibleCol = {
@@ -38,7 +34,7 @@ class ResultGroupTable {
         this.setVisibleCols();
         this.tbl.addHeaderRow(this.getTblHeader());
         this.tbl.setColGroup(this.getColGroups());
-        _.each(this.getDataRows(), function(d) {
+        _.each(this.getDataRows(), function (d) {
             tbl.addRow(d);
         });
         return tbl.getTbl();
@@ -55,7 +51,7 @@ class ResultGroupTable {
                 pvalue: 15,
             },
             cols = _.chain(this.visibleCol)
-                .map(function(v, k) {
+                .map(function (v, k) {
                     if (v) return weights[k];
                 })
                 .filter(_.isNumber)
@@ -89,10 +85,7 @@ class ResultGroupTable {
                         : "Variance";
                 },
                 ci() {
-                    let letter = _.chain(d.results)
-                        .map("ci_calc")
-                        .some()
-                        .value()
+                    let letter = _.chain(d.results).map("ci_calc").some().value()
                         ? fn.add_footnote(
                               `Confidence intervals calculated in HAWC from distributions provided (<a href="${h.docUrlRoot}/statistical-methods/#epidemiology-v1">source</a>).`
                           )
@@ -111,7 +104,7 @@ class ResultGroupTable {
             };
 
         return _.chain(this.visibleCol)
-            .map(function(v, k) {
+            .map(function (v, k) {
                 if (v) return headers[k]();
             })
             .filter(_.String)
@@ -122,7 +115,7 @@ class ResultGroupTable {
         let tbl = this.tbl,
             cols = this.visibleCol;
 
-        return _.map(this.res.resultGroups, function(rg) {
+        return _.map(this.res.resultGroups, function (rg) {
             return rg.build_tr(tbl.footnotes, cols);
         });
     }

@@ -57,9 +57,7 @@ class RoBScoreExcludeTable extends TableField {
             row.find(".score").html(d.score);
             row.find(".study").text(d.study);
             row.find(".metric").text(d.metric);
-            row.find('input[name="included"]')
-                .prop("checked", d.included)
-                .data("id", d.id);
+            row.find('input[name="included"]').prop("checked", d.included).data("id", d.id);
         });
     }
 

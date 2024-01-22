@@ -71,9 +71,7 @@ class HAWCModal {
     }
 
     addBody(html) {
-        this.getBody()
-            .html(html)
-            .scrollTop(0);
+        this.getBody().html(html).scrollTop(0);
         return this;
     }
 

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import Autosuggest from "react-autosuggest";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import h from "shared/utils/helpers";
 
 import {theme} from "./constants";
@@ -57,8 +57,8 @@ ClientSideAutosuggest.propTypes = {
     options: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const renderClientSideAutosuggest = function(el, name, value, options) {
-    ReactDOM.render(<ClientSideAutosuggest name={name} value={value} options={options} />, el);
+const renderClientSideAutosuggest = function (el, name, value, options) {
+    createRoot(el).render(<ClientSideAutosuggest name={name} value={value} options={options} />);
 };
 
 export {ClientSideAutosuggest, renderClientSideAutosuggest};

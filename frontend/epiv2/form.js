@@ -4,12 +4,10 @@ import $ from "$";
 
 import {EXPOSURE_BIOMONITORING} from "./constants";
 
-const designFormStartup = function(form) {
-        $(form)
-            .find("#id_summary")
-            .focus();
+const designFormStartup = function (form) {
+        $(form).find("#id_summary").focus();
     },
-    exposureFormStartup = function(form) {
+    exposureFormStartup = function (form) {
         // handle `exposure.measurement_type` change
         $(form)
             .find("select[name='measurement_type_0']")

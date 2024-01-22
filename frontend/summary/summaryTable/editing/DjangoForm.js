@@ -12,13 +12,8 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 @observer
 class DjangoForm extends Component {
     render() {
-        const {
-                formErrors,
-                tableObject,
-                isCreate,
-                updateContent,
-                updateTableContent,
-            } = this.props.store,
+        const {formErrors, tableObject, isCreate, updateContent, updateTableContent} =
+                this.props.store,
             header = isCreate ? "Create new table" : `Update ${tableObject.title}`,
             helpText = isCreate ? "..." : "Update an existing table";
 

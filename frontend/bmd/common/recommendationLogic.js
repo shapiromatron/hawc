@@ -13,24 +13,24 @@ Failure bins:
 */
 
 const SUFFICIENTLY_CLOSE_BMDL = 3,
-    returnFailure = function(bin, notes) {
+    returnFailure = function (bin, notes) {
         return {
             bin,
             notes,
         };
     },
-    validNumeric = function(val) {
+    validNumeric = function (val) {
         return val !== undefined && _.isNumber(val) && val !== -999;
     },
-    minNonZeroDose = function(groups) {
+    minNonZeroDose = function (groups) {
         return d3.min(groups.filter(d => d.dose > 0).map(d => d.dose));
     },
-    assertFieldExists = function(value, failure_bin, failure_text) {
+    assertFieldExists = function (value, failure_bin, failure_text) {
         if (!validNumeric(value)) {
             return returnFailure(failure_bin, failure_text);
         }
     },
-    assertLessThan = function(value, threshold, failure_bin, varname) {
+    assertLessThan = function (value, threshold, failure_bin, varname) {
         if (value > threshold) {
             return returnFailure(
                 failure_bin,
@@ -38,7 +38,7 @@ const SUFFICIENTLY_CLOSE_BMDL = 3,
             );
         }
     },
-    assertGreaterThan = function(value, threshold, failure_bin, varname) {
+    assertGreaterThan = function (value, threshold, failure_bin, varname) {
         if (value < threshold) {
             return returnFailure(
                 failure_bin,
@@ -292,7 +292,7 @@ const SUFFICIENTLY_CLOSE_BMDL = 3,
         },
     };
 
-const applyRecommendationLogic = function(logics, models, endpoint, doseUnitsId) {
+const applyRecommendationLogic = function (logics, models, endpoint, doseUnitsId) {
     endpoint.doseUnits.activate(doseUnitsId);
 
     // get function associated with each test
@@ -342,10 +342,7 @@ const applyRecommendationLogic = function(logics, models, endpoint, doseUnitsId)
     });
 
     // apply model recommendations, with each bmr being independent.
-    let bmr_indexes = _.chain(models)
-        .map("bmr_index")
-        .uniq()
-        .value();
+    let bmr_indexes = _.chain(models).map("bmr_index").uniq().value();
 
     bmr_indexes.forEach(bmr_index => {
         let subset = _.filter(models, {bmr_index, logic_bin: 0}),

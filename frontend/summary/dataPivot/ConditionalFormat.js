@@ -38,10 +38,7 @@ class _DataPivot_settings_conditionalFormat {
             footer = this._getFooter();
 
         this.setModalContent();
-        this.modal
-            .addHeader(header)
-            .addFooter(footer, {noClose: true})
-            .show({maxWidth: 1200});
+        this.modal.addHeader(header).addFooter(footer, {noClose: true}).show({maxWidth: 1200});
     }
 
     close_modal(save) {
@@ -188,7 +185,7 @@ class _DataPivot_settings_conditional {
             formattingTypes = parent.getConditionTypes(),
             defaults = _DataPivot_settings_conditionalFormat.defaults,
             div = $('<div class="well">').appendTo(el),
-            add_input_row = function(parent, desc_txt, inp) {
+            add_input_row = function (parent, desc_txt, inp) {
                 var lbl = $("<label>").html(desc_txt);
                 parent.append(lbl, inp);
             },
@@ -197,12 +194,12 @@ class _DataPivot_settings_conditional {
                 .val(values.field_name || defaults.field_name),
             conditionType = $('<select class="form-control" name="condition_type">')
                 .html(
-                    formattingTypes.map(function(v) {
+                    formattingTypes.map(function (v) {
                         return `<option value="${v}">${v}</option>`;
                     })
                 )
                 .val(values.condition_type || defaults.condition_type),
-            changeConditionType = function() {
+            changeConditionType = function () {
                 div.find(".conditionalDivs").hide();
                 div.find(`.${conditionType.val()}`).fadeIn();
             };
@@ -210,7 +207,7 @@ class _DataPivot_settings_conditional {
         // add delete button
         $('<button type="button" class="close">')
             .text("x")
-            .on("click", function() {
+            .on("click", function () {
                 div.remove();
                 parent.delete_condition(self);
             })
@@ -220,10 +217,8 @@ class _DataPivot_settings_conditional {
         add_input_row(div, "Condition field", fieldName);
         add_input_row(div, "Condition type", conditionType);
         div.append("<hr>");
-        formattingTypes.forEach(function(v) {
-            $(`<div class="conditionalDivs ${v}">`)
-                .appendTo(div)
-                .hide();
+        formattingTypes.forEach(function (v) {
+            $(`<div class="conditionalDivs ${v}">`).appendTo(div).hide();
         });
 
         // build min/max for size and color
@@ -245,10 +240,10 @@ class _DataPivot_settings_conditional {
             gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 
         // add event-handlers to change gradient color
-        min_color.change(function(v) {
+        min_color.change(function (v) {
             gradient.update_start_color(min_color.val());
         });
-        max_color.change(function(v) {
+        max_color.change(function (v) {
             gradient.update_stop_color(max_color.val());
         });
 
@@ -268,7 +263,7 @@ class _DataPivot_settings_conditional {
         this.inputs.push(fieldName, conditionType, min_size, max_size, min_color, max_color);
 
         // get unique values and set values
-        var buildStyleSelectors = function() {
+        var buildStyleSelectors = function () {
             // show appropriate div
             var discrete = div.find(".discrete-style");
             self.discrete_styles = [];
@@ -316,7 +311,7 @@ class _DataPivot_settings_conditional {
 
         // add event-handlers and fire to initialize
         fieldName.on("change", buildStyleSelectors);
-        conditionType.on("change", function() {
+        conditionType.on("change", function () {
             buildStyleSelectors();
             changeConditionType();
         });
@@ -327,10 +322,10 @@ class _DataPivot_settings_conditional {
 
     get_values() {
         var values = {discrete_styles: []};
-        this.inputs.forEach(function(v) {
+        this.inputs.forEach(function (v) {
             values[v.attr("name")] = parseInt(v.val(), 10) || v.val();
         });
-        this.discrete_styles.forEach(function(v) {
+        this.discrete_styles.forEach(function (v) {
             values.discrete_styles.push({key: v.data("key"), style: v.val()});
         });
         return values;

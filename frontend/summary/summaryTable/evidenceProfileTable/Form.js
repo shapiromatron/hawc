@@ -11,12 +11,8 @@ import MechanisticForm from "./MechanisticForm";
 class EvidenceProfileForm extends Component {
     render() {
         const {store} = this.props,
-            {
-                editTabIndex,
-                editTabIndexUpdate,
-                numEpiJudgementRowSpan,
-                numAniJudgementRowSpan,
-            } = store;
+            {editTabIndex, editTabIndexUpdate, numEpiJudgementRowSpan, numAniJudgementRowSpan} =
+                store;
         return (
             <Tabs selectedIndex={editTabIndex} onSelect={tabIndex => editTabIndexUpdate(tabIndex)}>
                 <TabList>

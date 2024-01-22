@@ -2,7 +2,7 @@ import _ from "lodash";
 import {action, autorun, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
-const createCell = function(row, column) {
+const createCell = function (row, column) {
         return {
             row,
             column,
@@ -12,13 +12,13 @@ const createCell = function(row, column) {
             quill_text: "<p></p>",
         };
     },
-    sortCells = function(cells) {
+    sortCells = function (cells) {
         return _.chain(cells)
             .sortBy(d => d.column)
             .sortBy(d => d.row)
             .value();
     },
-    cellRangeSearch = function(cells, row, column) {
+    cellRangeSearch = function (cells, row, column) {
         return _.find(cells, cell => {
             return (
                 row >= cell.row &&
@@ -28,7 +28,7 @@ const createCell = function(row, column) {
             );
         });
     },
-    anyMergedCells = function(cellsToTest, matrix) {
+    anyMergedCells = function (cellsToTest, matrix) {
         return _.chain(cellsToTest)
             .map(d => {
                 let match = matrix[d.row][d.column];
@@ -372,9 +372,7 @@ class GenericTableStore {
     }
 
     @computed get cellsByRow() {
-        return _.chain(this.settings.cells)
-            .groupBy("row")
-            .value();
+        return _.chain(this.settings.cells).groupBy("row").value();
     }
 
     @computed get totalRows() {

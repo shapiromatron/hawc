@@ -37,10 +37,10 @@ class ResultForestPlot extends D3Plot {
     get_dataset() {
         var data = this.res.data,
             estimates = _.chain(this.res.resultGroups)
-                .filter(function(d) {
+                .filter(function (d) {
                     return d.estimateNumeric();
                 })
-                .map(function(d) {
+                .map(function (d) {
                     return {
                         group: d,
                         name: d.data.group.name,
@@ -49,27 +49,27 @@ class ResultForestPlot extends D3Plot {
                 })
                 .value(),
             lines = _.chain(estimates)
-                .map(function(d) {
+                .map(function (d) {
                     return d.group.getIntervals();
                 })
-                .filter(function(d) {
+                .filter(function (d) {
                     return _.isNumber(d.lower_bound_interval) && _.isNumber(d.upper_bound_interval);
                 })
                 .value(),
             names = _.map(estimates, "name"),
             vals = _.chain(estimates)
-                .map(function(d) {
+                .map(function (d) {
                     let {upper_bound_interval, lower_bound_interval} = d.group.getIntervals();
                     return [d.group.data.estimate, lower_bound_interval, upper_bound_interval];
                 })
                 .flattenDeep()
-                .filter(function(d) {
+                .filter(function (d) {
                     return _.isNumber(d);
                 })
                 .value(),
-            getXDomain = function(scale_type, vals) {
+            getXDomain = function (scale_type, vals) {
                 if (scale_type === "log") {
-                    vals = _.filter(vals, function(d) {
+                    vals = _.filter(vals, function (d) {
                         return d > 0;
                     });
                 }
@@ -198,16 +198,16 @@ class ResultForestPlot extends D3Plot {
             .data(this.lines)
             .enter()
             .append("line")
-            .attr("x1", function(d) {
+            .attr("x1", function (d) {
                 return x(d.lower_bound_interval);
             })
-            .attr("y1", function(d) {
+            .attr("y1", function (d) {
                 return y(d.name) + mid;
             })
-            .attr("x2", function(d) {
+            .attr("x2", function (d) {
                 return x(d.upper_bound_interval);
             })
-            .attr("y2", function(d) {
+            .attr("y2", function (d) {
                 return y(d.name) + mid;
             })
             .attr("class", "dr_err_bars");
@@ -217,16 +217,16 @@ class ResultForestPlot extends D3Plot {
             .data(this.lines)
             .enter()
             .append("line")
-            .attr("x1", function(d) {
+            .attr("x1", function (d) {
                 return x(d.lower_bound_interval);
             })
-            .attr("y1", function(d) {
+            .attr("y1", function (d) {
                 return y(d.name) + mid * 1.5;
             })
-            .attr("x2", function(d) {
+            .attr("x2", function (d) {
                 return x(d.lower_bound_interval);
             })
-            .attr("y2", function(d) {
+            .attr("y2", function (d) {
                 return y(d.name) + mid * 0.5;
             })
             .attr("class", "dr_err_bars");
@@ -236,16 +236,16 @@ class ResultForestPlot extends D3Plot {
             .data(this.lines)
             .enter()
             .append("line")
-            .attr("x1", function(d) {
+            .attr("x1", function (d) {
                 return x(d.upper_bound_interval);
             })
-            .attr("y1", function(d) {
+            .attr("y1", function (d) {
                 return y(d.name) + mid * 1.5;
             })
-            .attr("x2", function(d) {
+            .attr("x2", function (d) {
                 return x(d.upper_bound_interval);
             })
-            .attr("y2", function(d) {
+            .attr("y2", function (d) {
                 return y(d.name) + mid * 0.5;
             })
             .attr("class", "dr_err_bars");

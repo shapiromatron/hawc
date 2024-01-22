@@ -40,7 +40,7 @@ export const mutateRobSettings = settings => {
             study._robPrepped = true;
         });
     },
-    transformStudy = function(study, data) {
+    transformStudy = function (study, data) {
         // unpack rob information and nest by domain
         mutateRobSettings(data.rob_settings);
         mutateRobStudies([data], data.rob_settings);

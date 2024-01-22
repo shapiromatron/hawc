@@ -74,7 +74,7 @@ class Exposure {
         $("<tr>")
             .appendTo(ctTable)
             .html(ctHeaders.map(d => `<th>${d}</th>`).join(""));
-        this.data.central_tendencies.forEach(function(d) {
+        this.data.central_tendencies.forEach(function (d) {
             let row = $("<tr>").appendTo(ctTable);
             ctHeaders.map(header => {
                 var variableName = header.replace(/ /g, "_").toLowerCase(),
@@ -84,9 +84,7 @@ class Exposure {
                     val = val.replace(/ /g, "&nbsp;");
                 }
 
-                return $("<td/>")
-                    .html(val)
-                    .appendTo(row);
+                return $("<td/>").html(val).appendTo(row);
             });
         });
         return ctTable;
@@ -125,9 +123,7 @@ class Exposure {
             content.push(el);
         }
 
-        $el.hide()
-            .append(content)
-            .fadeIn();
+        $el.hide().append(content).fadeIn();
     }
 
     displayAsModal() {
@@ -146,11 +142,7 @@ class Exposure {
             $details.append(el);
         }
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1000});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1000});
     }
 
     build_link() {

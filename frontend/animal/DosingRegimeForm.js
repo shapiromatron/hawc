@@ -18,7 +18,7 @@ class DosingRegimeForm {
 
         if (initial) {
             //unpack data from JSON file
-            initial.forEach(function(v, i) {
+            initial.forEach(function (v, i) {
                 if (v.dose_group_id + 1 > rows) {
                     rows = v.dose_group_id + 1;
                 }
@@ -35,7 +35,7 @@ class DosingRegimeForm {
             }
 
             // fill-in array
-            initial.forEach(function(v, i) {
+            initial.forEach(function (v, i) {
                 if (isFinite(parseFloat(v.dose))) {
                     array[v.dose_group_id].doses[doses_hash[v.dose_units]] = parseFloat(v.dose);
                 }
@@ -122,14 +122,14 @@ class DosingRegimeForm {
         var self = this;
 
         this.dose_units = [];
-        $("#dose_table thead th select option:selected").each(function(i, v) {
+        $("#dose_table thead th select option:selected").each(function (i, v) {
             self.dose_units.push(parseFloat(this.value));
         });
 
-        $("#dose_table tbody tr").each(function(i1, v1) {
+        $("#dose_table tbody tr").each(function (i1, v1) {
             $(v1)
                 .find("td input")
-                .each(function(i2, v2) {
+                .each(function (i2, v2) {
                     self.array[i1].doses[i2] = $(v2).val();
                 });
         });
@@ -210,25 +210,22 @@ class DosingRegimeForm {
     _setEventHandlers() {
         var self = this;
 
-        this.form.find("#id_num_dose_groups").on("change", function() {
+        this.form.find("#id_num_dose_groups").on("change", function () {
             self.change_rows();
         });
 
-        this.form.find("#new_dose_column").on("click", function(e) {
+        this.form.find("#new_dose_column").on("click", function (e) {
             e.preventDefault();
             self.add_dose_column();
         });
 
-        $("#dose_table").on("click", ".remove_dose", function(e) {
+        $("#dose_table").on("click", ".remove_dose", function (e) {
             e.preventDefault();
-            var td_index =
-                $(this)
-                    .parent()
-                    .index() - 1;
+            var td_index = $(this).parent().index() - 1;
             self.remove_dose_column(td_index);
         });
 
-        this.form.submit(function() {
+        this.form.submit(function () {
             self.form.find("#dose_groups_json").val(JSON.stringify(self.jsonify()));
             return true;
         });

@@ -50,9 +50,8 @@ class RobTableStore extends StudyRobStore {
                                 return Object.assign({}, score, {
                                     score_symbol: this.settings.score_metadata.symbols[score.score],
                                     score_shade: this.settings.score_metadata.colors[score.score],
-                                    score_description: this.settings.score_metadata.choices[
-                                        score.score
-                                    ],
+                                    score_description:
+                                        this.settings.score_metadata.choices[score.score],
                                     assessment_id: this.config.assessment_id,
                                     riskofbias_id: riskofbias.id,
                                     author: riskofbias.author,

@@ -1,7 +1,7 @@
 import {inject, observer, Provider} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import Loading from "shared/components/Loading";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
@@ -17,24 +17,23 @@ import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
-const startupHeatmapAppRender = function(el, settings, datastore, options) {
+const startupHeatmapAppRender = function (el, settings, datastore, options) {
         const store = new HeatmapDatastore(settings, datastore, options);
         try {
             if (store.withinRenderableBounds) {
                 store.initialize();
             }
-            ReactDOM.render(
+            createRoot(el).render(
                 <Provider store={store}>
                     <ExploreHeatmapComponent options={options} />
-                </Provider>,
-                el
+                </Provider>
             );
         } catch (err) {
             console.error(err);
-            ReactDOM.render(<p>An error occurred</p>, el);
+            createRoot(el).render(<p>An error occurred</p>);
         }
     },
-    getErrorDiv = function() {
+    getErrorDiv = function () {
         return `<div class="alert alert-danger" role="alert">
             <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
         </div>`;
@@ -248,7 +247,6 @@ class ExploreHeatmap extends BaseVisual {
     }
 
     displayAsModal(options) {
-        // TODO HEATMAP  - check!
         options = options || {};
 
         var captionDiv = $("<div>").html(this.data.caption),
@@ -256,11 +254,11 @@ class ExploreHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             modal = new HAWCModal(),
             callback = resp => {
-                if (resp.error) {
+                if (resp.dataset) {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
-                    modal.getModal().on("shown.bs.modal", function() {
+                    modal.getModal().on("shown.bs.modal", function () {
                         try {
                             startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                         } catch (err) {

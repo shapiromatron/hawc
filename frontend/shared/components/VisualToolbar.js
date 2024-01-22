@@ -32,10 +32,7 @@ class ToolbarStore {
     @action.bound scaleSize() {
         if (this.isFitted) {
             // scale svg to parent container
-            this.d3svg
-                .attr("width", "100%")
-                .attr("height", "100%")
-                .style("min-width", null);
+            this.d3svg.attr("width", "100%").attr("height", "100%").style("min-width", null);
         } else {
             // scale svg to native size
             this.d3svg

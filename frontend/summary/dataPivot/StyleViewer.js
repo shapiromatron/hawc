@@ -158,11 +158,7 @@ class StyleViewer extends D3Plot {
                 .attr("stroke-width", 2)
                 .attr("stroke", "#ccc");
 
-            this.text = this.vis
-                .append("svg:text")
-                .attr("x", x(1))
-                .attr("y", y(1))
-                .text("text");
+            this.text = this.vis.append("svg:text").attr("x", x(1)).attr("y", y(1)).text("text");
 
             this._update_styles(this.style.settings, false);
         }
@@ -232,7 +228,7 @@ class StyleViewer extends D3Plot {
                 .call(selection => applyStyles(this.svg, selection, style_settings));
         }
 
-        var randomize_data = function() {
+        var randomize_data = function () {
             return [
                 {x: Math.random() * 2, y: Math.random() * 2},
                 {x: Math.random() * 2, y: Math.random() * 2},

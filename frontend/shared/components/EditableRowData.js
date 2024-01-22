@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-const moveArrayElementUp = function(arr, index) {
+const moveArrayElementUp = function (arr, index) {
         if (index === 0) {
             return;
         }
@@ -10,7 +10,7 @@ const moveArrayElementUp = function(arr, index) {
         arr[index - 1] = b;
         return arr;
     },
-    moveArrayElementDown = function(arr, index) {
+    moveArrayElementDown = function (arr, index) {
         if (index + 1 >= arr.length) {
             return;
         }
@@ -19,11 +19,11 @@ const moveArrayElementUp = function(arr, index) {
         arr[index + 1] = b;
         return arr;
     },
-    deleteArrayElement = function(arr, index) {
+    deleteArrayElement = function (arr, index) {
         arr.splice(index, 1);
         return arr;
     },
-    ActionsTh = function(props) {
+    ActionsTh = function (props) {
         return (
             <th>
                 Actions
@@ -38,7 +38,7 @@ const moveArrayElementUp = function(arr, index) {
             </th>
         );
     },
-    MoveRowTd = function(props) {
+    MoveRowTd = function (props) {
         return (
             <td>
                 {props.onMoveUp ? (
