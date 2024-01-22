@@ -15,6 +15,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
+from django.forms import MultipleChoiceField
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
@@ -940,30 +941,27 @@ class Reference(models.Model):
                             assessment=self.assessment_id, tag=int(udf_tag)
                         )
                         # use tag_pk prefix (same as form creation)
-                        keepTrying = True
-                        while keepTrying:  # loop so we can attempt to fix errors
-                            form = binding.form_instance(prefix=int(udf_tag), data=udf)
-                            if form.is_valid():
-                                TagUDFContent.objects.update_or_create(
-                                    reference_id=self.id,
-                                    tag_binding_id=binding.id,
-                                    defaults={"content": form.cleaned_data},
-                                )
-                                keepTrying = False
-                            else:
-                                for field, errors in form.errors.items():
-                                    for error in errors:
-                                        if error == "Enter a list of values.":
-                                            udf[f"{udf_tag}-{field}"] = [udf[f"{udf_tag}-{field}"]]
-                                        else:
-                                            keepTrying = False
-                                if not keepTrying:
-                                    form_errors.update(
-                                        {
-                                            f"{udf_tag}-{key}": value
-                                            for (key, value) in form.errors.items()
-                                        }
-                                    )
+                        empty_form = binding.form_instance()
+                        for field, data in udf.items():
+                            if isinstance(
+                                empty_form.fields[field.removeprefix(f"{udf_tag}-")],
+                                MultipleChoiceField,
+                            ) and not isinstance(udf[field], list):
+                                udf[field] = [data]
+                        form = binding.form_instance(prefix=int(udf_tag), data=udf)
+                        if form.is_valid():
+                            TagUDFContent.objects.update_or_create(
+                                reference_id=self.id,
+                                tag_binding_id=binding.id,
+                                defaults={"content": form.cleaned_data},
+                            )
+                        else:
+                            form_errors.update(
+                                {
+                                    f"{udf_tag}-{field}": errors
+                                    for (field, errors) in form.errors.items()
+                                }
+                            )
                     except TagBinding.DoesNotExist:
                         pass
             if form_errors:

@@ -47,25 +47,30 @@ class Store {
         this.errorOnSave = false;
     }
     @action.bound setUDF() {
-        const intersects = (a, b) => a.some(x => b.includes(x));
         const referenceUserTagIDs = this.referenceUserTags.map(tag => tag.data.pk);
         var udfHTML = "";
-        this.udfIDs = [];
+        this.udfIDs = []; // reset current UDF tag IDs
         if (this.config.udfs) {
+            // check all tag UDFs for the assessment
             for (const [tagID, udf] of Object.entries(this.config.udfs)) {
-                if (intersects(this.config.descendant_tags[tagID], referenceUserTagIDs)) {
-                    udfHTML += "<div class='box-shadow rounded mt-3 mb-4'>";
-                    udfHTML += `<a class="text-black text-decoration-none clickable bg-gray 
+                // if any descendant of the UDF tag is on the reference
+                if (
+                    this.config.descendant_tags[tagID].some(tag =>
+                        referenceUserTagIDs.includes(tag)
+                    )
+                ) {
+                    udfHTML += `<div class='box-shadow rounded mt-3 mb-4'>
+                                    <a class="text-black text-decoration-none clickable bg-gray 
                                         rounded-top px-3 d-flex justify-content-start 
                                         align-items-center flex-wrap border-bottom-light" 
                                         type="button" data-toggle="collapse" id="udf-header-${tagID}-${this.reference.data.pk}"
                                         data-target="#collapse-${tagID}-${this.reference.data.pk}-udf" 
                                         aria-expanded="true" aria-controls="collapse-${tagID}-udf">
-                                    <span class="refTag px-1 py-0 my-3">${this.tagNames[tagID]}</span>
-                                    <span class="h5 m-0">Tag Form</span>
-                                </a>`;
-                    udfHTML += `<div class="px-4 py-3 collapse show" id="collapse-${tagID}-${this.reference.data.pk}-udf">${udf}</div></div>`;
-                    this.udfIDs.push(tagID);
+                                            <span class="refTag px-1 py-0 my-3">${this.tagNames[tagID]}</span>
+                                            <span class="h5 m-0">Tag Form</span>
+                                    </a>
+                                <div class="px-4 py-3 collapse show" id="collapse-${tagID}-${this.reference.data.pk}-udf">${udf}</div></div>`;
+                    this.udfIDs.push(tagID); // add to current UDF tag ids list
                 }
             }
         }
@@ -92,18 +97,13 @@ class Store {
             newValuesSubmit[tagID] = {};
             for (const field of $("#udf-form").serializeArray()) {
                 if (field["name"].includes(`${tagID}-`)) {
-                    newValues[field["name"]] =
-                        field["name"] in newValues
-                            ? newValues[field["name"]].concat(field["value"])
-                            : [].concat(field["value"]);
-                    if (field["name"] in newValuesSubmit[tagID]) {
-                        var existingValue = Array.isArray(newValuesSubmit[tagID][field["name"]])
-                            ? newValuesSubmit[tagID][field["name"]]
-                            : [newValuesSubmit[tagID][field["name"]]];
-                        newValuesSubmit[tagID][field["name"]] = existingValue.concat([
-                            field["value"],
-                        ]);
+                    if (field["name"] in newValues) {
+                        newValues[field["name"]] = newValues[field["name"]].concat(field["value"]);
+                        newValuesSubmit[tagID][field["name"]] = [field["value"]].concat(
+                            newValuesSubmit[tagID][field["name"]]
+                        );
                     } else {
+                        newValues[field["name"]] = [].concat(field["value"]);
                         newValuesSubmit[tagID][field["name"]] = field["value"];
                     }
                 }
@@ -137,7 +137,7 @@ class Store {
     @action.bound handleSaveSuccess(response) {
         const {resolved} = response;
         this.errorOnSave = false;
-        this.UDFError = false;
+        this.UDFError = null;
         this.reference.userTags = resolved ? null : toJS(this.referenceUserTags);
         this.reference.data.tag_udf_contents = toJS(this.UDFValues);
         if (!this.config.conflict_resolution || resolved) {
@@ -159,9 +159,7 @@ class Store {
         this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
     }
     @action.bound handleSaveFailure(response) {
-        if (response["UDF-form"]) {
-            this.UDFError = response["UDF-form"];
-        }
+        this.UDFError = "UDF-form" in response ? response["UDF-form"] : null;
         this.errorOnSave = true;
     }
     @action.bound saveAndNext() {
