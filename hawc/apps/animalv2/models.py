@@ -208,7 +208,7 @@ class Treatment(models.Model):
         blank=True,
         help_text="""Length of time between start of exposure and outcome assessment, in days when &lt;7 (e.g., 5d), weeks when &ge;7 days to 12 weeks (e.g., 1wk, 12wk), or months when &gt;12 weeks (e.g., 15mon). For repeated measures use descriptions such as "1, 2 and 3 wk".  For inhalations studies, also include hours per day and days per week, e.g., "13wk (6h/d, 7d/wk)." This field is commonly used in visualizations, so use abbreviations (h, d, wk, mon, y) and no spaces between numbers to save space. For reproductive and developmental studies, where possible instead include abbreviated age descriptions such as "GD1-10" or "GD2-PND10". For gavage studies, include the number of doses, e.g. "1wk (1dose/d, 5d/wk)" or "2doses" for a single-day experiment.""",
     )
-    exposure_outcome_durection = models.FloatField(
+    exposure_outcome_duration = models.FloatField(
         verbose_name="Exposure-outcome duration (days)",
         help_text="""Optional: Numeric length of time between start of exposure and outcome assessment in days. This field may be used to sort studies which is why days are used as a common metric.""",
         blank=True,
