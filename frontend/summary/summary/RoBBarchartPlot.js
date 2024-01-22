@@ -32,10 +32,7 @@ class RoBBarchartPlot extends D3Visualization {
 
     resize_plot_dimensions() {
         // Resize plot based on the dimensions of the labels.
-        var xlabel_width = this.vis
-            .select(".y_axis")
-            .node()
-            .getBoundingClientRect().width;
+        var xlabel_width = this.vis.select(".y_axis").node().getBoundingClientRect().width;
         if (this.padding.left < this.padding.left_original + xlabel_width) {
             this.padding.left = this.padding.left_original + xlabel_width;
             this.render(this.plot_div);
@@ -109,7 +106,7 @@ class RoBBarchartPlot extends D3Visualization {
 
                 this.score_ids.forEach(id => (weights[id] = 0));
 
-                scores.forEach(function(rob) {
+                scores.forEach(function (rob) {
                     weights[rob.data.score] = (weights[rob.data.score] || 0) + total_weight;
                 });
 

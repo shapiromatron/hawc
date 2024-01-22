@@ -41,10 +41,7 @@ class BaseVisual {
     }
 
     object_hyperlink() {
-        return $("<a>")
-            .attr("href", this.data.url)
-            .attr("target", "_blank")
-            .text(this.data.title);
+        return $("<a>").attr("href", this.data.url).attr("target", "_blank").text(this.data.title);
     }
 }
 

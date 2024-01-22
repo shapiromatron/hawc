@@ -8,7 +8,7 @@ import {
     buildHeaderTr,
 } from "./DataPivotUtilities";
 
-let buildReferenceLines = function(tab, dp) {
+let buildReferenceLines = function (tab, dp) {
         let thead = $("<thead>").html(
                 buildHeaderTr(["Reference line value", "Line style", "Delete"])
             ),
@@ -16,7 +16,7 @@ let buildReferenceLines = function(tab, dp) {
             tbody = $("<tbody>"),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.reference_lines,
-            addDataRow = function(i) {
+            addDataRow = function (i) {
                 let obj;
                 if (!settings[i]) {
                     settings.push(_DataPivot_settings_refline.defaults());
@@ -24,7 +24,7 @@ let buildReferenceLines = function(tab, dp) {
                 obj = new _DataPivot_settings_refline(dp, settings[i]);
                 tbody.append(obj.tr);
             },
-            newDataRow = function() {
+            newDataRow = function () {
                 addDataRow(settings.length);
             },
             newRowBtn = $(
@@ -37,7 +37,7 @@ let buildReferenceLines = function(tab, dp) {
         }
         tab.append(newRowBtn, $("<h3>Reference lines</h3>"), tbl);
     },
-    buildReferenceRanges = function(tab, dp) {
+    buildReferenceRanges = function (tab, dp) {
         let thead = $("<thead>").html(
                 buildHeaderTr(["Lower value", "Upper value", "Range style", "Delete"])
             ),
@@ -45,7 +45,7 @@ let buildReferenceLines = function(tab, dp) {
             tbody = $("<tbody>"),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.reference_rectangles,
-            addDataRow = function(i) {
+            addDataRow = function (i) {
                 let obj;
                 if (!settings[i]) {
                     settings.push(_DataPivot_settings_refrect.defaults());
@@ -53,7 +53,7 @@ let buildReferenceLines = function(tab, dp) {
                 obj = new _DataPivot_settings_refrect(dp, settings[i]);
                 tbody.append(obj.tr);
             },
-            newDataRow = function() {
+            newDataRow = function () {
                 addDataRow(settings.length);
             },
             newRowBtn = $(
@@ -67,13 +67,13 @@ let buildReferenceLines = function(tab, dp) {
 
         tab.append(newRowBtn, $("<h3>Reference ranges</h3>"), tbl);
     },
-    buildReferenceLabels = function(tab, dp) {
+    buildReferenceLabels = function (tab, dp) {
         var thead = $("<thead>").html(buildHeaderTr(["Text", "Style", "Delete"])),
             colgroup = buildColGroup(["", "", "120px"]),
             tbody = $("<tbody>"),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.labels,
-            addDataRow = function(i) {
+            addDataRow = function (i) {
                 let obj;
                 if (!settings[i]) {
                     settings.push(_DataPivot_settings_label.defaults());
@@ -81,7 +81,7 @@ let buildReferenceLines = function(tab, dp) {
                 obj = new _DataPivot_settings_label(dp, settings[i]);
                 tbody.append(obj.tr);
             },
-            newDataRow = function() {
+            newDataRow = function () {
                 addDataRow(settings.length);
             },
             newRowBtn = $(
@@ -95,7 +95,7 @@ let buildReferenceLines = function(tab, dp) {
 
         tab.append(newRowBtn, $("<h3>Labels</h3>"), tbl);
     },
-    buildReferenceTab = function(dp) {
+    buildReferenceTab = function (dp) {
         let tab = $('<div class="tab-pane" id="data_pivot_settings_ref">');
         buildReferenceLines(tab, dp);
         buildReferenceRanges(tab, dp);

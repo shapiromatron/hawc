@@ -15,9 +15,9 @@ class TagEditorStore {
 
     @action.bound fetchTags() {
         const url = this.config.list_url,
-            getOptions = function(nodes) {
+            getOptions = function (nodes) {
                 let opts = [],
-                    addOption = function(node) {
+                    addOption = function (node) {
                         let indentedName =
                             _.times(node.data.depth, d => "━ ").join("") + node.data.name;
                         opts.push([node.id, indentedName]);
@@ -30,7 +30,7 @@ class TagEditorStore {
                 opts.unshift([NO_PARENT, "---"]);
                 return opts;
             },
-            addDepth = function(node, depth) {
+            addDepth = function (node, depth) {
                 // add depth to each node, and recursively to child nodes
                 node.data.depth = depth;
 

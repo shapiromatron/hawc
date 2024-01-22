@@ -79,14 +79,14 @@ const padding = 0,
                     .style("fill", fillColor)
                     .attr("transform", `translate(${x},${y}) rotate(${rotate})`)
                     .text(text)
-                    .on("mouseenter", function() {
+                    .on("mouseenter", function () {
                         d3.select(this)
                             .transition()
                             .duration(120)
                             .style("fill", "#87ceff")
                             .attr("font-size", size * 1.1);
                     })
-                    .on("mouseleave", function() {
+                    .on("mouseleave", function () {
                         d3.select(this)
                             .transition()
                             .duration(60)
@@ -96,10 +96,7 @@ const padding = 0,
             })
             .start();
 
-        $(el)
-            .empty()
-            .append(svg.node())
-            .append(toolbarNode);
+        $(el).empty().append(svg.node()).append(toolbarNode);
 
         ReactDOM.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
     };

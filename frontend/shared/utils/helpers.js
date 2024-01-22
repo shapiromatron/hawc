@@ -14,7 +14,7 @@ const stopwords = new Set("the is at which of on".split(" ")),
     excelColumn = column => String.fromCharCode(65 + column),
     hexToRgb = hex => {
         // http://stackoverflow.com/questions/5623838/
-        hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b) {
+        hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function (m, r, g, b) {
             return r + r + g + g + b + b;
         });
 
@@ -199,7 +199,7 @@ const helpers = {
                 // insert a space between last upper in sequence followed by lower
                 .replace(/\b([A-Z]+)([A-Z])([a-z])/, "$1 $2$3")
                 // uppercase the first character of first word
-                .replace(/\w\S*/, function(txt) {
+                .replace(/\w\S*/, function (txt) {
                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
                 })
         );
@@ -316,11 +316,7 @@ const helpers = {
     hasInnerText(text) {
         // wrap text with html tag to ensure it is a valid jQuery selector expression
         // then return whether there is text content
-        return (
-            $(`<div>${text}</div>`)
-                .text()
-                .trim().length > 0
-        );
+        return $(`<div>${text}</div>`).text().trim().length > 0;
     },
     numericAxisFormat: d3.format(",~g"),
     contrastingColor(hex) {

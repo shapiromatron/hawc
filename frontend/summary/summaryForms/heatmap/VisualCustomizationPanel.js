@@ -38,10 +38,8 @@ class VisualCustomizationPanel extends Component {
         );
     }
     renderForm() {
-        const {
-            visualCustomizationPanelActiveTab,
-            changeActiveVisualCustomizationTab,
-        } = this.props.store.subclass;
+        const {visualCustomizationPanelActiveTab, changeActiveVisualCustomizationTab} =
+            this.props.store.subclass;
         return (
             <Tabs
                 selectedIndex={visualCustomizationPanelActiveTab}

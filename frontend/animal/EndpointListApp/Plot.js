@@ -67,7 +67,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
             else tail = tail.next = b;
         }
     },
-    renderPlot = function(el, store) {
+    renderPlot = function (el, store) {
         // always start fresh
         $(el).empty();
 
@@ -100,10 +100,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
         let xExtent = d3.extent(fullDataset, d => d.dose),
             xFloor = 10 ** Math.floor(Math.log10(xExtent[0])),
             xCeil = 10 ** Math.ceil(Math.log10(xExtent[1])),
-            x = d3
-                .scaleLog()
-                .domain([xFloor, xCeil])
-                .range([0, width]),
+            x = d3.scaleLog().domain([xFloor, xCeil]).range([0, width]),
             yBaseMaxRange = height - itemRadius - 2,
             y = d3.scaleLinear().range([yBaseMaxRange, 0]);
 
@@ -133,8 +130,8 @@ const dodgeLogarithmic = (data, x, radius, options) => {
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
-        const refresh = function(settings) {
-                const filterDataset = function() {
+        const refresh = function (settings) {
+                const filterDataset = function () {
                         const filtered = fullDataset
                                 .filter(d => _.includes(settings.doses, d.data["dose units id"]))
                                 .filter(d => _.includes(settings.systems, d.data.system))
@@ -222,7 +219,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                             exit
                                 .transition(t)
                                 .style("opacity", 0)
-                                .on("end", function() {
+                                .on("end", function () {
                                     d3.select(this).remove();
                                 })
                     );
@@ -255,7 +252,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                                 .delay((d, i) => i * 2)
                                 .attr("r", 0)
                                 .style("opacity", 0)
-                                .on("end", function() {
+                                .on("end", function () {
                                     d3.select(this).remove();
                                 })
                     );
@@ -270,7 +267,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                     mouseEnterExtra: () => d3.select(event.target).moveToFront(),
                 });
             },
-            colorLegend = function() {
+            colorLegend = function () {
                 let legend = svg
                     .append("g")
                     .attr("class", "color-legend")
@@ -290,7 +287,7 @@ const dodgeLogarithmic = (data, x, radius, options) => {
                     .enter()
                     .append("g")
                     .attr("transform", (d, i) => `translate(0,${i * 15})`)
-                    .each(function(d) {
+                    .each(function (d) {
                         d3.select(this)
                             .append("circle")
                             .attr("class", "critical-dose-legend")

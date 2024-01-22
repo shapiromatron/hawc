@@ -59,8 +59,8 @@ class SelectInput extends Component {
         const fieldId = this.props.id
                 ? this.props.id
                 : this.props.name
-                ? `id_${this.props.name}`
-                : null,
+                  ? `id_${this.props.name}`
+                  : null,
             {errors} = this.props;
 
         if (this.props.fieldOnly) {

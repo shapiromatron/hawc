@@ -1,9 +1,9 @@
 import {NULL_VALUE} from "../../summary/constants";
 
-const defineProps = function(id, label, column) {
+const defineProps = function (id, label, column) {
         return {id, label, column};
     },
-    defineAxis = function(field, opts) {
+    defineAxis = function (field, opts) {
         opts = opts || {};
         return {
             id: field.id,
@@ -13,7 +13,7 @@ const defineProps = function(id, label, column) {
             ],
         };
     },
-    defineMultiAxis = function(fields, id, label, opts) {
+    defineMultiAxis = function (fields, id, label, opts) {
         opts = opts || {};
         return {
             id,
@@ -28,7 +28,7 @@ const defineProps = function(id, label, column) {
             }),
         };
     },
-    defineFilter = function(field, opts) {
+    defineFilter = function (field, opts) {
         opts = opts || {};
         return {
             id: field.id,
@@ -40,7 +40,7 @@ const defineProps = function(id, label, column) {
             },
         };
     },
-    defineTable = function(field, opts) {
+    defineTable = function (field, opts) {
         opts = opts || {};
         return {
             id: field.id,

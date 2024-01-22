@@ -88,7 +88,7 @@ class TagTree {
     choices() {
         // get choices for a select input
         const choices = [],
-            addTag = function(tag) {
+            addTag = function (tag) {
                 choices.push({id: tag.data.pk, label: tag.get_full_name()});
                 tag.children.forEach(addTag);
             };

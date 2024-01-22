@@ -14,7 +14,7 @@ const Patterns = {
         waves: "waves",
         hexagons: "hexagons",
     },
-    createPattern = function(styles) {
+    createPattern = function (styles) {
         const pattern_fill = styles.pattern_fill || "#ffffff";
         switch (styles.pattern) {
             case Patterns.solid:

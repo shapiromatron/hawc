@@ -5,7 +5,7 @@ import Loading from "shared/components/Loading";
 
 import EditContainer from "./EditContainer";
 
-const getHeaderByTitle = function(item) {
+const getHeaderByTitle = function (item) {
     switch (item.depth) {
         case 2:
             return <h2 id={item.slug}>{item.title}</h2>;

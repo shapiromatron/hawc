@@ -123,7 +123,7 @@ class HeatmapDatastore {
 
     setScales() {
         const setScales = (fields, intersection) => {
-            const getSpecifiedAxisOrder = function(field) {
+            const getSpecifiedAxisOrder = function (field) {
                     /*
                     If an order is not specified, sort tokens.
                     If an order is specified, use the specified order, and append additional tokens to the end.
@@ -291,7 +291,7 @@ class HeatmapDatastore {
         let {scales, intersection} = this,
             index = -1,
             removedRows = this.rowsRemovedByFilters,
-            getIntersection = function(arr, set2) {
+            getIntersection = function (arr, set2) {
                 return set2 ? arr.filter(x => set2.has(x)) : [];
             },
             getRows = filters => {
@@ -326,10 +326,12 @@ class HeatmapDatastore {
                 })
                 .flat();
         if (this.settings.show_totals) {
-            const x_steps = scales.x.filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
-                    .length,
-                y_steps = scales.y.filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
-                    .length;
+            const x_steps = scales.x.filter((d, i) =>
+                    compress_x ? this.totals.x[i] > 0 : true
+                ).length,
+                y_steps = scales.y.filter((d, i) =>
+                    compress_y ? this.totals.y[i] > 0 : true
+                ).length;
             xy_map.push(
                 ...scales.x
                     .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))

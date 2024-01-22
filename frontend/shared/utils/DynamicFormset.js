@@ -41,8 +41,8 @@ class DynamicFormset {
 
     _updateFieldIndices() {
         var self = this;
-        this._formsInFormset().each(function(i, tr) {
-            _.each($(tr).find("input,select"), function(inp) {
+        this._formsInFormset().each(function (i, tr) {
+            _.each($(tr).find("input,select"), function (inp) {
                 self.updateElementIndex(inp, i);
             });
         });
@@ -62,9 +62,7 @@ class DynamicFormset {
         }
 
         // remove current form
-        $(e.target)
-            .parents(".dynamic-form")
-            .remove();
+        $(e.target).parents(".dynamic-form").remove();
 
         // update form count
         this._updateTotalFormsField();
@@ -80,9 +78,7 @@ class DynamicFormset {
         $row.find("input,select").val("");
         $row.find("select").each((i, sel) => {
             if ($(sel).find("option").length > 0) {
-                $(sel)
-                    .find("option:first")
-                    .prop("selected", true);
+                $(sel).find("option:first").prop("selected", true);
             }
         });
     }

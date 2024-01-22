@@ -146,7 +146,7 @@ class RadioField extends TextField {
 
 class SelectField extends TextField {
     _setInput() {
-        var makeOpt = function(d) {
+        var makeOpt = function (d) {
             return `<option value="${d[0]}">${d[1]}</option>`;
         };
         this.$inp = $(`<select name="${this.schema.name}" class="form-control">`).html(

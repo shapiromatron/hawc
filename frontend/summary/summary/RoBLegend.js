@@ -79,7 +79,7 @@ class RoBLegend {
                       this.settings.legend_x = parseInt(x);
                       this.settings.legend_y = parseInt(y);
                   })
-                : function() {},
+                : function () {},
             fields = this.get_data(),
             title,
             g;

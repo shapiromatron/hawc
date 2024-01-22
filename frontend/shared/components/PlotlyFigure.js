@@ -59,7 +59,7 @@ PlotlyFigure.defaultProps = {
     resizable: false,
 };
 
-const renderPlotlyFigure = function(el, config, resizable = false) {
+const renderPlotlyFigure = function (el, config, resizable = false) {
     el.innerHTML = "";
     try {
         ReactDOM.render(<PlotlyFigure {...config} resizable={resizable} />, el);

@@ -17,7 +17,7 @@ import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
-const startupHeatmapAppRender = function(el, settings, datastore, options) {
+const startupHeatmapAppRender = function (el, settings, datastore, options) {
         const store = new HeatmapDatastore(settings, datastore, options);
         try {
             if (store.withinRenderableBounds) {
@@ -34,7 +34,7 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
             ReactDOM.render(<p>An error occurred</p>, el);
         }
     },
-    getErrorDiv = function() {
+    getErrorDiv = function () {
         return `<div class="alert alert-danger" role="alert">
             <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
         </div>`;
@@ -259,7 +259,7 @@ class ExploreHeatmap extends BaseVisual {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
-                    modal.getModal().on("shown.bs.modal", function() {
+                    modal.getModal().on("shown.bs.modal", function () {
                         try {
                             startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                         } catch (err) {

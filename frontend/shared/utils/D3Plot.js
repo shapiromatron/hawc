@@ -24,7 +24,7 @@ class D3Plot {
             .attr("text-anchor", "middle")
             .attr("class", "dr_title")
             .html(this.title_str)
-            .each(function() {
+            .each(function () {
                 HAWCUtils.wrapText(this, opt.wrapWidth);
             });
     }
@@ -66,11 +66,7 @@ class D3Plot {
 
         this.set_legend_location(settings.box_t, settings.box_l);
 
-        this.legend
-            .append("svg:rect")
-            .attr("class", "legend")
-            .attr("height", 10)
-            .attr("width", 10);
+        this.legend.append("svg:rect").attr("class", "legend").attr("height", 10).attr("width", 10);
 
         this.legend
             .selectAll("legend_circles")
@@ -135,10 +131,7 @@ class D3Plot {
             .attr("preserveAspectRatio", "xMinYMin")
             .node();
 
-        this.vis = d3
-            .select(this.svg)
-            .append("g")
-            .attr("transform", `translate(${left},${top})`);
+        this.vis = d3.select(this.svg).append("g").attr("transform", `translate(${left},${top})`);
 
         var chart = $(this.svg),
             container = chart.parent();
@@ -146,7 +139,7 @@ class D3Plot {
         this.full_width = w;
         this.full_height = h;
         this.isFullSize = true;
-        this.trigger_resize = function(forceResize) {
+        this.trigger_resize = function (forceResize) {
             var targetWidth = Math.min(container.width(), self.full_width),
                 aspect = self.full_width / self.full_height;
             if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
@@ -243,10 +236,7 @@ class D3Plot {
                 }
                 break;
             case "ordinal":
-                scale = d3
-                    .scaleBand()
-                    .domain(settings.domain)
-                    .rangeRound(settings.rangeRound);
+                scale = d3.scaleBand().domain(settings.domain).rangeRound(settings.rangeRound);
                 break;
             default:
                 throw `scale type not defined: ${settings.scale_type}`;
@@ -328,10 +318,10 @@ class D3Plot {
             .enter()
             .append("line")
             .attr("class", this.y_axis_settings.gridline_class)
-            .attr("y1", function(v) {
+            .attr("y1", function (v) {
                 return v;
             })
-            .attr("y2", function(v) {
+            .attr("y2", function (v) {
                 return v;
             })
             .attr("x1", 0)
@@ -443,28 +433,28 @@ class D3Plot {
                 .attr(
                     "x1",
                     options.x1 ||
-                        function(v, i) {
+                        function (v, i) {
                             return d3.select(this).attr("x1");
                         }
                 )
                 .attr(
                     "x2",
                     options.x2 ||
-                        function(v, i) {
+                        function (v, i) {
                             return d3.select(this).attr("x2");
                         }
                 )
                 .attr(
                     "y1",
                     options.y1 ||
-                        function(v, i) {
+                        function (v, i) {
                             return d3.select(this).attr("y1");
                         }
                 )
                 .attr(
                     "y2",
                     options.y2 ||
-                        function(v, i) {
+                        function (v, i) {
                             return d3.select(this).attr("y2");
                         }
                 );
@@ -501,7 +491,7 @@ class D3Plot {
             .append("xhtml:a")
             .attr("title", "Display plot menu")
             .attr("class", "hidden")
-            .on("click", function() {
+            .on("click", function () {
                 plot._toggle_menu_bar();
             });
         this.cog_button

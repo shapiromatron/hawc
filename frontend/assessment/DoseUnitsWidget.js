@@ -24,10 +24,10 @@ class DoseUnitsWidget {
     handleAdd() {
         // add new units, after de-duping those already available.
         var optsMap = {};
-        this.$available.find("option:selected").each(function(i, el) {
+        this.$available.find("option:selected").each(function (i, el) {
             optsMap[el.value] = el;
         });
-        this.$selected.find("option").each(function(i, el) {
+        this.$selected.find("option").each(function (i, el) {
             delete optsMap[el.value];
         });
         this.$selected.append($(_.values(optsMap)).clone());
@@ -38,7 +38,7 @@ class DoseUnitsWidget {
     }
 
     handleUp() {
-        this.$selected.find("option:selected").each(function(i, el) {
+        this.$selected.find("option:selected").each(function (i, el) {
             var $el = $(el);
             $el.insertBefore($el.prev());
         });
@@ -49,7 +49,7 @@ class DoseUnitsWidget {
             .find("option:selected")
             .get()
             .reverse()
-            .forEach(function(el) {
+            .forEach(function (el) {
                 var $el = $(el);
                 $el.insertAfter($el.next());
             });
@@ -58,7 +58,7 @@ class DoseUnitsWidget {
     handleFormSubmit() {
         var selected_ids = this.$selected
             .children()
-            .map(function(i, el) {
+            .map(function (i, el) {
                 return parseInt(el.value);
             })
             .get();
@@ -70,7 +70,7 @@ class DoseUnitsWidget {
         var self = this;
 
         // set available
-        objects.forEach(function(d) {
+        objects.forEach(function (d) {
             self.$available.append(`<option value="${d.id}">${d.name}</option>`);
         });
 
@@ -82,7 +82,7 @@ class DoseUnitsWidget {
                 .filter(d => d.length > 0)
                 .map(d => parseInt(d));
 
-        ids.forEach(function(d) {
+        ids.forEach(function (d) {
             var dose = objectsKeymap[d];
             self.$selected.append(`<option value="${dose.id}">${dose.name}</option>`);
         });

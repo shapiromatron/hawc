@@ -1,4 +1,4 @@
-const checkSession = function() {
+const checkSession = function () {
     // check on an interval if a user's current session is about to expire. If it is, display
     // a popup to stay logged in.
     let checkId;
@@ -11,7 +11,7 @@ const checkSession = function() {
             const expTime = $('meta[name="session_expire_time"]').attr("content");
             return Date.parse(expTime);
         },
-        check = function() {
+        check = function () {
             // if session is about to expire, display a popup to request a session refresh
             const expTime = getExpireTime();
             if (expTime - Date.now() < SESSION_EXPIRE_WARNING) {

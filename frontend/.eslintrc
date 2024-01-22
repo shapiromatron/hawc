@@ -1,6 +1,5 @@
 {
     "rules": {
-        "generator-star-spacing": 1,
         "linebreak-style": 0,
         "no-await-in-loop": 1,
         "no-console": [
@@ -12,31 +11,24 @@
                 ]
             }
         ],
-        "no-sparse-arrays": 2,
         "no-unused-vars": [
             2,
             {
                 "args": "none"
             }
         ],
-        "object-shorthand": 1,
         "prettier/prettier": "error",
         "react/jsx-uses-react": 2,
         "react/jsx-uses-vars": 2,
         "react/no-deprecated": 2,
         "react/no-string-refs": 2,
         "react/prop-types": 2,
-        "react/react-in-jsx-scope": 2,
-        "space-before-function-paren": [
-            2,
-            "never"
-        ],
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error"
     },
     "parser": "@babel/eslint-parser",
     "parserOptions": {
-        "ecmaVersion": 9,
+        "ecmaVersion": 2021,
         "ecmaFeatures": {
             "jsx": true
         },
@@ -44,7 +36,7 @@
     },
     "env": {
         "browser": true,
-        "es6": true,
+        "es2021": true,
         "jest": true,
         "jquery": true,
         "node": true
@@ -52,7 +44,7 @@
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
-        "prettier"
+        "plugin:prettier/recommended"
     ],
     "plugins": [
         "react",
@@ -61,7 +53,7 @@
     ],
     "settings": {
         "react": {
-            "version": "detect"
+            "version": "16.14"
         }
     }
 }

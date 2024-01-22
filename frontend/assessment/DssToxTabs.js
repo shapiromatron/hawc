@@ -37,7 +37,7 @@ DssToxTabs.propTypes = {
     objects: PropTypes.arrayOf(PropTypes.object),
 };
 
-const renderDssToxTabs = function(el, objects) {
+const renderDssToxTabs = function (el, objects) {
     const substances = objects.map(d => new DssTox(d));
     ReactDOM.render(<DssToxTabs objects={substances} />, el);
 };

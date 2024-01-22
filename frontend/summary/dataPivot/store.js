@@ -68,11 +68,7 @@ class SortStore {
         if (key === NULL_CASE) {
             return [];
         }
-        return _.chain(this.rootStore.dp.data)
-            .map(key)
-            .uniq()
-            .sort()
-            .value();
+        return _.chain(this.rootStore.dp.data).map(key).uniq().sort().value();
     }
 }
 

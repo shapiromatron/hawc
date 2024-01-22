@@ -195,10 +195,10 @@ class ExploreHeatmapPlot {
                 width > xMax.width
                     ? 0
                     : width > xMax.height
-                    ? -90
-                    : xMax.width < xMax.height
-                    ? 0
-                    : -90;
+                      ? -90
+                      : xMax.width < xMax.height
+                        ? 0
+                        : -90;
         }
 
         x_tick_rotate = ((x_tick_rotate % 360) + 360) % 360; // make rotation between 0 and 360
@@ -212,15 +212,16 @@ class ExploreHeatmapPlot {
                     ? "start"
                     : "end"
                 : x_tick_rotate > 0 && x_tick_rotate < 180
-                ? "end"
-                : "start";
+                  ? "end"
+                  : "start";
         for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis
                     .append("g")
                     .attr(
                         "transform",
-                        `translate(0,${yOffset +
-                            (settings.x_axis_bottom ? label_padding : -label_padding)})`
+                        `translate(0,${
+                            yOffset + (settings.x_axis_bottom ? label_padding : -label_padding)
+                        })`
                     )
                     .attr("text-anchor", textAnchor),
                 lastItem = this.xs[0],
@@ -246,7 +247,7 @@ class ExploreHeatmapPlot {
                         .attr("y", 0)
                         .attr("transform", `rotate(${x_tick_rotate})`)
                         .text(lastItem[i].value || h.nullString)
-                        .each(function() {
+                        .each(function () {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
                             }
@@ -316,8 +317,9 @@ class ExploreHeatmapPlot {
                 .attr(
                     "points",
                     d =>
-                        `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
-                            d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
+                        `${d.x1},${newYOffset} ${d.x1},${yOffset} ${
+                            d.x1 + d.width
+                        },${yOffset} ${d.x1 + d.width},${newYOffset}`
                 )
                 .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "x");
@@ -390,7 +392,7 @@ class ExploreHeatmapPlot {
                         .attr("y", 0)
                         .attr("transform", `rotate(${y_tick_rotate})`)
                         .text(lastItem[i].value || h.nullString)
-                        .each(function() {
+                        .each(function () {
                             if (wrap_text) {
                                 HAWCUtils.wrapText(this, wrap_text);
                             }
@@ -454,8 +456,9 @@ class ExploreHeatmapPlot {
                 .attr(
                     "points",
                     d =>
-                        `${-width},${d.y1} 0,${d.y1} 0,${d.y1 + d.height} ${-width},${d.y1 +
-                            d.height}`
+                        `${-width},${d.y1} 0,${d.y1} 0,${d.y1 + d.height} ${-width},${
+                            d.y1 + d.height
+                        }`
                 )
                 .on("click", (event, d) => {
                     const cells = this.get_matching_cells(d.filters, "y");
@@ -614,13 +617,13 @@ class ExploreHeatmapPlot {
                         tableDataFilters.size == 0
                             ? d.rows.length
                             : _.includes(filterIndices, d.index)
-                            ? maxValue
-                            : d.rows.length / 3;
+                              ? maxValue
+                              : d.rows.length / 3;
                 return showCounts <= 2
                     ? colorScale(value)
                     : value === 0
-                    ? "white"
-                    : colorScale(maxValue / 3);
+                      ? "white"
+                      : colorScale(maxValue / 3);
             },
             totalColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index);
@@ -710,14 +713,8 @@ class ExploreHeatmapPlot {
         this.h = this.cellDimensions.height * this.y_steps;
 
         // Scales for x axis and y axis
-        this.x_scale = d3
-            .scaleBand()
-            .domain(_.range(0, this.x_steps))
-            .range([0, this.w]);
-        this.y_scale = d3
-            .scaleBand()
-            .domain(_.range(0, this.y_steps))
-            .range([0, this.h]);
+        this.x_scale = d3.scaleBand().domain(_.range(0, this.x_steps)).range([0, this.w]);
+        this.y_scale = d3.scaleBand().domain(_.range(0, this.y_steps)).range([0, this.h]);
 
         // Draw cells
         this.vis.append("g").attr("class", "exp_heatmap_cells");

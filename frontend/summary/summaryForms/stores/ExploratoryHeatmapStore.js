@@ -11,16 +11,16 @@ import {getInteractivityOptions} from "summary/interactivity/actions";
 import {NULL_VALUE} from "../../summary/constants";
 import {DATA_FILTER_CONTAINS, DATA_FILTER_LOGIC_AND} from "../../summary/filters";
 
-let createDefaultAxisItem = function() {
+let createDefaultAxisItem = function () {
         return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};
     },
-    createDefaultFilterWidget = function() {
+    createDefaultFilterWidget = function () {
         return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
     },
-    createTableRow = function() {
+    createTableRow = function () {
         return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
     },
-    createFilterRow = function() {
+    createFilterRow = function () {
         return {column: NULL_VALUE, type: DATA_FILTER_CONTAINS, value: ""};
     };
 

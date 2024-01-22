@@ -250,13 +250,13 @@ class Endpoint extends Observee {
     build_details_table(div) {
         var self = this,
             tbl = new DescriptiveTable(),
-            critical_dose = function(type) {
+            critical_dose = function (type) {
                 if (self.data[type] < 0) return;
                 var span = $("<span>");
                 new EndpointCriticalDose(self, span, type);
                 return span;
             },
-            bmd_response = function(type, showURL) {
+            bmd_response = function (type, showURL) {
                 if (self.data.bmds.length === 0) {
                     return;
                 }
@@ -264,7 +264,7 @@ class Endpoint extends Observee {
                 new BMDResult(self, el, type, showURL);
                 return el;
             },
-            getTaglist = function(tags, assessment_id) {
+            getTaglist = function (tags, assessment_id) {
                 if (tags.length === 0) {
                     return false;
                 }
@@ -281,7 +281,7 @@ class Endpoint extends Observee {
 
                 return div;
             },
-            isMultigenerational = function(experimentType) {
+            isMultigenerational = function (experimentType) {
                 return ["Rp", "1r", "2r", "Dv", "Ot"].includes(experimentType);
             };
 
@@ -460,11 +460,7 @@ class Endpoint extends Observee {
         this.build_general_notes($notes);
         modal.getModal().on("shown.bs.modal", () => this.renderPlot($plot, {showBmd: true}));
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1200});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1200});
     }
 
     hasEGdata() {

@@ -45,7 +45,7 @@ class RoBBarchart extends RoBHeatmap {
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on("shown.bs.modal", function() {
+        modal.getModal().on("shown.bs.modal", function () {
             new RoBBarchartPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });
