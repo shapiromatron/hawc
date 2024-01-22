@@ -18,11 +18,6 @@
             }
         ],
         "prettier/prettier": "error",
-        "react/jsx-uses-react": 2,
-        "react/jsx-uses-vars": 2,
-        "react/no-deprecated": 2,
-        "react/no-string-refs": 2,
-        "react/prop-types": 2,
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error"
     },
