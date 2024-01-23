@@ -86,3 +86,36 @@ class ChemicalForm(forms.ModelForm):
         helper.add_row("name", 3, "col-md-4")
         helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
+
+
+class AnimalGroupForm(forms.ModelForm):
+    class Meta:
+        model = models.AnimalGroup
+        exclude = ("experiment",)
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("species", 3, "col-md-4")
+        helper.add_row("lifestage_at_exposure", 2, "col-md-6")
+        helper.add_row("generation", 2, "col-md-6")
+
+        assessment_id = self.instance.experiment.study.assessment.pk
+        helper.add_create_btn(
+            "species",
+            reverse("assessment:species_create", args=(assessment_id,)),
+            "Create species",
+        )
+        helper.add_create_btn(
+            "strain",
+            reverse("assessment:strain_create", args=(assessment_id,)),
+            "Create strain",
+        )
+        return helper

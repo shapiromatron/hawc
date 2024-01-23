@@ -31,6 +31,27 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'animalv2:animalgroup-create' object.pk as animalgroup_create %}
+        {% include "animalv2/fragments/_create_card.html" with title="Animal Groups" hx_get=animalgroup_create hx_target="#animalgroup-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '35,15,15,15,20' %}
+            {% bs4_thead 'Name,Species,Strain,Sex,Edit' %}
+            <tbody>
+                {% if object.v2_animal_groups.all %}
+                    {% for object in object.v2_animal_groups.all %}
+                        {% include "animalv2/fragments/_animalgroup_row.html" %}
+                    {% endfor %}
+                    {% include "animalv2/fragments/_create_one.html" with id="animalgroup-empty-row" text="" %}
+                {% else %}
+                    {% include "animalv2/fragments/_create_one.html" with id="animalgroup-empty-row" text="animal groups" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="animalv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>

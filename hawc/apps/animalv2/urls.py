@@ -69,4 +69,35 @@ urlpatterns = [
         {"action": "delete"},
         name="chemical-delete",
     ),
+    # animalgroup
+    path(
+        "animalgroup/<int:pk>/create/",
+        views.AnimalGroupViewSet.as_view(),
+        {"action": "create"},
+        name="animalgroup-create",
+    ),
+    path(
+        "animalgroup/<int:pk>/",
+        views.AnimalGroupViewSet.as_view(),
+        {"action": "read"},
+        name="animalgroup-detail",
+    ),
+    path(
+        "animalgroup/<int:pk>/clone/",
+        views.AnimalGroupViewSet.as_view(),
+        {"action": "clone"},
+        name="animalgroup-clone",
+    ),
+    path(
+        "animalgroup/<int:pk>/update/",
+        views.AnimalGroupViewSet.as_view(),
+        {"action": "update"},
+        name="animalgroup-update",
+    ),
+    path(
+        "animalgroup/<int:pk>/delete/",
+        views.AnimalGroupViewSet.as_view(),
+        {"action": "delete"},
+        name="animalgroup-delete",
+    ),
 ]

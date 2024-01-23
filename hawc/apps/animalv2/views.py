@@ -144,3 +144,10 @@ class ChemicalViewSet(ExperimentChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm
     detail_fragment = "animalv2/fragments/_chemical_row.html"
+
+
+# AnimalGroup viewset
+class AnimalGroupViewSet(ExperimentChildViewSet):
+    model = models.AnimalGroup
+    form_class = forms.AnimalGroupForm
+    detail_fragment = "animalv2/fragments/_animalgroup_row.html"
