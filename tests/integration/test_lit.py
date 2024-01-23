@@ -173,7 +173,7 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_role("button", name="Save and next").click()
 
         # refresh page, check data stays
-        page.goto(f"{self.live_server_url}/lit/assessment/1/tag/")
+        page.goto(f"{self.live_server_url}/lit/assessment/1/tag/?id=1")
         expect(page.get_by_title("Inclusion ➤ Human Study")).to_be_visible()
         expect(page.get_by_label("Field1")).to_have_value("1001")
         expect(page.get_by_label("Field2")).to_have_value("2002")
