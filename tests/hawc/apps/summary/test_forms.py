@@ -2,13 +2,25 @@ import json
 from copy import deepcopy
 from io import BytesIO
 
+import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.summary.constants import VisualType
-from hawc.apps.summary.forms import ExternalSiteForm, ImageVisualForm, PlotlyVisualForm
+from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.summary.constants import ExportStyle, StudyType, VisualType
+from hawc.apps.summary.forms import (
+    DataPivotQueryForm,
+    DataPivotSelectorForm,
+    DataPivotUploadForm,
+    ExternalSiteForm,
+    ImageVisualForm,
+    PlotlyVisualForm,
+    TagtreeForm,
+)
+
+from ..test_utils import df_to_form_data
 
 
 @pytest.mark.django_db
@@ -31,6 +43,7 @@ class TestExternalSiteForm:
             data=data,
             parent=assessment,
             visual_type=visual_type,
+            evidence_type=StudyType.OTHER,
         )
         assert form.is_valid()
         assert form.cleaned_data == {
@@ -44,6 +57,14 @@ class TestExternalSiteForm:
             "external_url_query_args": [":showVizHome=no", ":embed=y"],
             "filters": "[]",
         }
+        instance = form.save()
+
+        # check saved data loads on initial form
+        form = ExternalSiteForm(
+            instance=instance,
+            data=data,
+        )
+        assert form.fields["external_url"].initial == "https://public.tableau.com/views/foo1/foo2"
 
     def test_urls(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
@@ -96,6 +117,56 @@ def valid_plotly_data() -> dict:
         "slug": "slug",
         "settings": '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}',
     }
+
+
+@pytest.mark.django_db
+class TestTagtreeForm:
+    def valid_data(self):
+        return dict(
+            title="title",
+            slug="slug",
+            description="hi",
+            root_node=1,
+            required_tags=[],
+            pruned_tags=[],
+            hide_empty_tag_nodes=False,
+            height=500,
+            width=999,
+            show_legend=True,
+            show_counts=True,
+        )
+
+    def test_success(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        visual_type = VisualType.LITERATURE_TAGTREE
+
+        # check save works and settings are saved correctly
+        data = self.valid_data()
+        form = TagtreeForm(
+            data=data,
+            parent=assessment,
+            visual_type=visual_type,
+            evidence_type=StudyType.OTHER,
+        )
+        assert form.is_valid()
+        instance = form.save()
+        assert instance.settings == {
+            "root_node": 1,
+            "required_tags": [],
+            "pruned_tags": [],
+            "hide_empty_tag_nodes": False,
+            "width": 999,
+            "height": 500,
+            "show_legend": True,
+            "show_counts": True,
+        }
+
+        # check saved data loads on initial form
+        form = TagtreeForm(
+            instance=instance,
+            data=data,
+        )
+        assert form.fields["width"].initial == 999
 
 
 @pytest.mark.django_db
@@ -179,3 +250,79 @@ class TestImageVisualForm:
         )
         assert form.is_valid() is False
         assert "Image must be >10KB and <3 MB in size." in form.errors["image"][0]
+
+
+@pytest.mark.django_db
+class TestDataPivotUploadForm:
+    def test_bad_excel(self, db_keys):
+        assess = Assessment.objects.get(id=db_keys.assessment_working)
+        bad_files = [
+            (
+                df_to_form_data("excel_file", pd.DataFrame(data=[1, 2], columns=["a"])),
+                "Must contain at least 2 columns.",
+            ),
+            (
+                df_to_form_data("excel_file", pd.DataFrame(data=[[1, 2]], columns=["a", "b"])),
+                "Must contain at least 2 rows of data.",
+            ),
+        ]
+        for files, error_msg in bad_files:
+            form = DataPivotUploadForm(
+                parent=assess,
+                data={"title": "a", "slug": "a"},
+                files=files,
+            )
+            assert form.is_valid() is False
+            assert form.errors["excel_file"][0] == error_msg
+
+    def test_bad_worksheet(self, db_keys):
+        df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
+        form = DataPivotUploadForm(
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+            data={"title": "a", "slug": "a", "worksheet_name": "foo"},
+            files=df_to_form_data("excel_file", df),
+        )
+        assert form.is_valid() is False
+        assert form.errors["worksheet_name"][0] == "Worksheet name foo not found."
+
+    def test_success(self, db_keys):
+        df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
+        form = DataPivotUploadForm(
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+            data={"title": "a", "slug": "a"},
+            files=df_to_form_data("excel_file", df),
+        )
+        assert form.is_valid()
+
+
+@pytest.mark.django_db
+class TestDataPivotQueryForm:
+    def test_success(self, db_keys):
+        form = DataPivotQueryForm(
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+            evidence_type=StudyType.BIOASSAY,
+            data={
+                "title": "a",
+                "slug": "a",
+                "export_style": ExportStyle.EXPORT_ENDPOINT.value,
+            },
+        )
+        assert form.is_valid()
+        instance = form.save()
+        assert instance.preferred_units == []
+
+
+@pytest.mark.django_db
+class TestDataPivotSelectorForm:
+    def test_success(self, db_keys):
+        user = HAWCUser.objects.get(email="team@hawcproject.org")
+        form = DataPivotSelectorForm(
+            user=user,
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+            data={"selector": 2, "reset_row_overrides": True},
+        )
+        assert form.is_valid()
+        assert (
+            form.get_success_url()
+            == "/summary/data-pivot/assessment/1/create/query/0/?initial=2&reset_row_overrides=1"
+        )
