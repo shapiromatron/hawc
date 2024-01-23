@@ -171,9 +171,10 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_label("Field1").fill("1001")
         page.get_by_label("Field2").fill("2002")
         page.get_by_role("button", name="Save and next").click()
+        expect(page.get_by_text('HERO3 HAWC3')).to_be_visible() # on to next reference
 
-        # refresh page, check data stays
-        page.goto(f"{self.live_server_url}/lit/assessment/1/tag/?id=1")
+        # go back to reference, check data stays
+        page.get_by_text("Frédéric Chopin 2010").click()
         expect(page.get_by_title("Inclusion ➤ Human Study")).to_be_visible()
         expect(page.get_by_label("Field1")).to_have_value("1001")
         expect(page.get_by_label("Field2")).to_have_value("2002")
