@@ -5,7 +5,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.11
+- [Python](https://www.python.org/) == 3.12
 - [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com/) < 2
 - [PostgreSQL](https://www.postgresql.org/) >= 12
@@ -49,7 +49,7 @@ For Windows, use anaconda or miniconda to get requirements can be used to get de
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.11 postgresql
+conda install python=3.12 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
 
@@ -382,6 +382,14 @@ make test-integration-debug
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
 py.test -sv tests/integration/test_myuser.py --pdb
+```
+
+Sometimes you may want to run a test multiple times to check for flakiness:
+
+```bash
+for i in {1..10}; do
+INTEGRATION_TESTS=1 py.test -sv tests/integration/ -k test_example
+done
 ```
 
 ## More settings
