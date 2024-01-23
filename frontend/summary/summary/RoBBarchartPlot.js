@@ -17,7 +17,7 @@ class RoBBarchartPlot extends D3Visualization {
         this.plot_div = $div.html("");
         this.processData();
         if (this.dataset.length === 0) {
-            return this.plot_div.html(`<p>Error: no studies with evaluations selected.</p>`);
+            return this.plot_div.html(`<p data-testid="visual-error">Error: no studies with evaluations selected.</p>`);
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true, "A risk of bias/study evaluation stacked barchart");

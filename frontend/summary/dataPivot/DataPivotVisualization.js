@@ -239,13 +239,13 @@ class DataPivotVisualization extends D3Plot {
         this.get_dataset();
         if (this.dp_data.length === 0) {
             return HAWCUtils.addAlert(
-                "<strong>Error: </strong>no data are available to be plotted",
+                "<p data-testid='visual-error'><strong>Error: </strong>no data are available to be plotted.</p>",
                 this.plot_div
             );
         }
         if (this.datarows.length === 0) {
             return HAWCUtils.addAlert(
-                "<strong>Error: </strong>data exists, but settings need to be modified (currently no rows are displayed).",
+                "<p data-testid='visual-error'><strong>Error: </strong>data exists, but settings need to be modified (currently no rows are displayed).</p>",
                 this.plot_div
             );
         }

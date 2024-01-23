@@ -32,7 +32,7 @@ class RoBHeatmapPlot extends D3Visualization {
         if (this.cells_data.length === 0) {
             let robName = this.data.assessment_rob_name.toLowerCase();
             return this.plot_div.html(
-                `<p>Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
+                `<p data-testid="visual-error">Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
             );
         }
         this.get_plot_sizes();

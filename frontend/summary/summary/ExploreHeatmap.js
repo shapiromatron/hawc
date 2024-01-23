@@ -35,7 +35,7 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
         }
     },
     getErrorDiv = function() {
-        return `<div class="alert alert-danger" role="alert">
+        return `<div class="alert alert-danger" role="alert" data-testid="visual-error">
             <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
         </div>`;
     };
@@ -60,7 +60,7 @@ class ExploreHeatmapComponent extends Component {
 
         if (!store.hasDataset) {
             return (
-                <div className="alert alert-danger">
+                <div className="alert alert-danger" data-testid="visual-error">
                     <p className="mb-0">
                         <i className="fa fa-exclamation-circle"></i>&nbsp;No data are available.
                     </p>
@@ -71,7 +71,7 @@ class ExploreHeatmapComponent extends Component {
         if (!store.withinRenderableBounds) {
             const {n_rows, n_cols, n_cells, maxCells} = this.props.store;
             return (
-                <div className="alert alert-danger" role="alert">
+                <div className="alert alert-danger" role="alert" data-testid="visual-error">
                     <p className="mb-0">
                         <i className="fa fa-exclamation-circle"></i>&nbsp;This heatmap is too large
                         and cannot be rendered. Using the settings specified, the current heatmap

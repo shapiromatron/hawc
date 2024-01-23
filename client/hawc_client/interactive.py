@@ -1,5 +1,6 @@
 from io import BytesIO
 from pathlib import Path
+import time
 
 from playwright._impl._api_structures import SetCookieParam
 from playwright.async_api import Page, expect
@@ -26,6 +27,8 @@ async def fetch_png(page: Page) -> BytesIO:
     await page.wait_for_load_state("load")
     await expect(page.locator(".is-loading")).to_have_count(0)
     await remove_dj_toolbar(page)
+    # Check for an error
+    await expect(page.get_by_test_id("visual-error")).to_have_count(0, timeout=0)
 
     viz_type = await page.evaluate(
         "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"
@@ -38,6 +41,7 @@ async def fetch_png(page: Page) -> BytesIO:
             | "risk of bias heatmap"
             | "study evaluation heatmap"
             | "risk of bias barchart"
+            | "study evaluation barchart"
             | "literature tagtree"
             | "exploratory heatmap"
         ):
@@ -92,10 +96,10 @@ class InteractiveHawcClient:
 
     async def __aenter__(self):
         self.playwright = await pcm().start()
-        browser = await self.playwright.chromium.launch(
-            headless=self.headless, timeout=self.timeout
-        )
+        browser = await self.playwright.chromium.launch(headless=self.headless)
         self.context = await browser.new_context()
+        if self.timeout:
+            self.context.set_default_timeout(self.timeout)
         self.page = await self.context.new_page()
         cookies = [
             SetCookieParam(name=k, value=v, url=self.client.session.root_url)
