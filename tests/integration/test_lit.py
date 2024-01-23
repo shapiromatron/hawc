@@ -171,7 +171,7 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_label("Field1").fill("1001")
         page.get_by_label("Field2").fill("2002")
         page.get_by_role("button", name="Save and next").click()
-        expect(page.get_by_text('HERO3 HAWC3')).to_be_visible() # on to next reference
+        expect(page.get_by_text("HERO3 HAWC3")).to_be_visible()  # on to next reference
 
         # go back to reference, check data stays
         page.get_by_text("Frédéric Chopin 2010").click()
