@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.commands import migrate
+from django.db import connection
 from django.db.backends.base import creation
 from django.test.utils import setup_databases
 
@@ -83,6 +84,10 @@ class Command(BaseCommand):
         call_command("migrate", verbosity=1, fake=True)
         self.stdout.write(self.style.HTTP_INFO("Creating cache table..."))
         call_command("createcachetable", verbosity=1)
+        self.stdout.write(self.style.HTTP_INFO("Installing PostgreSQL extension..."))
+        with connection.cursor() as cursor:
+            # since migration are faked; force creation!
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS unaccent")
 
     def setup_test_environment(self) -> None:
         """Setup test environment within pytest environment."""
