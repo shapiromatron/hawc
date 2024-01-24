@@ -27,7 +27,6 @@ from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
-    HAWCDjangoJSONEncoder,
     PydanticToDjangoError,
     ReportExport,
     SerializerHelper,
@@ -93,27 +92,6 @@ class SummaryText(MP_Node):
             slug=f"assessment-{assessment.pk}-slug",
             text="Root-level text",
         )
-
-    @classmethod
-    def get_assessment_descendants(cls, assessment_id, json_encode=True):
-        """
-        Return all, excluding root
-        """
-        root = cls.get_assessment_root_node(assessment_id)
-        tags = SummaryText.dump_bulk(root)
-
-        if json_encode:
-            return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
-        else:
-            return tags
-
-    @classmethod
-    def get_assessment_qs(cls, assessment_id):
-        """
-        Return queryset, including root.
-        """
-        root = cls.get_assessment_root_node(assessment_id)
-        return cls.get_tree(parent=root)
 
     def get_absolute_url(self):
         return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
