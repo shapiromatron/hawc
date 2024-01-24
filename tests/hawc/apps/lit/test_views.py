@@ -20,6 +20,7 @@ class TestViewPermissions:
         views = [
             reverse("lit:tag-status", args=(3,)),
             reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)),
+            reverse("lit:workflows", args=(db_keys.assessment_working,)),
         ]
         for client in clients:
             c = Client()
@@ -34,6 +35,7 @@ class TestViewPermissions:
         views = [
             (reverse("lit:tag-status", args=(3,)), 403),
             (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
+            (reverse("lit:workflows", args=(db_keys.assessment_working,)), 403),
         ]
         for url, status in views:
             response = c.get(url)
