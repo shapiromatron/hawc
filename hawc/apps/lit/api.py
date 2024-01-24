@@ -349,6 +349,7 @@ class ReferenceViewSet(
 ):
     model = models.Reference
     serializer_class = serializers.ReferenceSerializer
+    http_method_names = ["get", "patch", "delete", "head", "options", "trace"]
 
     def get_queryset(self):
         qs = super().get_queryset()
