@@ -25,7 +25,12 @@ class ReferenceTableMain extends Component {
                     <Tab>Insights</Tab>
                 </TabList>
                 <TabPanel>
-                    <ReferenceTable references={paginatedReferences} showActions={canEdit} page={page} fetchPage={fetchPage} />
+                    <ReferenceTable
+                        references={paginatedReferences}
+                        showActions={canEdit}
+                        page={page}
+                        fetchPage={fetchPage}
+                    />
                 </TabPanel>
                 <TabPanel>
                     <h4>Title wordcloud</h4>

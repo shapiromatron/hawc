@@ -12,10 +12,10 @@ class Store {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0], config.assessment_id, config.search_id);
         this.tagtree.add_references(config.references);
-        autorun(() => {this.current_page = this.filteredReferences ? 1: null; console.log("please work")});
+        autorun(() => (this.current_page = this.filteredReferences ? 1 : null));
     }
 
-    pagination = 25
+    pagination = 25;
 
     @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
@@ -23,10 +23,9 @@ class Store {
     @observable tagtree = null;
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
-    @observable current_page = null
+    @observable current_page = null;
 
     @computed get page() {
-        console.log("Computed page!")
         if (!this.current_page) {
             return null;
         }
@@ -36,11 +35,11 @@ class Store {
             total_pages = Math.ceil(refs.length / this.pagination);
 
         return {
-            current_page: current_page,
-            total_pages: total_pages,
+            current_page,
+            total_pages,
             next: current_page < total_pages ? current_page + 1 : null,
             previous: current_page > 1 ? current_page - 1 : null,
-        }
+        };
     }
 
     @action.bound fetchPage(page) {
@@ -48,7 +47,6 @@ class Store {
     }
 
     @computed get paginatedReferences() {
-        console.log("Computed paginated references!")
         let refs = toJS(this.filteredReferences);
 
         if (!this.current_page) {
