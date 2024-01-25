@@ -11,7 +11,7 @@ import Wordcloud from "./Wordcloud";
 class ReferenceTableMain extends Component {
     render() {
         const {store} = this.props,
-            {selectedReferences, filteredReferences} = store,
+            {selectedReferences, filteredReferences, paginatedReferences, page, fetchPage} = store,
             {canEdit} = store.config;
         if (!selectedReferences) {
             return null;
@@ -25,7 +25,7 @@ class ReferenceTableMain extends Component {
                     <Tab>Insights</Tab>
                 </TabList>
                 <TabPanel>
-                    <ReferenceTable references={filteredReferences} showActions={canEdit} />
+                    <ReferenceTable references={paginatedReferences} showActions={canEdit} page={page} fetchPage={fetchPage} />
                 </TabPanel>
                 <TabPanel>
                     <h4>Title wordcloud</h4>

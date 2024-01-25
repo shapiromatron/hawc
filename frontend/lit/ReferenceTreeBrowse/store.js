@@ -1,4 +1,4 @@
-import {action, computed, observable} from "mobx";
+import {action, autorun, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -12,7 +12,10 @@ class Store {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0], config.assessment_id, config.search_id);
         this.tagtree.add_references(config.references);
+        autorun(() => {this.current_page = this.filteredReferences ? 1: null; console.log("please work")});
     }
+
+    pagination = 25
 
     @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
@@ -20,6 +23,43 @@ class Store {
     @observable tagtree = null;
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
+    @observable current_page = null
+
+    @computed get page() {
+        console.log("Computed page!")
+        if (!this.current_page) {
+            return null;
+        }
+
+        let refs = toJS(this.filteredReferences),
+            {current_page} = this,
+            total_pages = Math.ceil(refs.length / this.pagination);
+
+        return {
+            current_page: current_page,
+            total_pages: total_pages,
+            next: current_page < total_pages ? current_page + 1 : null,
+            previous: current_page > 1 ? current_page - 1 : null,
+        }
+    }
+
+    @action.bound fetchPage(page) {
+        this.current_page = page;
+    }
+
+    @computed get paginatedReferences() {
+        console.log("Computed paginated references!")
+        let refs = toJS(this.filteredReferences);
+
+        if (!this.current_page) {
+            return refs;
+        }
+
+        let start = (this.current_page - 1) * this.pagination,
+            end = this.current_page * this.pagination;
+
+        return refs.slice(start, end);
+    }
 
     @action.bound handleTagClick(selectedTag) {
         h.pushUrlParamsState("tag_id", selectedTag.data.pk);

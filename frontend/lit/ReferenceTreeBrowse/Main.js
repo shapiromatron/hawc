@@ -55,7 +55,7 @@ class ReferenceTreeMain extends Component {
     }
     render() {
         const {store} = this.props,
-            {selectedReferences, selectedReferencesLoading, filteredReferences, yearFilter} = store,
+            {selectedReferences, selectedReferencesLoading, filteredReferences, paginatedReferences, yearFilter} = store,
             yearText = yearFilter ? ` (${yearFilter.min}-${yearFilter.max})` : "";
 
         return (
@@ -104,7 +104,7 @@ class ReferenceTreeMain extends Component {
                                 id="reference-list"
                                 className="list-group"
                                 style={{maxHeight: "50vh"}}>
-                                {filteredReferences.map(referenceListItem)}
+                                {paginatedReferences.map(referenceListItem)}
                             </div>
                         </>
                     ) : null}
