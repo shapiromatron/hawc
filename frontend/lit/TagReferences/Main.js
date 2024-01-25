@@ -217,16 +217,18 @@ class TagReferencesMain extends Component {
                                     <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
                             </div>
-                            {store.errorOnSave ? (
-                                <Alert
-                                    className="alert-danger mt-2"
-                                    message={
-                                        store.UDFError
-                                            ? "An error was found with your tag form data."
-                                            : "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
-                                    }
-                                />
-                            ) : null}
+                            <Alert
+                                className={
+                                    store.errorOnSave
+                                        ? "alert-danger mt-2 slide showing"
+                                        : "alert-danger mt-2 slide gone"
+                                }
+                                message={
+                                    store.UDFError
+                                        ? "An error was found with your tag form data."
+                                        : "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
+                                }
+                            />
                             <div className="well" style={{minHeight: "50px"}}>
                                 {store.successMessage ? (
                                     <Alert
