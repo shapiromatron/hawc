@@ -72,18 +72,18 @@ class ReferenceTreeMain extends Component {
             <div className="row">
                 <div className="col-md-12 pb-3">
                     {store.untaggedReferencesSelected === true ? (
-                        <h4>Untagged references</h4>
+                        <h3>Untagged references</h3>
                     ) : store.selectedTag === null ? (
-                        <h4>Available references</h4>
+                        <h3>Available references</h3>
                     ) : (
                         <div className="d-flex">
-                            <h4 className="mb-0 align-self-center">
+                            <h3 className="mb-0 align-self-center">
                                 <span>
                                     {selectedReferences && selectedReferences.length > 0
                                         ? `${filteredReferences.length} references tagged:`
                                         : "References tagged:"}
                                 </span>
-                            </h4>
+                            </h3>
                             <span className="mb-0 ml-2 refTag">
                                 {store.selectedTag.get_full_name()}
                             </span>
