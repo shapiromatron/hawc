@@ -14,7 +14,7 @@ class Store {
         this.tagtree.add_references(config.references);
     }
 
-    paginate_by = 50;
+    paginateBy = 50;
 
     @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
@@ -22,26 +22,26 @@ class Store {
     @observable tagtree = null;
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
-    @observable current_page = 1;
+    @observable currentPage = 1;
 
     @computed get page() {
         if (!this.selectedReferences) {
             return null;
         }
 
-        let {current_page, filteredReferences} = this,
-            total_pages = Math.ceil(filteredReferences.length / this.paginate_by);
+        let {currentPage, filteredReferences} = this,
+            totalPages = Math.ceil(filteredReferences.length / this.paginateBy);
 
         return {
-            current_page,
-            total_pages,
-            next: current_page < total_pages ? current_page + 1 : null,
-            previous: current_page > 1 ? current_page - 1 : null,
+            currentPage,
+            totalPages,
+            next: currentPage < totalPages ? currentPage + 1 : null,
+            previous: currentPage > 1 ? currentPage - 1 : null,
         };
     }
 
     @action.bound fetchPage(page) {
-        this.current_page = page;
+        this.currentPage = page;
     }
 
     @computed get paginatedReferences() {
@@ -50,8 +50,8 @@ class Store {
         }
 
         let refs = this.filteredReferences,
-            start = (this.current_page - 1) * this.paginate_by,
-            end = this.current_page * this.paginate_by;
+            start = (this.currentPage - 1) * this.paginateBy,
+            end = this.currentPage * this.paginateBy;
 
         return refs.slice(start, end);
     }
