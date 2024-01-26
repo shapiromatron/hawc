@@ -15,7 +15,7 @@ class Store {
         autorun(() => (this.current_page = this.filteredReferences ? 1 : null));
     }
 
-    pagination = 25;
+    pagination = 50;
 
     @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
