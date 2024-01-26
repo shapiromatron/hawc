@@ -40,8 +40,8 @@ Paginator.propTypes = {
     page: PropTypes.shape({
         current_page: PropTypes.number.isRequired,
         total_pages: PropTypes.number.isRequired,
-        next: PropTypes.any,
-        previous: PropTypes.any,
+        next: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        previous: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     }),
     onChangePage: PropTypes.func.isRequired,
 };
