@@ -4,7 +4,6 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import HelpText from "shared/components/HelpText";
 import Loading from "shared/components/Loading";
 import TextInput from "shared/components/TextInput";
 
@@ -107,7 +106,9 @@ class ReferenceTreeMain extends Component {
                             <QuickSearch
                                 updateQuickFilter={text => store.changeQuickFilterText(text)}
                             />
-                            <HelpText text={"References on this page:"} />
+                            <label>
+                                Showing {paginatedReferences.length} of {selectedReferences.length}:
+                            </label>
                             <div
                                 id="reference-list"
                                 className="list-group"
