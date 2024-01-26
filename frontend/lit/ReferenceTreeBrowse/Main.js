@@ -4,7 +4,9 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import LabelInput from "shared/components/LabelInput";
 import Loading from "shared/components/Loading";
+import Paginator from "shared/components/Paginator";
 import TextInput from "shared/components/TextInput";
 
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
@@ -61,6 +63,8 @@ class ReferenceTreeMain extends Component {
                 filteredReferences,
                 paginatedReferences,
                 yearFilter,
+                page,
+                fetchPage,
             } = store,
             yearText = yearFilter ? ` (${yearFilter.min}-${yearFilter.max})` : "";
 
@@ -106,14 +110,13 @@ class ReferenceTreeMain extends Component {
                             <QuickSearch
                                 updateQuickFilter={text => store.changeQuickFilterText(text)}
                             />
-                            <label>
-                                Showing {paginatedReferences.length} of {selectedReferences.length}:
-                            </label>
-                            <div
-                                id="reference-list"
-                                className="list-group"
-                                style={{maxHeight: "50vh"}}>
+                            <LabelInput
+                                label={`Showing ${paginatedReferences.length} of ${selectedReferences.length}:`}
+                            />
+                            <div id="reference-list" className="list-group">
                                 {paginatedReferences.map(referenceListItem)}
+                                <span className="mt-3"></span>
+                                {page ? <Paginator page={page} onChangePage={fetchPage} /> : null}
                             </div>
                         </>
                     ) : null}
