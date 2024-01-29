@@ -265,6 +265,10 @@ class TestDataPivotUploadForm:
                 df_to_form_data("excel_file", pd.DataFrame(data=[[1, 2]], columns=["a", "b"])),
                 "Must contain at least 2 rows of data.",
             ),
+            (
+                {"excel_file": SimpleUploadedFile("test.xlsx", b"a,b,c\n1,2,3\n")},
+                "Unable to read Excel file. Please upload an Excel file in XLSX format.",
+            ),
         ]
         for files, error_msg in bad_files:
             form = DataPivotUploadForm(
