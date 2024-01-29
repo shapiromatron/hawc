@@ -1,4 +1,4 @@
-import {action, computed, observable} from "mobx";
+import {action, autorun, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -12,6 +12,9 @@ class Store {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0], config.assessment_id, config.search_id);
         this.tagtree.add_references(config.references);
+        // pagination should be reset when the filters change
+        // to ensure that the current page is not out of bounds
+        autorun(() => (this.currentPage = this.filteredReferences ? 1 : null));
     }
 
     paginateBy = 50;
@@ -22,7 +25,7 @@ class Store {
     @observable tagtree = null;
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
-    @observable currentPage = 1;
+    @observable currentPage = null;
 
     @computed get page() {
         if (!this.selectedReferences) {
