@@ -1,6 +1,5 @@
 from io import BytesIO
 from pathlib import Path
-import time
 
 from playwright._impl._api_structures import SetCookieParam
 from playwright.async_api import Page, expect
@@ -28,7 +27,7 @@ async def fetch_png(page: Page) -> BytesIO:
     await expect(page.locator(".is-loading")).to_have_count(0)
     await remove_dj_toolbar(page)
     # Check for an error
-    await expect(page.get_by_test_id("visual-error")).to_have_count(0, timeout=0)
+    await expect(page.get_by_test_id("visual-error")).to_have_count(0, timeout=10)
 
     viz_type = await page.evaluate(
         "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"
