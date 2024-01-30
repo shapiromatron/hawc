@@ -310,7 +310,7 @@ class DoseGroupExport(ModelExport):
         }
 
 
-class AnimalExporter(Exporter):
+class EndpointGroupFlatCompleteExporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
             StudyExport(
@@ -418,7 +418,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
         return df.apply(_func, axis="columns").drop(columns=["endpoint_group-stdev"])
 
     def build_df(self) -> pd.DataFrame:
-        df = AnimalExporter().get_df(
+        df = EndpointGroupFlatCompleteExporter().get_df(
             self.queryset.select_related(
                 "animal_group__experiment__study",
                 "animal_group__dosing_regime",
@@ -464,7 +464,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
         return df
 
 
-class AnimalExporter2(Exporter):
+class EndpointGroupFlatDataPivotExporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
             StudyExport(
@@ -794,7 +794,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         )
 
     def build_df(self) -> pd.DataFrame:
-        df = AnimalExporter2().get_df(
+        df = EndpointGroupFlatDataPivotExporter().get_df(
             self.queryset.select_related(
                 "animal_group__experiment__study",
                 "animal_group__dosing_regime",
@@ -914,7 +914,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return df
 
 
-class AnimalExporter3(Exporter):
+class EndpointFlatDataPivotExporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
             StudyExport(
@@ -1099,7 +1099,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         )
 
     def build_df(self) -> pd.DataFrame:
-        df = AnimalExporter3().get_df(
+        df = EndpointFlatDataPivotExporter().get_df(
             self.queryset.select_related(
                 "animal_group__experiment__study",
                 "animal_group__dosing_regime",
@@ -1227,7 +1227,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return df
 
 
-class AnimalExporter4(Exporter):
+class EndpointSummaryExporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
             StudyExport(
@@ -1454,7 +1454,7 @@ class EndpointSummary(EndpointGroupFlatDataPivot):
         return df
 
     def build_df(self) -> pd.DataFrame:
-        df = AnimalExporter4().get_df(
+        df = EndpointSummaryExporter().get_df(
             self.queryset.select_related(
                 "animal_group__experiment__study",
                 "animal_group__dosing_regime",
