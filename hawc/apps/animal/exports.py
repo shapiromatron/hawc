@@ -338,7 +338,7 @@ class AnimalExporter(Exporter):
 
 class EndpointGroupFlatComplete(FlatFileExporter):
     def handle_doses(self, df: pd.DataFrame) -> pd.DataFrame:
-        # this is really slow; maybe its the filtering to find matching dose group ids?
+        # TODO this is really slow; maybe its the filtering to find matching dose group ids?
         # solutions: ?, put the burden on SQL w/ Prefetch and Subquery (messy)
         # long term solutions: group and dose group should be related
         def _func(group_df: pd.DataFrame) -> pd.DataFrame:
