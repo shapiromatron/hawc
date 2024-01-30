@@ -52,6 +52,9 @@ class TestWorkflows:
 
         # workflow delete
         url = reverse("lit:workflow-delete", args=[workflow.id])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert "Are you sure you want to delete?" in str(resp.content)
         resp = client.post(url)
         assert resp.status_code == 200
         assert models.Workflow.objects.count() == initial_workflow_count
