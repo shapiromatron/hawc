@@ -88,6 +88,7 @@ class ExperimentChildViewSet(HtmxViewSet):
     form_class = None  # required
     form_fragment = "animalv2/fragments/_object_edit_row.html"
     detail_fragment = None  # required
+    # subform_fragment = None  # optional
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -136,6 +137,8 @@ class ExperimentChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
+        # if self.subform_fragment:
+        # context["subform_template_fragment"] = self.subform_fragment
         return context
 
 
@@ -151,3 +154,11 @@ class AnimalGroupViewSet(ExperimentChildViewSet):
     model = models.AnimalGroup
     form_class = forms.AnimalGroupForm
     detail_fragment = "animalv2/fragments/_animalgroup_row.html"
+
+
+# Treatment viewset
+class TreatmentViewSet(ExperimentChildViewSet):
+    model = models.Treatment
+    form_class = forms.TreatmentForm
+    detail_fragment = "animalv2/fragments/_treatment_row.html"
+    # subform_fragment = "animalv2/fragments/_treatment_subform.html"

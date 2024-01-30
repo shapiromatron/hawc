@@ -100,4 +100,35 @@ urlpatterns = [
         {"action": "delete"},
         name="animalgroup-delete",
     ),
+    # treatment
+    path(
+        "treatment/<int:pk>/create/",
+        views.TreatmentViewSet.as_view(),
+        {"action": "create"},
+        name="treatment-create",
+    ),
+    path(
+        "treatment/<int:pk>/",
+        views.TreatmentViewSet.as_view(),
+        {"action": "read"},
+        name="treatment-detail",
+    ),
+    path(
+        "treatment/<int:pk>/clone/",
+        views.TreatmentViewSet.as_view(),
+        {"action": "clone"},
+        name="treatment-clone",
+    ),
+    path(
+        "treatment/<int:pk>/update/",
+        views.TreatmentViewSet.as_view(),
+        {"action": "update"},
+        name="treatment-update",
+    ),
+    path(
+        "treatment/<int:pk>/delete/",
+        views.TreatmentViewSet.as_view(),
+        {"action": "delete"},
+        name="treatment-delete",
+    ),
 ]

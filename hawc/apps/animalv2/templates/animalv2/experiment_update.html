@@ -52,6 +52,27 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'animalv2:treatment-create' object.pk as treatment_create %}
+        {% include "animalv2/fragments/_create_card.html" with title="Treatments" hx_get=treatment_create hx_target="#treatment-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '45,35,20' %}
+            {% bs4_thead 'Name,Chemical,Edit' %}
+            <tbody>
+                {% if object.v2_treatments.all %}
+                    {% for object in object.v2_treatments.all %}
+                        {% include "animalv2/fragments/_treatment_row.html" %}
+                    {% endfor %}
+                    {% include "animalv2/fragments/_create_one.html" with id="treatment-empty-row" text="" %}
+                {% else %}
+                    {% include "animalv2/fragments/_create_one.html" with id="treatment-empty-row" text="treatments" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="animalv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>

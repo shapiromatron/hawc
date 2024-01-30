@@ -47,5 +47,22 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Treatments</h3>
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '60,40' %}
+            {% bs4_thead 'Name,Chemical' %}
+            <tbody>
+                {% for object in object.v2_treatments.all %}
+                    {% include "animalv2/fragments/_treatment_row.html" %}
+                {% empty %}
+                    {% bs4_fullrow 'No treatments available.' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 {% endblock %}

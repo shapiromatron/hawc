@@ -1,0 +1,8 @@
+<tr hx-target="this" hx-swap="outerHTML" class="treatment-{{object.id}}">
+    <td>{{object.name}}</td>
+    <td>{{object.chemical}}</td>
+    {% include "animalv2/fragments/_object_row.html" with model="treatment" %}
+</tr>
+{% if action == 'create' or action == 'clone' %}
+    <tr style="display: none" id="treatment-empty-row" hx-target="this"></tr>
+{% endif %}

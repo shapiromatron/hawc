@@ -84,7 +84,9 @@ class ChemicalForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 3, "col-md-4")
-        helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
+        helper.add_create_btn(
+            "dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID"
+        )
         return helper
 
 
@@ -118,4 +120,25 @@ class AnimalGroupForm(forms.ModelForm):
             reverse("assessment:strain_create", args=(assessment_id,)),
             "Create strain",
         )
+        return helper
+
+
+class TreatmentForm(forms.ModelForm):
+    class Meta:
+        model = models.Treatment
+        exclude = ("experiment",)
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+        self.fields["chemical"].queryset = self.instance.experiment.v2_chemicals.all()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("exposure_duration", 3, "col-md-4")
+
         return helper
