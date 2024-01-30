@@ -137,13 +137,10 @@ class AnimalGroupExport(ModelExport):
         }
 
     def get_annotation_map(self, query_prefix):
-        SexSymbol = type(
-            "SexSymbol", (object,), {"choices": models.AnimalGroup.SEX_SYMBOLS.items()}
-        )
         return {
             "url": sql_format("/ani/animal-group/{}/", query_prefix + "id"),  # hardcoded URL
             "sex_display": sql_display(query_prefix + "sex", constants.Sex),
-            "sex_symbol": sql_display(query_prefix + "sex", SexSymbol),
+            "sex_symbol": sql_display(query_prefix + "sex", models.AnimalGroup.SEX_SYMBOLS),
             "parents_display": str_m2m(Cast(query_prefix + "parents", output_field=CharField())),
         }
 
@@ -171,15 +168,13 @@ class DosingRegimeExport(ModelExport):
         }
 
     def get_annotation_map(self, query_prefix):
-        PositiveControl = type(
-            "PositiveControl", (object,), {"choices": constants.POSITIVE_CONTROL_CHOICES}
-        )
+        POSITIVE_CONTROL = {k: v for k, v in constants.POSITIVE_CONTROL_CHOICES}
         return {
             "route_of_exposure_display": sql_display(
                 query_prefix + "route_of_exposure", constants.RouteExposure
             ),
             "positive_control_display": sql_display(
-                query_prefix + "positive_control", PositiveControl
+                query_prefix + "positive_control", POSITIVE_CONTROL
             ),
             "negative_control_display": sql_display(
                 query_prefix + "negative_control", constants.NegativeControl
@@ -239,9 +234,6 @@ class EndpointExport(ModelExport):
         }
 
     def get_annotation_map(self, query_prefix):
-        VarianceName = type(
-            "VarianceName", (object,), {"choices": models.Endpoint.VARIANCE_NAME.items()}
-        )
         return {
             "url": sql_format("/ani/endpoint/{}/", query_prefix + "id"),  # hardcoded URL
             "effects_display": str_m2m(query_prefix + "effects__name"),
@@ -249,7 +241,9 @@ class EndpointExport(ModelExport):
                 query_prefix + "observation_time_units", constants.ObservationTimeUnits
             ),
             "data_type_display": sql_display(query_prefix + "data_type", constants.DataType),
-            "variance_type_name": sql_display(query_prefix + "variance_type", VarianceName),
+            "variance_type_name": sql_display(
+                query_prefix + "variance_type", models.Endpoint.VARIANCE_NAME
+            ),
             "expected_adversity_direction_display": sql_display(
                 query_prefix + "expected_adversity_direction", constants.AdverseDirection
             ),
