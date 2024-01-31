@@ -8,7 +8,7 @@ import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import FieldError, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
