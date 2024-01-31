@@ -1,73 +1,73 @@
 {% extends first_log.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
+    <h2>{{ first_log }}s</h2>
+    <table class="table table-sm table-striped">
+        <colgroup>
+            <col width="30%">
+            <col width="70%">
+        </colgroup>
+        <tbody>
+            <tr>
+                <th>Item</th>
+                <td>
+                    {% with first_log.content_object.get_absolute_url as absolute_url %}
 
-<h2>{{first_log}}s</h2>
+                        {% if absolute_url %}
+                            <a href="{{ absolute_url }}">{{ first_log.get_object_name }}</a>
+                        {% else %}
+                            {{ first_log.get_object_name }}
+                        {% endif %}
 
-<table class="table table-sm table-striped">
-    <colgroup>
-        <col width="30%">
-        <col width="70%">
-    </colgroup>
-    <tbody>
+                    {% endwith %}
+                </td>
+            </tr>
+            <tr>
+                <th>Data type</th>
+                <td>{{ first_log.content_type }}</td>
+            </tr>
+            <tr>
+                <th>Assessment</th>
+                <td>{{ first_log.assessment }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Logs</h3>
+    <table class="table table-sm table-striped">
+        <colgroup>
+            <col width="20%" />
+            <col width="20%" />
+            <col width="60%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in object_list %}
+                <tr>
+                    <td>{{ event.created }}</td>
+                    <td>{{ event.user }}</td>
+                    <td>
 
-        <tr>
-            <th>Item</th>
-            <td>
-                {% with first_log.content_object.get_absolute_url as absolute_url %}
-                    {% if absolute_url %}
-                    <a href="{{absolute_url}}">{{first_log.get_object_name}}</a>
-                    {% else %}
-                    {{first_log.get_object_name}}
-                    {% endif %}
-                {% endwith %}
-            </td>
-        </tr>
+                        {% if event.message %}<p class="mb-1">{{ event.message }}</p>{% endif %}
 
-        <tr>
-            <th>Data type</th>
-            <td>{{first_log.content_type}}</td>
-        </tr>
+                        {{ event.snapshot }}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">
+                        <i>No logs available; see details below.</i>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        <tr>
-            <th>Assessment</th>
-            <td>{{first_log.assessment}}</td>
-        </tr>
+    {% include 'assessment/_logs_note.html' %}
 
-    </tbody>
-</table>
-
-<h3>Logs</h3>
-
-<table class="table table-sm table-striped">
-    <colgroup>
-        <col width="20%" />
-        <col width="20%" />
-        <col width="60%" />
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Timestamp</th>
-            <th>User</th>
-            <th>Message</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for event in object_list %}
-        <tr>
-            <td>{{event.created}}</td>
-            <td>{{event.user}}</td>
-            <td>{% if event.message %}<p class="mb-1">{{event.message}}</p>{% endif %}{{event.snapshot}}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="3">
-                <i>No logs available; see details below.</i>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% include 'assessment/_logs_note.html' %}
 {% endblock content %}

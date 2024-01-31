@@ -1,6 +1,8 @@
 {% extends 'udf/tagbinding_detail.html' %}
 
 {% block content %}
-  {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="tag binding"  %}
+    {{ block.super }}
+
+    {% include "hawc/_delete_block.html" with name="tag binding" %}
+
 {% endblock content %}

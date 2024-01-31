@@ -1,24 +1,21 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div id="rForm">
-    {% crispy form %}
-  </div>
+    <div id="rForm">{% crispy form %}</div>
+    <div id="rFormset" style="display: 
+        {% if form.comparison_set.value %}inline {% else %}none{% endif %}
+         ">
+        <legend id="formsetName"></legend>
 
-  <div id="rFormset" style="display: {% if form.comparison_set.value %}inline{% else %}none{% endif %}">
-    <legend id="formsetName"></legend>
-    {% if crud == "Create" %}
-      <p class="form-text text-muted">
-        Add results to each result
-      </p>
-    {% endif %}
-    {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
-  </div>
+        {% if crud == "Create" %}<p class="form-text text-muted">Add results to each result</p>{% endif %}
+
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
+
+    </div>
 {% endblock %}
 
-
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     window.addEventListener("DOMContentLoaded", function(){
 
       var printf = window.app.HAWCUtils.printf,
@@ -124,5 +121,5 @@
       showOrHideMetricUnits();
 
     });
-  </script>
+    </script>
 {% endblock extrajs %}

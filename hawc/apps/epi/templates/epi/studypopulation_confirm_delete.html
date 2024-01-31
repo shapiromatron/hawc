@@ -1,6 +1,8 @@
 {% extends 'epi/studypopulation_detail.html' %}
 
 {% block content %}
-  {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="study population" notes="This will remove all content associated with this population." %}
+    {{ block.super }}
+
+    {% include "hawc/_delete_block.html" with name="study population" notes="This will remove all content associated with this population." %}
+
 {% endblock content %}

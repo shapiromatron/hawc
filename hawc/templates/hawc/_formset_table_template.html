@@ -1,58 +1,60 @@
-
 {{ formset.non_form_errors|add_class:"alert alert-danger" }}
 {{ formset.non_field_errors|add_class:"alert alert-danger" }}
 <table class="table table-sm table-striped formset">
+    <thead>
+        {% for form in formset.forms %}
 
-  <thead>
-    {% for form in formset.forms %}
-      {% if forloop.first %}
-        <tr>
-          {{ formset.management_form }}
-          {% for field in form.visible_fields %}
-            <th>
-              <span class="formsetFieldLabel" {% if field.help_text %}data-toggle="tooltip" title="{{field.help_text}}"{% endif %}>
-                {{ field.label|capfirst }}
-              </span>
-              {% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
-              {% if field.help_text %}&nbsp;<i class="fa fa-question-circle"></i>{% endif %}
-            </th>
-          {% endfor %}
-        </tr>
-      {% endif %}
-    {% endfor %}
-  </thead>
-
-  <tbody>
-    {% for form in formset.forms %}
-      <tr class="dynamic-form">
-        {% for field in form.visible_fields %}
-          <td>
-            {# Include the hidden fields in the form #}
             {% if forloop.first %}
-              {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-              {% endfor %}
+                <tr>
+                    {{ formset.management_form }}
+                    {% for field in form.visible_fields %}
+                        <th>
+                            <span class="formsetFieldLabel" 
+                                {% if field.help_text %}data-toggle="tooltip" title="{{ field.help_text }}"{% endif %}
+                            >{{ field.label|capfirst }}</span>
 
-              {{ form.non_field_errors|add_class:"alert alert-danger" }}
+                            {% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+
+                            {% if field.help_text %}&nbsp;<i class="fa fa-question-circle"></i>{% endif %}
+
+                        </th>
+                    {% endfor %}
+                </tr>
             {% endif %}
 
-            {# add field and errors #}
-            {{ field.errors|add_class:"alert alert-danger" }}
-            {{ field }}
-
-            {# add delete button only if it's a new form in formset #}
-            {% if not form.instance.pk and showDeleteRow %}
-              {% if forloop.first %}
-                <button id="remove-{{ form.prefix }}-row"
-                   type="button"
-                   title="Remove row"
-                   class="deleteForm btn btn-sm btn-danger my-1">
-                   <i class="fa fa-trash"></i>&nbsp;Remove row</button>
-              {% endif %}
-            {% endif %}
-          </td>
         {% endfor %}
-      </tr>
-    {% endfor %}
-  </tbody>
+    </thead>
+    <tbody>
+        {% for form in formset.forms %}
+            <tr class="dynamic-form">
+                {% for field in form.visible_fields %}
+                    <td>
+                        {# Include the hidden fields in the form #}
+
+                        {% if forloop.first %}
+                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                            {{ form.non_field_errors|add_class:"alert alert-danger" }}
+                        {% endif %}
+
+                        {# add field and errors #}
+                        {{ field.errors|add_class:"alert alert-danger" }}
+                        {{ field }}
+                        {# add delete button only if it's a new form in formset #}
+
+                        {% if not form.instance.pk and showDeleteRow %}
+                            {% if forloop.first %}
+                                <button id="remove-{{ form.prefix }}-row"
+                                        type="button"
+                                        title="Remove row"
+                                        class="deleteForm btn btn-sm btn-danger my-1">
+                                    <i class="fa fa-trash"></i>&nbsp;Remove row
+                                </button>
+                            {% endif %}
+                        {% endif %}
+
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>

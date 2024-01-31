@@ -1,15 +1,15 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-  {% crispy form %}
+    {% crispy form %}
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function(){
       $('#id_name').on('select2:close', function(){
         $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()||"",128));
       });
     });
-  </script>
+    </script>
 {% endblock extrajs %}

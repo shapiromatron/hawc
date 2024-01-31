@@ -1,8 +1,10 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div class="d-flex justify-content-end">
-    {% include "common/scientific_pulldown.html" %}
-  </div>
-  {% crispy form %}
+    <div class="d-flex justify-content-end">
+
+        {% include "common/scientific_pulldown.html" %}
+
+    </div>
+    {% crispy form %}
 {% endblock %}

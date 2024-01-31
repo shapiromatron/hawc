@@ -1,7 +1,9 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2>{{object}}</h2>
-  <p class='form-text text-muted'>{{object.description|safe}}</p>
-  {% include "hawc/_delete_block.html" with name="metric" notes="This will remove any study evaluations with this metric." %}
+    <h2>{{ object }}</h2>
+    <p class='form-text text-muted'>{{ object.description|safe }}</p>
+
+    {% include "hawc/_delete_block.html" with name="metric" notes="This will remove any study evaluations with this metric." %}
+
 {% endblock %}

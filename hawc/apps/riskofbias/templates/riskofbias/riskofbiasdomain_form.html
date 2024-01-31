@@ -1,13 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  {% crispy form %}
+    {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
 $(document).ready(function() {
     $('#id_name').focus();
 });
-</script>
+    </script>
 {% endblock extrajs %}

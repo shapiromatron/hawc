@@ -1,17 +1,15 @@
 {% extends 'common/modal_template.html' %}
 
-{% block modal_title %}
-    Insert HAWC Smart-tag
-{% endblock %}
+{% block modal_title %}Insert HAWC Smart-tag{% endblock %}
 
 {% block modal_body %}
-    <div id="smartTagForm">
-        {% crispy form %}
-    </div>
+    <div id="smartTagForm">{% crispy form %}</div>
 {% endblock %}
 
 {% block modal_footer %}
-<button type="button" class="btn btn-primary smartTagSave">Insert</button>
-<button type="button" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button type="button" class="btn btn-primary smartTagSave">Insert</button>
+    <button type="button"
+            class="btn btn-light"
+            data-dismiss="modal"
+            aria-hidden="true">Cancel</button>
 {% endblock %}
-

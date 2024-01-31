@@ -1,41 +1,44 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div id="animal-group-header" class="d-flex">
-    <h2>{{object}}</h2>
-    {% if obj_perms.edit %}
-      {% actions %}
-        <span class="dropdown-header">Animal Group Editing</span>
-        <a class="dropdown-item" href="{% url 'animal:animal_group_update' object.pk %}">Update</a>
-        <a class="dropdown-item" href="{% audit_url object %}">View change logs</a>
-        <a class="dropdown-item" href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a>
+    <div id="animal-group-header" class="d-flex">
+        <h2>{{ object }}</h2>
 
-        {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">Dose Regime Editing</span>
-        <a class="dropdown-item" href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a>
-        <a class="dropdown-item" href="{% audit_url object.dosing_regime %}">View change logs</a>
-        {% endif %}
+        {% if obj_perms.edit %}
+            {% actions %}
+            <span class="dropdown-header">Animal Group Editing</span>
+            <a class="dropdown-item"
+               href="{% url 'animal:animal_group_update' object.pk %}">Update</a>
+            <a class="dropdown-item" href="{% audit_url object %}">View change logs</a>
+            <a class="dropdown-item"
+               href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a>
 
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">Endpoint Editing</span>
-        <a class="dropdown-item" href="{% url 'animal:endpoint_new' object.pk %}">Create new</a>
-        <a class="dropdown-item" href="{% url 'animal:endpoint_copy' object.pk %}">Copy from existing</a>
-      {% endactions %}
+            {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
+                <div class="dropdown-divider"></div>
+                <span class="dropdown-header">Dose Regime Editing</span>
+                <a class="dropdown-item"
+                   href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a>
+                <a class="dropdown-item" href="{% audit_url object.dosing_regime %}">View change logs</a>
+            {% endif %}
+
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">Endpoint Editing</span>
+            <a class="dropdown-item"
+               href="{% url 'animal:endpoint_new' object.pk %}">Create new</a>
+            <a class="dropdown-item"
+               href="{% url 'animal:endpoint_copy' object.pk %}">Copy from existing</a>
+        {% endactions %}
     {% endif %}
-  </div>
 
-  {% if crud == "Read" %}
-  <div id="animalGroupTableMain"></div>
-  {% endif %}
+</div>
+
+{% if crud == "Read" %}<div id="animalGroupTableMain"></div>{% endif %}
 
 {% endblock %}
 
-
 {% block extrajs %}
-
-{{ config|json_script:"config" }}
-<script type="text/javascript">
+    {{ config|json_script:"config" }}
+    <script type="text/javascript">
 window.app.startup("animalStartup", function(animal){
     const data = window.app.getConfig();
     animal.AnimalGroup.get_object(data.id, function(d){
@@ -48,5 +51,5 @@ window.app.startup("animalStartup", function(animal){
     });
     animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
   });
-</script>
+    </script>
 {% endblock %}

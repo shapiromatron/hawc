@@ -1,11 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  {% crispy form %}
+    {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function(){
         $('#id_title').on('keyup', function () {
           $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
@@ -19,5 +19,5 @@
         });
         $('#id_source').focus();
     });
-  </script>
+    </script>
 {% endblock extrajs %}

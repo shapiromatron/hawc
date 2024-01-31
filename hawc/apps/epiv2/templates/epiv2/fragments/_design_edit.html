@@ -1,16 +1,22 @@
-
 <div hx-target="this">
-  <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
-    <div class="d-flex justify-content-end">
-      {% include "common/scientific_pulldown.html" %}
-    </div>
-    {% crispy form %}
-    <div class="d-block container float-right">
-      <div class="float-right">
-        <button class="btn btn-sm btn-primary" hx-post="{% url 'epiv2:design-update' object.pk %}">Save</button>
-        <button class="btn btn-sm btn-light" hx-get="{% url 'epiv2:design-detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
-      </div>
-    </div>
-  </form>
-  {{form.media}}
+    <form method="post"
+          class="border my-2 p-2 pb-5 edit-form-background form-design">
+        <div class="d-flex justify-content-end">
+
+            {% include "common/scientific_pulldown.html" %}
+
+        </div>
+        {% crispy form %}
+        <div class="d-block container float-right">
+            <div class="float-right">
+                <button class="btn btn-sm btn-primary"
+                        hx-post="{% url 'epiv2:design-update' object.pk %}">Save</button>
+                <button class="btn btn-sm btn-light"
+                        hx-get="{% url 'epiv2:design-detail' object.pk %}">
+                    <i class="fa fa-fw fa-times mr-1"></i>Cancel
+                </button>
+            </div>
+        </div>
+    </form>
+    {{ form.media }}
 </div>

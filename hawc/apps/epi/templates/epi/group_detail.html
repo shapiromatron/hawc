@@ -2,23 +2,24 @@
 
 {% block content %}
     <div class="d-flex">
-      <h2>{{object.name}}</h2>
-      {% if obj_perms.edit and crud == "Read" %}
-        {% actions %}
-          <span class="dropdown-header">Group editing</span>
-          <a class="dropdown-item" href="{% url 'epi:g_update' object.pk %}">Update</a>
+        <h2>{{ object.name }}</h2>
+
+        {% if obj_perms.edit and crud == "Read" %}
+            {% actions %}
+            <span class="dropdown-header">Group editing</span>
+            <a class="dropdown-item" href="{% url 'epi:g_update' object.pk %}">Update</a>
         {% endactions %}
-      {% endif %}
-    </div>
-    <div id="objContainer"></div>
+    {% endif %}
+
+</div>
+<div id="objContainer"></div>
 {% endblock %}
 
-
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     const id = {{object.id}};
     window.app.startup("epiStartup", function(app){
       app.Group.displayFullPager($("#objContainer"), id);
     });
-  </script>
+    </script>
 {% endblock %}

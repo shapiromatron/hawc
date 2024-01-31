@@ -1,13 +1,18 @@
 {% extends "admin/base.html" %}
+
 {% load i18n %}
 
 {% block title %}{{ title }} | HAWC Admin{% endblock %}
 
 {% block extrastyle %}
     {{ block.super }}
+
     {% include 'includes/admin_environment_banner.html' %}
+
 {% endblock %}
 
 {% block branding %}
-    <h1 id="site-name"><a href="{% url 'admin:index' %}">HAWC Administration</a></h1>
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">HAWC Administration</a>
+    </h1>
 {% endblock %}

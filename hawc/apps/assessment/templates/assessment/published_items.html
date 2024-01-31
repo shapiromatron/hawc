@@ -1,154 +1,202 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2>Modify published items</h2>
-<p class="text-muted">
-    Publish or unpublish multiple items for public visibility in the current assessment. If an item
-    is made published, then if your assessment is public, anyone in the general public can view it.
-    If the item is unpublished, but it cannot be browsed to by viewing content on the site.
-    In some cases, unpublished content may be visible with a direct link, but not always. Reviewers
-    are treated in a similar way as the general public with regards to published content.
-</p>
-<div class='row'>
-    <div class='col-xl-4'>
-        <h3>Studies</h3>
-        <p class="help-text">View all <a href="{% url 'study:list' assessment.id %}">studies</a>.</p>
-        <table class="table table-sm table-bordered">
-            <thread>
+    <h2>Modify published items</h2>
+    <p class="text-muted">
+        Publish or unpublish multiple items for public visibility in the current assessment. If an item
+        is made published, then if your assessment is public, anyone in the general public can view it.
+        If the item is unpublished, but it cannot be browsed to by viewing content on the site.
+        In some cases, unpublished content may be visible with a direct link, but not always. Reviewers
+        are treated in a similar way as the general public with regards to published content.
+    </p>
+    <div class='row'>
+        <div class='col-xl-4'>
+            <h3>Studies</h3>
+            <p class="help-text">
+                View all <a href="{% url 'study:list' assessment.id %}">studies</a>.
+            </p>
+            <table class="table table-sm table-bordered">
+                <thread>
                 <tr>
                     <th>Published</th>
                     <th>Study</th>
                 </tr>
-            </thread>
-            <tbody>
-            {% for study in studies %}
-            <tr>
-                {% include 'assessment/fragments/publish_item_td.html' with name="study" object=study %}
-                <td><a href="{{study.get_absolute_url}}">{{study}}</a></td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="2"><i>No studies exist.</i></td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class='col-xl-4'>
-        <h3>Visuals</h3>
-        <p class="help-text">View all <a href="{% url 'summary:visualization_list' assessment.id %}">visuals</a>.</p>
-        <table class="table table-sm table-bordered">
-            <thread>
+                </thread>
+                <tbody>
+                    {% for study in studies %}
+                        <tr>
+
+                            {% include 'assessment/fragments/publish_item_td.html' with name="study" object=study %}
+
+                            <td>
+                                <a href="{{ study.get_absolute_url }}">{{ study }}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <i>No studies exist.</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class='col-xl-4'>
+            <h3>Visuals</h3>
+            <p class="help-text">
+                View all <a href="{% url 'summary:visualization_list' assessment.id %}">visuals</a>.
+            </p>
+            <table class="table table-sm table-bordered">
+                <thread>
                 <tr>
                     <th>Published</th>
                     <th>Visual</th>
                 </tr>
-            </thread>
-            <tbody>
-                {% for dp in datapivots %}
-                    {% if forloop.first %}
-                    <tr>
-                        <th colspan="2">Data Pivots</th>
-                    </tr>
-                    {% endif %}
-                    <tr>
-                        {% include 'assessment/fragments/publish_item_td.html' with name="datapivot" object=dp %}
-                        <td><a href="{{dp.get_absolute_url}}">{{dp}}</a></td>
-                    </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2"><i>No data pivots exist.</i></td>
-                </tr>
-                {% endfor %}
-                {% for visual in visuals %}
-                    {% ifchanged visual.visual_type %}
-                    <tr>
-                        <th colspan="2">{{visual.get_visual_type_display}}</th>
-                    </tr>
-                    {% endifchanged %}
-                    <tr>
-                        {% include 'assessment/fragments/publish_item_td.html' with name="visual" object=visual %}
-                        <td><a href="{{visual.get_absolute_url}}">{{visual}}</a></td>
-                    </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2"><i>No visuals exist.</i></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class='col-xl-4'>
-        <h3>Summary tables</h3>
-        <p class="help-text">View all <a href="{% url 'summary:tables_list' assessment.id %}">tables</a>.</p>
-        <table class="table table-sm table-bordered">
-            <thread>
+                </thread>
+                <tbody>
+                    {% for dp in datapivots %}
+
+                        {% if forloop.first %}
+                            <tr>
+                                <th colspan="2">Data Pivots</th>
+                            </tr>
+                        {% endif %}
+
+                        <tr>
+
+                            {% include 'assessment/fragments/publish_item_td.html' with name="datapivot" object=dp %}
+
+                            <td>
+                                <a href="{{ dp.get_absolute_url }}">{{ dp }}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <i>No data pivots exist.</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% for visual in visuals %}
+                        {% ifchanged visual.visual_type %}
+                            <tr>
+                                <th colspan="2">{{ visual.get_visual_type_display }}</th>
+                            </tr>
+                        {% endifchanged %}
+                        <tr>
+
+                            {% include 'assessment/fragments/publish_item_td.html' with name="visual" object=visual %}
+
+                            <td>
+                                <a href="{{ visual.get_absolute_url }}">{{ visual }}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <i>No visuals exist.</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class='col-xl-4'>
+            <h3>Summary tables</h3>
+            <p class="help-text">
+                View all <a href="{% url 'summary:tables_list' assessment.id %}">tables</a>.
+            </p>
+            <table class="table table-sm table-bordered">
+                <thread>
                 <tr>
                     <th>Published</th>
                     <th>Summary tables</th>
                 </tr>
-            </thread>
-            <tbody>
-                {% for table in summarytables %}
-                <tr>
-                    {% include 'assessment/fragments/publish_item_td.html' with name="summarytable" object=table %}
-                    <td><a href="{{table.get_absolute_url}}">{{table}}</a></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2"><i>No summary tables exist.</i></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class='col-xl-4'>
-        <h3>Datasets</h3>
-        <p class="help-text">View all <a href="{{assessment.get_absolute_url}}">datasets</a>.</p>
-        <table class="table table-sm table-bordered">
-            <thread>
+                </thread>
+                <tbody>
+                    {% for table in summarytables %}
+                        <tr>
+
+                            {% include 'assessment/fragments/publish_item_td.html' with name="summarytable" object=table %}
+
+                            <td>
+                                <a href="{{ table.get_absolute_url }}">{{ table }}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <i>No summary tables exist.</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class='col-xl-4'>
+            <h3>Datasets</h3>
+            <p class="help-text">
+                View all <a href="{{ assessment.get_absolute_url }}">datasets</a>.
+            </p>
+            <table class="table table-sm table-bordered">
+                <thread>
                 <tr>
                     <th>Published</th>
                     <th>Dataset</th>
                 </tr>
-            </thread>
-            <tbody>
-                {% for dataset in datasets %}
-                <tr>
-                    {% include 'assessment/fragments/publish_item_td.html' with name="dataset" object=dataset %}
-                    <td><a href="{{dataset.get_absolute_url}}">{{dataset}}</a></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2"><i>No datasets exist.</i></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class='col-xl-4'>
-        <h3>Attachments</h3>
-        <p class="help-text">View all <a href="{{assessment.get_absolute_url}}">attachments</a>.</p>
-        <table class="table table-sm table-bordered">
-            <thread>
+                </thread>
+                <tbody>
+                    {% for dataset in datasets %}
+                        <tr>
+
+                            {% include 'assessment/fragments/publish_item_td.html' with name="dataset" object=dataset %}
+
+                            <td>
+                                <a href="{{ dataset.get_absolute_url }}">{{ dataset }}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <i>No datasets exist.</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class='col-xl-4'>
+            <h3>Attachments</h3>
+            <p class="help-text">
+                View all <a href="{{ assessment.get_absolute_url }}">attachments</a>.
+            </p>
+            <table class="table table-sm table-bordered">
+                <thread>
                 <tr>
                     <th>Published</th>
                     <th>Assessment Attachments</th>
                 </tr>
-            </thread>
-            <tbody>
-                {% for attachment in attachments %}
-                <tr>
-                    {% include 'assessment/fragments/publish_item_td.html' with name="attachment" object=attachment %}
-                    <td><a href="{{attachment.get_absolute_url}}">{{attachment}}</a></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2"><i>No attachments exist.</i></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thread>
+                <tbody>
+                    {% for attachment in attachments %}
+                        <tr>
+
+                            {% include 'assessment/fragments/publish_item_td.html' with name="attachment" object=attachment %}
+
+                            <td>
+                                <a href="{{ attachment.get_absolute_url }}">{{ attachment }}</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                <i>No attachments exist.</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 {% endblock content %}

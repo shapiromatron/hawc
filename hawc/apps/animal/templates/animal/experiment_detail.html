@@ -2,36 +2,42 @@
 
 {% block content %}
     <div class="d-flex">
-      <h2>{{object}}</h2>
-      {% if obj_perms.edit %}
-        {% actions %}
+        <h2>{{ object }}</h2>
+
+        {% if obj_perms.edit %}
+            {% actions %}
             <span class="dropdown-header">Experiment Editing</span>
-            <a class="dropdown-item" href="{% url 'animal:experiment_update' object.pk %}">Update</a>
+            <a class="dropdown-item"
+               href="{% url 'animal:experiment_update' object.pk %}">Update</a>
             <a class="dropdown-item" href="{% audit_url object %}">View change logs</a>
-            <a class="dropdown-item" href="{% url 'animal:experiment_delete' object.pk %}">Delete</a>
+            <a class="dropdown-item"
+               href="{% url 'animal:experiment_delete' object.pk %}">Delete</a>
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Animal Group Editing</span>
-            <a class="dropdown-item" href="{% url 'animal:animal_group_new' object.pk %}">Create new</a>
-            <a class="dropdown-item" href="{% url 'animal:animal_group_copy' object.pk %}">Copy from existing</a>
+            <a class="dropdown-item"
+               href="{% url 'animal:animal_group_new' object.pk %}">Create new</a>
+            <a class="dropdown-item"
+               href="{% url 'animal:animal_group_copy' object.pk %}">Copy from existing</a>
         {% endactions %}
-      {% endif %}
-    </div>
-    <div id="objContainer"></div>
+    {% endif %}
 
-  {% if crud == "Read" %}
+</div>
+<div id="objContainer"></div>
+
+{% if crud == "Read" %}
     <h3>Available animal groups</h3>
+
     {% include "animal/_animal_group_list_tbl.html" with object_list=object.animal_groups.all %}
 
-  {% endif %}
+{% endif %}
+
 {% endblock %}
 
-
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     const id = {{object.id}};
     window.app.startup("animalStartup", function(app){
       app.Experiment.displayFullPager($("#objContainer"), id);
     });
-  </script>
-
+    </script>
 {% endblock extrajs %}

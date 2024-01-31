@@ -1,10 +1,12 @@
 {% if messages %}
-  <div class="row px-3">
-  {% for message in messages %}
-    <div class="col {% if message.tags %}{{ message.tags }}{% endif %}">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      {{ message|safe }}
+    <div class="row px-3">
+        {% for message in messages %}
+            <div class="col 
+                {% if message.tags %}{{ message.tags }}{% endif %}
+                 ">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message|safe }}
+            </div>
+        {% endfor %}
     </div>
-  {% endfor %}
-  </div>
 {% endif %}

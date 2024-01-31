@@ -1,20 +1,27 @@
 {% extends "admin/base.html" %}
 
 {% load i18n %}
+
 {% load static %}
 {% load render_bundle from webpack_loader %}
 
 {% block extrahead %}
-    <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/htmx/1.8.5/htmx.min.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'vendor/htmx/1.8.5/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}
 {% endblock %}
 
 {% block userlinks %}
+
     {% if site_url %}
         <a href="{{ site_url }}">{% trans 'View site' %}</a> /
     {% endif %}
+
     <a href="{% url 'swagger' %}">{% translate 'Swagger' %}</a> /
     <a href="{% url 'wagtailadmin_home' %}">{% translate 'Wagtail CMS' %}</a> /
+
     {% include "admin/color_theme_toggle.html" %}
+
 {% endblock %}

@@ -1,23 +1,25 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div class="d-flex">
-    <h2>{{object}}</h2>
-    {% if obj_perms.edit and crud == "Read" %}
-      {% actions %}
-        <span class="dropdown-header">Meta-protocol editing</span>
-        <a class="dropdown-item" href="{% url 'meta:protocol_update' object.pk %}">Update</a>
-        <a class="dropdown-item" href="{% url 'meta:protocol_delete' object.pk %}">Delete</a>
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">Meta-result editing</span>
-        <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
-        <a class="dropdown-item" href="{% url 'meta:result_copy' object.pk %}">Copy from existing</a>
-      {% endactions %}
+    <div class="d-flex">
+        <h2>{{ object }}</h2>
+
+        {% if obj_perms.edit and crud == "Read" %}
+            {% actions %}
+            <span class="dropdown-header">Meta-protocol editing</span>
+            <a class="dropdown-item"
+               href="{% url 'meta:protocol_update' object.pk %}">Update</a>
+            <a class="dropdown-item"
+               href="{% url 'meta:protocol_delete' object.pk %}">Delete</a>
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">Meta-result editing</span>
+            <a class="dropdown-item" href="{% url 'meta:result_create' object.pk %}">Create new</a>
+            <a class="dropdown-item" href="{% url 'meta:result_copy' object.pk %}">Copy from existing</a>
+        {% endactions %}
     {% endif %}
-  </div>
-  <div id="main"></div>
+
+</div>
+<div id="main"></div>
 {% endblock %}
 
-{% block extrajs %}
-  {{ config|json_script:"config" }}
-{% endblock %}
+{% block extrajs %}{{ config|json_script:"config" }}{% endblock %}

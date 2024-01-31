@@ -1,8 +1,17 @@
-<p class="text-muted my-2">This lists shows all {{rob_name|lower}} reviews which are currently assigned to you that require completion.</p>
+<p class="text-muted my-2">
+    This lists shows all {{ rob_name|lower }} reviews which are currently assigned to you that require completion.
+</p>
 <div class="list-group mb-3">
     {% for review in rob_reviews %}
-    <a class="list-group-item list-group-item-action dark-link" href="{{review.get_edit_url}}">{% icon 'fa-edit' %}&nbsp;{% if show_assessment %}{{review.study.assessment}}&nbsp;|&nbsp;{% endif %}{{review.study.short_citation}}&nbsp;({{review.final|yesno:"final,individual"}} review)</a>
+        <a class="list-group-item list-group-item-action dark-link"
+           href="{{ review.get_edit_url }}">{% icon 'fa-edit' %}&nbsp;
+
+            {% if show_assessment %}{{ review.study.assessment }}&nbsp;|&nbsp;{% endif %}
+
+        {{ review.study.short_citation }}&nbsp;({{ review.final|yesno:"final,individual" }} review)</a>
     {% empty %}
-    <p class="list-group-item disabled">You have no remaining reviews.</li>
+        <p class="list-group-item disabled">
+            You have no remaining reviews.
+        </li>
     {% endfor %}
 </div>

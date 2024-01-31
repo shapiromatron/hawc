@@ -1,35 +1,50 @@
-
 {% if object_list.count > 0 %}
-<h3>Assessment Values</h3>
-<table class="table table-sm table-striped">
-    {% bs4_colgroup '10,10,10,10,15,10,15,10,10' %}
-    <thead>
-        <tr>
-            <th>Evaluation type</th>
-            <th>System or health effect basis</th>
-            <th>Value type</th>
-            <th>Value duration</th>
-            <th>Value</th>
-            <th>POD type</th>
-            <th>Point of departure</th>
-            <th>Composite uncertainty factor</th>
-            <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value." %}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in object_list %}
-        <tr>
-            <td><a href="{{object.get_absolute_url}}">{{object.get_evaluation_type_display}}</a></td>
-            <td>{{object.system}}</td>
-            <td>{{object.get_value_type_display}}</td>
-            <td>{{object.duration}}</td>
-            <td>{{object.value}} {{object.value_unit|default:""}}{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</td>
-            <td>{{object.pod_type|default:"-"}}</td>
-            <td>{{object.pod_value|default:"-"}} {{object.pod_unit|default:""}}</td>
-            <td>{{object.uncertainty|default:"-"}}</td>
-            <td>{{object.confidence}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h3>Assessment Values</h3>
+    <table class="table table-sm table-striped">
+        {% bs4_colgroup '10,10,10,10,15,10,15,10,10' %}
+        <thead>
+            <tr>
+                <th>Evaluation type</th>
+                <th>System or health effect basis</th>
+                <th>Value type</th>
+                <th>Value duration</th>
+                <th>Value</th>
+                <th>POD type</th>
+                <th>Point of departure</th>
+                <th>Composite uncertainty factor</th>
+                <th>
+                    Confidence
+
+                    {% include "common/info_popover.html" with text="Confidence in the toxicity value." %}
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>
+                        <a href="{{ object.get_absolute_url }}">{{ object.get_evaluation_type_display }}</a>
+                    </td>
+                    <td>{{ object.system }}</td>
+                    <td>{{ object.get_value_type_display }}</td>
+                    <td>{{ object.duration }}</td>
+                    <td>
+                        {{ object.value }} {{ object.value_unit|default:"" }}
+
+                        {% if object.adaf %}
+
+                            {% include "common/info_popover.html" with text=adaf_footnote %}
+
+                        {% endif %}
+
+                    </td>
+                    <td>{{ object.pod_type|default:"-" }}</td>
+                    <td>{{ object.pod_value|default:"-" }} {{ object.pod_unit|default:"" }}</td>
+                    <td>{{ object.uncertainty|default:"-" }}</td>
+                    <td>{{ object.confidence }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endif %}

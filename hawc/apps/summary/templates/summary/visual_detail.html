@@ -1,18 +1,17 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block extrahead %}
-<meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
+    <meta name="hawc-viz-type"
+          data-viz-type="{{ object.get_visual_type_display }}" />
 {% endblock %}
 
-{% block content %}
-  <div class='visualization'></div>
-{% endblock %}
+{% block content %}<div class='visualization'></div>{% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     window.app.startup("summaryStartup", function(summary){
       window.isEditable = {{obj_perms.edit|lower}};
       summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
     });
-  </script>
+    </script>
 {% endblock %}

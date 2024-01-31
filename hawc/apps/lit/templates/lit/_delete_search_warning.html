@@ -1,11 +1,22 @@
 <b>All references and studies that were exclusively included from this search/import will also be removed.</b>
-<br><br>
+<br>
+<br>
 {% with studies=object.sole_studies %}
-<b>{{studies|length}} studies—including their extracted content and/or study evaluations—will be deleted</b>.
-{% if studies|length > 0 %}
-    The following studies will be removed: {% for study in studies %}<a href='{{study.get_absolute_url}}'>{{study}}</a>{% if not forloop.last %}; {% endif %}{% endfor %}. This will also impact any tables or visualizations using these studies.
-{% endif %}
+    <b>{{ studies|length }} studies—including their extracted content and/or study evaluations—will be deleted</b>.
+
+    {% if studies|length > 0 %}
+        The following studies will be removed:
+        {% for study in studies %}
+            <a href='{{ study.get_absolute_url }}'>{{ study }}</a>
+
+            {% if not forloop.last %};{% endif %}
+
+        {% endfor %}
+        . This will also impact any tables or visualizations using these studies.
+    {% endif %}
+
 {% endwith %}
-<br><br>
-<b>{{object.sole_references.count}} references ({{object.sole_references.tagged.count}} with tags) will also be deleted.</b>
+<br>
+<br>
+<b>{{ object.sole_references.count }} references ({{ object.sole_references.tagged.count }} with tags) will also be deleted.</b>
 <br>

@@ -1,17 +1,19 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-  <h2>{{title}}</h2>
-  <p>{{description}}</p>
-  {% include "common/inline_filter_form.html" %}
-  {% include table_fragment %}
-  {% include "includes/paginator.html" with plural_object_name="assessments" %}
+    <h2>{{ title }}</h2>
+    <p>{{ description }}</p>
+
+    {% include "common/inline_filter_form.html" %}
+    {% include table_fragment %}
+    {% include "includes/paginator.html" with plural_object_name="assessments" %}
+
 {% endblock content %}
 
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
   $(document).ready(function(){
     window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
   });
-</script>
+    </script>
 {% endblock extrajs %}

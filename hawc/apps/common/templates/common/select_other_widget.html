@@ -1,8 +1,10 @@
 {% spaceless %}
-{% for widget in widget.subwidgets %}
-{% include widget.template_name %}
-{% endfor %}
-<script id="{{widget.name}}-{{widget.jsid}}">
+    {% for widget in widget.subwidgets %}
+
+        {% include widget.template_name %}
+
+    {% endfor %}
+    <script id="{{widget.name}}-{{widget.jsid}}">
 $(document).ready(()=>{
     const div = $("#{{widget.name}}-{{widget.jsid}}").closest('div'),
         select = div.find('#{{widget.subwidgets.0.attrs.id}}'),
@@ -14,5 +16,5 @@ $(document).ready(()=>{
         (hasOther) ? input.show(): input.hide();
     }).trigger('change')
 });
-</script>
+    </script>
 {% endspaceless %}

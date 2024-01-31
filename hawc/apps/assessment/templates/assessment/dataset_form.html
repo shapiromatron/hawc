@@ -1,12 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-{% crispy form %}
+    {% crispy form %}
 {% endblock content %}
 
-
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function () {
         $('#id_name').focus();
 
@@ -27,5 +26,5 @@
 
         $('#id_revision_data').change(handleExcelNameChange);
     });
-</script>
+    </script>
 {% endblock extrajs %}

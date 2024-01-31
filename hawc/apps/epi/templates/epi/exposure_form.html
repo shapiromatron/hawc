@@ -1,24 +1,26 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="exposureForm">
-      {% crispy form %}
-    </div>
-
+    <div id="exposureForm">{% crispy form %}</div>
     <div id="ctFormset">
-      <legend>Central Tendencies
-        <button class="float-right btn btn-primary" title="Add new central tendency" type="button" id="addFormToFormset">+</button>
-      </legend>
-      {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+        <legend>
+            Central Tendencies
+            <button class="float-right btn btn-primary"
+                    title="Add new central tendency"
+                    type="button"
+                    id="addFormToFormset">+</button>
+        </legend>
+
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+
     </div>
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     window.addEventListener("DOMContentLoaded", function () {
       new window.app.DynamicFormset($('#ctFormset'), 'form', { oneFormRequired: true });
       $('#ctFormset').insertBefore($('.form-actions'));
     });
-  </script>
+    </script>
 {% endblock extrajs %}
-

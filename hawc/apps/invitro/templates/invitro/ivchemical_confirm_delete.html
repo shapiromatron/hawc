@@ -2,5 +2,7 @@
 
 {% block content %}
     {{ block.super }}
+
     {% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
+
 {% endblock content %}

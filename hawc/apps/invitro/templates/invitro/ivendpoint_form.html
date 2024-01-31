@@ -1,29 +1,29 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="eForm">
-        {% crispy form %}
-    </div>
-
+    <div id="eForm">{% crispy form %}</div>
     <div id="egFormset">
-        <legend>Endpoint groups
+        <legend>
+            Endpoint groups
             <button class="float-right btn btn-primary"
                     title="Add new group"
                     type="button"
                     id="addFormToFormset">+</button>
         </legend>
-        {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
-    </div>
 
+        {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+
+    </div>
     <div id="egBenchmarkFormset">
         <legend>Benchmark values</legend>
+
         {% include "hawc/_formset_table_template.html" with showDeleteRow=False formset=benchmark_formset %}
+
     </div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
-
+    <script type="text/javascript">
     var OELwidget = function($el){
         this.$el = $el;
         this.startup();
@@ -53,5 +53,5 @@
         new OELwidget($('#id_LOEL'));
     });
 
-</script>
+    </script>
 {% endblock extrajs %}

@@ -1,35 +1,33 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="tabbable" style="display:none;">
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link active" href="#data" data-toggle="tab">Visualization settings</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#settings" data-toggle="tab">Figure customization</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
-    </li>
-  </ul>
-
-  <div class="tab-content">
-    <div id="data"     class="tab-pane active">
-      {% crispy form %}
+    <div class="tabbable" style="display:none;">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#data" data-toggle="tab">Visualization settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#settings" data-toggle="tab">Figure customization</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="data"     class="tab-pane active">{% crispy form %}</div>
+            <div id="settings" class="tab-pane"></div>
+            <div id="preview"  class="tab-pane"></div>
+        </div>
     </div>
-    <div id="settings" class="tab-pane"></div>
-    <div id="preview"  class="tab-pane"></div>
-  </div>
-</div>
+    <div id="main" style="display:none;"></div>
 
-<div id="main" style="display:none;"></div>
-{% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
+    {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
+
 {% endblock %}
 
 {% block extrajs %}
-  {{ smart_tag_form.media }}
-  <script id="config" type="text/json" charset="utf-8">
+    {{ smart_tag_form.media }}
+    <script id="config" type="text/json" charset="utf-8">
       {
           "assessment": {{assessment.id}},
           "crud": "{{crud}}",
@@ -46,8 +44,8 @@
           "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",
           "clear_cache_url": "{{assessment.get_clear_cache_url}}"
       }
-  </script>
-  <script type="text/javascript">
+    </script>
+    <script type="text/javascript">
     window.app.startup("summaryFormsStartup", function(summaryForms){
       const config = window.app.getConfig(),
         djangoForm = $('#data form').get(0),
@@ -81,5 +79,5 @@
         {% endif %}
       }
     });
-  </script>
+    </script>
 {% endblock %}

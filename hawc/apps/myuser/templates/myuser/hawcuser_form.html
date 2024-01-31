@@ -3,6 +3,8 @@
 {% block title %}Create account | HAWC{% endblock %}
 
 {% block content %}
-{% crispy form %}
-{% include "registration/license.html" with modal_id='license_modal'%}
+    {% crispy form %}
+
+    {% include "registration/license.html" with modal_id='license_modal' %}
+
 {% endblock content %}

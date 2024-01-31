@@ -1,18 +1,20 @@
 {% if object_list or obj_perms.edit %}
-  <h3>Animal bioassay experiments</h3>
-  <table class="table table-sm table-striped">
-    {% bs4_colgroup '25,25,50' %}
-    {% bs4_thead 'Name,Type,Comments' %}
-    <tbody>
-      {% for object in object_list %}
-        <tr>
-          <td><a href="{% url 'animal:experiment_detail' object.pk %}">{{object}}</a></td>
-          <td>{{object.get_type_display}}</td>
-          <td>{{object.description|safe}}</td>
-        </tr>
-      {% empty %}
-        {% bs4_fullrow 'No experiments available.' %}
-      {% endfor %}
-    </tbody>
-  </table>
+    <h3>Animal bioassay experiments</h3>
+    <table class="table table-sm table-striped">
+        {% bs4_colgroup '25,25,50' %}
+        {% bs4_thead 'Name,Type,Comments' %}
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'animal:experiment_detail' object.pk %}">{{ object }}</a>
+                    </td>
+                    <td>{{ object.get_type_display }}</td>
+                    <td>{{ object.description|safe }}</td>
+                </tr>
+            {% empty %}
+                {% bs4_fullrow 'No experiments available.' %}
+            {% endfor %}
+        </tbody>
+    </table>
 {% endif %}

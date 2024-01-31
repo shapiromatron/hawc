@@ -1,6 +1,8 @@
 {% extends 'assessment/dataset_detail.html' %}
 
 {% block content %}
-{{ block.super }}
-{% include "hawc/_delete_block.html" with name="dataset" notes="This will delete all associated data, and may break any visualizations that were created using this dataset." %}
+    {{ block.super }}
+
+    {% include "hawc/_delete_block.html" with name="dataset" notes="This will delete all associated data, and may break any visualizations that were created using this dataset." %}
+
 {% endblock content %}

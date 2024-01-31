@@ -1,47 +1,43 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex mb-2">
-    <h2 class="mb-0">Outcomes ({{page_obj.paginator.count}} found)</h2>
-    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
-    {% actions %}
-        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
-    {% endactions %}
+    <div class="d-flex mb-2">
+        <h2 class="mb-0">Outcomes ({{ page_obj.paginator.count }} found)</h2>
+
+        {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+            {% actions %}
+            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+        {% endactions %}
     {% endif %}
+
 </div>
+
 {% include 'common/inline_filter_form.html' %}
+
 <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '17,20,17,18,14,14' %}
     {% bs4_thead 'Study,Study population,Outcome,System,Effect,Diagnostic' %}
     <tbody>
         {% for object in object_list %}
-        <tr>
-            <td>
-                <a href="{{object.study_population.study.get_absolute_url}}">{{object.study_population.study.short_citation}}</a>{% debug_badge object.study_population.study_id %}
-            </td>
-            <td>
-                <a href="{{object.study_population.get_absolute_url}}">{{object.study_population.name}}</a>{% debug_badge object.study_population_id %}
-            </td>
-            <td class="previewModalParent">
-                <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
-                <a href="{{object.get_absolute_url}}">{{object.name}}</a>{% debug_badge object.id %}
-            </td>
-            <td>
-                {{object.system|default:"--"}}
-            </td>
-            <td>
-                {{object.effect|default:"--"}}
-            </td>
-            <td>
-                {{object.get_diagnostic_display|default:"--"}}
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    <a href="{{ object.study_population.study.get_absolute_url }}">{{ object.study_population.study.short_citation }}</a>{% debug_badge object.study_population.study_id %}
+                </td>
+                <td>
+                    <a href="{{ object.study_population.get_absolute_url }}">{{ object.study_population.name }}</a>{% debug_badge object.study_population_id %}
+                </td>
+                <td class="previewModalParent">
+                    <i data-id={{ object.pk }} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+                    <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>{% debug_badge object.id %}
+                </td>
+                <td>{{ object.system|default:"--" }}</td>
+                <td>{{ object.effect|default:"--" }}</td>
+                <td>{{ object.get_diagnostic_display|default:"--" }}</td>
+            </tr>
         {% empty %}
-        <tr>
-            <td colspan="6">
-                No outcomes available
-            </td>
-        </tr>
+            <tr>
+                <td colspan="6">No outcomes available</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
@@ -51,9 +47,9 @@
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
     window.app.startup("epiStartup", function (app) {
         $("i.previewModalIcon").click(e => app.Outcome.displayAsModal($(e.target).data("id")));
     });
-</script>
+    </script>
 {% endblock %}

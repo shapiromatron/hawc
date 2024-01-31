@@ -1,32 +1,46 @@
 {% if object_list %}
-  <table id="ag-table" class="table table-sm table-striped">
-    <thead>
-      <tr>
-        {%if with_experiment %}
-          <th>Experiment</th>
-        {% endif %}
-        <th>Name</th>
-        <th>Species</th>
-        <th>Strain</th>
-        <th>Sex</th>
-        <th>Siblings</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for object in object_list %}
-        <tr>
-          {%if with_experiment %}
-            <td><a href="{% url 'animal:animal_group_detail' object.experiment.pk %}">{{object.experiment}}</a></td>
-          {% endif %}
-          <td><a href="{% url 'animal:animal_group_detail' object.pk %}">{{object}}</a></td>
-          <td>{{object.species}}</td>
-          <td>{{object.strain}}</td>
-          <td>{{object.get_sex_display}}</td>
-          <td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a>{% else %}None{% endif %}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <table id="ag-table" class="table table-sm table-striped">
+        <thead>
+            <tr>
+
+                {% if with_experiment %}<th>Experiment</th>{% endif %}
+
+                <th>Name</th>
+                <th>Species</th>
+                <th>Strain</th>
+                <th>Sex</th>
+                <th>Siblings</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+
+                    {% if with_experiment %}
+                        <td>
+                            <a href="{% url 'animal:animal_group_detail' object.experiment.pk %}">{{ object.experiment }}</a>
+                        </td>
+                    {% endif %}
+
+                    <td>
+                        <a href="{% url 'animal:animal_group_detail' object.pk %}">{{ object }}</a>
+                    </td>
+                    <td>{{ object.species }}</td>
+                    <td>{{ object.strain }}</td>
+                    <td>{{ object.get_sex_display }}</td>
+                    <td>
+
+                        {% if object.siblings %}
+                            <a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{ object.siblings }}</a>
+                        {% else %}
+                            None
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% else %}
-  <p>No animal groups available.</p>
+    <p>No animal groups available.</p>
 {% endif %}

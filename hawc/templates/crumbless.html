@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 
-{% block sidebar_outer %}{% include "includes/sidebar_container.html" %}{% endblock sidebar_outer %}
+{% block sidebar_outer %}
+
+    {% include "includes/sidebar_container.html" %}
+
+{% endblock sidebar_outer %}
 
 {% block content_outer %}
-<div class="col-xl-10 col-lg-12" >
-    {% block content %}{% endblock content %}
-</div>
+    <div class="col-xl-10 col-lg-12">
+
+        {% block content %}
+        {% endblock content %}
+
+    </div>
 {% endblock content_outer %}

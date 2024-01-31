@@ -1,11 +1,13 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div id="main">
-  <p>Loading, please wait...&nbsp;<span class="fa fa-spin fa-spinner"></span></p>
-</div>
+    <div id="main">
+        <p>
+            Loading, please wait...&nbsp;<span class="fa fa-spin fa-spinner"></span>
+        </p>
+    </div>
 {% endblock %}
 
 {% block extrajs %}
-  {{ config|json_script:"config" }}
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

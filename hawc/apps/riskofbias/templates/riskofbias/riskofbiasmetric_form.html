@@ -3,82 +3,96 @@
 {% load riskofbias %}
 
 {% block content %}
-  {% crispy form %}
-  <div id="detail_display" class="hidden"></div>
-  <div id="detail_library" class="hidden">
-    <div id="detail-0" >
-      <p><i>The judgment field is not shown; only textual descriptions are recorded. If a custom judgment response is required, select "None" and then put the custom value in the description field.</i></p>
+    {% crispy form %}
+    <div id="detail_display" class="hidden"></div>
+    <div id="detail_library" class="hidden">
+        <div id="detail-0">
+            <p>
+                <i>The judgment field is not shown; only textual descriptions are recorded. If a custom judgment response is required, select "None" and then put the custom value in the description field.</i>
+            </p>
+        </div>
+        <div id="detail-1">
+            <p>
+                <b>Available judgments:</b>
+            </p>
+            <ul>
+                {% score_option 17 %}
+                {% score_option 16 %}
+                {% score_option 15 %}
+                {% score_option 14 %}
+                {% score_option 12 %}
+                {% score_option 10 %}
+            </ul>
+        </div>
+        <div id="detail-2">
+            <p>
+                <b>Available judgments:</b>
+            </p>
+            <ul>
+                {% score_option 27 %}
+                {% score_option 26 %}
+                {% score_option 25 %}
+                {% score_option 24 %}
+                {% score_option 22 %}
+                {% score_option 20 %}
+            </ul>
+        </div>
+        <div id="detail-3">
+            <p>
+                <b>Available judgments:</b>
+            </p>
+            <ul>
+                {% score_option 37 %}
+                {% score_option 36 %}
+                {% score_option 35 %}
+                {% score_option 34 %}
+                {% score_option 22 %}
+                {% score_option 20 %}
+            </ul>
+        </div>
+        <div id="detail-4">
+            <p>
+                <b>Available judgments:</b>
+            </p>
+            <ul>
+                {% score_option 40 %}
+                {% score_option 41 %}
+                {% score_option 22 %}
+                {% score_option 20 %}
+            </ul>
+        </div>
+        <div id="detail-5">
+            <p>
+                <b>Available judgments:</b>
+            </p>
+            <ul>
+                {% score_option 53 %}
+                {% score_option 52 %}
+                {% score_option 51 %}
+                {% score_option 50 %}
+                {% score_option 22 %}
+                {% score_option 20 %}
+            </ul>
+        </div>
+        <div id="detail-6">
+            <p>
+                <b>Available judgments:</b>
+            </p>
+            <ul>
+                {% score_option 57 %}
+                {% score_option 56 %}
+                {% score_option 55 %}
+                {% score_option 54 %}
+                {% score_option 22 %}
+                {% score_option 20 %}
+            </ul>
+        </div>
     </div>
-    <div id="detail-1" >
-      <p><b>Available judgments:</b></p>
-      <ul>
-        {% score_option 17 %}
-        {% score_option 16 %}
-        {% score_option 15 %}
-        {% score_option 14 %}
-        {% score_option 12 %}
-        {% score_option 10 %}
-      </ul>
-    </div>
-    <div id="detail-2" >
-      <p><b>Available judgments:</b></p>
-      <ul>
-        {% score_option 27 %}
-        {% score_option 26 %}
-        {% score_option 25 %}
-        {% score_option 24 %}
-        {% score_option 22 %}
-        {% score_option 20 %}
-      </ul>
-    </div>
-    <div id="detail-3" >
-      <p><b>Available judgments:</b></p>
-      <ul>
-        {% score_option 37 %}
-        {% score_option 36 %}
-        {% score_option 35 %}
-        {% score_option 34 %}
-        {% score_option 22 %}
-        {% score_option 20 %}
-      </ul>
-    </div>
-    <div id="detail-4" >
-      <p><b>Available judgments:</b></p>
-      <ul>
-        {% score_option 40 %}
-        {% score_option 41 %}
-        {% score_option 22 %}
-        {% score_option 20 %}
-      </ul>
-    </div>
-    <div id="detail-5">
-      <p><b>Available judgments:</b></p>
-      <ul>
-        {% score_option 53 %}
-        {% score_option 52 %}
-        {% score_option 51 %}
-        {% score_option 50 %}
-        {% score_option 22 %}
-        {% score_option 20 %}
-      </ul>
-    </div>
-    <div id="detail-6">
-      <p><b>Available judgments:</b></p>
-      <ul>
-        {% score_option 57 %}
-        {% score_option 56 %}
-        {% score_option 55 %}
-        {% score_option 54 %}
-        {% score_option 22 %}
-        {% score_option 20 %}
-      </ul>
-    </div>
-  </div>
-  </div>
+</div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
 $(document).ready(function() {
     $('#detail_display').insertAfter($('#div_id_responses')).removeClass('hidden');
     $('#id_name').focus();
@@ -89,5 +103,5 @@ $(document).ready(function() {
       document.getElementById("detail_library")
     );
 });
-</script>
+    </script>
 {% endblock extrajs %}

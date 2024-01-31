@@ -1,33 +1,40 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2>My assigned tasks</h2>
+    <h2>My assigned tasks</h2>
 
-{% include 'common/inline_filter_form.html' %}
+    {% include 'common/inline_filter_form.html' %}
 
-{% if object_list %}
-<table class="table table-sm table-striped">
-    {% bs4_colgroup "30,70" %}
-    {% bs4_thead "Study,Task" %}
-    <tbody>
-        {% for task in object_list %}
-        <tr>
-            <td>
-                <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a>
-            </td>
-            {% include "mgmt/fragments/task_cell.html" with object=task %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% include "includes/paginator.html" with plural_object_name="tasks" %}
-{% else %}
-<p><i>There are no tasks available</i></p>
-{% endif %}
+    {% if object_list %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup "30,70" %}
+            {% bs4_thead "Study,Task" %}
+            <tbody>
+                {% for task in object_list %}
+                    <tr>
+                        <td>
+                            <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a>
+                        </td>
 
-{% with rob_name=assessment.get_rob_name_display %}
-<h3 class="mb-0">Assigned {{rob_name|title}} Reviews</h3>
-{% include "mgmt/fragments/rob_reviews.html" with show_assessment=False %}
-{% endwith %}
+                        {% include "mgmt/fragments/task_cell.html" with object=task %}
 
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% include "includes/paginator.html" with plural_object_name="tasks" %}
+
+    {% else %}
+        <p>
+            <i>There are no tasks available</i>
+        </p>
+    {% endif %}
+
+    {% with rob_name=assessment.get_rob_name_display %}
+        <h3 class="mb-0">Assigned {{ rob_name|title }} Reviews</h3>
+
+        {% include "mgmt/fragments/rob_reviews.html" with show_assessment=False %}
+
+    {% endwith %}
 {% endblock %}

@@ -1,8 +1,13 @@
-<div class="input-group my-2" style="width: fit-content;" role="group" aria-label="Downlink link button group with format select">
+<div class="input-group my-2"
+     style="width: fit-content"
+     role="group"
+     aria-label="Downlink link button group with format select">
     <div class="input-group-prepend">
-        <a class="btn btn-primary" style="line-height: 1.5rem;" type="button" id="{{name}}-url" href="{{link}}?format={{format}}{% if allow_unpublished %}&unpublished=false{% endif %}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;{{button_text}}</a>
+        <a class="btn btn-primary" style="line-height: 1.5rem" type="button" id="{{ name }}-url" href="{{ link }}?format={{ format }} 
+            {% if allow_unpublished %}&unpublished=false{% endif %}
+         "><i class="fa fa-download" aria-hidden="true"></i>&nbsp;{{ button_text }}</a>
     </div>
-    <select id="{{name}}" class="custom-select" required>
+    <select id="{{ name }}" class="custom-select" required>
         <option selected value="xlsx">xlsx</option>
         <option value="csv">csv</option>
         <option value="tsv">tsv</option>
@@ -10,13 +15,17 @@
         <option value="html">html</option>
     </select>
 </div>
+
 {% if allow_unpublished %}
-<div class="form-check">
-    <input class="form-check-input unpublished-checkbox" type="checkbox" data-url="{{name}}-url">
-    <label class="form-check-label" for="{{name}}-checkbox">
-        Include unpublished data
-    </label>
-</div>
+    <div class="form-check">
+        <input class="form-check-input unpublished-checkbox"
+               type="checkbox"
+               data-url="{{ name }}-url">
+        <label class="form-check-label" for="{{ name }}-checkbox">Include unpublished data</label>
+    </div>
 {% endif %}
-<p class="text-muted">{{help_text}}</p>
-<p><small><i class="text-muted" id="{{name}}-fmt-text">Excel Spreadsheet</i></small></p>
+
+<p class="text-muted">{{ help_text }}</p>
+<p>
+    <small><i class="text-muted" id="{{ name }}-fmt-text">Excel Spreadsheet</i></small>
+</p>

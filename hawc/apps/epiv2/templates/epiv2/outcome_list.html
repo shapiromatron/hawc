@@ -1,32 +1,38 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex mb-2">
-    <h2 class="mb-0">Outcomes ({{page_obj.paginator.count}} found)</h2>
-    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
-    {% actions %}
-        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
-    {% endactions %}
+    <div class="d-flex mb-2">
+        <h2 class="mb-0">Outcomes ({{ page_obj.paginator.count }} found)</h2>
+
+        {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+            {% actions %}
+            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+        {% endactions %}
     {% endif %}
+
 </div>
+
 {% include 'common/inline_filter_form.html' %}
+
 <table class="table table-sm table-striped">
     {% bs4_colgroup '25,25,25,25' %}
     {% bs4_thead 'Study,Study Population,Design,Outcome' %}
     <tbody>
         {% for object in object_list %}
-        <tr>
-            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a>{% debug_badge object.design.study_id %}</td>
-            <td><a href="{{object.design.get_absolute_url}}">{{object.design}}</a>{% debug_badge object.design_id %}</td>
-            <td>{{object.design.get_study_design_display}}</td>
-            <td>{{object}}{% debug_badge object.id %}</td>
-        </tr>
+            <tr>
+                <td>
+                    <a href="{{ object.design.study.get_absolute_url }}">{{ object.design.study.short_citation }}</a>{% debug_badge object.design.study_id %}
+                </td>
+                <td>
+                    <a href="{{ object.design.get_absolute_url }}">{{ object.design }}</a>{% debug_badge object.design_id %}
+                </td>
+                <td>{{ object.design.get_study_design_display }}</td>
+                <td>{{ object }}{% debug_badge object.id %}</td>
+            </tr>
         {% empty %}
-        <tr>
-            <td colspan="4">
-                No outcomes available
-            </td>
-        </tr>
+            <tr>
+                <td colspan="4">No outcomes available</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>

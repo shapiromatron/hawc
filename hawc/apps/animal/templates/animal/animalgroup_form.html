@@ -1,37 +1,36 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
+    <!-- Animal-Group Form -->
+    {% crispy form %}
+    <!-- Dosing Regime Form and Dose-Groups -->
 
-  <!-- Animal-Group Form -->
-  {% crispy form %}
+    {% if crud == "Create" %}
+        <div id="dosingRegimeContainer">
+            {% crispy form_dosing_regime %}
+            <div id="doseGroupsDiv">
+                <legend class='d-inline-block'>Dose-groups</legend>
+                <span class='float-right'>
+                    <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
+                    <a class='btn btn-primary'
+                       href="{% url 'assessment:dose_units_create' assessment.pk %}"
+                       onclick="return window.app.HAWCUtils.newWindowPopupLink(this);"
+                       title="Add new dose-units">+</a>
+                </span>
 
-  <!-- Dosing Regime Form and Dose-Groups -->
-  {% if crud == "Create" %}
-    <div id="dosingRegimeContainer">
+                {% if dose_groups_errors %}<div class="alert alert-danger">{{ dose_groups_errors|safe }}</div>{% endif %}
 
-      {% crispy form_dosing_regime %}
-      <div id="doseGroupsDiv">
-
-        <legend class='d-inline-block'>Dose-groups</legend>
-        <span class='float-right'>
-            <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
-        </span>
-
-        {% if dose_groups_errors %}
-          <div class="alert alert-danger">{{dose_groups_errors|safe}}</div>
-        {% endif %}
-        <table id="dose_table" class="table table-sm table-striped"></table>
-        <input id="dose_groups_json" name="dose_groups_json" type="hidden" />
-      </div>
-    </div>
-  {% endif %}
-
+                <table id="dose_table" class="table table-sm table-striped">
+                </table>
+                <input id="dose_groups_json" name="dose_groups_json" type="hidden" />
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
 $(document).ready(function() {
     var printf = window.app.HAWCUtils.printf,
         animalGroupSetup = function(){
@@ -140,5 +139,5 @@ $(document).ready(function() {
     {% endif %}
     $('#id_name').focus();
 });
-</script>
+    </script>
 {% endblock extrajs %}

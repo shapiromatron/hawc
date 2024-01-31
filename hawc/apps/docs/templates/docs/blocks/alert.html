@@ -1,4 +1,10 @@
-<div class="alert alert-{{value.type}}">
-{% if value.label %}<p><b>{{value.label}}</b></p>{% endif %}
-{{value.message}}
+<div class="alert alert-{{ value.type }}">
+
+    {% if value.label %}
+        <p>
+            <b>{{ value.label }}</b>
+        </p>
+    {% endif %}
+
+    {{ value.message }}
 </div>

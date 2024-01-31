@@ -1,11 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  {% crispy form %}
+    {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function () {
 
       // handle all logic related to dtxid + cas
@@ -30,5 +30,5 @@
       handleChemicalPropertiesInformation();
 
     });
-  </script>
-  {% endblock extrajs %}
+    </script>
+{% endblock extrajs %}

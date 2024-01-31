@@ -1,39 +1,43 @@
 {% if object_list %}
-  <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 50%;">
-      <col style="width: 16%;">
-      <col style="width: 10%;">
-      <col style="width: 12%;">
-      <col style="width: 12%;">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Title and description</th>
-        <th>Source</th>
-        <th>References</th>
-        <th>Created</th>
-        <th>Last Updated</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for object in object_list %}
-        <tr>
-          <td>
-            <a href="{{object.get_absolute_url}}">{{object.title}}</a><br>
-            <span class='form-text text-muted'>{{object.description|safe}}</span>
-          </td>
-          <td>{{object.get_search_type_display}}: {{object.get_source_display}}</td>
-          <td>{{object.references.count}}<br/>
-          {% with object.fraction_tagged|default:0 as tagged %}
-          <span class='form-text text-muted'>{{tagged|percentage}} tagged</span></td>
-          {% endwith %}
-          <td>{{object.created}}</td>
-          <td>{{object.date_last_run}}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <table class="table table-sm table-striped">
+        <colgroup>
+            <col style="width: 50%;">
+            <col style="width: 16%;">
+            <col style="width: 10%;">
+            <col style="width: 12%;">
+            <col style="width: 12%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Title and description</th>
+                <th>Source</th>
+                <th>References</th>
+                <th>Created</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>
+                        <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
+                        <br>
+                        <span class='form-text text-muted'>{{ object.description|safe }}</span>
+                    </td>
+                    <td>{{ object.get_search_type_display }}: {{ object.get_source_display }}</td>
+                    <td>
+                        {{ object.references.count }}
+                        <br />
+                        {% with object.fraction_tagged|default:0 as tagged %}
+                            <span class='form-text text-muted'>{{ tagged|percentage }} tagged</span>
+                        </td>
+                    {% endwith %}
+                    <td>{{ object.created }}</td>
+                    <td>{{ object.date_last_run }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% else %}
-  <p>No previous literature searches available.</p>
+    <p>No previous literature searches available.</p>
 {% endif %}

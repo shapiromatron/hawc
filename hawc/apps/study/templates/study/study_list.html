@@ -1,21 +1,28 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex">
-    <h2>Available studies ({{page_obj.paginator.count}} found)</h2>
-    {% if obj_perms.edit and crud == "Read" %}
-        {% actions %}
+    <div class="d-flex">
+        <h2>Available studies ({{ page_obj.paginator.count }} found)</h2>
+
+        {% if obj_perms.edit and crud == "Read" %}
+            {% actions %}
             <span class="dropdown-header">Study editing</span>
             <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Create new</a>
-            <a class="dropdown-item" href="{% url 'study:create_from_identifier' assessment.pk %}">Create from identifier</a>
+            <a class="dropdown-item"
+               href="{% url 'study:create_from_identifier' assessment.pk %}">Create from identifier</a>
+
             {% if assessment.enable_risk_of_bias %}
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-header">{{assessment.get_rob_name_display}}</span>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a>
-            <a class="dropdown-item" href="{% url 'riskofbias:rob_assignments' assessment.pk %}">View assignments</a>
+                <div class="dropdown-divider"></div>
+                <span class="dropdown-header">{{ assessment.get_rob_name_display }}</span>
+                <a class="dropdown-item"
+                   href="{% url 'riskofbias:arob_detail' assessment.pk %}">View requirements</a>
+                <a class="dropdown-item"
+                   href="{% url 'riskofbias:rob_assignments' assessment.pk %}">View assignments</a>
             {% endif %}
+
         {% endactions %}
     {% endif %}
+
 </div>
 
 {% include 'common/inline_filter_form.html' %}
@@ -25,38 +32,40 @@
     {% bs4_thead 'Short citation,Full citation,Bioassay,Epidemiology,Epi. meta-analysis,In vitro,Ecology' %}
     <tbody>
         {% for object in object_list %}
-        <tr>
-            <td>
-                <a href="{% url 'study:detail' object.pk %}">{{ object.short_citation }}</a>
-                {% if not object.published %}
-                <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
-                {% endif %}
-                {% debug_badge object.id %}
-            </td>
-            <td>
-                {{object.full_citation}}
-                {% for ident in object.identifiers.all %}
-                {% with url=ident.get_url %}
-                {% if url %}
-                <a class="badge badge-secondary" target="_blank" href="{{url}}">
-                    {{ident.get_database_display}}
-                </a>
-                {% endif %}
-                {% endwith %}
+            <tr>
+                <td>
+                    <a href="{% url 'study:detail' object.pk %}">{{ object.short_citation }}</a>
+
+                    {% if not object.published %}
+                        <i class="fa fa-eye-slash"
+                           title="Unpublished (not be visible to the public)"
+                           aria-hidden="true"></i>
+                    {% endif %}
+
+                    {% debug_badge object.id %}
+                </td>
+                <td>
+                    {{ object.full_citation }}
+                    {% for ident in object.identifiers.all %}
+                        {% with url=ident.get_url %}
+
+                            {% if url %}
+                                <a class="badge badge-secondary" target="_blank" href="{{ url }}">{{ ident.get_database_display }}</a>
+                            {% endif %}
+
+                        {% endwith %}
+                    {% endfor %}
+                </td>
+                {% for data_type in object.data_types %}
+                    <td>
+                        <i class="{{ data_type|yesno:'fa fa-check,fa fa-minus' }}"></i>
+                    </td>
                 {% endfor %}
-            </td>
-            {% for data_type in object.data_types %}
-            <td>
-                <i class="{{data_type|yesno:'fa fa-check,fa fa-minus'}}"></i>
-            </td>
-            {% endfor %}
-        </tr>
+            </tr>
         {% empty %}
-        <tr>
-            <td colspan="7">
-                No studies available
-            </td>
-        </tr>
+            <tr>
+                <td colspan="7">No studies available</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>

@@ -1,17 +1,19 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  {% if obj_perms.edit_assessment %}
-  <div class="d-flex">
-    <h2>{{object}}: {{assessment.get_rob_name_display}} (all reviews)</h2>
-    {% actions %}
-      <a class="dropdown-item" href="{{object.get_final_rob.get_edit_url}}">Edit final review</a>
-    {% endactions %}
-  </div>
-  {% endif %}
-  <div id="main"></div>
+
+    {% if obj_perms.edit_assessment %}
+        <div class="d-flex">
+            <h2>{{ object }}: {{ assessment.get_rob_name_display }} (all reviews)</h2>
+            {% actions %}
+            <a class="dropdown-item" href="{{ object.get_final_rob.get_edit_url }}">Edit final review</a>
+        {% endactions %}
+    </div>
+{% endif %}
+
+<div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-  {{ config|json_script:"config" }}
+    {{ config|json_script:"config" }}
 {% endblock extrajs %}

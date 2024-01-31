@@ -3,41 +3,46 @@
 {% load static %}
 
 {% block dp_content %}
-
-  <div id="loading_div"></div>
-
-  <div id='data_pivot' style='display:none;'>
-    <ul class="nav nav-tabs">
-        <li class="nav-item"><a class="nav-link active" href="#dp_data" data-toggle="tab">Data</a></li>
-        <li class="nav-item"><a class="nav-link" href="#dp_settings" data-toggle="tab">Settings</a></li>
-        <li class="nav-item"><a class="nav-link" id="display_tab_icon" href="#dp_display" data-toggle="tab">Preview</a></li>
-    </ul>
-    <div class="tab-content mt-2">
-        <div class="tab-pane active" id="dp_data" style="overflow-y: scroll; max-height: 70vh"></div>
-        <div class="tab-pane" id="dp_settings"></div>
-        <div class="tab-pane" id="dp_display"></div>
+    <div id="loading_div"></div>
+    <div id='data_pivot' style='display:none;'>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dp_data" data-toggle="tab">Data</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#dp_settings" data-toggle="tab">Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"
+                   id="display_tab_icon"
+                   href="#dp_display"
+                   data-toggle="tab">Preview</a>
+            </li>
+        </ul>
+        <div class="tab-content mt-2">
+            <div class="tab-pane active"
+                 id="dp_data"
+                 style="overflow-y: scroll;
+                        max-height: 70vh"></div>
+            <div class="tab-pane" id="dp_settings"></div>
+            <div class="tab-pane" id="dp_display"></div>
+        </div>
     </div>
-  </div>
-
-  <form id="dp_settings_form" action="." method="post">
-    <fieldset class="hidden">
-      {% for field in form %}
-        {{field}}
-      {% endfor %}
-      {% csrf_token %}
-    </fieldset>
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Update data-pivot settings</button>
-      <a href="{{object.get_absolute_url}}" class="btn btn-light">Cancel</a>
-    </div>
-  </form>
-
+    <form id="dp_settings_form" action="." method="post">
+        <fieldset class="hidden">
+            {% for field in form %}{{ field }}{% endfor %}
+            {% csrf_token %}
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update data-pivot settings</button>
+            <a href="{{ object.get_absolute_url }}" class="btn btn-light">Cancel</a>
+        </div>
+    </form>
 {% endblock dp_content %}
 
 {% block extrajs %}
-{{ config|json_script:"dp-config" }}
-<script type="text/javascript">
+    {{ config|json_script:"dp-config" }}
+    <script type="text/javascript">
 $('#loading_div').html(window.app.HAWCUtils.loading())
 window.app.startup("dataPivotStartup", function(app){
   const config = JSON.parse(document.getElementById('dp-config').textContent),
@@ -51,5 +56,5 @@ window.app.startup("dataPivotStartup", function(app){
     };
   app.DataPivot.displayEditView(config.data_url, config.settings, options)
 });
-</script>
+    </script>
 {% endblock extrajs %}

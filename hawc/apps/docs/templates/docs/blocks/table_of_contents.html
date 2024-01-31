@@ -1,14 +1,20 @@
 {% load wagtailcore_tags %}
 
-<h3 id="toc">{{value.child_header}}</h3>
+<h3 id="toc">{{ value.child_header }}</h3>
 <ul>
+
     {% if value.show_all_descendants %}
         {% for child in page.toc_descendants %}
-            <li style="margin-left: {{child.indent_offset}}em"><a href="{% pageurl child %}">{{ child.title }}</a></li>
+            <li style="margin-left: {{ child.indent_offset }}em">
+                <a href="{% pageurl child %}">{{ child.title }}</a>
+            </li>
         {% endfor %}
     {% else %}
         {% for child in page.toc_children %}
-            <li><a href="{% pageurl child %}">{{ child.title }}</a></li>
+            <li>
+                <a href="{% pageurl child %}">{{ child.title }}</a>
+            </li>
         {% endfor %}
     {% endif %}
+
 </ul>

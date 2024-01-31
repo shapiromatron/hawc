@@ -1,14 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="float-right">
-    {% include "common/scientific_pulldown.html" %}
-</div>
-{% crispy form %}
+    <div class="float-right">
+
+        {% include "common/scientific_pulldown.html" %}
+
+    </div>
+    {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+    <script type="text/javascript">
     $(document).ready(function () {
         const eval_type = $('#id_evaluation_type'),
             showRelevantFields = function(){
@@ -34,5 +36,5 @@
             };
         eval_type.on('change', showRelevantFields).trigger('change');
     });
-</script>
+    </script>
 {% endblock extrajs %}

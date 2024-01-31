@@ -3,11 +3,9 @@
 {% block title %}Contact | HAWC{% endblock %}
 
 {% block content %}
-  {% crispy form %}
+    {% crispy form %}
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    document.getElementById('id_name').focus();
-  </script>
+    <script type="text/javascript">document.getElementById('id_name').focus();</script>
 {% endblock extrajs %}

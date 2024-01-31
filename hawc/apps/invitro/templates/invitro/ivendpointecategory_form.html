@@ -1,8 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
-{% block content %}
-    <div id='main'></div>
-{% endblock %}
+{% block content %}<div id='main'></div>{% endblock %}
 
 {% block extrajs %}
     {{ config|json_script:"config" }}

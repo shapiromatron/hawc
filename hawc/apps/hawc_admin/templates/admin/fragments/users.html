@@ -1,10 +1,8 @@
 <h2>Active users</h2>
 {% plotly active event="htmx" resizable=True %}
-
 <h2>Days since login</h2>
 {% plotly growth.0 event="htmx" resizable=True %}
 {% plotly growth.1 event="htmx" resizable=True %}
-
 <h2>Days since last login</h2>
 {% plotly logins.0 event="htmx" resizable=True %}
 {% plotly logins.1 event="htmx" resizable=True %}

@@ -1,31 +1,34 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div class="d-flex">
-    <h2>{{object}}</h2>
-    {% include "common/unpublished_badge.html" %}
-    {% if crud == "Read" %}
-      {% actions %}
-        <span class="dropdown-header">Reporting</span>
-        <a class="dropdown-item" href="{{object.get_api_word_url}}">
-          <i class="fa fa-fw fa-file-word-o"></i>&nbsp;Download report
-        </a>
-        {% if obj_perms.edit %}
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">Edit settings</span>
-        <a class="dropdown-item" href="{{object.get_update_url}}">
-          <i class="fa fa-fw fa-edit"></i>&nbsp;Update
-        </a>
-        <a class="dropdown-item" href="{{object.get_delete_url}}">
-          <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
-        </a>
-        {% endif %}
-      {% endactions %}
+    <div class="d-flex">
+        <h2>{{ object }}</h2>
+
+        {% include "common/unpublished_badge.html" %}
+
+        {% if crud == "Read" %}
+            {% actions %}
+            <span class="dropdown-header">Reporting</span>
+            <a class="dropdown-item" href="{{ object.get_api_word_url }}">
+                <i class="fa fa-fw fa-file-word-o"></i>&nbsp;Download report
+            </a>
+
+            {% if obj_perms.edit %}
+                <div class="dropdown-divider"></div>
+                <span class="dropdown-header">Edit settings</span>
+                <a class="dropdown-item" href="{{ object.get_update_url }}">
+                    <i class="fa fa-fw fa-edit"></i>&nbsp;Update
+                </a>
+                <a class="dropdown-item" href="{{ object.get_delete_url }}">
+                    <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
+                </a>
+            {% endif %}
+
+        {% endactions %}
     {% endif %}
-  </div>
-  <div id="main" style="min-height: 400px"></div>
+
+</div>
+<div id="main" style="min-height: 400px"></div>
 {% endblock %}
 
-{% block extrajs %}
-  {{ config|json_script:"config" }}
-{% endblock %}
+{% block extrajs %}{{ config|json_script:"config" }}{% endblock %}

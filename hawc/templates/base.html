@@ -4,108 +4,183 @@
 
 <!DOCTYPE html>
 <html class="js" lang="en-us">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="NONE,NOARCHIVE" />
-    {% if session_expire_time %}<meta name="session_expire_time" content="{{session_expire_time}}" />{% endif %}
-    <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="NONE,NOARCHIVE" />
 
-    {% if GTM_ID %}
-      <!-- Google Tag Manager -->
-      <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{GTM_ID}}");</script>
-      <!-- End Google Tag Manager -->
-    {% endif %}
+        {% if session_expire_time %}<meta name="session_expire_time" content="{{ session_expire_time }}" />{% endif %}
 
-    {% if flavor == "EPA" %}
-      <link rel="icon" href="https://www.epa.gov/themes/epa_theme/images/favicon.ico" type="image/x-icon" />
-    {% else %}
-      <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
-      <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
-      <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
-      <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
-    {% endif %}
+        <title>
 
-    {% block extrahead %}{% endblock %}
+            {% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.6.2/css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
-    {% if flavor == "EPA" %}
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
-    <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
-    {% else %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/prime-hawc.css' %}" />
-    {% endif %}
-    {% block extrastyle %}{% endblock %}
-  </head>
+        </title>
 
-  <body class="html">
-    {% if GTM_ID %}
-      <!-- Google Tag Manager -->
-      <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GTM_ID}}" height="0" width="0"
-          style="display:none;visibility:hidden"></iframe></noscript>
-      <!-- End Google Tag Manager -->
-    {% endif %}
+        {% if GTM_ID %}
+            <!-- Google Tag Manager -->
+            <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{GTM_ID}}");</script>
+            <!-- End Google Tag Manager -->
+        {% endif %}
 
-    {% if user.is_superuser or SERVER_ROLE != 'production' %}
-      {% include 'includes/environment_banner.html' %}
-    {% endif %}
+        {% if flavor == "EPA" %}
+            <link rel="icon"
+                  href="https://www.epa.gov/themes/epa_theme/images/favicon.ico"
+                  type="image/x-icon" />
+        {% else %}
+            <link id="favicon"
+                  href="{% static 'img/favicon-256.png' %}"
+                  rel="shortcut icon"
+                  sizes="256x256" />
+            <link id="favicon"
+                  href="{% static 'img/favicon-128.png' %}"
+                  rel="shortcut icon"
+                  sizes="128x128" />
+            <link id="favicon"
+                  href="{% static 'img/favicon-64.png' %}"
+                  rel="shortcut icon"
+                  sizes="64x64" />
+            <link id="favicon"
+                  href="{% static 'img/favicon-32.png' %}"
+                  rel="shortcut icon"
+                  sizes="32x32" />
+        {% endif %}
 
-    {% cache 3600 header %}
-    {% if flavor == "EPA" %}
-      {% include 'includes/epa/header.html' %}
-    {% endif %}
+        {% block extrahead %}{% endblock %}
+
+        <link rel="stylesheet"
+              type="text/css"
+              href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
+        <link rel="stylesheet"
+              type="text/css"
+              href="{% static 'vendor/bootstrap/4.6.2/css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
+
+        {% if flavor == "EPA" %}
+            <link rel="stylesheet"
+                  type="text/css"
+                  href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
+            <link rel="stylesheet"
+                  type="text/css"
+                  href="{% static 'css/epa/core/style.css' %}" />
+            <link rel="stylesheet"
+                  type="text/css"
+                  href="{% static 'css/epa-bootstrap.css' %}" />
+            <link rel="stylesheet"
+                  type="text/css"
+                  href="{% static 'css/epa-hawc.css' %}" />
+            <script type="text/javascript"
+                    src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
+        {% else %}
+            <link rel="stylesheet"
+                  type="text/css"
+                  href="{% static 'css/prime-hawc.css' %}" />
+        {% endif %}
+
+        {% block extrastyle %}{% endblock %}
+
+    </head>
+    <body class="html">
+
+        {% if GTM_ID %}
+            <!-- Google Tag Manager -->
+            <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{ GTM_ID }}"
+        height="0"
+        width="0"
+        style="display:none;
+               visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager -->
+        {% endif %}
+
+        {% if user.is_superuser or SERVER_ROLE != 'production' %}
+
+            {% include 'includes/environment_banner.html' %}
+
+        {% endif %}
+
+        {% cache 3600 header %}
+
+        {% if flavor == "EPA" %}
+
+            {% include 'includes/epa/header.html' %}
+
+        {% endif %}
+
     {% endcache %}
 
     {% block content_row_outer %}
-      <section class="main-content clearfix" id="main-content">
-        {% include 'includes/navigation.html' %}
-        <div class="row no-gutters" style="min-height: 100vh;">
-          {% block sidebar_outer %}{% endblock sidebar_outer %}
-          <div class="col overflow-auto">
-            <div id="main-content-container" class="container-fluid">
-              {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+        <section class="main-content clearfix" id="main-content">
 
-              {% include "includes/messages.html" %}
-              {% if UA_SUPPORTED is False %}
-                {% include "includes/unsupported_browser.html" %}
-              {% endif %}
+            {% include 'includes/navigation.html' %}
 
-              {% block content_header %}{% endblock content_header %}
-              {% block content_outer %}
-                <div class="row  overflow-auto mb-4"  style="min-height: 95vh;">
-                  <div class="col overflow-auto">
-                  {% block content %}{% endblock content %}
-                  </div>
+            <div class="row no-gutters" style="min-height: 100vh;">
+
+                {% block sidebar_outer %}
+                {% endblock sidebar_outer %}
+
+                <div class="col overflow-auto">
+                    <div id="main-content-container" class="container-fluid">
+
+                        {% block breadcrumbs_outer %}
+                        {% endblock breadcrumbs_outer %}
+
+                        {% include "includes/messages.html" %}
+
+                        {% if UA_SUPPORTED is False %}
+
+                            {% include "includes/unsupported_browser.html" %}
+
+                        {% endif %}
+
+                        {% block content_header %}
+                        {% endblock content_header %}
+
+                        {% block content_outer %}
+                            <div class="row  overflow-auto mb-4"  style="min-height: 95vh;">
+                                <div class="col overflow-auto">
+
+                                    {% block content %}
+                                    {% endblock content %}
+                                </div>
+                            </div>
+                        {% endblock content_outer %}
+                    </div>
                 </div>
-              {% endblock content_outer %}
             </div>
-          </div>
-        </div>
-      </section>
+        </section>
     {% endblock content_row_outer %}
 
     {% cache 3600 footer %}
+
     {% if flavor == "EPA" %}
-      {% include "./includes/epa/footer.html" %}
+
+        {% include "./includes/epa/footer.html" %}
+
     {% else %}
-      {% include "./includes/base/footer.html" %}
+
+        {% include "./includes/base/footer.html" %}
+
     {% endif %}
-    {% endcache %}
-    {% if flavor == "EPA" %}
-    <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
-    {% endif %}
-    <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/htmx/1.8.5/htmx.min.js' %}"></script>
-    {% render_bundle 'main' %}
-    {% if form %}{{ form.media }}{% endif %}
-    {% block extrajs %}{% endblock %}
-  </body>
+
+{% endcache %}
+
+{% if flavor == "EPA" %}
+    <script type="text/javascript"
+            src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
+{% endif %}
+<script type="text/javascript"
+        src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
+<script type="text/javascript"
+        src="{% static 'vendor/htmx/1.8.5/htmx.min.js' %}"></script>
+{% render_bundle 'main' %}
+
+{% if form %}{{ form.media }}{% endif %}
+
+{% block extrajs %}{% endblock %}
+
+</body>
 </html>

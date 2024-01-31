@@ -1,7 +1,14 @@
 <h2>Top assessments</h2>
 <p>Top 20 assessments with the most changes within in the last 180 days.</p>
-{% if matrix %}{{matrix|safe}}{% else %}<p class="errornote">Matrix cannot be generated - an error occurred.</p>{% endif %}
+
+{% if matrix %}
+    {{ matrix|safe }}
+{% else %}
+    <p class="errornote">Matrix cannot be generated - an error occurred.</p>
+{% endif %}
 
 <div style="height: 200vh">
-{% include 'admin/fragments/assessment_profile.html' %}
+
+    {% include 'admin/fragments/assessment_profile.html' %}
+
 </div>

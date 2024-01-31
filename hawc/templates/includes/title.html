@@ -1,3 +1,9 @@
 {% for crumb in breadcrumbs reversed %}
-    {% if forloop.last %}HAWC{% else %}{{crumb.name}} | {% endif %}
+
+    {% if forloop.last %}
+        HAWC
+    {% else %}
+        {{ crumb.name }} |
+    {% endif %}
+
 {% endfor %}

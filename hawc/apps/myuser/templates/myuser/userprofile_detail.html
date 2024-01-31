@@ -1,60 +1,70 @@
 {% extends "crumbless.html" %}
 
 {% block content %}
-<div class="d-flex">
-  <h2>User Profile</h2>
-  {% actions %}
-    <a class="dropdown-item" href="{% url 'user:profile_update' %}">Update profile</a>
-    {% if user.has_usable_password %}
-    <a class="dropdown-item" href="{% url 'user:change_password' %}">Change password</a>
-    {% endif %}
-  {% endactions %}
+    <div class="d-flex">
+        <h2>User Profile</h2>
+        {% actions %}
+        <a class="dropdown-item" href="{% url 'user:profile_update' %}">Update profile</a>
+
+        {% if user.has_usable_password %}
+            <a class="dropdown-item" href="{% url 'user:change_password' %}">Change password</a>
+        {% endif %}
+
+    {% endactions %}
 </div>
 <table class="table table-sm table-striped table-hover table-bordered">
-  <colgroup>
-    <col width="34%" />
-    <col width="66%" />
-  </colgroup>
-  <tbody>
-    {% optional_table_row "Name" user.get_full_name %}
-    {% optional_table_row "Email" user.email %}
-    {% optional_table_row "External ID" user.external_id %}
-    <tr>
-      <th>Can Create Assessments</th>
-      <td>{{user.can_create_assessments}}</td>
+    <colgroup>
+        <col width="34%" />
+        <col width="66%" />
+    </colgroup>
+    <tbody>
+        {% optional_table_row "Name" user.get_full_name %}
+        {% optional_table_row "Email" user.email %}
+        {% optional_table_row "External ID" user.external_id %}
+        <tr>
+            <th>Can Create Assessments</th>
+            <td>{{ user.can_create_assessments }}</td>
+        </tr>
+        <tr>
+            <th>
+            HERO website</a>
+        </th>
+        <td>
+
+            {% if object.HERO_access %}
+                <a href="https://heronet.epa.gov">https://heronet.epa.gov</a> (authentication required)
+            {% else %}
+                <a href="https://hero.epa.gov">https://hero.epa.gov</a> (no authentication required)
+            {% endif %}
+
+            <p class="text-muted mb-0">Website used to redirect HERO links.</p>
+        </td>
     </tr>
     <tr>
-      <th>HERO website</a></th>
-      <td>{% if object.HERO_access %}
-        <a href="https://heronet.epa.gov">https://heronet.epa.gov</a> (authentication required)
-        {% else %}
-        <a href="https://hero.epa.gov">https://hero.epa.gov</a> (no authentication required)
-        {% endif %}
-        <p class="text-muted mb-0">Website used to redirect HERO links.</p>
-      </td>
+        <th>API token</th>
+        <td>
+            <span id="api_token">{{ token.key }}</span>
+            <p class="text-muted mb-0">Token is only valid during the current login session.</p>
+        </td>
     </tr>
     <tr>
-      <th>API token</th>
-      <td>
-        <span id="api_token">{{token.key}}</span>
-        <p class="text-muted mb-0">Token is only valid during the current login session.</p>
-      </td>
+        <th>Show debug information</th>
+        <td>
+            <span id="id_debug"></span>
+            <br />
+            <p class="text-muted mb-0">Show additional debug information on views throughout HAWC.</p>
+        </td>
     </tr>
-    <tr>
-      <th>Show debug information</th>
-      <td>
-        <span id="id_debug"></span><br/>
-        <p class="text-muted mb-0">Show additional debug information on views throughout HAWC.</p>
-      </td>
-    </tr>
-  </tbody>
+</tbody>
 </table>
 {% endblock content %}
 
 {% block extrajs %}
-  {% include "includes/hero_access.html" %}
-  <script>
+
+    {% include "includes/hero_access.html" %}
+
+    <script>
     const value = (window.localStorage.getItem('hawc-debug-badge') || "false");
     $('#id_debug').text(value.charAt(0).toUpperCase() + value.slice(1));
-  </script>
+    </script>
 {% endblock extrajs %}

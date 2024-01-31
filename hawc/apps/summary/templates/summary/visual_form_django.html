@@ -2,12 +2,14 @@
 
 {% block content %}
     {% crispy form %}
+
     {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
+
 {% endblock %}
 
 {% block extrajs %}
-{{ smart_tag_form.media }}
-<script type="text/javascript">
+    {{ smart_tag_form.media }}
+    <script type="text/javascript">
     window.app.startup("summaryFormsStartup", function (summaryForms) {
         {% if crud == "Create" %}
         $('#id_title').on('keyup', function () {
@@ -21,5 +23,5 @@
             );
         })
     });
-</script>
+    </script>
 {% endblock %}

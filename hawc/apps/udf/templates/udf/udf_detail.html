@@ -1,19 +1,21 @@
 {% extends "crumbless.html" %}
 
 {% block content %}
-<div class="d-flex">
-  <h2>{{object.name}}</h2>
-  {% if view.user_can_edit %}
-    {% actions %}
-      <a class="dropdown-item" href="{% url 'udf:udf_update' object.pk %}">Update</a>
-    {% endactions %}
-  {% endif %}
+    <div class="d-flex">
+        <h2>{{ object.name }}</h2>
+
+        {% if view.user_can_edit %}
+            {% actions %}
+            <a class="dropdown-item" href="{% url 'udf:udf_update' object.pk %}">Update</a>
+        {% endactions %}
+    {% endif %}
+
 </div>
-<p>Description: {{object.description}}</p>
-<p>Deprecated: {{object.deprecated}}</p>
-<p>Creator: {{object.creator}}</p>
-<p>Created: {{object.created}}</p>
-<p>Last Updated: {{object.last_updated}}</p>
+<p>Description: {{ object.description }}</p>
+<p>Deprecated: {{ object.deprecated }}</p>
+<p>Creator: {{ object.creator }}</p>
+<p>Created: {{ object.created }}</p>
+<p>Last Updated: {{ object.last_updated }}</p>
 <h3 class="py-3">Form Preview:</h3>
 {% crispy form %}
 {% endblock content %}

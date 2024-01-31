@@ -1,11 +1,13 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<div class="row m-auto">
-    <h2>Welcome, {{ user.get_full_name }}.</h2>
-</div>
-<div class="row m-auto">
-    {% crispy form %}
-    {% include "registration/license.html" with modal_id="license_modal"%}
-</div>
+    <div class="row m-auto">
+        <h2>Welcome, {{ user.get_full_name }}.</h2>
+    </div>
+    <div class="row m-auto">
+        {% crispy form %}
+
+        {% include "registration/license.html" with modal_id="license_modal" %}
+
+    </div>
 {% endblock content %}

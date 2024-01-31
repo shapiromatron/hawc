@@ -1,134 +1,204 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
     <h2>Assessment endpoints</h2>
     <ul>
 
         {% if total_endpoints == 0 %}
-            <li><i>No endpoints are available for this assessment.</i></li>
+            <li>
+                <i>No endpoints are available for this assessment.</i>
+            </li>
         {% endif %}
 
         {% if endpoints > 0 %}
-        <li><a href="{% url 'animal:endpoint_list' assessment.id %}">{{endpoints}} animal bioassay endpoints</a></li>
+            <li>
+                <a href="{% url 'animal:endpoint_list' assessment.id %}">{{ endpoints }} animal bioassay endpoints</a>
+            </li>
         {% endif %}
 
         {% if outcomes > 0 %}
-        <li><a href="{% url 'epi:outcome_list' assessment.id %}">{{outcomes}} epidemiological outcomes</a></li>
+            <li>
+                <a href="{% url 'epi:outcome_list' assessment.id %}">{{ outcomes }} epidemiological outcomes</a>
+            </li>
         {% endif %}
 
         {% if epiv2_outcomes > 0 %}
-        <li><a href="{% url 'epiv2:outcome' assessment.id %}">{{epiv2_outcomes}} epidemiological outcomes</a></li>
+            <li>
+                <a href="{% url 'epiv2:outcome' assessment.id %}">{{ epiv2_outcomes }} epidemiological outcomes</a>
+            </li>
         {% endif %}
 
         {% if eco_results > 0 %}
-        <li><a href="{% url 'eco:result_list' assessment.id %}">{{eco_results}} ecological results</a></li>
+            <li>
+                <a href="{% url 'eco:result_list' assessment.id %}">{{ eco_results }} ecological results</a>
+            </li>
         {% endif %}
 
         {% if meta_results > 0 %}
-        <li><a href="{% url 'meta:result_list' assessment.id %}">{{meta_results}} epidemiological meta-analyses results</a></li>
+            <li>
+                <a href="{% url 'meta:result_list' assessment.id %}">{{ meta_results }} epidemiological meta-analyses results</a>
+            </li>
         {% endif %}
 
         {% if ivendpoints > 0 %}
-        <li><a href="{% url 'invitro:endpoint_list' assessment.id %}">{{ivendpoints}} <i>in vitro</i> endpoints</a></li>
+            <li>
+                <a href="{% url 'invitro:endpoint_list' assessment.id %}">{{ ivendpoints }} <i>in vitro</i> endpoints</a>
+            </li>
         {% endif %}
 
     </ul>
 
-    {% if total_endpoints > 0  %}
-    <h3>Dataset overview dashboards</h3>
-    <table class='table table-sm table-striped'>
-        {% bs4_colgroup '40,20,20,20' %}
-        {% bs4_thead 'Data type,Study summary,Outcome/Results,Outcome/Results + Doses' %}
-        <tbody>
-            {% if endpoints > 0 %}
-            <tr>
-                <td>Bioassay</td>
-                <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}">Study summary</a></td>
-                <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}">Endpoints</a></td>
-                <td><a href="{% url 'animal:heatmap_endpoints_doses' assessment.id %}">Endpoints + Doses</a></td>
-            </tr>
-            {% if obj_perms.edit %}
-            <tr>
-                <td>Bioassay (including unpublished HAWC data)
-                    &nbsp;
-                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                        aria-hidden="true"></i>
-                </td>
-                <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
-                <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">Endpoints</a></td>
-                <td><a href="{% url 'animal:heatmap_endpoints_doses' assessment.id %}?unpublished=true">Endpoints + Doses</a></td>
-            </tr>
-            {% endif %}
-            {% endif %}
-            {% if outcomes > 0 %}
-            <tr>
-                <td>Epidemiology</td>
-                <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}">Study summary</a></td>
-                <td><a href="{% url 'epi:heatmap_results' assessment.id %}">Results</a></td>
-                <td>N/A</td>
-            </tr>
-            {% if obj_perms.edit %}
-            <tr>
-                <td>Epidemiology (including unpublished HAWC data)
-                    &nbsp;
-                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                        aria-hidden="true"></i>
-                </td>
-                <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
-                <td><a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
-                <td>N/A</td>
-            </tr>
-            {% endif %}
-            {% endif %}
-            {% if eco_designs > 0 %}
-            <tr>
-                <td>Ecology</td>
-                <td><a href="{% url 'eco:heatmap_study_design' assessment.id %}">Study summary</a></td>
-                <td><a href="{% url 'eco:heatmap_results' assessment.id %}">Results</a></td>
-                <td>N/A</td>
-            </tr>
-            {% if obj_perms.edit %}
-            <tr>
-                <td>Ecology (including unpublished HAWC data)
-                    &nbsp;
-                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                        aria-hidden="true"></i>
-                </td>
-                <td><a href="{% url 'eco:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
-                <td><a href="{% url 'eco:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
-                <td>N/A</td>
-            </tr>
-            {% endif %}
-            {% endif %}
-            {% if epiv2_outcomes > 0 %}
-            <tr>
-                <td>Epidemiology</td>
-                <td><a href="{% url 'epiv2:heatmap-study-design' assessment.id %}">Study design</a></td>
-                <td><a href="{% url 'epiv2:heatmap-result' assessment.id %}">Study results</a></td>
-                <td>N/A</td>
-            </tr>
-            {% if obj_perms.edit %}
-            <tr>
-                <td>Epidemiology (including unpublished HAWC data)
-                    &nbsp;
-                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                        aria-hidden="true"></i>
-                </td>
-                <td><a href="{% url 'epiv2:heatmap-study-design' assessment.id %}?unpublished=true">Study design</a></td>
-                <td><a href="{% url 'epiv2:heatmap-result' assessment.id %}?unpublished=true">Study results</a></td>
-                <td>N/A</td>
-            </tr>
-            {% endif %}
-            {% endif %}
-        </tbody>
-    </table>
+    {% if total_endpoints > 0 %}
+        <h3>Dataset overview dashboards</h3>
+        <table class='table table-sm table-striped'>
+            {% bs4_colgroup '40,20,20,20' %}
+            {% bs4_thead 'Data type,Study summary,Outcome/Results,Outcome/Results + Doses' %}
+            <tbody>
+
+                {% if endpoints > 0 %}
+                    <tr>
+                        <td>Bioassay</td>
+                        <td>
+                            <a href="{% url 'animal:heatmap_study_design' assessment.id %}">Study summary</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'animal:heatmap_endpoints' assessment.id %}">Endpoints</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'animal:heatmap_endpoints_doses' assessment.id %}">Endpoints + Doses</a>
+                        </td>
+                    </tr>
+
+                    {% if obj_perms.edit %}
+                        <tr>
+                            <td>
+                                Bioassay (including unpublished HAWC data)
+                                &nbsp;
+                                <i title="Include published & unpublished HAWC studies (not visible to the public)"
+                                   class="fa fa-eye-slash"
+                                   aria-hidden="true"></i>
+                            </td>
+                            <td>
+                                <a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">Endpoints</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'animal:heatmap_endpoints_doses' assessment.id %}?unpublished=true">Endpoints + Doses</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+
+                {% if outcomes > 0 %}
+                    <tr>
+                        <td>Epidemiology</td>
+                        <td>
+                            <a href="{% url 'epi:heatmap_study_design' assessment.id %}">Study summary</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'epi:heatmap_results' assessment.id %}">Results</a>
+                        </td>
+                        <td>N/A</td>
+                    </tr>
+
+                    {% if obj_perms.edit %}
+                        <tr>
+                            <td>
+                                Epidemiology (including unpublished HAWC data)
+                                &nbsp;
+                                <i title="Include published & unpublished HAWC studies (not visible to the public)"
+                                   class="fa fa-eye-slash"
+                                   aria-hidden="true"></i>
+                            </td>
+                            <td>
+                                <a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">Results</a>
+                            </td>
+                            <td>N/A</td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+
+                {% if eco_designs > 0 %}
+                    <tr>
+                        <td>Ecology</td>
+                        <td>
+                            <a href="{% url 'eco:heatmap_study_design' assessment.id %}">Study summary</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'eco:heatmap_results' assessment.id %}">Results</a>
+                        </td>
+                        <td>N/A</td>
+                    </tr>
+
+                    {% if obj_perms.edit %}
+                        <tr>
+                            <td>
+                                Ecology (including unpublished HAWC data)
+                                &nbsp;
+                                <i title="Include published & unpublished HAWC studies (not visible to the public)"
+                                   class="fa fa-eye-slash"
+                                   aria-hidden="true"></i>
+                            </td>
+                            <td>
+                                <a href="{% url 'eco:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'eco:heatmap_results' assessment.id %}?unpublished=true">Results</a>
+                            </td>
+                            <td>N/A</td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+
+                {% if epiv2_outcomes > 0 %}
+                    <tr>
+                        <td>Epidemiology</td>
+                        <td>
+                            <a href="{% url 'epiv2:heatmap-study-design' assessment.id %}">Study design</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'epiv2:heatmap-result' assessment.id %}">Study results</a>
+                        </td>
+                        <td>N/A</td>
+                    </tr>
+
+                    {% if obj_perms.edit %}
+                        <tr>
+                            <td>
+                                Epidemiology (including unpublished HAWC data)
+                                &nbsp;
+                                <i title="Include published & unpublished HAWC studies (not visible to the public)"
+                                   class="fa fa-eye-slash"
+                                   aria-hidden="true"></i>
+                            </td>
+                            <td>
+                                <a href="{% url 'epiv2:heatmap-study-design' assessment.id %}?unpublished=true">Study design</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'epiv2:heatmap-result' assessment.id %}?unpublished=true">Study results</a>
+                            </td>
+                            <td>N/A</td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+
+            </tbody>
+        </table>
     {% endif %}
 
-    {% if user.is_beta_tester  %}
-    <h3 class="betatester">Critical effects by dose</h3>
-    <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}">WIP</a></p>
-    <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}?unpublished=true">WIP (unpublished)</a></p>
+    {% if user.is_beta_tester %}
+        <h3 class="betatester">Critical effects by dose</h3>
+        <p>
+            <a href="{% url 'animal:endpoint_list_v2' assessment.id %}">WIP</a>
+        </p>
+        <p>
+            <a href="{% url 'animal:endpoint_list_v2' assessment.id %}?unpublished=true">WIP (unpublished)</a>
+        </p>
     {% endif %}
 
 {% endblock %}
