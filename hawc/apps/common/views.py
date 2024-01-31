@@ -714,13 +714,6 @@ class FilterSetMixin:
             self._filterset = self.filterset_class(**self.get_filterset_kwargs())
         return self._filterset
 
-    def get_queryset(self):
-        try:
-            return self.filterset.qs
-        except FieldError:
-            # TODO - remove try/except after https://github.com/carltongibson/django-filter/pull/1598
-            return super().get_queryset().none()
-
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context.update(form=self.filterset.form)
