@@ -241,10 +241,20 @@ class Treatment(models.Model):
     def get_study(self):
         return self.experiment.get_study()
 
+    # also clone dose groups assigned to this treatment
     def clone(self):
+        associated_dose_groups = DoseGroup.objects.filter(
+            treatment_id=self.id
+        ).order_by("dose_group_id")
+
         self.id = None
         self.name = f"{self.name} (2)"
         self.save()
+        for dose_group in associated_dose_groups:
+            dose_group.id = None
+            dose_group.treatment_id = self.id
+            dose_group.save()
+
         return self
 
 

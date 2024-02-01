@@ -5,7 +5,13 @@
             <div class="d-flex justify-content-end">
                 {% include "common/scientific_pulldown.html" %}
             </div>
+
             {% crispy form %}
+
+            {% if subform_template_fragment %}
+              {% include subform_template_fragment %}
+            {% endif %}
+
             <div class="form-row float-right">
                 {% if form.instance.id %}
                 <button id="{{model}}-save" class="btn btn-sm btn-primary" hx-post="{% crud_url 'animalv2' model 'update' object.pk %}">

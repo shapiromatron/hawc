@@ -142,3 +142,25 @@ class TreatmentForm(forms.ModelForm):
         helper.add_row("exposure_duration", 3, "col-md-4")
 
         return helper
+
+
+class DoseGroupForm(forms.ModelForm):
+    subform_parent_key = "treatment_id"
+
+    class Meta:
+        model = models.DoseGroup
+        exclude = ("treatment",)
+
+    def __init__(self, *args, **kwargs):
+        treatment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if treatment:
+            self.instance.treatment = treatment
+
+
+# thx https://stackoverflow.com/questions/21754918/rendering-tabular-rows-with-formset-in-django-crispy-forms and https://stackoverflow.com/questions/42615357/cannot-pass-helper-to-django-crispy-formset-in-template
+class DoseGroupFormHelper(BaseFormHelper):
+    def __init__(self, *args, **kwargs):
+        super(DoseGroupFormHelper, self).__init__(*args, **kwargs)
+        self.form_tag = False
+        self.template = "bootstrap4/table_inline_formset.html"

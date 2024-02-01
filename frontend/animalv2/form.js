@@ -2,6 +2,32 @@ import _ from "lodash";
 
 import $ from "$";
 
+// general approach lifted from https://stackoverflow.com/questions/501719/dynamically-adding-a-form-to-a-django-formset
+// td#id is duping the cloned row, need to udpate that...
+const cloneSubformRow = function(selector, formIdentifier) {
+    var newElement = $(selector).clone(true);
+    var total = $("#id_" + formIdentifier + "-TOTAL_FORMS").val();
+    newElement.find(":input").each(function() {
+        var name = $(this)
+            .attr("name")
+            .replace("-" + (total - 1) + "-", "-" + total + "-");
+        var id = "id_" + name;
+        $(this)
+            .attr({name, id})
+            .val("")
+            .removeAttr("checked");
+    });
+    newElement.find("label").each(function() {
+        var newFor = $(this)
+            .attr("for")
+            .replace("-" + (total - 1) + "-", "-" + total + "-");
+        $(this).attr("for", newFor);
+    });
+    total++;
+    $("#id_" + formIdentifier + "-TOTAL_FORMS").val(total);
+    $(selector).after(newElement);
+};
+
 const experimentFormStartup = function(form) {
     $(form)
         .find("#id_name")
@@ -59,12 +85,22 @@ const animalGroupFormStartup = function(form) {
     });
 };
 
+const treatmentFormStartup = function(form) {
+    $(form)
+        .find("button#add_subobject_row")
+        .click(function() {
+            cloneSubformRow("#embedded_dosegroup_form_wrapper tr:last", "form");
+        });
+};
+
 export default document => {
     document.body.addEventListener("htmx:load", e => {
         if (e.target.querySelector(".form-experiment")) {
             experimentFormStartup(e.target);
         } else if (e.target.querySelector(".form-animalgroup")) {
             animalGroupFormStartup(e.target);
+        } else if (e.target.querySelector(".form-treatment")) {
+            treatmentFormStartup(e.target);
         }
     });
 };
