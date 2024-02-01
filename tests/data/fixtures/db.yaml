@@ -2714,7 +2714,7 @@
     path: '000400020003'
     depth: 3
     numchild: 0
-    name: Tier III
+    name: Tier III Demo
     slug: tier-iii
 - model: lit.referencetags
   pk: 2
@@ -9888,7 +9888,7 @@
         col_span: 1
         row_span: 1
         quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets can be added</li><li><a
-          href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
+          href="https://pubmed.ncbi.nlm.nih.gov/" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
           can be added</li></ul>
       - row: 7
         column: 1

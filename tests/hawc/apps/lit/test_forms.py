@@ -15,8 +15,9 @@ from hawc.apps.lit.forms import (
     ReferenceExcelUploadForm,
     ReferenceForm,
     RisImportForm,
+    TagsCopyForm,
 )
-from hawc.apps.lit.models import Reference
+from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.study.models import Study
 from hawc.services.utils.ris import ReferenceParser
 
@@ -445,6 +446,22 @@ class TestBulkReferenceStudyExtractForm:
         assert form.errors == {
             "study_type": ["Select a valid choice. crazy is not one of the available choices."]
         }
+
+
+@pytest.mark.django_db
+class TestTagsCopyForm:
+    def test_success(self, pm_user):
+        dst_assess = Assessment.objects.get(id=3)
+        src_assess = Assessment.objects.get(id=4)
+        form = TagsCopyForm(
+            assessment=dst_assess,
+            data={"assessment": src_assess.id, "confirmation": "confirm"},
+            user=pm_user,
+        )
+        assert not ReferenceFilterTag.get_assessment_qs(3).filter(name="Tier III Demo").exists()
+        assert form.is_valid()
+        form.copy_tags()
+        assert ReferenceFilterTag.get_assessment_qs(3).filter(name="Tier III Demo").exists()
 
 
 @pytest.mark.django_db
