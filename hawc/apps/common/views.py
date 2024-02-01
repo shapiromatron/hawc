@@ -714,6 +714,9 @@ class FilterSetMixin:
             self._filterset = self.filterset_class(**self.get_filterset_kwargs())
         return self._filterset
 
+    def get_queryset(self):
+        return self.filterset.qs
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context.update(form=self.filterset.form)
