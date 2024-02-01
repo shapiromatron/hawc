@@ -38,6 +38,9 @@ class TermAdmin(admin.ModelAdmin):
     def get_entities(self, obj):
         return ul_items(obj.entities.all(), lambda el: f"<a href={el.get_external_url()}>{el}</a>")
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class EntityTermRelationAdmin(admin.TabularInline):
     model = models.EntityTermRelation
