@@ -2,8 +2,9 @@ import pytest
 
 # use concrete implementations to test
 from hawc.apps.animal.models import DoseGroup, Experiment
-from hawc.apps.common.models import sql_format
+from hawc.apps.common.models import apply_flavored_help_text, sql_format
 from hawc.apps.lit.models import ReferenceFilterTag
+from hawc.apps.riskofbias import models
 
 _nested_names = [
     "Inclusion",
@@ -58,3 +59,12 @@ def test_sql_format():
     for case in ["/too-few/", "{}", "/too-many/{}/{}/"]:
         with pytest.raises(ValueError):
             sql_format(case, "foo")
+
+
+def test_apply_flavored_help_text(settings):
+    settings.MODIFY_HELP_TEXT = True
+    settings.HAWC_FLAVOR = "EPA"
+    initial = models.RiskOfBiasAssessment._meta.get_field("help_text").help_text
+    apply_flavored_help_text("riskofbias")
+    changed = models.RiskOfBiasAssessment._meta.get_field("help_text").help_text
+    assert initial != changed
