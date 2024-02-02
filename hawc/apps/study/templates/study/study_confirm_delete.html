@@ -1,8 +1,8 @@
 {% extends 'study/study_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="study" notes="This will remove all data associated with this study, including study evaluations, data extractions, BMD-modeling runs, etc. It will also delete the related reference from the literature module, including searches, imports, and associated tags." confirm=True %}
+  {% include "hawc/_delete_block.html" with name="study" notes="This will remove all data associated with this study, including study evaluations, data extractions, BMD-modeling runs, etc. It will also delete the related reference from the literature module, including searches, imports, and associated tags." confirm=True %}
 
 {% endblock content %}

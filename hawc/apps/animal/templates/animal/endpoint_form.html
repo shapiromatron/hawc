@@ -2,145 +2,145 @@
 
 {% block content %}
 
-    {% if animal_group.dosing_regime %}
-        {% crispy form %}
-    {% else %}
-        <div class="alert alert-danger" role="alert">
-            Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.
-        </div>
-    {% endif %}
+  {% if animal_group.dosing_regime %}
+    {% crispy form %}
+  {% else %}
+    <div class="alert alert-danger" role="alert">
+      Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.
+    </div>
+  {% endif %}
 
     {# extra stuff that JS will move to correct location #}
-    <div id="extra" class="hidden">
+  <div id="extra" class="hidden">
         {# Endpoint Group formset #}
-        <div id='endpointGroups'>
-            <legend>Dose-response data</legend>
-            <p>
-                <small class="form-text text-muted">
-                    <span class="d_only">
-                        For dichotomous data, all fields are required. For p-values,
-                        0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
-                        should be coded as 0.01; 0.001 or &lt;0.001 should be coded
-                        as 0.001.
-                    </span>
-                    <span class="c_only">
-                        For continuous data, if variance is not-reported, ensure the
-                        "variance type" input-field above is "NR", and then variance can be
-                        left blank; otherwise it is required. If any data are not reported,
-                        leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
-                        as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
-                        should be coded as 0.001.
-                    </span>
-                    <span class="p_only">
-                        For percent-difference data, lower CI (%) and upper CI (%) are optional.
-                        If any data are not reported, leave those fields blank.
-                    </span>
-                </small>
-            </p>
-            <div class="row">
-                <div class="col-md-8">
-                    {{ formset.management_form }}
-                    {{ formset.non_form_errors|add_class:"alert alert-danger" }}
-                    <table id="eg" class="table table-sm table-striped">
-                        <thead>
-                            <tr>
-                                <th id="doses_title">Dose</th>
-                                <th>N</th>
-                                <th class="d_only">Incidence</th>
-                                <th class="pc_only">Response</th>
-                                <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
-                                <th class="p_only">Low CI (%)</th>
-                                <th class="p_only">High CI (%)</th>
-                                <th>
-                                    Significance
-                                    <br>
-                                    Level
-                                    <br>
-                                    (if significant)
+    <div id='endpointGroups'>
+      <legend>Dose-response data</legend>
+      <p>
+        <small class="form-text text-muted">
+          <span class="d_only">
+            For dichotomous data, all fields are required. For p-values,
+            0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
+            should be coded as 0.01; 0.001 or &lt;0.001 should be coded
+            as 0.001.
+          </span>
+          <span class="c_only">
+            For continuous data, if variance is not-reported, ensure the
+            "variance type" input-field above is "NR", and then variance can be
+            left blank; otherwise it is required. If any data are not reported,
+            leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
+            as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
+            should be coded as 0.001.
+          </span>
+          <span class="p_only">
+            For percent-difference data, lower CI (%) and upper CI (%) are optional.
+            If any data are not reported, leave those fields blank.
+          </span>
+        </small>
+      </p>
+      <div class="row">
+        <div class="col-md-8">
+          {{ formset.management_form }}
+          {{ formset.non_form_errors|add_class:"alert alert-danger" }}
+          <table id="eg" class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th id="doses_title">Dose</th>
+                <th>N</th>
+                <th class="d_only">Incidence</th>
+                <th class="pc_only">Response</th>
+                <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
+                <th class="p_only">Low CI (%)</th>
+                <th class="p_only">High CI (%)</th>
+                <th>
+                  Significance
+                  <br>
+                  Level
+                  <br>
+                  (if significant)
 
-                                    {% include "common/helptext_popup.html" with text=formset.0.significance_level.help_text %}
+                  {% include "common/helptext_popup.html" with text=formset.0.significance_level.help_text %}
 
-                                </th>
-                                <th>
-                                    Treatment Related Effect
+                </th>
+                <th>
+                  Treatment Related Effect
 
-                                    {% include "common/helptext_popup.html" with text=formset.0.treatment_effect.help_text %}
+                  {% include "common/helptext_popup.html" with text=formset.0.treatment_effect.help_text %}
 
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for form in formset %}
-                                <tr>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for form in formset %}
+                <tr>
 
-                                    {% if forloop.first %}{{ form.non_field_errors|add_class:"alert alert-danger" }}{% endif %}
+                  {% if forloop.first %}{{ form.non_field_errors|add_class:"alert alert-danger" }}{% endif %}
 
-                                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                                    <td class="doses" id="dose_{{ i }}"></td>
-                                    <td>{{ form.n }}{{ form.n.errors|add_class:"alert alert-danger" }}</td>
-                                    <td class="d_only">{{ form.incidence }}{{ form.incidence.errors|add_class:"alert alert-danger" }}</td>
-                                    <td class="pc_only">{{ form.response }}{{ form.response.errors|add_class:"alert alert-danger" }}</td>
-                                    <td class="c_only">{{ form.variance }}{{ form.variance.errors|add_class:"alert alert-danger" }}</td>
-                                    <th class="p_only">{{ form.lower_ci }}{{ form.lower_ci.errors|add_class:"alert alert-danger" }}</th>
-                                    <th class="p_only">{{ form.upper_ci }}{{ form.upper_ci.errors|add_class:"alert alert-danger" }}</th>
-                                    <td>{{ form.significance_level }}</td>
-                                    <td>{{ form.treatment_effect }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-4">
-                    <div id='endpoint_plot'></div>
-                </div>
-            </div>
+                  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                  <td class="doses" id="dose_{{ i }}"></td>
+                  <td>{{ form.n }}{{ form.n.errors|add_class:"alert alert-danger" }}</td>
+                  <td class="d_only">{{ form.incidence }}{{ form.incidence.errors|add_class:"alert alert-danger" }}</td>
+                  <td class="pc_only">{{ form.response }}{{ form.response.errors|add_class:"alert alert-danger" }}</td>
+                  <td class="c_only">{{ form.variance }}{{ form.variance.errors|add_class:"alert alert-danger" }}</td>
+                  <th class="p_only">{{ form.lower_ci }}{{ form.lower_ci.errors|add_class:"alert alert-danger" }}</th>
+                  <th class="p_only">{{ form.upper_ci }}{{ form.upper_ci.errors|add_class:"alert alert-danger" }}</th>
+                  <td>{{ form.significance_level }}</td>
+                  <td>{{ form.treatment_effect }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+        <div class="col-md-4">
+          <div id='endpoint_plot'></div>
+        </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/json" id="config">
+  <script type="text/json" id="config">
     {
       "vocabulary": {{vocabulary|safe}},
       "litterEffectRequired": {{form.instance.litter_effect_required|lower}},
       "doses": {{animal_group.get_doses_json|safe}},
       {% if form.instance.id  %}
-      "endpoint_data": {{form.instance.get_json|safe}}
+        "endpoint_data": {{form.instance.get_json|safe}}
       {% else %}
-      "endpoint_data": {
-        "animal_group": {{animal_group.get_json|safe}},
-        "groups": [],
-        "noel_names": {{form.noel_names|safe}},
-        "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
-        "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
-        "FEL": {{form.FEL.value|default_if_none:"-999"}}
-      }
+        "endpoint_data": {
+          "animal_group": {{animal_group.get_json|safe}},
+          "groups": [],
+          "noel_names": {{form.noel_names|safe}},
+          "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
+          "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
+          "FEL": {{form.FEL.value|default_if_none:"-999"}}
+        }
       {% endif %}
     }
-    </script>
-    <script type="text/javascript">
-  $(document).ready(() => {
-    const settings = window.app.getConfig();
-    window.app.startup("animalStartup", function (animal) {
-      animal.startupEndpointForm(document.getElementById("vocab"), settings.vocabulary);
-      $("#row_id_name_1").remove();
-      $("#row_id_system_4").remove();
-      $("#row_id_name_term_5").remove();
-      $("#endpoint")
-        .removeClass("hidden")
-        .hide()
-        .fadeIn({
-          complete: () => {
-            new animal.EditEndpoint(settings);
-          },
+  </script>
+  <script type="text/javascript">
+    $(document).ready(() => {
+      const settings = window.app.getConfig();
+      window.app.startup("animalStartup", function (animal) {
+        animal.startupEndpointForm(document.getElementById("vocab"), settings.vocabulary);
+        $("#row_id_name_1").remove();
+        $("#row_id_system_4").remove();
+        $("#row_id_name_term_5").remove();
+        $("#endpoint")
+          .removeClass("hidden")
+          .hide()
+          .fadeIn({
+            complete: () => {
+              new animal.EditEndpoint(settings);
+            },
+          });
+        $("#div_id_endpoint_notes").one("focusin", function () {
+          $("input.form-control").first().focus()
         });
-      $("#div_id_endpoint_notes").one("focusin", function () {
-        $("input.form-control").first().focus()
       });
     });
-  });
-    </script>
+  </script>
 
-    {% include "common/helptext_popup_js.html" %}
+  {% include "common/helptext_popup_js.html" %}
 
 {% endblock %}

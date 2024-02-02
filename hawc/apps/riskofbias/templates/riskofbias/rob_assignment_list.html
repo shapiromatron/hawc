@@ -2,24 +2,24 @@
 
 {% block content %}
 
-    {% if obj_perms.edit_assessment %}
-        <div class="d-flex">
-            <h2>{{ assessment.get_rob_name_display }} assignments</h2>
-            {% actions %}
-            <a class="dropdown-item"
-               href="{% url 'riskofbias:rob_assignments_update' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
-        {% endactions %}
+  {% if obj_perms.edit_assessment %}
+    <div class="d-flex">
+      <h2>{{ assessment.get_rob_name_display }} assignments</h2>
+      {% actions %}
+        <a class="dropdown-item"
+           href="{% url 'riskofbias:rob_assignments_update' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+      {% endactions %}
     </div>
-{% endif %}
+  {% endif %}
 
-{% include "common/inline_filter_form.html" %}
+  {% include "common/inline_filter_form.html" %}
 
-<div id="main"></div>
+  <div id="main"></div>
 
-{% include "includes/paginator.html" with plural_object_name="assignments" %}
+  {% include "includes/paginator.html" with plural_object_name="assignments" %}
 
 {% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

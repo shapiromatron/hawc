@@ -1,62 +1,62 @@
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+  <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
 </li>
 
 {% if not contact_only %}
-    {% if feature_flags.ENABLE_DOCS_LINK and not user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'about' %}">About</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'resources' %}">Resources</a>
-        </li>
-    {% endif %}
-
-    {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
-        </li>
-    {% endif %}
-
+  {% if feature_flags.ENABLE_DOCS_LINK and not user.is_authenticated %}
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+      <a class="nav-link" href="{% url 'about' %}">About</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'resources' %}">Resources</a>
+    </li>
+  {% endif %}
 
-    {% if user.is_authenticated %}
-        <li class="nav-item dropdown">
-            <a href="#"
-               class="nav-link dropdown-toggle"
-               id="navbarDropdownMenuLink"
-               data-toggle="dropdown"
-               aria-haspopup="true"
-               aria-expanded="false">Your HAWC</a>
-            <div class="dropdown-menu dropdown-menu-right"
-                 aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="{% url 'portal' %}">Portal</a>
-                <a class="dropdown-item" href="{% url 'user:settings' %}">Profile</a>
-                <a class="dropdown-item" href="{% url 'mgmt:user-task-list' %}">Assigned tasks</a>
+  {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
+    </li>
+  {% endif %}
 
-                {% if user.is_staff %}
-                    <div class="dropdown-divider"></div>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+  </li>
 
-                    {% if has_admin %}
-                        <a class="dropdown-item" href="{{ ADMIN_ROOT }}{% url 'admin:index' %}">Admin</a>
-                    {% endif %}
+  {% if user.is_authenticated %}
+    <li class="nav-item dropdown">
+      <a href="#"
+         class="nav-link dropdown-toggle"
+         id="navbarDropdownMenuLink"
+         data-toggle="dropdown"
+         aria-haspopup="true"
+         aria-expanded="false">Your HAWC</a>
+      <div class="dropdown-menu dropdown-menu-right"
+           aria-labelledby="navbarDropdownMenuLink">
+        <a class="dropdown-item" href="{% url 'portal' %}">Portal</a>
+        <a class="dropdown-item" href="{% url 'user:settings' %}">Profile</a>
+        <a class="dropdown-item" href="{% url 'mgmt:user-task-list' %}">Assigned tasks</a>
 
-                    <a class="dropdown-item" href="{% url 'assessment:full_list' %}">View all assessments</a>
-                {% endif %}
+        {% if user.is_staff %}
+          <div class="dropdown-divider"></div>
 
-                <div class="dropdown-divider"></div>
-                <form class="dropdown-item" method="post" action="{% url 'user:logout' %}">
-                    {% csrf_token %}
-                    <button class="unstyled-action-button logout-btn" type="submit">Logout</button>
-                </form>
-            </div>
-        </li>
-    {% else %}
-        <li class="nav-item">
-            <a class="nav-link"
-               href="{% url 'user:login' %}?next={{ request.path }}">Login</a>
-        </li>
-    {% endif %}
+          {% if has_admin %}
+            <a class="dropdown-item" href="{{ ADMIN_ROOT }}{% url 'admin:index' %}">Admin</a>
+          {% endif %}
+
+          <a class="dropdown-item" href="{% url 'assessment:full_list' %}">View all assessments</a>
+        {% endif %}
+
+        <div class="dropdown-divider"></div>
+        <form class="dropdown-item" method="post" action="{% url 'user:logout' %}">
+          {% csrf_token %}
+          <button class="unstyled-action-button logout-btn" type="submit">Logout</button>
+        </form>
+      </div>
+    </li>
+  {% else %}
+    <li class="nav-item">
+      <a class="nav-link"
+         href="{% url 'user:login' %}?next={{ request.path }}">Login</a>
+    </li>
+  {% endif %}
 {% endif %}

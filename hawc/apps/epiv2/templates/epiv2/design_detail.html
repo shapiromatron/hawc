@@ -1,127 +1,127 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>{{ object.summary }}</h2>
+  <div class="d-flex">
+    <h2>{{ object.summary }}</h2>
 
-        {% if obj_perms.edit and crud == "Read" %}
-            {% actions %}
-            <span class="dropdown-header">Study design editing</span>
-            <a class="dropdown-item" href="{{ object.get_update_url }}">Update</a>
-            <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete</a>
-        {% endactions %}
+    {% if obj_perms.edit and crud == "Read" %}
+      {% actions %}
+        <span class="dropdown-header">Study design editing</span>
+        <a class="dropdown-item" href="{{ object.get_update_url }}">Update</a>
+        <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete</a>
+      {% endactions %}
     {% endif %}
 
-</div>
+  </div>
 
-{% include "epiv2/fragments/_design_table.html" %}
+  {% include "epiv2/fragments/_design_table.html" %}
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Chemicals</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '50,50' %}
-            {% bs4_thead 'Name,DTXSID' %}
-            <tbody>
-                {% for object in object.chemicals.all %}
+      <h3 class="card-title">Chemicals</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '50,50' %}
+        {% bs4_thead 'Name,DTXSID' %}
+        <tbody>
+          {% for object in object.chemicals.all %}
 
-                    {% include "epiv2/fragments/chemical_row.html" %}
+            {% include "epiv2/fragments/chemical_row.html" %}
 
-                {% empty %}
-                    {% bs4_fullrow 'No chemicals available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+          {% empty %}
+            {% bs4_fullrow 'No chemicals available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
-<div class="card my-4 mx-2">
+  </div>
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Exposure Measurements</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '33,33,34' %}
-            {% bs4_thead 'Name,Measurement Type,Measurement Timing' %}
-            <tbody>
-                {% for object in object.exposures.all %}
+      <h3 class="card-title">Exposure Measurements</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '33,33,34' %}
+        {% bs4_thead 'Name,Measurement Type,Measurement Timing' %}
+        <tbody>
+          {% for object in object.exposures.all %}
 
-                    {% include "epiv2/fragments/exposure_row.html" %}
+            {% include "epiv2/fragments/exposure_row.html" %}
 
-                {% empty %}
-                    {% bs4_fullrow 'No exposure measurements available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+          {% empty %}
+            {% bs4_fullrow 'No exposure measurements available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
-<div class="card my-4 mx-2">
+  </div>
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Exposure Levels</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,20,20,20,20' %}
-            {% bs4_thead 'Name,Chemical,Exposure,Level,Comments' %}
-            <tbody>
-                {% for object in object.exposure_levels.all %}
+      <h3 class="card-title">Exposure Levels</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '20,20,20,20,20' %}
+        {% bs4_thead 'Name,Chemical,Exposure,Level,Comments' %}
+        <tbody>
+          {% for object in object.exposure_levels.all %}
 
-                    {% include "epiv2/fragments/exposurelevel_row.html" %}
+            {% include "epiv2/fragments/exposurelevel_row.html" %}
 
-                {% empty %}
-                    {% bs4_fullrow 'No exposure levels available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+          {% empty %}
+            {% bs4_fullrow 'No exposure levels available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
-<div class="card my-4 mx-2">
+  </div>
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Outcomes</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '25,25,25,25' %}
-            {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome' %}
-            <tbody>
-                {% for object in object.outcomes.all %}
+      <h3 class="card-title">Outcomes</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '25,25,25,25' %}
+        {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome' %}
+        <tbody>
+          {% for object in object.outcomes.all %}
 
-                    {% include "epiv2/fragments/outcome_row.html" %}
+            {% include "epiv2/fragments/outcome_row.html" %}
 
-                {% empty %}
-                    {% bs4_fullrow 'No outcomes available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+          {% empty %}
+            {% bs4_fullrow 'No outcomes available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
-<div class="card my-4 mx-2">
+  </div>
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Adjustment Factors</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '25,40,35' %}
-            {% bs4_thead 'Name,Description,Comments' %}
-            <tbody>
-                {% for object in object.adjustment_factors.all %}
+      <h3 class="card-title">Adjustment Factors</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '25,40,35' %}
+        {% bs4_thead 'Name,Description,Comments' %}
+        <tbody>
+          {% for object in object.adjustment_factors.all %}
 
-                    {% include "epiv2/fragments/adjustment_factor_row.html" %}
+            {% include "epiv2/fragments/adjustment_factor_row.html" %}
 
-                {% empty %}
-                    {% bs4_fullrow 'No adjustment factors available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+          {% empty %}
+            {% bs4_fullrow 'No adjustment factors available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
-<div class="card my-4 mx-2">
+  </div>
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Data Extractions</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '12,12,12,12,11,5,11,12,13' %}
-            {% bs4_thead 'Group,Outcome,Exposure<br />Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments' %}
-            <tbody>
-                {% for object in object.data_extractions.all %}
+      <h3 class="card-title">Data Extractions</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '12,12,12,12,11,5,11,12,13' %}
+        {% bs4_thead 'Group,Outcome,Exposure<br />Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments' %}
+        <tbody>
+          {% for object in object.data_extractions.all %}
 
-                    {% include "epiv2/fragments/data_extraction_row.html" %}
+            {% include "epiv2/fragments/data_extraction_row.html" %}
 
-                {% empty %}
-                    {% bs4_fullrow 'No data extractions available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+          {% empty %}
+            {% bs4_fullrow 'No data extractions available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 {% endblock %}

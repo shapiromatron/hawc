@@ -1,20 +1,20 @@
 <tr hx-target="this"
     hx-swap="outerHTML"
     class="dataextraction-{{ object.pk }} outcome-{{ object.outcome_id }} exposurelevel-{{ object.exposure_level_id }} chemical-{{ object.exposure_level.chemical_id }} exposure-{{ object.exposure_level.exposure_measurement_id }} adjustmentfactor-{{ object.factors_id }}">
-    <td>{{ object.group|default:"-" }}</td>
-    <td>{{ object.outcome }}</td>
-    <td>{{ object.exposure_level }}</td>
-    <td>{{ object.outcome_measurement_timing|default:"-" }}</td>
-    <td>{{ object.effect_estimate_type }}</td>
-    <td>{{ object.n|default_if_none:"-" }}</td>
-    <td>{{ object.get_estimate_value }}</td>
-    <td>{{ object.confidence|default:"-" }}</td>
-    <td>{{ object.comments|default:"-" }}</td>
+  <td>{{ object.group|default:"-" }}</td>
+  <td>{{ object.outcome }}</td>
+  <td>{{ object.exposure_level }}</td>
+  <td>{{ object.outcome_measurement_timing|default:"-" }}</td>
+  <td>{{ object.effect_estimate_type }}</td>
+  <td>{{ object.n|default_if_none:"-" }}</td>
+  <td>{{ object.get_estimate_value }}</td>
+  <td>{{ object.confidence|default:"-" }}</td>
+  <td>{{ object.comments|default:"-" }}</td>
 
-    {% include "epiv2/fragments/_object_row.html" with model="dataextraction" %}
+  {% include "epiv2/fragments/_object_row.html" with model="dataextraction" %}
 
 </tr>
 
 {% if action == 'create' or action == 'clone' %}
-    <tr style="display: none" id="dataextraction-empty-row" hx-target="this"></tr>
+  <tr style="display: none" id="dataextraction-empty-row" hx-target="this"></tr>
 {% endif %}

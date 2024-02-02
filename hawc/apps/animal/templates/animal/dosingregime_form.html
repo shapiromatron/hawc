@@ -1,37 +1,37 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    {% crispy form %}
-    <div id="doseGroupsDiv">
-        <legend class='d-inline-block'>Dose-groups</legend>
-        <span class='float-right'>
-            <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-            <a class='btn btn-primary'
-               href="{% url 'assessment:dose_units_create' assessment.pk %}"
-               onclick="return window.app.HAWCUtils.newWindowPopupLink(this);"
-               title="Add new dose-units">+</a>
-        </span>
+  {% crispy form %}
+  <div id="doseGroupsDiv">
+    <legend class='d-inline-block'>Dose-groups</legend>
+    <span class='float-right'>
+      <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
+      <a class='btn btn-primary'
+         href="{% url 'assessment:dose_units_create' assessment.pk %}"
+         onclick="return window.app.HAWCUtils.newWindowPopupLink(this);"
+         title="Add new dose-units">+</a>
+    </span>
 
-        {% if dose_groups_errors %}<div class="alert alert-danger">{{ dose_groups_errors|safe }}</div>{% endif %}
+    {% if dose_groups_errors %}<div class="alert alert-danger">{{ dose_groups_errors|safe }}</div>{% endif %}
 
-        <table id="dose_table" class="table table-sm table-striped">
-        </table>
-        <input id="dose_groups_json" name="dose_groups_json" type="hidden" />
-    </div>
+    <table id="dose_table" class="table table-sm table-striped">
+    </table>
+    <input id="dose_groups_json" name="dose_groups_json" type="hidden" />
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
+  <script type="text/javascript">
       // reorganize forms
-      var actions = $('.form-actions');
-      $('#doseGroupsDiv').insertBefore($('.form-actions'))
+    var actions = $('.form-actions');
+    $('#doseGroupsDiv').insertBefore($('.form-actions'))
 
-      var dose_types = {{dose_types|safe}},
-          dose_values = {{dose_groups_json|safe}};
+    var dose_types = {{dose_types|safe}},
+        dose_values = {{dose_groups_json|safe}};
 
-      window.app.startup("animalStartup", function(animal){
-          new animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
-      })
-      $('#id_route_of_exposure').focus();
-    </script>
+    window.app.startup("animalStartup", function(animal){
+      new animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);
+    })
+    $('#id_route_of_exposure').focus();
+  </script>
 {% endblock extrajs %}

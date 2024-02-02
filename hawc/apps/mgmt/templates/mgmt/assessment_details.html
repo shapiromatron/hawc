@@ -1,71 +1,71 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>Task assignments</h2>
-        {% actions %}
-        <a class="dropdown-item"
-           href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
+  <div class="d-flex">
+    <h2>Task assignments</h2>
+    {% actions %}
+      <a class="dropdown-item"
+         href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
     {% endactions %}
-</div>
+  </div>
 
-{% include 'common/inline_filter_form.html' %}
+  {% include 'common/inline_filter_form.html' %}
 
-{% if object_list %}
+  {% if object_list %}
     <table class="task-row table table-sm">
-        {% bs4_colgroup "20,20,20,20,20" %}
-        <thead>
-            <tr>
-                <th>
-                    <span class="popovers" data-title="Study" data-content="Selected study.">Study</span>
-                </th>
-                <th>
-                    <span class="popovers"
-                          data-title="Data preparation"
-                          data-content="Content which should be extracted from study is documented for data extractors.">Data preparation</span>
-                </th>
-                <th>
-                    <span class="popovers"
-                          data-title="Data extraction"
-                          data-content="Data is extracted from study.">Data extraction</span>
-                </th>
-                <th>
-                    <span class="popovers"
-                          data-title="QA/QC"
-                          data-content="Data extracted has been QA/QC.">QA/QC</span>
-                </th>
-                <th>
-                    <span class="popovers"
-                          data-title="Risk of bias/study evaluation"
-                          data-content="Risk of bias/study evaluation has been completed (if enabled).">Risk of bias/study evaluation</span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% regroup object_list by study as study_list %}
-            {% for study in study_list %}
-                <tr class="taskStudyRow">
-                    <td>
-                        <a href="{{ study.grouper.get_absolute_url }}">{{ study.grouper }}</a>
-                        <br>
-                        <b>Date created: </b>
-                        <span>{{ study.grouper.created|date:"SHORT_DATE_FORMAT" }}</span>
-                    </td>
-                    {% for task in study.list %}
+      {% bs4_colgroup "20,20,20,20,20" %}
+      <thead>
+        <tr>
+          <th>
+            <span class="popovers" data-title="Study" data-content="Selected study.">Study</span>
+          </th>
+          <th>
+            <span class="popovers"
+                  data-title="Data preparation"
+                  data-content="Content which should be extracted from study is documented for data extractors.">Data preparation</span>
+          </th>
+          <th>
+            <span class="popovers"
+                  data-title="Data extraction"
+                  data-content="Data is extracted from study.">Data extraction</span>
+          </th>
+          <th>
+            <span class="popovers"
+                  data-title="QA/QC"
+                  data-content="Data extracted has been QA/QC.">QA/QC</span>
+          </th>
+          <th>
+            <span class="popovers"
+                  data-title="Risk of bias/study evaluation"
+                  data-content="Risk of bias/study evaluation has been completed (if enabled).">Risk of bias/study evaluation</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% regroup object_list by study as study_list %}
+        {% for study in study_list %}
+          <tr class="taskStudyRow">
+            <td>
+              <a href="{{ study.grouper.get_absolute_url }}">{{ study.grouper }}</a>
+              <br>
+              <b>Date created: </b>
+              <span>{{ study.grouper.created|date:"SHORT_DATE_FORMAT" }}</span>
+            </td>
+            {% for task in study.list %}
 
-                        {% include "mgmt/fragments/task_cell.html" with object=task %}
+              {% include "mgmt/fragments/task_cell.html" with object=task %}
 
-                    {% endfor %}
-                </tr>
             {% endfor %}
-        </tbody>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
 
     {% include "includes/paginator.html" with plural_object_name="tasks" %}
 
-{% else %}
+  {% else %}
     <p>No tasks available.</p>
-{% endif %}
+  {% endif %}
 
 {% endblock %}
 

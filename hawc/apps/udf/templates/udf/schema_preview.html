@@ -1,7 +1,7 @@
 {% if valid %}
-    {% crispy form %}
+  {% crispy form %}
 {% else %}
 
-    {% include "common/widgets/error.html" with message="Unable to load preview; invalid schema." %}
+  {% include "common/widgets/error.html" with message="Unable to load preview; invalid schema." %}
 
 {% endif %}

@@ -1,14 +1,14 @@
 <td hx-post="{% url 'assessment:publish-update' assessment.id name object.id %}"
     hx-target="this"
     hx-swap="outerHTML">
-    <form>
-        {% csrf_token %}
-        <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" name="{{ name }}" value="{{ object.id }}" hx-trigger="click" 
-                {% if object.published or object.publicly_available %}checked{% endif %}
-                 />
-                <label class="custom-control-label">&nbsp;</label>
-                <span class="fa fa-spin fa-spinner float-right htmx-indicator"></span>
-            </div>
-        </form>
-    </td>
+  <form>
+    {% csrf_token %}
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" name="{{ name }}" value="{{ object.id }}" hx-trigger="click"
+             {% if object.published or object.publicly_available %}checked{% endif %}
+      />
+      <label class="custom-control-label">&nbsp;</label>
+      <span class="fa fa-spin fa-spinner float-right htmx-indicator"></span>
+    </div>
+  </form>
+</td>

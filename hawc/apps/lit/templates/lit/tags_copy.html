@@ -1,60 +1,60 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <form class="container-fluid" action="." method="post">
-        {% csrf_token %}
-        <fieldset>
-            <legend>Copy tags from existing assessments</legend>
-            <p class="form-text text-muted">
-                Copy literature reference tags from an existing HAWC assessment which you have access to.
-            </p>
-            {{ form.non_field_errors|add_class:"alert alert-danger" }}
-            {% for field in form %}{{ field|as_crispy_field }}{% endfor %}
-        </fieldset>
-        <div id="tag-copy-content" class="hidden my-3">
-            <div class="alert alert-warning">
-                <a class="close" href="#" data-dismiss="alert">×</a>
-                <h4>Warning!</h4>
-                <p>
-                    Copying tags from another assessment will remove ALL existing tags, and will
-                    also remove any tags from existing literature for this assessment, even if the tag-names
-                    are identical between an existing tag and a new tag copied from another assessment.
-                    <br>
-                    <br>
-                    It is therefore recommended to only complete this procedure if literature have not yet been
-                    tagged for the current assessment.
-                </p>
-            </div>
-            <b>Tags for selected assessment:</b>
-            <div id="tags">
-                <p>
-                    Loading, please wait...&nbsp;
-                    <span className="fa fa-spin fa-spinner"></span>
-                </p>
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
-            <a class="btn btn-light"
-               href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
-        </div>
-    </form>
+  <form class="container-fluid" action="." method="post">
+    {% csrf_token %}
+    <fieldset>
+      <legend>Copy tags from existing assessments</legend>
+      <p class="form-text text-muted">
+        Copy literature reference tags from an existing HAWC assessment which you have access to.
+      </p>
+      {{ form.non_field_errors|add_class:"alert alert-danger" }}
+      {% for field in form %}{{ field|as_crispy_field }}{% endfor %}
+    </fieldset>
+    <div id="tag-copy-content" class="hidden my-3">
+      <div class="alert alert-warning">
+        <a class="close" href="#" data-dismiss="alert">×</a>
+        <h4>Warning!</h4>
+        <p>
+          Copying tags from another assessment will remove ALL existing tags, and will
+          also remove any tags from existing literature for this assessment, even if the tag-names
+          are identical between an existing tag and a new tag copied from another assessment.
+          <br>
+          <br>
+          It is therefore recommended to only complete this procedure if literature have not yet been
+          tagged for the current assessment.
+        </p>
+      </div>
+      <b>Tags for selected assessment:</b>
+      <div id="tags">
+        <p>
+          Loading, please wait...&nbsp;
+          <span className="fa fa-spin fa-spinner"></span>
+        </p>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
+      <a class="btn btn-light"
+         href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
+    </div>
+  </form>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
+  <script type="text/javascript">
     window.app.startup("litStartup", function(lit){
       $('#tag-copy-content').insertAfter($('#div_id_assessment')).removeClass('hidden');
       const handleChange = function () {
         const assessment_id = $('#id_assessment').val(),
-          url = `/lit/api/assessment/${assessment_id}/tagtree/`
+              url = `/lit/api/assessment/${assessment_id}/tagtree/`
         $.get(url, function(data){
           const tree = {data:{}, id:1, children: data.tree},
-            tagtree = new lit.TagTree(tree)
+                tagtree = new lit.TagTree(tree)
           tagtree.render(document.getElementById('tags'));
         });
       }
       $('#id_assessment').on('change', handleChange).trigger('change');
     });
-    </script>
+  </script>
 {% endblock extrajs %}

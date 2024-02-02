@@ -1,14 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex justify-content-end">
+  <div class="d-flex justify-content-end">
 
-        {% include "common/scientific_pulldown.html" %}
+    {% include "common/scientific_pulldown.html" %}
 
-    </div>
-    {% crispy form %}
+  </div>
+  {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">$("#id_summary").focus();</script>
+  <script type="text/javascript">$("#id_summary").focus();</script>
 {% endblock extrajs %}

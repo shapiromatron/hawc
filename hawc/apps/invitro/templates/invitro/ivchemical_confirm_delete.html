@@ -1,8 +1,8 @@
 {% extends 'invitro/ivchemical_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
+  {% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
 
 {% endblock content %}

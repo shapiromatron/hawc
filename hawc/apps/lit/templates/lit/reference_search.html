@@ -1,28 +1,28 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex mb-2">
-        <h2 class="mb-0">References ({{ page_obj.paginator.count }} found)</h2>
+  <div class="d-flex mb-2">
+    <h2 class="mb-0">References ({{ page_obj.paginator.count }} found)</h2>
 
-        {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
-            {% actions %}
-            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
-        {% endactions %}
+    {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
+      {% actions %}
+        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
+      {% endactions %}
     {% endif %}
 
-</div>
+  </div>
 
-{% include 'common/inline_filter_form.html' %}
+  {% include 'common/inline_filter_form.html' %}
 
-<div id="main"></div>
+  <div id="main"></div>
 
-{% include 'includes/paginator.html' with plural_object_name='references' %}
+  {% include 'includes/paginator.html' with plural_object_name='references' %}
 
 {% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+  {{ config|json_script:"config" }}
 
-    {% include "common/helptext_popup_js.html" %}
+  {% include "common/helptext_popup_js.html" %}
 
 {% endblock extrajs %}

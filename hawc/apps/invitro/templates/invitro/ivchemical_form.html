@@ -1,11 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    {% crispy form %}
+  {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function () {
 
       // handle all logic related to dtxid + cas
@@ -13,7 +13,7 @@
         // if `dtxsid` is selected, change casrn/chemical_name
         $('select[name=dtxsid]').on('select2:select', function (event) {
           let casrn = event.params.data.casrn,
-            chemical_name = event.params.data.chemical_name;
+              chemical_name = event.params.data.chemical_name;
           if (casrn) {
             $('#id_cas').val(casrn);
           }
@@ -30,5 +30,5 @@
       handleChemicalPropertiesInformation();
 
     });
-    </script>
+  </script>
 {% endblock extrajs %}

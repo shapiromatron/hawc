@@ -1,21 +1,21 @@
 {% extends 'lit/reference_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% if object.has_study %}
-        <div class="alert alert-danger my-2">
-            <h4>
-                <i class="fa fa-exclamation-triangle"></i>&nbsp;Delete this reference?
-            </h4>
-            <p>
-                This reference cannot be deleted; it has a data extraction or study evaluation associated with it. Please delete the <a href="{{ object.study.get_absolute_url }}">study</a>. This will remove all associated data and this reference.
-            </p>
-        </div>
-    {% else %}
+  {% if object.has_study %}
+    <div class="alert alert-danger my-2">
+      <h4>
+        <i class="fa fa-exclamation-triangle"></i>&nbsp;Delete this reference?
+      </h4>
+      <p>
+        This reference cannot be deleted; it has a data extraction or study evaluation associated with it. Please delete the <a href="{{ object.study.get_absolute_url }}">study</a>. This will remove all associated data and this reference.
+      </p>
+    </div>
+  {% else %}
 
-        {% include "hawc/_delete_block.html" with name="reference" notes="This also removes the reference from any searches/imports which may have included the reference." %}
+    {% include "hawc/_delete_block.html" with name="reference" notes="This also removes the reference from any searches/imports which may have included the reference." %}
 
-    {% endif %}
+  {% endif %}
 
 {% endblock content %}

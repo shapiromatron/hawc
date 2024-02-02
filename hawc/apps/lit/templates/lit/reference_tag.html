@@ -2,17 +2,17 @@
 
 {% block content %}
 
-    {% include 'common/inline_filter_form.html' %}
+  {% include 'common/inline_filter_form.html' %}
 
-    <div id="main"></div>
+  <div id="main"></div>
 
-    {% include "includes/paginator.html" with plural_object_name="references" %}
+  {% include "includes/paginator.html" with plural_object_name="references" %}
 
 {% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+  {{ config|json_script:"config" }}
 
-    {% include "common/helptext_popup_js.html" %}
+  {% include "common/helptext_popup_js.html" %}
 
 {% endblock extrajs %}

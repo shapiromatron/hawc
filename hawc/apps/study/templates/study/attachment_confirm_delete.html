@@ -1,12 +1,12 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h2>Delete attachment?</h2>
-    <p>
-        <b>Selected attachment:</b> <a href="{{ object.attachment.url }}">{{ object }}</a>
-    </p>
-    <p>{{ object.description|safe }}</p>
+  <h2>Delete attachment?</h2>
+  <p>
+    <b>Selected attachment:</b> <a href="{{ object.attachment.url }}">{{ object }}</a>
+  </p>
+  <p>{{ object.description|safe }}</p>
 
-    {% include "hawc/_delete_block.html" with name="attachment" notes="This will remove the attachment." %}
+  {% include "hawc/_delete_block.html" with name="attachment" notes="This will remove the attachment." %}
 
 {% endblock content %}

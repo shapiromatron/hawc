@@ -1,19 +1,19 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>Summary text</h2>
+  <div class="d-flex">
+    <h2>Summary text</h2>
 
-        {% if obj_perms.edit %}
-            {% actions %}
-            <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
-        {% endactions %}
+    {% if obj_perms.edit %}
+      {% actions %}
+        <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+      {% endactions %}
     {% endif %}
 
-</div>
-<div id="main" class="container-fluid col-md-12"></div>
+  </div>
+  <div id="main" class="container-fluid col-md-12"></div>
 {% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

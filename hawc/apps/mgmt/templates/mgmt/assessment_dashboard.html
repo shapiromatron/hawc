@@ -1,36 +1,36 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>Management dashboard</h2>
-        {% actions %}
-        <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
-        <a class="dropdown-item"
-           href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
-        <a class="dropdown-item"
-           href="{% url 'mgmt:assessment-analytics' assessment.pk %}">Analytics</a>
+  <div class="d-flex">
+    <h2>Management dashboard</h2>
+    {% actions %}
+      <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
+      <a class="dropdown-item"
+         href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
+      <a class="dropdown-item"
+         href="{% url 'mgmt:assessment-analytics' assessment.pk %}">Analytics</a>
     {% endactions %}
-</div>
+  </div>
 
-{% if object_list %}
+  {% if object_list %}
     <div>
-        <h3>All task summary</h3>
-        <div class="bar-all">{% plotly all_tasks_plot %}</div>
-        <h3>Tasks by type</h3>
-        <div class="bar-task d-flex row">
-            {% for plot in type_plots %}
-                <div class="mb-3">{% plotly plot %}</div>
-            {% endfor %}
-        </div>
-        <h3>Tasks by user</h3>
-        <div class="bar-user d-flex row">
-            {% for plot in user_plots %}
-                <div class="mb-3">{% plotly plot %}</div>
-            {% endfor %}
-        </div>
+      <h3>All task summary</h3>
+      <div class="bar-all">{% plotly all_tasks_plot %}</div>
+      <h3>Tasks by type</h3>
+      <div class="bar-task d-flex row">
+        {% for plot in type_plots %}
+          <div class="mb-3">{% plotly plot %}</div>
+        {% endfor %}
+      </div>
+      <h3>Tasks by user</h3>
+      <div class="bar-user d-flex row">
+        {% for plot in user_plots %}
+          <div class="mb-3">{% plotly plot %}</div>
+        {% endfor %}
+      </div>
     </div>
-{% else %}
+  {% else %}
     <p>No tasks have been assigned.</p>
-{% endif %}
+  {% endif %}
 
 {% endblock %}

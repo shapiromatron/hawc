@@ -1,35 +1,35 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    {% crispy form %}
-    <div id='extra_content' class='hidden'>
-        <div class="alert alert-warning">
-            <h4>Warning!</h4>
-            <p>
-                Copying this approach from another assessment will delete all {{ assessment.get_rob_name_display|lower }}
-                information currently saved in this assessment. This includes all domains and metrics
-                which currently exist, as well as any completed evaluations for studies already assessed.
-            </p>
-            <p>It does not change the assessment which the approach is copied from.</p>
-        </div>
+  {% crispy form %}
+  <div id='extra_content' class='hidden'>
+    <div class="alert alert-warning">
+      <h4>Warning!</h4>
+      <p>
+        Copying this approach from another assessment will delete all {{ assessment.get_rob_name_display|lower }}
+        information currently saved in this assessment. This includes all domains and metrics
+        which currently exist, as well as any completed evaluations for studies already assessed.
+      </p>
+      <p>It does not change the assessment which the approach is copied from.</p>
     </div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
-$(document).ready(function(){
+  <script type="text/javascript">
+    $(document).ready(function(){
     // move extra-content to appropriate location then make visible
-    $('#extra_content').appendTo($('#extra_content_insertion')).removeClass('hidden');
+      $('#extra_content').appendTo($('#extra_content_insertion')).removeClass('hidden');
 
-    const updateLink = function(){
+      const updateLink = function(){
         const url = `/rob/assessment/${$('#id_assessment').val()}/`,
-            name = $('#id_assessment option:selected').text(),
-            text = `<p>View approach for <a target="_blank" href="${url}">${name}<a />.</p>`;
+              name = $('#id_assessment option:selected').text(),
+              text = `<p>View approach for <a target="_blank" href="${url}">${name}<a />.</p>`;
         $('#approach').html(text);
-    };
+      };
 
     // load approach on assessment change
-    $('#id_assessment').on('change', updateLink).trigger('change');
-});
-    </script>
+      $('#id_assessment').on('change', updateLink).trigger('change');
+    });
+  </script>
 {% endblock extrajs %}

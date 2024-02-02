@@ -2,18 +2,18 @@
 <br>
 <br>
 {% with studies=object.sole_studies %}
-    <b>{{ studies|length }} studies—including their extracted content and/or study evaluations—will be deleted</b>.
+  <b>{{ studies|length }} studies—including their extracted content and/or study evaluations—will be deleted</b>.
 
-    {% if studies|length > 0 %}
-        The following studies will be removed:
-        {% for study in studies %}
-            <a href='{{ study.get_absolute_url }}'>{{ study }}</a>
+  {% if studies|length > 0 %}
+    The following studies will be removed:
+    {% for study in studies %}
+      <a href='{{ study.get_absolute_url }}'>{{ study }}</a>
 
-            {% if not forloop.last %};{% endif %}
+      {% if not forloop.last %};{% endif %}
 
-        {% endfor %}
-        . This will also impact any tables or visualizations using these studies.
-    {% endif %}
+    {% endfor %}
+    . This will also impact any tables or visualizations using these studies.
+  {% endif %}
 
 {% endwith %}
 <br>

@@ -1,20 +1,20 @@
 {% spaceless %}
-    {% for widget in widget.subwidgets %}
+  {% for widget in widget.subwidgets %}
 
-        {% include widget.template_name %}
+    {% include widget.template_name %}
 
-    {% endfor %}
-    <script id="{{widget.name}}-{{widget.jsid}}">
-$(document).ready(()=>{
-    const div = $("#{{widget.name}}-{{widget.jsid}}").closest('div'),
-        select = div.find('#{{widget.subwidgets.0.attrs.id}}'),
-        input = div.find('#{{widget.subwidgets.1.attrs.id}}');
-    select.on('change', function(e) {
+  {% endfor %}
+  <script id="{{widget.name}}-{{widget.jsid}}">
+    $(document).ready(()=>{
+      const div = $("#{{widget.name}}-{{widget.jsid}}").closest('div'),
+            select = div.find('#{{widget.subwidgets.0.attrs.id}}'),
+            input = div.find('#{{widget.subwidgets.1.attrs.id}}');
+      select.on('change', function(e) {
         const other = "{{widget.other_choice}}",
-            value = $(e.target).val(),
-            hasOther = (Array.isArray(value))? value.some(v=>v === other): value === other;
+              value = $(e.target).val(),
+              hasOther = (Array.isArray(value))? value.some(v=>v === other): value === other;
         (hasOther) ? input.show(): input.hide();
-    }).trigger('change')
-});
-    </script>
+      }).trigger('change')
+    });
+  </script>
 {% endspaceless %}

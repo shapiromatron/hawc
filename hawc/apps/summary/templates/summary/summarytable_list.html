@@ -1,83 +1,83 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>Available tables</h2>
+  <div class="d-flex">
+    <h2>Available tables</h2>
 
-        {% if obj_perms.edit %}
-            {% actions %}
-            <a class="dropdown-item"
-               href="{% url 'summary:tables_create_selector' assessment.pk %}">
-                <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
-            </a>
-            <a class="dropdown-item"
-               href="{% url 'summary:tables_copy' assessment.pk %}">
-                <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
-            </a>
-        {% endactions %}
+    {% if obj_perms.edit %}
+      {% actions %}
+        <a class="dropdown-item"
+           href="{% url 'summary:tables_create_selector' assessment.pk %}">
+          <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
+        </a>
+        <a class="dropdown-item"
+           href="{% url 'summary:tables_copy' assessment.pk %}">
+          <i class="fa fa-fw fa-copy"></i>&nbsp;Copy from existing
+        </a>
+      {% endactions %}
     {% endif %}
 
-</div>
+  </div>
 
-{% include 'common/inline_filter_form.html' %}
+  {% include 'common/inline_filter_form.html' %}
 
-{% if object_list.exists %}
+  {% if object_list.exists %}
     <table class="table table-sm table-striped">
-        <colgroup>
-            <col style="width: 40%;">
-            <col style="width: 20%;">
-            <col style="width: 20%;">
-            <col style="width: 20%;">
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Table type</th>
+      <colgroup>
+        <col style="width: 40%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Table type</th>
 
-                {% if show_published %}<th>Published</th>{% endif %}
+          {% if show_published %}<th>Published</th>{% endif %}
 
-                <th>Created</th>
-                <th>Modified</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for object in object_list %}
-                <tr>
-                    <td>
-                        <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
+          <th>Created</th>
+          <th>Modified</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in object_list %}
+          <tr>
+            <td>
+              <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
 
-                        {% if obj_perms.edit and not object.published %}
-                            <i class="fa fa-eye-slash"
-                               title="Unpublished (not be visible to the public)"
-                               aria-hidden="true"></i>
-                        {% endif %}
+              {% if obj_perms.edit and not object.published %}
+                <i class="fa fa-eye-slash"
+                   title="Unpublished (not be visible to the public)"
+                   aria-hidden="true"></i>
+              {% endif %}
 
-                        {% debug_badge object.id %}
-                    </td>
-                    <td>{{ object.get_table_type_display }}</td>
+              {% debug_badge object.id %}
+            </td>
+            <td>{{ object.get_table_type_display }}</td>
 
-                    {% if show_published %}<td>{{ object.published }}</td>{% endif %}
+            {% if show_published %}<td>{{ object.published }}</td>{% endif %}
 
-                    <td>{{ object.created|date:"Y-m-d" }}</td>
-                    <td>{{ object.last_updated|date:"Y-m-d" }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+            <td>{{ object.created|date:"Y-m-d" }}</td>
+            <td>{{ object.last_updated|date:"Y-m-d" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
 
     {% include "includes/paginator.html" with plural_object_name="tables" %}
 
-{% else %}
+  {% else %}
 
     {% if obj_perms.edit %}
-        <p>
-            <i>No tables are available - create one!</i>
-        </p>
+      <p>
+        <i>No tables are available - create one!</i>
+      </p>
     {% else %}
-        <p>
-            <i>No tables are available.</i>
-        </p>
+      <p>
+        <i>No tables are available.</i>
+      </p>
     {% endif %}
-{% endif %}
+  {% endif %}
 
 {% endblock %}

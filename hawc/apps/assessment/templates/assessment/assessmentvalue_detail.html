@@ -2,107 +2,107 @@
 
 {% block content %}
 
-    {% if crud == "Read" %}
-        <div class="d-flex">
-            <h3>Assessment Value for {{ object.assessment }}</h3>
+  {% if crud == "Read" %}
+    <div class="d-flex">
+      <h3>Assessment Value for {{ object.assessment }}</h3>
 
-            {% if obj_perms.edit %}
-                {% actions %}
-                <a class="dropdown-item"
-                   href="{% url 'assessment:values-update' object.pk %}">Update</a>
-                <a class="dropdown-item"
-                   href="{% url 'assessment:values-delete' object.pk %}">Delete</a>
-            {% endactions %}
-        {% endif %}
+      {% if obj_perms.edit %}
+        {% actions %}
+          <a class="dropdown-item"
+             href="{% url 'assessment:values-update' object.pk %}">Update</a>
+          <a class="dropdown-item"
+             href="{% url 'assessment:values-delete' object.pk %}">Delete</a>
+        {% endactions %}
+      {% endif %}
 
     </div>
-{% endif %}
+  {% endif %}
 
-<table class="table table-sm table-striped">
+  <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
+      <col style="width: 30%;">
+      <col style="width: 70%;">
     </colgroup>
     <tbody>
-        {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
-        {% optional_table_row "System or health effect basis" object.system %}
-        {% optional_table_row "Value type" object.get_value_type_display %}
+      {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
+      {% optional_table_row "System or health effect basis" object.system %}
+      {% optional_table_row "Value type" object.get_value_type_display %}
+      <tr>
+        <th>
+          Value
+
+          {% if object.adaf %}
+
+            {% include "common/info_popover.html" with text=adaf_footnote %}
+
+          {% endif %}
+
+        </th>
+        <td>{{ object.value }} {{ object.value_unit|default:"" }}</td>
+      </tr>
+
+      {% if object.confidence %}
         <tr>
-            <th>
-                Value
+          <th>
+            Confidence
 
-                {% if object.adaf %}
+            {% include "common/info_popover.html" with text="Confidence in the toxicity value." %}
 
-                    {% include "common/info_popover.html" with text=adaf_footnote %}
-
-                {% endif %}
-
-            </th>
-            <td>{{ object.value }} {{ object.value_unit|default:"" }}</td>
+          </th>
+          <td>{{ object.confidence }}</td>
         </tr>
+      {% endif %}
 
-        {% if object.confidence %}
-            <tr>
-                <th>
-                    Confidence
+      {% optional_table_row "Value duration" object.duration %}
+      {% optional_table_row "Basis" object.basis %}
+      {% optional_table_row "POD type" object.pod_type %}
 
-                    {% include "common/info_popover.html" with text="Confidence in the toxicity value." %}
+      {% if object.pod_value %}
+        <tr>
+          <th>POD Value</th>
+          <td>{{ object.pod_value|default:"" }} {{ object.pod_unit|default:"" }}</td>
+        </tr>
+      {% endif %}
 
-                </th>
-                <td>{{ object.confidence }}</td>
-            </tr>
-        {% endif %}
+      {% if object.show_noncancer_fields %}
+        {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
+      {% endif %}
 
-        {% optional_table_row "Value duration" object.duration %}
-        {% optional_table_row "Basis" object.basis %}
-        {% optional_table_row "POD type" object.pod_type %}
+      {% optional_table_row "Species and strain" object.species_studied|default:"" %}
 
-        {% if object.pod_value %}
-            <tr>
-                <th>POD Value</th>
-                <td>{{ object.pod_value|default:"" }} {{ object.pod_unit|default:"" }}</td>
-            </tr>
-        {% endif %}
+      {% if object.study %}
+        <tr>
+          <th>Key Study</th>
+          <td>
+            <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
+          </td>
+        </tr>
+      {% endif %}
 
-        {% if object.show_noncancer_fields %}
-            {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
-        {% endif %}
+      {% if object.show_cancer_fields %}
+        {% optional_table_row "Tumor type" object.tumor_type %}
+        {% optional_table_row "Extrapolation method" object.extrapolation_method %}
+      {% endif %}
 
-        {% optional_table_row "Species and strain" object.species_studied|default:"" %}
-
-        {% if object.study %}
-            <tr>
-                <th>Key Study</th>
-                <td>
-                    <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
-                </td>
-            </tr>
-        {% endif %}
-
-        {% if object.show_cancer_fields %}
-            {% optional_table_row "Tumor type" object.tumor_type %}
-            {% optional_table_row "Extrapolation method" object.extrapolation_method %}
-        {% endif %}
-
-        {% optional_table_row "Evidence characterization" object.evidence %}
-        {% optional_table_row "Comments" object.comments %}
-        {% for key, value in object.extra.items %}
-            <tr>
-                <th>{{ key }}</th>
-                <td>{{ value }}</td>
-            </tr>
-        {% empty %}
-        {% endfor %}
+      {% optional_table_row "Evidence characterization" object.evidence %}
+      {% optional_table_row "Comments" object.comments %}
+      {% for key, value in object.extra.items %}
+        <tr>
+          <th>{{ key }}</th>
+          <td>{{ value }}</td>
+        </tr>
+      {% empty %}
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 {% endblock %}
 
 {% block extrajs %}
 
-    {% if object.adaf %}
+  {% if object.adaf %}
 
-        {% include "common/helptext_popup_js.html" %}
+    {% include "common/helptext_popup_js.html" %}
 
-    {% endif %}
+  {% endif %}
 
 {% endblock %}

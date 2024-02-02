@@ -1,110 +1,110 @@
-<div 
-    {% if obj_perms.edit_assessment or permissions.edit_assessment %} hx-get="{{ object.get_edit_url }}" class="box-shadow p-3 rounded mb-4 clickable" hx-indicator="#spinner-{{ object.pk }}" title="Click to update" hx-swap="outerHTML" {% else %} class="box-shadow p-3 rounded mb-4" {% endif %}
-     style="width: fit-content">
-    <div class="d-flex">
-        <h4 class="mb-3">
-            {{ object.title }}&nbsp;<i class="fa fa-spinner fa-spin htmx-indicator"
-   id="spinner-{{ object.pk }}"
-   aria-hidden="true"></i>
-        </h4>
-        <div class="ml-auto align-self-start d-flex flex-shrink-0 flex-wrap-0">
+<div
+  {% if obj_perms.edit_assessment or permissions.edit_assessment %} hx-get="{{ object.get_edit_url }}" class="box-shadow p-3 rounded mb-4 clickable" hx-indicator="#spinner-{{ object.pk }}" title="Click to update" hx-swap="outerHTML" {% else %} class="box-shadow p-3 rounded mb-4" {% endif %}
+  style="width: fit-content">
+  <div class="d-flex">
+    <h4 class="mb-3">
+      {{ object.title }}&nbsp;<i class="fa fa-spinner fa-spin htmx-indicator"
+                                 id="spinner-{{ object.pk }}"
+                                 aria-hidden="true"></i>
+    </h4>
+    <div class="ml-auto align-self-start d-flex flex-shrink-0 flex-wrap-0">
 
-            {% if object.link_conflict_resolution %}
-                <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Conflict Resolution linked on Literature Review</span>
+      {% if object.link_conflict_resolution %}
+        <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Conflict Resolution linked on Literature Review</span>
+      {% endif %}
+
+      {% if object.link_tagging %}
+        <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Tagging linked on Literature Review</span>
+      {% endif %}
+
+    </div>
+  </div>
+  <div class="d-flex justify-content-center">
+    <div class="d-inline-flex">
+      <div class="border-right border-secondary px-4 d-flex flex-column flex-wrap">
+        <p class="text-center mb-2">Admission Criteria</p>
+        <div class="d-flex flex-wrap justify-content-center vw50">
+
+          {% if object.admission_tags.exists %}
+            <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">Tagged with
+              {% for tag in object.admission_tags.all %}
+
+                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
+
+                {% list_punctuation forloop "or" %}
+              {% endfor %}
+
+              {% if object.admission_tags_descendants %}(including descendant tags){% endif %}
+
+            </span>
+          {% endif %}
+
+          {% if object.admission_source.exists %}
+
+            {% if object.admission_tags.exists %}
+              <span class="d-flex align-items-center">
+                <span class="font-weight-bold py-1 px-2 m-1 flex-shrink-0">and</span>
+              </span>
             {% endif %}
 
-            {% if object.link_tagging %}
-                <span class="outline-btn ml-2 rounded btn-tny"><i class="fa fa-link" aria-hidden="true"></i>&nbsp; Tagging linked on Literature Review</span>
+            <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">
+              Sourced from
+              {% for source in object.admission_source.all %}
+                <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{ source }}</span>
+                {% list_punctuation forloop "or" %}
+              {% endfor %}
+            </span>
+          {% endif %}
+
+          {% if not object.admission_tags.exists and not object.admission_source.exists %}
+            <span class="alert alert-warning text-center"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; No admission criteria selected. <b>All references will be admitted to this workflow.</b></span>
+          {% endif %}
+
+        </div>
+      </div>
+      <div class="border-left border-secondary px-4 d-flex flex-column flex-wrap">
+        <p class="text-center mb-2">Removal Criteria</p>
+        <div class="d-flex flex-wrap justify-content-center vw50">
+
+          {% if object.removal_tags.exists %}
+            <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center flex-wrap align-items-center">Tagged with
+              {% for tag in object.removal_tags.all %}
+
+                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
+
+                {% list_punctuation forloop "or" %}
+              {% endfor %}
+
+              {% if object.removal_tags_descendants %}(including descendant tags){% endif %}
+
+            </span>
+          {% endif %}
+
+          {% if object.removal_source.exists %}
+
+            {% if object.removal_tags.exists %}
+              <span class="d-flex align-items-center">
+                <span class="font-weight-bold py-1 px-2 m-1 flex-shrink-0">or</span>
+              </span>
             {% endif %}
 
+            <span class="bg-gray rounded px-3 py-2 m-1 justify-content-center d-flex align-items-center text-center">Sourced from
+              {% for source in object.removal_source.all %}
+                <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{ source }}</span>
+                {% list_punctuation forloop "or" %}
+              {% endfor %}
+            </span>
+          {% endif %}
+
+          {% if not object.removal_tags.exists and not object.removal_source.exists %}
+            <span class="alert alert-danger text-center"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; No removal criteria selected. <b>No references will be removed from this workflow.</b></span>
+          {% endif %}
+
         </div>
+      </div>
     </div>
-    <div class="d-flex justify-content-center">
-        <div class="d-inline-flex">
-            <div class="border-right border-secondary px-4 d-flex flex-column flex-wrap">
-                <p class="text-center mb-2">Admission Criteria</p>
-                <div class="d-flex flex-wrap justify-content-center vw50">
-
-                    {% if object.admission_tags.exists %}
-                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">Tagged with
-                            {% for tag in object.admission_tags.all %}
-
-                                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
-
-                                {% list_punctuation forloop "or" %}
-                            {% endfor %}
-
-                            {% if object.admission_tags_descendants %}(including descendant tags){% endif %}
-
-                        </span>
-                    {% endif %}
-
-                    {% if object.admission_source.exists %}
-
-                        {% if object.admission_tags.exists %}
-                            <span class="d-flex align-items-center">
-                                <span class="font-weight-bold py-1 px-2 m-1 flex-shrink-0">and</span>
-                            </span>
-                        {% endif %}
-
-                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center align-items-center flex-wrap">
-                            Sourced from
-                            {% for source in object.admission_source.all %}
-                                <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{ source }}</span>
-                                {% list_punctuation forloop "or" %}
-                            {% endfor %}
-                        </span>
-                    {% endif %}
-
-                    {% if not object.admission_tags.exists and not object.admission_source.exists %}
-                        <span class="alert alert-warning text-center"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; No admission criteria selected. <b>All references will be admitted to this workflow.</b></span>
-                    {% endif %}
-
-                </div>
-            </div>
-            <div class="border-left border-secondary px-4 d-flex flex-column flex-wrap">
-                <p class="text-center mb-2">Removal Criteria</p>
-                <div class="d-flex flex-wrap justify-content-center vw50">
-
-                    {% if object.removal_tags.exists %}
-                        <span class="bg-gray rounded px-3 py-2 m-1 d-flex justify-content-center flex-wrap align-items-center">Tagged with
-                            {% for tag in object.removal_tags.all %}
-
-                                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='px-1 py-0 my-1 mx-1' %}
-
-                                {% list_punctuation forloop "or" %}
-                            {% endfor %}
-
-                            {% if object.removal_tags_descendants %}(including descendant tags){% endif %}
-
-                        </span>
-                    {% endif %}
-
-                    {% if object.removal_source.exists %}
-
-                        {% if object.removal_tags.exists %}
-                            <span class="d-flex align-items-center">
-                                <span class="font-weight-bold py-1 px-2 m-1 flex-shrink-0">or</span>
-                            </span>
-                        {% endif %}
-
-                        <span class="bg-gray rounded px-3 py-2 m-1 justify-content-center d-flex align-items-center text-center">Sourced from
-                            {% for source in object.removal_source.all %}
-                                <span class="outline-btn bg-white rounded my-1 mx-2"><i class="fa fa-cloud-download"></i>&nbsp;{{ source }}</span>
-                                {% list_punctuation forloop "or" %}
-                            {% endfor %}
-                        </span>
-                    {% endif %}
-
-                    {% if not object.removal_tags.exists and not object.removal_source.exists %}
-                        <span class="alert alert-danger text-center"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; No removal criteria selected. <b>No references will be removed from this workflow.</b></span>
-                    {% endif %}
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="mt-2 ml-1 d-flex justify-content-center text-center">
-        <i class="m-0 text-muted" style="max-width: 800px;">{{ object.description }}</i>
-    </div>
+  </div>
+  <div class="mt-2 ml-1 d-flex justify-content-center text-center">
+    <i class="m-0 text-muted" style="max-width: 800px;">{{ object.description }}</i>
+  </div>
 </div>

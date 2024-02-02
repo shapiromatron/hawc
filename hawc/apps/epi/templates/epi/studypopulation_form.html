@@ -1,11 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    {% crispy form %}
+  {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function(){
 
       // show-hide N fields for cohort level fields only
@@ -19,5 +19,5 @@
       }).trigger('change');
 
     });
-    </script>
+  </script>
 {% endblock extrajs %}

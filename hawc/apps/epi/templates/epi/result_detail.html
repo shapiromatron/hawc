@@ -1,26 +1,26 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>{{ object }}</h2>
+  <div class="d-flex">
+    <h2>{{ object }}</h2>
 
-        {% if obj_perms.edit and crud == "Read" %}
-            {% actions %}
-            <span class="dropdown-header">Result editing</span>
-            <a class="dropdown-item" href="{% url 'epi:result_update' object.pk %}">Update</a>
-            <a class="dropdown-item" href="{% url 'epi:result_delete' object.pk %}">Delete</a>
-        {% endactions %}
+    {% if obj_perms.edit and crud == "Read" %}
+      {% actions %}
+        <span class="dropdown-header">Result editing</span>
+        <a class="dropdown-item" href="{% url 'epi:result_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'epi:result_delete' object.pk %}">Delete</a>
+      {% endactions %}
     {% endif %}
 
-</div>
-<div id="objContainer"></div>
+  </div>
+  <div id="objContainer"></div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
+  <script type="text/javascript">
     const id = {{object.id}};
     window.app.startup("epiStartup", function(app){
       app.Result.displayFullPager($("#objContainer"), id);
     });
-    </script>
+  </script>
 {% endblock %}

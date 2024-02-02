@@ -1,8 +1,8 @@
 {% extends 'summary/summarytable_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="summary table" notes="This will delete the current summary table, which cannot be recovered." %}
+  {% include "hawc/_delete_block.html" with name="summary table" notes="This will delete the current summary table, which cannot be recovered." %}
 
 {% endblock content %}

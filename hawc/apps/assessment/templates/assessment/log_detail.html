@@ -1,59 +1,59 @@
 {% extends object.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>{{ object }}</h2>
+  <div class="d-flex">
+    <h2>{{ object }}</h2>
 
-        {% if object.get_object_name %}
-            {% actions %}
-            <a class="dropdown-item" href="{{ object.get_object_list_url }}">View all logs for object</a>
-        {% endactions %}
+    {% if object.get_object_name %}
+      {% actions %}
+        <a class="dropdown-item" href="{{ object.get_object_list_url }}">View all logs for object</a>
+      {% endactions %}
     {% endif %}
 
-</div>
-<table class="table table-sm table-striped">
+  </div>
+  <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
+      <col style="width: 30%;">
+      <col style="width: 70%;">
     </colgroup>
     <tbody>
-        <tr>
-            <th>Object</th>
-            <td>
-                {% with object.content_object.get_absolute_url as absolute_url %}
+      <tr>
+        <th>Object</th>
+        <td>
+          {% with object.content_object.get_absolute_url as absolute_url %}
 
-                    {% if absolute_url %}
-                        <a href="{{ absolute_url }}">{{ object.get_object_name }}</a>
-                    {% else %}
-                        {{ object.get_object_name }}
-                    {% endif %}
+            {% if absolute_url %}
+              <a href="{{ absolute_url }}">{{ object.get_object_name }}</a>
+            {% else %}
+              {{ object.get_object_name }}
+            {% endif %}
 
-                {% endwith %}
-            </td>
-        </tr>
-        <tr>
-            <th>Object type</th>
-            <td>{{ object.content_type }}</td>
-        </tr>
-        <tr>
-            <th>Assessment</th>
-            <td>{{ object.assessment }}</td>
-        </tr>
-        <tr>
-            <th>Message</th>
-            <td>{{ object.message }}</td>
-        </tr>
-        <tr>
-            <th>User</th>
-            <td>{{ object.user }}</td>
-        </tr>
-        <tr>
-            <th>Timestamp</th>
-            <td>{{ object.created }}</td>
-        </tr>
+          {% endwith %}
+        </td>
+      </tr>
+      <tr>
+        <th>Object type</th>
+        <td>{{ object.content_type }}</td>
+      </tr>
+      <tr>
+        <th>Assessment</th>
+        <td>{{ object.assessment }}</td>
+      </tr>
+      <tr>
+        <th>Message</th>
+        <td>{{ object.message }}</td>
+      </tr>
+      <tr>
+        <th>User</th>
+        <td>{{ object.user }}</td>
+      </tr>
+      <tr>
+        <th>Timestamp</th>
+        <td>{{ object.created }}</td>
+      </tr>
     </tbody>
-</table>
+  </table>
 
-{% include 'assessment/_logs_note.html' %}
+  {% include 'assessment/_logs_note.html' %}
 
 {% endblock content %}

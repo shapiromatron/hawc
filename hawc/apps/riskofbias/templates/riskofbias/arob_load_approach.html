@@ -1,46 +1,46 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    {% crispy form %}
-    <div id='extra_content' class="hidden">
-        <div class="alert alert-warning">
-            <h4>Warning!</h4>
-            <p>
-                Loading this approach will delete all {{ assessment.get_rob_name_display|lower }}
-                information currently saved in this assessment. This includes all domains and metrics
-                which currently exist, as well as any completed evaluations for studies already assessed.
-            </p>
-        </div>
+  {% crispy form %}
+  <div id='extra_content' class="hidden">
+    <div class="alert alert-warning">
+      <h4>Warning!</h4>
+      <p>
+        Loading this approach will delete all {{ assessment.get_rob_name_display|lower }}
+        information currently saved in this assessment. This includes all domains and metrics
+        which currently exist, as well as any completed evaluations for studies already assessed.
+      </p>
     </div>
-    <div id="detail_display" class="hidden"></div>
-    <div id="detail_library" class="hidden">
-        <div id="detail-1">
-            <p>
-                Adapted from the US National Toxicology Program <a target="_blank"
-    href="https://ntp.niehs.nih.gov/whatwestudy/assessments/noncancer/riskbias/index.html">Risk of Bias Tool</a>.
-            </p>
-        </div>
-        <div id="detail-2">
-            <p>
-                Adapted from the US EPA <a target="_blank"
-    href="https://cfpub.epa.gov/ncea/iris_drafts/recordisplay.cfm?deid=356370">ORD Staff Handbook for Developing IRIS Assessments</a>.
-            </p>
-        </div>
+  </div>
+  <div id="detail_display" class="hidden"></div>
+  <div id="detail_library" class="hidden">
+    <div id="detail-1">
+      <p>
+        Adapted from the US National Toxicology Program <a target="_blank"
+                                                           href="https://ntp.niehs.nih.gov/whatwestudy/assessments/noncancer/riskbias/index.html">Risk of Bias Tool</a>.
+      </p>
     </div>
+    <div id="detail-2">
+      <p>
+        Adapted from the US EPA <a target="_blank"
+                                   href="https://cfpub.epa.gov/ncea/iris_drafts/recordisplay.cfm?deid=356370">ORD Staff Handbook for Developing IRIS Assessments</a>.
+      </p>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
-$(document).ready(function () {
+  <script type="text/javascript">
+    $(document).ready(function () {
   // move extra-content to appropriate location then make visible
-  $('#extra_content').insertBefore($('#div_id_rob_type')).removeClass('hidden');
-  $('#detail_display').insertAfter($('#div_id_rob_type')).removeClass('hidden');
+      $('#extra_content').insertBefore($('#div_id_rob_type')).removeClass('hidden');
+      $('#detail_display').insertAfter($('#div_id_rob_type')).removeClass('hidden');
   // handle selector change
-  window.app.HAWCUtils.onSelectChangeShowDetail(
-    document.getElementById("id_rob_type"),
-    document.getElementById("detail_display"),
-    document.getElementById("detail_library")
-  );
-});
-    </script>
+      window.app.HAWCUtils.onSelectChangeShowDetail(
+        document.getElementById("id_rob_type"),
+        document.getElementById("detail_display"),
+        document.getElementById("detail_library")
+      );
+    });
+  </script>
 {% endblock extrajs %}

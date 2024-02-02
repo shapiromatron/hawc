@@ -1,56 +1,56 @@
 <table class="table table-sm table-striped"
        hx-target="this"
        id="design-table">
-    <colgroup>
-        <col style="width: 20%;">
-        <col style="width: 80%;">
-    </colgroup>
-    <tbody>
-        {% optional_table_row "Study design" object.get_study_design_display %}
-        {% optional_table_row "Study population N" object.participant_n %}
-        {% optional_table_row "Source" object.get_source_display %}
-        {% optional_table_row "Population age category" object.get_age_profile_display %}
-        {% optional_table_row "Population age details" object.age_description %}
-        {% optional_table_row "Sex" object.get_sex_display %}
-        {% optional_table_row "Population race/ethnicity" object.race %}
-        {% optional_table_row "Population summary" object.summary %}
-        {% optional_table_row "Study (cohort) name" object.study_name %}
-        {% optional_table_row "Year(s) of enrollment" object.years_enrolled %}
-        {% optional_table_row "Year(s) or length of follow-up" object.years_followup %}
-        {% with object.countries.all as countries %}
+  <colgroup>
+    <col style="width: 20%;">
+    <col style="width: 80%;">
+  </colgroup>
+  <tbody>
+    {% optional_table_row "Study design" object.get_study_design_display %}
+    {% optional_table_row "Study population N" object.participant_n %}
+    {% optional_table_row "Source" object.get_source_display %}
+    {% optional_table_row "Population age category" object.get_age_profile_display %}
+    {% optional_table_row "Population age details" object.age_description %}
+    {% optional_table_row "Sex" object.get_sex_display %}
+    {% optional_table_row "Population race/ethnicity" object.race %}
+    {% optional_table_row "Population summary" object.summary %}
+    {% optional_table_row "Study (cohort) name" object.study_name %}
+    {% optional_table_row "Year(s) of enrollment" object.years_enrolled %}
+    {% optional_table_row "Year(s) or length of follow-up" object.years_followup %}
+    {% with object.countries.all as countries %}
 
-            {% if countries %}
-                <tr>
-                    <th>Countries</th>
-                    <td>
-                        {% for object in object.countries.all %}<span class="badge badge-secondary">{{ object.name }}</span>{% endfor %}
-                    </td>
-                </tr>
-            {% endif %}
+      {% if countries %}
+        <tr>
+          <th>Countries</th>
+          <td>
+            {% for object in object.countries.all %}<span class="badge badge-secondary">{{ object.name }}</span>{% endfor %}
+          </td>
+        </tr>
+      {% endif %}
 
-        {% endwith %}
-        {% optional_table_row "Other geographic information" object.region %}
+    {% endwith %}
+    {% optional_table_row "Other geographic information" object.region %}
 
-        {% if object.criteria|hastext %}
-            <tr>
-                <th>Inclusion/Exclusion Criteria</th>
-                <td>{{ object.criteria|safe }}</td>
-            </tr>
-        {% endif %}
+    {% if object.criteria|hastext %}
+      <tr>
+        <th>Inclusion/Exclusion Criteria</th>
+        <td>{{ object.criteria|safe }}</td>
+      </tr>
+    {% endif %}
 
-        {% if object.susceptibility|hastext %}
-            <tr>
-                <th>Susceptibility</th>
-                <td>{{ object.susceptibility|safe }}</td>
-            </tr>
-        {% endif %}
+    {% if object.susceptibility|hastext %}
+      <tr>
+        <th>Susceptibility</th>
+        <td>{{ object.susceptibility|safe }}</td>
+      </tr>
+    {% endif %}
 
-        {% if object.comments|hastext %}
-            <tr>
-                <th>Comments</th>
-                <td>{{ object.comments|safe }}</td>
-            </tr>
-        {% endif %}
+    {% if object.comments|hastext %}
+      <tr>
+        <th>Comments</th>
+        <td>{{ object.comments|safe }}</td>
+      </tr>
+    {% endif %}
 
-    </tbody>
+  </tbody>
 </table>

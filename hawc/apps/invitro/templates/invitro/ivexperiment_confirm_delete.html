@@ -1,8 +1,8 @@
 {% extends 'invitro/ivexperiment_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="experiment" notes="This will remove all content associated with this experiment." %}
+  {% include "hawc/_delete_block.html" with name="experiment" notes="This will remove all content associated with this experiment." %}
 
 {% endblock content %}

@@ -1,26 +1,26 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>{{ object }}: {{ assessment.get_rob_name_display }} review</h2>
+  <div class="d-flex">
+    <h2>{{ object }}: {{ assessment.get_rob_name_display }} review</h2>
 
-        {% if obj_perms.edit %}
-            {% actions %}
-            <span class="dropdown-header">{{ assessment.get_rob_name_display }}</span>
-            <a class="dropdown-item"
-               href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a>
+    {% if obj_perms.edit %}
+      {% actions %}
+        <span class="dropdown-header">{{ assessment.get_rob_name_display }}</span>
+        <a class="dropdown-item"
+           href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a>
 
-            {% if obj_perms.edit_assessment %}
-                <a class="dropdown-item" href="{{ object.get_final_rob.get_edit_url }}">Edit final review</a>
-            {% endif %}
+        {% if obj_perms.edit_assessment %}
+          <a class="dropdown-item" href="{{ object.get_final_rob.get_edit_url }}">Edit final review</a>
+        {% endif %}
 
-        {% endactions %}
+      {% endactions %}
     {% endif %}
 
-</div>
-<div id="main"></div>
+  </div>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}

@@ -3,16 +3,16 @@
 {% block title %}Login | HAWC{% endblock %}
 
 {% block content %}
-    {% crispy form %}
+  {% crispy form %}
 {% endblock content %}
 
 {% block extrajs %}
 
-    {% if form.enable_turnstyle %}
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-                async
-                defer></script>
-    {% endif %}
+  {% if form.enable_turnstyle %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            async
+            defer></script>
+  {% endif %}
 
-    <script type="text/javascript">document.getElementById('id_username').focus();</script>
+  <script type="text/javascript">document.getElementById('id_username').focus();</script>
 {% endblock extrajs %}

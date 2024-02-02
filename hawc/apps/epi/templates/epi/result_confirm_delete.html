@@ -1,8 +1,8 @@
 {% extends 'epi/result_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="result" notes="This will remove all group-specific result data for this result and outcome." %}
+  {% include "hawc/_delete_block.html" with name="result" notes="This will remove all group-specific result data for this result and outcome." %}
 
 {% endblock content %}

@@ -1,37 +1,37 @@
 <div class="sidebar">
-    <div class="dropdown d-block d-lg-none px-1 pt-3">
-        <button class="btn 
-            {% if flavor == 'PRIME' %}text-white{% endif %}
-             " type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa fa-bars" title="Mobile navigation panel"></i>
-        </button>
-        <div class="dropdown-menu 
-            {% if flavor == 'PRIME' %} bg-dark {% else %} bg-light {% endif %}
-             py-0" aria-labelledby="assessmentToggleMenu">
+  <div class="dropdown d-block d-lg-none px-1 pt-3">
+    <button class="btn
+                   {% if flavor == 'PRIME' %}text-white{% endif %}
+                  " type="button" id="assessmentToggleMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      <i class="fa fa-bars" title="Mobile navigation panel"></i>
+    </button>
+    <div class="dropdown-menu
+                {% if flavor == 'PRIME' %} bg-dark {% else %} bg-light {% endif %}
+                py-0" aria-labelledby="assessmentToggleMenu">
 
-            {% if flavor == "EPA" %}
+      {% if flavor == "EPA" %}
 
-                {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav mb-0 border-0" sub_ul="usa-sidenav__sublist" %}
+        {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav mb-0 border-0" sub_ul="usa-sidenav__sublist" %}
 
-            {% else %}
+      {% else %}
 
-                {% include "includes/sidebar.html"  with li_class="nav-item" a_class="nav-link" ul_class="nav flex-column" sub_ul="nav flex-column sub-list" %}
+        {% include "includes/sidebar.html"  with li_class="nav-item" a_class="nav-link" ul_class="nav flex-column" sub_ul="nav flex-column sub-list" %}
 
-            {% endif %}
+      {% endif %}
 
-        </div>
     </div>
-    <nav class="nav flex-column pt-2 d-none d-lg-block">
+  </div>
+  <nav class="nav flex-column pt-2 d-none d-lg-block">
 
-        {% if flavor == "EPA" %}
+    {% if flavor == "EPA" %}
 
-            {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav" sub_ul="usa-sidenav__sublist" %}
+      {% include "includes/sidebar.html" with li_class="usa-sidenav__item" a_class="menu__link" ul_class="menu usa-sidenav" sub_ul="usa-sidenav__sublist" %}
 
-        {% else %}
+    {% else %}
 
-            {% include "includes/sidebar.html" with li_class="nav-item" a_class="nav-link" ul_class="nav flex-column" sub_ul="nav flex-column sub-list" %}
+      {% include "includes/sidebar.html" with li_class="nav-item" a_class="nav-link" ul_class="nav flex-column" sub_ul="nav flex-column sub-list" %}
 
-        {% endif %}
+    {% endif %}
 
-    </nav>
+  </nav>
 </div>

@@ -1,28 +1,28 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>{{ object }}</h2>
+  <div class="d-flex">
+    <h2>{{ object }}</h2>
 
-        {% if obj_perms.edit and crud == "Read" %}
-            {% actions %}
-            <span class="dropdown-header">BMD editing</span>
+    {% if obj_perms.edit and crud == "Read" %}
+      {% actions %}
+        <span class="dropdown-header">BMD editing</span>
 
-            {% if object.can_edit %}<a class="dropdown-item" href="{{ object.get_update_url }}">Update</a>{% endif %}
+        {% if object.can_edit %}<a class="dropdown-item" href="{{ object.get_update_url }}">Update</a>{% endif %}
 
-            <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete</a>
-        {% endactions %}
+        <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete</a>
+      {% endactions %}
     {% endif %}
 
-</div>
+  </div>
 
-{% if obj_perms.edit and crud == "Read" and not object.can_edit %}
+  {% if obj_perms.edit and crud == "Read" and not object.can_edit %}
 
     {% include 'bmd/_read_only_session_alert.html' %}
 
-{% endif %}
+  {% endif %}
 
-<div id="main"></div>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}{{ config|json_script:"config" }}{% endblock %}

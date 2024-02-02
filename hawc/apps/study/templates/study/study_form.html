@@ -2,33 +2,33 @@
 
 {% block content %}
 
-    {% if manual_entry_warning %}
-        {% alert warning %}
-        <p>
-            You can continue to manually enter a study if you wish. However, instead of manually
-            entering reference information, we recommend importing the reference from PubMed or HERO
-            using one of these approaches instead:
-        </p>
-        <ul>
-            <li>
-                <a href="{% url 'study:create_from_identifier' assessment.pk %}"
-                   class="alert-link">Create  Study From Identifier</a> - for a single reference
-            </li>
-            <li>
-                <a href="{% url 'lit:import_new' assessment.pk %}" class="alert-link">New Literature Import</a> - for multiple references simultaneously
-            </li>
-        </ul>
-        <p>This requires less work, and ensures that we have links to the reference throughout your assessment.</p>
+  {% if manual_entry_warning %}
+    {% alert warning %}
+      <p>
+        You can continue to manually enter a study if you wish. However, instead of manually
+        entering reference information, we recommend importing the reference from PubMed or HERO
+        using one of these approaches instead:
+      </p>
+      <ul>
+        <li>
+          <a href="{% url 'study:create_from_identifier' assessment.pk %}"
+             class="alert-link">Create  Study From Identifier</a> - for a single reference
+        </li>
+        <li>
+          <a href="{% url 'lit:import_new' assessment.pk %}" class="alert-link">New Literature Import</a> - for multiple references simultaneously
+        </li>
+      </ul>
+      <p>This requires less work, and ensures that we have links to the reference throughout your assessment.</p>
     {% endalert %}
-{% endif %}
+  {% endif %}
 
-{% crispy form %}
+  {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
-$(document).ready(function () {
-    document.getElementById("id_short_citation").focus()
-});
-    </script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      document.getElementById("id_short_citation").focus()
+    });
+  </script>
 {% endblock extrajs %}

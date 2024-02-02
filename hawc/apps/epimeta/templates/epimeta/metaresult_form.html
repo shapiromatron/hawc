@@ -1,34 +1,34 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    {% crispy form %}
+  {% crispy form %}
     {# Single-Result formset #}
-    <div id="srFormset">
-        <legend>
-            Single-Study Results
-            <button class="float-right btn btn-primary"
-                    title="Add new row to single-result"
-                    type="button"
-                    id="addFormToFormset">+</button>
-        </legend>
-        <p class="form-text text-muted">
-            Add individual study-finding which were used for the meta-analysis.
-            Results can be associated with data already present in HAWC, or can be
-            manually-entered with key findings. Hover-over field-titles for more
-            help-text. <strong>If you choose to not include-any individual results,
+  <div id="srFormset">
+    <legend>
+      Single-Study Results
+      <button class="float-right btn btn-primary"
+              title="Add new row to single-result"
+              type="button"
+              id="addFormToFormset">+</button>
+    </legend>
+    <p class="form-text text-muted">
+      Add individual study-finding which were used for the meta-analysis.
+      Results can be associated with data already present in HAWC, or can be
+      manually-entered with key findings. Hover-over field-titles for more
+      help-text. <strong>If you choose to not include-any individual results,
         delete all rows from this table before submitting.</strong>
     </p>
 
     {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
 
-</div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-    <script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function(){
       $("#srFormset").insertBefore($(".form-actions"));
       new window.app.DynamicFormset($('#srFormset'), 'form');
     });
-    </script>
+  </script>
 {% endblock extrajs %}

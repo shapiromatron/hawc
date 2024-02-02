@@ -1,8 +1,8 @@
 {% extends 'epi/comparisonset_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="group" notes="This will remove all groups, and any results associated with an outcome and these groups." %}
+  {% include "hawc/_delete_block.html" with name="group" notes="This will remove all groups, and any results associated with an outcome and these groups." %}
 
 {% endblock content %}

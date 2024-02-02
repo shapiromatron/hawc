@@ -1,8 +1,8 @@
 {% extends 'animal/experiment_detail.html' %}
 
 {% block content %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% include "hawc/_delete_block.html" with name="experiment" notes="This will remove all data associated with the experiment, including animal-groups, endpoints, and BMD modeling runs." %}
+  {% include "hawc/_delete_block.html" with name="experiment" notes="This will remove all data associated with the experiment, including animal-groups, endpoints, and BMD modeling runs." %}
 
 {% endblock content %}

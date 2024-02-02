@@ -3,38 +3,38 @@
 {% load wagtailuserbar wagtail_cache %}
 
 {% block title %}
-    {% wagtailpagecache 3600 title %}
+  {% wagtailpagecache 3600 title %}
     {% for crumb in breadcrumbs reversed %}
 
-        {% if forloop.last %}
-            {{ crumb.name }}
-        {% else %}
-            {{ crumb.name }} |
-        {% endif %}
+      {% if forloop.last %}
+        {{ crumb.name }}
+      {% else %}
+        {{ crumb.name }} |
+      {% endif %}
 
     {% endfor %}
-{% endwagtailpagecache %}
+  {% endwagtailpagecache %}
 {% endblock title %}
 
 {% block content_row_outer %}
-    {% wagtailpagecache 3600 content_row_outer %}
+  {% wagtailpagecache 3600 content_row_outer %}
     {{ block.super }}
-{% endwagtailpagecache %}
-{% wagtailuserbar %}
+  {% endwagtailpagecache %}
+  {% wagtailuserbar %}
 {% endblock content_row_outer %}
 
 {% block sidebar_outer %}
-    {% wagtailpagecache 3600 sidebar_outer %}
+  {% wagtailpagecache 3600 sidebar_outer %}
 
     {% include "includes/sidebar_container.html" with expand_docs=True %}
 
-{% endwagtailpagecache %}
+  {% endwagtailpagecache %}
 {% endblock sidebar_outer %}
 
 {% block breadcrumbs_outer %}
-    {% wagtailpagecache 3600 breadcrumbs_outer %}
+  {% wagtailpagecache 3600 breadcrumbs_outer %}
 
     {% include "includes/breadcrumbs.html" %}
 
-{% endwagtailpagecache %}
+  {% endwagtailpagecache %}
 {% endblock breadcrumbs_outer %}

@@ -6,14 +6,14 @@ An account has just been created for you on <a href="https://{{ domain }}">{{ do
 <br>
 
 {% if assessments.count > 0 %}
-    You have been assigned to the following projects:
-    <ul>
-        {% for assessment in assessments %}
-            <li>
-                <a href="https://{{ domain }}{{ assessment.get_absolute_url }}">{{ assessment }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+  You have been assigned to the following projects:
+  <ul>
+    {% for assessment in assessments %}
+      <li>
+        <a href="https://{{ domain }}{{ assessment.get_absolute_url }}">{{ assessment }}</a>
+      </li>
+    {% endfor %}
+  </ul>
 {% endif %}
 
 In order to use the site, you'll need to set your password. To set your

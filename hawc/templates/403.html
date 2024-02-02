@@ -5,31 +5,31 @@
 {% block title %}403 | HAWC{% endblock %}
 
 {% block content %}
-    <div class="jumbotron">
+  <div class="jumbotron">
 
-        {% if user.is_authenticated %}
-            <img alt="A red danger light indicating user access is denied."
-                 class='float-right'
-                 src="{% static '/img/hal.png' %}"
-                 style="max-height:250px;
-                        margin-left: 20px">
-            <h2>403. Forbidden.</h2>
-            <p>I'm sorry Dave, I'm afraid I can't do that.</p>
-            <p>
-                <strong>It appears that you, {{ request.user }}, have not been given permission to view this page.</strong>
-            </p>
-            <p>
-                Think you should have access? Talk to the project manager for the assessment you're trying to view and
-                request permission.
-            </p>
-        {% else %}
-            <h2>403. Forbidden.</h2>
-            <p>It looks like you're not logged-in to the website, and this page requires authentication.</p>
-            <strong>
-                <a class='btn btn-primary'
-                   href="{% url 'user:login' %}?next={{ request.path }}">Login to HAWC</a>
-            </strong>
-        {% endif %}
+    {% if user.is_authenticated %}
+      <img alt="A red danger light indicating user access is denied."
+           class='float-right'
+           src="{% static '/img/hal.png' %}"
+           style="max-height:250px;
+                  margin-left: 20px">
+      <h2>403. Forbidden.</h2>
+      <p>I'm sorry Dave, I'm afraid I can't do that.</p>
+      <p>
+        <strong>It appears that you, {{ request.user }}, have not been given permission to view this page.</strong>
+      </p>
+      <p>
+        Think you should have access? Talk to the project manager for the assessment you're trying to view and
+        request permission.
+      </p>
+    {% else %}
+      <h2>403. Forbidden.</h2>
+      <p>It looks like you're not logged-in to the website, and this page requires authentication.</p>
+      <strong>
+        <a class='btn btn-primary'
+           href="{% url 'user:login' %}?next={{ request.path }}">Login to HAWC</a>
+      </strong>
+    {% endif %}
 
-    </div>
+  </div>
 {% endblock content %}

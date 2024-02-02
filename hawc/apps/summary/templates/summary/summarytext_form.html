@@ -1,18 +1,18 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="row pl-1">
-        <div class="col-md-12">
-            <h2>Modify summary text</h2>
-        </div>
-        <div id="main" class="container-fluid col-md-12"></div>
+  <div class="row pl-1">
+    <div class="col-md-12">
+      <h2>Modify summary text</h2>
     </div>
+    <div id="main" class="container-fluid col-md-12"></div>
+  </div>
 
-    {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
+  {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 
 {% endblock %}
 
 {% block extrajs %}
-    {{ smart_tag_form.media }}
-    {{ config|json_script:"config" }}
+  {{ smart_tag_form.media }}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}
