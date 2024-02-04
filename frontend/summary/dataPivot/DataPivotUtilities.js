@@ -360,6 +360,45 @@ class _DataPivot_settings_description {
     }
 }
 
+class _DataPivot_settings_calculated {
+    constructor(data_pivot, values) {
+        var self = this;
+        this.data_pivot = data_pivot;
+        this.values = values;
+
+        // create fields
+        this.content = {
+            name: $('<input class="form-control" type="text">').val(values.name),
+            formula: $('<input class="form-control" type="text">').val(values.formula),
+        };
+
+        this.tr = $("<tr>")
+            .append($("<td>").append(this.content.name))
+            .append($("<td>").append(this.content.formula))
+            .append(
+                DataPivot.build_movement_td(self.data_pivot.settings.calculated_columns, this, {
+                    showSort: false,
+                })
+            )
+            .on("change", "input,select", () => this.data_push())
+            .trigger("change");
+
+        return this;
+    }
+
+    static defaults() {
+        return {
+            name: "",
+            formula: "",
+        };
+    }
+
+    data_push() {
+        this.values.name = this.content.name.val();
+        this.values.formula = this.content.formula.val();
+    }
+}
+
 class _DataPivot_settings_pointdata {
     constructor(data_pivot, values) {
         var self = this,
@@ -973,6 +1012,7 @@ export {_DataPivot_settings_label};
 export {_DataPivot_settings_filters};
 export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
+export {_DataPivot_settings_calculated};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
 export {_DataPivot_settings_barchart};

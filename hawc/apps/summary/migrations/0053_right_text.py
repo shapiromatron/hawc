@@ -7,6 +7,7 @@ def set_right(apps, schema_editor):
     for obj in DataPivot.objects.all():
         for desc in obj.settings.get("description_settings", []):
             desc["to_right"] = False
+        obj.settings["calculated_columns"] = []
         updated_objs.append(obj)
     DataPivot.objects.bulk_update(updated_objs, ["settings"])
 
@@ -17,6 +18,7 @@ def unset_right(apps, schema_editor):
     for obj in DataPivot.objects.all():
         for desc in obj.settings.get("description_settings", []):
             desc.pop("to_right")
+        obj.settings.pop("calculated_columns")
         updated_objs.append(obj)
     DataPivot.objects.bulk_update(updated_objs, ["settings"])
 
