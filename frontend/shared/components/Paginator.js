@@ -5,7 +5,7 @@ import React from "react";
 const Paginator = props => {
     const {onChangePage, page} = props;
 
-    if (page.total_pages === 1) {
+    if (page.totalPages === 1) {
         return null;
     }
 
@@ -22,7 +22,7 @@ const Paginator = props => {
             ) : null}
             <li className="page-item disabled">
                 <span className="page-link">
-                    {page.current_page} of {page.total_pages}
+                    {page.currentPage} of {page.totalPages}
                 </span>
             </li>
             {page.next ? (
@@ -38,10 +38,10 @@ const Paginator = props => {
 
 Paginator.propTypes = {
     page: PropTypes.shape({
-        current_page: PropTypes.number.isRequired,
-        total_pages: PropTypes.number.isRequired,
-        next: PropTypes.string,
-        previous: PropTypes.string,
+        currentPage: PropTypes.number.isRequired,
+        totalPages: PropTypes.number.isRequired,
+        next: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        previous: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     }),
     onChangePage: PropTypes.func.isRequired,
 };
