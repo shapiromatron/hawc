@@ -223,13 +223,18 @@ class DataPivot {
 
     build_data_table() {
         // get headers
-        var data_headers = [];
+        let data_headers = [];
         for (var prop in this.data[0]) {
             // eslint-disable-next-line no-prototype-builtins
             if (this.data[0].hasOwnProperty(prop)) {
                 data_headers.push(prop);
             }
         }
+
+        // add calculated_columns
+        this.settings.calculated_columns.map(d => {
+            data_headers.push(d.name);
+        });
 
         // build data table
         ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);

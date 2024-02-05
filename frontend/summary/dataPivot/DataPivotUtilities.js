@@ -277,6 +277,8 @@ class _DataPivot_settings_spacers {
     }
 }
 
+import renderColumnNameSelect from "./components/ColumnNameSelect";
+
 class _DataPivot_settings_description {
     constructor(data_pivot, values) {
         var self = this;
@@ -307,9 +309,10 @@ class _DataPivot_settings_description {
             );
         });
 
+        const nameTd = $("<td>");
+        renderColumnNameSelect(nameTd[0], this.data_pivot);
         this.tr = $("<tr>")
-            .append($("<td>").append(this.content.field_name))
-            .append($("<td>").append(this.content.header_name))
+            .append(nameTd)
             .append($("<td>").append(this.content.header_style))
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))

@@ -76,10 +76,19 @@ class SortStore {
     }
 }
 
+class ColumnNameStore {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
+        this.settings = this.rootStore.dp.settings.sorts;
+    }
+}
+
 class Store {
     constructor(dp) {
+        console.log(dp);
         this.dp = dp;
         this.sortStore = new SortStore(this);
+        this.columnNameStore = new ColumnNameStore(this);
     }
     // TODO - remove methods below (after rewrite to React from jQuery)
     sync() {
