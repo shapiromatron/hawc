@@ -8,7 +8,7 @@ import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import FieldError, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
@@ -715,11 +715,7 @@ class FilterSetMixin:
         return self._filterset
 
     def get_queryset(self):
-        try:
-            return self.filterset.qs
-        except FieldError:
-            # TODO - remove try/except after https://github.com/carltongibson/django-filter/pull/1598
-            return super().get_queryset().none()
+        return self.filterset.qs
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
