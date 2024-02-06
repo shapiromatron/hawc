@@ -11,7 +11,7 @@ Not
   = _ "NOT"i _ value:Not {return options.negateValue(value);} / Group
 
 Group
-  = _ "(" _ query:Query _ ")" _ {return options.groupValues ? options.groupValues(query) : query;} / Integer
+  = _ "(" _ query:Query _ ")" _ {return query;} / Integer
 
 Integer
   = _ integer:[0-9]+ _ {return options.getValue(parseInt(integer.join(""), 10));}
