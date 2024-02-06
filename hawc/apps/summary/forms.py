@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
+from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.io as pio
@@ -695,7 +696,7 @@ class DataPivotUploadForm(DataPivotForm):
             # see if it loads
             try:
                 wb = load_workbook(excel_file, read_only=True)
-            except InvalidFileException:
+            except (BadZipFile, InvalidFileException):
                 self.add_error(
                     "excel_file",
                     "Unable to read Excel file. Please upload an Excel file in XLSX format.",

@@ -87,12 +87,8 @@ class Chemical(models.Model):
         related_name="v2_chemicals",
         help_text=DSSTox.help_text(),
     )
-    source = models.CharField(
-        max_length=128, verbose_name="Source of chemical", blank=True
-    )
-    purity = models.CharField(
-        max_length=128, verbose_name="Chemical purity", blank=True
-    )
+    source = models.CharField(max_length=128, verbose_name="Source of chemical", blank=True)
+    purity = models.CharField(max_length=128, verbose_name="Chemical purity", blank=True)
     vehicle = models.CharField(
         max_length=64,
         verbose_name="Chemical vehicle",
@@ -163,9 +159,7 @@ class AnimalGroup(models.Model):
     generation = models.CharField(
         blank=True, default="", max_length=2, choices=constants.Generation.choices
     )
-    parents = models.ManyToManyField(
-        "self", related_name="children", symmetrical=False, blank=True
-    )
+    parents = models.ManyToManyField("self", related_name="children", symmetrical=False, blank=True)
     husbandry_and_diet = models.TextField(
         help_text="""Copy paste animal husbandry information from materials and methods, use quotation marks around all text directly copy/pasted from paper. Describe diet as presented in the paper (e.g., "soy-protein free 2020X Teklad," "Atromin 1310", "standard rodent chow").""",
         verbose_name="Animal Husbandry and Diet",
@@ -202,9 +196,7 @@ class Treatment(models.Model):
         verbose_name="Treatment name",
         help_text="TODO",
     )
-    chemical = models.ForeignKey(
-        Chemical, on_delete=models.CASCADE, related_name="v2_treatments"
-    )
+    chemical = models.ForeignKey(Chemical, on_delete=models.CASCADE, related_name="v2_treatments")
     route_of_exposure = models.CharField(
         max_length=2,
         choices=constants.RouteExposure.choices,
@@ -243,9 +235,9 @@ class Treatment(models.Model):
 
     # also clone dose groups assigned to this treatment
     def clone(self):
-        associated_dose_groups = DoseGroup.objects.filter(
-            treatment_id=self.id
-        ).order_by("dose_group_id")
+        associated_dose_groups = DoseGroup.objects.filter(treatment_id=self.id).order_by(
+            "dose_group_id"
+        )
 
         self.id = None
         self.name = f"{self.name} (2)"
@@ -292,9 +284,7 @@ class Endpoint(models.Model):
         blank=True,
         null=True,
     )
-    system = models.CharField(
-        max_length=128, blank=True, help_text="Relevant biological system"
-    )
+    system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
     system_term = models.ForeignKey(
         Term,
         related_name="v2_endpoint_system_terms",
@@ -359,9 +349,7 @@ class Endpoint(models.Model):
 class ObservationTime(models.Model):
     objects = managers.ObservationTimeManager()
 
-    endpoint = models.ForeignKey(
-        Endpoint, on_delete=models.CASCADE, related_name="v2_timepoints"
-    )
+    endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE, related_name="v2_timepoints")
     observation_time = models.FloatField(
         blank=True,
         null=True,
@@ -452,13 +440,9 @@ class DoseResponseGroupLevelData(models.Model):
     # as per guidance, intentionally making this text, not numeric, in case extractors want to note units.
     # could split into separate dose/dose_units instead if desired? See also DoseResponseAnimalLevelData.dose
 
-    n = models.PositiveSmallIntegerField(
-        blank=True, null=True, validators=[MinValueValidator(0)]
-    )
+    n = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
     response = models.FloatField()
-    variance = models.FloatField(
-        blank=True, null=True, validators=[MinValueValidator(0)]
-    )
+    variance = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     treatment_related_effect = models.PositiveSmallIntegerField(
         choices=constants.TreatmentRelatedEffect.choices
     )
@@ -467,9 +451,7 @@ class DoseResponseGroupLevelData(models.Model):
     )
     p_value = models.CharField(max_length=128, blank=True, help_text="TODO")
     NOEL = models.SmallIntegerField(default=-999, help_text="No observed effect level")
-    LOEL = models.SmallIntegerField(
-        default=-999, help_text="Lowest observed effect level"
-    )
+    LOEL = models.SmallIntegerField(default=-999, help_text="Lowest observed effect level")
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

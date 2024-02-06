@@ -13,9 +13,9 @@ keywords = [
 ]
 classifiers = [
   "Intended Audience :: Science/Research",
-  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 
 [project.scripts]
 manage = "hawc:manage"
@@ -32,13 +32,12 @@ build-backend = "flit_core.buildapi"
 [tool.coverage.run]
 omit = [
   "*migrations*",
-  "*urls.py",
   "./build/",
+  "./client/hawc_client/interactive.py",
   "./hawc/main/*",
   "./scripts/private/*",
   "./tests/*",
   "./venv/*",
-  "*/bmds/*",
 ]
 
 [tool.flit.sdist]
