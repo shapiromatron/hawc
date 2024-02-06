@@ -19,6 +19,11 @@ The HAWC database is a [PostgreSQL](https://www.postgresql.org/) database. See d
 ## Animal bioassay schema
 
 <figure markdown>
+  ![HAWC animal bioassay v2 data schema](./static/img/hawc-schema-animalv2.png)
+  <figcaption>Animal bioassay v2 schema. The image is very large; please save/or open in another tab.</figcaption>
+</figure>
+
+<figure markdown>
   ![HAWC animal bioassay data schema](./static/img/hawc-schema-animal.png)
   <figcaption>Animal bioassay schema. The image is very large; please save/or open in another tab.</figcaption>
 </figure>
@@ -84,6 +89,7 @@ pip install -U pydot
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-lit.png lit study
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-study.png study riskofbias
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-animal.png animal
+manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-animalv2.png animalv2
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-bmd.png bmd
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epi.png epi
 manage graph_models -g --pydot -o ./docs/docs/static/img/hawc-schema-epiv2.png epiv2
