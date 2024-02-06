@@ -111,13 +111,13 @@ export const DATA_FILTER_CONTAINS = "contains",
             },
             stringify = (arr, depth) => {
                 if (!Array.isArray(arr)) {
-                    return `${"\t".repeat(depth)}${arr}`;
+                    return `${"  ".repeat(depth)}${arr}`;
                 }
                 let flat_arr = [];
                 for (const v of arr) {
                     flat_arr.push(stringify(v, depth + 1));
                 }
-                return `${"\t".repeat(depth)}(\n${flat_arr.join("\n")}\n${"\t".repeat(depth)})`;
+                return `${"  ".repeat(depth)}(\n${flat_arr.join("\n")}\n${"  ".repeat(depth)})`;
             };
         try {
             let parsed = Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
