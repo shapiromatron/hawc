@@ -79,6 +79,7 @@ goto :eof
 :format
 ruff format . && ruff . --fix --show-fixes
 npm --prefix .\frontend run format
+djhtml . --tabwidth 2
 goto :eof
 
 :lint-py
