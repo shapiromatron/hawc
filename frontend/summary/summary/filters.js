@@ -115,7 +115,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                 }
                 let flat_arr = [];
                 for (const v of arr) {
-                    flat_arr.push(test(v, depth + 1));
+                    flat_arr.push(stringify(v, depth + 1));
                 }
                 return `${"\t".repeat(depth)}(\n${flat_arr.join("\n")}\n${"\t".repeat(depth)})`;
             };
