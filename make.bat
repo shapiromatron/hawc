@@ -12,6 +12,7 @@ if /I %1 == lint-py goto :lint-py
 if /I %1 == format-py goto :format-py
 if /I %1 == lint-js goto :lint-js
 if /I %1 == format-js goto :format-js
+if /I %1 == format-html goto :format-html
 if /I %1 == test goto :test
 if /I %1 == test-integration goto :test-integration
 if /I %1 == test-integration-debug goto :test-integration-debug
