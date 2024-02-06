@@ -84,9 +84,7 @@ class ChemicalForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 3, "col-md-4")
-        helper.add_create_btn(
-            "dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID"
-        )
+        helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
 
 
@@ -161,6 +159,6 @@ class DoseGroupForm(forms.ModelForm):
 # thx https://stackoverflow.com/questions/21754918/rendering-tabular-rows-with-formset-in-django-crispy-forms and https://stackoverflow.com/questions/42615357/cannot-pass-helper-to-django-crispy-formset-in-template
 class DoseGroupFormHelper(BaseFormHelper):
     def __init__(self, *args, **kwargs):
-        super(DoseGroupFormHelper, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.form_tag = False
         self.template = "bootstrap4/table_inline_formset.html"

@@ -6,11 +6,11 @@ from django.shortcuts import render
 
 from ..common.htmx import HtmxViewSet, Item, action, can_edit, can_view
 from ..common.views import (
-    create_object_log,
     BaseCreate,
     BaseDelete,
     BaseDetail,
     BaseUpdate,
+    create_object_log,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -166,9 +166,7 @@ class ExperimentChildViewSet(HtmxViewSet):
     @transaction.atomic
     def perform_create(self, item: Item, form, formset=None):
         item.object = form.save()
-        create_object_log(
-            "Created", item.object, item.assessment.id, self.request.user.id
-        )
+        create_object_log("Created", item.object, item.assessment.id, self.request.user.id)
 
         if formset is not None:
             self.perform_formset_cud_operations(formset, item.object)
@@ -178,14 +176,11 @@ class ExperimentChildViewSet(HtmxViewSet):
         temp_instances = formset.save(commit=False)
 
         for obj in formset.deleted_objects:
-            create_object_log(
-                "Deleted", obj, obj.get_assessment().id, self.request.user.id
-            )
+            create_object_log("Deleted", obj, obj.get_assessment().id, self.request.user.id)
             obj.delete()
 
         parent_key = self.subform_form_class.subform_parent_key
         for temp_instance in temp_instances:
-            parent_val = getattr(temp_instance, parent_key)
             setattr(temp_instance, parent_key, parent_obj_instance.id)
             is_create = temp_instance.id is None
             temp_instance.save()
