@@ -1,11 +1,12 @@
 import json
 
 import pytest
+from django.forms.models import model_to_dict
 from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
-from hawc.apps.animal import models
+from hawc.apps.animal import constants, models
 
 from ..test_utils import check_200, get_client
 
@@ -96,6 +97,31 @@ class TestAnimalGroupCreate:
         resp = c.post(url, payload, follow=True)
         assertTemplateUsed(resp, "animal/animalgroup_form.html")
         assert "Each dose-type must have 3 dose groups" in resp.context["dose_groups_errors"]
+
+
+@pytest.mark.django_db
+class TestAnimalGroupUpdate:
+    @pytest.mark.parametrize(
+        "filter",
+        [
+            constants.Generation.NA,  # non generational
+            constants.Generation.P0,  # generational
+        ],
+    )
+    def test_success(self, filter):
+        instance = models.AnimalGroup.objects.filter(generation=filter)[0]
+        url = reverse("animal:animal_group_update", args=(instance.id,))
+
+        c = Client()
+        assert c.login(username="admin@hawcproject.org", password="pw") is True
+
+        resp = c.get(url)
+        assertTemplateUsed(resp, "animal/animalgroup_form.html")
+
+        payload = model_to_dict(instance)
+        payload.pop("siblings")
+        resp = c.post(url, payload, follow=True)
+        assertTemplateUsed(resp, "animal/animalgroup_detail.html")
 
 
 @pytest.mark.django_db
