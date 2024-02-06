@@ -76,8 +76,11 @@ lint-js:  ## Check javascript formatting issues
 format-js:  ## Fix javascript formatting issues where possible
 	@npm --prefix ./frontend run format
 
+lint-html:  ## Check HTML formatting issues where possible
+	@djhtml --tabwidth 2 --check hawc/
+
 format-html:  ## Fix HTML formatting issues where possible
-	@djhtml . --tabwidth 2
+	@djhtml --tabwidth 2 hawc/
 
 test:  ## Run python tests
 	@py.test
