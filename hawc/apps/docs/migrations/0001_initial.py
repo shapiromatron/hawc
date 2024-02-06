@@ -125,9 +125,11 @@ class Migration(migrations.Migration):
                                 "content",
                                 wagtail.blocks.RichTextBlock(
                                     features=[
+                                        "anchor-identifier",
                                         "h3",
                                         "h4",
                                         "h5",
+                                        "h6",
                                         "bold",
                                         "italic",
                                         "link",
@@ -166,9 +168,11 @@ class Migration(migrations.Migration):
                                             "message",
                                             wagtail.blocks.RichTextBlock(
                                                 features=[
+                                                    "anchor-identifier",
                                                     "h3",
                                                     "h4",
                                                     "h5",
+                                                    "h6",
                                                     "bold",
                                                     "italic",
                                                     "link",
@@ -197,7 +201,8 @@ class Migration(migrations.Migration):
                                                 default=False, required=False
                                             ),
                                         ),
-                                    ]
+                                    ],
+                                    label="Table of Contents",
                                 ),
                             ),
                         ],

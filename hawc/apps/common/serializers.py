@@ -67,7 +67,11 @@ class UnusedSerializer(serializers.Serializer):
     pass
 
 
-class HeatmapQuerySerializer(serializers.Serializer):
+class ExportQuerySerializer(serializers.Serializer):
+    """
+    Serializer for exports that may or may not include unpublished data.
+    """
+
     unpublished = serializers.BooleanField(default=False)
 
 

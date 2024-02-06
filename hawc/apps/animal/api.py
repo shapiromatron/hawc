@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotAcceptable, PermissionDenied
+from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -13,9 +13,10 @@ from ..assessment.api import (
     DoseUnitsViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
-from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from ..common.views import create_object_log
 from . import exports, models, serializers
 from .actions.model_metadata import AnimalMetadata
@@ -26,11 +27,9 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     model = models.Assessment
     serializer_class = UnusedSerializer
 
-    def get_endpoint_queryset(self):
-        perms = self.assessment.user_permissions(self.request.user)
-        if not perms["edit"]:
-            return models.Endpoint.objects.published(self.assessment)
-        return models.Endpoint.objects.get_qs(self.assessment)
+    def get_endpoint_queryset(self, request):
+        published_only = get_published_only(self.assessment, request)
+        return models.Endpoint.objects.get_qs(self.assessment).published_only(published_only)
 
     @action(
         detail=True,
@@ -41,10 +40,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     def full_export(self, request, pk):
         """
         Retrieve complete animal data
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_endpoint_queryset(),
+            self.get_endpoint_queryset(request),
             filename=f"{self.assessment}-bioassay-complete",
             assessment=self.assessment,
         )
@@ -59,10 +61,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
         exporter = exports.EndpointSummary(
-            self.get_endpoint_queryset(),
+            self.get_endpoint_queryset(request),
             filename=f"{self.assessment}-bioassay-summary",
             assessment=self.assessment,
         )
@@ -82,15 +87,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-unpublished-{not published_only}"
 
         def func() -> pd.DataFrame:
-            return models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
+            return models.Endpoint.heatmap_study_df(self.assessment, published_only=published_only)
 
         df = cacheable(func, key)
         return FlatExport.api_response(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
@@ -109,15 +112,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{not published_only}"
 
         def df_func() -> pd.DataFrame:
-            return models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
+            return models.Endpoint.heatmap_df(self.assessment.id, published_only=published_only)
 
         df = cacheable(df_func, key)
         return FlatExport.api_response(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
@@ -136,15 +137,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         is present then results from all studies are shown.
         """
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{not published_only}"
 
         def df_func() -> pd.DataFrame:
-            return models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
+            return models.Endpoint.heatmap_doses_df(self.assessment, published_only=published_only)
 
         df = cacheable(df_func, key)
         return FlatExport.api_response(
@@ -158,16 +157,14 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     )
     def endpoints(self, request, pk):
         self.assessment = self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-list-unpublished-{not published_only}"
 
         def df_func() -> pd.DataFrame:
             return models.Endpoint.objects.endpoint_df(
-                self.assessment, published_only=not unpublished
+                self.assessment, published_only=published_only
             )
 
         df = cacheable(df_func, key)

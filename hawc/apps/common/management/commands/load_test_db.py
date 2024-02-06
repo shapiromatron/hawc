@@ -1,3 +1,4 @@
+import shutil
 import sys
 from pathlib import Path
 
@@ -6,6 +7,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.commands import migrate
+from django.db import connection
 from django.db.backends.base import creation
 from django.test.utils import setup_databases
 
@@ -59,18 +61,33 @@ class Command(BaseCommand):
                 fn.parent.mkdir(parents=True, exist_ok=True)
                 df.to_excel(fn, index=False)
 
+        # copy media files
+        media_files = ["summary/visual/images/iris.png"]
+        for media_file in media_files:
+            target = Path(settings.MEDIA_ROOT) / media_file
+            src = Path(settings.PROJECT_ROOT) / f"tests/data/media/{media_file}"
+            if src.exists() and not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(src, target)
+
     def setup_environment(self) -> None:
         """Disable migrations like pytest-django does, but outside of pytest-django."""
         creation.TEST_DATABASE_PREFIX = ""
         migrate.Command = MigrateSilentCommand
         settings.MIGRATION_MODULES = DisableMigrations()
         self.stdout.write(self.style.HTTP_INFO("Migrating database schema..."))
-        setup_databases(verbosity=0, interactive=False, keepdb=True)
+        setup_databases(verbosity=1, interactive=False, keepdb=True)
         self.stdout.write(self.style.HTTP_INFO("Loading database fixture..."))
-        call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=0)
+        call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=1)
         settings.MIGRATION_MODULES = {}
-        self.stdout.write(self.style.HTTP_INFO("Writing migrations (fake)..."))
-        call_command("migrate", verbosity=0, fake=True)
+        self.stdout.write(self.style.HTTP_INFO("Writing migrations..."))
+        call_command("migrate", verbosity=1, fake=True)
+        self.stdout.write(self.style.HTTP_INFO("Creating cache table..."))
+        call_command("createcachetable", verbosity=1)
+        self.stdout.write(self.style.HTTP_INFO("Installing PostgreSQL extension..."))
+        with connection.cursor() as cursor:
+            # since migration are faked; force creation!
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS unaccent")
 
     def setup_test_environment(self) -> None:
         """Setup test environment within pytest environment."""

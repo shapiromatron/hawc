@@ -2714,7 +2714,7 @@
     path: '000400020003'
     depth: 3
     numchild: 0
-    name: Tier III
+    name: Tier III Demo
     slug: tier-iii
 - model: lit.referencetags
   pk: 2
@@ -9888,7 +9888,7 @@
         col_span: 1
         row_span: 1
         quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets can be added</li><li><a
-          href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
+          href="https://pubmed.ncbi.nlm.nih.gov/" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
           can be added</li></ul>
       - row: 7
         column: 1
@@ -10285,6 +10285,24 @@
     sort_order: short_citation
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
+    endpoints: []
+- model: summary.visual
+  pk: 12
+  fields:
+    title: image
+    slug: image
+    assessment: 2
+    visual_type: 8
+    evidence_type: 3
+    dose_units: null
+    prefilters: {}
+    settings: {}
+    caption: ''
+    image: "summary/visual/images/iris.png"
+    published: true
+    sort_order: short_citation
+    created: 2023-11-15 14:25:27.528283+00:00
+    last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
 - model: summary.datapivot
   pk: 1

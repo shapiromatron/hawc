@@ -115,6 +115,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
+    workflow = df.ModelChoiceFilter(
+        method="filter_workflow",
+        queryset=models.Workflow.objects.all(),
+        label="Workflow",
+        empty_label="[No Workflow]",
+    )
     paginate_by = PaginationFilter()
 
     class Meta:
@@ -142,6 +148,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "paginate_by",
             "partially_tagged",
             "needs_tagging",
+            "workflow",
         ]
 
     def filter_queryset(self, queryset):
@@ -274,8 +281,13 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset = queryset.annotate(
             user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
         )
-        queryset = queryset.filter(user_tag_count__lt=2, tags__isnull=True)
+        queryset = queryset.filter(user_tag_count__lt=2)
         return queryset.distinct()
+
+    def filter_workflow(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.in_workflow(value).distinct()
 
     def create_form(self):
         form = super().create_form()
@@ -309,6 +321,10 @@ class ReferenceFilterSet(BaseFilterSet):
                     form.fields["tags"].label = "Consensus Tags"
         if "search" in form.fields:
             form.fields["search"].queryset = models.Search.objects.filter(
+                assessment=self.assessment
+            )
+        if "workflow" in form.fields:
+            form.fields["workflow"].queryset = models.Workflow.objects.filter(
                 assessment=self.assessment
             )
         return form

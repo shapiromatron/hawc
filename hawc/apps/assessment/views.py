@@ -12,7 +12,6 @@ from django.db import transaction
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponseNotAllowed,
     HttpResponseRedirect,
     JsonResponse,
 )
@@ -361,6 +360,9 @@ class AssessmentDownloads(BaseDetail):
         kwargs.update(
             EpiVersion=constants.EpiVersion,
         )
+        kwargs["allow_unpublished"] = self.assessment.user_is_team_member_or_higher(
+            self.request.user
+        )
         return super().get_context_data(**kwargs)
 
 
@@ -623,29 +625,20 @@ class CloseWindow(TemplateView):
 
 
 class UpdateSession(View):
-    http_method_names = ("post",)
-
-    def isTruthy(self, request, field):
-        return request.POST.get(field, "true") == "true"
+    http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
-        if request.method != "POST":
-            return HttpResponseNotAllowed(["POST"])
         response = {}
         if request.POST.get("refresh"):
-            if request.user.is_authenticated:
-                old_time = request.session.get_expiry_date().isoformat()
-                request.session.set_expiry(None)  # use the global session expiry policy
-                new_time = request.session.get_expiry_date().isoformat()
-                response = {
-                    "message": f"Session extended from {old_time} to {new_time}.",
-                    "new_expiry_time": new_time,
-                }
-            else:
-                response = {
-                    "message": "Session not renewed.",
-                    "new_expiry_time": None,
-                }
+            if not request.user.is_authenticated:
+                raise Http404()
+            old_time = request.session.get_expiry_date().isoformat()
+            request.session.set_expiry(None)  # use the global session expiry policy
+            new_time = request.session.get_expiry_date().isoformat()
+            response = {
+                "message": f"Session extended from {old_time} to {new_time}.",
+                "new_expiry_time": new_time,
+            }
         return JsonResponse(response)
 
 
