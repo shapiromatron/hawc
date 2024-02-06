@@ -154,7 +154,7 @@ function peg$parse(input, options) {
       peg$c10 = peg$literalExpectation("(", false),
       peg$c11 = ")",
       peg$c12 = peg$literalExpectation(")", false),
-      peg$c13 = function(query) {return query;},
+      peg$c13 = function(query) {return options.groupValues ? options.groupValues(query) : query;},
       peg$c14 = /^[0-9]/,
       peg$c15 = peg$classExpectation([["0", "9"]], false, false),
       peg$c16 = function(integer) {return options.getValue(parseInt(integer.join(""), 10));},
