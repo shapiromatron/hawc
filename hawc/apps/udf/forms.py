@@ -1,10 +1,11 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import F, Value
+from django.db.models import F, Q, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
+from hawc.apps.assessment.autocomplete import AssessmentAutocomplete
 from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaButton
@@ -39,9 +40,18 @@ class UDFForm(forms.ModelForm):
 
     class Meta:
         model = models.UserDefinedForm
-        fields = ("name", "description", "schema", "editors", "deprecated")
+        fields = (
+            "name",
+            "description",
+            "schema",
+            "editors",
+            "assessments",
+            "published",
+            "deprecated",
+        )
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
+            "assessments": AutocompleteSelectMultipleWidget(AssessmentAutocomplete),
         }
 
     @property
@@ -53,6 +63,8 @@ class UDFForm(forms.ModelForm):
             cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
         ]
         legend_text = "Update a custom form" if self.instance.id else "Create a custom form"
+        if not self.instance.id and "deprecated" in self.fields:
+            self.fields.pop("deprecated")
         helper = BaseFormHelper(self, legend_text=legend_text, form_actions=form_actions)
         return helper
 
@@ -82,6 +94,9 @@ class ModelBindingForm(forms.ModelForm):
             self.fields["assessment"].initial = self.assessment
             self.instance.assessment = self.assessment
             self.instance.creator = user
+        self.fields["form"].queryset = models.UserDefinedForm.objects.all().get_available_udfs(
+            user, self.assessment
+        )
 
     class Meta:
         model = models.ModelBinding
@@ -116,6 +131,9 @@ class TagBindingForm(forms.ModelForm):
         qs = ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
         self.fields["tag"].queryset = qs
         self.fields["tag"].choices = [(el.id, el.get_nested_name()) for el in qs]
+        self.fields["form"].queryset = models.UserDefinedForm.objects.all().get_available_udfs(
+            user, self.assessment
+        )
 
     class Meta:
         model = models.TagBinding

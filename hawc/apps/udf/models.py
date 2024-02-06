@@ -11,9 +11,12 @@ from django.utils.safestring import SafeText
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
 from ..common.forms import DynamicFormField
+from . import managers
 
 
 class UserDefinedForm(models.Model):
+    objects = managers.UserDefinedFormManager()
+
     name = models.CharField(max_length=128)
     description = models.TextField()
     schema = models.JSONField()
@@ -28,6 +31,8 @@ class UserDefinedForm(models.Model):
         on_delete=models.SET_NULL,
         related_name="children",
     )
+    assessments = models.ManyToManyField(Assessment, blank=True, related_name="udf_forms")
+    published = models.BooleanField(default=False)
     deprecated = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

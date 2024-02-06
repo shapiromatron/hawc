@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
@@ -25,6 +26,9 @@ from .cache import UDFCache
 class UDFListView(LoginRequiredMixin, ListView):
     template_name = "udf/udf_list.html"
     model = models.UserDefinedForm
+
+    def get_queryset(self):
+        return super().get_queryset().get_available_udfs(self.request.user)
 
 
 class UDFDetailView(LoginRequiredMixin, DetailView):
