@@ -62,7 +62,7 @@ loc: ## Generate lines of code report
 
 lint: lint-py lint-js  ## Check formatting issues
 
-format: format-py format-js  ## Fix formatting issues where possible
+format: format-py format-js format-html ## Fix formatting issues where possible
 
 lint-py:  ## Check python formatting issues
 	@ruff format . --check && ruff .
@@ -75,6 +75,9 @@ lint-js:  ## Check javascript formatting issues
 
 format-js:  ## Fix javascript formatting issues where possible
 	@npm --prefix ./frontend run format
+
+format-html:  ## Fix HTML formatting issues where possible
+	@djhtml . --tabwidth 2
 
 test:  ## Run python tests
 	@py.test

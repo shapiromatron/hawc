@@ -40,6 +40,7 @@ echo.  lint-py           check python formatting issues
 echo.  format-py         fix python formatting issues where possible
 echo.  lint-js           check javascript formatting issues
 echo.  format-js         fix javascript formatting issues where possible
+echo.  format-html       fix html formatting issues where possible
 echo.  loc               generate lines of code report
 echo.  startdb           start postgres db (if pgdata folder is located in %HOMEPATH%\dev)
 goto :eof
@@ -93,6 +94,10 @@ goto :eof
 
 :format-js
 npm --prefix .\frontend run format
+goto :eof
+
+:format-html
+djhtml . --tabwidth 2
 goto :eof
 
 :test
