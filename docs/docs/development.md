@@ -190,6 +190,15 @@ On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short 
 make startdb
 ```
 
+The development environment includes [pre-commit](https://pre-commit.com/) to automatically format code when committing changes. To set up pre-commit, run the following command:
+
+```bash
+pre-commit install
+
+# run on all files to make sure it is installed correctly
+pre-commit run --all-files
+```
+
 ## Local Settings
 
 ### Django settings inheritance
