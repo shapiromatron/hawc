@@ -9,8 +9,8 @@
         {% if obj_perms.edit_assessment %}
           <a class="dropdown-item" href="{{assessment.literature_settings.get_update_url}}">Update settings</a>
           <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update tags</a>
-          <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         {% endif %}
+        <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Searches and Imports</span>
         <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
