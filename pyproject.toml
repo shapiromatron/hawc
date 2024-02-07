@@ -32,13 +32,12 @@ build-backend = "flit_core.buildapi"
 [tool.coverage.run]
 omit = [
   "*migrations*",
-  "*urls.py",
   "./build/",
+  "./client/hawc_client/interactive.py",
   "./hawc/main/*",
   "./scripts/private/*",
   "./tests/*",
   "./venv/*",
-  "*/bmds/*",
 ]
 
 [tool.flit.sdist]
