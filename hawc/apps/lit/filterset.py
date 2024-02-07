@@ -1,4 +1,5 @@
 import django_filters as df
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count, F, Q, Value
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
@@ -115,6 +116,12 @@ class ReferenceFilterSet(BaseFilterSet):
         label="Partially Tagged",
         help_text="References with one unresolved user tag",
     )
+    workflow = df.ModelChoiceFilter(
+        method="filter_workflow",
+        queryset=models.Workflow.objects.all(),
+        label="Workflow",
+        empty_label="[No Workflow]",
+    )
     paginate_by = PaginationFilter()
 
     class Meta:
@@ -142,6 +149,7 @@ class ReferenceFilterSet(BaseFilterSet):
             "paginate_by",
             "partially_tagged",
             "needs_tagging",
+            "workflow",
         ]
 
     def filter_queryset(self, queryset):
@@ -218,6 +226,7 @@ class ReferenceFilterSet(BaseFilterSet):
         if not value:
             return queryset
         include_descendants = self.data.get("include_additiontag_descendants", False)
+        queryset = queryset.annotate(consensus_tags=ArrayAgg("tags", distinct=True))
         for tag in value:
             queryset = queryset.annotate(addtag_count=Value(0))
             tag_ids = (
@@ -225,17 +234,13 @@ class ReferenceFilterSet(BaseFilterSet):
                 if include_descendants
                 else [tag.id]
             )
-            for tag_id in tag_ids:
-                queryset = queryset.annotate(
-                    addtag_count=F("addtag_count")
-                    + Count(
-                        "user_tags",
-                        filter=Q(user_tags__is_resolved=False)
-                        & Q(user_tags__tags=tag_id)
-                        & ~Q(tags=tag_id),
-                    )
+            queryset = queryset.annotate(
+                added_tags=ArrayAgg(
+                    "user_tags__tags__id",
+                    distinct=True,
+                    filter=Q(user_tags__is_resolved=False) & Q(user_tags__tags__in=tag_ids),
                 )
-            queryset = queryset.filter(addtag_count__gt=0)
+            ).filter(Q(added_tags__isnull=False) & ~Q(consensus_tags__contains=F("added_tags")))
         return queryset.distinct()
 
     def filter_tag_deletions(self, queryset, name, value):
@@ -274,8 +279,13 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset = queryset.annotate(
             user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
         )
-        queryset = queryset.filter(user_tag_count__lt=2, tags__isnull=True)
+        queryset = queryset.filter(user_tag_count__lt=2)
         return queryset.distinct()
+
+    def filter_workflow(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.in_workflow(value).distinct()
 
     def create_form(self):
         form = super().create_form()
@@ -309,6 +319,10 @@ class ReferenceFilterSet(BaseFilterSet):
                     form.fields["tags"].label = "Consensus Tags"
         if "search" in form.fields:
             form.fields["search"].queryset = models.Search.objects.filter(
+                assessment=self.assessment
+            )
+        if "workflow" in form.fields:
+            form.fields["workflow"].queryset = models.Workflow.objects.filter(
                 assessment=self.assessment
             )
         return form

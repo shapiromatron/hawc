@@ -4,6 +4,7 @@ import logging
 import re
 from copy import copy
 from math import ceil
+from typing import Self
 from urllib import parse
 
 from celery import chain
@@ -792,6 +793,15 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 
         return descendants
 
+    def _set_tag_parents(self, tag_map: dict[str, Self]):
+        self.parents = []
+        current_path = self.path
+        while True:
+            current_path = self._get_parent_path_from_path(current_path)
+            if len(current_path) == 4:
+                break
+            self.parents.append(tag_map[current_path])
+
 
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
@@ -902,8 +912,12 @@ class Reference(models.Model):
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
-        deleted_tags = set(self.tags.all().values_list("pk", flat=True)).difference(set(tag_pks))
+        self_tags = set(self.tags.all().values_list("pk", flat=True))
+        deleted_tags = self_tags.difference(set(tag_pks))
+        added_tags = set(tag_pks).difference(self_tags)
         user_tag.deleted_tags = list(deleted_tags) if deleted_tags else []
+        if not (deleted_tags or added_tags):
+            user_tag.is_resolved = True
         user_tag.save()
 
         # determine if we should save the reference-level tags
@@ -1190,23 +1204,14 @@ class Reference(models.Model):
         """
         tag_map = {tag.path: tag for tag in tags}
 
-        def _set_parents(tag):
-            tag.parents = []
-            current_path = tag.path
-            while True:
-                current_path = tag._get_parent_path_from_path(current_path)
-                if len(current_path) == 4:
-                    break
-                tag.parents.append(tag_map[current_path])
-
         for reference in references:
             reference.bulk_merge_tag_names = []
             for tag in reference.tags.all():
-                _set_parents(tag)
+                tag._set_tag_parents(tag_map)
             if user_tags:
                 for user_tag in reference.user_tags.all():
                     for tag in user_tag.tags.all():
-                        _set_parents(tag)
+                        tag._set_tag_parents(tag_map)
                         if (
                             check_bulk
                             and tag.id in reference.bulk_merge_tags
@@ -1260,8 +1265,146 @@ class UserReferenceTag(models.Model):
         )
 
 
+class WorkflowAdmissionTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="workflow_admissions"
+    )
+    content_object = models.ForeignKey("Workflow", on_delete=models.CASCADE)
+
+
+class WorkflowRemovalTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="workflow_removals"
+    )
+    content_object = models.ForeignKey("Workflow", on_delete=models.CASCADE)
+
+
+class Workflow(models.Model):
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="workflows"
+    )
+    title = models.CharField(max_length=32, help_text="Descriptive name for this workflow.")
+    description = models.TextField(
+        blank=True,
+        help_text="A description or set of notes for for this workflow.",
+    )
+    link_tagging = models.BooleanField(
+        default=False,
+        help_text="Add a panel on the Literature Review page for tagging references in this workflow.",
+    )
+    link_conflict_resolution = models.BooleanField(
+        default=False,
+        help_text="Add a panel on the Literature Review page for resolving conflicts on references in this workflow.",
+    )
+    admission_tags = managers.ReferenceFilterTagManager(
+        through=WorkflowAdmissionTags, blank=True, related_name="admission_workflows"
+    )
+    admission_tags_descendants = models.BooleanField(
+        default=False,
+        help_text="""Applies to tags selected above. By default, only references with the exact
+          selected tag(s) are admitted to the workflow; checking this box includes references that
+            are tagged with any descendant of the selected tag(s).""",
+    )
+    admission_source = models.ManyToManyField(
+        Search, blank=True, related_name="workflow_admissions"
+    )
+    removal_tags = managers.ReferenceFilterTagManager(
+        through=WorkflowRemovalTags, blank=True, related_name="removal_workflows"
+    )
+    removal_tags_descendants = models.BooleanField(
+        default=False,
+        help_text="""Applies to tags selected above. By default, only references with the exact
+          selected tag(s) are admitted to the workflow; checking this box includes references that
+            are tagged with any descendant of the selected tag(s).""",
+    )
+    removal_source = models.ManyToManyField(Search, blank=True, related_name="workflow_removals")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} Workflow"
+
+    def get_absolute_url(self):
+        return reverse("lit:workflow-detail", args=[self.pk])
+
+    def get_edit_url(self):
+        return reverse("lit:workflow-update", args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse("lit:workflow-delete", args=[self.pk])
+
+    def get_assessment(self):
+        return self.assessment
+
+    def reference_filter(self) -> models.Q:
+        filters = models.Q()
+
+        removal_tags = []
+        if self.removal_tags_descendants:
+            for tag in self.removal_tags.all():
+                removal_tags.extend(tag.get_tree(parent=tag).values_list("id", flat=True))
+            removal_tags = list(set(removal_tags))
+        else:
+            removal_tags = self.removal_tags.all().values_list("id", flat=True)
+        if removal_tags:
+            filters &= ~models.Q(tags__in=removal_tags)
+
+        admission_tags = []
+        if self.admission_tags_descendants:
+            for tag in self.admission_tags.all():
+                admission_tags.extend(tag.get_tree(parent=tag).values_list("id", flat=True))
+            admission_tags = list(set(admission_tags))
+        else:
+            admission_tags = self.admission_tags.all().values_list("id", flat=True)
+        if admission_tags:
+            filters &= models.Q(tags__in=admission_tags)
+
+        if self.admission_source.exists():
+            filters &= models.Q(searches__in=self.admission_source.all())
+
+        if self.removal_source.exists():
+            filters &= ~models.Q(searches__in=self.removal_source.all())
+
+        return filters
+
+    @classmethod
+    def annotate_tag_parents(cls, workflows: list, tags: models.QuerySet):
+        """Annotate tag parents for all tags.
+
+        Sets a new attribute (parents: list[Tag]) for each tag.
+
+        Args:
+            workflows (list): a list of workflows
+            tags (models.QuerySet): the full tag list for an assessment
+        """
+        tag_map = {tag.path: tag for tag in tags}
+
+        for workflow in workflows:
+            for tag in workflow.admission_tags.all():
+                tag._set_tag_parents(tag_map)
+            for tag in workflow.removal_tags.all():
+                tag._set_tag_parents(tag_map)
+
+    def tag_url(self) -> str:
+        return reverse("lit:tag", args=(self.assessment_id,)) + f"?workflow={self.id}"
+
+    def tag_conflicts_url(self) -> str:
+        return reverse("lit:tag-conflicts", args=(self.assessment_id,)) + f"?workflow={self.id}"
+
+    def get_description(self) -> str:
+        return (
+            self.description
+            or "Go to 'View Workflows' under the actions button for more information."
+        )
+
+
 reversion.register(LiteratureAssessment)
 reversion.register(Search)
 reversion.register(ReferenceFilterTag)
 reversion.register(Reference, follow=["tags"])
 reversion.register(UserReferenceTag, follow=["tags"])
+reversion.register(Workflow)

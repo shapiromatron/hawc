@@ -15,7 +15,7 @@ class HAWCUtils {
     static booleanCheckbox(value) {
         return value
             ? `<i class="fa fa-check"><span class="invisible">${value}</span></i>`
-            : `<i class="fa fa-minus"><span class="invisible">${value}</span></i>`;
+            : `<i class="fa fa-times"><span class="invisible">${value}</span></i>`;
     }
 
     static newWindowPopupLink(triggeringLink) {

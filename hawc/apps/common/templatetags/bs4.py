@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from django import template
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
+from django.utils.safestring import SafeString, mark_safe
 from plotly.graph_objs._figure import Figure
 
 register = template.Library()
@@ -144,3 +144,15 @@ def analytics_card(value, label):
         </div>
         """
     )
+
+
+@register.simple_tag
+def list_punctuation(loop, conjunction: str = "or") -> SafeString:
+    # return commas between items if > 2, and the appropriate conjunction
+    num_items = loop["counter"] + loop["revcounter"] - 1
+    if loop["revcounter0"] > 1:
+        # if >2 remaining, add commas
+        return mark_safe(", ")
+    elif loop["revcounter0"] == 1:
+        return mark_safe(f"{',' if num_items >= 3 else ''} {conjunction} ")
+    return mark_safe("")
