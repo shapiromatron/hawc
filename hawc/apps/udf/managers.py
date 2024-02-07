@@ -8,6 +8,8 @@ class UserDefinedFormManager(models.Manager):
 
 class UserDefinedFormQuerySet(models.QuerySet):
     def get_available_udfs(self, user, assessment=None):
+        if user.is_staff:
+            return self
         return self.filter(
             models.Q(creator=user)
             | models.Q(editors=user)

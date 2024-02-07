@@ -51,7 +51,7 @@ class UserDefinedForm(models.Model):
         return reverse("udf:udf_update", args=(self.pk,))
 
     def user_can_edit(self, user):
-        return self.creator == user or user in self.editors.all()
+        return self.creator == user or user in self.editors.all() or user.is_staff
 
 
 class ModelBinding(models.Model):
