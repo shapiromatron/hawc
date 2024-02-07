@@ -9,7 +9,11 @@ class DatasetPreview extends Component {
         const {dataset, url, clearCacheUrl} = this.props;
 
         if (!dataset || dataset.length === 0) {
-            return <div className="alert alert-danger" data-testid="visual-error">No data are available.</div>;
+            return (
+                <div className="alert alert-danger" data-testid="visual-error">
+                    No data are available.
+                </div>
+            );
         }
 
         const firstRow = dataset[0],
