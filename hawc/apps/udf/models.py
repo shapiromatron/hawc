@@ -47,6 +47,9 @@ class UserDefinedForm(models.Model):
     def get_absolute_url(self):
         return reverse("udf:udf_detail", args=(self.pk,))
 
+    def get_update_url(self):
+        return reverse("udf:udf_update", args=(self.pk,))
+
     def user_can_edit(self, user):
         return self.creator == user or user in self.editors.all()
 

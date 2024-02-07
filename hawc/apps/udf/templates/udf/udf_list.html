@@ -1,33 +1,94 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'udf:udf_create' %}">Create a form</a>
+<div class="d-flex align-items-start">
+    <h2 class="mt-0 mb-2">User Defined Forms</h2>
+    <a class="ml-auto btn btn-primary mt-1" href="{% url 'udf:udf_create' %}">Create a form</a>
+</div>
+
+{% for object in object_list %}
+<div class="box-shadow p-3 rounded mb-4">
+    <div class="d-flex align-items-center">
+        <div>
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0" style="font-size: 1.15rem;">{{object.name}}</h4>
+                {% if object.deprecated %}
+                    <span class="badge ml-2 p-1 text-danger border border-danger">
+                        Deprecated</span>
+                {% endif %}
+            </div>  
+        <div>
+            <i class="text-muted my-1">{{object.description}}</i>
+        </div>
+        </div>
+        <div class="ml-auto">
+            <!-- <i class="text-muted small px-2">Created by {{object.creator}}</i> -->
+            <!-- <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#udf-{{object.id}}-preview" aria-expanded="false" aria-controls="udf-{{object.id}}-preview">
+                Preview
+            </button> -->
+            {% if object.user_can_edit %}
+            <a class="btn btn-primary" href="{{object.get_update_url}}">
+                Update
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="d-flex align-items-start flex-wrap">
+        <div class="card mt-2 mr-3 flex-shrink-0">
+            <a class="px-3 py-2 clickable box-shadow-minor" data-toggle="collapse" href="#udf-{{object.id}}-preview" aria-expanded="false" aria-controls="udf-{{object.id}}-preview">Preview &nbsp;<i class="fa fa-angle-down" aria-hidden="true"></i> </a>
+        </div>
+       
+        <div class="card mt-2 mr-3 flex-shrink-0" style="width: 10rem;">
+            {% if object.assessments.exists %}
+            <a class="px-3 py-2 mb-0 text-center clickable box-shadow-minor clickable" data-toggle="collapse" href="#udf-{{object.id}}-assessments" aria-expanded="false" aria-controls="#udf-{{object.id}}-assessments" style="position:relative; z-index: 1; scrollbar-gutter: stable;"> {{object.assessments.count}} assessments &nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+            <div id="udf-{{object.id}}-assessments" class="collapse list-group list-group-flush rounded" style="position:relative; z-index: 0; max-height: 10rem; overflow-y: scroll;">
+                {% for assessment in object.assessments.all %}
+                <a class="list-group-item list-group-item-action py-1 px-3 small" href="{{assessment.get_absolute_url}}">{{assessment.name}}</a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="px-3 py-2 mb-0 text-center box-shadow-minor">No assessments</p>
+            {% endif %}
+        </div>
+        <div class="card mt-2 mr-3 flex-shrink-0" style="width: 9rem;">
+            {% if object.editors.exists %}
+            <a class="px-3 py-2 mb-0 text-center box-shadow-minor  {% if object.editors.exists %} clickable {% endif %}" data-toggle="collapse" href="#udf-{{object.id}}-editors" aria-expanded="false" aria-controls="#udf-{{object.id}}-editors" style="position:relative; z-index: 1; scrollbar-gutter: stable;"> {{object.editors.count}} editors &nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+            <div id="udf-{{object.id}}-editors" class="collapse list-group list-group-flush rounded" style="position:relative; z-index: 0; max-height: 10rem; overflow-y: scroll;">
+                {% for editor in object.editors.all %}
+                <div class="list-group-item py-1 px-3 small">{{editor}}</div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="px-3 py-2 mb-0 text-center box-shadow-minor">No editors</p>
+            {% endif %}
+        </div>
+        <div class="card mt-2 mr-3 p-2 {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
+            <p class="m-0 small"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
+        </div>
+        <div class="card mt-2 mr-3 p-2">
+            <p class="text-muted small m-0">Created by {{object.creator}}</p>
+        </div>
+        <div class="card mt-2 mr-3 p-2">
+            <p class="m-0 small text-muted">Updated {{object.last_updated|date:"DATE_FORMAT"}}
+            </p>
+        </div>
+    </div>
+    <div id="udf-{{object.id}}-preview" class="collapse m-2 rounded">
+        <form id="udf-{{object.id}}" class="bg-lightblue p-4 rounded">
+            {% crispy object.form %}
+        </form>
     </div>
 </div>
-<h2 class="mt-0 mb-2">User Defined Forms</h2>
-{% if object_list %}
-<table id="mainTbl" class="table table-sm table-striped">
-    {% bs4_colgroup '20,40,20,20' %}
-    {% bs4_thead 'Name,Description,Creator,Last Updated' %}
-    <tbody>
-        {% for object in object_list %}
-        <tr>
-            <td>
-                <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
-            </td>
-            <td>{{object.description}}</td>
-            <td>{{object.creator}}</td>
-            <td>{{object.last_updated|date:"Y-m-d"}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
+{% empty %}
 {% alert info %}No forms found.{% endalert %}
-{% endif %}
+{% endfor %}
 
 {% include "includes/paginator.html" with plural_object_name="forms" %}
 {% endblock content %}
+
+{% block extrajs %}
+<script>
+    window.app.HAWCUtils.dynamicFormListeners();
+</script>
+{% endblock extrajs %}

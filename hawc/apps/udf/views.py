@@ -28,7 +28,19 @@ class UDFListView(LoginRequiredMixin, ListView):
     model = models.UserDefinedForm
 
     def get_queryset(self):
-        return super().get_queryset().get_available_udfs(self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .get_available_udfs(self.request.user)
+            .prefetch_related("editors", "assessments")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for udf in context["object_list"]:
+            udf.form = dynamic_forms.Schema.model_validate(udf.schema).to_form(prefix=udf.id)
+            udf.user_can_edit = udf.user_can_edit(self.request.user)
+        return context
 
 
 class UDFDetailView(LoginRequiredMixin, DetailView):
