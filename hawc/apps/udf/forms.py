@@ -23,10 +23,12 @@ class UDFForm(forms.ModelForm):
         validators=[PydanticValidator(Schema)],
         widget=TextareaButton(
             btn_attrs={
+                "hx-indicator": "#spinner",
+                "id": "schema-preview-btn",
                 "hx-post": reverse_lazy("udf:schema_preview"),
                 "hx-target": "#schema-preview-frame",
                 "hx-swap": "innerHTML",
-                "class": "ml-2 px-3 py-2 clickable box-shadow-minor btn btn-primary",
+                "class": "ml-2 px-3 py-2 btn btn-primary hidden",
             },
             btn_content="Preview",
             btn_stretch=False,
@@ -87,7 +89,8 @@ class UDFForm(forms.ModelForm):
             ),
             cfl.Row(
                 cfl.Div(
-                    css_id="schema-preview-frame", css_class="bg-lightblue rounded p-4 box-shadow"
+                    css_id="schema-preview-frame",
+                    css_class="bg-lightblue rounded box-shadow p-4 collapse",
                 )
             ),
             cfb.FormActions(*form_actions, css_class="form-actions"),
