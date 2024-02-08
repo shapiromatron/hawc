@@ -1,10 +1,10 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div id='main'></div>
-<div class="well">
-  <a class='btn btn-primary' href="{% url 'lit:tags_copy' assessment.pk %}">Copy tags from existing assessment</a>
-</div>
+  <div id='main'></div>
+  <div class="well">
+    <a class='btn btn-primary' href="{% url 'lit:tags_copy' assessment.pk %}">Copy tags from existing assessment</a>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
