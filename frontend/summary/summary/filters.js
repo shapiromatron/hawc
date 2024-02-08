@@ -96,9 +96,13 @@ export const DATA_FILTER_CONTAINS = "contains",
         }
     },
     readableCustomQueryFilters = function(filters, filter_query) {
-        let getValue = i => {
-                let filter = filters[i - 1]; // convert 1 to 0 indexing
-                return `"${filter.column}"[${filter.type}]"${filter.value}"{${i}}`;
+        let optMap = _.keyBy(DATA_FILTER_OPTIONS, "id"),
+            getValue = i => {
+                const filter = filters[i - 1], // convert 1 to 0 indexing
+                    valStr = _.isNaN(_.toNumber(filter.value))
+                        ? `"${filter.value}"`
+                        : `${filter.value}`;
+                return `"${filter.column}" ${optMap[filter.type].label} ${valStr} {${i}}`;
             },
             negateValue = v => {
                 return ["NOT", v];
