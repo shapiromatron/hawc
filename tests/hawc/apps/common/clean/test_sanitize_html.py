@@ -10,16 +10,25 @@ class TestEscapeAbstract:
 
         # no changes, expected elements
         # <mark>
-        text = clean_html('<mark class="llr-mk-pos">turtles</mark>')
-        assert text == '<mark class="llr-mk-pos">turtles</mark>'
+        text = clean_html('<mark class="my-class">turtles</mark>')
+        assert text == '<mark class="my-class">turtles</mark>'
 
         # <span>
-        text = clean_html('<span class="abstract_label">BACKGROUND: </span>')
-        assert text == '<span class="abstract_label">BACKGROUND: </span>'
+        text = clean_html('<span class="my-class">BACKGROUND: </span>')
+        assert text == '<span class="my-class">BACKGROUND: </span>'
 
         # <br>
         text = clean_html("health-care system. <br>")
         assert text == "health-care system. <br>"
+
+        # check < still works if spaced correctly
+        for a, b in (
+            ("10 < 20", "10 &lt; 20"),
+            ("10 <= 20", "10 &lt;= 20"),
+            ("30 > 20", "30 &gt; 20"),
+            ("30 >= 20", "30 &gt;= 20"),
+        ):
+            assert clean_html(a) == b
 
     def test_unexpected_html(self):
         # <median
