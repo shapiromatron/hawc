@@ -1,7 +1,6 @@
 """Validate html."""
 
 import nh3
-from django.utils.safestring import SafeText, mark_safe
 
 from .sanitize_css import CSSSanitizer
 
@@ -46,7 +45,7 @@ css_sanitizer = CSSSanitizer(
 )
 
 
-def clean_html(html: str) -> SafeText:
+def clean_html(html: str) -> str:
     """Cleans given HTML by removing invalid HTML tags, attributes, and CSS properties.
     Note: inner text within invalid HTML tags will still be included.
     Args:
@@ -61,10 +60,9 @@ def clean_html(html: str) -> SafeText:
             return css_sanitizer.sanitize_css(value)
         return value
 
-    sanitize_html = nh3.clean(
+    return nh3.clean(
         html,
         tags=valid_html_tags,
         attributes=valid_html_attrs,
         attribute_filter=attribute_filter,
     )
-    return mark_safe(sanitize_html)
