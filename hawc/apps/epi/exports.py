@@ -505,27 +505,30 @@ class OutcomeDataPivot(FlatFileExporter):
 
         results = df.groupby("result-id", group_keys=False)
         computed_df = results.apply(_apply_results)
+        # empty groups may return original columns, so remove them
+        computed_df = computed_df[computed_df.columns.difference(df.columns)]
         return df.join(computed_df, on="result_group-id").drop(
             columns=["result-estimate_type", "result-variance_type", "group-isControl"]
         )
 
     def build_df(self) -> pd.DataFrame:
         df = EpiDataPivotExporter().get_df(self.queryset.order_by("id", "results__results"))
-        outcome_ids = list(df["outcome-id"].unique())
-        rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-            self.queryset.first().assessment_id,
-            outcome_ids,
-            "epi",
-        )
-        rob_df = pd.DataFrame(
-            data=[
-                [rob_data[(outcome_id, metric_id)] for metric_id in rob_headers.keys()]
-                for outcome_id in outcome_ids
-            ],
-            columns=list(rob_headers.values()),
-            index=outcome_ids,
-        )
-        df = df.join(rob_df, on="outcome-id")
+        if obj := self.queryset.first():
+            outcome_ids = list(df["outcome-id"].unique())
+            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
+                obj.assessment_id,
+                outcome_ids,
+                "epi",
+            )
+            rob_df = pd.DataFrame(
+                data=[
+                    [rob_data[(outcome_id, metric_id)] for metric_id in rob_headers.keys()]
+                    for outcome_id in outcome_ids
+                ],
+                columns=list(rob_headers.values()),
+                index=outcome_ids,
+            )
+            df = df.join(rob_df, on="outcome-id")
 
         df["Reference/Exposure group"] = (
             df["study-short_citation"]
