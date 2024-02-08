@@ -12,6 +12,7 @@ import {
     DATA_FILTER_OPTIONS,
     filterLogicHelpText,
     filterQueryHelpText,
+    readableCustomQueryFilters,
 } from "../../summary/filters";
 
 const dataKey = "filters",
@@ -63,7 +64,8 @@ FilterRow.propTypes = {
 class FilterTable extends Component {
     render() {
         const store = this.props.store.subclass,
-            {filters, filtersLogic, filtersQuery} = store.settings;
+            {filters, filtersLogic, filtersQuery} = store.settings,
+            filtersQueryReadable = readableCustomQueryFilters(filters, filtersQuery);
         return (
             <>
                 <table className="table table-sm table-striped">
@@ -100,11 +102,16 @@ class FilterTable extends Component {
                         choices={DATA_FILTER_LOGIC_OPTIONS}
                     />
                     {filtersLogic === DATA_FILTER_LOGIC_CUSTOM ? (
-                        <TextInput
-                            value={filtersQuery}
-                            helpText={filterQueryHelpText}
-                            onChange={e => store.changeSettings("filtersQuery", e.target.value)}
-                        />
+                        <>
+                            <TextInput
+                                value={filtersQuery}
+                                helpText={filterQueryHelpText}
+                                onChange={e => store.changeSettings("filtersQuery", e.target.value)}
+                            />
+                            <pre>
+                                <code>{filtersQueryReadable}</code>
+                            </pre>
+                        </>
                     ) : null}
                 </div>
             </>
