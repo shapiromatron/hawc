@@ -9,33 +9,10 @@ from django.utils.encoding import force_str
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
 
+from .clean.sanitize_html import valid_html_tags
+
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
 hyperlink_regex = re.compile(r"href\s*=\s*['\"](.*?)['\"]")
-
-
-valid_html_tags = {
-    "a",
-    "blockquote",
-    "br",
-    "div",
-    "em",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "li",
-    "mark",
-    "ol",
-    "p",
-    "span",
-    "strong",
-    "sub",
-    "sup",
-    "s",
-    "ul",
-    "u",
-}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
     "canada.ca",
