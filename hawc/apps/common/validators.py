@@ -13,21 +13,6 @@ tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
 hyperlink_regex = re.compile(r"href\s*=\s*['\"](.*?)['\"]")
 
 
-valid_scheme = {"", "http", "https"}
-valid_netloc_endings = {
-    "canada.ca",
-    ".edu",
-    ".gov",
-    ".who.int",
-    "doi.org",
-    "elsevier.com",
-    "public.tableau.com",
-    "sciencedirect.com",
-    "sharepoint.com",
-    "hawcproject.org",
-    "zenodo.org",
-}
-
 valid_html_tags = {
     "a",
     "blockquote",
@@ -50,6 +35,20 @@ valid_html_tags = {
     "s",
     "ul",
     "u",
+}
+valid_scheme = {"", "http", "https"}
+valid_netloc_endings = {
+    "canada.ca",
+    ".edu",
+    ".gov",
+    ".who.int",
+    "doi.org",
+    "elsevier.com",
+    "public.tableau.com",
+    "sciencedirect.com",
+    "sharepoint.com",
+    "hawcproject.org",
+    "zenodo.org",
 }
 
 
