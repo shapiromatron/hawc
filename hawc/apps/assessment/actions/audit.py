@@ -247,9 +247,9 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         qs = getattr(self, method)()
         return qs.select_related("content_type", "revision")
 
-    def export(self) -> Response:
+    def get_df(self) -> pd.DataFrame:
         qs = self.get_queryset()
-        df = pd.DataFrame(
+        return pd.DataFrame(
             qs.values_list(
                 "content_type__app_label",
                 "content_type__model",
@@ -260,4 +260,9 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
             ),
             columns=["app", "model", "pk", "serialized_data", "user", "date_revised"],
         )
-        return FlatExport.api_response(df=df, filename=f"{self.assessment}-{self.type}-audit-logs")
+
+    def export(self) -> Response:
+        return FlatExport.api_response(
+            df=self.get_df(),
+            filename=f"{self.assessment}-{self.type}-audit-logs",
+        )

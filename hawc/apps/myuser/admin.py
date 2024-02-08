@@ -43,7 +43,9 @@ class HAWCUserAdmin(admin.ModelAdmin):
     ordering = ("-date_joined",)
     form = forms.AdminUserForm
     inlines = [UserProfileAdmin]
-    can_delete = False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     @admin.action(description="Send welcome email")
     def send_welcome_emails(modeladmin, request, queryset):
