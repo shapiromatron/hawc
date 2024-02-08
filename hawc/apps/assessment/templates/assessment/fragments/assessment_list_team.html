@@ -1,24 +1,24 @@
 {% if object_list %}
-<table id="mainTbl" class="table table-sm table-striped">
-  {% bs4_colgroup '40,10,20,15,15' %}
-  {% bs4_thead 'Name,Year,Role,Published,Last Updated' %}
-  <tbody>
-    {% for object in object_list %}
-    <tr>
-      <td>
-        <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
-        {% if object.assessment_objective %}
-        <div class='text-muted'>{{object.assessment_objective|striptags|truncatewords:30|safe}}</div>
-        {% endif %}
-      </td>
-      <td>{{object.year}}</td>
-      <td>{{object.user_role}}</td>
-      <td>{{object.published}}</td>
-      <td>{{object.last_updated|date:"Y-m-d"}}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <table id="mainTbl" class="table table-sm table-striped">
+    {% bs4_colgroup '40,10,20,15,15' %}
+    {% bs4_thead 'Name,Year,Role,Published,Last Updated' %}
+    <tbody>
+      {% for object in object_list %}
+        <tr>
+          <td>
+            <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
+            {% if object.assessment_objective %}
+              <div class='text-muted'>{{object.assessment_objective|striptags|truncatewords:30|safe}}</div>
+            {% endif %}
+          </td>
+          <td>{{object.year}}</td>
+          <td>{{object.user_role}}</td>
+          <td>{{object.published}}</td>
+          <td>{{object.last_updated|date:"Y-m-d"}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% else %}
   {% alert info %}No assessments found.{% endalert %}
 {% endif %}

@@ -8,29 +8,29 @@
   <p class="lead">Option #1 (Query-based)</p>
   <p class='form-text text-muted'>Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query; but it will contain the latest information from the database, so the visualization may change from time to time.</p>
   {% if assessment.has_animal_data %}
-  <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.BIOASSAY %}" class="btn btn-primary">
-    {{evidence_type.BIOASSAY.label}}
-  </a>
+    <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.BIOASSAY %}" class="btn btn-primary">
+      {{evidence_type.BIOASSAY.label}}
+    </a>
   {% endif %}
   {% if assessment.has_epi_data %}
-  <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.EPI %}" class="btn btn-primary">
-    {{evidence_type.EPI.label}}
-  </a>
+    <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.EPI %}" class="btn btn-primary">
+      {{evidence_type.EPI.label}}
+    </a>
   {% endif %}
   {% if assessment.has_epimeta_data %}
-  <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.EPI_META %}" class="btn btn-primary">
-    {{evidence_type.EPI_META.label}}
-  </a>
+    <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.EPI_META %}" class="btn btn-primary">
+      {{evidence_type.EPI_META.label}}
+    </a>
   {% endif %}
   {% if assessment.has_invitro_data %}
-  <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.IN_VITRO %}" class="btn btn-primary">
-    {{evidence_type.IN_VITRO.label}}
-  </a>
+    <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.IN_VITRO %}" class="btn btn-primary">
+      {{evidence_type.IN_VITRO.label}}
+    </a>
   {% endif %}
   {% if assessment.has_eco_data %}
-  <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.ECO %}" class="btn btn-primary">
-    {{evidence_type.ECO.label}}
-  </a>
+    <a href="{% url 'summary:dp_new-query' assessment.pk evidence_type.ECO %}" class="btn btn-primary">
+      {{evidence_type.ECO.label}}
+    </a>
   {% endif %}
   <hr>
 

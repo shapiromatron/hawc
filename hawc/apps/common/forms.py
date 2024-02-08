@@ -8,6 +8,7 @@ from django.forms.widgets import RadioSelect
 from django.urls import reverse
 
 from . import validators, widgets
+from .clean import sanitize_html
 from .helper import PydanticToDjangoError
 
 ASSESSMENT_UNIQUE_MESSAGE = "Must be unique for assessment (current value already exists)."
@@ -383,7 +384,7 @@ class QuillField(forms.CharField):
 
     def to_python(self, value):
         value = super().to_python(value)
-        return validators.clean_html(value) if value else value
+        return sanitize_html.clean_html(value) if value else value
 
     def validate(self, value):
         super().validate(value)

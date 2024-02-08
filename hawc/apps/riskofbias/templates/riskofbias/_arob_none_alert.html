@@ -1,11 +1,11 @@
 {% alert info %}
   <p><b>No {{assessment.get_rob_name_display|lower}} requirements exist for this assessment.</b></p>
   {% if obj_perms.edit_assessment %}
-  <p>As a project manager, you have the following options:</p>
-  <ul>
-    <li><a href="{% url 'riskofbias:arob_load_approach' assessment.pk %}">Load</a>&nbsp;a predefined approach into your assessment</li>
-    <li><a href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy</a>&nbsp;an approach from another assessment</li>
-    <li><a href="{% url 'assessment:modules_update' assessment.pk %}">Disable</a> {{assessment.get_rob_name_display|lower}} for this assessment</li>
-  </ul>
+    <p>As a project manager, you have the following options:</p>
+    <ul>
+      <li><a href="{% url 'riskofbias:arob_load_approach' assessment.pk %}">Load</a>&nbsp;a predefined approach into your assessment</li>
+      <li><a href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy</a>&nbsp;an approach from another assessment</li>
+      <li><a href="{% url 'assessment:modules_update' assessment.pk %}">Disable</a> {{assessment.get_rob_name_display|lower}} for this assessment</li>
+    </ul>
   {% endif %}
 {% endalert %}
