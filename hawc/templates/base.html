@@ -73,6 +73,7 @@
               {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
               {% include "includes/messages.html" %}
+              {% include "includes/htmx_alert.html" %}
               {% if UA_SUPPORTED is False %}
                 {% include "includes/unsupported_browser.html" %}
               {% endif %}
