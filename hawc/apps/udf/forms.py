@@ -1,3 +1,4 @@
+from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
@@ -25,7 +26,7 @@ class UDFForm(forms.ModelForm):
                 "hx-post": reverse_lazy("udf:schema_preview"),
                 "hx-target": "#schema-preview-frame",
                 "hx-swap": "innerHTML",
-                "class": "ml-2",
+                "class": "ml-2 px-3 py-2 clickable box-shadow-minor btn btn-primary",
             },
             btn_content="Preview",
             btn_stretch=False,
@@ -56,7 +57,7 @@ class UDFForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["description"].widget.attrs["rows"] = 3
+        self.fields["description"].widget.attrs["rows"] = 8
         cancel_url = reverse("udf:udf_list")
         form_actions = [
             cfl.Submit("save", "Save"),
@@ -66,6 +67,31 @@ class UDFForm(forms.ModelForm):
         if not self.instance.id and "deprecated" in self.fields:
             self.fields.pop("deprecated")
         helper = BaseFormHelper(self, legend_text=legend_text, form_actions=form_actions)
+        helper = BaseFormHelper(self)
+        helper.layout = cfl.Layout(
+            cfl.HTML(f"<legend>{legend_text}</legend>"),
+            cfl.Row(
+                cfl.Column("name", css_class="col-md-6"),
+                cfl.Column(
+                    "published",
+                    "deprecated" if self.instance.id else None,
+                    css_class="col-md-6 align-items-center d-flex",
+                ),
+            ),
+            cfl.Row(
+                cfl.Column("description", css_class="col-md-6"),
+                cfl.Column("editors", "assessments", css_class="col-md-6"),
+            ),
+            cfl.Row(
+                cfl.Column("schema"),
+            ),
+            cfl.Row(
+                cfl.Div(
+                    css_id="schema-preview-frame", css_class="bg-lightblue rounded p-4 box-shadow"
+                )
+            ),
+            cfb.FormActions(*form_actions, css_class="form-actions"),
+        )
         return helper
 
 

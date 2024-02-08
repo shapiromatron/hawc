@@ -19,11 +19,18 @@ class UserDefinedForm(models.Model):
 
     name = models.CharField(max_length=128)
     description = models.TextField()
-    schema = models.JSONField()
+    schema = models.JSONField(
+        help_text="The schema defines the structure and behavior of the UDF. It is composed of JSON that specifies fields and conditional logic. Contact us for help defining a schema for your UDF."
+    )
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="udf_forms_creator"
     )
-    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="udf_forms")
+    editors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="udf_forms",
+        help_text="Editors have the ability to update this form, and can use it for any of their assessments.",
+    )
     parent = models.ForeignKey(
         "self",
         blank=True,
@@ -31,9 +38,19 @@ class UserDefinedForm(models.Model):
         on_delete=models.SET_NULL,
         related_name="children",
     )
-    assessments = models.ManyToManyField(Assessment, blank=True, related_name="udf_forms")
-    published = models.BooleanField(default=False)
-    deprecated = models.BooleanField(default=False)
+    assessments = models.ManyToManyField(
+        Assessment,
+        blank=True,
+        related_name="udf_forms",
+        help_text="Users in selected assessments will be able to apply this form to models in their assessment.",
+    )
+    published = models.BooleanField(
+        default=False,
+        help_text="Published UDFs are visible for all users and usable for all assessments.",
+    )
+    deprecated = models.BooleanField(
+        default=False, help_text="Select if this UDF should no longer be used."
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
