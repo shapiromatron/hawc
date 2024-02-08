@@ -5,17 +5,22 @@ import Loading from "shared/components/Loading";
 
 const DataTableWrapper = ({children, className, data, columns}) => {
     const ref = createRef(),
-        [loading, setLoading] = useState(true);
+        [loading, setLoading] = useState(true),
+        dtProps = {autoWidth: false, order: [], pageLength: 10};
+
+    // check that either children or data exist
+    if (children) {
+        // do nothing
+    } else if (data && columns) {
+        dtProps.data = data;
+        dtProps.columns = columns;
+    } else {
+        console.error("Invalid props passed to DataTableWrapper");
+    }
+
     $.DataTable = require("datatables.net");
     useEffect(() => {
-        // only include data/columns if they were provided
-        const table = $(ref.current.firstElementChild).DataTable({
-            autoWidth: false,
-            order: [],
-            pageLength: 10,
-            ...(data ? {data} : {}),
-            ...(columns ? {columns} : {}),
-        });
+        const table = $(ref.current.firstElementChild).DataTable(dtProps);
         setLoading(false);
         return () => table.destroy();
     });
