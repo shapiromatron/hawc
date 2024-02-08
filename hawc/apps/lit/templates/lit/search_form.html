@@ -7,17 +7,17 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-        $('#id_title').on('keyup', function () {
-          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
-        });
+      $('#id_title').on('keyup', function () {
+        $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
+      });
 
         // add a loading notification
-        $('input[type=submit]').click(function(e){
-            $(e.target).addClass('disabled').css('pointer-events', 'none');
-            $(e.target).parent().append(window.app.HAWCUtils.loading());
-            return true;
-        });
-        $('#id_source').focus();
+      $('input[type=submit]').click(function(e){
+        $(e.target).addClass('disabled').css('pointer-events', 'none');
+        $(e.target).parent().append(window.app.HAWCUtils.loading());
+        return true;
+      });
+      $('#id_source').focus();
     });
   </script>
 {% endblock extrajs %}

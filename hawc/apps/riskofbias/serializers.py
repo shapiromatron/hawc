@@ -4,6 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common import validators
+from ..common.clean import sanitize_html
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
@@ -103,7 +104,7 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
 
     def validate_notes(self, value):
         validators.validate_hyperlinks(value)
-        return validators.clean_html(value)
+        return sanitize_html.clean_html(value)
 
 
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
@@ -129,7 +130,7 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
 
     def validate_notes(self, value):
         validators.validate_hyperlinks(value)
-        return validators.clean_html(value)
+        return sanitize_html.clean_html(value)
 
 
 class StudyScoreSerializer(RiskOfBiasScoreSerializer):
