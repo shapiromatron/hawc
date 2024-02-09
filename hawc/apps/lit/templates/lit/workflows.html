@@ -1,19 +1,19 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex">
-  <h2 class="mb-2">Workflows</h2>
-  {% if obj_perms.edit_assessment %}
-    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-create' assessment.pk %}" hx-trigger="click" hx-target="#workflow-list" hx-swap="outerHTML" href="/">Create new workflow</a>
-  {% endif %}
-</div>
-<p class="text-muted vw75 mt-0 mb-2">
-  Literature workflows define groups of references in a specific state of tagging. References must match all admission criteria and none of the removal criteria to fit in a workflow. Workflows can filter references for various pages in HAWC; like the tagging, conflict resolution, and list views. Linked tiles to some of these workflow-filtered pages can be added to the Literature Review home page for quick access.
-</p>
-{% include "lit/fragments/workflow_list.html" %}
+  <div class="d-flex">
+    <h2 class="mb-2">Workflows</h2>
+    {% if obj_perms.edit_assessment %}
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-create' assessment.pk %}" hx-trigger="click" hx-target="#workflow-list" hx-swap="outerHTML" href="/">Create new workflow</a>
+    {% endif %}
+  </div>
+  <p class="text-muted vw75 mt-0 mb-2">
+    Literature workflows define groups of references in a specific state of tagging. References must match all admission criteria and none of the removal criteria to fit in a workflow. Workflows can filter references for various pages in HAWC; like the tagging, conflict resolution, and list views. Linked tiles to some of these workflow-filtered pages can be added to the Literature Review home page for quick access.
+  </p>
+  {% include "lit/fragments/workflow_list.html" %}
 {% endblock %}
 
 {% block extrajs %}
-{% include "common/htmx_autocomplete.html" %}
-{% include "common/helptext_popup_js.html" %}
+  {% include "common/htmx_autocomplete.html" %}
+  {% include "common/helptext_popup_js.html" %}
 {% endblock %}

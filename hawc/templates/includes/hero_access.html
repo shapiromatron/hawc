@@ -1,9 +1,9 @@
 <script id='heroAccess' type='text/json'>
-{
+  {
     "heroAccess": {{user.profile.HERO_access|yesno:"true,false"}}
-}
+  }
 </script>
 <script type="text/javascript">
-    const data = JSON.parse(document.getElementById('heroAccess').textContent);
-    window.app.HAWCUtils.Hero.setAccess(data.heroAccess);
+  const data = JSON.parse(document.getElementById('heroAccess').textContent);
+  window.app.HAWCUtils.Hero.setAccess(data.heroAccess);
 </script>

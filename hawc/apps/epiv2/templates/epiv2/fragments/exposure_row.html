@@ -1,17 +1,17 @@
 <tr hx-target="this" hx-swap="outerHTML" class="exposure-{{object.pk}}">
-    <td>{{object.name}}</td>
-    <td>
-        {% if object.measurement_type %}
-        <ul>
-            {% for mt in object.measurement_type %}
-            <li>{{mt}}</li>
-            {% endfor %}
-        </ul>
-        {% else %}-{% endif %}
-    </td>
-    <td>{{object.measurement_timing|default:"-"}}</td>
-    {% include "epiv2/fragments/_object_row.html" with model="exposure" %}
+  <td>{{object.name}}</td>
+  <td>
+    {% if object.measurement_type %}
+      <ul>
+        {% for mt in object.measurement_type %}
+          <li>{{mt}}</li>
+        {% endfor %}
+      </ul>
+    {% else %}-{% endif %}
+  </td>
+  <td>{{object.measurement_timing|default:"-"}}</td>
+  {% include "epiv2/fragments/_object_row.html" with model="exposure" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
-<tr style="display: none" id="exposure-empty-row" hx-target="this"></tr>
+  <tr style="display: none" id="exposure-empty-row" hx-target="this"></tr>
 {% endif %}

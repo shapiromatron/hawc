@@ -27,48 +27,48 @@
           fs = new window.app.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
           comparison_set_id = {{ form.comparison_set.value|default:"null" }},
           updateFormset = function(d){
-            var n;
+        var n;
 
-            if (_.isUndefined(d)) return elFormset.hide();
+        if (_.isUndefined(d)) return elFormset.hide();
 
             // update formset name
-            $("#formsetName").text(d.name);
+        $("#formsetName").text(d.name);
 
             // remove all but first row
-            fs.$el.find('tbody tr:gt(0)').remove();
+        fs.$el.find('tbody tr:gt(0)').remove();
 
             // reset first-row values
-            fs.clearForm(fs.$el.find('tbody tr').slice(0, 1));
+        fs.clearForm(fs.$el.find('tbody tr').slice(0, 1));
 
             // add rows based on number of groups in collection
-            _(d.groups.length-1).times(fs.addForm.bind(fs));
+        _(d.groups.length-1).times(fs.addForm.bind(fs));
 
             // bind each row to a different group-id
-            fs.$el.find('tbody tr').each(function(i, v){
-              $(v).find('.groupField').val(d.groups[i].id);
-              n = d.groups[i].participant_n;
-              if (_.isNumber(n)) $(v).find('.nField').val(n);
-            });
-            updateLabels();
+        fs.$el.find('tbody tr').each(function(i, v){
+          $(v).find('.groupField').val(d.groups[i].id);
+          n = d.groups[i].participant_n;
+          if (_.isNumber(n)) $(v).find('.nField').val(n);
+        });
+        updateLabels();
 
-            elFormset.show();
-          }, updateLabels = function(){
-            fs.$el.find('tbody tr').each(function(i, tr){
-              var tr = $(tr);
-              tr.find('.groupFieldLabel').text(tr.find('.groupField option:selected').text());
-            });
-          }, showOrHideMetricUnits = function () {
-            var metricsThatRequireUnits = ["mean", "mean change", "regression coefficient", "other"];
-            var selectedMetricText = $("#id_metric option:selected").text();
-            var showMetricUnits = metricsThatRequireUnits.indexOf(selectedMetricText) != -1;
-            var metricUnitsWrapper = $("div#div_id_metric_units");
-            if (showMetricUnits) {
-              metricUnitsWrapper.show();
-            } else {
-              metricUnitsWrapper.find("textarea").val("");
-              metricUnitsWrapper.hide();
-            }
+        elFormset.show();
+      }, updateLabels = function(){
+        fs.$el.find('tbody tr').each(function(i, tr){
+          var tr = $(tr);
+          tr.find('.groupFieldLabel').text(tr.find('.groupField option:selected').text());
+        });
+      }, showOrHideMetricUnits = function () {
+        var metricsThatRequireUnits = ["mean", "mean change", "regression coefficient", "other"];
+        var selectedMetricText = $("#id_metric option:selected").text();
+        var showMetricUnits = metricsThatRequireUnits.indexOf(selectedMetricText) != -1;
+        var metricUnitsWrapper = $("div#div_id_metric_units");
+        if (showMetricUnits) {
+          metricUnitsWrapper.show();
+        } else {
+          metricUnitsWrapper.find("textarea").val("");
+          metricUnitsWrapper.hide();
         }
+      }
 
       // add group labels
       $(".groupField").each(function(i,v){

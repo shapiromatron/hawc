@@ -1,44 +1,44 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-{% if crud == "Read" %}
-<div class="d-flex">
-    <h2>Tag/Form binding</h2>
-    {% if obj_perms.edit %}
-    {% actions %}
-    <a class="dropdown-item" href="{% url 'udf:tag_update' object.pk %}">Update</a>
-    <a class="dropdown-item" href="{% url 'udf:tag_delete' object.pk %}">Delete</a>
-    {% endactions %}
-    {% endif %}
-</div>
-{% endif %}
-<table class="table table-sm table-striped">
+  {% if crud == "Read" %}
+    <div class="d-flex">
+      <h2>Tag/Form binding</h2>
+      {% if obj_perms.edit %}
+        {% actions %}
+          <a class="dropdown-item" href="{% url 'udf:tag_update' object.pk %}">Update</a>
+          <a class="dropdown-item" href="{% url 'udf:tag_delete' object.pk %}">Delete</a>
+        {% endactions %}
+      {% endif %}
+    </div>
+  {% endif %}
+  <table class="table table-sm table-striped">
     {% bs4_colgroup '15,85' %}
     <tbody>
-        <tr>
-            <th>Tag</th>
-            <td>{{object.tag}}</td>
-        </tr>
-        <tr>
-            <th>Form</th>
-            <td>
-                <p><a href="{% url 'udf:udf_detail' object.form.pk %}">{{object.form.name}}</a></p>
-                <p class='my-3'><u>Form Preview:</u></p>
-                {% crispy object.form_instance %}
-            </td>
-        </tr>
-        <tr>
-            <th>Creator</th>
-            <td>{{object.creator}}</td>
-        </tr>
-        <tr>
-            <th>Created</th>
-            <td>{{object.created}}</td>
-        </tr>
-        <tr>
-            <th>Last Updated</th>
-            <td>{{object.last_updated}}</td>
-        </tr>
+      <tr>
+        <th>Tag</th>
+        <td>{{object.tag}}</td>
+      </tr>
+      <tr>
+        <th>Form</th>
+        <td>
+          <p><a href="{% url 'udf:udf_detail' object.form.pk %}">{{object.form.name}}</a></p>
+          <p class='my-3'><u>Form Preview:</u></p>
+          {% crispy object.form_instance %}
+        </td>
+      </tr>
+      <tr>
+        <th>Creator</th>
+        <td>{{object.creator}}</td>
+      </tr>
+      <tr>
+        <th>Created</th>
+        <td>{{object.created}}</td>
+      </tr>
+      <tr>
+        <th>Last Updated</th>
+        <td>{{object.last_updated}}</td>
+      </tr>
     </tbody>
-</table>
+  </table>
 {% endblock %}

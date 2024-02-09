@@ -3,25 +3,25 @@
 {% load render_bundle from webpack_loader %}
 
 {% block breadcrumbs %}
-<div class="breadcrumbs">
+  <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">Home</a>
     &rsaquo;
     Insights
-</div>
+  </div>
 {% endblock %}
 
 {% block content %}
-    <div hx-target="#dashboard-content" style="padding: 1em">
-        <button hx-get="{% url 'admin_dashboard' %}?action=assessment_size">Assessment size</button>
-        <button hx-get="{% url 'admin_dashboard' %}?action=assessment_growth">Assessments growth</button>
-        <button hx-get="{% url 'admin_dashboard' %}?action=growth">Item growth</button>
-        <button hx-get="{% url 'admin_dashboard' %}?action=users">Users</button>
-        <button hx-get="{% url 'admin_dashboard' %}?action=daily_changes">Daily changes</button>
-    </div>
+  <div hx-target="#dashboard-content" style="padding: 1em">
+    <button hx-get="{% url 'admin_dashboard' %}?action=assessment_size">Assessment size</button>
+    <button hx-get="{% url 'admin_dashboard' %}?action=assessment_growth">Assessments growth</button>
+    <button hx-get="{% url 'admin_dashboard' %}?action=growth">Item growth</button>
+    <button hx-get="{% url 'admin_dashboard' %}?action=users">Users</button>
+    <button hx-get="{% url 'admin_dashboard' %}?action=daily_changes">Daily changes</button>
+  </div>
 
-    <div id="dashboard-content">
-        <p>Select an item above.</p>
-    </div>
+  <div id="dashboard-content">
+    <p>Select an item above.</p>
+  </div>
 
-    {% render_bundle "main" %}
+  {% render_bundle "main" %}
 {% endblock content %}

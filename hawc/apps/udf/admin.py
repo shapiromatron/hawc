@@ -3,27 +3,43 @@ from django.contrib import admin
 from . import models
 
 
-class UserDefinedFormInline(admin.TabularInline):
-    model = models.UserDefinedForm
-    extra = 0
+@admin.register(models.UserDefinedForm)
+class UserDefinedFormInline(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "creator",
+        "last_updated",
+    )
+    list_filter = (
+        "deprecated",
+        "created",
+    )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
-class ModelBindingInline(admin.TabularInline):
-    model = models.ModelBinding
-    extra = 0
+@admin.register(models.ModelBinding)
+class ModelBindingInline(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "assessment_id",
+        "content_type",
+        "creator",
+        "last_updated",
+    )
+    list_filter = ("created",)
 
 
-class TagBindingInline(admin.TabularInline):
-    model = models.TagBinding
-    extra = 0
-
-
-class ModelUDFContentInline(admin.TabularInline):
-    model = models.ModelUDFContent
-    extra = 0
-
-
-admin.site.register(models.UserDefinedForm)
-admin.site.register(models.ModelBinding)
-admin.site.register(models.TagBinding)
-admin.site.register(models.ModelUDFContent)
+@admin.register(models.TagBinding)
+class TagBindingInline(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "assessment_id",
+        "tag_id",
+        "creator",
+        "last_updated",
+    )
+    list_filter = ("created",)
+    raw_id_fields = ("tag",)
