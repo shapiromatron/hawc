@@ -256,7 +256,7 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["generation"].choices = self.fields["generation"].choices[1:]
+        self.fields["generation"].choices = constants.Generation.choices[1:]
         self.fields["parents"].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment
         )

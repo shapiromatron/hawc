@@ -16,6 +16,7 @@ class SummaryClient(BaseClient):
                 - title (str): Visual title
                 - slug (str): Visual identifier/URL base
                 - visual_type (int): Constant representing visual type
+                - evidence_type (int): Constant representing evidence type
                 - published (bool): visual is published for public view
                 - settings (dict): object settings (must be valid JSON)
                 - assessment (int): assessment ID
@@ -38,6 +39,7 @@ class SummaryClient(BaseClient):
                 - title (str): Visual title
                 - slug (str): Visual identifier/URL base
                 - visual_type (int): Constant representing visual type
+                - evidence_type (int): Constant representing evidence type
                 - published (bool): visual is published for public view
                 - settings (dict): object settings (must be valid JSON)
                 - assessment (int): assessment ID

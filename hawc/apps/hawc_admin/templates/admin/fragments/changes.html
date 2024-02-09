@@ -1,19 +1,19 @@
 
 <div hx-target="this" hx-swap="outerHTML">
-    <h2>Punch card</h2>
-    {{punchcard.to_html|safe}}
+  <h2>Punch card</h2>
+  {{punchcard.to_html|safe}}
 
-    <p>&nbsp;</p>
+  <p>&nbsp;</p>
 
-    {% if lines %}
+  {% if lines %}
     {% plotly lines event="htmx" resizable=True %}
     {{lines_data.to_html|safe}}
-    {% endif %}
+  {% endif %}
 
-    <p>&nbsp;</p>
+  <p>&nbsp;</p>
 
-    {% if boxplot %}
+  {% if boxplot %}
     {% plotly boxplot event="htmx" resizable=True %}
     {{boxplot_data.to_html|safe}}
-    {% endif %}
+  {% endif %}
 </div>

@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
+from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.io as pio
@@ -15,6 +16,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
+from ..common.clean import sanitize_html
 from ..common.forms import (
     BaseFormHelper,
     CopyForm,
@@ -194,7 +196,7 @@ class VisualForm(forms.ModelForm):
     def clean_caption(self):
         caption = self.cleaned_data["caption"]
         validators.validate_hyperlinks(caption)
-        return validators.clean_html(caption)
+        return sanitize_html.clean_html(caption)
 
     def clean_evidence_type(self):
         visual_type = self.cleaned_data["visual_type"]
@@ -678,7 +680,7 @@ class DataPivotForm(forms.ModelForm):
     def clean_caption(self):
         caption = self.cleaned_data["caption"]
         validators.validate_hyperlinks(caption)
-        return validators.clean_html(caption)
+        return sanitize_html.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):
@@ -695,7 +697,7 @@ class DataPivotUploadForm(DataPivotForm):
             # see if it loads
             try:
                 wb = load_workbook(excel_file, read_only=True)
-            except InvalidFileException:
+            except (BadZipFile, InvalidFileException):
                 self.add_error(
                     "excel_file",
                     "Unable to read Excel file. Please upload an Excel file in XLSX format.",

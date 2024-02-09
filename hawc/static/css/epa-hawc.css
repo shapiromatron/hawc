@@ -26,6 +26,11 @@
     -webkit-mask: url(/static/vendor/uswds/3.1.0/img/usa-icons/expand_more.svg) no-repeat center/contain;
 }
 
+/* EPA header */
+.usa-nav--epa .menu__link:hover {
+    color: white !important;
+}
+
 /* Top nav */
 .hawc-header .navbar-toggler {
     color: initial;

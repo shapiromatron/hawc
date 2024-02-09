@@ -12,6 +12,8 @@ if /I %1 == lint-py goto :lint-py
 if /I %1 == format-py goto :format-py
 if /I %1 == lint-js goto :lint-js
 if /I %1 == format-js goto :format-js
+if /I %1 == lint-html goto :lint-html
+if /I %1 == format-html goto :format-html
 if /I %1 == test goto :test
 if /I %1 == test-integration goto :test-integration
 if /I %1 == test-integration-debug goto :test-integration-debug
@@ -40,6 +42,8 @@ echo.  lint-py           check python formatting issues
 echo.  format-py         fix python formatting issues where possible
 echo.  lint-js           check javascript formatting issues
 echo.  format-js         fix javascript formatting issues where possible
+echo.  lint-html         check html formatting issues
+echo.  format-html       fix html formatting issues where possible
 echo.  loc               generate lines of code report
 echo.  startdb           start postgres db (if pgdata folder is located in %HOMEPATH%\dev)
 goto :eof
@@ -72,11 +76,13 @@ goto :eof
 :lint
 ruff format . --check && ruff .
 npm --prefix .\frontend run lint
+djhtml --tabwidth 2 --check hawc
 goto :eof
 
 :format
 ruff format . && ruff . --fix --show-fixes
 npm --prefix .\frontend run format
+djhtml --tabwidth 2 hawc
 goto :eof
 
 :lint-py
@@ -93,6 +99,14 @@ goto :eof
 
 :format-js
 npm --prefix .\frontend run format
+goto :eof
+
+:lint-html
+djhtml --tabwidth 2 --check hawc
+goto :eof
+
+:format-html
+djhtml --tabwidth 2 hawc
 goto :eof
 
 :test

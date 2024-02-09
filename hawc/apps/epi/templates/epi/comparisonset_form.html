@@ -7,17 +7,17 @@
 
   <div id="gFormset">
     <legend>Groups
-        <button class="float-right btn btn-primary"
-                title="Add new group"
-                type="button"
-                id="addFormToFormset">+</button>
+      <button class="float-right btn btn-primary"
+              title="Add new group"
+              type="button"
+              id="addFormToFormset">+</button>
     </legend>
     {% if crud == "Create" %}
       <p class="form-text text-muted">
         If exposure is a continuous variable, create one group, “Continuous”, for the comparison set. If categorical, create the appropriate number of groups, “Q1”, “Q2”, etc. For case-controls studies, also indicate "Cases" and "Controls". Ex. Continuous; Control T1
         <span class='help-text-notes'>The total number of individuals in all groups should equal the total number of individuals in the comparison set</span>
         <span class='important-note'>This field is commonly used in HAWC visualizations.</span>
-    </p>
+      </p>
     {% endif %}
     {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
   </div>
