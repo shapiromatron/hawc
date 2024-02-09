@@ -11,9 +11,6 @@
 {% block extrajs %}
 <script>
     $(window).ready(function() {
-        $("#schema-preview-btn").appendTo($("label[for*='id_schema']"));
-        $("#schema-preview-btn").after('<i class="fa fa-spinner fa-spin htmx-indicator ml-2" id="spinner" aria-hidden="true"></i>');
-        $("#schema-preview-btn").removeClass("hidden");
         $("#schema-preview-btn").on("click", function() {
             $("#schema-preview-frame").removeClass('show');
         });

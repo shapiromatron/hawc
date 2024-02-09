@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 from hawc.apps.assessment.autocomplete import AssessmentAutocomplete
 from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from hawc.apps.common.dynamic_forms.schemas import Schema
-from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaButton
+from hawc.apps.common.forms import BaseFormHelper, PydanticValidator
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
 from ..assessment.models import Assessment
@@ -21,18 +21,6 @@ class UDFForm(forms.ModelForm):
     schema = forms.JSONField(
         initial=Schema(fields=[]).model_dump(),
         validators=[PydanticValidator(Schema)],
-        widget=TextareaButton(
-            btn_attrs={
-                "hx-indicator": "#spinner",
-                "id": "schema-preview-btn",
-                "hx-post": reverse_lazy("udf:schema_preview"),
-                "hx-target": "#schema-preview-frame",
-                "hx-swap": "innerHTML",
-                "class": "ml-2 px-3 py-2 btn btn-primary hidden",
-            },
-            btn_content="Preview",
-            btn_stretch=False,
-        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -40,6 +28,17 @@ class UDFForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.id is None:
             self.instance.creator = user
+        self.fields["schema"].label_append_button = {
+            "btn_attrs": {
+                "hx-indicator": "#spinner",
+                "id": "schema-preview-btn",
+                "hx-post": reverse_lazy("udf:schema_preview"),
+                "hx-target": "#schema-preview-frame",
+                "hx-swap": "innerHTML",
+                "class": "ml-2 btn btn-primary",
+            },
+            "btn_content": "Preview",
+        }
 
     class Meta:
         model = models.UserDefinedForm
@@ -65,13 +64,10 @@ class UDFForm(forms.ModelForm):
             cfl.Submit("save", "Save"),
             cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
         ]
-        legend_text = "Update a custom form" if self.instance.id else "Create a custom form"
-        if not self.instance.id and "deprecated" in self.fields:
-            self.fields.pop("deprecated")
-        helper = BaseFormHelper(self, legend_text=legend_text, form_actions=form_actions)
+        legend_text = "Update a User Defined Form" if self.instance.id else "Create a User Defined Form"
         helper = BaseFormHelper(self)
         helper.layout = cfl.Layout(
-            cfl.HTML(f"<legend>{legend_text}</legend>"),
+            cfl.HTML(f"<legend class='mb-2'>{legend_text}</legend>"),
             cfl.Row(
                 cfl.Column("name", css_class="col-md-6"),
                 cfl.Column(
@@ -90,7 +86,7 @@ class UDFForm(forms.ModelForm):
             cfl.Row(
                 cfl.Div(
                     css_id="schema-preview-frame",
-                    css_class="bg-lightblue rounded box-shadow p-4 collapse",
+                    css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
                 )
             ),
             cfb.FormActions(*form_actions, css_class="form-actions"),
