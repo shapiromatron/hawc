@@ -130,5 +130,8 @@ def df_to_form_data(key: str, df: pd.DataFrame) -> dict:
 
 
 # return any random instance of a specified model class
-def generic_get_any(model_class):
-    return model_class.objects.all().first()
+def generic_get_first(model_class):
+    first_obj = model_class.objects.all().first()
+    if first_obj is None:
+        raise Exception(f"generic_get_first failed; no instances of '{model_class}' found")
+    return first_obj

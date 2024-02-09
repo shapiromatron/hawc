@@ -93,18 +93,18 @@ class ExperimentChildViewSet(HtmxViewSet):
     form_fragment = "animalv2/fragments/_object_edit_row.html"
     detail_fragment = None  # required
 
-    # inline subform - all optional
-    subform_fragment = None
-    subform_form_class = None
-    subform_model_class = None
-    subform_helper_class = None
+    # inline formset - all optional
+    formset_fragment = None
+    formset_form_class = None
+    formset_model_class = None
+    formset_helper_class = None
 
-    def supports_subform(self):
+    def supports_formset(self) -> bool:
         return (
-            self.subform_fragment is not None
-            and self.subform_form_class is not None
-            and self.subform_model_class is not None
-            and self.subform_helper_class is not None
+            self.formset_fragment is not None
+            and self.formset_form_class is not None
+            and self.formset_model_class is not None
+            and self.formset_helper_class is not None
         )
 
     @action(permission=can_view)
@@ -119,10 +119,10 @@ class ExperimentChildViewSet(HtmxViewSet):
             form = self.form_class(request.POST, parent=request.item.parent)
 
             formset = None
-            if self.supports_subform():
+            if self.supports_formset():
                 formset = modelformset_factory(
-                    self.subform_model_class,
-                    form=self.subform_form_class,
+                    self.formset_model_class,
+                    form=self.formset_form_class,
                     can_delete=True,
                 )(request.POST)
 
@@ -143,10 +143,10 @@ class ExperimentChildViewSet(HtmxViewSet):
         formset = None
 
         if request.method == "POST" and form.is_valid():
-            if self.supports_subform():
+            if self.supports_formset():
                 formset = modelformset_factory(
-                    self.subform_model_class,
-                    form=self.subform_form_class,
+                    self.formset_model_class,
+                    form=self.formset_form_class,
                     can_delete=True,
                 )(request.POST)
             if formset is None or formset.is_valid():
@@ -179,7 +179,7 @@ class ExperimentChildViewSet(HtmxViewSet):
             create_object_log("Deleted", obj, obj.get_assessment().id, self.request.user.id)
             obj.delete()
 
-        parent_key = self.subform_form_class.subform_parent_key
+        parent_key = self.formset_form_class.formset_parent_key
         for temp_instance in temp_instances:
             setattr(temp_instance, parent_key, parent_obj_instance.id)
             is_create = temp_instance.id is None
@@ -214,41 +214,41 @@ class ExperimentChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
-        if self.supports_subform():
-            context["subform_template_fragment"] = self.subform_fragment
+        if self.supports_formset():
+            context["formset_template_fragment"] = self.formset_fragment
 
             # if we can, use the previous formset to avoid losing in-progress edits, display errors, etc.
             formset = kwargs.get("formset")
             if formset is None:
                 formset = modelformset_factory(
-                    self.subform_model_class,
-                    form=self.subform_form_class,
+                    self.formset_model_class,
+                    form=self.formset_form_class,
                     can_delete=True,
                 )(
                     # only show the subobjects related to this parent. The filter key is dynamic
                     # so we do it using a Q object.
                     #
                     # e.g. for DoseGroup editing:
-                    #       self.subform_form_class.subform_parent_key is "treatment_id"
+                    #       self.formset_form_class.formset_parent_key is "treatment_id"
                     #       self.request.item.object.id is the id of the parent treatment
                     #
                     # So this Q code is like doing:
-                    #       queryset=self.subform_model_class.objects.filter(
+                    #       queryset=self.formset_model_class.objects.filter(
                     #           treatment_id=x
                     #       ).order_by("dose_group_id")
-                    queryset=self.subform_model_class.objects.filter(
+                    queryset=self.formset_model_class.objects.filter(
                         Q(
                             (
-                                self.subform_form_class.subform_parent_key,
+                                self.formset_form_class.formset_parent_key,
                                 self.request.item.object.id,
                             )
                         )
                     ).order_by("dose_group_id")
                     if self.request.item.object is not None
-                    else self.subform_model_class.objects.none()
+                    else self.formset_model_class.objects.none()
                 )
-            context["subform_instance"] = formset
-            context["subform_helper"] = self.subform_helper_class()
+            context["formset_instance"] = formset
+            context["formset_helper"] = self.formset_helper_class()
         return context
 
 
@@ -271,7 +271,7 @@ class TreatmentViewSet(ExperimentChildViewSet):
     model = models.Treatment
     form_class = forms.TreatmentForm
     detail_fragment = "animalv2/fragments/_treatment_row.html"
-    subform_fragment = "animalv2/fragments/_treatment_subform.html"
-    subform_form_class = forms.DoseGroupForm
-    subform_model_class = models.DoseGroup
-    subform_helper_class = forms.DoseGroupFormHelper
+    formset_fragment = "animalv2/fragments/_treatment_formset.html"
+    formset_form_class = forms.DoseGroupForm
+    formset_model_class = models.DoseGroup
+    formset_helper_class = forms.DoseGroupFormHelper

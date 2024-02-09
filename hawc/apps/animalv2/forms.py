@@ -143,7 +143,7 @@ class TreatmentForm(forms.ModelForm):
 
 
 class DoseGroupForm(forms.ModelForm):
-    subform_parent_key = "treatment_id"
+    formset_parent_key = "treatment_id"
 
     class Meta:
         model = models.DoseGroup
