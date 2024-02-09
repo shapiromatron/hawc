@@ -50,13 +50,13 @@ def form_actions_create_or_close():
     ]
 
 
-def form_actions_big_apply_filters():
+def form_actions_big(save_text="Save", cancel_url=".", cancel_text="Cancel"):
     """Create big, centered Submit and Cancel buttons for filter forms."""
     return cfl.HTML(
-        """
-        <div class="d-flex justify-content-center">
-            <input type="submit" name="save" value="Apply Filters" class="btn btn-primary mx-2 py-2" id="submit-id-save" style="width: 15%;">
-            <a role="button" class="btn btn-light mx-2 py-2" href="." style="width: 10%;">Cancel</a>
+        f"""
+        <div class="d-flex justify-content-center mb-4">
+            <input type="submit" name="save" value="{save_text}" class="btn btn-primary mx-2 py-2" id="submit-id-save" style="width: 15rem; padding: 0.7rem;">
+            <a role="button" class="btn btn-light mx-2 py-2" href="{cancel_url}" style="width: 8rem; padding: 0.7rem;">{cancel_text}</a>
         </div>
         """
     )
@@ -279,7 +279,7 @@ class ExpandableFilterFormHelper(InlineFilterFormHelper):
         layout, collapsed_idx = self.get_layout_item(self.collapse_field_name)
         collapsed_field = layout.pop(collapsed_idx)
         self.add_filter_field(self.main_field, self.appended_fields, expandable=True)
-        self.layout.append(form_actions_big_apply_filters())
+        self.layout.append(form_actions_big(save_text="Apply Filters"))
         form_index = 1
         if self.legend_text:
             self.layout.insert(0, cfl.HTML(f"<legend>{self.legend_text}</legend>"))

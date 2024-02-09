@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 from hawc.apps.assessment.autocomplete import AssessmentAutocomplete
 from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from hawc.apps.common.dynamic_forms.schemas import Schema
-from hawc.apps.common.forms import BaseFormHelper, PydanticValidator
+from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, form_actions_big
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
 from ..assessment.models import Assessment
@@ -59,37 +59,41 @@ class UDFForm(forms.ModelForm):
     @property
     def helper(self):
         self.fields["description"].widget.attrs["rows"] = 8
-        cancel_url = reverse("udf:udf_list")
-        form_actions = [
-            cfl.Submit("save", "Save"),
-            cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
-        ]
-        legend_text = "Update a User Defined Form" if self.instance.id else "Create a User Defined Form"
+        legend_text = (
+            "Update User Defined Form" if self.instance.id else "Create a User Defined Form"
+        )
         helper = BaseFormHelper(self)
         helper.layout = cfl.Layout(
-            cfl.HTML(f"<legend class='mb-2'>{legend_text}</legend>"),
-            cfl.Row(
-                cfl.Column("name", css_class="col-md-6"),
-                cfl.Column(
-                    "published",
-                    "deprecated" if self.instance.id else None,
-                    css_class="col-md-6 align-items-center d-flex",
+            cfl.Fieldset(
+                legend_text,
+                cfl.Row(
+                    cfl.Column("name", css_class="col-md-6"),
+                    cfl.Column(
+                        "published",
+                        "deprecated" if self.instance.id else None,
+                        css_class="col-md-6 align-items-center d-flex",
+                    ),
                 ),
+                cfl.Row(
+                    cfl.Column("description", css_class="col-md-6"),
+                    cfl.Column("editors", "assessments", css_class="col-md-6"),
+                ),
+                css_class="fieldset-border mx-2 mb-4",
             ),
-            cfl.Row(
-                cfl.Column("description", css_class="col-md-6"),
-                cfl.Column("editors", "assessments", css_class="col-md-6"),
+            cfl.Fieldset(
+                "Form Schema",
+                cfl.Row(
+                    cfl.Column("schema"),
+                ),
+                cfl.Row(
+                    cfl.Div(
+                        css_id="schema-preview-frame",
+                        css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
+                    )
+                ),
+                css_class="fieldset-border mx-2 mb-4",
             ),
-            cfl.Row(
-                cfl.Column("schema"),
-            ),
-            cfl.Row(
-                cfl.Div(
-                    css_id="schema-preview-frame",
-                    css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
-                )
-            ),
-            cfb.FormActions(*form_actions, css_class="form-actions"),
+            form_actions_big(cancel_url=reverse("udf:udf_list")),
         )
         return helper
 

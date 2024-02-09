@@ -7,7 +7,7 @@
 </div>
 <div class="list-group mb-4">
     {% for object in object_list %}
-    <div class="list-group-item px-3 py-4">
+    <div class="list-group-item p-4">
         <div class="d-flex align-items-start">
             <div class="col-md-11 px-0">
                 <div class="d-flex align-items-center">
@@ -21,7 +21,7 @@
             </div>
             <div class="ml-auto">
                 {% if object.user_can_edit %}
-                <a class="btn btn-sm btn-primary" href="{{object.get_update_url}}">
+                <a class="btn outline-btn px-3" href="{{object.get_update_url}}">
                     Update
                 </a>
                 {% endif %}
@@ -57,7 +57,7 @@
                 {% endif %}
             </div>
             <div class="card mt-2 mr-2 p-2 {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
-                <p class="m-0 small"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
+                <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1" style="font-size: large;"></i></p>
             </div>
             <div class="card mt-2 mr-2 p-2">
                 <p class="text-muted small m-0">Created by {{object.creator}}</p>
@@ -67,7 +67,7 @@
                 </p>
             </div>
         </div>
-        <div id="udf-{{object.id}}-preview" class="collapse mt-3 rounded">
+        <div id="udf-{{object.id}}-preview" class="collapse mt-3 rounded box-shadow">
             <form id="udf-{{object.id}}" class="bg-lightblue p-4 rounded">
                 {% crispy object.form %}
             </form>
