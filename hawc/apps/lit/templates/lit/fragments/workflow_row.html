@@ -1,7 +1,7 @@
 <div
   {% if obj_perms.edit_assessment or permissions.edit_assessment %}
     hx-get="{{ object.get_edit_url }}"
-    class="box-shadow p-3 rounded mb-4 clickable"
+    class="box-shadow p-3 rounded mb-4 clickable workflow-row"
     hx-indicator="#spinner-{{object.pk}}"
     title="Click to update" hx-swap="outerHTML"
   {% else %}
@@ -87,8 +87,8 @@
         </div>
       </div>
     </div>
+    </div>
+    <div class="mt-2 ml-1 d-flex justify-content-center text-center">
+      <i class="m-0 text-muted" style="max-width: 75%;">{{object.description}}</i>
+    </div>
   </div>
-  <div class="mt-2 ml-1 d-flex justify-content-center text-center">
-    <i class="m-0 text-muted" style="max-width: 800px;">{{object.description}}</i>
-  </div>
-</div>

@@ -1,4 +1,4 @@
-<div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form">
+<div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form" style="max-width: 90rem;">
   {% if form %}
     <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
       <form class="workflow-form" method=post enctype="multipart/form-data">
@@ -62,19 +62,21 @@
             <button class="btn btn-light"
                     id="workflow-cancel"
                     type='button'
-                    onclick="$(this).closest('.workflow-edit-row').remove()"
+                    onclick="delRow($(this).closest('.workflow-edit-row'))"
                     style="width: 10rem; height: 2rem;">
               Cancel
             </button>
           {% endif %}
         </div>
       </form>
+      {% include "common/helptext_popup_js.html" %}
+    </div>
   {% endif %}
-</div>
-</div>
-{% if form %}
-  <script type="text/javascript">
-    document.querySelector('#id_title').focus();
+  <script>
+    function delRow(elt) {
+      var scrollVal = $(elt).attr('scrolltop');
+      elt.remove()
+      $('body,html').animate({scrollTop: scrollVal}, 400);
+    }
   </script>
-  {% include "common/helptext_popup_js.html" %}
-{% endif %}
+</div>
