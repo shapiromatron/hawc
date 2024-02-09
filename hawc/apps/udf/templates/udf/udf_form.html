@@ -1,23 +1,23 @@
 {% extends "crumbless.html" %}
 
 {% block content %}
-<div class="row">
+  <div class="row">
     <div class="col-md-12 pad-form">
-    {% crispy form %}
+      {% crispy form %}
     </div>
-</div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-<script>
+  <script>
     $(window).ready(function() {
-        $("#schema-preview-btn").on("click", function() {
-            $("#schema-preview-frame").removeClass('show');
-        });
-        $("#schema-preview-btn").on("htmx:afterOnLoad", function() {
-            window.app.HAWCUtils.dynamicFormListeners();
-            $("#schema-preview-frame").collapse("show");
-        });
+      $("#schema-preview-btn").on("click", function() {
+        $("#schema-preview-frame").removeClass('show');
+      });
+      $("#schema-preview-btn").on("htmx:afterOnLoad", function() {
+        window.app.HAWCUtils.dynamicFormListeners();
+        $("#schema-preview-frame").collapse("show");
+      });
     });
-</script>
+  </script>
 {% endblock extrajs %}
