@@ -803,3 +803,48 @@ class TestReferenceViewSet:
         response = client.get(url)
         assert response.status_code == 200
         assert len(response.json()) == 1
+
+
+@pytest.mark.django_db
+class TestReferenceFilterTagViewSet:
+    def test_crud(self):
+        client = get_client("pm", api=True)
+
+        # create
+        url = reverse("lit:api:tags-list") + "?assessment_id=3"
+        data = {"name": "Test", "parent": 28}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 201
+        instance = response.json()
+        assert instance["name"] == "Test"
+
+        # detail
+        url = reverse("lit:api:tags-detail", args=(instance["id"],))
+        response = client.get(url, format="json")
+        assert response.json() == instance
+
+        # update
+        data = {"name": "Test2"}
+        response = client.patch(url, data, format="json")
+        assert response.status_code == 200
+        instance = response.json()
+        assert instance["name"] == "Test2"
+
+        # delete
+        response = client.delete(url, data, format="json")
+        assert response.status_code == 204
+
+    def test_move(self):
+        client = get_client("pm", api=True)
+        tags = models.ReferenceFilterTag.get_assessment_qs(3)
+        tag = tags.get(name="Tier I")
+        url = reverse("lit:api:tags-move", args=(tag.id,))
+
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier I", "Tier II", "Tier III"]
+
+        response = client.patch(url, {"newIndex": 2}, format="json")
+        assert response.json()["status"] is True
+
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier II", "Tier III", "Tier I"]

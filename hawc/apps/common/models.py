@@ -194,19 +194,6 @@ class AssessmentRootMixin:
         )
 
     @classmethod
-    def assessment_qs(cls, assessment_id):
-        include_root = False
-        if issubclass(cls, AssessmentRootMixin):
-            include_root = True
-        ids = (
-            cls.get_assessment_qs(assessment_id, include_root)
-            .order_by("depth")
-            .values_list("id", flat=True)
-        )
-        ids = list(ids)  # force evaluation
-        return cls.objects.filter(id__in=ids)
-
-    @classmethod
     def get_all_tags(cls, assessment_id):
         """
         Get all tags for the selected assessment.

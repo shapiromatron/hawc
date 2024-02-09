@@ -23,17 +23,17 @@
 
 
 {% block extrajs %}
-<script type="text/javascript">
-$(document).ready(function () {
+  <script type="text/javascript">
+    $(document).ready(function () {
   // move extra-content to appropriate location then make visible
-  $('#extra_content').insertBefore($('#div_id_rob_type')).removeClass('hidden');
-  $('#detail_display').insertAfter($('#div_id_rob_type')).removeClass('hidden');
+      $('#extra_content').insertBefore($('#div_id_rob_type')).removeClass('hidden');
+      $('#detail_display').insertAfter($('#div_id_rob_type')).removeClass('hidden');
   // handle selector change
-  window.app.HAWCUtils.onSelectChangeShowDetail(
-    document.getElementById("id_rob_type"),
-    document.getElementById("detail_display"),
-    document.getElementById("detail_library")
-  );
-});
-</script>
+      window.app.HAWCUtils.onSelectChangeShowDetail(
+        document.getElementById("id_rob_type"),
+        document.getElementById("detail_display"),
+        document.getElementById("detail_library")
+      );
+    });
+  </script>
 {% endblock extrajs %}

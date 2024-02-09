@@ -1,57 +1,57 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="eForm">
-        {% crispy form %}
-    </div>
+  <div id="eForm">
+    {% crispy form %}
+  </div>
 
-    <div id="egFormset">
-        <legend>Endpoint groups
-            <button class="float-right btn btn-primary"
-                    title="Add new group"
-                    type="button"
-                    id="addFormToFormset">+</button>
-        </legend>
-        {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
-    </div>
+  <div id="egFormset">
+    <legend>Endpoint groups
+      <button class="float-right btn btn-primary"
+              title="Add new group"
+              type="button"
+              id="addFormToFormset">+</button>
+    </legend>
+    {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+  </div>
 
-    <div id="egBenchmarkFormset">
-        <legend>Benchmark values</legend>
-        {% include "hawc/_formset_table_template.html" with showDeleteRow=False formset=benchmark_formset %}
-    </div>
+  <div id="egBenchmarkFormset">
+    <legend>Benchmark values</legend>
+    {% include "hawc/_formset_table_template.html" with showDeleteRow=False formset=benchmark_formset %}
+  </div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+  <script type="text/javascript">
 
     var OELwidget = function($el){
-        this.$el = $el;
-        this.startup();
+      this.$el = $el;
+      this.startup();
     };
     OELwidget.prototype = {
-        startup: function(){
-            $(document).on('change', '.doses', this.update.bind(this));
-            $('.doses').first().trigger('change');
-        },
-        update: function(){
-            var init = this.$el.val(),
-                opts = [
-                    '<option value="-999">---</option>',
-                ];
-            $('.doses').each(function(i, el){
-                opts.push($('<option>').text(el.value).attr('value', i));
-            });
-            this.$el.html(opts).val(init);
-        },
+      startup: function(){
+        $(document).on('change', '.doses', this.update.bind(this));
+        $('.doses').first().trigger('change');
+      },
+      update: function(){
+        var init = this.$el.val(),
+            opts = [
+          '<option value="-999">---</option>',
+        ];
+        $('.doses').each(function(i, el){
+          opts.push($('<option>').text(el.value).attr('value', i));
+        });
+        this.$el.html(opts).val(init);
+      },
     };
 
     window.addEventListener("DOMContentLoaded", function(){
-        new window.app.DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
-        $('#egFormset').insertBefore($('#eForm .form-actions'));
-        $('#egBenchmarkFormset').insertBefore($('#eForm .form-actions'));
-        new OELwidget($('#id_NOEL'));
-        new OELwidget($('#id_LOEL'));
+      new window.app.DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
+      $('#egFormset').insertBefore($('#eForm .form-actions'));
+      $('#egBenchmarkFormset').insertBefore($('#eForm .form-actions'));
+      new OELwidget($('#id_NOEL'));
+      new OELwidget($('#id_LOEL'));
     });
 
-</script>
+  </script>
 {% endblock extrajs %}

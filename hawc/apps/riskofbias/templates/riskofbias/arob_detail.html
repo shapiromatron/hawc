@@ -1,67 +1,67 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex">
-  <h2>{{assessment.get_rob_name_display}} requirements</h2>
-  {% if obj_perms.edit and crud == "Read" %}
-    {% actions %}
-      {% if obj_perms.edit_assessment %}
-      <span class="dropdown-header">{{assessment.get_rob_name_display}} settings</span>
-      <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
-      <div class="dropdown-divider"></div>
-      {% endif %}
+  <div class="d-flex">
+    <h2>{{assessment.get_rob_name_display}} requirements</h2>
+    {% if obj_perms.edit and crud == "Read" %}
+      {% actions %}
+        {% if obj_perms.edit_assessment %}
+          <span class="dropdown-header">{{assessment.get_rob_name_display}} settings</span>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_update' assessment.pk %}">Update requirements</a>
+          <div class="dropdown-divider"></div>
+        {% endif %}
 
-      <span class="dropdown-header">Study assignment</span>
-      <a class="dropdown-item" href="{% url 'riskofbias:rob_assignments' assessment.pk %}">View assignments</a>
+        <span class="dropdown-header">Study assignment</span>
+        <a class="dropdown-item" href="{% url 'riskofbias:rob_assignments' assessment.pk %}">View assignments</a>
 
-      {% if obj_perms.edit_assessment %}
-      <div class="dropdown-divider"></div>
-      <span class="dropdown-header">Data cleanup</span>
-      <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a>
-      {% endif %}
-    {% endactions %}
+        {% if obj_perms.edit_assessment %}
+          <div class="dropdown-divider"></div>
+          <span class="dropdown-header">Data cleanup</span>
+          <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' assessment.pk %}">Clean {{assessment.get_rob_name_display|lower}} responses</a>
+        {% endif %}
+      {% endactions %}
+    {% endif %}
+  </div>
+
+  {{assessment.rob_settings.help_text|safe}}
+
+  {% if no_data %}
+    {% include 'riskofbias/_arob_none_alert.html' %}
+  {% else %}
+    <nav class="my-3">
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-contact-tab" data-toggle="tab" data-target="#nav-overview" type="button" role="tab" aria-controls="nav-overview" aria-selected="false">Overview</button>
+        <button class="nav-link" id="nav-home-tab" data-toggle="tab" data-target="#nav-bioassay" type="button" role="tab" aria-controls="nav-bioassay" aria-selected="true">Bioassay</button>
+        <button class="nav-link" id="nav-profile-tab" data-toggle="tab" data-target="#nav-epi" type="button" role="tab" aria-controls="nav-epi" aria-selected="false">Epidemiology</button>
+        <button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-invitro" type="button" role="tab" aria-controls="nav-invitro" aria-selected="false">In Vitro</button>
+      </div>
+    </nav>
+    <div class="tab-content px-3" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
+        <h3>Requirements by Study Type</h3>
+        <table class="table table-sm table-striped">
+          {% bs4_colgroup '25,30,15,15,15' %}
+          {% bs4_thead 'Domain,Metric,Bioassay,Epidemiology,In Vitro' %}
+          <tbody>{% for metric in metrics %}
+            <tr>
+              <td>{{metric.domain.name}}{% debug_badge metric.domain_id %}</td>
+              <td>{{metric.name}}{% debug_badge metric.id %}</td>
+              <td>{{metric.required_animal|yesno:'✔,-'}}</td>
+              <td>{{metric.required_epi|yesno:'✔,-'}}</td>
+              <td>{{metric.required_invitro|yesno:'✔,-'}}</td>
+            </tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+      <div class="tab-pane fade" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
+        {% include "riskofbias/component/domain_list.html" with qs=bioassay_metrics %}
+      </div>
+      <div class="tab-pane fade" id="nav-epi" role="tabpanel" aria-labelledby="nav-epi-tab">
+        {% include "riskofbias/component/domain_list.html" with qs=epi_metrics %}
+      </div>
+      <div class="tab-pane fade" id="nav-invitro" role="tabpanel" aria-labelledby="nav-invitro-tab">
+        {% include "riskofbias/component/domain_list.html" with qs=invitro_metrics %}
+      </div>
+    </div>
   {% endif %}
-</div>
-
-{{assessment.rob_settings.help_text|safe}}
-
-{% if no_data %}
-{% include 'riskofbias/_arob_none_alert.html' %}
-{% else %}
-<nav class="my-3">
-  <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <button class="nav-link active" id="nav-contact-tab" data-toggle="tab" data-target="#nav-overview" type="button" role="tab" aria-controls="nav-overview" aria-selected="false">Overview</button>
-    <button class="nav-link" id="nav-home-tab" data-toggle="tab" data-target="#nav-bioassay" type="button" role="tab" aria-controls="nav-bioassay" aria-selected="true">Bioassay</button>
-    <button class="nav-link" id="nav-profile-tab" data-toggle="tab" data-target="#nav-epi" type="button" role="tab" aria-controls="nav-epi" aria-selected="false">Epidemiology</button>
-    <button class="nav-link" id="nav-contact-tab" data-toggle="tab" data-target="#nav-invitro" type="button" role="tab" aria-controls="nav-invitro" aria-selected="false">In Vitro</button>
-  </div>
-</nav>
-<div class="tab-content px-3" id="nav-tabContent">
-  <div class="tab-pane fade show active" id="nav-overview" role="tabpanel" aria-labelledby="nav-overview-tab">
-    <h3>Requirements by Study Type</h3>
-    <table class="table table-sm table-striped">
-      {% bs4_colgroup '25,30,15,15,15' %}
-      {% bs4_thead 'Domain,Metric,Bioassay,Epidemiology,In Vitro' %}
-      <tbody>{% for metric in metrics %}
-        <tr>
-          <td>{{metric.domain.name}}{% debug_badge metric.domain_id %}</td>
-          <td>{{metric.name}}{% debug_badge metric.id %}</td>
-          <td>{{metric.required_animal|yesno:'✔,-'}}</td>
-          <td>{{metric.required_epi|yesno:'✔,-'}}</td>
-          <td>{{metric.required_invitro|yesno:'✔,-'}}</td>
-        </tr>
-      {% endfor %}</tbody>
-    </table>
-  </div>
-  <div class="tab-pane fade" id="nav-bioassay" role="tabpanel" aria-labelledby="nav-bioassay-tab">
-  {% include "riskofbias/component/domain_list.html" with qs=bioassay_metrics %}
-  </div>
-  <div class="tab-pane fade" id="nav-epi" role="tabpanel" aria-labelledby="nav-epi-tab">
-  {% include "riskofbias/component/domain_list.html" with qs=epi_metrics %}
-  </div>
-  <div class="tab-pane fade" id="nav-invitro" role="tabpanel" aria-labelledby="nav-invitro-tab">
-  {% include "riskofbias/component/domain_list.html" with qs=invitro_metrics %}
-  </div>
-</div>
-{% endif %}
 {% endblock %}

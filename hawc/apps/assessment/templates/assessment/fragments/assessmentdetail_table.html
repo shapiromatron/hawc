@@ -7,8 +7,8 @@
 {% optional_table_row "Report identifier" content %}
 {% optional_table_row "Peer review status" object.get_peer_review_status_display %}
 {% for key, value in object.extra.items %}
-<tr>
+  <tr>
     <th>{{key}}</th>
     <td>{{value}}</td>
-</tr>
+  </tr>
 {% endfor %}
