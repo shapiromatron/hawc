@@ -1,39 +1,38 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2>Assessment model forms</h2>
-  <p class="text-muted">...</p>
+  <div class="d-flex align-items-start">
+    <h2 class="mt-0 mb-2">{{assessment.name}} UDF Bindings</h2>
+    {% actions %}
+      {% if obj_perms.edit %}
+        <a class="dropdown-item" href="{% url 'udf:tag_create' assessment.pk %}">Create literature tag binding</a>
+        <a class="dropdown-item" href="{% url 'udf:model_create' assessment.pk %}">Create data extraction binding</a>
+        <a class="dropdown-item" href="{% url 'udf:udf_list' %}">View UDFs</a>
+      {% endif %}
+    {% endactions %}
 
-  <div class="d-flex">
-    <h3>Forms bound to tags:</h3>
-    {% if obj_perms.edit %}
-      {% actions %}
-        <a class="dropdown-item" href="{% url 'udf:tag_create' assessment.pk %}">Create</a>
-      {% endactions %}
-    {% endif %}
   </div>
-  <ul>
-    {% for object in tag_object_list %}
-      <li><a href={{object.get_absolute_url}}>{{object}}</a></li>
-    {% empty %}
-      <li><i>No custom forms have been assigned to literature tags.</i></li>
-    {% endfor %}
-  </ul>
+  {% if tag_object_list %}
+    <div class="mt-2 mb-4 vw75">
+      <div class="list-group mb-4 rounded box-shadow">
+        {% for object in tag_object_list %}
+          {% include "udf/fragments/_udf_tag_item.html" with udf=object.form binding=object tagbinding=True only %}
+        {% endfor %}
+        {% for object in object_list %}
+          {% include "udf/fragments/_udf_tag_item.html" with udf=object.form binding=object modelbinding=True only %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
 
-  <div class="d-flex">
-    <h3>Forms bound to data extraction elements:</h3>
-    {% if obj_perms.edit %}
-      {% actions %}
-        <a class="dropdown-item" href="{% url 'udf:model_create' assessment.pk %}">Create</a>
-      {% endactions %}
-    {% endif %}
-  </div>
-  <ul>
-    {% for object in object_list %}
-      <li><a href={{object.get_absolute_url}}>{{object}}</a></li>
-    {% empty %}
-      <li><i>No custom forms have been bound to data extractions.</i></li>
-    {% endfor %}
-  </ul>
+  {% if not object_list and not tag_object_list %}
+    <div class="alert alert-warning text-center">No UDF model bindings created yet.</div>
+  {% endif %}
 
 {% endblock %}
+
+{% block extrajs %}
+  <script>
+    window.app.HAWCUtils.dynamicFormListeners();
+  </script>
+{% endblock extrajs %}

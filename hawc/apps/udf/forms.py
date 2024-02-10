@@ -133,11 +133,7 @@ class ModelBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = (
-            self.instance.get_absolute_url()
-            if self.instance.id
-            else self.instance.assessment.get_udf_list_url()
-        )
+        cancel_url = self.instance.assessment.get_udf_list_url()
         legend_text = "Update a model binding" if self.instance.id else "Create a model binding"
         helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper

@@ -1,3 +1,5 @@
+import itertools
+
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -38,7 +40,7 @@ class UDFListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         for udf in context["object_list"]:
             udf.form = dynamic_forms.Schema.model_validate(udf.schema).to_form(prefix=udf.id)
-            udf.user_can_edit = udf.user_can_edit(self.request.user)
+            udf.can_edit = udf.user_can_edit(self.request.user)
         return context
 
 
@@ -126,8 +128,15 @@ class UDFBindingList(BaseList):
         return super().get_queryset().filter(assessment=self.assessment)
 
     def get_context_data(self, **kwargs):
-        kwargs.update(tag_object_list=models.TagBinding.objects.filter(assessment=self.assessment))
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context["tag_object_list"] = list(
+            models.TagBinding.objects.filter(assessment=self.assessment).prefetch_related(
+                "tag", "form"
+            )
+        )
+        for binding in itertools.chain(context["object_list"], context["tag_object_list"]):
+            binding.form.can_edit = binding.form.user_can_edit(self.request.user)
+        return context
 
 
 # Model binding views
@@ -159,6 +168,11 @@ class UpdateModelBindingView(BaseUpdate):
     model = models.ModelBinding
     form_class = forms.ModelBindingForm
     success_message = "Model form binding updated."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(user=self.request.user)
+        return kwargs
 
     def get_success_url(self):
         return self.assessment.get_udf_list_url()
