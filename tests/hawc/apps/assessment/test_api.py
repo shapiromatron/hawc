@@ -20,10 +20,16 @@ class TestDatasetViewSet:
         # team-member can view anything, including versions and unpublished
         assert client.login(username="team@hawcproject.org", password="pw") is True
         for url, code in [
-            ( reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200,),
-            (reverse("assessment:api:dataset-data",args=(db_keys.dataset_final,)),200,),
             (
-                reverse('assessment:api:dataset-version', args=(db_keys.dataset_final, 1)),
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)),
                 200,
             ),
             (
