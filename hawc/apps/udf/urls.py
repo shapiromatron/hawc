@@ -39,31 +39,6 @@ urlpatterns = (
             {"action": "delete"},
             name="binding_delete",
         ),
-        path(
-            "assessment/<int:pk>/create-model/",
-            views.CreateModelBindingView.as_view(),
-            name="model_create",
-        ),
-        path(
-            "model/<int:pk>/update/",
-            views.UpdateModelBindingView.as_view(),
-            name="model_update",
-        ),
-        path("model/<int:pk>/", views.ModelBindingDetailView.as_view(), name="model_detail"),
-        path("model/<int:pk>/delete/", views.DeleteModelBindingView.as_view(), name="model_delete"),
-        # Tag binding views
-        path(
-            "assessment/<int:pk>/tag/create/",
-            views.CreateTagBindingView.as_view(),
-            name="tag_create",
-        ),
-        path(
-            "tag/<int:pk>/update/",
-            views.UpdateTagBindingView.as_view(),
-            name="tag_update",
-        ),
-        path("tag/<int:pk>/", views.TagBindingDetailView.as_view(), name="tag_detail"),
-        path("tag/<int:pk>/delete/", views.DeleteTagBindingView.as_view(), name="tag_delete"),
     ]
     if settings.HAWC_FEATURES.ENABLE_UDF
     else []
