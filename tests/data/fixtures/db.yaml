@@ -1521,7 +1521,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 2
-    animal_version: 2
+    animal_version: 1
 - model: assessment.assessment
   pk: 2
   fields:
