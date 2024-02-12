@@ -108,6 +108,12 @@ class ModelBinding(models.Model):
     def get_absolute_url(self):
         return reverse("udf:model_detail", args=(self.id,))
 
+    def get_update_url(self):
+        return reverse("udf:binding_update", args=("model", self.id))
+
+    def get_delete_url(self):
+        return reverse("udf:binding_delete", args=("model", self.id))
+
 
 class TagBinding(models.Model):
     assessment = models.ForeignKey(
@@ -154,6 +160,12 @@ class TagBinding(models.Model):
 
     def get_absolute_url(self):
         return reverse("udf:tag_detail", args=(self.id,))
+
+    def get_update_url(self):
+        return reverse("udf:binding_update", args=("tag", self.id))
+
+    def get_delete_url(self):
+        return reverse("udf:binding_delete", args=("tag", self.id))
 
 
 class ModelUDFContent(models.Model):

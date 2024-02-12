@@ -1,25 +1,25 @@
-<div class="list-group-item list-group-item-flush p-4 pl-3 {% if binding %}binding-row{% endif %}">
+<div class="list-group-item list-group-item-flush p-4" {% if binding %} hx-target="this" hx-swap="outerHTML" id="{{binding.id}}-binding-row" {% endif %}>
   <div class="d-flex align-items-start justify-content-between">
     <div class="col-md-11 px-0">
       <div class="d-flex align-items-center rounded {% if binding %}binding-title{% endif %}">
-        <p class="mb-0" style="font-size: 1.25rem;"><b>{{udf.name}}</b></p>
+        <p class="mb-0 font-weight-bold" style="font-size: 1.25rem;"><span {% if binding %} class="rounded bg-lightblue px-2 py-1" {% endif %}>{{udf.name}}</span></p>
         {% if udf.deprecated %}
           <span class="badge ml-2 p-1 text-danger border border-danger">
             Deprecated</span>
         {% endif %}
         <p class="my-0 ml-1" style="font-size: 1.25rem;">
-          {% if tagbinding %} bound to {% include "lit/_nested_tag.html" with tag=binding.tag extra_classes="my-0 mx-1 px-1 py-0" %} tag{% endif %}
-          {% if modelbinding %} bound to <b>{{binding.content_type}}</b> {% endif %}
+          {% if binding_type == 'tag' %} bound to {% include "lit/_nested_tag.html" with tag=binding.tag extra_classes="my-0 mx-1 px-1 py-0" %} tag{% endif %}
+          {% if binding_type == 'model' %} bound to <b>{{binding.content_type}}</b> {% endif %}
         </p>
       </div>
-      <i class="text-muted my-0 d-block" style="text-overflow:ellipsis; overflow:hidden; white-space: nowrap;">{{udf.description}}</i>
+      <i class="text-muted my-0 d-block" title="{{udf.description}}" style="text-overflow:ellipsis; overflow:hidden; white-space: nowrap;">{{udf.description}}</i>
     </div>
     {% if binding %}
+      <i class="fa fa-spinner fa-spin htmx-indicator mr-2" id="spinner-{{binding_type}}-{{binding.pk}}" aria-hidden="true"></i>
       <div class="dropdown btn-group flex-shrink-0 ">
-        <a class="btn btn-secondary btn-sm dropdown-toggle" id="{{binding.id}}dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{binding.id}}dropdownToggle">
-          <a class="dropdown-item" type="button" href="{% url 'udf:model_update' binding.pk %}">Update binding</a>
-          <a class="dropdown-item" type="button" href="{% url 'udf:model_delete' binding.pk %}">Delete binding</button>
+        <a class="btn btn-secondary btn-sm dropdown-toggle" id="{{binding_type}}-{{binding.id}}dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{binding_type}}-{{binding.id}}dropdownToggle">
+          <button class="dropdown-item" type="button" hx-indicator="#spinner-{{binding_type}}-{{binding.pk}}" hx-get="{{ binding.get_update_url }}">Update binding</button>
           <a class="dropdown-item" type="button" href="{{ udf.get_update_url }}">Update UDF</a>
         </div>
       </div>
@@ -31,7 +31,7 @@
   </div>
   <div class="d-flex align-items-start flex-wrap udf-info-row">
     <div class="card mt-2 mr-2 flex-shrink-0">
-      <a class="px-3 py-2 clickable box-shadow-minor" data-toggle="collapse" href="#udf-{{udf.id}}-{{binding.id}}-preview" aria-expanded="false" aria-controls="udf-{{udf.id}}-{{binding.id}}-preview">Preview Form &nbsp;<i class="fa fa-angle-down" aria-hidden="true"></i> </a>
+      <a class="px-3 py-2 clickable box-shadow-minor" data-toggle="collapse" href="#udf-{{binding_type}}-{{udf.id}}-{{binding.id}}-preview" aria-expanded="false" aria-controls="udf-{{udf.id}}-{{binding.id}}-preview">Preview Form &nbsp;<i class="fa fa-angle-down" aria-hidden="true"></i> </a>
     </div>
 
     {% if not binding %}
@@ -50,8 +50,8 @@
     {% endif %}
     <div class="card mt-2 mr-2 flex-shrink-0" style="width: 10rem;">
       {% if udf.editors.exists %}
-        <a class="p-2 mb-0 text-center box-shadow-minor  {% if udf.editors.exists %} clickable {% endif %}" data-toggle="collapse" href="#udf-{{udf.id}}-{{binding.id}}-editors" aria-expanded="false" aria-controls="#udf-{{udf.id}}-{{binding.id}}-editors" style="position:relative; z-index: 1; scrollbar-gutter: stable; height:2.6rem;"> {{udf.editors.count}} {% if binding %} form {% endif %} editor{{udf.editors.count|pluralize}} &nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
-        <div id="udf-{{udf.id}}-{{binding.id}}-editors" class="collapse list-group list-group-flush rounded" style="position:relative; z-index: 0; max-height: 10rem; overflow-y: scroll;">
+        <a class="p-2 mb-0 text-center box-shadow-minor  {% if udf.editors.exists %} clickable {% endif %}" data-toggle="collapse" href="#udf-{{binding_type}}-{{udf.id}}-{{binding.id}}-editors" aria-expanded="false" aria-controls="#udf-{{binding_type}}-{{udf.id}}-{{binding.id}}-editors" style="position:relative; z-index: 1; scrollbar-gutter: stable; height:2.6rem;"> {{udf.editors.count}} {% if binding %} form {% endif %} editor{{udf.editors.count|pluralize}} &nbsp; <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+        <div id="udf-{{binding_type}}-{{udf.id}}-{{binding.id}}-editors" class="collapse list-group list-group-flush rounded" style="position:relative; z-index: 0; max-height: 10rem; overflow-y: scroll;">
           {% for editor in udf.editors.all %}
             <div class="list-group-item py-1 px-3 small">{{editor}}</div>
           {% endfor %}
@@ -60,9 +60,11 @@
         <p class="p-2 mb-0 text-center text-muted">No editors</p>
       {% endif %}
     </div>
-    <div class="card mt-2 mr-2 p-2 {{ udf.published|yesno:'border-success text-success,text-muted' }}" title="{{ udf.published|yesno:'Published,Unpublished' }}">
-      <p class="m-0"><i class="fa fa-{{ udf.published|yesno:'eye,eye-slash' }} px-1" style="font-size: large;"></i></p>
-    </div>
+    {% if not binding %}
+      <div class="card mt-2 mr-2 p-2 {{ udf.published|yesno:'border-success text-success,text-muted' }}" title="{{ udf.published|yesno:'Published,Unpublished' }}">
+        <p class="m-0"><i class="fa fa-{{ udf.published|yesno:'eye,eye-slash' }} px-1" style="font-size: large;"></i></p>
+      </div>
+    {% endif %}
 
     <div class="card mt-2 mr-2 p-2">
       <p class="text-muted small m-0">
@@ -92,8 +94,8 @@
       </p>
     </div>
   </div>
-  <div id="udf-{{udf.id}}-{{binding.id}}-preview" class="collapse mt-3 rounded box-shadow">
-    <form id="udf-{{udf.id}}-{{binding.id}}" class="bg-lightblue p-4 rounded">
+  <div id="udf-{{binding_type}}-{{udf.id}}-{{binding.id}}-preview" class="collapse mt-3 rounded box-shadow">
+    <form id="udf-{{binding_type}}-{{udf.id}}-{{binding.id}}" class="bg-lightblue p-4 rounded">
       {% if binding %}
         {% crispy binding.form_instance %}
       {% else %}

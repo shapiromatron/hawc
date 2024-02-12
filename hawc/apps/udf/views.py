@@ -1,6 +1,8 @@
 import itertools
 
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import BadRequest, PermissionDenied
+from django.http import HttpRequest
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
@@ -19,6 +21,7 @@ from hawc.apps.common.views import (
     htmx_required,
 )
 
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from . import forms, models
 from .cache import UDFCache
 
@@ -137,6 +140,93 @@ class UDFBindingList(BaseList):
         for binding in itertools.chain(context["object_list"], context["tag_object_list"]):
             binding.form.can_edit = binding.form.user_can_edit(self.request.user)
         return context
+
+
+class BindingViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = Assessment
+    model = models.ModelBinding
+    form = forms.ModelBindingForm
+    binding_type = "tag"
+
+    form_fragment = "udf/fragments/binding_edit_row.html"
+    detail_fragment = "udf/fragments/_udf_item.html"
+    list_fragment = "udf/fragments/binding_list.html"
+
+    def dispatch(self, request: HttpRequest, *args, **kwargs):
+        self.binding_type = self.kwargs.get("binding_type", None)
+        if self.binding_type == "tag":
+            self.model = models.TagBinding
+            self.form = forms.TagBindingForm
+        elif self.binding_type == "model":
+            self.model = models.ModelBinding
+            self.form = forms.ModelBindingForm
+        else:
+            raise BadRequest("Must provide a 'tag' or 'model' binding_type argument.")
+        return super().dispatch(request, *args, **kwargs)
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        # prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+        return render(
+            request,
+            self.detail_fragment,
+            self.get_context_data(
+                binding_type=self.binding_type,
+                udf=request.item.object.form,
+                binding=request.item.object,
+            ),
+        )
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = self.form(request.POST, parent=request.item.parent, user=request.user)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = self.form(parent=request.item.parent, user=request.user)
+            template = self.list_fragment
+        context = self.get_context_data(form=form)
+        object_list = self.model.objects.filter(
+            assessment=request.item.assessment
+        ).prefetch_related("admission_tags", "removal_tags")
+        context.update(
+            object_list=object_list,
+            binding_type=self.binding_type,
+            udf=request.item.object.form,
+            binding=request.item.object,
+        )
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = self.form(request.POST, instance=request.item.object, user=request.user)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = self.form(data=None, instance=request.item.object, user=request.user)
+        context = self.get_context_data(
+            form=form,
+            binding_type=self.binding_type,
+            udf=request.item.object.form,
+            binding=request.item.object,
+        )
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        form = self.form(data=None, instance=request.item.object, user=request.user)
+        context = self.get_context_data(form=form, binding_type=self.binding_type)
+        return render(request, self.form_fragment, context)
 
 
 # Model binding views

@@ -1,0 +1,16 @@
+{% if tag_object_list or object_list %}
+  <div class="mt-2 mb-4 vw75">
+    <div class="list-group mb-4 rounded box-shadow">
+      {% for object in tag_object_list %}
+        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type="tag" only %}
+      {% endfor %}
+      {% for object in object_list %}
+        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type="model" only %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% if not object_list and not tag_object_list %}
+  <div class="alert alert-warning text-center">No UDF model bindings created yet.</div>
+{% endif %}

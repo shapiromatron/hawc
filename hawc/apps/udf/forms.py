@@ -1,4 +1,3 @@
-from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
@@ -133,9 +132,18 @@ class ModelBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = self.instance.assessment.get_udf_list_url()
-        legend_text = "Update a model binding" if self.instance.id else "Create a model binding"
-        helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("form"),
+                cfl.Column(
+                    cfl.HTML('<p style="font-size: 1.25rem;">bound to</p>'),
+                    css_class="col-md-auto d-flex align-items-center px-4",
+                ),
+                cfl.Column("content_type"),
+            )
+        )
         return helper
 
 
@@ -166,11 +174,16 @@ class TagBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = (
-            self.instance.get_absolute_url()
-            if self.instance.id
-            else self.instance.assessment.get_udf_list_url()
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("form"),
+                cfl.Column(
+                    cfl.HTML('<p style="font-size: 1.25rem;">bound to</p>'),
+                    css_class="col-md-auto d-flex align-items-center px-4",
+                ),
+                cfl.Column("tag"),
+            )
         )
-        legend_text = "Update a tag binding" if self.instance.id else "Create a tag binding"
-        helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper

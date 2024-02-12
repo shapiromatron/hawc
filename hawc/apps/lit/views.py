@@ -393,7 +393,7 @@ class TagReferences(BaseFilterList):
             lambda: {
                 tag.id: tag.nested_name.replace("|", " ➤ ")
                 for tag in models.ReferenceFilterTag.annotate_nested_names(
-                    models.ReferenceFilterTag.assessment_qs(self.assessment.id)
+                    models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
                 )
             },
             f"assessment-{self.assessment.id}-tag-names",
