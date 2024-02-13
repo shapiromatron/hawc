@@ -1,22 +1,22 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<h2>HAWC Dataset Interactivity</h2>
-<p class="mb-3">Some visuals allow deeper interactivity by displaying modal or popup menus which link to extracted data in HAWC.  When using data queries from HAWC, interactivity is built-in and can be configured when configuring the visualization. For user-uploaded Excel datasets, this interactivity can also be configured, but you'll need to use the correct column headers when uploading a dataset. In addition, the corresponding values used in the data rows must be valid identifiers in the current assessment. The following table shows which column headers can be used to allow enable interactivity:</p>
-<table class="table table-sm table-bordered">
+  <h2>HAWC Dataset Interactivity</h2>
+  <p class="mb-3">Some visuals allow deeper interactivity by displaying modal or popup menus which link to extracted data in HAWC.  When using data queries from HAWC, interactivity is built-in and can be configured when configuring the visualization. For user-uploaded Excel datasets, this interactivity can also be configured, but you'll need to use the correct column headers when uploading a dataset. In addition, the corresponding values used in the data rows must be valid identifiers in the current assessment. The following table shows which column headers can be used to allow enable interactivity:</p>
+  <table class="table table-sm table-bordered">
     {% bs4_thead 'Input column header*,Available action(s)' %}
     <tbody id="tblBody"></tbody>
     <tfoot>
-    {% bs4_fullrow '* Column header names are case sensitive. User permissions are checked whenever a user attempts to access any resource in HAWC, so you must use the correct HAWC IDs to enable these interactive features.' %}
+      {% bs4_fullrow '* Column header names are case sensitive. User permissions are checked whenever a user attempts to access any resource in HAWC, so you must use the correct HAWC IDs to enable these interactive features.' %}
     </tfoot>
-</table>
+  </table>
 {% endblock content %}
 
 {% block extrajs %}
-<script type="text/javascript">
+  <script type="text/javascript">
     window.app.startup("summaryInteractivityStartup", app => {
-        const el = document.getElementById("tblBody");
-        app.renderExtensionTableBody(el);
+      const el = document.getElementById("tblBody");
+      app.renderExtensionTableBody(el);
     });
-</script>
+  </script>
 {% endblock %}

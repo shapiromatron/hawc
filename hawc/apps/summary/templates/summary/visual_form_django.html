@@ -1,25 +1,25 @@
 {% extends './visual_form.html' %}
 
 {% block content %}
-    {% crispy form %}
-    {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
+  {% crispy form %}
+  {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
 
 {% block extrajs %}
-{{ smart_tag_form.media }}
-<script type="text/javascript">
+  {{ smart_tag_form.media }}
+  <script type="text/javascript">
     window.app.startup("summaryFormsStartup", function (summaryForms) {
-        {% if crud == "Create" %}
+      {% if crud == "Create" %}
         $('#id_title').on('keyup', function () {
-            $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
+          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
         });
-        {% endif %}
-        window.app.startup("smartTagsStartup", function (smartTags) {
-            new smartTags.SmartTagEditor(
-                $('#id_caption'),
-                {submitEl: '#visualForm', takeFocusEl: "#id_title"}
-            );
-        })
+      {% endif %}
+      window.app.startup("smartTagsStartup", function (smartTags) {
+        new smartTags.SmartTagEditor(
+          $('#id_caption'),
+          {submitEl: '#visualForm', takeFocusEl: "#id_title"}
+        );
+      })
     });
-</script>
+  </script>
 {% endblock %}

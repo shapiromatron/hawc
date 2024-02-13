@@ -5,11 +5,11 @@
 {% endblock content %}
 
 {% block extrajs %}
-<script>
-$('#id_debug').prop('checked', window.localStorage.getItem('hawc-debug-badge')=="true");
-$('form').on('submit', function(){
-  window.localStorage.setItem('hawc-debug-badge', $('#id_debug').prop('checked').toString())
-  return true;
-})
-</script>
+  <script>
+    $('#id_debug').prop('checked', window.localStorage.getItem('hawc-debug-badge')=="true");
+    $('form').on('submit', function(){
+      window.localStorage.setItem('hawc-debug-badge', $('#id_debug').prop('checked').toString())
+      return true;
+    })
+  </script>
 {% endblock %}
