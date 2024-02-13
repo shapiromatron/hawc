@@ -15,19 +15,8 @@
       <i class="text-muted my-0 d-block" title="{{udf.description}}" style="text-overflow:ellipsis; overflow:hidden; white-space: nowrap;">{{udf.description}}</i>
     </div>
     {% if binding %}
-      {% if udf.can_edit or permissions.edit_assessment or obj_perms.edit_assessment %}
-      <i class="fa fa-spinner fa-spin htmx-indicator mr-2" id="spinner-{{binding_type}}-{{binding.pk}}" aria-hidden="true"></i>
-      <div class="dropdown btn-group flex-shrink-0 ">
-        <a class="btn btn-secondary btn-sm dropdown-toggle" id="{{binding_type}}-{{binding.id}}dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{binding_type}}-{{binding.id}}dropdownToggle">
-          {% if permissions.edit_assessment or obj_perms.edit_assessment  %}
-          <button class="dropdown-item" type="button" hx-indicator="#spinner-{{binding_type}}-{{binding.pk}}" hx-get="{{ binding.get_update_url }}">Update binding</button>
-          {% endif %}
-          {% if udf.can_edit %}
-          <a class="dropdown-item" type="button" href="{{ udf.get_update_url }}">Update UDF</a>
-          {% endif %}
-        </div>
-      </div>
+      {% if permissions.edit_assessment or obj_perms.edit_assessment %}
+        <button class="btn outline-btn px-3" type="button" hx-indicator="#spinner-{{binding_type}}-{{binding.pk}}" hx-get="{{ binding.get_update_url }}">Update</button>
       {% endif %}
     {% elif udf.can_edit %}
       <a class="btn outline-btn px-3" href="{{udf.get_update_url}}">
@@ -63,7 +52,7 @@
           {% endfor %}
         </div>
       {% else %}
-        <p class="p-2 mb-0 text-center text-muted">No editors</p>
+        <p class="p-2 mb-0 text-center text-muted">No {% if binding%}form {% endif %}editors</p>
       {% endif %}
     </div>
     {% if not binding %}
