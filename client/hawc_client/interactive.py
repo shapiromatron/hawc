@@ -28,7 +28,7 @@ async def fetch_png(page: Page) -> BytesIO:
     await remove_dj_toolbar(page)
 
     # Check for an error; the page should load after 10 seconds even if its waiting for data
-    await expect(page.get_by_test_id("error")).to_have_count(0, timeout=10)
+    await expect(page.get_by_test_id("error")).to_have_count(0, timeout=10 * 1000)
 
     viz_type = await page.evaluate(
         "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"
@@ -90,6 +90,13 @@ class InteractiveHawcClient:
     """
 
     def __init__(self, client: BaseClient, headless: bool = True, timeout: float | None = None):
+        """_summary_
+
+        Args:
+            client (BaseClient): the current client
+            headless (bool, optional): _description_. Defaults to True.
+            timeout (float | None, optional): Timeout, in seconds
+        """
         self.client = client
         self.headless = headless
         self.timeout = timeout
@@ -99,7 +106,7 @@ class InteractiveHawcClient:
         browser = await self.playwright.chromium.launch(headless=self.headless)
         self.context = await browser.new_context()
         if self.timeout:
-            self.context.set_default_timeout(self.timeout)
+            self.context.set_default_timeout(self.timeout * 1000)  # sec to ms
         self.page = await self.context.new_page()
         cookies = [
             SetCookieParam(name=k, value=v, url=self.client.session.root_url)
