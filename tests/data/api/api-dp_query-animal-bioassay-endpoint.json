@@ -77,7 +77,6 @@
     "description_settings": [
       {
         "dpe": "study",
-        "field_index": "study name",
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
@@ -85,7 +84,6 @@
       },
       {
         "dpe": "experiment",
-        "field_index": "experiment name",
         "field_name": "experiment name",
         "header_name": "experiment name",
         "header_style": "header",
@@ -93,7 +91,6 @@
       },
       {
         "dpe": "animal_group",
-        "field_index": "animal group name",
         "field_name": "animal group name",
         "header_name": "animal group name",
         "header_style": "header",
@@ -101,7 +98,6 @@
       },
       {
         "dpe": "endpoint_complete",
-        "field_index": "endpoint name",
         "field_name": "endpoint name",
         "header_name": "endpoint name",
         "header_style": "header",

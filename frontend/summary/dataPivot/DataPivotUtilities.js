@@ -339,10 +339,9 @@ class _DataPivot_settings_description {
 
     data_push() {
         this.values.field_name = this.content.field_name.find("option:selected").val();
-        this.values.field_index = this.content.field_name.find("option:selected").val();
+        this.values.header_name = this.content.header_name.val();
         this.values.header_style = this.content.header_style.find("option:selected").val();
         this.values.text_style = this.content.text_style.find("option:selected").val();
-        this.values.header_name = this.content.header_name.val();
         this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
         this.values.dpe = NULL_CASE;
         if (this.values.header_name === "") {

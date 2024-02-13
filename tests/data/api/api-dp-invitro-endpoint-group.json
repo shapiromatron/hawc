@@ -55,7 +55,6 @@
     "description_settings": [
       {
         "dpe": "---",
-        "field_index": "study name",
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
@@ -63,7 +62,6 @@
       },
       {
         "dpe": "---",
-        "field_index": "chemical name",
         "field_name": "chemical name",
         "header_name": "chemical name",
         "header_style": "header",
@@ -71,7 +69,6 @@
       },
       {
         "dpe": "---",
-        "field_index": "cell species",
         "field_name": "cell species",
         "header_name": "cell species",
         "header_style": "header",
@@ -79,7 +76,6 @@
       },
       {
         "dpe": "---",
-        "field_index": "IVEndpoint name",
         "field_name": "IVEndpoint name",
         "header_name": "IVEndpoint name",
         "header_style": "header",
@@ -87,7 +83,6 @@
       },
       {
         "dpe": "---",
-        "field_index": "---",
         "field_name": "---",
         "header_name": "---",
         "header_style": "header",
