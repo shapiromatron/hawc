@@ -8,8 +8,8 @@
             Deprecated</span>
         {% endif %}
         <p class="my-0 ml-1" style="font-size: 1.25rem;">
-          {% if binding_type and binding_type == tag_binding_type %} bound to <span class="refTag my-0 mx-1 px-1 py-0">{{binding.tag_name}}</span> tag{% endif %}
-          {% if binding_type and binding_type == model_binding_type %} bound to <b>{{binding.content_type}}</b> {% endif %}
+          {% if binding_type and binding_type == tag_binding %} bound to <span class="refTag my-0 mx-1 px-1 py-0">{{binding.tag_name}}</span> tag{% endif %}
+          {% if binding_type and binding_type == model_binding %} bound to <b>{{binding.content_type}}</b> {% endif %}
         </p>
       </div>
       <i class="text-muted my-0 d-block" title="{{udf.description}}" style="text-overflow:ellipsis; overflow:hidden; white-space: nowrap;">{{udf.description}}</i>

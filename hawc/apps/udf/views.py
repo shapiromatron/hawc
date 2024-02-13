@@ -135,8 +135,8 @@ class UDFBindingList(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            tag_binding_type=BindingType.TAG.value,
-            model_binding_type=BindingType.MODEL.value,
+            tag_binding=BindingType.TAG.value,
+            model_binding=BindingType.MODEL.value,
             tag_object_list=list(
                 models.TagBinding.objects.filter(assessment=self.assessment)
                 .prefetch_related("tag", "form")
@@ -179,8 +179,8 @@ class BindingViewSet(HtmxViewSet):
         return super().get_context_data(
             *args,
             **kwargs,
-            tag_binding_type=BindingType.TAG.value,
-            model_binding_type=BindingType.MODEL.value,
+            tag_binding=BindingType.TAG.value,
+            model_binding=BindingType.MODEL.value,
             binding_type=self.binding_type,
         )
 

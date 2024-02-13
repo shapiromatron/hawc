@@ -3,10 +3,10 @@
     <div class="list-group mb-4 rounded">
       {% include "udf/fragments/binding_edit_row.html" %}
       {% for object in tag_object_list %}
-        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=tag_binding_type %}
+        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=tag_binding %}
       {% endfor %}
       {% for object in object_list %}
-        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=model_binding_type %}
+        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=model_binding %}
       {% endfor %}
     </div>
   </div>
