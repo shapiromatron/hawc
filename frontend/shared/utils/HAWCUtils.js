@@ -80,8 +80,9 @@ class HAWCUtils {
     static addAlert(content, $div) {
         $div = $div || $("#content");
         $div.prepend(
-            $('<div class="alert alert-danger">')
+            $('<div class="alert alert-danger" data-testid="error">')
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+                .append("<i class='fa fa-fw fa-exclamation-triangle mr-1'></i>")
                 .append(content)
         );
     }

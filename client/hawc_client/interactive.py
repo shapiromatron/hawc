@@ -28,7 +28,7 @@ async def fetch_png(page: Page) -> BytesIO:
     await remove_dj_toolbar(page)
 
     # Check for an error; the page should load after 10 seconds even if its waiting for data
-    await expect(page.get_by_test_id("visual-error")).to_have_count(0, timeout=10)
+    await expect(page.get_by_test_id("error")).to_have_count(0, timeout=10)
 
     viz_type = await page.evaluate(
         "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"

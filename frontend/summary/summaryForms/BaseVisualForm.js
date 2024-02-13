@@ -85,7 +85,7 @@ class BaseVisualForm {
         })
             .fail(function() {
                 HAWCUtils.addAlert(
-                    "<p data-testid='visual-error'><strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed.</p>"
+                    "<strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed."
                 );
             })
             .always(function() {

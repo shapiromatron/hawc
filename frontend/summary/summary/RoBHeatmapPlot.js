@@ -11,6 +11,7 @@ import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
 import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
@@ -31,8 +32,9 @@ class RoBHeatmapPlot extends D3Visualization {
         this.processData();
         if (this.cells_data.length === 0) {
             let robName = this.data.assessment_rob_name.toLowerCase();
-            return this.plot_div.html(
-                `<p data-testid="visual-error">Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
+            return HAWCUtils.addAlert(
+                `Error: no studies with ${robName} selected. Please select at least one study with ${robName}.`,
+                this.plot_div
             );
         }
         this.get_plot_sizes();

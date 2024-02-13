@@ -2,6 +2,7 @@ import {inject, observer, Provider} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
+import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
@@ -35,9 +36,9 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
         }
     },
     getErrorDiv = function() {
-        return `<div class="alert alert-danger" role="alert" data-testid="visual-error">
-            <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
-        </div>`;
+        const $div = $("<div>");
+        HAWCUtils.addAlert("An error occurred; please modify settings...", $div);
+        return $div;
     };
 
 @inject("store")
@@ -59,27 +60,13 @@ class ExploreHeatmapComponent extends Component {
             hasFilters = store.settings.filter_widgets.length > 0;
 
         if (!store.hasDataset) {
-            return (
-                <div className="alert alert-danger" data-testid="visual-error">
-                    <p className="mb-0">
-                        <i className="fa fa-exclamation-circle"></i>&nbsp;No data are available.
-                    </p>
-                </div>
-            );
+            return <Alert message={"No data are available."} />;
         }
 
         if (!store.withinRenderableBounds) {
-            const {n_rows, n_cols, n_cells, maxCells} = this.props.store;
-            return (
-                <div className="alert alert-danger" role="alert" data-testid="visual-error">
-                    <p className="mb-0">
-                        <i className="fa fa-exclamation-circle"></i>&nbsp;This heatmap is too large
-                        and cannot be rendered. Using the settings specified, the current heatmap
-                        will have {n_rows} rows, {n_cols} columns, and {n_cells} cells. Please
-                        change the settings to have fewer than {maxCells} cells.
-                    </p>
-                </div>
-            );
+            const {n_rows, n_cols, n_cells, maxCells} = this.props.store,
+                message = `This heatmap is too large and cannot be rendered. Using the settings specified, the current heatmap will have ${n_rows} rows, ${n_cols} columns, and ${n_cells} cells. Please change the settings to have fewer than ${maxCells} cells.`;
+            return <Alert message={message} />;
         }
 
         return (

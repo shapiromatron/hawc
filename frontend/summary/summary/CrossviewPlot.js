@@ -71,8 +71,9 @@ class CrossviewPlot extends D3Visualization {
         this.plot_div = $div.html("");
         this.processData();
         if (this.dataset.length === 0) {
-            return this.plot_div.html(
-                "<p data-testid='visual-error'>Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.</p>"
+            return HAWCUtils.addAlert(
+                "Error: no endpoints found. Try selecting a different dose-unit, or changing prefilter settings.",
+                this.plot_div
             );
         }
         this.build_plot_skeleton(false, "A dose-response visualization of multiple endpoints");

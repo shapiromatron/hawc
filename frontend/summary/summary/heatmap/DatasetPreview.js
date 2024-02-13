@@ -2,6 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
+import Alert from "shared/components/Alert";
 import DataTable from "shared/components/DataTable";
 
 class DatasetPreview extends Component {
@@ -9,11 +10,7 @@ class DatasetPreview extends Component {
         const {dataset, url, clearCacheUrl} = this.props;
 
         if (!dataset || dataset.length === 0) {
-            return (
-                <div className="alert alert-danger" data-testid="visual-error">
-                    No data are available.
-                </div>
-            );
+            return <Alert message={"No data are available."} />;
         }
 
         const firstRow = dataset[0],
