@@ -89,13 +89,14 @@ class InteractiveHawcClient:
     A context manager for downloading assessment visuals.
     """
 
-    def __init__(self, client: BaseClient, headless: bool = True, timeout: float | None = None):
-        """_summary_
+    def __init__(self, client: BaseClient, headless: bool = True, timeout: float = 60):
+        """Start an interactive HAWC client to process content.
 
         Args:
-            client (BaseClient): the current client
-            headless (bool, optional): _description_. Defaults to True.
-            timeout (float | None, optional): Timeout, in seconds
+            client (BaseClient): the current client; requires `login=True` to process content
+                which requires authentication.
+            headless (bool): Run in headless mode; defaults to True.
+            timeout (float): Timeout, in seconds; defaults to 60
         """
         self.client = client
         self.headless = headless
