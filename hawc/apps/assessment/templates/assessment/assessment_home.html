@@ -10,6 +10,9 @@
       {% else %}
         <p class="dropdown-item help-block">Assessment creation disabled - please <a href="{% url 'contact' %}">contact us</a> if needed.</p>
       {% endif %}
+      {% if feature_flags.ENABLE_UDF %}
+        <a class="dropdown-item" href="{% url 'udf:udf_list' %}">View User Defined Forms</a>
+      {% endif %}
     {% endactions %}
   </div>
   <p>Welcome to the HAWC portal. Here you're able to create new assessments or work on existing assessments.</p>
