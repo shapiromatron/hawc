@@ -1,5 +1,4 @@
 from django.core.exceptions import BadRequest, PermissionDenied
-from django.db.models import TextChoices
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -118,11 +117,6 @@ class SchemaPreview(LoginRequiredMixin, FormView):
         return self.render_to_response(self.get_context_data(valid=False))
 
 
-class BindingType(TextChoices):
-    TAG = "tag"
-    MODEL = "model"
-
-
 class UDFBindingList(BaseList):
     parent_model = Assessment
     parent_template_name = "assessment"
@@ -135,8 +129,8 @@ class UDFBindingList(BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            tag_binding=BindingType.TAG.value,
-            model_binding=BindingType.MODEL.value,
+            tag_binding=constants.BindingType.TAG.value,
+            model_binding=constants.BindingType.MODEL.value,
             tag_object_list=list(
                 models.TagBinding.objects.filter(assessment=self.assessment)
                 .prefetch_related("tag", "form")
@@ -165,10 +159,10 @@ class BindingViewSet(HtmxViewSet):
 
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         self.binding_type = self.kwargs.get("binding_type", None)
-        if self.binding_type == BindingType.TAG:
+        if self.binding_type == constants.BindingType.TAG:
             self.model = models.TagBinding
             self.form = forms.TagBindingForm
-        elif self.binding_type == BindingType.MODEL:
+        elif self.binding_type == constants.BindingType.MODEL:
             self.model = models.ModelBinding
             self.form = forms.ModelBindingForm
         else:
@@ -179,8 +173,8 @@ class BindingViewSet(HtmxViewSet):
         return super().get_context_data(
             *args,
             **kwargs,
-            tag_binding=BindingType.TAG.value,
-            model_binding=BindingType.MODEL.value,
+            tag_binding=constants.BindingType.TAG.value,
+            model_binding=constants.BindingType.MODEL.value,
             binding_type=self.binding_type,
         )
 
@@ -188,7 +182,7 @@ class BindingViewSet(HtmxViewSet):
     def read(self, request: HttpRequest, *args, **kwargs):
         udf = request.item.object.form
         udf.can_edit = udf.user_can_edit(self.request.user)
-        if self.binding_type == BindingType.TAG:
+        if self.binding_type == constants.BindingType.TAG:
             tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.assessment.id)
             request.item.object.tag_name = tag_names[request.item.object.tag.id]
         return render(
@@ -211,7 +205,7 @@ class BindingViewSet(HtmxViewSet):
                 udf = request.item.object.form
                 udf.can_edit = udf.user_can_edit(self.request.user)
                 template = self.detail_fragment
-                if self.binding_type == BindingType.TAG:
+                if self.binding_type == constants.BindingType.TAG:
                     tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.parent.id)
                     request.item.object.tag_name = tag_names[request.item.object.tag.id]
                 context.update(udf=udf, binding=request.item.object)
@@ -231,7 +225,7 @@ class BindingViewSet(HtmxViewSet):
             for binding in object_list:
                 binding.form.can_edit = binding.form.user_can_edit(request.user)
             for binding in tag_object_list:
-                if self.binding_type == BindingType.TAG:
+                if self.binding_type == constants.BindingType.TAG:
                     binding.tag_name = tag_names[binding.tag.id]
                 binding.form.can_edit = binding.form.user_can_edit(request.user)
         return render(request, template, context)
