@@ -40,7 +40,7 @@ class ColumnSelectManager {
         this.selects.forEach(select => select.update());
     }
     updateHeaders() {
-        const firstRow = this.data_pivot.data[0],
+        const firstRow = this.data_pivot.raw_data[0],
             headers = _.keys(firstRow);
         headers.push(
             ...this.data_pivot.settings.calculated_columns

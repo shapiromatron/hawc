@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import DataTable from "shared/components/DataTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 
 import $ from "$";
 
@@ -18,7 +19,6 @@ import build_settings_general_tab from "./DPFGeneralSettingsTab";
 import build_ordering_tab from "./DPFOrderTab";
 import build_reference_tab from "./DPFReferenceTab";
 import build_styles_tab from "./DPFStyleTab";
-import {NULL_CASE} from "./shared";
 import Store from "./store";
 import StyleManager from "./StyleManager";
 
@@ -27,34 +27,44 @@ class DataPivot {
         if (_.keys(settings).length == 0) {
             settings = DataPivot.default_plot_settings();
         }
-        this.data = data;
         this.settings = settings;
+        this.raw_data = data;
         this.title = title;
         this.url = url;
         this.onRendered = [];
+        this.processDataset();
         if (dom_bindings.update) {
             this.build_edit_settings(dom_bindings);
         }
     }
 
+    processDataset() {
+        this.data = DataPivotVisualization.processDataset(this.raw_data, this.settings);
+    }
+
     static get_object(pk, callback) {
-        $.get(`/summary/api/data_pivot/${pk}/`, function(d) {
-            d3.tsv(d.data_url, (row, idx) => DataPivot.massage_row(row, idx)).then(
-                data => {
-                    var dp = new DataPivot(data, d.settings, {}, d.title, d.url);
-                    if (callback) {
-                        callback(dp);
-                    } else {
-                        return dp;
-                    }
-                },
-                error => {
-                    console.error(error);
-                    alert(`An error occurred; if the error continues please contact us.`);
-                    throw "Server error";
-                }
-            );
-        });
+        const url = `/summary/api/data_pivot/${pk}/`,
+            handleError = err => {
+                console.error(err);
+                alert(`An error occurred; if the error continues please contact us.`);
+                throw "Server error";
+            };
+
+        fetch(url, h.fetchGet)
+            .then(d => d.json())
+            .then(d => {
+                fetch(d.data_url, h.fetchGet)
+                    .then(d => d.text())
+                    .then(data => d3.tsvParse(data))
+                    .then(data => {
+                        const dp = new DataPivot(data, d.settings, {}, d.title, d.url);
+                        if (callback) {
+                            callback(dp);
+                        }
+                    })
+                    .catch(err => handleError(err));
+            })
+            .catch(err => handleError(err));
     }
 
     static displayAsModal(id) {
@@ -73,8 +83,16 @@ class DataPivot {
     }
 
     static displayEditView(data_url, settings, options) {
-        d3.tsv(data_url, (d, i) => DataPivot.massage_row(d, i)).then(
-            data => {
+        const handleError = err => {
+            console.error(err);
+            alert(`An error occurred; if the error continues please contact us.`);
+            throw "Server error";
+        };
+
+        fetch(data_url, h.fetchGet)
+            .then(d => d.text())
+            .then(data => d3.tsvParse(data))
+            .then(data => {
                 $("#loading_div").fadeOut();
                 const dp = new DataPivot(data, settings, {
                     update: true,
@@ -88,34 +106,12 @@ class DataPivot {
                     $(options.settingsField).val(dp.get_settings_json());
                     return true;
                 });
-            },
-            error => {
-                console.error(arguments);
-                alert(`An error occurred; if the error continues please contact us.`);
-                throw "Server error";
-            }
-        );
+            })
+            .catch(err => handleError(err));
     }
 
     static default_plot_settings() {
         return DataPivotDefaultSettings;
-    }
-
-    static massage_row(row, i) {
-        // make numbers in data numeric if possible
-        // see https://github.com/mbostock/d3/wiki/CSV
-        for (var field in row) {
-            // eslint-disable-next-line no-prototype-builtins
-            if (row.hasOwnProperty(field)) {
-                row[field] = +row[field] || row[field];
-            }
-        }
-
-        // add data-pivot row-level key and index
-        row._dp_y = i;
-        row._dp_pk = row["key"] || i;
-
-        return row;
     }
 
     static move_row(arr, obj, moveUp) {
@@ -219,8 +215,12 @@ class DataPivot {
     build_data_pivot_vis(div, editable) {
         delete this.plot;
         editable = editable || false;
-        var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
-        this.plot = new DataPivotVisualization(data, this.settings, div, editable);
+        this.plot = new DataPivotVisualization(
+            _.cloneDeep(this.raw_data),
+            this.settings,
+            div,
+            editable
+        );
     }
 
     build_data_table() {
@@ -268,6 +268,7 @@ class DataPivot {
             self.triggerOnRenderedCallbacks();
         });
     }
+
     _get_description_options() {
         return this.settings.description_settings.map(
             (d, i) => `<option value="${i}">${d.header_name}</option>`
