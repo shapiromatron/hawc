@@ -1,5 +1,6 @@
-<div class="list-group-item {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %} p-4" hx-target="this" hx-swap="outerHTML">
-  <form method=post enctype="multipart/form-data" class="d-flex align-items-center">
+<div class="{% if form %} list-group-item {% endif %}{% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %} p-0 binding-edit-row" hx-target="this" hx-swap="outerHTML" id="binding-edit-row">
+  {% if form %}
+  <form method=post enctype="multipart/form-data" class="d-flex align-items-center p-4">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
     </div>
@@ -51,17 +52,18 @@
         <i class="fa fa-spinner fa-spin htmx-indicator mr-2" id="spinner-{{object.pk}}" aria-hidden="true"></i>
         <button class="btn btn-primary px-4 py-2"
                 id="binding-create"
-                hx-post="{% url 'udf:binding_create'  binding_type assessment.pk %}"
+                hx-post="{% url 'udf:binding_create' assessment.pk binding_type %}"
                 hx-indicator="#spinner-{{object.pk}}">
           <i class="fa fa-fw fa-save"></i>&nbsp;Create
         </button>
         <button class="btn btn-light px-3 py-2 ml-2"
                 id="binding-cancel"
                 type='button'
-                onclick="$(this).closest('.workflow-edit-row').remove()">
+                onclick="$(this).closest('.binding-edit-row').remove()">
           Cancel
         </button>
       {% endif %}
     </div>
   </form>
+  {% endif %}
 </div>

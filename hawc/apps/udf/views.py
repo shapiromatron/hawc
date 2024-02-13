@@ -1,6 +1,5 @@
-import itertools
-
 from django.core.exceptions import BadRequest, PermissionDenied
+from django.db.models import TextChoices
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -11,18 +10,15 @@ from django.views.generic.edit import CreateView, FormView, UpdateView
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.common import dynamic_forms
 from hawc.apps.common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
     BaseList,
-    BaseUpdate,
     LoginRequiredMixin,
     MessageMixin,
     htmx_required,
 )
+from hawc.apps.lit.models import ReferenceFilterTag
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from . import forms, models
+from . import constants, forms, models
 from .cache import UDFCache
 
 
@@ -122,22 +118,36 @@ class SchemaPreview(LoginRequiredMixin, FormView):
         return self.render_to_response(self.get_context_data(valid=False))
 
 
+class BindingType(TextChoices):
+    TAG = "tag"
+    MODEL = "model"
+
+
 class UDFBindingList(BaseList):
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.ModelBinding
+    template_name = "udf/udfbinding_list.html"
 
     def get_queryset(self):
-        return super().get_queryset().filter(assessment=self.assessment)
+        return super().get_queryset().filter(assessment=self.assessment).order_by("-created")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tag_object_list"] = list(
-            models.TagBinding.objects.filter(assessment=self.assessment).prefetch_related(
-                "tag", "form"
-            )
+        context.update(
+            tag_binding_type=BindingType.TAG.value,
+            model_binding_type=BindingType.MODEL.value,
+            tag_object_list=list(
+                models.TagBinding.objects.filter(assessment=self.assessment)
+                .prefetch_related("tag", "form")
+                .order_by("-created")
+            ),
         )
-        for binding in itertools.chain(context["object_list"], context["tag_object_list"]):
+        tag_names = ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
+        for binding in context["object_list"]:
+            binding.form.can_edit = binding.form.user_can_edit(self.request.user)
+        for binding in context["tag_object_list"]:
+            binding.tag_name = tag_names[binding.tag.id]
             binding.form.can_edit = binding.form.user_can_edit(self.request.user)
         return context
 
@@ -147,7 +157,7 @@ class BindingViewSet(HtmxViewSet):
     parent_model = Assessment
     model = models.ModelBinding
     form = forms.ModelBindingForm
-    binding_type = "tag"
+    binding_type = BindingType = None
 
     form_fragment = "udf/fragments/binding_edit_row.html"
     detail_fragment = "udf/fragments/_udf_item.html"
@@ -155,25 +165,37 @@ class BindingViewSet(HtmxViewSet):
 
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         self.binding_type = self.kwargs.get("binding_type", None)
-        if self.binding_type == "tag":
+        if self.binding_type == BindingType.TAG:
             self.model = models.TagBinding
             self.form = forms.TagBindingForm
-        elif self.binding_type == "model":
+        elif self.binding_type == BindingType.MODEL:
             self.model = models.ModelBinding
             self.form = forms.ModelBindingForm
         else:
             raise BadRequest("Must provide a 'tag' or 'model' binding_type argument.")
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, *args, **kwargs):
+        return super().get_context_data(
+            *args,
+            **kwargs,
+            tag_binding_type=BindingType.TAG.value,
+            model_binding_type=BindingType.MODEL.value,
+            binding_type=self.binding_type,
+        )
+
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
-        # prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+        udf = request.item.object.form
+        udf.can_edit = udf.user_can_edit(self.request.user)
+        if self.binding_type == BindingType.TAG:
+            tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.assessment.id)
+            request.item.object.tag_name = tag_names[request.item.object.tag.id]
         return render(
             request,
             self.detail_fragment,
             self.get_context_data(
-                binding_type=self.binding_type,
-                udf=request.item.object.form,
+                udf=udf,
                 binding=request.item.object,
             ),
         )
@@ -183,22 +205,35 @@ class BindingViewSet(HtmxViewSet):
         template = self.form_fragment
         if request.method == "POST":
             form = self.form(request.POST, parent=request.item.parent, user=request.user)
+            context = self.get_context_data(form=form, binding_type=self.binding_type)
             if form.is_valid():
                 self.perform_create(request.item, form)
+                udf = request.item.object.form
+                udf.can_edit = udf.user_can_edit(self.request.user)
                 template = self.detail_fragment
+                if self.binding_type == BindingType.TAG:
+                    tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.parent.id)
+                    request.item.object.tag_name = tag_names[request.item.object.tag.id]
+                context.update(udf=udf, binding=request.item.object)
         else:
             form = self.form(parent=request.item.parent, user=request.user)
             template = self.list_fragment
-        context = self.get_context_data(form=form)
-        object_list = self.model.objects.filter(
-            assessment=request.item.assessment
-        ).prefetch_related("admission_tags", "removal_tags")
-        context.update(
-            object_list=object_list,
-            binding_type=self.binding_type,
-            udf=request.item.object.form,
-            binding=request.item.object,
-        )
+            object_list = models.ModelBinding.objects.filter(
+                assessment=request.item.assessment
+            ).order_by("-created")
+            tag_object_list = models.TagBinding.objects.filter(
+                assessment=request.item.assessment
+            ).order_by("-created")
+            context = self.get_context_data(
+                form=form, object_list=object_list, tag_object_list=tag_object_list
+            )
+            tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.parent.id)
+            for binding in object_list:
+                binding.form.can_edit = binding.form.user_can_edit(request.user)
+            for binding in tag_object_list:
+                if self.binding_type == BindingType.TAG:
+                    binding.tag_name = tag_names[binding.tag.id]
+                binding.form.can_edit = binding.form.user_can_edit(request.user)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -213,7 +248,6 @@ class BindingViewSet(HtmxViewSet):
             form = self.form(data=None, instance=request.item.object, user=request.user)
         context = self.get_context_data(
             form=form,
-            binding_type=self.binding_type,
             udf=request.item.object.form,
             binding=request.item.object,
         )
@@ -225,8 +259,9 @@ class BindingViewSet(HtmxViewSet):
             self.perform_delete(request.item)
             return self.str_response()
         form = self.form(data=None, instance=request.item.object, user=request.user)
-        context = self.get_context_data(form=form, binding_type=self.binding_type)
+        context = self.get_context_data(form=form)
         return render(request, self.form_fragment, context)
+
 
 class UDFDetailMixin:
     """Mixin to add saved UDF contents to the context of a BaseDetail view."""

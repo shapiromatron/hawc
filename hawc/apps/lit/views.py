@@ -389,15 +389,7 @@ class TagReferences(BaseFilterList):
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
         tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        tag_names = cacheable(
-            lambda: {
-                tag.id: tag.nested_name.replace("|", " ➤ ")
-                for tag in models.ReferenceFilterTag.annotate_nested_names(
-                    models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-                )
-            },
-            f"assessment-{self.assessment.id}-tag-names",
-        )
+        tag_names = models.ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
         descendant_tags = cacheable(
             lambda: models.ReferenceFilterTag.get_tree_descendants(tags),
             f"assessment-{self.assessment.id}-tag-descendants",

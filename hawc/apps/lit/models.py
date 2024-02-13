@@ -731,6 +731,27 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         return tags
 
     @classmethod
+    def get_nested_tag_names(cls, assessment_pk: int):
+        """_summary_
+
+        Args:
+            assessment_pk (int): assessment id
+
+        Returns:
+            tag_names (dict): Keys are tag IDs, values are tag nested names
+        """
+        tag_names = cacheable(
+            lambda: {
+                tag.id: tag.nested_name.replace("|", " ➤ ")
+                for tag in ReferenceFilterTag.annotate_nested_names(
+                    ReferenceFilterTag.get_assessment_qs(assessment_pk)
+                )
+            },
+            f"assessment-{assessment_pk}-tag-names",
+        )
+        return tag_names
+
+    @classmethod
     def build_default(cls, assessment):
         """
         Constructor to define default literature-tags.

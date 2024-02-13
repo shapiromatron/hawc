@@ -1,14 +1,18 @@
 {% if tag_object_list or object_list %}
-  <div class="mt-2 mb-4 vw75">
-    <div class="list-group mb-4 rounded box-shadow">
+  <div class="mt-2 mb-4 vw75" id="binding-list">
+    <div class="list-group mb-4 rounded">
+      {% include "udf/fragments/binding_edit_row.html" %}
       {% for object in tag_object_list %}
-        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type="tag" only %}
+        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=tag_binding_type %}
       {% endfor %}
       {% for object in object_list %}
-        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type="model" only %}
+        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=model_binding_type %}
       {% endfor %}
     </div>
   </div>
+  <script>
+    window.app.HAWCUtils.dynamicFormListeners();
+  </script>
 {% endif %}
 
 {% if not object_list and not tag_object_list %}

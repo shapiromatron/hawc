@@ -16,7 +16,7 @@ urlpatterns = (
         path("assessment/<int:pk>/", views.UDFBindingList.as_view(), name="binding-list"),
         # binding objects
         path(
-            "bindings/<binding_type>/create/",
+            "assessment/<int:pk>/bindings/<binding_type>/create/",
             views.BindingViewSet.as_view(),
             {"action": "create"},
             name="binding_create",

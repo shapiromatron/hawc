@@ -8,21 +8,27 @@
             Deprecated</span>
         {% endif %}
         <p class="my-0 ml-1" style="font-size: 1.25rem;">
-          {% if binding_type == 'tag' %} bound to {% include "lit/_nested_tag.html" with tag=binding.tag extra_classes="my-0 mx-1 px-1 py-0" %} tag{% endif %}
-          {% if binding_type == 'model' %} bound to <b>{{binding.content_type}}</b> {% endif %}
+          {% if binding_type and binding_type == tag_binding_type %} bound to <span class="refTag my-0 mx-1 px-1 py-0">{{binding.tag_name}}</span> tag{% endif %}
+          {% if binding_type and binding_type == model_binding_type %} bound to <b>{{binding.content_type}}</b> {% endif %}
         </p>
       </div>
       <i class="text-muted my-0 d-block" title="{{udf.description}}" style="text-overflow:ellipsis; overflow:hidden; white-space: nowrap;">{{udf.description}}</i>
     </div>
     {% if binding %}
+      {% if udf.can_edit or permissions.edit_assessment or obj_perms.edit_assessment %}
       <i class="fa fa-spinner fa-spin htmx-indicator mr-2" id="spinner-{{binding_type}}-{{binding.pk}}" aria-hidden="true"></i>
       <div class="dropdown btn-group flex-shrink-0 ">
         <a class="btn btn-secondary btn-sm dropdown-toggle" id="{{binding_type}}-{{binding.id}}dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="{{binding_type}}-{{binding.id}}dropdownToggle">
+          {% if permissions.edit_assessment or obj_perms.edit_assessment  %}
           <button class="dropdown-item" type="button" hx-indicator="#spinner-{{binding_type}}-{{binding.pk}}" hx-get="{{ binding.get_update_url }}">Update binding</button>
+          {% endif %}
+          {% if udf.can_edit %}
           <a class="dropdown-item" type="button" href="{{ udf.get_update_url }}">Update UDF</a>
+          {% endif %}
         </div>
       </div>
+      {% endif %}
     {% elif udf.can_edit %}
       <a class="btn outline-btn px-3" href="{{udf.get_update_url}}">
         Update
