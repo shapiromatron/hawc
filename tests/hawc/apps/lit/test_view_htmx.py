@@ -40,7 +40,7 @@ class TestWorkflows:
         assert "Title/Abstract" in str(resp.content)
 
         # workflow update
-        url = workflow.get_edit_url() reverse("lit:workflow-htmx", args=[workflow.id, "update"])
+        url = workflow.get_edit_url()
         inputs = {
             "title": "Title/Abstract update",
         }
