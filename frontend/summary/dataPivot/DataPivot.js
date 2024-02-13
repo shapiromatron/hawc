@@ -196,6 +196,7 @@ class DataPivot {
     build_edit_settings(dom_bindings) {
         var self = this,
             editable = true;
+        this.store = new Store(this);
         this.style_manager = new StyleManager(this);
         this.column_select_manager = new ColumnSelectManager(this);
         this.$div = $(dom_bindings.container);
@@ -210,7 +211,6 @@ class DataPivot {
             }
         });
 
-        this.store = new Store(this);
         this.build_data_table();
         this.build_settings();
         this.$div.fadeIn();
@@ -223,23 +223,7 @@ class DataPivot {
         this.plot = new DataPivotVisualization(data, this.settings, div, editable);
     }
 
-    set_data_headers() {
-        // get headers
-        let data_headers = [];
-        for (var prop in this.data[0]) {
-            // eslint-disable-next-line no-prototype-builtins
-            if (this.data[0].hasOwnProperty(prop)) {
-                data_headers.push(prop);
-            }
-        }
-        // add calculated_columns
-        this.settings.calculated_columns.forEach(d => data_headers.push(d.name));
-        // now save things back to object=
-        this.data_headers = data_headers;
-    }
-
     build_data_table() {
-        this.set_data_headers();
         ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);
     }
 
@@ -284,23 +268,6 @@ class DataPivot {
             self.triggerOnRenderedCallbacks();
         });
     }
-
-    _get_header_options(show_blank) {
-        var opts = [];
-        if (show_blank) opts.push(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
-        return opts.concat(this.data_headers.map(v => `<option value="${v}">${v}</option>`));
-    }
-
-    _get_header_options_react(show_blank = false) {
-        const options = this.data_headers.map(d => {
-            return {id: d, label: d};
-        });
-        if (show_blank) {
-            options.unshift({id: NULL_CASE, label: NULL_CASE});
-        }
-        return options;
-    }
-
     _get_description_options() {
         return this.settings.description_settings.map(
             (d, i) => `<option value="${i}">${d.header_name}</option>`

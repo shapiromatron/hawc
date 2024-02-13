@@ -15,6 +15,15 @@ class SortStore {
     }
 
     @observable settings = null;
+    @observable fieldColumns = [];
+
+    @action.bound updateFieldColumns(fieldColumns) {
+        const options = fieldColumns.map(d => {
+            return {id: d, label: d};
+        });
+        options.unshift({id: NULL_CASE, label: NULL_CASE});
+        this.fieldColumns = options;
+    }
 
     @action.bound createNew() {
         this.settings.push({
@@ -76,18 +85,10 @@ class SortStore {
     }
 }
 
-class ColumnNameStore {
-    constructor(rootStore) {
-        this.rootStore = rootStore;
-        this.settings = this.rootStore.dp.settings.sorts;
-    }
-}
-
 class Store {
     constructor(dp) {
         this.dp = dp;
         this.sortStore = new SortStore(this);
-        this.columnNameStore = new ColumnNameStore(this);
     }
     // TODO - remove methods below (after rewrite to React from jQuery)
     sync() {
