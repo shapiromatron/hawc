@@ -1,16 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2 class="d-inline-block">Update {{object.summary}}</h2>
-<div class="float-right">
+  <h2 class="d-inline-block">Update {{object.summary}}</h2>
+  <div class="float-right">
     <a id="design-update" class="btn btn-sm btn-primary" href="#"
-        hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
-        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
-</div>
+       hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
+      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
+  </div>
 
-{% include "epiv2/fragments/_design_table.html" %}
+  {% include "epiv2/fragments/_design_table.html" %}
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'epiv2:chemical-htmx' object.pk 'create' as chemical_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-empty-row" %}
@@ -29,9 +29,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'epiv2:exposure-htmx' object.pk 'create' as exposure_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target="#exposure-empty-row" %}
@@ -50,9 +50,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'epiv2:exposurelevel-htmx' object.pk 'create' as exposurelevel_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target="#exposurelevel-empty-row" %}
@@ -71,9 +71,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'epiv2:outcome-htmx' object.pk 'create' as outcome_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-empty-row" %}
@@ -92,9 +92,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'epiv2:adjustmentfactor-htmx' object.pk 'create' as adjustmentfactor_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target="#adjustmentfactor-empty-row" %}
@@ -113,9 +113,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'epiv2:dataextraction-htmx' object.pk 'create' as dataextraction_create %}
         {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
@@ -134,19 +134,19 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="well text-center">
+  <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="epiv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
-</div>
+  </div>
 {% endblock %}
 
 
 {% block extrajs %}
-{% include "common/htmx_autocomplete.html" %}
-<script type="text/javascript">
-window.app.startup("epiv2Startup", function(app){
-    app.formStartup(document);
-});
-</script>
+  {% include "common/htmx_autocomplete.html" %}
+  <script type="text/javascript">
+    window.app.startup("epiv2Startup", function(app){
+      app.formStartup(document);
+    });
+  </script>
 {% endblock %}

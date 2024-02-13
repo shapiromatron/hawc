@@ -5,7 +5,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.11
+- [Python](https://www.python.org/) == 3.12
 - [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com/) < 2
 - [PostgreSQL](https://www.postgresql.org/) >= 12
@@ -49,7 +49,7 @@ For Windows, use anaconda or miniconda to get requirements can be used to get de
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.11 postgresql
+conda install python=3.12 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
 
@@ -189,6 +189,23 @@ On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short 
 # start postgres db (if pgdata folder is located in %HOMEPATH%\dev)
 make startdb
 ```
+
+### Pre commit hooks
+
+There are number of code quality checks that standardize and format code to make sure that our source code is consistent regardless of the developer. These checks are automatically run when the code is submitted for review, and the linting checks must pass to have a valid review. However, this can be a surprise if you don't run the linters prior to pushning a commit.
+
+The development environment includes [pre-commit](https://pre-commit.com/) to automatically check linters and formatters prior to committing changes.  This would prevent you from pushing code that hadn't been run through the linters. To set up pre-commit, run the following command:
+
+```bash
+pre-commit install
+
+# run on all files to make sure it is installed correctly
+pre-commit run --all-files
+```
+
+!!! note
+
+    This is completely optional; you can use if you wish but it's not required.
 
 ## Local Settings
 
@@ -382,6 +399,14 @@ make test-integration-debug
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
 py.test -sv tests/integration/test_myuser.py --pdb
+```
+
+Sometimes you may want to run a test multiple times to check for flakiness:
+
+```bash
+for i in {1..10}; do
+INTEGRATION_TESTS=1 py.test -sv tests/integration/ -k test_example
+done
 ```
 
 ## More settings

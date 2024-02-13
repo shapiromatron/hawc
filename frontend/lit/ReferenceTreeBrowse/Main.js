@@ -4,7 +4,9 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import LabelInput from "shared/components/LabelInput";
 import Loading from "shared/components/Loading";
+import Paginator from "shared/components/Paginator";
 import TextInput from "shared/components/TextInput";
 
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
@@ -55,25 +57,33 @@ class ReferenceTreeMain extends Component {
     }
     render() {
         const {store} = this.props,
-            {selectedReferences, selectedReferencesLoading, filteredReferences, yearFilter} = store,
+            {
+                selectedReferences,
+                selectedReferencesLoading,
+                filteredReferences,
+                paginatedReferences,
+                yearFilter,
+                page,
+                fetchPage,
+            } = store,
             yearText = yearFilter ? ` (${yearFilter.min}-${yearFilter.max})` : "";
 
         return (
             <div className="row">
                 <div className="col-md-12 pb-3">
                     {store.untaggedReferencesSelected === true ? (
-                        <h4>Untagged references</h4>
+                        <h3>Untagged references</h3>
                     ) : store.selectedTag === null ? (
-                        <h4>Available references</h4>
+                        <h3>Available references</h3>
                     ) : (
                         <div className="d-flex">
-                            <h4 className="mb-0 align-self-center">
+                            <h3 className="mb-0 align-self-center">
                                 <span>
                                     {selectedReferences && selectedReferences.length > 0
                                         ? `${filteredReferences.length} references tagged:`
                                         : "References tagged:"}
                                 </span>
-                            </h4>
+                            </h3>
                             <span className="mb-0 ml-2 refTag">
                                 {store.selectedTag.get_full_name()}
                             </span>
@@ -100,11 +110,13 @@ class ReferenceTreeMain extends Component {
                             <QuickSearch
                                 updateQuickFilter={text => store.changeQuickFilterText(text)}
                             />
-                            <div
-                                id="reference-list"
-                                className="list-group"
-                                style={{maxHeight: "50vh"}}>
-                                {filteredReferences.map(referenceListItem)}
+                            <LabelInput
+                                label={`Showing ${paginatedReferences.length} of ${selectedReferences.length}:`}
+                            />
+                            <div id="reference-list" className="list-group">
+                                {paginatedReferences.map(referenceListItem)}
+                                <span className="mt-3"></span>
+                                {page ? <Paginator page={page} onChangePage={fetchPage} /> : null}
                             </div>
                         </>
                     ) : null}

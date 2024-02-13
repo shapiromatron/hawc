@@ -1,6 +1,6 @@
 
 <tr hx-target="this" hx-swap="outerHTML">
-    {% if form %}
+  {% if form %}
     <td colspan="3">
         <form class="attachment-form" method="post" enctype="multipart/form-data">
             {% crispy form %}
@@ -20,17 +20,17 @@
                 <button class="btn btn-primary ml-2"
                     hx-post="{% url 'assessment:attachment-htmx' assessment.pk 'create' %}"
                     hx-encoding="multipart/form-data">
-                    <i class="fa fa-fw fa-save"></i>&nbsp;Create
-                </button>
-                <button class="btn btn-light"
+              <i class="fa fa-fw fa-save"></i>&nbsp;Create
+            </button>
+            <button class="btn btn-light"
                     type='button'
                     onclick="$(this).closest('tr').remove()">
-                    Cancel
-                </button>
-                {% endif %}
-            </div>
-        </form>
+              Cancel
+            </button>
+          {% endif %}
+        </div>
+      </form>
     </td>
     {{ form.media }}
-    {% endif %}
+  {% endif %}
 </tr>

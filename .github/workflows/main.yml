@@ -33,7 +33,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
       with:
-        python-version: '3.11'
+        python-version: '3.12'
         architecture: 'x64'
     - name: try to restore pip cache
       uses: actions/cache@v3
@@ -47,9 +47,12 @@ jobs:
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         pip install -U pip wheel
         pip install -r requirements/dev.txt
-    - name: lint
+    - name: lint-py
       run: |
         make lint-py
+    - name: lint-html
+      run: |
+        make lint-html
     - name: Setup linux environment
       if: startsWith(runner.os, 'Linux')
       run: |
@@ -152,7 +155,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
       with:
-        python-version: '3.11'
+        python-version: '3.12'
         architecture: 'x64'
     - name: try to restore pip cache
       uses: actions/cache@v3

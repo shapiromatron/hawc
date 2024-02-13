@@ -52,6 +52,58 @@ class TestWorkflows:
 
         # workflow delete
         url = workflow.get_delete_url()
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert "Are you sure you want to delete?" in str(resp.content)
         resp = client.post(url)
         assert resp.status_code == 200
         assert models.Workflow.objects.count() == initial_workflow_count
+
+
+@pytest.mark.django_db
+class TestBulkMerge:
+    def test_bulk_merge(self, db_keys):
+        assessment_id = db_keys.assessment_conflict_resolution
+        client = Client(headers={"hx-request": "true"})
+
+        base_url = reverse("lit:bulk-merge-conflicts", args=[assessment_id])
+
+        # permissions deny
+        assert client.login(email="reviewer@hawcproject.org", password="pw") is True
+        resp = client.get(base_url)
+        assert resp.status_code == 403
+
+        assert client.login(email="pm@hawcproject.org", password="pw") is True
+
+        initial_exclusions = models.Reference.objects.filter(tags__in=[37]).count()
+
+        # index
+        resp = client.get(base_url)
+        assertTemplateUsed(resp, "lit/components/bulk_merge_modal_content.html")
+        assert resp.status_code == 200
+        assert "Bulk Merge Tag Conflicts?" in str(resp.content)
+
+        # preview
+        url = f"{base_url}?action=preview"
+        data = {
+            "tags": 37,
+            "include_without_conflict": True,
+        }
+        resp = client.post(url, data=data)
+        assertTemplateUsed(resp, "lit/components/bulk_merge_modal_content.html")
+        assert resp.status_code == 200
+        assert "reference(s) will be tagged:" in str(resp.content)
+
+        # merge
+        url = f"{base_url}?action=merge"
+        data = {
+            "tags": 37,
+            "include_without_conflict": True,
+            "cache_key": resp.context["cache_key"],
+        }
+        resp = client.post(url, data=data)
+        assertTemplateUsed(resp, "lit/components/bulk_merge_modal_content.html")
+        assert resp.status_code == 200
+        assert "Reference results:" in str(resp.content)
+
+        assert models.Reference.objects.filter(tags__in=[37]).count() == initial_exclusions + 1

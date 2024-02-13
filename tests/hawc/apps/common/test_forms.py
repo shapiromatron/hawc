@@ -24,11 +24,11 @@ class TestQuillField:
         fld = QuillField()
         data = [
             # remove script tag
-            ("<script>alert();</script>", "alert();"),
+            ("<script>alert();</script>", ""),
             # remove attribute
             (
                 '<a href="www.example.com" title="title">link</a>',
-                '<a href="www.example.com">link</a>',
+                '<a href="www.example.com" rel="noopener noreferrer">link</a>',
             ),
             # remove some styles
             (

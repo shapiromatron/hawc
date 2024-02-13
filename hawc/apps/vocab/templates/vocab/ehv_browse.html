@@ -1,21 +1,21 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<a class="pull-right btn btn-primary" href="{% url 'vocab:api:ehv-nested' %}?format=xlsx">Download</a>
-<h2>Environmental Health Vocabulary (EHV)</h2>
-<div>
+  <a class="pull-right btn btn-primary" href="{% url 'vocab:api:ehv-nested' %}?format=xlsx">Download</a>
+  <h2>Environmental Health Vocabulary (EHV)</h2>
+  <div>
     <p>
-        Experimental data extracted into HAWC is designed to enable filtering, sorting, and
-        visualizations of the findings. To enable the ability to browse and filter at different
-        levels, a curated controlled vocabulary of terms can be used to extract content from
-        literature. However, numerous external ontologies and thesauri exist in the biological
-        domain that can map health-effects and knowledge. Therefore, these controlled vocabularies
-        can also be mapped to external entities.
+      Experimental data extracted into HAWC is designed to enable filtering, sorting, and
+      visualizations of the findings. To enable the ability to browse and filter at different
+      levels, a curated controlled vocabulary of terms can be used to extract content from
+      literature. However, numerous external ontologies and thesauri exist in the biological
+      domain that can map health-effects and knowledge. Therefore, these controlled vocabularies
+      can also be mapped to external entities.
     </p>
-</div>
-<div id="main"></div>
+  </div>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/json" id="config">{{config|safe}}</script>
+  <script type="text/json" id="config">{{config|safe}}</script>
 {% endblock %}

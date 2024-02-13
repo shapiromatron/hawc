@@ -1,10 +1,10 @@
 <tr hx-target="this" hx-swap="outerHTML" class="outcome-{{object.pk}}">
-    <td>{{object.get_system_display}}</td>
-    <td>{{object.effect}}</td>
-    <td>{{object.effect_detail}}</td>
-    <td>{{object.endpoint}}</td>
-    {% include "epiv2/fragments/_object_row.html" with model="outcome" %}
+  <td>{{object.get_system_display}}</td>
+  <td>{{object.effect}}</td>
+  <td>{{object.effect_detail}}</td>
+  <td>{{object.endpoint}}</td>
+  {% include "epiv2/fragments/_object_row.html" with model="outcome" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
-<tr style="display: none" id="outcome-empty-row" hx-target="this"></tr>
+  <tr style="display: none" id="outcome-empty-row" hx-target="this"></tr>
 {% endif %}

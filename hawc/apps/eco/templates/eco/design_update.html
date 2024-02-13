@@ -1,16 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2 class="d-inline-block">{{object.name}}</h2>
-<div class="float-right pb-2">
+  <h2 class="d-inline-block">{{object.name}}</h2>
+  <div class="float-right pb-2">
     <a id="design-update" class="btn btn-sm btn-primary" href="#" hx-get="{% url 'eco:design-update' object.pk %}" hx-target="#design-table"
-        hx-swap="outerHTML">
-        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
-</div>
+       hx-swap="outerHTML">
+      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
+  </div>
 
-{% include "eco/fragments/_design_table.html" %}
+  {% include "eco/fragments/_design_table.html" %}
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'eco:cause-htmx' object.pk 'create' as cause_create %}
         {% include "eco/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target="#cause-empty-row" model="cause" %}
@@ -29,9 +29,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'eco:effect-htmx' object.pk 'create' as effect_create %}
         {% include "eco/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target="#effect-empty-row" model="effect" %}
@@ -50,9 +50,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
         {% url 'eco:result-htmx' object.pk 'create' as result_create %}
         {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-empty-row" model="result" %}
@@ -71,9 +71,9 @@
             </tbody>
         </table>
     </div>
-</div>
+  </div>
 
-<div class="well text-center">
+  <div class="well text-center">
     <a class="btn btn-light my-3" id="design-page-cancel" href="{{object.get_absolute_url}}"><i class="fa fa-fw fa-times"></i>Cancel</a>
-</div>
+  </div>
 {% endblock %}
