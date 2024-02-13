@@ -4,7 +4,7 @@
   <h2 class="d-inline-block">Update {{object.summary}}</h2>
   <div class="float-right">
     <a id="design-update" class="btn btn-sm btn-primary" href="#"
-       hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
+       hx-get="{% url 'epiv2:design-htmx' object.pk 'update' %}" hx-target="#design-table" hx-swap="outerHTML">
       <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
   </div>
 
