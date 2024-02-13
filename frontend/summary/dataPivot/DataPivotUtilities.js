@@ -312,6 +312,7 @@ class _DataPivot_settings_description {
         renderColumnNameSelect(nameTd[0], this.data_pivot);
         this.tr = $("<tr>")
             .append(nameTd)
+            .append($("<td>").append(this.content.header_name))
             .append($("<td>").append(this.content.header_style))
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))
