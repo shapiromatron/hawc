@@ -731,13 +731,13 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("assessment:attachment-detail", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk,"read"])
 
     def get_edit_url(self):
-        return reverse("assessment:attachment-update", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk,"update"])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment-delete", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk,"delete"])
 
     def get_dict(self):
         return {
