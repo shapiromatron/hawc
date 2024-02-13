@@ -277,8 +277,6 @@ class _DataPivot_settings_spacers {
     }
 }
 
-import renderColumnNameSelect from "./components/ColumnNameSelect";
-
 class _DataPivot_settings_description {
     constructor(data_pivot, values) {
         var self = this;
@@ -287,8 +285,8 @@ class _DataPivot_settings_description {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control"></select>')
-                .html(this.data_pivot._get_header_options(true))
+            field_name: this.data_pivot.column_select_manager
+                .createSelect(true)
                 .val(values.field_name),
             header_name: $('<input class="form-control" type="text">').val(values.header_name),
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
@@ -308,18 +306,14 @@ class _DataPivot_settings_description {
             );
         });
 
-        const nameTd = $("<td>");
-        renderColumnNameSelect(nameTd[0], this.data_pivot);
         this.tr = $("<tr>")
-            .append(nameTd)
+            .append($("<td>").append(this.content.field_name))
             .append($("<td>").append(this.content.header_name))
             .append($("<td>").append(this.content.header_style))
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))
             .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function() {
-                self.data_push();
-            });
+            .on("change", "input,select", () => self.data_push());
 
         var movement_td = DataPivot.build_movement_td(
             self.data_pivot.settings.description_settings,
@@ -396,6 +390,7 @@ class _DataPivot_settings_calculated {
     data_push() {
         this.values.name = this.content.name.val();
         this.values.formula = this.content.formula.val();
+        this.data_pivot.column_select_manager.updateSelects();
     }
 }
 

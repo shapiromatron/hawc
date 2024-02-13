@@ -85,7 +85,6 @@ class ColumnNameStore {
 
 class Store {
     constructor(dp) {
-        console.log(dp);
         this.dp = dp;
         this.sortStore = new SortStore(this);
         this.columnNameStore = new ColumnNameStore(this);

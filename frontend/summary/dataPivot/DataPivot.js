@@ -9,6 +9,7 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
+import ColumnSelectManager from "./components/ColumnNameSelect";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
@@ -196,6 +197,7 @@ class DataPivot {
         var self = this,
             editable = true;
         this.style_manager = new StyleManager(this);
+        this.column_select_manager = new ColumnSelectManager(this);
         this.$div = $(dom_bindings.container);
         this.$data_div = $(dom_bindings.data_div);
         this.$settings_div = $(dom_bindings.settings_div);
@@ -221,7 +223,7 @@ class DataPivot {
         this.plot = new DataPivotVisualization(data, this.settings, div, editable);
     }
 
-    build_data_table() {
+    set_data_headers() {
         // get headers
         let data_headers = [];
         for (var prop in this.data[0]) {
@@ -230,17 +232,15 @@ class DataPivot {
                 data_headers.push(prop);
             }
         }
-
         // add calculated_columns
-        this.settings.calculated_columns.map(d => {
-            data_headers.push(d.name);
-        });
-
-        // build data table
-        ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);
-
-        // now save things back to object
+        this.settings.calculated_columns.forEach(d => data_headers.push(d.name));
+        // now save things back to object=
         this.data_headers = data_headers;
+    }
+
+    build_data_table() {
+        this.set_data_headers();
+        ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);
     }
 
     addOnRenderedCallback(cb) {
