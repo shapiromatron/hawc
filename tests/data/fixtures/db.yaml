@@ -10408,7 +10408,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>caption</p>
     published: true
     created: 2020-05-08 17:48:36.143248+00:00
@@ -10519,7 +10519,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
     created: 2020-05-08 17:52:21.928839+00:00
@@ -10629,7 +10629,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
     created: 2020-05-09 03:22:01.190725+00:00
@@ -10738,7 +10738,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>Example.</p>
     published: true
     created: 2020-05-11 02:26:51.725098+00:00
@@ -10847,7 +10847,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:10:29.880052+00:00
@@ -10956,7 +10956,7 @@
       "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity":
       0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke":
       "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c",
-      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:12:54.866928+00:00
