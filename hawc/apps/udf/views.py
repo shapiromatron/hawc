@@ -138,11 +138,8 @@ class UDFBindingList(BaseList):
             ),
         )
         tag_names = ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
-        for binding in context["object_list"]:
-            binding.form.can_edit = binding.form.user_can_edit(self.request.user)
         for binding in context["tag_object_list"]:
             binding.tag_name = tag_names[binding.tag.id]
-            binding.form.can_edit = binding.form.user_can_edit(self.request.user)
         return context
 
 
@@ -178,13 +175,19 @@ class BindingViewSet(HtmxViewSet):
             binding_type=self.binding_type,
         )
 
+    def add_tag_names(self, tag_binding, assessment_id):
+        if self.binding_type == constants.BindingType.TAG:
+            tag_names = ReferenceFilterTag.get_nested_tag_names(assessment_id)
+            if isinstance(tag_binding, list):
+                for binding in tag_binding:
+                    binding.tag_name = tag_names[binding.tag.id]
+            else:
+                tag_binding.tag_name = tag_names[tag_binding.tag.id]
+
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
         udf = request.item.object.form
-        udf.can_edit = udf.user_can_edit(self.request.user)
-        if self.binding_type == constants.BindingType.TAG:
-            tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.assessment.id)
-            request.item.object.tag_name = tag_names[request.item.object.tag.id]
+        self.add_tag_names(request.item.object, request.item.assessment.id)
         return render(
             request,
             self.detail_fragment,
@@ -199,15 +202,12 @@ class BindingViewSet(HtmxViewSet):
         template = self.form_fragment
         if request.method == "POST":
             form = self.form(request.POST, parent=request.item.parent, user=request.user)
-            context = self.get_context_data(form=form, binding_type=self.binding_type)
+            context = self.get_context_data(form=form)
             if form.is_valid():
                 self.perform_create(request.item, form)
                 udf = request.item.object.form
-                udf.can_edit = udf.user_can_edit(self.request.user)
                 template = self.detail_fragment
-                if self.binding_type == constants.BindingType.TAG:
-                    tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.parent.id)
-                    request.item.object.tag_name = tag_names[request.item.object.tag.id]
+                self.add_tag_names(request.item.object, request.item.assessment.id)
                 context.update(udf=udf, binding=request.item.object)
         else:
             form = self.form(parent=request.item.parent, user=request.user)
@@ -221,13 +221,7 @@ class BindingViewSet(HtmxViewSet):
             context = self.get_context_data(
                 form=form, object_list=object_list, tag_object_list=tag_object_list
             )
-            tag_names = ReferenceFilterTag.get_nested_tag_names(request.item.parent.id)
-            for binding in object_list:
-                binding.form.can_edit = binding.form.user_can_edit(request.user)
-            for binding in tag_object_list:
-                if self.binding_type == constants.BindingType.TAG:
-                    binding.tag_name = tag_names[binding.tag.id]
-                binding.form.can_edit = binding.form.user_can_edit(request.user)
+            self.add_tag_names(tag_object_list, request.item.assessment.id)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -238,6 +232,7 @@ class BindingViewSet(HtmxViewSet):
             if form.is_valid():
                 self.perform_update(request.item, form)
                 template = self.detail_fragment
+                self.add_tag_names(request.item.object, request.item.assessment.id)
         else:
             form = self.form(data=None, instance=request.item.object, user=request.user)
         context = self.get_context_data(
