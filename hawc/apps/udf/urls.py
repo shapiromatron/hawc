@@ -16,25 +16,25 @@ urlpatterns = (
         path("assessment/<int:pk>/", views.UDFBindingList.as_view(), name="binding-list"),
         # binding objects
         path(
-            "assessment/<int:pk>/bindings/<binding_type>/create/",
+            "assessment/<int:pk>/bindings/<slug:binding_type>/create/",
             views.BindingViewSet.as_view(),
             {"action": "create"},
             name="binding_create",
         ),
         path(
-            "bindings/<binding_type>/<int:pk>/",
+            "bindings/<slug:binding_type>/<int:pk>/",
             views.BindingViewSet.as_view(),
             {"action": "read"},
             name="binding_detail",
         ),
         path(
-            "bindings/<binding_type>/<int:pk>/update/",
+            "bindings/<slug:binding_type>/<int:pk>/update/",
             views.BindingViewSet.as_view(),
             {"action": "update"},
             name="binding_update",
         ),
         path(
-            "bindings/<binding_type>/<int:pk>/delete/",
+            "bindings/<slug:binding_type>/<int:pk>/delete/",
             views.BindingViewSet.as_view(),
             {"action": "delete"},
             name="binding_delete",
