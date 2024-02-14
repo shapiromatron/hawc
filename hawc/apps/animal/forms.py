@@ -465,7 +465,7 @@ class EndpointForm(ModelForm):
             )
             initial = udf_content.content if udf_content is not None else None
 
-            udf = self.model_binding.form_field(label="User defined fields", initial=initial)
+            udf = self.model_binding.form_field(label="User Defined Form fields", initial=initial)
             self.fields["udf"] = udf
 
     @property
