@@ -454,8 +454,7 @@ class DataPivotVisualization extends D3Plot {
             settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
-                        var hash = new Map();
-                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                        var hash = buildStyleMap(cf, false);
                         rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
@@ -474,11 +473,10 @@ class DataPivotVisualization extends D3Plot {
         } else {
             this.dp_settings.dataline_settings.forEach(dl => {
                 dl.conditional_formatting.forEach(cf => {
-                    const styles = "bars",
-                        hash = new Map();
+                    const styles = "bars";
                     switch (cf.condition_type) {
                         case "discrete-style":
-                            cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                            var hash = buildStyleMap(cf, false);
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
                                     d._styles[styles] = get_associated_style(
@@ -536,7 +534,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var mapping = buildStyleMap(cf);
+                            var mapping = buildStyleMap(cf, false);
                             rows.forEach(d => {
                                 let key = _.toString(d[cf.field_name]),
                                     value = mapping.get(key);
