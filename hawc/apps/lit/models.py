@@ -733,8 +733,10 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     @classmethod
     def get_nested_tag_names(cls, assessment_pk: int):
         """_summary_
+
         Args:
             assessment_pk (int): assessment id
+
         Returns:
             tag_names (dict): Keys are tag IDs, values are tag nested names
         """

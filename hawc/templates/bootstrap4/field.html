@@ -19,6 +19,16 @@
         {% include 'common/helptext_popup.html' with text=field.field.help_text %}
       {% endif %}
     </label>
+    {% if field.field.label_append_button %}
+      <button type="button"
+              {% for name, value in field.field.label_append_button.btn_attrs.items %}
+                {% if value is not False %} {{ name }}{% if value is not True %}="{{ value|stringformat:'s' }}"{% endif %}{% endif %}
+              {% endfor %}
+      >{{field.field.label_append_button.btn_content}}</button>
+      {% if "hx-indicator" in field.field.label_append_button.btn_attrs %}
+        <i class="fa fa-spinner fa-spin htmx-indicator ml-2" id="spinner" aria-hidden="true"></i>
+      {% endif %}
+    {% endif %}
   {% endif %}
 
   {% if field|is_checkboxselectmultiple %}

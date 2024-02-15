@@ -5,9 +5,10 @@ from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
+from hawc.apps.assessment.autocomplete import AssessmentAutocomplete
 from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from hawc.apps.common.dynamic_forms.schemas import Schema
-from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaButton
+from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, form_actions_big
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
 from ..assessment.models import Assessment
@@ -19,16 +20,6 @@ class UDFForm(forms.ModelForm):
     schema = forms.JSONField(
         initial=Schema(fields=[]).model_dump(),
         validators=[PydanticValidator(Schema)],
-        widget=TextareaButton(
-            btn_attrs={
-                "hx-post": reverse_lazy("udf:schema_preview"),
-                "hx-target": "#schema-preview-frame",
-                "hx-swap": "innerHTML",
-                "class": "ml-2",
-            },
-            btn_content="Preview",
-            btn_stretch=False,
-        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -36,24 +27,73 @@ class UDFForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.id is None:
             self.instance.creator = user
+        self.fields["schema"].label_append_button = {
+            "btn_attrs": {
+                "hx-indicator": "#spinner",
+                "id": "schema-preview-btn",
+                "hx-post": reverse_lazy("udf:schema_preview"),
+                "hx-target": "#schema-preview-frame",
+                "hx-swap": "innerHTML",
+                "class": "ml-2 btn btn-primary",
+            },
+            "btn_content": "Preview",
+        }
 
     class Meta:
         model = models.UserDefinedForm
-        fields = ("name", "description", "schema", "editors", "deprecated")
+        fields = (
+            "name",
+            "description",
+            "schema",
+            "editors",
+            "assessments",
+            "published",
+            "deprecated",
+        )
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
+            "assessments": AutocompleteSelectMultipleWidget(AssessmentAutocomplete),
         }
 
     @property
     def helper(self):
-        self.fields["description"].widget.attrs["rows"] = 3
-        cancel_url = reverse("udf:udf_list")
-        form_actions = [
-            cfl.Submit("save", "Save"),
-            cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
-        ]
-        legend_text = "Update a custom form" if self.instance.id else "Create a custom form"
-        helper = BaseFormHelper(self, legend_text=legend_text, form_actions=form_actions)
+        self.fields["description"].widget.attrs["rows"] = 8
+        legend_text = (
+            "Update User Defined Form" if self.instance.id else "Create a User Defined Form"
+        )
+        helper = BaseFormHelper(self)
+        helper.layout = cfl.Layout(
+            cfl.Fieldset(
+                legend_text,
+                cfl.Row(
+                    cfl.Column("name", css_class="col-md-6"),
+                    cfl.Column(
+                        "published",
+                        "deprecated" if self.instance.id else None,
+                        css_class="col-md-6 align-items-center d-flex",
+                    ),
+                ),
+                cfl.Row(
+                    cfl.Column("description", css_class="col-md-6"),
+                    cfl.Column("editors", "assessments", css_class="col-md-6"),
+                ),
+                css_class="fieldset-border mx-2 mb-4",
+            ),
+            cfl.Fieldset(
+                "Form Schema",
+                cfl.Row(
+                    cfl.Column("schema"),
+                ),
+                cfl.Row(
+                    cfl.Div(
+                        css_id="schema-preview-frame",
+                        css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
+                    )
+                ),
+                css_class="fieldset-border mx-2 mb-4",
+            ),
+            form_actions_big(cancel_url=reverse("udf:udf_list")),
+        )
         return helper
 
 
@@ -82,6 +122,9 @@ class ModelBindingForm(forms.ModelForm):
             self.fields["assessment"].initial = self.assessment
             self.instance.assessment = self.assessment
             self.instance.creator = user
+        self.fields["form"].queryset = models.UserDefinedForm.objects.all().get_available_udfs(
+            user, self.assessment
+        )
 
     class Meta:
         model = models.ModelBinding
@@ -89,13 +132,18 @@ class ModelBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = (
-            self.instance.get_absolute_url()
-            if self.instance.id
-            else self.instance.assessment.get_udf_list_url()
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("form"),
+                cfl.Column(
+                    cfl.HTML('<p style="font-size: 1.25rem;">bound to</p>'),
+                    css_class="col-md-auto d-flex align-items-center px-4",
+                ),
+                cfl.Column("content_type"),
+            )
         )
-        legend_text = "Update a model binding" if self.instance.id else "Create a model binding"
-        helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper
 
 
@@ -116,6 +164,9 @@ class TagBindingForm(forms.ModelForm):
         qs = ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
         self.fields["tag"].queryset = qs
         self.fields["tag"].choices = [(el.id, el.get_nested_name()) for el in qs]
+        self.fields["form"].queryset = models.UserDefinedForm.objects.all().get_available_udfs(
+            user, self.assessment
+        )
 
     class Meta:
         model = models.TagBinding
@@ -123,11 +174,16 @@ class TagBindingForm(forms.ModelForm):
 
     @property
     def helper(self):
-        cancel_url = (
-            self.instance.get_absolute_url()
-            if self.instance.id
-            else self.instance.assessment.get_udf_list_url()
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("form"),
+                cfl.Column(
+                    cfl.HTML('<p style="font-size: 1.25rem;">bound to</p>'),
+                    css_class="col-md-auto d-flex align-items-center px-4",
+                ),
+                cfl.Column("tag"),
+            )
         )
-        legend_text = "Update a tag binding" if self.instance.id else "Create a tag binding"
-        helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper

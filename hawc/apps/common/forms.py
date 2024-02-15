@@ -51,13 +51,13 @@ def form_actions_create_or_close():
     ]
 
 
-def form_actions_big_apply_filters():
+def form_actions_big(save_text="Save", cancel_url=".", cancel_text="Cancel"):
     """Create big, centered Submit and Cancel buttons for filter forms."""
     return cfl.HTML(
-        """
-        <div class="d-flex justify-content-center">
-            <input type="submit" name="save" value="Apply Filters" class="btn btn-primary mx-2 py-2" id="submit-id-save" style="width: 15%;">
-            <a role="button" class="btn btn-light mx-2 py-2" href="." style="width: 10%;">Cancel</a>
+        f"""
+        <div class="d-flex justify-content-center mb-4">
+            <input type="submit" name="save" value="{save_text}" class="btn btn-primary mx-2 py-2" id="submit-id-save" style="width: 15rem; padding: 0.7rem;">
+            <a role="button" class="btn btn-light mx-2 py-2" href="{cancel_url}" style="width: 8rem; padding: 0.7rem;">{cancel_text}</a>
         </div>
         """
     )
@@ -280,7 +280,7 @@ class ExpandableFilterFormHelper(InlineFilterFormHelper):
         layout, collapsed_idx = self.get_layout_item(self.collapse_field_name)
         collapsed_field = layout.pop(collapsed_idx)
         self.add_filter_field(self.main_field, self.appended_fields, expandable=True)
-        self.layout.append(form_actions_big_apply_filters())
+        self.layout.append(form_actions_big(save_text="Apply Filters"))
         form_index = 1
         if self.legend_text:
             self.layout.insert(0, cfl.HTML(f"<legend>{self.legend_text}</legend>"))
@@ -421,46 +421,6 @@ class ConfirmationField(forms.CharField):
         super().validate(value)
         if value != self.check_value:
             raise forms.ValidationError(f'The value of "{self.check_value}" is required.')
-
-
-class WidgetButtonMixin:
-    """Mixin that adds a button to be associated with a field."""
-
-    _template_name = "common/widgets/btn.html"
-
-    def __init__(
-        self,
-        btn_attrs=None,
-        btn_content="",
-        btn_stretch=True,
-        btn_append=True,
-        *args,
-        **kwargs,
-    ):
-        """Apply button settings."""
-        self.btn_attrs = {} if btn_attrs is None else btn_attrs.copy()
-        self.btn_content = btn_content
-        self.btn_stretch = btn_stretch
-        self.btn_append = btn_append
-        super().__init__(*args, **kwargs)
-
-    def get_context(self, name, value, attrs):
-        """Add button settings to context."""
-        context = super().get_context(name, value, attrs)
-        context["widget"]["btn_attrs"] = self.btn_attrs
-        context["widget"]["btn_content"] = self.btn_content
-        context["widget"]["btn_stretch"] = self.btn_stretch
-        context["widget"]["btn_append"] = self.btn_append
-        return context
-
-    def render(self, name, value, attrs=None, renderer=None):
-        """Add to the context, then render."""
-        context = self.get_context(name, value, attrs)
-        return self._render(self._template_name, context, renderer)
-
-
-class TextareaButton(WidgetButtonMixin, forms.Textarea):
-    """Custom widget that adds a button associated with a textarea."""
 
 
 class DynamicFormField(forms.JSONField):
