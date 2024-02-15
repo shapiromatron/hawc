@@ -1,0 +1,143 @@
+interactions:
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=23878845&id=16080930
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '102'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        EAAAAP//QuODdkgCAAAA//8DAF8xrObcOQAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:16 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B27BC72AC1EE500002393FDD1ACB7.1.1.m_3
+      NCBI-SID:
+      - 936734CFCB97EFAD_2A2DSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=936734CFCB97EFAD_2A2DSID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:17 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=21860499
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '90'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:17 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B27BC72AC1EE500004294010F1E88.1.1.m_3
+      NCBI-SID:
+      - 02C86FACEF470873_CB76SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=02C86FACEF470873_CB76SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:18 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

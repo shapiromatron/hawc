@@ -1,0 +1,182 @@
+interactions:
+- request:
+    body: db=pubmed&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '877'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7I1MxGH8LkstFHUwQAAAD//wMAFNuL5uIAAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:13 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322CC4EF5A3366C5000024B62AF3D879.1.1.m_1
+      NCBI-SID:
+      - 2BB2C024A4E76044_AB94SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=2BB2C024A4E76044_AB94SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:13 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '931'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        XSWdHN3tsnTx0e0/AAAA//8DABD/5usyLAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:14 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322CC4EF5A3366C500004CB62DF4484D.1.1.m_1
+      NCBI-SID:
+      - B9C64697D651C169_A947SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=B9C64697D651C169_A947SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:14 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '9'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

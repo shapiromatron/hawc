@@ -1,0 +1,221 @@
+interactions:
+- request:
+    body: db=pubmed&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&rettype=count
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '86'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//skGx246L08Y5vzSvxM7MRh/C4LLRR1MCAAAA//8DACRpkk/gAAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:08 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B27BC72AC1EE500004593D34440C1.1.1.m_1
+      NCBI-SID:
+      - AE2DE58375C6D72C_D025SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=AE2DE58375C6D72C_D025SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:09 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=3&db=pubmed&api_key=<omitted>&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&retstart=0
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '137'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//dFDRasIwFP2V0Cf3lGR2ppVLYAxkjsnA9q0UiTYPlbQZSQQ/32uTgU7M07nnnpx7OHB3W8KH
+        PY1BLoBGAFsdNuos50ATujJVUC5INnERw7r77n1Av3UneclYkXM0wSEyRfkq5gt+y4hCcMESQ9N/
+        qJ0avVEBq6v0/SzJ9cHK2UH6Q4+V6uZoT25UpgU60VFRW5lVUZA1X1Gx3O2Ofcdylr9x3pKfLfmT
+        kBkvRfnyT1kw7CtnaIxukyu9jfIs195p5QM5KDR2D6HSdtT21yg/+KzZ6OqT1NoNfso0S5KseTeG
+        rHptOlxcAAAA//9y9HNRUELShCSnCfYJprnI2vGbC3EqbkOxyOMKE330yAssTS2qRFaioVSMFi+Q
+        qICKKoBiAiGlCXahxnAJNoh3gPnQQt/AEIiswExDI31jw2iXxJJUBV2FgNKknMxkcFgBQxkj+Gz0
+        UXMrFwAAAP//AwDwMPl9awQAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:10 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322CC4EF5A3366C500004CB620A7A0DA.1.1.m_1
+      NCBI-SID:
+      - 04AD4C9C4EF28E2B_A5CDSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=04AD4C9C4EF28E2B_A5CDSID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:10 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '9'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=3&db=pubmed&api_key=<omitted>&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&retstart=3
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '137'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
+        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
+        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
+        AP//dFDLCsIwEPyV0JOe0mjVVpaACKKiCLa3IhJtDpW0kSSCn+/aRPCBOc3OTmaHgY/bHOb61jo+
+        BuoB7KXbijsfAg3oyeROGBc4j2FVbWrr0G9VcZYm6YSlaIJDYAbDjA1+mVFgaPgPhRGtVcJhdbn8
+        nDl5PlgY3XB7rrFSWV70zbRCHYB2tFcUmke5F0Tl2iumx+OlruIkTkaMHchuT14S0mPZJOt/KdMY
+        +0piNEa3zpW+R/mX62SksI6cBRqbn1Bh20p9VcI2Niq3Ml+SQprGdpl6QRKVM6XIopaqwsUDAAD/
+        /3L0c1FQQtKEJKcJ9gmmucja8ZsLcSpuQ7HI4woTffTICyxNLapEVqKhVIwWL5CogIoqgGICIaUJ
+        dqHGcAk2iHeA+dBC38AQiKzATEMjfWPDaJfEklQFXYWA0qSczGRwWAFDGSP4bPRRcysXAAAA//8D
+        AKyL851rBAAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:10 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322CC4EF5A3366C5000024B622F4247B.1.1.m_1
+      NCBI-SID:
+      - D28990A04A4664EA_AC3ASID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=D28990A04A4664EA_AC3ASID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:11 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,96 @@
+interactions:
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=21813142
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '90'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        AAAA//9C44MGqgAAAAD//wMAaAT2/mMTAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 22:12:20 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - D0BD004AB92570450000469C4ADCCB9A.1.1.m_3
+      NCBI-SID:
+      - 373AAC5464549C3C_0EA7SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=373AAC5464549C3C_0EA7SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 22:12:21 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '8'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1
