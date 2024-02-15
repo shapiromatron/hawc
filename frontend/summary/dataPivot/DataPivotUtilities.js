@@ -354,6 +354,13 @@ class _DataPivot_settings_calculated {
         this.data_pivot = data_pivot;
         this.values = values;
 
+        const checkFormula = function() {
+            // TODO - a formula is invalid if it contains "test"; replace with real check
+            const el = $(this),
+                isValid = !el.val().includes("test");
+            isValid ? el.removeClass("is-invalid") : el.addClass("is-invalid");
+        };
+
         // create fields
         this.content = {
             name: $('<input class="form-control" type="text">').val(values.name),
@@ -370,6 +377,8 @@ class _DataPivot_settings_calculated {
             )
             .on("change", "input,select", () => this.data_push())
             .trigger("change");
+
+        this.content.formula.on("keyup", checkFormula).trigger("keyup");
 
         return this;
     }
