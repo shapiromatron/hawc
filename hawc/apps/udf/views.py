@@ -1,4 +1,5 @@
 from django.core.exceptions import BadRequest, PermissionDenied
+from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -178,7 +179,7 @@ class BindingViewSet(HtmxViewSet):
     def add_tag_names(self, tag_binding, assessment_id):
         if self.binding_type == constants.BindingType.TAG:
             tag_names = ReferenceFilterTag.get_nested_tag_names(assessment_id)
-            if isinstance(tag_binding, list):
+            if isinstance(tag_binding, list) or isinstance(tag_binding, QuerySet):
                 for binding in tag_binding:
                     binding.tag_name = tag_names[binding.tag.id]
             else:
