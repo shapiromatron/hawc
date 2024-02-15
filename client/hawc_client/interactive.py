@@ -1,3 +1,4 @@
+import time
 from io import BytesIO
 from pathlib import Path
 
@@ -6,12 +7,60 @@ from playwright.async_api import Page, expect
 from playwright.async_api._context_manager import PlaywrightContextManager as pcm
 
 from .client import BaseClient
-from .exceptions import HawcClientException
+from .exceptions import ContentUnavailable, HawcClientException
 
 
 async def remove_dj_toolbar(page: Page):
     if await page.evaluate("document.querySelector('#djDebug')"):
         await page.evaluate("document.querySelector('#djDebug').remove()")
+
+
+async def get_tableau_image(page) -> BytesIO:
+    download_button = page.frame_locator("iframe").locator(
+        'div[role="button"]:has-text("Download")'
+    )
+    download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
+    await download_button.click()
+    async with page.expect_download() as download_info:
+        await download_confirm.click()
+    download = await download_info.value
+    path = await download.path()
+    return BytesIO(path.read_bytes())
+
+
+async def get_plotly_image(page) -> BytesIO:
+    download_confirm = page.locator(".js-plotly-plot .modebar-btn").first
+    async with page.expect_download() as download_info:
+        await download_confirm.click()
+    download = await download_info.value
+    path = await download.path()
+    return BytesIO(path.read_bytes())
+
+
+async def get_static_image(page) -> BytesIO:
+    b = await page.locator("#visual-image img").screenshot(type="png")
+    return BytesIO(b)
+
+
+async def get_svg_image(page) -> BytesIO:
+    error_alert = page.get_by_test_id("error")
+    download_button = page.locator("button", has=page.locator("i.fa-download"))
+    download_confirm = page.locator("text=Download as a PNG")
+
+    await expect(download_button.or_(error_alert)).to_be_visible()
+    if await error_alert.is_visible():
+        error_text = await error_alert.inner_text()
+        raise ContentUnavailable(400, error_text)
+
+    # wait 1 second; the tagtree has startup animations
+    time.sleep(1000)
+
+    await download_button.click()
+    async with page.expect_download() as download_info:
+        await download_confirm.click()
+    download = await download_info.value
+    path = await download.path()
+    return BytesIO(path.read_bytes())
 
 
 async def fetch_png(page: Page) -> BytesIO:
@@ -26,9 +75,6 @@ async def fetch_png(page: Page) -> BytesIO:
     await page.wait_for_load_state("load")
     await expect(page.locator(".is-loading")).to_have_count(0)
     await remove_dj_toolbar(page)
-
-    # Check for an error; the page should load after 10 seconds even if its waiting for data
-    await expect(page.get_by_test_id("error")).to_have_count(0, timeout=10 * 1000)
 
     viz_type = await page.evaluate(
         "document.querySelector('meta[name=hawc-viz-type]').dataset.vizType"
@@ -45,31 +91,15 @@ async def fetch_png(page: Page) -> BytesIO:
             | "literature tagtree"
             | "exploratory heatmap"
         ):
-            download_button = page.locator("button", has=page.locator("i.fa-download"))
-            download_confirm = page.locator("text=Download as a PNG")
+            return await get_svg_image(page)
         case "embedded external website":
-            download_button = page.frame_locator("iframe").locator(
-                'div[role="button"]:has-text("Download")'
-            )
-            download_confirm = page.frame_locator("iframe").locator('button:has-text("Image")')
+            return await get_tableau_image(page)
         case "plotly":
-            download_button = None
-            download_confirm = page.locator(".js-plotly-plot .modebar-btn").first
+            return await get_plotly_image(page)
         case "static image":
-            b = await page.locator("#visual-image img").screenshot(type="png")
-            return BytesIO(b)
+            return await get_static_image(page)
         case _:
             raise ValueError(f"Unknown visual type: {viz_type}")
-
-    if download_button:
-        await download_button.click()
-    async with page.expect_download() as download_info:
-        await download_confirm.click()
-    download = await download_info.value
-    path = await download.path()
-    if path is None:
-        raise ValueError("Download failed")
-    return BytesIO(path.read_bytes())
 
 
 PathLike = Path | str | None
