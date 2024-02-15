@@ -48,9 +48,7 @@ class DataPivot {
                     }
                 },
                 error => {
-                    console.error(error);
-                    alert(`An error occurred; if the error continues please contact us.`);
-                    throw "Server error";
+                    this.handleUnknownError(null, error);
                 }
             );
         });
@@ -89,9 +87,7 @@ class DataPivot {
                 });
             },
             error => {
-                console.error(arguments);
-                alert(`An error occurred; if the error continues please contact us.`);
-                throw "Server error";
+                this.handleUnknownError(null, error);
             }
         );
     }
@@ -214,11 +210,32 @@ class DataPivot {
         this.$div.fadeIn();
     }
 
-    build_data_pivot_vis(div, editable) {
-        delete this.plot;
-        editable = editable || false;
-        var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
-        this.plot = new DataPivotVisualization(data, this.settings, div, editable);
+    handleUnknownError($div, err) {
+        console.error(err);
+        const msg = "Error: An error has ocurred; please check visualization settings.";
+        if ($div === null) {
+            const $el = $("#main-content-container h2").first();
+            if ($el) {
+                $div = $("<div>");
+                $div.insertAfter($el);
+            }
+        }
+        if ($div) {
+            HAWCUtils.addAlert(msg, $div);
+        } else {
+            alert(msg);
+        }
+    }
+
+    build_data_pivot_vis($div, editable) {
+        try {
+            delete this.plot;
+            editable = editable || false;
+            var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
+            this.plot = new DataPivotVisualization(data, this.settings, $div, editable);
+        } catch (err) {
+            this.handleUnknownError($div, err);
+        }
     }
 
     build_data_table() {

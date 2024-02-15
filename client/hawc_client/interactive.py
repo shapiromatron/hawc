@@ -3,7 +3,7 @@ from io import BytesIO
 from pathlib import Path
 
 from playwright._impl._api_structures import SetCookieParam
-from playwright.async_api import Page, expect
+from playwright.async_api import Page, TimeoutError, expect
 from playwright.async_api._context_manager import PlaywrightContextManager as pcm
 
 from .client import BaseClient
@@ -42,18 +42,22 @@ async def get_static_image(page) -> BytesIO:
     return BytesIO(b)
 
 
-async def get_svg_image(page) -> BytesIO:
+async def get_svg_image(page, timeout_ms) -> BytesIO:
     error_alert = page.get_by_test_id("error")
     download_button = page.locator("button", has=page.locator("i.fa-download"))
     download_confirm = page.locator("text=Download as a PNG")
 
-    await expect(download_button.or_(error_alert)).to_be_visible()
+    try:
+        await expect(download_button.or_(error_alert)).to_be_visible(timeout=timeout_ms)
+    except AssertionError:
+        raise TimeoutError(f"Timeout - exceeded {timeout_ms}ms")
+
     if await error_alert.is_visible():
         error_text = await error_alert.inner_text()
         raise ContentUnavailable(400, error_text)
 
     # wait 1 second; the tagtree has startup animations
-    time.sleep(1000)
+    time.sleep(1)
 
     await download_button.click()
     async with page.expect_download() as download_info:
@@ -63,11 +67,12 @@ async def get_svg_image(page) -> BytesIO:
     return BytesIO(path.read_bytes())
 
 
-async def fetch_png(page: Page) -> BytesIO:
+async def fetch_png(page: Page, timeout_ms: int) -> BytesIO:
     """Helper method to download a PNG from a visualization page
 
     Args:
         page (Page): a page instance
+        timeout_ms (int): timeout, in milliseconds
 
     Returns:
         BytesIO: The PNG image, in bytes
@@ -91,7 +96,7 @@ async def fetch_png(page: Page) -> BytesIO:
             | "literature tagtree"
             | "exploratory heatmap"
         ):
-            return await get_svg_image(page)
+            return await get_svg_image(page, timeout_ms)
         case "embedded external website":
             return await get_tableau_image(page)
         case "plotly":
@@ -130,14 +135,14 @@ class InteractiveHawcClient:
         """
         self.client = client
         self.headless = headless
-        self.timeout = timeout
+        self.timeout = timeout * 1000  # convert from s to ms
 
     async def __aenter__(self):
         self.playwright = await pcm().start()
         browser = await self.playwright.chromium.launch(headless=self.headless)
         self.context = await browser.new_context()
         if self.timeout:
-            self.context.set_default_timeout(self.timeout * 1000)  # sec to ms
+            self.context.set_default_timeout(self.timeout)
         self.page = await self.context.new_page()
         cookies = [
             SetCookieParam(name=k, value=v, url=self.client.session.root_url)
@@ -171,7 +176,8 @@ class InteractiveHawcClient:
         response = await self.page.goto(url)
         if response and not response.ok:
             raise HawcClientException(response.status, response.status_text)
-        data = await fetch_png(self.page)
+        self.page.set_default_timeout(self.timeout)
+        data = await fetch_png(self.page, self.timeout)
         write_to_file(data, fn)
         return data
 
@@ -192,6 +198,7 @@ class InteractiveHawcClient:
         if response and not response.ok:
             raise HawcClientException(response.status, response.status_text)
         # attempt to fetch PNG
-        data = await fetch_png(self.page)
+        self.page.set_default_timeout(self.timeout)
+        data = await fetch_png(self.page, self.timeout)
         write_to_file(data, fn)
         return data
