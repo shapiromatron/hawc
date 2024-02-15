@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+import Format from "shared/parsers/format";
 import Query from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -211,7 +212,9 @@ class DataPivotVisualization extends D3Plot {
             settings.calculated_columns
                 .filter(d => d.name && d.formula)
                 .forEach(d => {
-                    row[d.name] = d.formula;
+                    row[d.name] = Format.parse(d.formula, {
+                        getValue: identifier => row[identifier],
+                    });
                 });
             return row;
         };
