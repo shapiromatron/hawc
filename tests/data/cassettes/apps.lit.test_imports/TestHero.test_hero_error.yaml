@@ -1,0 +1,2306 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/3981313,3981322,6416396,3858444,2676749,3981327,6416397,6570001,7065615,7325713,7325714,7325715,7325716,3878944,4354081,6324256,3981347,10176548,2732071,3858472,9959466,5918764,3858477,7065644,3981365,1617974,3858487,3858488,4319287,3858492,6574143,3856451,3858500,3856453,3856455,3856456,10176584,6305866,3856460,3858509,3858510,3856464,1749076,2850900,3856468,3856470,3856472,6324311,5918810,2850908,3858524,2850910,9959518,3856480,9959521,3856484,2850917,3856486,9959527,3860584,3860585,1618026,3856490,3856492,3858541,3981417,6324329,5935216,6324336,9959533,6322291,6987891,3223669,3856505,3856507,3981436,198783,2850944,3858560,9959553,9959556,3459209,10328201,3856523,3981451,4354192,9959571,4618390,9642134,5353624,10176665,4309149,3856549,5017765,5081256,2850986,6316202,9959598,3858607,10176686/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:46 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371482; Expires=Fri, 16 Feb 2024 16:46:46 GMT; Path=/; HttpOnly
+      - CFTOKEN=89991960; Expires=Fri, 16 Feb 2024 16:46:46 GMT; Path=/; HttpOnly
+      - JSESSIONID=33744A7E91EF6B7C7B6762E24BBCCC3F.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A46; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371482; CFTOKEN=89991960; JSESSIONID=33744A7E91EF6B7C7B6762E24BBCCC3F.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A46
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:48 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A48; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/3858609,5017777,2850995,6316209,5081271,3858617,2851003,2851005,3858622,2990271,9959616,9959621,3111116,1276109,2558158,3856591,3858637,3858640,2258,5081294,1597652,3858645,3858646,10176720,3021018,3858650,3858652,9959652,1276134,3981542,10176742,3981549,3858670,9959664,5081333,4616440,2576635,1050876,7383292,1276159,3856639,3981579,9959693,2851087,3856656,2535697,1274132,1274137,10176795,3856668,6326557,3856677,1274154,1274159,2324788,2324790,5413179,7326015,2324807,6336839,8442183,2851149,1290574,2912596,9959770,8442206,2023785,2324841,3858793,3858797,5081455,2851186,7276919,7487863,2851198,5083518,5919109,1239433,2347406,7487886,5081488,5400977,2668947,3981721,7487901,2324895,4956575,5083552,7287202,10228134,2324905,2851242,3008937,6781357,3858862,2324911,3981744,5097904,5097905,5097906/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:48 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371483; Expires=Fri, 16 Feb 2024 16:46:48 GMT; Path=/; HttpOnly
+      - CFTOKEN=96733394; Expires=Fri, 16 Feb 2024 16:46:48 GMT; Path=/; HttpOnly
+      - JSESSIONID=8FFA43AF075C05554D565BEF63B25C32.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A48; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371483; CFTOKEN=96733394; JSESSIONID=8FFA43AF075C05554D565BEF63B25C32.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A48
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:50 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A50; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/5097907,5097908,1849786,5097916,1429952,9961931,5024209,3899858,3856851,5024210,2851285,5024211,1249755,5083612,3981789,7410142,7410143,3981793,7174629,3856871,7410151,3858922,7410159,7410160,7410161,7410162,9961974,8630776,7490043,6355453,1333757,7014910,7014912,1047045,9961991,9961992,3899913,9961993,9961994,9961995,10273292,4825616,9962001,5083667,1274388,7410195,10273305,5083675,1274396,1274397,3797537,7404066,782883,5024294,5083689,1274410,3858988,3858989,1274414,6318636,6318642,1401396,3021365,1290806,7023161,819771,3859012,3899973,6836806,10273351,7404106,10273354,7404111,3869265,6318674,10476114,6318676,7328343,1290844,8438370,10273383,10273384,3981929,7486056,7484012,7484013,4940398,7484014,7486061,1290868,1290870,3981942,10273403,7019132,10273404,10273405,10273406,10273407,10273408,10273409/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:50 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371484; Expires=Fri, 16 Feb 2024 16:46:50 GMT; Path=/; HttpOnly
+      - CFTOKEN=23326535; Expires=Fri, 16 Feb 2024 16:46:50 GMT; Path=/; HttpOnly
+      - JSESSIONID=7A12A33BC89017BA1016FF14DBCD2A84.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A50; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371484; CFTOKEN=23326535; JSESSIONID=7A12A33BC89017BA1016FF14DBCD2A84.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A50
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:51 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A51; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/10273410,7486084,7348867,1041030,1290887,1290888,5079687,10273411,1290891,5079692,10273412,1290897,1290898,4309651,7486109,6326943,6326944,6326945,6324898,7486119,6326952,7019179,7019180,1450669,7019181,7127728,3076786,6994610,3982004,7486130,6392503,6392504,6392505,1043130,2155195,6392507,7002817,2816710,7404231,7404232,5079753,6988489,7404233,7404234,7404235,7404236,6988495,2190035,6988500,5079766,6988503,6988504,6988506,346845,9962212,9960165,9960166,3898087,9960167,9960168,2919147,5079787,5386987,5386988,9960177,6988530,6988531,9960179,5079797,7019253,2919159,88824,5079799,2970367,5079809,4348675,5079816,6304523,5079822,688914,4774679,2919200,6703908,5079846,3859243,3859244,1055535,1415983,5079856,3859253,2919224,1401660,6835448,2325315,2919238,4174662,2325320,5098313,2325325,3859277/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:52 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371485; Expires=Fri, 16 Feb 2024 16:46:52 GMT; Path=/; HttpOnly
+      - CFTOKEN=71290006; Expires=Fri, 16 Feb 2024 16:46:52 GMT; Path=/; HttpOnly
+      - JSESSIONID=44534782A131D98D3DA7EEFDBBD9F7D3.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A52; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371485; CFTOKEN=71290006; JSESSIONID=44534782A131D98D3DA7EEFDBBD9F7D3.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A52
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:53 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A53; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/2325327,3859278,3859279,3859281,2325331,5098323,2325333,1291094,2919254,5098324,5098325,2325338,2325339,2325340,2919262,2325346,5387106,2919268,2325349,2919269,2325356,2325359,3748720,6316913,2919284,2919288,6316920,6822780,6822781,2325374,5387135,5387136,6822782,6822783,3789699,7484296,2325387,3810188,5387149,3351439,5387157,2991004,5079967,2919328,5079968,5079969,3861414,5079975,7019434,5387180,2325421,1039278,5079986,2718645,2325430,1256375,2325435,2325440,7021512,5880781,5352400,3857361,4238291,2919380,2554838,8453078,732120,2010072,3857377,488418,4238307,3857382,3857383,3857384,3857387,4510700,4238322,2325492,3857400,3857402,4238334,1850369,2022408,670731,7488541,10365981,4238377,5082157,3857454,625713,3859509,6986805,3861561,1279036,1279037,3859523,6579272,3859541,3748953,7277659/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:54 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371486; Expires=Fri, 16 Feb 2024 16:46:54 GMT; Path=/; HttpOnly
+      - CFTOKEN=30535053; Expires=Fri, 16 Feb 2024 16:46:54 GMT; Path=/; HttpOnly
+      - JSESSIONID=592BFE81D8A6F46D09072A82F1F6BEE3.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A54; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371486; CFTOKEN=30535053; JSESSIONID=592BFE81D8A6F46D09072A82F1F6BEE3.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A54
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:55 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A55; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/7277661,3748959,7277663,5082215,7277677,4238457,3005562,3222653,3005567,5772415,9956482,3005573,1279110,3859602,3859603,3859606,1279127,5080217,3859614,4238497,5381284,5080229,3859625,3841196,3847344,5381304,2571454,3359940,7021776,9960658,6333653,6333654,5080284,3359967,4771044,5080298,2850027,7486699,5080307,2596083,3859699,2850037,3859700,2538743,3859702,2850041,3859703,3859704,10366205,3859705,3921144,2850046,5080312,2850049,3859714,6835451,2850052,3044613,2170118,3859719,2850058,2850060,3859724,2850063,2850065,9944338,3468563,2850068,5063958,2538777,3859737,2850075,2850078,9944351,2850081,7486755,3859749,2850087,6835499,2850093,3859757,5881135,2850096,9944367,2850098,1230132,6827320,5080377,2850106,6835515,9944377,3859776,3351873,5080385,6985026,30021,10173768,3749193,3859786,3859787/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:56 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371488; Expires=Fri, 16 Feb 2024 16:46:56 GMT; Path=/; HttpOnly
+      - CFTOKEN=58421415; Expires=Fri, 16 Feb 2024 16:46:56 GMT; Path=/; HttpOnly
+      - JSESSIONID=6BBC12875AC0544F525CFE2120D36495.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A56; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371488; CFTOKEN=58421415; JSESSIONID=6BBC12875AC0544F525CFE2120D36495.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A56
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:57 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A57; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/752972,3859788,2559310,3859789,3859790,3859791,3859792,3859793,3859794,3859795,3859797,5915992,3859803,10284379,3859805,1445216,3859815,3360105,3859817,2850155,7486826,3351917,2850159,2850161,3859825,1228147,4111730,10328914,2850168,2823545,3859833,9641336,10328915,2850176,3859846,2850183,3859849,3859851,2850190,4220306,4220307,6356370,4220309,2583958,5381526,6505874,2850202,5381531,2850206,3503518,4220319,3859873,4220321,5381538,3749284,3859876,1047977,3749289,7484843,7484844,2850221,5916078,7484845,3358129,5381555,2850228,5381561,5080507,6833596,5381565,5080513,6833603,6833604,2850246,3859910,4167113,6391241,6391242,6833613,3859918,3859919,3859920,3859921,3859922,3859924,3859925,3859926,3859929,3859930,5381601,3859942,2821611,5080558,6387183,6970864,2850290,2850294,2850295,2559480,6303224/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:58 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371490; Expires=Fri, 16 Feb 2024 16:46:58 GMT; Path=/; HttpOnly
+      - CFTOKEN=90584020; Expires=Fri, 16 Feb 2024 16:46:58 GMT; Path=/; HttpOnly
+      - JSESSIONID=415F35EDFB17799645AD4FD2FA637053.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A58; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371490; CFTOKEN=90584020; JSESSIONID=415F35EDFB17799645AD4FD2FA637053.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A58
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:47:00 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A00; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/6303225,6303226,6303228,6303229,6391291,6833658,2850306,1578499,6512132,5080583,1578505,2850314,1578507,2850316,1332749,1578509,128527,3448334,5080586,5080589,5080590,6512144,1578517,2850325,6833681,2010648,6833688,6833693,6833694,6833697,4238579,5084712,2649641,5080618,6833705,6833708,3604013,2967086,5080622,1289776,2012721,8347180,1424947,1289780,1424948,5080628,6833715,1424952,9795126,1289787,1289788,5080637,5080638,10004031,5080639,2539072,2850369,6336059,5080643,3399236,5080645,5412420,2850375,3980872,6833739,2850380,6833741,3980882,3980883,3980884,5080663,6323799,6323801,2850396,2573918,6833762,2850404,4234856,1289834,4234858,6956652,1289837,2850415,2850416,2850417,5412466,6364788,3878517,6547066,3860099,7161477,1326734,2549400,3860121,4241049,2535067,4241051,6315677,7491230,4241055/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:47:01 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371491; Expires=Fri, 16 Feb 2024 16:47:01 GMT; Path=/; HttpOnly
+      - CFTOKEN=40109151; Expires=Fri, 16 Feb 2024 16:47:01 GMT; Path=/; HttpOnly
+      - JSESSIONID=8F86B84FF2A755C669580D6A6CFDE039.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A01; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371491; CFTOKEN=40109151; JSESSIONID=8F86B84FF2A755C669580D6A6CFDE039.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A01
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:47:02 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A02; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/6315680,6364834,7491238,2188967,7491240,6315689,6315690,7026347,7491241,7491242,7491243,7491244,6315696,7491245,6315698,7491246,7491247,7491248,7491249,7491251,7491252,6315705,7491253,7491254,7491255,7491256,7491258,7491259,6311630,5385935,5385936,5385937,6311631,6311635,6315734,6315737,10284765,2029288,2549482,5412587,7489260,2553581,3860206,5883631,3839729,5412596,7489270,6315771,6311681,2621188,6315783,1289993,6315785,1289999,6315791,6315808,6315809,6315810,3114808,4239163,3858250,1937230,6365007,3858259,3858262,3858263,3858264,1404761,7270234,716635,6360927,3858272,2946930,5386116,5918597,509832,10176392,6987659,3790742,5918615,5918616,3981209,6553496,10176410,1447841,6356901,5918630,6356902,6356904,4198322,10176443,10176444,1038270,3860415,5185472,3858375,10176458,3350475,4409296,10176467/recordsperpage/100.json
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:47:03 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371492; Expires=Fri, 16 Feb 2024 16:47:03 GMT; Path=/; HttpOnly
+      - CFTOKEN=92784130; Expires=Fri, 16 Feb 2024 16:47:03 GMT; Path=/; HttpOnly
+      - JSESSIONID=EA805C7FF041EF9E230AB2C08B9BAA5E.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A03; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+      location:
+      - https://hero.epa.gov/hero/ws/index.cfm/content/error
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - CFID=14371492; CFTOKEN=92784130; JSESSIONID=EA805C7FF041EF9E230AB2C08B9BAA5E.cfusion;
+        LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A03
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/content/error
+  response:
+    body:
+      string: "\r\n  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n  <!DOCTYPE html
+        PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n
+        \ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\r\n
+        \   <!-- OneEPA Template -->\r\n    <head>\r\n       <title>Error Page | Health
+        &amp; Environmental Research Online (HERO) | US EPA</title>\r\n\r\n      <meta
+        http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\r\n      <meta name=\"HandheldFriendly\"
+        content=\"true\" />\r\n      <link rel=\"shortcut icon\" href=\"https://www.epa.gov/sites/all/themes/epa/favicon.ico\"
+        type=\"image/vnd.microsoft.icon\" />\r\n      <meta name=\"MobileOptimized\"
+        content=\"width\" />\r\n      <meta http-equiv=\"cleartype\" content=\"on\"
+        />\r\n      <meta http-equiv=\"ImageToolbar\" content=\"false\" />\r\n      <meta
+        name=\"viewport\" content=\"width=device-width\" />\r\n      <meta name=\"version\"
+        content=\"20161218\" />\r\n\r\n      <meta name=\"dc.description\" content=\"\"
+        />\r\n      <meta name=\"keywords\" content=\"\" />\r\n      <meta name=\"DC.Title\"
+        content=\"Error Page\" />\r\n      <meta name=\"DC.Subject\" content=\"\"
+        />\r\n      <meta name=\"DC.Type\" content=\"WEB SITE\" />\r\n      <meta
+        name=\"DC.Date.modified\" content=\"2009-03-15\" />\r\n      <meta name=\"DC.Date\"
+        content=\"2009-03-15\" />\r\n      <meta name=\"DC.Language\" content=\"en\"
+        />\r\n      <meta name=\"DC.Creator\" content=\"US EPA National Center for
+        Environmental Assessment\" />\r\n      <meta http-equiv=\"Content-Style-Type\"
+        content=\"text/css\" />\r\n      <meta http-equiv=\"Content-Type\" content=\"text/html;
+        charset=utf-8\" />\r\n      <meta http-equiv=\"Pragma\" content=\"no-cache\">\r\n
+        \     <meta http-equiv=\"Expires\" content=\"-1\">\r\n\r\n      <link type=\"text/css\"
+        rel=\"stylesheet\" href=\"https://www.epa.gov/sites/all/libraries/template2/s.css\"
+        media=\"all\" />\r\n      <!--[if lt IE 9]><link type=\"text/css\" rel=\"stylesheet\"
+        href=\"https://www.epa.gov/sites/all/themes/epa/css/ie.css\" media=\"all\"
+        /><![endif]-->\r\n\r\n      <link rel=\"alternate\" type=\"application/atom+xml\"
+        title=\"EPA.gov All Press Releases\" href=\"https://www.epa.gov/newsreleases/search/rss\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"EPA.gov
+        Headquarters Press Releases\" href=\"/https://www.epa.gov/newsreleases/search/rss/field_press_office/headquarters\"
+        />\r\n      <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Greenversations,
+        EPA's Blog\" href=\"https://blog.epa.gov/blog/feed/\" />\r\n\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/foresee-trigger.js\"></script>\r\n\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/jquery.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/libraries/template2/js.js\"></script>\r\n\t<script
+        src=\"https://www.epa.gov/sites/all/modules/custom/epa_core/js/alert.js\"></script>\r\n\t<script>var
+        $ = jQuery.noConflict();</script>\r\n      \r\n        <base href=\"https://hero.epa.gov/hero/\">\r\n
+        \     \t\t<!-- printing 2 CSS links -->\r\n\t<link rel=\"stylesheet\" media=\"screen,print\"
+        href=\"resources/css/thirdparty/font-awesome.min.css\" type=\"text/css\" />\r\n\t<link
+        rel=\"stylesheet\" media=\"screen,print\" href=\"resources/css/hero/hero.css\"
+        type=\"text/css\" />\r\n\r\n\t\t<!-- printing 5 JS links -->\r\n\t<script
+        src=\"resources/javascript/jquery/jquery-ui-1.8.min.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/jsfunctions.js\" type=\"text/javascript\"
+        ></script>\r\n\t<script src=\"resources/javascript/hero.compatibility.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/jquery.validate.min.js\"
+        type=\"text/javascript\" ></script>\r\n\t<script src=\"resources/javascript/jquery/he.js\"
+        type=\"text/javascript\" ></script>\r\n\r\n      <script type=\"text/javascript\">\r\n
+        \       \r\n        $(document).ready(function() {\r\n          $.ajaxSetup
+        ({\r\n            // Disable caching of AJAX responses\r\n            cache:
+        false\r\n          });\r\n        });\r\n\r\n        \r\n\r\n        function
+        fairUse() {\r\n          var msg=\"This PDF is fully protected under the US
+        Copyright Law, and is made available within the HERONet community as provided
+        for in section 107 on Fair Use, for research purposes with the goal of advancing
+        the understanding of environmental and public health issues. If you wish to
+        use this copyrighted material for purposes of your own that go beyond Fair
+        Use, you must obtain permission from the copyright holder.\";\r\n          return
+        confirm(msg);\r\n        }\r\n      </script>\r\n\r\n    </head>\r\n<style
+        type=\"text/css\">\r\n\t\r\n\t\t.one-sidebar .main-column {width: 100%;}\r\n\t\t.main-content
+        > .region-sidebar {display: none;}\r\n\t\t.main-column {float: none; width:
+        100%;}\r\n\t\r\n</style>\r\n\r\n<body  class=\"html one-sidebar sidebar-first
+        block-og-menu microsite\">\r\n\t\r\n\t\r\n\t\t<!-- Google Tag Manager -->\r\n\t\t<noscript><iframe
+        src=\"//www.googletagmanager.com/ns.html?id=GTM-L8ZB\" height=\"0\" width=\"0\"
+        style=\"display:none;visibility:hidden\"></iframe></noscript>\r\n\t\t<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new
+        Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-L8ZB');</script>\r\n\t\t<!--
+        End Google Tag Manager -->\r\n\t\r\n\r\n\r\n  <div class=\"skip-links\">\r\n
+        \   <a href=\"#main-content\" class=\"skip-link element-invisible element-focusable\">Jump
+        to main content</a>\r\n  </div>\r\n  <header class=\"masthead clearfix\" role=\"banner\">\r\n
+        \   \r\n    <img class=\"site-logo\" src=\"https://www.epa.gov/sites/all/themes/epa/logo.png\"
+        alt=\"\" />\r\n    <hgroup class=\"site-name-and-slogan\">\r\n      <h1 class=\"site-name\"><a
+        href=\"https://www.epa.gov/\" title=\"Go to the home page\" rel=\"home\"><span>US
+        EPA</span></a></h1>\r\n      <div class=\"site-slogan\">United States Environmental
+        Protection Agency</div>\r\n    </hgroup>\r\n    <form class=\"epa-search\"
+        method=\"get\" action=\"https://search.epa.gov/epasearch/epasearch\">\r\n
+        \     <label class=\"element-hidden\" for=\"search-box\">Search</label>\r\n
+        \     <input class=\"form-text\" placeholder=\"Search EPA.gov\" name=\"querytext\"
+        id=\"search-box\" value=\"\">\r\n      <button class=\"epa-search-button\"
+        id=\"search-button\" type=\"submit\" title=\"Search\">Search</button>\r\n
+        \     <input type=\"hidden\" name=\"fld\" value=\"\">\r\n      <input type=\"hidden\"
+        name=\"areaname\" value=\"\">\r\n      <input type=\"hidden\" name=\"areacontacts\"
+        value=\"\">\r\n      <input type=\"hidden\" name=\"areasearchurl\" value=\"\">\r\n
+        \     <input type=\"hidden\" name=\"typeofsearch\" value=\"epa\">\r\n      <input
+        type=\"hidden\" name=\"result_template\" value=\"epafiles_default.xsl\">\r\n
+        \     <input type=\"hidden\" name=\"filter\" value=\"sample4filt.hts\">\r\n
+        \   </form>\r\n\r\n  </header>\r\n\r\n  <nav class=\"nav main-nav clearfix\"
+        role=\"navigation\">\r\n    <div class=\"nav__inner\">\r\n      <h2 class=\"element-invisible\">Main
+        menu</h2>\r\n      <ul class=\"menu\" role=\"menu\">\r\n        <li class=\"menu-item\"
+        id=\"menu-learn\" role=\"presentation\"><a href=\"https://www.epa.gov/environmental-topics\"
+        title=\"Learn about EPA's environmental topics to help protect the environment
+        in your home, workplace, and community and EPA&#039;s research mission is
+        to conduct leading-edge research and foster the sound use of science and technology.\"
+        class=\"menu-link\" role=\"menuitem\">Environmental Topics</a></li>\r\n        <li
+        class=\"menu-item\" id=\"menu-lawsregs\" role=\"presentation\"><a href=\"https://www.epa.gov/laws-regulations\"
+        title=\"Laws written by Congress provide the authority for EPA to write regulations.
+        Regulations explain the technical, operational, and legal details necessary
+        to implement laws.\" class=\"menu-link\" role=\"menuitem\">Laws &amp; Regulations</a></li>\r\n
+        \       <li class=\"menu-item\" id=\"menu-about\" role=\"presentation\"><a
+        href=\"https://www.epa.gov/aboutepa\" title=\"Learn more about: our mission
+        and what we do, how we are organized, and our history.\" class=\"menu-link\"
+        role=\"menuitem\">About EPA</a></li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n\r\n\t<section
+        id=\"main-content\" class=\"main-content clearfix\" role=\"main\">\r\n    \r\n
+        \       \r\n        <h2 class=\"microsite-name\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Health
+        & Environmental Research Online (HERO)</a></h2>\r\n    \r\n\t\t<div class=\"region-preface
+        clearfix\">\r\n\t\t\t<div id=\"block-pane-epa-web-area-connect\" class=\"block
+        block-pane  block-pane-epa-web-area-connect\">\r\n\t\t\t\t<ul class=\"menu
+        utility-menu\">\r\n\t\t\t\t\t<li class=\"menu-item\"><a href=\"https://hero.epa.gov/hero/ws/index.cfm/content/contactus\"
+        class=\"menu-link\">Contact Us</a></li>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div
+        class=\"main-column clearfix\" id=\"content\">\r\n\r\n\r\n        <!--googleon:
+        all-->\r\n\t\t\t<div class=\"panel-pane pane-node-content\" >\r\n\t\t\t\t<div
+        class=\"pane-content\">\r\n\t\t\t\t\t<div class=\"node node-page clearfix
+        view-mode-full\">\r\n              \r\n\t\t\t\t\t\t\r\n              \r\n\t\t\t\t\t\t<br/>\r\n\r\n\t\t\t\t\t\r\n\t<h1>Error
+        Page</h1>\r\n\t<h2>Sorry</h2>\r\n\t<p>There was an error in HERO.  We appreciate
+        your patience while we try to work this out.</p>\r\n\r\n\t\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n
+        \       <!--googleoff: all-->\r\n\t\t</div>\r\n\r\n\r\n<div class=\"region-sidebar-first
+        region-sidebar\">\r\n\t<div id=\"block-og-menu-og-single-menu-block\" class=\"block
+        block-og-menu  block-og-menu-og-single-menu-block\">\r\n\t\t<!-- BEGIN AREA
+        MAIN NAVIGATION -->\r\n\t\t\t\r\n\t\t\t<ul class=\"menu\">\r\n          <li
+        class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/home\">Home</a></li>\r\n
+        \         <li class=\"menu-item\"><a class=\"menu-node-unpublished menu-link\"
+        href=\"https://hero.epa.gov/hero/ws/index.cfm/content/basic\">Learn about
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/howto\">Using
+        HERO</a></li>\r\n          <li class=\"menu-item\"><a id=\"leftSide_link_searchHERO\"
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/search\">Search
+        HERO</a></li>\r\n          <li class=\"menu-item\">\r\n            \r\n              <a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/litbrowser/public\">Projects
+        in HERO</a>\r\n            \r\n          </li>\r\n          <li class=\"menu-item\"><a
+        class=\"menu-node-unpublished menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/assessment\">Risk
+        Assessment</a></li>\r\n          <li class=\"menu-item\"><a class=\"menu-node-unpublished
+        menu-link\" href=\"https://hero.epa.gov/hero/ws/index.cfm/content/transparency\">Transparency
+        &amp; Integrity</a></li>\r\n          \r\n\r\n        </ul>\r\n        <!--
+        END AREA MAIN NAVIGATION -->\r\n      </div>\r\n      </div>\r\n\r\n  </section>\r\n\r\n\r\n
+        \ <footer class=\"main-footer clearfix\" role=\"contentinfo\">\r\n    <div
+        class=\"main-footer__inner\">\r\n      <div class=\"region-footer\">\r\n        <div
+        class=\"block block-pane block-pane-epa-global-footer\">\r\n          <div
+        class=\"row cols-3\">\r\n            <div class=\"col size-1of3\">\r\n              <div
+        class=\"col__title\">Discover.</div>\r\n              <ul class=\"menu\">\r\n
+        \               <li><a href=\"https://www.epa.gov/accessibility\">Accessibility</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/aboutepa/administrator-gina-mccarthy\">EPA
+        Administrator</a></li>\r\n                <li><a href=\"https://www.epa.gov/planandbudget\">Budget
+        &amp; Performance</a></li>\r\n                <li><a href=\"https://www.epa.gov/contracts\">Contracting</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/grants-and-other-funding-opportunities\">Grants</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/ocr/whistleblower-protections-epa-and-how-they-relate-non-disclosure-agreements-signed-epa-employees\">No
+        FEAR Act Data</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/privacy-and-security-notice\">Privacy
+        and Security</a></li>\r\n              </ul>\r\n            </div>\r\n            <div
+        class=\"col size-1of3\">\r\n              <div class=\"col__title\">Connect.</div>\r\n
+        \             <ul class=\"menu\">\r\n                <li><a href=\"https://www.data.gov/\">Data.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/office-inspector-general/about-epas-office-inspector-general\">Inspector
+        General</a></li>\r\n                <li><a href=\"https://www.epa.gov/careers\">Jobs</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom\">Newsroom</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/open\">Open Government</a></li>\r\n
+        \               <li><a href=\"http://www.regulations.gov/\">Regulations.gov</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/newsroom/email-subscriptions\">Subscribe</a></li>\r\n
+        \               <li><a href=\"https://www.usa.gov/\">USA.gov</a></li>\r\n
+        \               <li><a href=\"https://www.whitehouse.gov/\">White House</a></li>\r\n
+        \             </ul>\r\n            </div>\r\n            <div class=\"col
+        size-1of3\">\r\n              <div class=\"col__title\">Ask.</div>\r\n              <ul
+        class=\"menu\">\r\n                <li><a href=\"https://www.epa.gov/home/forms/contact-us\">Contact
+        Us</a></li>\r\n                <li><a href=\"https://www.epa.gov/home/epa-hotlines\">Hotlines</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/foia\">FOIA Requests</a></li>\r\n
+        \               <li><a href=\"https://www.epa.gov/home/frequent-questions-specific-epa-programstopics\">Frequent
+        Questions</a></li>\r\n              </ul>\r\n              <div class=\"col__title\">Follow.</div>\r\n
+        \             <ul class=\"social-menu\">\r\n                <li><a class=\"menu-link
+        social-facebook\" href=\"https://www.facebook.com/EPA\">Facebook</a></li>\r\n
+        \               <li><a class=\"menu-link social-twitter\" href=\"https://twitter.com/epa\">Twitter</a></li>\r\n
+        \               <li><a class=\"menu-link social-youtube\" href=\"https://www.youtube.com/user/USEPAgov\">YouTube</a></li>\r\n
+        \               <li><a class=\"menu-link social-flickr\" href=\"https://www.flickr.com/photos/usepagov\">Flickr</a></li>\r\n
+        \               <li><a class=\"menu-link social-instagram\" href=\"https://instagram.com/epagov\">Instagram</a></li>\r\n
+        \             </ul>\r\n              <p class=\"last-updated\">Last Updated
+        on February 15, 2024</p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n
+        \     </div>\r\n    </div>\r\n  </footer>\r\n\r\n\r\n</body>\r\n</html>\r\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - text/html;charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:47:04 GMT
+      Keep-Alive:
+      - timeout=5, max=99
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A04; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+version: 1

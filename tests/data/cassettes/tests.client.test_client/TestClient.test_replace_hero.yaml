@@ -1,0 +1,209 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1037739/recordsperpage/100.json
+  response:
+    body:
+      string: '{"results":[{"REFERENCE_ID":1037739,"ABSTRACT":"The chemical conversion
+        of methanol in direct methanol fuel cells was followed in situ by NMR spectroscopy.
+        Comparing data of the methanol oxidation on Pt and PtRu anode catalysts allowed
+        the role of Ru in both Faradaic and non-Faradaic reactions to be investigated.
+        The spatial distributions of chemicals could also be determined. (Picture:
+        T1-T4=inlet and outlet tubes.).","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1037739","hasPDF":true,"YEAR":2012,"allAuthors":["Han,
+        OH; Han, KS; Shin, CW; Lee, J; Kim, SS; Um, MS; Joh, HI; Kim, SK; Ha, HY"],"HEROID":1037739,"id":"1037739","project_key":[18],"referencetype":["journal
+        article"],"type":"reference","doi":"10.1002/anie.201108330","sortYear":2012,"tag_path_text":["IRIS|Methanol
+        (Non-Cancer)|Search 2012|WOS","IRIS|Methanol (Non-Cancer)|Search Jan 30 2013|WOS"],"category_key":[2],"PROJECTS":[{"PROJECT":"Methanol
+        (Non-Cancer)","PROJECT_ID":18,"USAGES":[{"USAGE_ID":"2445","USAGE":"Search
+        Jan 30 2013","USAGES":[{"USAGE_ID":"2447","USAGE":"WOS","USAGES":[]}]},{"USAGE_ID":"1591","USAGE":"Search
+        2012","USAGES":[{"USAGE_ID":"1593","USAGE":"WOS","USAGES":[]}]}]}],"tag_path_key":["2|18|1591|1593","2|18|2445|2447"],"firstAuthor":"Han","AUTHORS":"Han,
+        OH; Han, KS; Shin, CW; Lee, J; Kim, SS; Um, MS; Joh, HI; Kim, SK; Ha, HY","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Angewandte
+        Chemie (International Edition).","wosid":"WOS:000302607500013","TITLE":"Observation
+        of Methanol Behavior in Fuel Cells In Situ by NMR Spectroscopy","modified":"2022-06-07T08:23:29Z","PMID":22411696,"keywords":["fuel
+        cells; in situ detection; methanol; NMR spectroscopy; oxidation"],"journalTitle":"Angewandte
+        Chemie (International Edition)","_version_":1734963584327221248}],"isValid":true,"message":"Success","error":""} '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:49:30 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371530; Expires=Fri, 16 Feb 2024 16:49:30 GMT; Path=/; HttpOnly
+      - CFTOKEN=69309154; Expires=Fri, 16 Feb 2024 16:49:30 GMT; Path=/; HttpOnly
+      - JSESSIONID=07088494FEBDF45932B5A91CF28D4E53.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A49%3A30; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1037739/recordsperpage/100.json
+  response:
+    body:
+      string: '{"results":[{"REFERENCE_ID":1037739,"ABSTRACT":"The chemical conversion
+        of methanol in direct methanol fuel cells was followed in situ by NMR spectroscopy.
+        Comparing data of the methanol oxidation on Pt and PtRu anode catalysts allowed
+        the role of Ru in both Faradaic and non-Faradaic reactions to be investigated.
+        The spatial distributions of chemicals could also be determined. (Picture:
+        T1-T4=inlet and outlet tubes.).","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1037739","hasPDF":true,"YEAR":2012,"allAuthors":["Han,
+        OH; Han, KS; Shin, CW; Lee, J; Kim, SS; Um, MS; Joh, HI; Kim, SK; Ha, HY"],"HEROID":1037739,"id":"1037739","project_key":[18],"referencetype":["journal
+        article"],"type":"reference","doi":"10.1002/anie.201108330","sortYear":2012,"tag_path_text":["IRIS|Methanol
+        (Non-Cancer)|Search 2012|WOS","IRIS|Methanol (Non-Cancer)|Search Jan 30 2013|WOS"],"category_key":[2],"PROJECTS":[{"PROJECT":"Methanol
+        (Non-Cancer)","PROJECT_ID":18,"USAGES":[{"USAGE_ID":"2445","USAGE":"Search
+        Jan 30 2013","USAGES":[{"USAGE_ID":"2447","USAGE":"WOS","USAGES":[]}]},{"USAGE_ID":"1591","USAGE":"Search
+        2012","USAGES":[{"USAGE_ID":"1593","USAGE":"WOS","USAGES":[]}]}]}],"tag_path_key":["2|18|1591|1593","2|18|2445|2447"],"firstAuthor":"Han","AUTHORS":"Han,
+        OH; Han, KS; Shin, CW; Lee, J; Kim, SS; Um, MS; Joh, HI; Kim, SK; Ha, HY","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Angewandte
+        Chemie (International Edition).","wosid":"WOS:000302607500013","TITLE":"Observation
+        of Methanol Behavior in Fuel Cells In Situ by NMR Spectroscopy","modified":"2022-06-07T08:23:29Z","PMID":22411696,"keywords":["fuel
+        cells; in situ detection; methanol; NMR spectroscopy; oxidation"],"journalTitle":"Angewandte
+        Chemie (International Edition)","_version_":1734963584327221248}],"isValid":true,"message":"Success","error":""} '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:49:31 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371531; Expires=Fri, 16 Feb 2024 16:49:31 GMT; Path=/; HttpOnly
+      - CFTOKEN=21453900; Expires=Fri, 16 Feb 2024 16:49:31 GMT; Path=/; HttpOnly
+      - JSESSIONID=7A51CA543CB852BF7ABF1BA186D6843D.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A49%3A31; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=22411696
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '45'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:49:31 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322CC4EF5A3366C50000457934E3C60A.1.1.m_3
+      NCBI-SID:
+      - 796E7BF6F8F37542_DCA0SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=796E7BF6F8F37542_DCA0SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:49:32 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

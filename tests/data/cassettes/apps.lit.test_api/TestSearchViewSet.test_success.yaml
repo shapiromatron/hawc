@@ -1,0 +1,306 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/5490558/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":5490558,\"ABSTRACT\":\"Butylbenzylphthalate
+        (BBP) has been assessed as a Priority Substance under the Canadian Environmental
+        Protection Act. Effects that occur at lowest concentrations in rats are increases
+        in organ to body weight ratios, primarily for the liver and kidney, and histological
+        effects on the pancreas and kidney. In studies with protocols specific for
+        investigating reproductive toxicity, adverse effects on testes have been reported,
+        although at dose levels higher than those that had effects on other organs,
+        such as liver and kidney. Although results of available studies do not support
+        the conclusion that BBP is estrogenic, the potential for other endocrine-mediated
+        effects cannot be precluded at this time. A tolerable daily intake of 1300
+        \u03BCg/kg body weight per day has been derived, based upon the lower 95%
+        confidence limit for the benchmark dose associated with a 5% increase in the
+        incidence of pancreatic lesions in male rats in an oral subchronic assay.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5490558\",\"hasPDF\":true,\"YEAR\":2001,\"allAuthors\":[\"Long,
+        G; Meek, ME\"],\"HEROID\":5490558,\"id\":\"5490558\",\"project_key\":[2207,2245,2757,2842,2843],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"pdfURL\":\"https://search.proquest.com/docview/14582298?accountid=171501\",\"doi\":\"10.1081/gnc-100103582\",\"sortYear\":2001,\"tag_path_text\":[\"IRIS|BBP
+        (Butyl benzyl phthalate)|Literature Search|LitSearch Dec 2012|WOS\",\"IRIS|BBP
+        (Butyl benzyl phthalate)|Secondary Literature|Risk assessments \",\"IRIS|Phthalates
+        \u2013 Targeted Search for Epidemiological Studies|Excluded\",\"IRIS|Phthalates
+        \u2013 Targeted Search for Epidemiological Studies|Source - August 2017 Update
+        (Private)|WOS - Forward Search Results\",\"OPPT REs|OPPT Evidence Map: Butyl
+        benzyl phthalate (BBP)|Peer-Reviewed Literature|Literature Search September
+        2019 (Date Unlimited)|Current Contents\",\"OPPT REs|OPPT Evidence Map: Butyl
+        benzyl phthalate (BBP)|Peer-Reviewed Literature|Literature Search September
+        2019 (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl
+        phthalate (BBP)|Peer-Reviewed Literature|Literature Search September 2019
+        (Date Unlimited)|WOS\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate
+        (BBP)|Systematic Review|Hazard\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl
+        phthalate (DEHP)|Peer-Reviewed Literature|Literature Search September 2019
+        (Date Unlimited)|Current Contents\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl
+        phthalate (DEHP)|Peer-Reviewed Literature|Literature Search September 2019
+        (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl phthalate
+        (DEHP)|Peer-Reviewed Literature|Literature Search September 2019 (Date Unlimited)|WOS\",\"OPPT
+        REs|OPPT Evidence Map: Di-ethylhexyl phthalate (DEHP)|Systematic Review|Hazard\",\"Other|EBTC
+        Zebrafish|Litsearch 2018|WOS_Core Collection\"],\"category_key\":[2,18,32],\"PROJECTS\":[{\"PROJECT\":\"BBP
+        (Butyl benzyl phthalate)\",\"PROJECT_ID\":2207,\"USAGES\":[{\"USAGE_ID\":\"5550\",\"USAGE\":\"Secondary
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"4477\",\"USAGE\":\"Risk assessments
+        \",\"USAGES\":[]}]},{\"USAGE_ID\":\"5881\",\"USAGE\":\"Literature Search\",\"USAGES\":[{\"USAGE_ID\":\"3822\",\"USAGE\":\"LitSearch
+        Dec 2012\",\"USAGES\":[{\"USAGE_ID\":\"2284\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"EBTC
+        Zebrafish\",\"PROJECT_ID\":2757,\"USAGES\":[{\"USAGE_ID\":\"17338\",\"USAGE\":\"Litsearch
+        2018\",\"USAGES\":[{\"USAGE_ID\":\"17341\",\"USAGE\":\"WOS_Core Collection\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Diethylhexyl phthalate (DEHP)\",\"PROJECT_ID\":2843,\"USAGES\":[{\"USAGE_ID\":\"31101\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"31230\",\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":\"31065\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"20037\",\"USAGE\":\"Initial Search:
+        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"20210\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"20209\",\"USAGE\":\"Current
+        Contents\",\"USAGES\":[]},{\"USAGE_ID\":\"20039\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Butyl benzyl phthalate (BBP)\",\"PROJECT_ID\":2842,\"USAGES\":[{\"USAGE_ID\":\"30944\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"30948\",\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30833\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"20032\",\"USAGE\":\"Initial Search:
+        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"20034\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"20240\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"20239\",\"USAGE\":\"Current
+        Contents\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Phthalates \u2013 Targeted
+        Search for Epidemiological Studies\",\"PROJECT_ID\":2245,\"USAGES\":[{\"USAGE_ID\":\"12073\",\"USAGE\":\"Source
+        - August 2017 Update (Private)\",\"USAGES\":[{\"USAGE_ID\":\"15272\",\"USAGE\":\"WOS
+        - Forward Search Results\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4544\",\"USAGE\":\"Excluded\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2207|5881|3822|2284\",\"2|2207|5550|4477\",\"2|2245|4544\",\"2|2245|12073|15272\",\"32|2842|30833|20032|20239\",\"32|2842|30833|20032|20240\",\"32|2842|30833|20032|20034\",\"32|2842|30944|30948\",\"32|2843|31065|20037|20209\",\"32|2843|31065|20037|20210\",\"32|2843|31065|20037|20039\",\"32|2843|31101|31230\",\"18|2757|17338|17341\"],\"firstAuthor\":\"Long\",\"AUTHORS\":\"Long,
+        G; Meek, ME\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
+        of Environmental Science and Health, Part C: Environmental Carcinogenesis
+        & Ecotoxicology Reviews C19:105.\",\"wosid\":\"WOS:000174781300006\",\"TITLE\":\"Butylbenzylphthalate:
+        Hazard characterization and exposure-response analysis\",\"modified\":\"2022-06-10T09:01:38Z\",\"PMID\":\"\",\"keywords\":[\"Environment
+        Abstracts; RISK ASSESSMENT; DATA, CHEMICAL; DOSE RESPONSE PROFILES; TOXICOLOGY;
+        ENA 07:General\"],\"journalTitle\":\"Journal of Environmental Science and
+        Health, Part C: Environmental Carcinogenesis & Ecotoxicology Reviews\",\"_version_\":1735237775271133184}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:17 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371465; Expires=Fri, 16 Feb 2024 16:46:17 GMT; Path=/; HttpOnly
+      - CFTOKEN=76302872; Expires=Fri, 16 Feb 2024 16:46:17 GMT; Path=/; HttpOnly
+      - JSESSIONID=985D8FD435E5C0638D942648A918201C.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A17; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=19425233
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '45'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        AQAAAP//AwAE32yWUR8AAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:17 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B27BC72AC1EE500005858FCC3D01D.1.1.m_3
+      NCBI-SID:
+      - D3392C66EF493019_C7CBSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=D3392C66EF493019_C7CBSID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:46:18 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=5490558
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        g8Z8AAAAAP//AwBPV2WyrhIAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:19 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B27BC72AC1EE500002A58FF64FF8E.1.1.m_3
+      NCBI-SID:
+      - EC502A17ABC60358_65A3SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=EC502A17ABC60358_65A3SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:46:19 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '1'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

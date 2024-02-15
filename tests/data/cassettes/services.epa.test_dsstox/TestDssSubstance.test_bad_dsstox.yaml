@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.31.0
+      x-api-key:
+      - <omitted>
+    method: GET
+    uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID123456789
+  response:
+    body:
+      string: "{\n  \"title\" : \"Not found \",\n  \"status\" : 404,\n  \"detail\"
+        : \"dtxsid with value DTXSID123456789 not found.\"\n}"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/problem+json
+      Date:
+      - Thu, 15 Feb 2024 16:50:14 GMT
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 85fc1201a1918facbeb30836e7391660.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 0Ocu2wMZ5XFJC2QTlnD_E5PvBKkkH-YK1v86vvas9Sz_3iGj1X3t2Q==
+      X-Amz-Cf-Pop:
+      - IAD89-C1
+      X-Cache:
+      - Error from cloudfront
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      X-Vcap-Request-Id:
+      - cf3dc2ca-8233-41db-497f-d1897ee8a9cd
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 404
+      message: Not Found
+version: 1

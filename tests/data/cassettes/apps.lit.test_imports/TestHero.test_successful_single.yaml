@@ -1,0 +1,262 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/9961932/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":9961932,\"ABSTRACT\":\"Per- and polyfluorinated
+        alkyl substances (PFASs) are considered emerging persistent organic pollutants,
+        which are chemically, thermally, and biologically stable, or degrade to persistent
+        end products. Dietary intake is considered as one of the main human exposure
+        pathways of these chemicals and, having entered the human body, PFASs are
+        not metabolised and accumulate in tissues, while their toxicological properties
+        may cause various health problems. Several studies on the occurrence of PFASs
+        in various food types have been conducted, including the assessment of dietary
+        exposure. The most important sources were fish, meat, eggs, fruits, and vegetables.
+        Fruits and vegetables recently showed relatively high levels of PFASs, and
+        have become a more significant source of PFASs than meat. In 2020, the European
+        Food Safety Authority (EFSA) published an opinion, setting the tolerable weekly
+        intake (TWI) of 4.4\_ng kg-1 b.w. for the sum of perfluorooctanoic acid (PFOA),
+        perfluorononanoic acid (PFNA), perfluorohexanesulphonic acid (PFHxS), and
+        perfluorooctanesulphonic acid (PFOS). The emphasis in this paper is on the
+        systematization of available information on the distribution of PFASs and
+        their levels in different food, with a special interest in data from the Europe.
+        The current legislation and estimated dietary intakes by the general population
+        are described. While the available information on tolerably daily intakes
+        estimated in a number of European countries often exceeds the newly established
+        EFSA TWI, a critical evaluation of performance characteristics of the reviewed
+        analytical methodologies revealed the insufficient sensitivity of quantification
+        procedures for accurate risk assessment according to the guidelines proposed
+        by EFSA.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/9961932\",\"hasPDF\":false,\"YEAR\":2022,\"allAuthors\":[\"Pasecnaja,
+        E; Bartkevics, V; Zacs, D\"],\"HEROID\":9961932,\"id\":\"9961932\",\"project_key\":[2608,2630,2633,2826,4208,4214,4743,4774,4828],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1016/j.chemosphere.2021.132378\",\"sortYear\":2022,\"tag_path_text\":[\"Other|PFAS
+        Pelch ORD Search Comparison|Pelch Strings|Search 5: PFNA (375-95-1)\",\"Other|PFAS
+        Pelch ORD Search Comparison|Pelch Strings|Search 13: PFHxS (355-46-4)\",\"Other|PFAS
+        Pelch ORD Search Comparison|Pelch Strings|Search 30: Catch all\",\"Other|PFAS
+        Pelch ORD Search Comparison|ORD Strings|Search 5: PFNA(375-95-1)\",\"Other|PFAS
+        Pelch ORD Search Comparison|ORD Strings|Search 13: PFHxS(355-46-4)\",\"Other|Pelch
+        / PFAS Analysis|PFHxS (2630) Pelch Pubmed\",\"Other|Pelch / PFAS Analysis|PFHxS
+        (2630) Pelch WOS\",\"Other|Pelch / PFAS Analysis|PFHxS (2630) Pubmed\",\"Other|Pelch
+        / PFAS Analysis|PFHxS (2630) WOS\",\"Other|Pelch / PFAS Analysis|PFNA (2633)
+        Pelch Pubmed\",\"Other|Pelch / PFAS Analysis|PFNA (2633) Pelch WOS\",\"Other|Pelch
+        / PFAS Analysis|PFNA (2633) Pubmed\",\"Other|Pelch / PFAS Analysis|PFNA (2633)
+        WOS\",\"PFAS|Missing PFAS 2023|Literature Search|Pubmed\",\"PFAS|Missing PFAS
+        2023|Literature Search|WOS\",\"PFAS|Missing PFAS 2023|Perfluorononanoic\",\"PFAS|Missing
+        PFAS 2023|Perfluorooctanesulfonic acid\",\"PFAS|Missing PFAS 2023|Perfluorooctanoic
+        acid\",\"PFAS|PFAS 150|Literature Search Update December 2021|PubMed\",\"PFAS|PFAS
+        150|Missing 2021 searches\",\"PFAS|PFAS 150|Screened Studies|Supplemental\",\"PFAS|PFAS
+        150|Perfluorohexanesulfonic acid\",\"PFAS|PFAS Dietary exposure pathway|Initial
+        Literature Search: April 2023|WoS\",\"PFAS|PFAS Universe|Data Source|Web of
+        Science\",\"PFAS|PFAS Universe|Data Source|Pubmed\",\"PFAS|PFAS Universe|Perfluorohexanesulfonate\",\"PFAS|PFAS
+        Universe|Perfluorohexanesulfonic acid\",\"PFAS|PFAS Universe|Perfluorononanoic
+        acid\",\"PFAS|PFAS Universe|Perfluorooctanesulfonate\",\"PFAS|PFAS Universe|Perfluorooctanesulfonic
+        acid\",\"PFAS|PFAS Universe|Perfluorooctanoate\",\"PFAS|PFAS Universe|Perfluorooctanoic
+        acid\",\"PFAS|PFAS Universe|Sodium perfluorohexanesulfonate\",\"PFAS|PFHxS|Database
+        searches|Pubmed\",\"PFAS|PFHxS|Database searches|WOS\",\"PFAS|PFHxS|Supplemental|Environmental
+        fate or occurrence (including food)\",\"PFAS|PFHxS|Supplemental|TiAb\",\"PFAS|PFHxS|Literature
+        Search Update April  2023|Supplemental|Environmental fate or occurrence (including
+        food)\",\"PFAS|PFNA|Literature Search|Pubmed\",\"PFAS|PFNA|Literature Search|WOS\",\"PFAS|PFNA|LitSearch:
+        April 2021 - April 2022|PubMed\",\"PFAS|PFNA|LitSearch: April 2021 - April
+        2022|WoS\",\"PFAS|PFNA|Title and Abstract Screening|Tagged as Supplemental|Environmental
+        occurance\",\"PFAS|PFNA|Title and Abstract Screening|Tagged as Supplemental|Environmental
+        fate\",\"PFAS|PFNA|Title and Abstract Screening|Tagged as Supplemental|Other
+        PFAS\",\"PFAS|PFOA (335-67-1) and PFOS (1763-23-1)|LitSearch Update (Sept
+        2020 - Feb 2022)|PubMed\",\"PFAS|PFOA (335-67-1) and PFOS (1763-23-1)|LitSearch
+        Update (Sept 2020 - Feb 2022)|WOS\"],\"category_key\":[18,23],\"PROJECTS\":[{\"PROJECT\":\"Missing
+        PFAS 2023\",\"PROJECT_ID\":4828,\"USAGES\":[{\"USAGE_ID\":\"44004\",\"USAGE\":\"Literature
+        Search\",\"USAGES\":[{\"USAGE_ID\":\"44005\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"44006\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"44017\",\"USAGE\":\"Perfluorononanoic\",\"USAGES\":[]},{\"USAGE_ID\":\"44020\",\"USAGE\":\"Perfluorooctanoic
+        acid\",\"USAGES\":[]},{\"USAGE_ID\":\"44019\",\"USAGE\":\"Perfluorooctanesulfonic
+        acid\",\"USAGES\":[]}]},{\"PROJECT\":\"PFNA\",\"PROJECT_ID\":2633,\"USAGES\":[{\"USAGE_ID\":\"35953\",\"USAGE\":\"LitSearch:
+        April 2021 - April 2022\",\"USAGES\":[{\"USAGE_ID\":\"35955\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"35954\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"20373\",\"USAGE\":\"Title
+        and Abstract Screening\",\"USAGES\":[{\"USAGE_ID\":\"20388\",\"USAGE\":\"Tagged
+        as Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"20396\",\"USAGE\":\"Environmental
+        occurance\",\"USAGES\":[]},{\"USAGE_ID\":\"36650\",\"USAGE\":\"Environmental
+        fate\",\"USAGES\":[]},{\"USAGE_ID\":\"36651\",\"USAGE\":\"Other PFAS\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"18419\",\"USAGE\":\"Literature
+        Search\",\"USAGES\":[{\"USAGE_ID\":\"18421\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"18420\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PFHxS\",\"PROJECT_ID\":2630,\"USAGES\":[{\"USAGE_ID\":\"43422\",\"USAGE\":\"LitSearches
+        2018-2022\",\"USAGES\":[{\"USAGE_ID\":\"43426\",\"USAGE\":\"Exclude\",\"USAGES\":[{\"USAGE_ID\":\"43427\",\"USAGE\":\"Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"43437\",\"USAGE\":\"Environmental
+        fate or occurrence (including food)\",\"USAGES\":[]}]}]}]},{\"USAGE_ID\":\"43848\",\"USAGE\":\"Literature
+        Search Update April  2023\",\"USAGES\":[{\"USAGE_ID\":\"43851\",\"USAGE\":\"Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"43858\",\"USAGE\":\"Environmental
+        fate or occurrence (including food)\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"43816\",\"USAGE\":\"Database
+        searches\",\"USAGES\":[{\"USAGE_ID\":\"43819\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"43817\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"35959\",\"USAGE\":\"LitSearch:
+        April 2021 - April 2022\",\"USAGES\":[{\"USAGE_ID\":\"35961\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"35960\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43834\",\"USAGE\":\"Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"43843\",\"USAGE\":\"Environmental
+        fate or occurrence (including food)\",\"USAGES\":[]},{\"USAGE_ID\":\"43835\",\"USAGE\":\"TiAb\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PFAS
+        Dietary exposure pathway\",\"PROJECT_ID\":4774,\"USAGES\":[{\"USAGE_ID\":\"43592\",\"USAGE\":\"Initial
+        Literature Search: April 2023\",\"USAGES\":[{\"USAGE_ID\":\"43594\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PFAS
+        Universe\",\"PROJECT_ID\":4214,\"USAGES\":[{\"USAGE_ID\":\"40124\",\"USAGE\":\"Perfluorooctanesulfonic
+        acid\",\"USAGES\":[]},{\"USAGE_ID\":\"40321\",\"USAGE\":\"Data Source\",\"USAGES\":[{\"USAGE_ID\":\"40322\",\"USAGE\":\"Web
+        of Science\",\"USAGES\":[]},{\"USAGE_ID\":\"40323\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"40123\",\"USAGE\":\"Perfluorooctanesulfonate\",\"USAGES\":[]},{\"USAGE_ID\":\"40199\",\"USAGE\":\"Sodium
+        perfluorohexanesulfonate\",\"USAGES\":[]},{\"USAGE_ID\":\"40111\",\"USAGE\":\"Perfluorononanoic
+        acid\",\"USAGES\":[]},{\"USAGE_ID\":\"41403\",\"USAGE\":\"Perfluorooctanoic
+        acid\",\"USAGES\":[]},{\"USAGE_ID\":\"40126\",\"USAGE\":\"Perfluorooctanoate\",\"USAGES\":[]},{\"USAGE_ID\":\"40093\",\"USAGE\":\"Perfluorohexanesulfonic
+        acid\",\"USAGES\":[]},{\"USAGE_ID\":\"40092\",\"USAGE\":\"Perfluorohexanesulfonate\",\"USAGES\":[]}]},{\"PROJECT\":\"Pelch
+        / PFAS Analysis\",\"PROJECT_ID\":4743,\"USAGES\":[{\"USAGE_ID\":\"41739\",\"USAGE\":\"PFHxS
+        (2630) Pubmed\",\"USAGES\":[]},{\"USAGE_ID\":\"41740\",\"USAGE\":\"PFHxS (2630)
+        WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"41745\",\"USAGE\":\"PFNA (2633) Pelch
+        WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"41734\",\"USAGE\":\"PFNA (2633) WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"41733\",\"USAGE\":\"PFNA
+        (2633) Pubmed\",\"USAGES\":[]},{\"USAGE_ID\":\"41744\",\"USAGE\":\"PFHxS (2630)
+        Pelch WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"41732\",\"USAGE\":\"PFNA (2633)
+        Pelch Pubmed\",\"USAGES\":[]},{\"USAGE_ID\":\"41738\",\"USAGE\":\"PFHxS (2630)
+        Pelch Pubmed\",\"USAGES\":[]}]},{\"PROJECT\":\"PFOA (335-67-1) and PFOS (1763-23-1)\",\"PROJECT_ID\":2608,\"USAGES\":[{\"USAGE_ID\":\"35253\",\"USAGE\":\"LitSearch
+        Update (Sept 2020 - Feb 2022)\",\"USAGES\":[{\"USAGE_ID\":\"35255\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"35254\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PFAS
+        150\",\"PROJECT_ID\":2826,\"USAGES\":[{\"USAGE_ID\":\"25817\",\"USAGE\":\"Screened
+        Studies\",\"USAGES\":[{\"USAGE_ID\":\"29932\",\"USAGE\":\"Supplemental\",\"USAGES\":[]}]},{\"USAGE_ID\":\"35088\",\"USAGE\":\"Literature
+        Search Update December 2021\",\"USAGES\":[{\"USAGE_ID\":\"35089\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"19273\",\"USAGE\":\"Perfluorohexanesulfonic
+        acid\",\"USAGES\":[]},{\"USAGE_ID\":\"44449\",\"USAGE\":\"Missing 2021 searches\",\"USAGES\":[]}]},{\"PROJECT\":\"PFAS
+        Pelch ORD Search Comparison\",\"PROJECT_ID\":4208,\"USAGES\":[{\"USAGE_ID\":\"36666\",\"USAGE\":\"ORD
+        Strings\",\"USAGES\":[{\"USAGE_ID\":\"36671\",\"USAGE\":\"Search 13: PFHxS(355-46-4)\",\"USAGES\":[]},{\"USAGE_ID\":\"36669\",\"USAGE\":\"Search
+        5: PFNA(375-95-1)\",\"USAGES\":[]}]},{\"USAGE_ID\":\"36659\",\"USAGE\":\"Pelch
+        Strings\",\"USAGES\":[{\"USAGE_ID\":\"36662\",\"USAGE\":\"Search 5: PFNA (375-95-1)\",\"USAGES\":[]},{\"USAGE_ID\":\"36664\",\"USAGE\":\"Search
+        13: PFHxS (355-46-4)\",\"USAGES\":[]},{\"USAGE_ID\":\"36665\",\"USAGE\":\"Search
+        30: Catch all\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"18|4208|36659|36662\",\"18|4208|36659|36664\",\"18|4208|36659|36665\",\"18|4208|36666|36669\",\"18|4208|36666|36671\",\"18|4743|41738\",\"18|4743|41744\",\"18|4743|41739\",\"18|4743|41740\",\"18|4743|41732\",\"18|4743|41745\",\"18|4743|41733\",\"18|4743|41734\",\"23|4828|44004|44006\",\"23|4828|44004|44005\",\"23|4828|44017\",\"23|4828|44019\",\"23|4828|44020\",\"23|2826|35088|35089\",\"23|2826|44449\",\"23|2826|25817|29932\",\"23|2826|19273\",\"23|4774|43592|43594\",\"23|4214|40321|40322\",\"23|4214|40321|40323\",\"23|4214|40092\",\"23|4214|40093\",\"23|4214|40111\",\"23|4214|40123\",\"23|4214|40124\",\"23|4214|40126\",\"23|4214|41403\",\"23|4214|40199\",\"23|2630|43816|43817\",\"23|2630|43816|43819\",\"23|2630|43834|43843\",\"23|2630|43834|43835\",\"23|2630|43848|43851|43858\",\"23|2633|18419|18420\",\"23|2633|18419|18421\",\"23|2633|35953|35954\",\"23|2633|35953|35955\",\"23|2633|20373|20388|20396\",\"23|2633|20373|20388|36650\",\"23|2633|20373|20388|36651\",\"23|2608|35253|35254\",\"23|2608|35253|35255\"],\"firstAuthor\":\"Pasecnaja\",\"AUTHORS\":\"Pasecnaja,
+        E; Bartkevics, V; Zacs, D\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Chemosphere
+        287:132378. [Review]\",\"wosid\":\"WOS:000704945100001\",\"TITLE\":\"Occurrence
+        of selected per- and polyfluorinated alkyl substances (PFASs) in food available
+        on the European market - A review on levels and human exposure assessment\",\"modified\":\"2023-11-06T14:30:26Z\",\"PMID\":34592212,\"keywords\":[\"PFASs;
+        Food contamination; EFSA; Human exposure\"],\"journalTitle\":\"Chemosphere\",\"_version_\":1781825304785846281}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:40 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371476; Expires=Fri, 16 Feb 2024 16:46:40 GMT; Path=/; HttpOnly
+      - CFTOKEN=14954504; Expires=Fri, 16 Feb 2024 16:46:40 GMT; Path=/; HttpOnly
+      - JSESSIONID=A41AA560D51CF6AB7AD2A2E8BA04F73E.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A40; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=34592212
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '45'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:40 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - D0BD004AB925704500003269D8AA2546.1.1.m_3
+      NCBI-SID:
+      - 1506509C085C334D_A5D1SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=1506509C085C334D_A5D1SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:46:41 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

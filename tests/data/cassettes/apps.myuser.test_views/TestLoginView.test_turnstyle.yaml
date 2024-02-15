@@ -1,0 +1,46 @@
+interactions:
+- request:
+    body: secret=secret&response=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '23'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://challenges.cloudflare.com/turnstile/v0/siteverify
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAxzKywnAIBQEwF72rA3YSvAguhEhfngbTyG9BzLneaCdMyWEM12iA82m+TwLhXCg
+        N6mN6ttY+/ZGrTlERIdOKdV/xfcDAAD//wMA9OTj90gAAAA=
+    headers:
+      CF-RAY:
+      - 855f08928cf505eb-IAD
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 Feb 2024 16:47:34 GMT
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      alt-svc:
+      - h3=":443"; ma=86400
+    status:
+      code: 200
+      message: OK
+version: 1

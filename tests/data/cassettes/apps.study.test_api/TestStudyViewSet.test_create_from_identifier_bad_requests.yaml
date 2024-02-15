@@ -1,0 +1,96 @@
+interactions:
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=-1
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '39'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        xGtgEwAA
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:47:39 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - D0BD004AB925704500003A6B282A8E10.1.1.m_3
+      NCBI-SID:
+      - 7579F41DD615FB4C_5B6CSID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=7579F41DD615FB4C_5B6CSID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:47:40 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

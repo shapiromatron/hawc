@@ -1,0 +1,304 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":1,\"ABSTRACT\":\"Aspects covered by
+        this review: lung dust assessments; acute pulmonary reactions to asbestos
+        exposure; lung cancer; malignant mesothelial tumours; non-malignant pleural
+        disease; airway responses; exposure-response relations; environmental control
+        limits; risk of low level exposure; evaluation of the impact of control measures;
+        gradient in biological effects between different fibres or types of exposure;
+        clinical issues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1\",\"hasPDF\":false,\"YEAR\":1982,\"allAuthors\":[\"Becklake,
+        MR\"],\"HEROID\":1,\"id\":\"1\",\"project_key\":[42,993,1436,1713,2220,2488,2533,2810,2979,3019,3048],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1164/arrd.1982.126.2.187\",\"sortYear\":1982,\"tag_path_text\":[\"IRIS|Acenaphthene\",\"IRIS|Allyl
+        chloride\",\"IRIS|Asbestos\",\"NAAQS|Litsearch-Lead ISA 2020_SWIFT Screening|Full
+        Text Screening|Tox|Supplemental|Hematological\",\"NAAQS|Litsearch-Lead ISA
+        2020_SWIFT Screening|Full Text Screening|Tox|Supplemental|Hepatic\",\"NAAQS|Litsearch-Lead
+        ISA 2020_SWIFT Screening|Full Text Screening|Tox|Supplemental|Renal\",\"OPPT|ECOSAR\",\"OPPT
+        REs|OPPT Evidence Map: Asbestos Part 2|Peer-Reviewed Literature|Initial Search:
+        April 2021 (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Asbestos
+        Part 2|Peer-Reviewed Literature|Initial Search: April 2021 (Date Unlimited)|PubMed\",\"OPPT
+        REs|OPPT Evidence Map: Asbestos Part 2|Peer-Reviewed Literature|Initial Search:
+        April 2021 (Date Unlimited)|Toxline\",\"OPPT REs|OPPT Evidence Map: Asbestos
+        Part 2|Peer-Reviewed Literature|Initial Search: April 2021 (Date Unlimited)|WoS\",\"OPPT
+        REs|OPPT Evidence Map: Asbestos Part 2|Systematic Review|Exposure|Title &
+        Abstract Review|Meets PECO Criteria\",\"OPPT REs|OPPT Evidence Map: Asbestos
+        Part 2|Systematic Review|Exposure|Full Text Review\",\"OPPT REs|OPPT_Asbestos,
+        Part I: Chrysotile_F. Human Health|Total \u2013 title/abstract screening|On
+        topic|Peer review|Secondary source/ Review\",\"OPPT REs|OPPT_Asbestos, Part
+        I: Chrysotile_Supplemental Search|LitSearch: Sept 2020 (Undated)|ProQuest\",\"OPPT
+        REs|OPPT_Asbestos, Part I: Chrysotile_Supplemental Search|LitSearch: Sept
+        2020 (Undated)|PubMed\",\"OPPT REs|OPPT_Asbestos, Part I: Chrysotile_Supplemental
+        Search|LitSearch: Sept 2020 (Undated)|Toxline\",\"OPPT REs|OPPT_Asbestos,
+        Part I: Chrysotile_Supplemental Search|LitSearch: Sept 2020 (Undated)|WoS\",\"OPPT
+        REs|OPPT_Asbestos, Part I: Chrysotile_Supplemental Search|Legacy Uses|Health
+        Outcomes\",\"Other|Applicability of Libby Amphibole Asbestos Tox Values|Sources
+        (Feb 2016)|Toxline\",\"Other|Applicability of Libby Amphibole Asbestos Tox
+        Values|Sources (Feb 2016)|PubMed\",\"Other|HAWC|test1\",\"Other|HAWC|test3\",\"Other|LitCiter|Liver!|Nano
+        Refs\",\"Other|LitCiter|Distiller Import 09-Jun-2021 13:40:03\",\"Other|LitCiter|Distiller
+        Import 14-Feb-2022 11:39:22\"],\"category_key\":[1,2,18,30,32],\"PROJECTS\":[{\"PROJECT\":\"Acenaphthene\",\"PROJECT_ID\":1436,\"USAGES\":[]},{\"PROJECT\":\"Litsearch-Lead
+        ISA 2020_SWIFT Screening\",\"PROJECT_ID\":3019,\"USAGES\":[{\"USAGE_ID\":\"33041\",\"USAGE\":\"Full
+        Text Screening\",\"USAGES\":[{\"USAGE_ID\":\"35093\",\"USAGE\":\"Tox\",\"USAGES\":[{\"USAGE_ID\":\"35094\",\"USAGE\":\"Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"35106\",\"USAGE\":\"Renal\",\"USAGES\":[]},{\"USAGE_ID\":\"35100\",\"USAGE\":\"Hepatic\",\"USAGES\":[]},{\"USAGE_ID\":\"35099\",\"USAGE\":\"Hematological\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"ECOSAR\",\"PROJECT_ID\":2810,\"USAGES\":[]},{\"PROJECT\":\"Allyl
+        chloride\",\"PROJECT_ID\":993,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Asbestos,
+        Part I: Chrysotile_F. Human Health\",\"PROJECT_ID\":2533,\"USAGES\":[{\"USAGE_ID\":\"13964\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10250\",\"USAGE\":\"On
+        topic\",\"USAGES\":[{\"USAGE_ID\":\"10251\",\"USAGE\":\"Peer review\",\"USAGES\":[{\"USAGE_ID\":\"10253\",\"USAGE\":\"Secondary
+        source/ Review\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"Applicability of Libby
+        Amphibole Asbestos Tox Values\",\"PROJECT_ID\":2488,\"USAGES\":[{\"USAGE_ID\":\"7593\",\"USAGE\":\"Sources
+        (Feb 2016)\",\"USAGES\":[{\"USAGE_ID\":\"7594\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"7596\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Asbestos Part 2\",\"PROJECT_ID\":3048,\"USAGES\":[{\"USAGE_ID\":\"32132\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"32142\",\"USAGE\":\"Exposure\",\"USAGES\":[{\"USAGE_ID\":\"32147\",\"USAGE\":\"Full
+        Text Review\",\"USAGES\":[]},{\"USAGE_ID\":\"32143\",\"USAGE\":\"Title & Abstract
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"32146\",\"USAGE\":\"Meets PECO Criteria\",\"USAGES\":[]}]}]}]},{\"USAGE_ID\":\"32084\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"32085\",\"USAGE\":\"Initial Search:
+        April 2021 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"32089\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"32094\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"32093\",\"USAGE\":\"Toxline\",\"USAGES\":[]},{\"USAGE_ID\":\"32090\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"HAWC\",\"PROJECT_ID\":2220,\"USAGES\":[{\"USAGE_ID\":\"2474\",\"USAGE\":\"test3\",\"USAGES\":[]},{\"USAGE_ID\":\"2472\",\"USAGE\":\"test1\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_Asbestos,
+        Part I: Chrysotile_Supplemental Search\",\"PROJECT_ID\":2979,\"USAGES\":[{\"USAGE_ID\":\"25858\",\"USAGE\":\"LitSearch:
+        Sept 2020 (Undated)\",\"USAGES\":[{\"USAGE_ID\":\"25861\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"25866\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"25865\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"25867\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]},{\"USAGE_ID\":\"28726\",\"USAGE\":\"Legacy
+        Uses\",\"USAGES\":[{\"USAGE_ID\":\"27685\",\"USAGE\":\"Health Outcomes\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Asbestos\",\"PROJECT_ID\":42,\"USAGES\":[]},{\"PROJECT\":\"LitCiter\",\"PROJECT_ID\":1713,\"USAGES\":[{\"USAGE_ID\":\"6884\",\"USAGE\":\"Liver!\",\"USAGES\":[{\"USAGE_ID\":\"8213\",\"USAGE\":\"Nano
+        Refs\",\"USAGES\":[]}]},{\"USAGE_ID\":\"33273\",\"USAGE\":\"Distiller Import
+        09-Jun-2021 13:40:03\",\"USAGES\":[]},{\"USAGE_ID\":\"35286\",\"USAGE\":\"Distiller
+        Import 14-Feb-2022 11:39:22\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|1436\",\"2|993\",\"2|42\",\"1|3019|33041|35093|35094|35099\",\"1|3019|33041|35093|35094|35100\",\"1|3019|33041|35093|35094|35106\",\"30|2810\",\"32|3048|32084|32085|32089\",\"32|3048|32084|32085|32090\",\"32|3048|32084|32085|32093\",\"32|3048|32084|32085|32094\",\"32|3048|32132|32142|32143|32146\",\"32|3048|32132|32142|32147\",\"32|2533|13964|10250|10251|10253\",\"32|2979|25858|25865\",\"32|2979|25858|25861\",\"32|2979|25858|25867\",\"32|2979|25858|25866\",\"32|2979|28726|27685\",\"18|2488|7593|7596\",\"18|2488|7593|7594\",\"18|2220|2472\",\"18|2220|2474\",\"18|1713|6884|8213\",\"18|1713|33273\",\"18|1713|35286\"],\"firstAuthor\":\"Becklake\",\"AUTHORS\":\"Becklake,
+        MR\",\"noPDFAvailable\":true,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
+        Review of Respiratory Disease 126:187-194. [Review]\",\"wosid\":\"WOS:A1982PC43700001\",\"TITLE\":\"Asbestos-related
+        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-02-12T14:25:43Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
+        Asbestos; 1332-21-4; Abridged Index Medicus; Index Medicus; Mesothelioma --
+        etiology; Lung -- analysis; Dust -- analysis; Pulmonary Fibrosis -- etiology;
+        Environmental Exposure; Bronchitis -- etiology; Lung Neoplasms -- etiology;
+        Asbestosis -- etiology; Asbestos -- adverse effects; Lung Diseases -- etiology;
+        Pleural Diseases -- etiology\"],\"journalTitle\":\"American Review of Respiratory
+        Disease\",\"_version_\":1790703509466775553}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:21 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371467; Expires=Fri, 16 Feb 2024 16:46:21 GMT; Path=/; HttpOnly
+      - CFTOKEN=62031145; Expires=Fri, 16 Feb 2024 16:46:21 GMT; Path=/; HttpOnly
+      - JSESSIONID=7FCF65748FD7FB6C8DC1DFA5D480E978.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A21; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":1,\"ABSTRACT\":\"Aspects covered by
+        this review: lung dust assessments; acute pulmonary reactions to asbestos
+        exposure; lung cancer; malignant mesothelial tumours; non-malignant pleural
+        disease; airway responses; exposure-response relations; environmental control
+        limits; risk of low level exposure; evaluation of the impact of control measures;
+        gradient in biological effects between different fibres or types of exposure;
+        clinical issues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1\",\"hasPDF\":false,\"YEAR\":1982,\"allAuthors\":[\"Becklake,
+        MR\"],\"HEROID\":1,\"id\":\"1\",\"project_key\":[42,993,1436,1713,2220,2488,2533,2810,2979,3019,3048],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1164/arrd.1982.126.2.187\",\"sortYear\":1982,\"tag_path_text\":[\"IRIS|Acenaphthene\",\"IRIS|Allyl
+        chloride\",\"IRIS|Asbestos\",\"NAAQS|Litsearch-Lead ISA 2020_SWIFT Screening|Full
+        Text Screening|Tox|Supplemental|Hematological\",\"NAAQS|Litsearch-Lead ISA
+        2020_SWIFT Screening|Full Text Screening|Tox|Supplemental|Hepatic\",\"NAAQS|Litsearch-Lead
+        ISA 2020_SWIFT Screening|Full Text Screening|Tox|Supplemental|Renal\",\"OPPT|ECOSAR\",\"OPPT
+        REs|OPPT Evidence Map: Asbestos Part 2|Peer-Reviewed Literature|Initial Search:
+        April 2021 (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Asbestos
+        Part 2|Peer-Reviewed Literature|Initial Search: April 2021 (Date Unlimited)|PubMed\",\"OPPT
+        REs|OPPT Evidence Map: Asbestos Part 2|Peer-Reviewed Literature|Initial Search:
+        April 2021 (Date Unlimited)|Toxline\",\"OPPT REs|OPPT Evidence Map: Asbestos
+        Part 2|Peer-Reviewed Literature|Initial Search: April 2021 (Date Unlimited)|WoS\",\"OPPT
+        REs|OPPT Evidence Map: Asbestos Part 2|Systematic Review|Exposure|Title &
+        Abstract Review|Meets PECO Criteria\",\"OPPT REs|OPPT Evidence Map: Asbestos
+        Part 2|Systematic Review|Exposure|Full Text Review\",\"OPPT REs|OPPT_Asbestos,
+        Part I: Chrysotile_F. Human Health|Total \u2013 title/abstract screening|On
+        topic|Peer review|Secondary source/ Review\",\"OPPT REs|OPPT_Asbestos, Part
+        I: Chrysotile_Supplemental Search|LitSearch: Sept 2020 (Undated)|ProQuest\",\"OPPT
+        REs|OPPT_Asbestos, Part I: Chrysotile_Supplemental Search|LitSearch: Sept
+        2020 (Undated)|PubMed\",\"OPPT REs|OPPT_Asbestos, Part I: Chrysotile_Supplemental
+        Search|LitSearch: Sept 2020 (Undated)|Toxline\",\"OPPT REs|OPPT_Asbestos,
+        Part I: Chrysotile_Supplemental Search|LitSearch: Sept 2020 (Undated)|WoS\",\"OPPT
+        REs|OPPT_Asbestos, Part I: Chrysotile_Supplemental Search|Legacy Uses|Health
+        Outcomes\",\"Other|Applicability of Libby Amphibole Asbestos Tox Values|Sources
+        (Feb 2016)|Toxline\",\"Other|Applicability of Libby Amphibole Asbestos Tox
+        Values|Sources (Feb 2016)|PubMed\",\"Other|HAWC|test1\",\"Other|HAWC|test3\",\"Other|LitCiter|Liver!|Nano
+        Refs\",\"Other|LitCiter|Distiller Import 09-Jun-2021 13:40:03\",\"Other|LitCiter|Distiller
+        Import 14-Feb-2022 11:39:22\"],\"category_key\":[1,2,18,30,32],\"PROJECTS\":[{\"PROJECT\":\"Acenaphthene\",\"PROJECT_ID\":1436,\"USAGES\":[]},{\"PROJECT\":\"Litsearch-Lead
+        ISA 2020_SWIFT Screening\",\"PROJECT_ID\":3019,\"USAGES\":[{\"USAGE_ID\":\"33041\",\"USAGE\":\"Full
+        Text Screening\",\"USAGES\":[{\"USAGE_ID\":\"35093\",\"USAGE\":\"Tox\",\"USAGES\":[{\"USAGE_ID\":\"35094\",\"USAGE\":\"Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"35106\",\"USAGE\":\"Renal\",\"USAGES\":[]},{\"USAGE_ID\":\"35100\",\"USAGE\":\"Hepatic\",\"USAGES\":[]},{\"USAGE_ID\":\"35099\",\"USAGE\":\"Hematological\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"ECOSAR\",\"PROJECT_ID\":2810,\"USAGES\":[]},{\"PROJECT\":\"Allyl
+        chloride\",\"PROJECT_ID\":993,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Asbestos,
+        Part I: Chrysotile_F. Human Health\",\"PROJECT_ID\":2533,\"USAGES\":[{\"USAGE_ID\":\"13964\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10250\",\"USAGE\":\"On
+        topic\",\"USAGES\":[{\"USAGE_ID\":\"10251\",\"USAGE\":\"Peer review\",\"USAGES\":[{\"USAGE_ID\":\"10253\",\"USAGE\":\"Secondary
+        source/ Review\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"Applicability of Libby
+        Amphibole Asbestos Tox Values\",\"PROJECT_ID\":2488,\"USAGES\":[{\"USAGE_ID\":\"7593\",\"USAGE\":\"Sources
+        (Feb 2016)\",\"USAGES\":[{\"USAGE_ID\":\"7594\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"7596\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Asbestos Part 2\",\"PROJECT_ID\":3048,\"USAGES\":[{\"USAGE_ID\":\"32132\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"32142\",\"USAGE\":\"Exposure\",\"USAGES\":[{\"USAGE_ID\":\"32147\",\"USAGE\":\"Full
+        Text Review\",\"USAGES\":[]},{\"USAGE_ID\":\"32143\",\"USAGE\":\"Title & Abstract
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"32146\",\"USAGE\":\"Meets PECO Criteria\",\"USAGES\":[]}]}]}]},{\"USAGE_ID\":\"32084\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"32085\",\"USAGE\":\"Initial Search:
+        April 2021 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"32089\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"32094\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"32093\",\"USAGE\":\"Toxline\",\"USAGES\":[]},{\"USAGE_ID\":\"32090\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"HAWC\",\"PROJECT_ID\":2220,\"USAGES\":[{\"USAGE_ID\":\"2474\",\"USAGE\":\"test3\",\"USAGES\":[]},{\"USAGE_ID\":\"2472\",\"USAGE\":\"test1\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_Asbestos,
+        Part I: Chrysotile_Supplemental Search\",\"PROJECT_ID\":2979,\"USAGES\":[{\"USAGE_ID\":\"25858\",\"USAGE\":\"LitSearch:
+        Sept 2020 (Undated)\",\"USAGES\":[{\"USAGE_ID\":\"25861\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"25866\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"25865\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"25867\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]},{\"USAGE_ID\":\"28726\",\"USAGE\":\"Legacy
+        Uses\",\"USAGES\":[{\"USAGE_ID\":\"27685\",\"USAGE\":\"Health Outcomes\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Asbestos\",\"PROJECT_ID\":42,\"USAGES\":[]},{\"PROJECT\":\"LitCiter\",\"PROJECT_ID\":1713,\"USAGES\":[{\"USAGE_ID\":\"6884\",\"USAGE\":\"Liver!\",\"USAGES\":[{\"USAGE_ID\":\"8213\",\"USAGE\":\"Nano
+        Refs\",\"USAGES\":[]}]},{\"USAGE_ID\":\"33273\",\"USAGE\":\"Distiller Import
+        09-Jun-2021 13:40:03\",\"USAGES\":[]},{\"USAGE_ID\":\"35286\",\"USAGE\":\"Distiller
+        Import 14-Feb-2022 11:39:22\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|1436\",\"2|993\",\"2|42\",\"1|3019|33041|35093|35094|35099\",\"1|3019|33041|35093|35094|35100\",\"1|3019|33041|35093|35094|35106\",\"30|2810\",\"32|3048|32084|32085|32089\",\"32|3048|32084|32085|32090\",\"32|3048|32084|32085|32093\",\"32|3048|32084|32085|32094\",\"32|3048|32132|32142|32143|32146\",\"32|3048|32132|32142|32147\",\"32|2533|13964|10250|10251|10253\",\"32|2979|25858|25865\",\"32|2979|25858|25861\",\"32|2979|25858|25867\",\"32|2979|25858|25866\",\"32|2979|28726|27685\",\"18|2488|7593|7596\",\"18|2488|7593|7594\",\"18|2220|2472\",\"18|2220|2474\",\"18|1713|6884|8213\",\"18|1713|33273\",\"18|1713|35286\"],\"firstAuthor\":\"Becklake\",\"AUTHORS\":\"Becklake,
+        MR\",\"noPDFAvailable\":true,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
+        Review of Respiratory Disease 126:187-194. [Review]\",\"wosid\":\"WOS:A1982PC43700001\",\"TITLE\":\"Asbestos-related
+        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-02-12T14:25:43Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
+        Asbestos; 1332-21-4; Abridged Index Medicus; Index Medicus; Mesothelioma --
+        etiology; Lung -- analysis; Dust -- analysis; Pulmonary Fibrosis -- etiology;
+        Environmental Exposure; Bronchitis -- etiology; Lung Neoplasms -- etiology;
+        Asbestosis -- etiology; Asbestos -- adverse effects; Lung Diseases -- etiology;
+        Pleural Diseases -- etiology\"],\"journalTitle\":\"American Review of Respiratory
+        Disease\",\"_version_\":1790703509466775553}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:22 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371468; Expires=Fri, 16 Feb 2024 16:46:22 GMT; Path=/; HttpOnly
+      - CFTOKEN=89384795; Expires=Fri, 16 Feb 2024 16:46:22 GMT; Path=/; HttpOnly
+      - JSESSIONID=AF30E513AB2EF7C19DB8B5A58F71758C.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A22; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=7049025
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        AA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:46:23 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - D0BD004AB925704500003D6945D8F9FF.1.1.m_3
+      NCBI-SID:
+      - C9FDFF0BD362BE0F_58A6SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=C9FDFF0BD362BE0F_58A6SID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:46:23 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1

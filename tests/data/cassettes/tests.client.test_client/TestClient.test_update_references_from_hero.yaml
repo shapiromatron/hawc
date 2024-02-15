@@ -1,0 +1,214 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1037739,3/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":1037739,\"ABSTRACT\":\"The chemical
+        conversion of methanol in direct methanol fuel cells was followed in situ
+        by NMR spectroscopy. Comparing data of the methanol oxidation on Pt and PtRu
+        anode catalysts allowed the role of Ru in both Faradaic and non-Faradaic reactions
+        to be investigated. The spatial distributions of chemicals could also be determined.
+        (Picture: T1-T4=inlet and outlet tubes.).\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1037739\",\"hasPDF\":true,\"YEAR\":2012,\"allAuthors\":[\"Han,
+        OH; Han, KS; Shin, CW; Lee, J; Kim, SS; Um, MS; Joh, HI; Kim, SK; Ha, HY\"],\"HEROID\":1037739,\"id\":\"1037739\",\"project_key\":[18],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1002/anie.201108330\",\"sortYear\":2012,\"tag_path_text\":[\"IRIS|Methanol
+        (Non-Cancer)|Search 2012|WOS\",\"IRIS|Methanol (Non-Cancer)|Search Jan 30
+        2013|WOS\"],\"category_key\":[2],\"PROJECTS\":[{\"PROJECT\":\"Methanol (Non-Cancer)\",\"PROJECT_ID\":18,\"USAGES\":[{\"USAGE_ID\":\"2445\",\"USAGE\":\"Search
+        Jan 30 2013\",\"USAGES\":[{\"USAGE_ID\":\"2447\",\"USAGE\":\"WOS\",\"USAGES\":[]}]},{\"USAGE_ID\":\"1591\",\"USAGE\":\"Search
+        2012\",\"USAGES\":[{\"USAGE_ID\":\"1593\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"2|18|1591|1593\",\"2|18|2445|2447\"],\"firstAuthor\":\"Han\",\"AUTHORS\":\"Han,
+        OH; Han, KS; Shin, CW; Lee, J; Kim, SS; Um, MS; Joh, HI; Kim, SK; Ha, HY\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Angewandte
+        Chemie (International Edition).\",\"wosid\":\"WOS:000302607500013\",\"TITLE\":\"Observation
+        of Methanol Behavior in Fuel Cells In Situ by NMR Spectroscopy\",\"modified\":\"2022-06-07T08:23:29Z\",\"PMID\":22411696,\"keywords\":[\"fuel
+        cells; in situ detection; methanol; NMR spectroscopy; oxidation\"],\"journalTitle\":\"Angewandte
+        Chemie (International Edition)\",\"_version_\":1734963584327221248},{\"REFERENCE_ID\":3,\"ABSTRACT\":\"In
+        order to study the cellular and biochemical changes in early asbestosis, three
+        groups of sheep were repeatedly exposed to intratracheal instillations of
+        either saline (controls), low doses of UICC chrysotile asbestos (LD), or high
+        doses of the fibers (HD) until an alveolitis was observed in all HD sheep
+        during the twelfth month of exposure. All sheep were studied bimonthly by
+        transbronchial lung biopsy (LB), bronchoalveolar lavage (BAL), pulmonary function
+        tests (PFT), and chest roentgenograms (CXR). While LBs of the HD sheep demonstrated
+        large accumulations of monocyte-macrophages in the alveolar and interstitial
+        spaces, those of controls and LD sheep did not. In BAL, there was no difference
+        in total and differential cell counts between groups, but the BAL lymphocyte
+        proliferative capacity was clearly depressed in all asbestos-exposed sheep.
+        In the BAL supernatant, total proteins (mainly albumin, beta + gamma globulins)
+        and lactate dehydrogenase were significantly elevated in the HD group only.
+        This alveolitis was associated with a fall in vital capacity, lung compliance,
+        diffusing capacity, and arterial PO2. Abnormalities on CXR appeared 3 months
+        later. Thus, the cellular and biochemical features of early asbestosis are
+        clearly distinct from those reported in idiopathic pulmonary fibrosis.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/3\",\"hasPDF\":true,\"YEAR\":1983,\"allAuthors\":[\"B\xE9gin,
+        R; Rola-Pleszczynski, M; Mass\xE9, S; Lemaire, I; Sirois, P; Boctor, M; Nadeau,
+        D; Drapeau, G; Bureau, MA\"],\"HEROID\":3,\"id\":\"3\",\"project_key\":[42,2488,2533,2691,2810,3019],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0013-9351(83)90180-9\",\"sortYear\":1983,\"tag_path_text\":[\"IRIS|Asbestos\",\"NAAQS|Litsearch
+        O3 2018|Citation Mapping Seeds\",\"NAAQS|Litsearch-Lead ISA 2020_SWIFT Screening|Full
+        Text Screening|Tox|Supplemental|Neurological\",\"OPPT|ECOSAR\",\"OPPT REs|OPPT_Asbestos,
+        Part I: Chrysotile_F. Human Health|Total \u2013 title/abstract screening|On
+        topic|Peer review|Primary source\",\"OPPT REs|OPPT_Asbestos, Part I: Chrysotile_F.
+        Human Health|On topic - additional tags for titles/abstracts|Animal hazard
+        ID|Respiratory and peritoneal noncancer\",\"OPPT REs|OPPT_Asbestos, Part I:
+        Chrysotile_F. Human Health|On topic - additional tags for titles/abstracts|Animal
+        hazard ID|Asbestosis\",\"OPPT REs|OPPT_Asbestos, Part I: Chrysotile_F. Human
+        Health|On topic - additional tags for titles/abstracts|MOA\",\"Other|Applicability
+        of Libby Amphibole Asbestos Tox Values|Sources (Feb 2016)|Toxline\",\"Other|Applicability
+        of Libby Amphibole Asbestos Tox Values|Sources (Feb 2016)|PubMed\"],\"category_key\":[1,2,18,30,32],\"PROJECTS\":[{\"PROJECT\":\"Litsearch-Lead
+        ISA 2020_SWIFT Screening\",\"PROJECT_ID\":3019,\"USAGES\":[{\"USAGE_ID\":\"33041\",\"USAGE\":\"Full
+        Text Screening\",\"USAGES\":[{\"USAGE_ID\":\"35093\",\"USAGE\":\"Tox\",\"USAGES\":[{\"USAGE_ID\":\"35094\",\"USAGE\":\"Supplemental\",\"USAGES\":[{\"USAGE_ID\":\"35104\",\"USAGE\":\"Neurological\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"ECOSAR\",\"PROJECT_ID\":2810,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Asbestos,
+        Part I: Chrysotile_F. Human Health\",\"PROJECT_ID\":2533,\"USAGES\":[{\"USAGE_ID\":\"10060\",\"USAGE\":\"On
+        topic - additional tags for titles/abstracts\",\"USAGES\":[{\"USAGE_ID\":\"10074\",\"USAGE\":\"MOA\",\"USAGES\":[]},{\"USAGE_ID\":\"10059\",\"USAGE\":\"Animal
+        hazard ID\",\"USAGES\":[{\"USAGE_ID\":\"13980\",\"USAGE\":\"Asbestosis\",\"USAGES\":[]},{\"USAGE_ID\":\"13975\",\"USAGE\":\"Respiratory
+        and peritoneal noncancer\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"13964\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10250\",\"USAGE\":\"On
+        topic\",\"USAGES\":[{\"USAGE_ID\":\"10251\",\"USAGE\":\"Peer review\",\"USAGES\":[{\"USAGE_ID\":\"10252\",\"USAGE\":\"Primary
+        source\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"Applicability of Libby Amphibole
+        Asbestos Tox Values\",\"PROJECT_ID\":2488,\"USAGES\":[{\"USAGE_ID\":\"7593\",\"USAGE\":\"Sources
+        (Feb 2016)\",\"USAGES\":[{\"USAGE_ID\":\"7594\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"7596\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Litsearch
+        O3 2018\",\"PROJECT_ID\":2691,\"USAGES\":[{\"USAGE_ID\":\"15413\",\"USAGE\":\"Citation
+        Mapping Seeds\",\"USAGES\":[]}]},{\"PROJECT\":\"Asbestos\",\"PROJECT_ID\":42,\"USAGES\":[]}],\"tag_path_key\":[\"2|42\",\"1|2691|15413\",\"1|3019|33041|35093|35094|35104\",\"30|2810\",\"32|2533|13964|10250|10251|10252\",\"32|2533|10060|10059|13975\",\"32|2533|10060|10059|13980\",\"32|2533|10060|10074\",\"18|2488|7593|7596\",\"18|2488|7593|7594\"],\"firstAuthor\":\"B\xE9gin\",\"AUTHORS\":\"B\xE9gin,
+        R; Rola-Pleszczynski, M; Mass\xE9, S; Lemaire, I; Sirois, P; Boctor, M; Nadeau,
+        D; Drapeau, G; Bureau, MA\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Environmental
+        Research 30:195-210.\",\"wosid\":\"WOS:A1983QC75700022\",\"TITLE\":\"Asbestos-induced
+        lung injury in the sheep model: the initial alveolitis\",\"modified\":\"2023-09-07T14:44:40Z\",\"PMID\":6682033,\"journalTitle\":\"Environmental
+        Research\",\"_version_\":1776390380705546241}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 15 Feb 2024 16:50:05 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=14371535; Expires=Fri, 16 Feb 2024 16:50:05 GMT; Path=/; HttpOnly
+      - CFTOKEN=26450243; Expires=Fri, 16 Feb 2024 16:50:05 GMT; Path=/; HttpOnly
+      - JSESSIONID=54EDEE948FB0FD36D3481BFCCEAD989D.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F15%2011%3A50%3A05; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&id=6682033
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '44'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: !!binary |
+        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
+        /wMAF1M0fdcYAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Thu, 15 Feb 2024 16:50:06 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 322CC4EF5A3366C500003B7A0D865746.1.1.m_3
+      NCBI-SID:
+      - 7C77356C1D0CE47F_15DASID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=7C77356C1D0CE47F_15DASID; domain=.nih.gov; path=/; expires=Sat, 15
+        Feb 2025 16:50:07 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '3'
+      X-RateLimit-Remaining:
+      - '2'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
+    status:
+      code: 200
+      message: OK
+version: 1
