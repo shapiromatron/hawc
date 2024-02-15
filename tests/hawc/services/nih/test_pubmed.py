@@ -13,7 +13,8 @@ def pubmed_connect():
 
 
 @pytest.mark.skipif(
-    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
+    PUBMED_API_KEY is None,
+    reason="Test environment requires $PUBMED_API_KEY to be set.",
 )
 @pytest.mark.vcr
 @pytest.mark.usefixtures("pubmed_connect")
@@ -67,7 +68,8 @@ class TestPubMedSearch:
 
 
 @pytest.mark.skipif(
-    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
+    PUBMED_API_KEY is None,
+    reason="Test environment requires $PUBMED_API_KEY to be set.",
 )
 @pytest.mark.vcr
 @pytest.mark.usefixtures("pubmed_connect")
@@ -153,20 +155,20 @@ class TestPubMedFetch:
         obj.pop("xml")
         obj.pop("abstract")
         expected = {
-            "authors_short": "Committee on Predictive-Toxicology Approaches for Military Assessments of Acute Exposures et al.",
-            "doi": "10.17226/21775",
-            "year": 2015,
             "PMID": 26468569,
-            "title": "Application of Modern Toxicology Approaches for Predicting Acute Toxicity for Chemical Defense",
-            "citation": "(2015). Washington (DC): National Academies Press (US).",
+            "year": 2015,
+            "doi": "10.17226/21775",
             "authors": [
-                "Committee on Predictive-Toxicology Approaches for Military Assessments of Acute Exposures",
+                "Committee on Predictive-Toxicology Approaches for Military Assessments of\nAcute Exposures",
                 "Committee on Toxicology",
                 "Board on Environmental Studies and Toxicology",
                 "Board on Life Sciences",
                 "Division on Earth and Life Studies",
                 "The National Academies of Sciences, Engineering, and Medicine",
             ],
+            "authors_short": "Committee on Predictive-Toxicology Approaches for Military Assessments of\nAcute Exposures et al.",
+            "title": "Application of Modern Toxicology Approaches for Predicting Acute Toxicity for Chemical Defense",
+            "citation": "(2015). Washington (DC): National Academies Press (US).",
         }
         assert obj == expected
 
@@ -179,12 +181,12 @@ class TestPubMedFetch:
         obj.pop("abstract")
         expected = {
             "PMID": 20301382,
+            "year": 1993,
+            "doi": None,
             "authors": ["Goldstein A", "Falk MJ"],
             "authors_short": "Goldstein A and Falk MJ",
+            "title": "Single Large-Scale Mitochondrial DNA Deletion Syndromes",
             "citation": "GeneReviews® (1993). Seattle (WA): University of Washington, Seattle.",
-            "doi": None,
-            "title": "Mitochondrial DNA Deletion Syndromes",
-            "year": 1993,
         }
         assert obj == expected
 
