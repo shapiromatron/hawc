@@ -6,6 +6,7 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
+import {handleVisualError} from "./common";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
@@ -57,7 +58,11 @@ class LiteratureTagtree extends BaseVisual {
     }
 
     buildViz($plotDiv, data) {
-        this.buildPlot($plotDiv, data);
+        try {
+            this.buildPlot($plotDiv, data);
+        } catch (error) {
+            handleVisualError(null, error);
+        }
     }
 
     getPlotData($plotDiv) {

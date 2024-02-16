@@ -1,6 +1,9 @@
 import * as d3 from "d3";
 import _ from "lodash";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import textures from "textures";
+
+import $ from "$";
 
 const Patterns = {
         solid: "solid",
@@ -121,6 +124,24 @@ const Patterns = {
                 obj.style(attr, value);
             }
         });
+    },
+    handleVisualError = ($div, err, msg) => {
+        console.error(err);
+        if ($div === null) {
+            const $el = $("#main-content-container h2").first();
+            if ($el) {
+                $div = $("<div>");
+                $div.insertAfter($el);
+            }
+        }
+        if (!msg) {
+            msg = "Error: An error has ocurred; please check visualization settings.";
+        }
+        if ($div) {
+            HAWCUtils.addAlert(msg, $div);
+        } else {
+            alert(msg);
+        }
     };
 
-export {applyStyles, Patterns};
+export {applyStyles, handleVisualError, Patterns};

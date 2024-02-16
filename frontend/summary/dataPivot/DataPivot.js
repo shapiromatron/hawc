@@ -9,6 +9,7 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
+import {handleVisualError} from "../summary/common";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
@@ -47,9 +48,7 @@ class DataPivot {
                         return dp;
                     }
                 },
-                error => {
-                    this.handleUnknownError(null, error);
-                }
+                error => handleVisualError(null, error)
             );
         });
     }
@@ -86,9 +85,7 @@ class DataPivot {
                     return true;
                 });
             },
-            error => {
-                this.handleUnknownError(null, error);
-            }
+            error => handleVisualError(null, error)
         );
     }
 
@@ -210,23 +207,6 @@ class DataPivot {
         this.$div.fadeIn();
     }
 
-    handleUnknownError($div, err) {
-        console.error(err);
-        const msg = "Error: An error has ocurred; please check visualization settings.";
-        if ($div === null) {
-            const $el = $("#main-content-container h2").first();
-            if ($el) {
-                $div = $("<div>");
-                $div.insertAfter($el);
-            }
-        }
-        if ($div) {
-            HAWCUtils.addAlert(msg, $div);
-        } else {
-            alert(msg);
-        }
-    }
-
     build_data_pivot_vis($div, editable) {
         try {
             delete this.plot;
@@ -234,7 +214,7 @@ class DataPivot {
             var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
             this.plot = new DataPivotVisualization(data, this.settings, $div, editable);
         } catch (err) {
-            this.handleUnknownError($div, err);
+            handleVisualError($div, err);
         }
     }
 
