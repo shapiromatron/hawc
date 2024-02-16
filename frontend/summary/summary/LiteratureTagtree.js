@@ -61,7 +61,7 @@ class LiteratureTagtree extends BaseVisual {
         try {
             this.buildPlot($plotDiv, data);
         } catch (error) {
-            handleVisualError(null, error);
+            handleVisualError(error, null);
         }
     }
 

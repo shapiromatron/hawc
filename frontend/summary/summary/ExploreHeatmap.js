@@ -32,8 +32,7 @@ const startupHeatmapAppRender = function(el, settings, datastore, options) {
             el
         );
     } catch (err) {
-        console.error(err);
-        ReactDOM.render(<p>An error occurred</p>, el);
+        handleVisualError(err, $(el));
     }
 };
 
@@ -213,7 +212,7 @@ class ExploreHeatmap extends BaseVisual {
 
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                     } catch (err) {
-                        return handleVisualError($plotDiv, err);
+                        return handleVisualError(err, $plotDiv);
                     }
 
                     if (options.cb) {
@@ -260,7 +259,7 @@ class ExploreHeatmap extends BaseVisual {
                     try {
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                     } catch (err) {
-                        return handleVisualError($plotDiv, err);
+                        return handleVisualError(err, $plotDiv);
                     }
                     caption.renderAndEnable();
                 });

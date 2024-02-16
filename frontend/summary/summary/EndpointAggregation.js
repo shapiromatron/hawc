@@ -66,7 +66,7 @@ class EndpointAggregation extends BaseVisual {
             this.buildPlot();
             caption.renderAndEnable();
         } catch (error) {
-            handleVisualError(null, error);
+            handleVisualError(error, null);
         }
 
         return this;

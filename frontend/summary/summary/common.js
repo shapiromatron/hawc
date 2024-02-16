@@ -125,7 +125,13 @@ const Patterns = {
             }
         });
     },
-    handleVisualError = ($div, err, msg) => {
+    handleVisualError = (err, $div, msg) => {
+        /**
+         * Apply custom styling attributes to elements in an SVG
+         * @param {err} A javascript error
+         * @param {$div} An (optional) jQuery selection element
+         * @param {msg} An (optional) message to display
+         */
         console.error(err);
         if ($div === null) {
             const $el = $("#main-content-container h2").first();

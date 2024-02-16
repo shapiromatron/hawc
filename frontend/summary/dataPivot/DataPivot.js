@@ -48,7 +48,7 @@ class DataPivot {
                         return dp;
                     }
                 },
-                error => handleVisualError(null, error)
+                error => handleVisualError(error, error)
             );
         });
     }
@@ -85,7 +85,7 @@ class DataPivot {
                     return true;
                 });
             },
-            error => handleVisualError(null, error)
+            error => handleVisualError(error, null)
         );
     }
 
@@ -214,7 +214,7 @@ class DataPivot {
             var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
             this.plot = new DataPivotVisualization(data, this.settings, $div, editable);
         } catch (err) {
-            handleVisualError($div, err);
+            handleVisualError(err, $div);
         }
     }
 
