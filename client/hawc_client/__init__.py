@@ -15,7 +15,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2023.2"
+__version__ = "2024.1"
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
