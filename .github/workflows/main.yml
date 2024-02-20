@@ -47,9 +47,12 @@ jobs:
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         pip install -U pip wheel
         pip install -r requirements/dev.txt
-    - name: lint
+    - name: lint-py
       run: |
         make lint-py
+    - name: lint-html
+      run: |
+        make lint-html
     - name: Setup linux environment
       if: startsWith(runner.os, 'Linux')
       run: |

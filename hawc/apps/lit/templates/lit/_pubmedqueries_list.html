@@ -1,47 +1,47 @@
 {% load static %}
 
 {% with queries=object.get_pubmed_queries %}
-<h3>Results from queries</h3>
-{% if queries %}
-  <table class="table table-sm table-striped">
-    <thead>
-      <tr>
-        <th>Date last executed</th>
-        <th>Total references found</th>
-        <th>References added</th>
-        <th>References removed</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for query in queries %}
+  <h3>Results from queries</h3>
+  {% if queries %}
+    <table class="table table-sm table-striped">
+      <thead>
         <tr>
-          <td>{{query.query_date}}</td>
-          <td>{{query.total_count}}</td>
-          <td>{{query.total_added}}</td>
-          <td>{{query.total_removed}}</td>
+          <th>Date last executed</th>
+          <th>Total references found</th>
+          <th>References added</th>
+          <th>References removed</th>
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <p>The search has not yet been executed for import into HAWC.</p>
-{% endif %}
+      </thead>
+      <tbody>
+        {% for query in queries %}
+          <tr>
+            <td>{{query.query_date}}</td>
+            <td>{{query.total_count}}</td>
+            <td>{{query.total_added}}</td>
+            <td>{{query.total_removed}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>The search has not yet been executed for import into HAWC.</p>
+  {% endif %}
 
-{% if obj_perms.edit %}
-  <div class="well">
+  {% if obj_perms.edit %}
+    <div class="well">
 
-    {% if queries %}
-      <a href="{% url 'lit:tag' assessment.pk %}?search={{object.pk}}" class="btn btn-primary">Tag literature</a>
-      <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-light">Rerun search</a>
-    {% else %}
-      <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-primary">Run search</a>
-    {% endif %}
+      {% if queries %}
+        <a href="{% url 'lit:tag' assessment.pk %}?search={{object.pk}}" class="btn btn-primary">Tag literature</a>
+        <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-light">Rerun search</a>
+      {% else %}
+        <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-primary">Run search</a>
+      {% endif %}
 
-    <div id="loading_div" style="display: none">
-      <br>
-      <p>Please wait; depending on query size this may take up to 15 minutes... <span class="fa fa-spin fa-spinner"></span>
-    </div>
+      <div id="loading_div" style="display: none">
+        <br>
+        <p>Please wait; depending on query size this may take up to 15 minutes... <span class="fa fa-spin fa-spinner"></span>
+        </div>
 
-  </div>
-{% endif %}
+      </div>
+  {% endif %}
 {% endwith %}

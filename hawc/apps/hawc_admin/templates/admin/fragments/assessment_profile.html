@@ -1,12 +1,12 @@
 <div hx-target="this" hx-swap="outerHTML">
-    <h2>Assessment profile</h2>
-    <form hx-get="{% url 'admin_dashboard' %}?action=assessment_profile" hx-trigger="change">
-        {{ form.as_p }}
-        {% csrf_token %}
-    </form>
-    {% if fig %}
+  <h2>Assessment profile</h2>
+  <form hx-get="{% url 'admin_dashboard' %}?action=assessment_profile" hx-trigger="change">
+    {{ form.as_p }}
+    {% csrf_token %}
+  </form>
+  {% if fig %}
     <div>{% plotly fig event="htmx" resizable=True %}</div>
-    {% else %}
+  {% else %}
     <p>No selected assessment or invalid assessment id.</p>
-    {% endif %}
+  {% endif %}
 </div>

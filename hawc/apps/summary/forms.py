@@ -16,6 +16,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
+from ..common.clean import sanitize_html
 from ..common.forms import (
     BaseFormHelper,
     CopyForm,
@@ -195,7 +196,7 @@ class VisualForm(forms.ModelForm):
     def clean_caption(self):
         caption = self.cleaned_data["caption"]
         validators.validate_hyperlinks(caption)
-        return validators.clean_html(caption)
+        return sanitize_html.clean_html(caption)
 
     def clean_evidence_type(self):
         visual_type = self.cleaned_data["visual_type"]
@@ -679,7 +680,7 @@ class DataPivotForm(forms.ModelForm):
     def clean_caption(self):
         caption = self.cleaned_data["caption"]
         validators.validate_hyperlinks(caption)
-        return validators.clean_html(caption)
+        return sanitize_html.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):

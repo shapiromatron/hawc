@@ -1,32 +1,32 @@
 <div id="attach_table">
-    {% if object_list or action == 'create' %}
+  {% if object_list or action == 'create' %}
     <h2>Attachments</h2>
     <table class="table table-sm table-striped">
-        <colgroup>
-            {% if canEdit or permissions.edit %}
-            <col style="width: 25%;">
-            <col style="width: 50%;">
-            <col style="width: 25%;">
-            {% else %}
-            <col style="width: 30%;">
-            <col style="width: 70%;">
-            {% endif %}
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Attachment</th>
-                <th>Description</th>
-                {% if canEdit or permissions.edit %}
-                <th>Editing</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for object in object_list %}
-                {% include "assessment/fragments/attachment_row.html" %}
-            {% endfor %}
-            {% include "assessment/fragments/attachment_edit_row.html" %}
-        </tbody>
+      <colgroup>
+        {% if canEdit or permissions.edit %}
+          <col style="width: 25%;">
+          <col style="width: 50%;">
+          <col style="width: 25%;">
+        {% else %}
+          <col style="width: 30%;">
+          <col style="width: 70%;">
+        {% endif %}
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Attachment</th>
+          <th>Description</th>
+          {% if canEdit or permissions.edit %}
+            <th>Editing</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in object_list %}
+          {% include "assessment/fragments/attachment_row.html" %}
+        {% endfor %}
+        {% include "assessment/fragments/attachment_edit_row.html" %}
+      </tbody>
     </table>
-    {% endif %}
+  {% endif %}
 </div>

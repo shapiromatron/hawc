@@ -1,40 +1,40 @@
 {% if is_paginated %}
-<ul class="pagination justify-content-center mb-0">
+  <ul class="pagination justify-content-center mb-0">
 
     {% if page_obj.has_previous %}
-    <li class="page-item">
+      <li class="page-item">
         <a class="page-link" href="?{% url_replace page=page_obj.previous_page_number %}">&lt;&lt;</a>
-    </li>
+      </li>
     {% else %}
-    <li class="page-item disabled">
+      <li class="page-item disabled">
         <a class="page-link" href="#">&lt;&lt;</a>
-    </li>
+      </li>
     {% endif %}
 
     <li class="page-item disabled">
-        <a class="page-link" href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
+      <a class="page-link" href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
     </li>
 
     {% if page_obj.has_next %}
-    <li class="page-item">
+      <li class="page-item">
         <a class="page-link" href="?{% url_replace page=page_obj.next_page_number %}">&gt;&gt;</a>
-    </li>
+      </li>
     {% else %}
-    <li class="page-item disabled">
+      <li class="page-item disabled">
         <a class="page-link" href="#">&gt;&gt;</a>
-    </li>
+      </li>
     {% endif %}
 
     <li class="ml-3 page-item">
-        <label class="page-link font-weight-normal text-muted" for="quickPageSelector">Go to page:&nbsp;</label>
+      <label class="page-link font-weight-normal text-muted" for="quickPageSelector">Go to page:&nbsp;</label>
     </li>
     <li class="page-item">
-        <select id="quickPageSelector" class="form-control" onchange="location=this.value;">
-            {% for n in page_obj.paginator.page_range %}
-            <option {% if page_obj.number == n %}selected{% endif %} value="?{% url_replace page=n %}">{{ n }}</option>
-            {% endfor %}
-        </select>
+      <select id="quickPageSelector" class="form-control" onchange="location=this.value;">
+        {% for n in page_obj.paginator.page_range %}
+          <option {% if page_obj.number == n %}selected{% endif %} value="?{% url_replace page=n %}">{{ n }}</option>
+        {% endfor %}
+      </select>
     </li>
-</ul>
-<p class="text-center">Showing {{plural_object_name|default:"items"}} <b>{{page_obj.start_index}}-{{page_obj.end_index}}</b> of <b>{{paginator.count}}</b></p>
+  </ul>
+  <p class="text-center">Showing {{plural_object_name|default:"items"}} <b>{{page_obj.start_index}}-{{page_obj.end_index}}</b> of <b>{{paginator.count}}</b></p>
 {% endif %}
