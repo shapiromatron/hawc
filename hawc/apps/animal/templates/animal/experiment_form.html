@@ -10,27 +10,27 @@
       $('#id_name').focus();
       var pa = $('#id_purity_available'),
           addBlankOption = function(setAsBlank){
-            var sel = $('#id_purity_qualifier'),
-                blank = sel.find('option[value=""]');
-            if(setAsBlank){
-              if(blank.length===0) blank = $('<option value=""></option>').appendTo(sel);
-              blank.prop('selected', true);
-            } else {
-              blank.remove();
-            }
-          },
+        var sel = $('#id_purity_qualifier'),
+            blank = sel.find('option[value=""]');
+        if(setAsBlank){
+          if(blank.length===0) blank = $('<option value=""></option>').appendTo(sel);
+          blank.prop('selected', true);
+        } else {
+          blank.remove();
+        }
+      },
           showPurity = function(){
-            if (pa.prop('checked')){
-              $('#div_id_purity').show();
-              $('#div_id_purity_qualifier').show();
-              addBlankOption(false);
-            } else {
-              $('#div_id_purity_qualifier').hide();
-              $('#div_id_purity').hide();
-              $('#id_purity').val("");
-              addBlankOption(true);
-            }
-          };
+        if (pa.prop('checked')){
+          $('#div_id_purity').show();
+          $('#div_id_purity_qualifier').show();
+          addBlankOption(false);
+        } else {
+          $('#div_id_purity_qualifier').hide();
+          $('#div_id_purity').hide();
+          $('#id_purity').val("");
+          addBlankOption(true);
+        }
+      };
       pa.on('change', showPurity).trigger('change');
 
       // by default, reproductive/developmental experiments are multi-generational; other types are not.

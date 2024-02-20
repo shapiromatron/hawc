@@ -28,7 +28,8 @@ psycopg2-binary==2.9.9
 redis==5.0.1
 requests==2.31.0
 pydantic==2.4.2
-bleach[css]==6.1.0
+nh3==0.2.15
+tinycss2==1.2.1
 
 # computational
 numpy==1.26.1

@@ -1,152 +1,152 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2 class="d-inline-block">Update {{object.summary}}</h2>
-<div class="float-right">
+  <h2 class="d-inline-block">Update {{object.summary}}</h2>
+  <div class="float-right">
     <a id="design-update" class="btn btn-sm btn-primary" href="#"
-        hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
-        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
-</div>
+       hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
+      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
+  </div>
 
-{% include "epiv2/fragments/_design_table.html" %}
+  {% include "epiv2/fragments/_design_table.html" %}
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'epiv2:chemical-create' object.pk as chemical_create %}
-        {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '43,42,15' %}
-            {% bs4_thead 'Name,DTXSID,Edit' %}
-            <tbody>
-                {% if object.chemicals.all %}
-                    {% for object in object.chemicals.all %}
-                        {% include "epiv2/fragments/chemical_row.html" %}
-                    {% endfor %}
-                    {% include "epiv2/fragments/_create_one.html" with id="chemical-empty-row" text="" %}
-                {% else %}
-                    {% include "epiv2/fragments/_create_one.html" with id="chemical-empty-row" text="chemicals" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'epiv2:chemical-create' object.pk as chemical_create %}
+      {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-empty-row" %}
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '43,42,15' %}
+        {% bs4_thead 'Name,DTXSID,Edit' %}
+        <tbody>
+          {% if object.chemicals.all %}
+            {% for object in object.chemicals.all %}
+              {% include "epiv2/fragments/chemical_row.html" %}
+            {% endfor %}
+            {% include "epiv2/fragments/_create_one.html" with id="chemical-empty-row" text="" %}
+          {% else %}
+            {% include "epiv2/fragments/_create_one.html" with id="chemical-empty-row" text="chemicals" %}
+          {% endif %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'epiv2:exposure-create' object.pk as exposure_create %}
-        {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target="#exposure-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '29,28,28,15' %}
-            {% bs4_thead 'Name,Measurement Type, Measurement Timing,Edit' %}
-            <tbody>
-                {% if object.exposures.all %}
-                    {% for object in object.exposures.all %}
-                        {% include "epiv2/fragments/exposure_row.html" %}
-                    {% endfor %}
-                    {% include "epiv2/fragments/_create_one.html" with id="exposure-empty-row" text="" %}
-                {% else %}
-                    {% include "epiv2/fragments/_create_one.html" with id="exposure-empty-row" text="exposure measurements" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'epiv2:exposure-create' object.pk as exposure_create %}
+      {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target="#exposure-empty-row" %}
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '29,28,28,15' %}
+        {% bs4_thead 'Name,Measurement Type, Measurement Timing,Edit' %}
+        <tbody>
+          {% if object.exposures.all %}
+            {% for object in object.exposures.all %}
+              {% include "epiv2/fragments/exposure_row.html" %}
+            {% endfor %}
+            {% include "epiv2/fragments/_create_one.html" with id="exposure-empty-row" text="" %}
+          {% else %}
+            {% include "epiv2/fragments/_create_one.html" with id="exposure-empty-row" text="exposure measurements" %}
+          {% endif %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'epiv2:exposurelevel-create' object.pk as exposurelevel_create %}
-        {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target="#exposurelevel-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '17,17,17,17,17,15' %}
-            {% bs4_thead 'Name,Chemical,Exposure,Central Tendency,Comments,Edit' %}
-            <tbody>
-                {% if object.exposure_levels.all %}
-                    {% for object in object.exposure_levels.all %}
-                        {% include "epiv2/fragments/exposurelevel_row.html" %}
-                    {% endfor %}
-                    {% include "epiv2/fragments/_create_one.html" with id="exposurelevel-empty-row" text="" %}
-                {% else %}
-                    {% include "epiv2/fragments/_create_one.html" with id="exposurelevel-empty-row" text="exposure levels" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'epiv2:exposurelevel-create' object.pk as exposurelevel_create %}
+      {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target="#exposurelevel-empty-row" %}
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '17,17,17,17,17,15' %}
+        {% bs4_thead 'Name,Chemical,Exposure,Central Tendency,Comments,Edit' %}
+        <tbody>
+          {% if object.exposure_levels.all %}
+            {% for object in object.exposure_levels.all %}
+              {% include "epiv2/fragments/exposurelevel_row.html" %}
+            {% endfor %}
+            {% include "epiv2/fragments/_create_one.html" with id="exposurelevel-empty-row" text="" %}
+          {% else %}
+            {% include "epiv2/fragments/_create_one.html" with id="exposurelevel-empty-row" text="exposure levels" %}
+          {% endif %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'epiv2:outcome-create' object.pk as outcome_create %}
-        {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '22,21,21,21,15' %}
-            {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
-            <tbody>
-                {% if object.outcomes.all %}
-                    {% for object in object.outcomes.all %}
-                        {% include "epiv2/fragments/outcome_row.html" %}
-                    {% endfor %}
-                    {% include "epiv2/fragments/_create_one.html" with id="outcome-empty-row" text="" %}
-                {% else %}
-                    {% include "epiv2/fragments/_create_one.html" with id="outcome-empty-row" text="outcomes" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'epiv2:outcome-create' object.pk as outcome_create %}
+      {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-empty-row" %}
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '22,21,21,21,15' %}
+        {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
+        <tbody>
+          {% if object.outcomes.all %}
+            {% for object in object.outcomes.all %}
+              {% include "epiv2/fragments/outcome_row.html" %}
+            {% endfor %}
+            {% include "epiv2/fragments/_create_one.html" with id="outcome-empty-row" text="" %}
+          {% else %}
+            {% include "epiv2/fragments/_create_one.html" with id="outcome-empty-row" text="outcomes" %}
+          {% endif %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'epiv2:adjustmentfactor-create' object.pk as adjustmentfactor_create %}
-        {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target="#adjustmentfactor-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,40,25,15' %}
-            {% bs4_thead 'Name,Description,Comments,Edit' %}
-            <tbody>
-                {% if object.adjustment_factors.all %}
-                    {% for object in object.adjustment_factors.all %}
-                        {% include "epiv2/fragments/adjustment_factor_row.html" %}
-                    {% endfor %}
-                    {% include "epiv2/fragments/_create_one.html" with id="adjustmentfactor-empty-row" text="" %}
-                {% else %}
-                    {% include "epiv2/fragments/_create_one.html" with id="adjustmentfactor-empty-row" text="adjustment factors" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'epiv2:adjustmentfactor-create' object.pk as adjustmentfactor_create %}
+      {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target="#adjustmentfactor-empty-row" %}
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '20,40,25,15' %}
+        {% bs4_thead 'Name,Description,Comments,Edit' %}
+        <tbody>
+          {% if object.adjustment_factors.all %}
+            {% for object in object.adjustment_factors.all %}
+              {% include "epiv2/fragments/adjustment_factor_row.html" %}
+            {% endfor %}
+            {% include "epiv2/fragments/_create_one.html" with id="adjustmentfactor-empty-row" text="" %}
+          {% else %}
+            {% include "epiv2/fragments/_create_one.html" with id="adjustmentfactor-empty-row" text="adjustment factors" %}
+          {% endif %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
-        {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '12,12,12,12,6,6,6,12,12,10' %}
-            {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments,Edit' %}
-            <tbody>
-                {% if object.data_extractions.all %}
-                    {% for object in object.data_extractions.all %}
-                        {% include "epiv2/fragments/data_extraction_row.html" %}
-                    {% endfor %}
-                    {% include "epiv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="" %}
-                {% else %}
-                    {% include "epiv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="extractions" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
+      {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '12,12,12,12,6,6,6,12,12,10' %}
+        {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments,Edit' %}
+        <tbody>
+          {% if object.data_extractions.all %}
+            {% for object in object.data_extractions.all %}
+              {% include "epiv2/fragments/data_extraction_row.html" %}
+            {% endfor %}
+            {% include "epiv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="" %}
+          {% else %}
+            {% include "epiv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="extractions" %}
+          {% endif %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="well text-center">
+  <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="epiv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
-</div>
+  </div>
 {% endblock %}
 
 
 {% block extrajs %}
-{% include "common/htmx_autocomplete.html" %}
-<script type="text/javascript">
-window.app.startup("epiv2Startup", function(app){
-    app.formStartup(document);
-});
-</script>
+  {% include "common/htmx_autocomplete.html" %}
+  <script type="text/javascript">
+    window.app.startup("epiv2Startup", function(app){
+      app.formStartup(document);
+    });
+  </script>
 {% endblock %}
