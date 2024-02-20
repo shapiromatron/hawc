@@ -51,6 +51,10 @@ class ActiveDose {
         }
     }
 
+    hasUnits(doseUnitsId) {
+        return this.units.filter(d => d.id === doseUnitsId).length > 0;
+    }
+
     activate(doseUnitsId) {
         // set null case
         if (doseUnitsId === null) {
