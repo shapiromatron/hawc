@@ -129,16 +129,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:46:40 GMT
+      - Tue, 20 Feb 2024 16:38:21 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371476; Expires=Fri, 16 Feb 2024 16:46:40 GMT; Path=/; HttpOnly
-      - CFTOKEN=14954504; Expires=Fri, 16 Feb 2024 16:46:40 GMT; Path=/; HttpOnly
-      - JSESSIONID=A41AA560D51CF6AB7AD2A2E8BA04F73E.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A40; Path=/
+      - CFID=14825869; Expires=Wed, 21 Feb 2024 16:38:21 GMT; Path=/; HttpOnly
+      - CFTOKEN=24212241; Expires=Wed, 21 Feb 2024 16:38:21 GMT; Path=/; HttpOnly
+      - JSESSIONID=DBEB0AEDDFF8274F1944D9762F5C56E1.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A21; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -149,7 +149,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=34592212
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=34592212
     headers:
       Accept:
       - '*/*'
@@ -158,7 +158,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '45'
+      - '90'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -167,53 +167,77 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM" IndexingMethod="Automated"><PMID
+        Version="1">34592212</PMID><DateCompleted><Year>2021</Year><Month>11</Month><Day>30</Day></DateCompleted><DateRevised><Year>2021</Year><Month>11</Month><Day>30</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1879-1298</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>287</Volume><Issue>Pt 4</Issue><PubDate><Year>2022</Year><Month>Jan</Month></PubDate></JournalIssue><Title>Chemosphere</Title><ISOAbbreviation>Chemosphere</ISOAbbreviation></Journal><ArticleTitle>Occurrence
+        of selected per- and polyfluorinated alkyl substances (PFASs) in food available
+        on the European market - A review on levels and human exposure assessment.</ArticleTitle><Pagination><StartPage>132378</StartPage><MedlinePgn>132378</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1016/j.chemosphere.2021.132378</ELocationID><ELocationID
+        EIdType="pii" ValidYN="Y">S0045-6535(21)02850-2</ELocationID><Abstract><AbstractText>Per-
+        and polyfluorinated alkyl substances (PFASs) are considered emerging persistent
+        organic pollutants, which are chemically, thermally, and biologically stable,
+        or degrade to persistent end products. Dietary intake is considered as one
+        of the main human exposure pathways of these chemicals and, having entered
+        the human body, PFASs are not metabolised and accumulate in tissues, while
+        their toxicological properties may cause various health problems. Several
+        studies on the occurrence of PFASs in various food types have been conducted,
+        including the assessment of dietary exposure. The most important sources were
+        fish, meat, eggs, fruits, and vegetables. Fruits and vegetables recently showed
+        relatively high levels of PFASs, and have become a more significant source
+        of PFASs than meat. In 2020, the European Food Safety Authority (EFSA) published
+        an opinion, setting the tolerable weekly intake (TWI) of 4.4&#xa0;ng kg-1
+        b.w. for the sum of perfluorooctanoic acid (PFOA), perfluorononanoic acid
+        (PFNA), perfluorohexanesulphonic acid (PFHxS), and perfluorooctanesulphonic
+        acid (PFOS). The emphasis in this paper is on the systematization of available
+        information on the distribution of PFASs and their levels in different food,
+        with a special interest in data from the Europe. The current legislation and
+        estimated dietary intakes by the general population are described. While the
+        available information on tolerably daily intakes estimated in a number of
+        European countries often exceeds the newly established EFSA TWI, a critical
+        evaluation of performance characteristics of the reviewed analytical methodologies
+        revealed the insufficient sensitivity of quantification procedures for accurate
+        risk assessment according to the guidelines proposed by EFSA.</AbstractText><CopyrightInformation>Copyright
+        &#xa9; 2021 Elsevier Ltd. All rights reserved.</CopyrightInformation></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Pasecnaja</LastName><ForeName>Elina</ForeName><Initials>E</Initials><AffiliationInfo><Affiliation>Institute
+        of Food Safety, Animal Health and Environment "BIOR", Lejupes iela 3, Riga,
+        LV-1076, Latvia; University of Latvia, Jelgavas iela 1, Riga, LV-1004, Latvia.
+        Electronic address: elina.pasecnaja@bior.lv.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Bartkevics</LastName><ForeName>Vadims</ForeName><Initials>V</Initials><AffiliationInfo><Affiliation>Institute
+        of Food Safety, Animal Health and Environment "BIOR", Lejupes iela 3, Riga,
+        LV-1076, Latvia; University of Latvia, Jelgavas iela 1, Riga, LV-1004, Latvia.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Zacs</LastName><ForeName>Dzintars</ForeName><Initials>D</Initials><AffiliationInfo><Affiliation>Institute
+        of Food Safety, Animal Health and Environment "BIOR", Lejupes iela 3, Riga,
+        LV-1076, Latvia.</Affiliation></AffiliationInfo></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2021</Year><Month>09</Month><Day>27</Day></ArticleDate></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Chemosphere</MedlineTA><NlmUniqueID>0320657</NlmUniqueID><ISSNLinking>0045-6535</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D005466">Fluorocarbons</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000074341" MajorTopicYN="N">Dietary Exposure</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004435" MajorTopicYN="N">Eating</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004531" MajorTopicYN="N">Eggs</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005466" MajorTopicYN="Y">Fluorocarbons</DescriptorName><QualifierName
+        UI="Q000032" MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008460" MajorTopicYN="N">Meat</DescriptorName></MeshHeading></MeshHeadingList><KeywordList
+        Owner="NOTNLM"><Keyword MajorTopicYN="N">EFSA</Keyword><Keyword MajorTopicYN="N">Food
+        contamination</Keyword><Keyword MajorTopicYN="N">Human exposure</Keyword><Keyword
+        MajorTopicYN="N">PFASs</Keyword></KeywordList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2021</Year><Month>7</Month><Day>27</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="revised"><Year>2021</Year><Month>9</Month><Day>20</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2021</Year><Month>9</Month><Day>25</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2021</Year><Month>10</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2021</Year><Month>12</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2021</Year><Month>9</Month><Day>30</Day><Hour>20</Hour><Minute>13</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">34592212</ArticleId><ArticleId IdType="doi">10.1016/j.chemosphere.2021.132378</ArticleId><ArticleId
+        IdType="pii">S0045-6535(21)02850-2</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -228,28 +252,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:40 GMT
+      - Tue, 20 Feb 2024 16:38:21 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB925704500003269D8AA2546.1.1.m_3
+      - 322C45D975EA9B45000055DBBA102B24.1.1.m_3
       NCBI-SID:
-      - 1506509C085C334D_A5D1SID
+      - CAADFB02A8430CD5_C883SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=1506509C085C334D_A5D1SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:41 GMT
+      - ncbi_sid=CAADFB02A8430CD5_C883SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:22 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

@@ -18,122 +18,216 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        //8DADb/+eOBTwAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">29186030</PMID><DateCompleted><Year>2018</Year><Month>07</Month><Day>09</Day></DateCompleted><DateRevised><Year>2018</Year><Month>11</Month><Day>13</Day></DateRevised><Article
+        PubModel="Electronic"><Journal><ISSN IssnType="Electronic">1422-0067</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>18</Volume><Issue>12</Issue><PubDate><Year>2017</Year><Month>Nov</Month><Day>29</Day></PubDate></JournalIssue><Title>International
+        journal of molecular sciences</Title><ISOAbbreviation>Int J Mol Sci</ISOAbbreviation></Journal><ArticleTitle>Buprofezin
+        Is Metabolized by CYP353D1v2, a Cytochrome P450 Associated with Imidacloprid
+        Resistance in Laodelphax striatellus.</ArticleTitle><ELocationID EIdType="pii"
+        ValidYN="Y">2564</ELocationID><ELocationID EIdType="doi" ValidYN="Y">10.3390/ijms18122564</ELocationID><Abstract><AbstractText><i>CYP353D1v2</i>
+        is a cytochrome P450 related to imidacloprid resistance in <i>Laodelphax striatellus</i>.
+        This work was conducted to examine the ability of CYP353D1v2 to metabolize
+        other insecticides. Carbon monoxide difference spectra analysis indicates
+        that CYP353D1v2 was successfully expressed in insect cell Sf9. The catalytic
+        activity of CYP353D1v2 relating to degrading buprofezin, chlorpyrifos, and
+        deltamethrin was tested by measuring substrate depletion and analyzing the
+        formation of metabolites. The results showed the nicotinamide-adenine dinucleotide
+        phosphate (NADPH)-dependent depletion of buprofezin (eluting at 8.7 min) and
+        parallel formation of an unknown metabolite (eluting 9.5 min). However, CYP353D1v2
+        is unable to metabolize deltamethrin and chlorpyrifos. The recombinant CYP353D1v2
+        protein efficiently catalyzed the model substrate <i>p</i>-nitroanisole with
+        a maximum velocity of 9.24 nmol/min/mg of protein and a Michaelis constant
+        of Km = 6.21 &#xb5;M. In addition, imidacloprid was metabolized in vitro by
+        the recombinant CYP353D1v2 microsomes (catalytic constant Kcat) 0.064 pmol/min/pmol
+        P450, Km = 6.41 &#xb5;M. The mass spectrum of UPLC-MS analysis shows that
+        the metabolite was a product of buprofezin, which was buprofezin sulfone.
+        This result provided direct evidence that <i>L. striatellus</i> cytochrome
+        P450 CYP353D1v2 is capable of metabolizing imidacloprid and buprofezin.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Elzaki</LastName><ForeName>Mohammed
+        Esmail Abdalla</ForeName><Initials>MEA</Initials><AffiliationInfo><Affiliation>The
+        Key Laboratory of Monitoring and Management of Plant Diseases and Insects,
+        Department of Entomology, College of Plant Protection, Ministry of Agriculture,
+        Nanjing Agricultural University, Nanjing 210095, China. mohammedelzaki@njau.edu.cn.</Affiliation></AffiliationInfo><AffiliationInfo><Affiliation>College
+        of Crop Science, Fujian Agriculture and Forestry University, Fuzhou 350002,
+        China. mohammedelzaki@njau.edu.cn.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Miah</LastName><ForeName>Mohammad Asaduzzaman</ForeName><Initials>MA</Initials><AffiliationInfo><Affiliation>The
+        Key Laboratory of Monitoring and Management of Plant Diseases and Insects,
+        Department of Entomology, College of Plant Protection, Ministry of Agriculture,
+        Nanjing Agricultural University, Nanjing 210095, China. mamiah81@yahoo.com.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Han</LastName><ForeName>Zhaojun</ForeName><Initials>Z</Initials><AffiliationInfo><Affiliation>The
+        Key Laboratory of Monitoring and Management of Plant Diseases and Insects,
+        Department of Entomology, College of Plant Protection, Ministry of Agriculture,
+        Nanjing Agricultural University, Nanjing 210095, China. zjhan@njau.edu.cn.</Affiliation></AffiliationInfo></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2017</Year><Month>11</Month><Day>29</Day></ArticleDate></Article><MedlineJournalInfo><Country>Switzerland</Country><MedlineTA>Int
+        J Mol Sci</MedlineTA><NlmUniqueID>101092791</NlmUniqueID><ISSNLinking>1422-0067</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D007306">Insecticides</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D000073943">Neonicotinoids</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D009574">Nitro Compounds</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D013829">Thiadiazines</NameOfSubstance></Chemical><Chemical><RegistryNumber>3B8KGI239I</RegistryNumber><NameOfSubstance
+        UI="C083997">buprofezin</NameOfSubstance></Chemical><Chemical><RegistryNumber>3BN7M937V8</RegistryNumber><NameOfSubstance
+        UI="C082359">imidacloprid</NameOfSubstance></Chemical><Chemical><RegistryNumber>9035-51-2</RegistryNumber><NameOfSubstance
+        UI="D003577">Cytochrome P-450 Enzyme System</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003577" MajorTopicYN="N">Cytochrome P-450 Enzyme System</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006430" MajorTopicYN="N">Hemiptera</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007306" MajorTopicYN="N">Insecticides</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="Y">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000073943" MajorTopicYN="N">Neonicotinoids</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="Y">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009574" MajorTopicYN="N">Nitro Compounds</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="Y">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013829" MajorTopicYN="N">Thiadiazines</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading></MeshHeadingList><KeywordList
+        Owner="NOTNLM"><Keyword MajorTopicYN="N">Cytochrome P450</Keyword><Keyword
+        MajorTopicYN="N">buprofezin</Keyword><Keyword MajorTopicYN="N">cross-resistance</Keyword><Keyword
+        MajorTopicYN="N">functional expression</Keyword><Keyword MajorTopicYN="N">insecticide
+        metabolism</Keyword></KeywordList><CoiStatement>The authors declare no conflict
+        of interest.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2017</Year><Month>9</Month><Day>22</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="revised"><Year>2017</Year><Month>11</Month><Day>14</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2017</Year><Month>11</Month><Day>20</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2017</Year><Month>11</Month><Day>30</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2017</Year><Month>12</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2018</Year><Month>7</Month><Day>10</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">29186030</ArticleId><ArticleId IdType="pmc">PMC5751167</ArticleId><ArticleId
+        IdType="doi">10.3390/ijms18122564</ArticleId><ArticleId IdType="pii">ijms18122564</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Konno
+        T. Pest Management Rice. Springer; Berlin, Germany: 1990. Buprofezin; A reliable
+        IGR for the control of rice pests; pp. 210&#x2013;222.</Citation></Reference><Reference><Citation>De
+        Cock A., Degheele D. Insecticides with Novel Modes of Action. Springer; Berlin/Heidelberg,
+        Germany: 1998. Buprofezin: A novel chitin synthesis inhibitor affecting specifically
+        planthoppers, whiteflies and scale insects; pp. 74&#x2013;91.</Citation></Reference><Reference><Citation>Nagata
+        T., Masda T., Moriya S. Development of insecticide resistance in the brown
+        planthopper: Nilaparvata lugens STAL (Hemiptera: Delphacidae) Appl. Entomol.
+        Zool. 1979;14:264&#x2013;269. doi: 10.1303/aez.14.264.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1303/aez.14.264</ArticleId></ArticleIdList></Reference><Reference><Citation>Nagata
+        T., Ohira Y. Insecticide resistance of the small brown planthopper, Laodelphax
+        striatellus Fall&#xe9;n (Hemiptera: Delphacidae), collected in Kyushu and
+        on the East China Sea. Appl. Entomol. Zool. 1986;21:216&#x2013;219. doi: 10.1303/aez.21.216.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1303/aez.21.216</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        L., Zhang Y., Han Z., Liu Y., Fang J. Cross-resistance and possible mechanisms
+        of chlorpyrifos resistance in Laodelphax striatellus (Fall&#xe9;n) Pest Manag.
+        Sci. 2010;66:1096&#x2013;1100. doi: 10.1002/ps.1984.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1002/ps.1984</ArticleId><ArticleId IdType="pubmed">20582994</ArticleId></ArticleIdList></Reference><Reference><Citation>Gao
+        B., Wu J., Huang S., Mu L., Han Z. Insecticide resistance in field populations
+        of Laodelphax striatellus Fall&#xe9;n (Homoptera: Delphacidae) in China and
+        its possible mechanisms. Int. J. Pest Manag. 2008;54:13&#x2013;19. doi: 10.1080/09670870701553303.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/09670870701553303</ArticleId></ArticleIdList></Reference><Reference><Citation>Yanhua
+        W., Changxing W., Xueping Z. Advances in the research of insecticide resistance
+        of the small brown planthopper, Laodelphax striatellus. Plant Prot. 2011;4:29&#x2013;35.
+        (In Chinese)</Citation></Reference><Reference><Citation>Zhang Y., Guo H.,
+        Yang Q., Li S., Wang L., Zhang G., Fang J. Overexpression of a P450 gene (CYP6CW1)
+        in buprofezin-resistant Laodelphax striatellus (Fall&#xe9;n) Pestic. Biochem.
+        Physiol. 2012;104:277&#x2013;282. doi: 10.1016/j.pestbp.2012.10.002.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.pestbp.2012.10.002</ArticleId></ArticleIdList></Reference><Reference><Citation>Feyereisen
+        R. Insect P450 enzymes. Ann. Rev. Entomol. 1999;44:507&#x2013;533. doi: 10.1146/annurev.ento.44.1.507.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1146/annurev.ento.44.1.507</ArticleId><ArticleId IdType="pubmed">9990722</ArticleId></ArticleIdList></Reference><Reference><Citation>Xu
+        L., Wu M., Han Z. Overexpression of multiple detoxification genes in deltamethrin
+        resistant Laodelphax striatellus (Hemiptera: Delphacidae) in China. PLoS ONE.
+        2013;8:e79443. doi: 10.1371/journal.pone.0079443.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1371/journal.pone.0079443</ArticleId><ArticleId IdType="pmc">PMC3855578</ArticleId><ArticleId
+        IdType="pubmed">24324548</ArticleId></ArticleIdList></Reference><Reference><Citation>Xu
+        L., Wu M., Han Z. Biochemical and molecular characterisation and cross-resistance
+        in field and laboratory chlorpyrifos-resistant strains of Laodelphax striatellus
+        (Hemiptera: Delphacidae) from eastern China. Pest Manag. Sci. 2014;70:1118&#x2013;1129.
+        doi: 10.1002/ps.3657.</Citation><ArticleIdList><ArticleId IdType="doi">10.1002/ps.3657</ArticleId><ArticleId
+        IdType="pubmed">24115461</ArticleId></ArticleIdList></Reference><Reference><Citation>Elzaki
+        M.E.A., Zhang W., Feng A., Qiou X., Zhao W., Han Z. Constitutive overexpression
+        of cytochrome P450 associated with imidacloprid resistance in Laodelphax striatellus
+        (Fall&#xe9;n) Pest Manag. Sci. 2016;72:1051&#x2013;1058. doi: 10.1002/ps.4155.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1002/ps.4155</ArticleId><ArticleId IdType="pubmed">26395964</ArticleId></ArticleIdList></Reference><Reference><Citation>Elzaki
+        M., Zhang W., Han Z. Cytochrome P450 CYP4DE1 and CYP6CW3v2 contribute to ethiprole
+        resistance in Laodelphax striatellus (Fall&#xe9;n) Insect Mol. Biol. 2015;24:368&#x2013;376.
+        doi: 10.1111/imb.12164.</Citation><ArticleIdList><ArticleId IdType="doi">10.1111/imb.12164</ArticleId><ArticleId
+        IdType="pubmed">25693611</ArticleId></ArticleIdList></Reference><Reference><Citation>Zhu
+        F., Parthasarathy R., Bai H., Woithe K., Kaussmann M., Nauen R., Harrison
+        D.A., Palli S.R. A brain-specific cytochrome P450 responsible for the majority
+        of deltamethrin resistance in the QTC279 strain of Tribolium castaneum. Proc.
+        Natl. Acad. Sci. USA. 2010;107:8557&#x2013;8562. doi: 10.1073/pnas.1000059107.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1073/pnas.1000059107</ArticleId><ArticleId IdType="pmc">PMC2889294</ArticleId><ArticleId
+        IdType="pubmed">20410462</ArticleId></ArticleIdList></Reference><Reference><Citation>Ding
+        Z., Wen Y., Yang B., Zhang Y., Liu S., Liu Z., Han Z. Biochemical mechanisms
+        of imidacloprid resistance in Nilaparvata lugens: Over-expression of cytochrome
+        P450 CYP6AY1. Insect Biochem. Mol. Biol. 2013;43:1021&#x2013;1027. doi: 10.1016/j.ibmb.2013.08.005.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.ibmb.2013.08.005</ArticleId><ArticleId IdType="pubmed">23994173</ArticleId></ArticleIdList></Reference><Reference><Citation>Jou&#xdf;en
+        N., Agnolet S., Lorenz S., Sch&#xf6;ne S.E., Ellinger R., Schneider B., Heckel
+        D.G. Resistance of Australian Helicoverpa armigera to fenvalerate is due to
+        the chimeric P450 enzyme CYP337B3. Proc. Natl. Acad. Sci. USA. 2012;109:15206&#x2013;15211.
+        doi: 10.1073/pnas.1202047109.</Citation><ArticleIdList><ArticleId IdType="doi">10.1073/pnas.1202047109</ArticleId><ArticleId
+        IdType="pmc">PMC3458352</ArticleId><ArticleId IdType="pubmed">22949643</ArticleId></ArticleIdList></Reference><Reference><Citation>Stevenson
+        B.J., Bibby J., Pignatelli P., Muangnoicharoen S., O&#x2019;Neill P.M., Lian
+        L.-Y., M&#xfc;ller P., Nikou D., Steven A., Hemingway J. Cytochrome P450 6M2
+        from the malaria vector Anopheles gambiae metabolizes pyrethroids: Sequential
+        metabolism of deltamethrin revealed. Insect Biochem. Mol. Biol. 2011;41:492&#x2013;502.
+        doi: 10.1016/j.ibmb.2011.02.003.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.ibmb.2011.02.003</ArticleId><ArticleId
+        IdType="pubmed">21324359</ArticleId></ArticleIdList></Reference><Reference><Citation>Elzaki
+        M.E.A., Miah M.A., Wu M., Zhang H.J., Jiang L., Han Z. Imidacloprid is degraded
+        by CYP353D1v2, a cytochrome P450 overexpressed in a resistant strain of Laodelphax
+        striatellus. Pest Manag. Sci. 2017 doi: 10.1002/ps.4570.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1002/ps.4570</ArticleId><ArticleId IdType="pubmed">28296046</ArticleId></ArticleIdList></Reference><Reference><Citation>Mao
+        X., Liu J., Li X., Chi J., Liu Y. Resistance risk, cross-resistance and biochemical
+        resistance mechanism of Laodelphax striatellus to buprofezin. J. Appl. Ecol.
+        2016;27:255&#x2013;262.</Citation><ArticleIdList><ArticleId IdType="pubmed">27228617</ArticleId></ArticleIdList></Reference><Reference><Citation>Scott
+        J.G. Cytochromes P450 and insecticide resistance. Insect Biochem. Mol. Biol.
+        1999;29:757&#x2013;777. doi: 10.1016/S0965-1748(99)00038-7.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/S0965-1748(99)00038-7</ArticleId><ArticleId IdType="pubmed">10510498</ArticleId></ArticleIdList></Reference><Reference><Citation>Nauen
+        R., Vontas J., Kaussmann M., W&#xf6;lfel K. Pymetrozine is hydroxylated by
+        CYP6CM1, a cytochrome P450 conferring neonicotinoid resistance in Bemisia
+        tabaci. Pest Manag. Sci. 2013;69:457&#x2013;461. doi: 10.1002/ps.3460.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1002/ps.3460</ArticleId><ArticleId IdType="pubmed">23325724</ArticleId></ArticleIdList></Reference><Reference><Citation>Roditakis
+        E., Morou E., Tsagkarakou A., Riga M., Nauen R., Paine M., Morin S., Vontas
+        J. Assessment of the Bemisia tabaci CYP6CM1vQ transcript and protein levels
+        in laboratory and field-derived imidacloprid-resistant insects and cross-metabolism
+        potential of the recombinant enzyme. Insect Sci. 2011;18:23&#x2013;29. doi:
+        10.1111/j.1744-7917.2010.01384.x.</Citation><ArticleIdList><ArticleId IdType="doi">10.1111/j.1744-7917.2010.01384.x</ArticleId></ArticleIdList></Reference><Reference><Citation>Jou&#xdf;en
+        N., Heckel D.G., Haas M., Schuphan I., Schmidt B. Metabolism of imidacloprid
+        and DDT by P450 CYP6G1 expressed in cell cultures of Nicotiana tabacum suggests
+        detoxification of these insecticides in Cyp6g1-overexpressing strains of Drosophila
+        melanogaster, leading to resistance. Pest Manag. Sci. 2008;64:65&#x2013;73.
+        doi: 10.1002/ps.1472.</Citation><ArticleIdList><ArticleId IdType="doi">10.1002/ps.1472</ArticleId><ArticleId
+        IdType="pubmed">17912692</ArticleId></ArticleIdList></Reference><Reference><Citation>Mitchell
+        S.N., Stevenson B.J., M&#xfc;ller P., Wilding C.S., Egyir-Yawson A., Field
+        S.G., Hemingway J., Paine M.J., Ranson H., Donnelly M.J. Identification and
+        validation of a gene causing cross-resistance between insecticide classes
+        in Anopheles gambiae from Ghana. Proc. Natl. Acad. Sci. USA. 2012;109:6147&#x2013;6152.
+        doi: 10.1073/pnas.1203452109.</Citation><ArticleIdList><ArticleId IdType="doi">10.1073/pnas.1203452109</ArticleId><ArticleId
+        IdType="pmc">PMC3341073</ArticleId><ArticleId IdType="pubmed">22460795</ArticleId></ArticleIdList></Reference><Reference><Citation>Yunta
+        C., Grisales N., N&#xe1;sz S., Hemmings K., Pignatelli P., Voice M., Ranson
+        H., Paine M.J. Pyriproxyfen is metabolized by P450s associated with pyrethroid
+        resistance in An. gambiae. Insect Biochem. Mol. Biol. 2016;78:50&#x2013;57.
+        doi: 10.1016/j.ibmb.2016.09.001.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.ibmb.2016.09.001</ArticleId><ArticleId
+        IdType="pmc">PMC6399515</ArticleId><ArticleId IdType="pubmed">27613592</ArticleId></ArticleIdList></Reference><Reference><Citation>Elzaki
+        M.E.A., Pu J., Zhu Y., Zhang W., Sun H., Wu M., Han Z. Cross-resistance among
+        common insecticides and its possible mechanism in Laodelphax striatellus Fall&#xe9;n
+        (Hemiptera: Delphacidae) Orient. Insects. 2017:1&#x2013;14. doi: 10.1080/00305316.2017.1316784.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/00305316.2017.1316784</ArticleId></ArticleIdList></Reference><Reference><Citation>Chandor-Proust
+        A., Bibby J., R&#xe9;gent-Kloeckner M., Roux J., Guittard-Crilat E., Poupardin
+        R., Riaz M.A., Paine M., Dauphin-Villemant C., Reynaud S. The central role
+        of mosquito cytochrome P450 CYP6Zs in insecticide detoxification revealed
+        by functional expression and structural modelling. Biochem. J. 2013;455:75&#x2013;85.
+        doi: 10.1042/BJ20130577.</Citation><ArticleIdList><ArticleId IdType="doi">10.1042/BJ20130577</ArticleId><ArticleId
+        IdType="pmc">PMC3778711</ArticleId><ArticleId IdType="pubmed">23844938</ArticleId></ArticleIdList></Reference><Reference><Citation>Phillips
+        I.R., Shephard E.A., de Montellano P.R.O. Cytochrome P450 Protocols. Springer;
+        New York, NY, USA: 1998. Volume 107.</Citation></Reference><Reference><Citation>Bradford
+        M.M. A rapid and sensitive method for the quantitation of microgram quantities
+        of protein utilizing the principle of protein-dye binding. Anal. Biochem.
+        1976;72:248&#x2013;254. doi: 10.1016/0003-2697(76)90527-3.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/0003-2697(76)90527-3</ArticleId><ArticleId IdType="pubmed">942051</ArticleId></ArticleIdList></Reference><Reference><Citation>Omura
+        T. The carbon monoxide-binding pigment of liver microsomes. J. Biol. Chem.
+        1964;239:2379&#x2013;2385.</Citation><ArticleIdList><ArticleId IdType="pubmed">14209972</ArticleId></ArticleIdList></Reference><Reference><Citation>Pritchard
+        M.P., McLaughlin L., Friedberg T. Cytochrome P450 Protocols. Humana Press;
+        Totowa, NJ, USA: 2006. Establishment of functional human cytochrome P450 monooxygenase
+        systems in Escherichia coli; pp. 19&#x2013;29.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16719371</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -148,20 +242,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 22:12:18 GMT
+      - Tue, 20 Feb 2024 16:42:36 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322CC4EF5A3366C500002CB63E7E5AC5.1.1.m_3
+      - 939B5F7AF237010500004AA874CD1AFB.1.1.m_3
       NCBI-SID:
-      - 1DDA2A4A2B0B921B_D993SID
+      - 213A5B10782E8D45_C480SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=1DDA2A4A2B0B921B_D993SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 22:12:19 GMT
+      - ncbi_sid=213A5B10782E8D45_C480SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:37 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:

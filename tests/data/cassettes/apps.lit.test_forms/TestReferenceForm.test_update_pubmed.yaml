@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=-1
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=-1
     headers:
       Accept:
       - '*/*'
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '39'
+      - '84'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -18,36 +18,54 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        AAD//0Ljg0apAAAAAP//AwD3kMRrYBMAAA==
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">1</PMID><DateCompleted><Year>1976</Year><Month>01</Month><Day>16</Day></DateCompleted><DateRevised><Year>2024</Year><Month>01</Month><Day>09</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0006-2944</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>13</Volume><Issue>2</Issue><PubDate><Year>1975</Year><Month>Jun</Month></PubDate></JournalIssue><Title>Biochemical
+        medicine</Title><ISOAbbreviation>Biochem Med</ISOAbbreviation></Journal><ArticleTitle>Formate
+        assay in body fluids: application in methanol poisoning.</ArticleTitle><Pagination><StartPage>117</StartPage><EndPage>126</EndPage><MedlinePgn>117-26</MedlinePgn></Pagination><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Makar</LastName><ForeName>A B</ForeName><Initials>AB</Initials></Author><Author
+        ValidYN="Y"><LastName>McMartin</LastName><ForeName>K E</ForeName><Initials>KE</Initials></Author><Author
+        ValidYN="Y"><LastName>Palese</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Tephly</LastName><ForeName>T R</ForeName><Initials>TR</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>F32 AG064886</GrantID><Acronym>AG</Acronym><Agency>NIA
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>MC_UU_12013/5</GrantID><Agency>MRC</Agency><Country>United
+        Kingdom</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013487">Research
+        Support, U.S. Gov''t, P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Biochem Med</MedlineTA><NlmUniqueID>0151424</NlmUniqueID><ISSNLinking>0006-2944</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D005561">Formates</NameOfSubstance></Chemical><Chemical><RegistryNumber>142M471B3J</RegistryNumber><NameOfSubstance
+        UI="D002245">Carbon Dioxide</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        1.2.-</RegistryNumber><NameOfSubstance UI="D000445">Aldehyde Oxidoreductases</NameOfSubstance></Chemical><Chemical><RegistryNumber>Y4S76JWI15</RegistryNumber><NameOfSubstance
+        UI="D000432">Methanol</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000445" MajorTopicYN="N">Aldehyde Oxidoreductases</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001826" MajorTopicYN="N">Body Fluids</DescriptorName><QualifierName UI="Q000032"
+        MajorTopicYN="Y">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002245" MajorTopicYN="N">Carbon Dioxide</DescriptorName><QualifierName
+        UI="Q000097" MajorTopicYN="N">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005561" MajorTopicYN="N">Formates</DescriptorName><QualifierName UI="Q000097"
+        MajorTopicYN="N">blood</QualifierName><QualifierName UI="Q000506" MajorTopicYN="Y">poisoning</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000882" MajorTopicYN="N">Haplorhini</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006863" MajorTopicYN="N">Hydrogen-Ion Concentration</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007700" MajorTopicYN="N">Kinetics</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000432" MajorTopicYN="N">Methanol</DescriptorName><QualifierName UI="Q000097"
+        MajorTopicYN="N">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008722" MajorTopicYN="N">Methods</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011549" MajorTopicYN="N">Pseudomonas</DescriptorName><QualifierName UI="Q000201"
+        MajorTopicYN="N">enzymology</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1975</Year><Month>6</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1975</Year><Month>6</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1975</Year><Month>6</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">1</ArticleId><ArticleId IdType="doi">10.1016/0006-2944(75)90147-7</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -62,28 +80,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:31 GMT
+      - Tue, 20 Feb 2024 16:38:13 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB925704500005A69815221E7.1.1.m_3
+      - D0BD9F070703C0B5000059D71F741E4A.1.1.m_3
       NCBI-SID:
-      - 2A3F36E148C1BE44_5BA5SID
+      - DF53F069403F4774_2C12SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=2A3F36E148C1BE44_5BA5SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:31 GMT
+      - ncbi_sid=DF53F069403F4774_2C12SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:14 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

@@ -18,11 +18,8 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7QRh/C4LLRR1MCAAAA//8DAKIvR53gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>1</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -37,20 +34,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:42 GMT
+      - Tue, 20 Feb 2024 16:38:23 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB925704500003C69EDFA163A.1.1.m_1
+      - 322C45D975EA9B4500003CDBC746C8AB.1.1.m_1
       NCBI-SID:
-      - FB0D9147A847FF33_7920SID
+      - F27F52428E083B1C_165ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=FB0D9147A847FF33_7920SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:43 GMT
+      - ncbi_sid=F27F52428E083B1C_165ASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:24 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -69,7 +66,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
+    body: retmax=5000&db=pubmed&api_key=<omitted>&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
     headers:
       Accept:
       - '*/*'
@@ -78,7 +75,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '82'
+      - '127'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -87,16 +84,21 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EztNGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaWF
-        pYmxKVATkM0FIiFyAAAAAP//sgkpSswrzkksAYZMcCrQdCS+nQII2LgV5efaZaQm5pRk2OiDORDx
-        kHw7JYiwUrRvarCHQkhqUW5xrIJ/kAJc3DEnR8EtMzUnBUVcvRiXTFppDh6pvNRinDpRJWz0ga4D
-        u1If2UO4fFeUWZxdjOE5kCi61wAAAAD//1KAiqI7AmwCJU7Ir8rPS1VISS3ISQVJYTgGTR7DXRoQ
-        Faguc/RzUVBC0oMkpwl2NoapRHhAHz3JBJamFlUiK1EytLS0wOISn/y89OKSolT0lAGS1CAzLSnQ
-        PC1pQt1HWXKAmUL/eNS00ceIIS5gEYBWzgAAAAD//wMAnzsIsCUFAAA=
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>1</Count><RetMax>1</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>9894351</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>health</From>     <To>\"health\"[MeSH Terms] OR \"health\"[All
+        Fields] OR \"health's\"[All Fields] OR \"healthful\"[All Fields] OR \"healthfulness\"[All
+        Fields] OR \"healths\"[All Fields]</To>    </Translation><Translation>     <From>risks</From>
+        \    <To>\"risk\"[MeSH Terms] OR \"risk\"[All Fields] OR \"risks\"[All Fields]</To>
+        \   </Translation><Translation>     <From>ozone depletion</From>     <To>\"ozone
+        depletion\"[MeSH Terms] OR (\"ozone\"[All Fields] AND \"depletion\"[All Fields])
+        OR \"ozone depletion\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>\"1998\"[All
+        Fields] AND \"Longstreth\"[All Fields] AND (\"health\"[MeSH Terms] OR \"health\"[All
+        Fields] OR \"health s\"[All Fields] OR \"healthful\"[All Fields] OR \"healthfulness\"[All
+        Fields] OR \"healths\"[All Fields]) AND (\"risk\"[MeSH Terms] OR \"risk\"[All
+        Fields] OR \"risks\"[All Fields]) AND (\"ozone depletion\"[MeSH Terms] OR
+        (\"ozone\"[All Fields] AND \"depletion\"[All Fields]) OR \"ozone depletion\"[All
+        Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -111,28 +113,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:43 GMT
+      - Tue, 20 Feb 2024 16:38:23 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB925704500005E69F73AA5AA.1.1.m_1
+      - 322C45D975EA9B4500003FDBCC115E8D.1.1.m_1
       NCBI-SID:
-      - BDFC67BE811494CE_3EC5SID
+      - E0CC325D244FD9D8_719ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=BDFC67BE811494CE_3EC5SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:44 GMT
+      - ncbi_sid=E0CC325D244FD9D8_719ASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:24 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '1'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -143,7 +145,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=9894351
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=9894351
     headers:
       Accept:
       - '*/*'
@@ -152,7 +154,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '44'
+      - '89'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -161,58 +163,85 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAFxRUW+DIBh8369gPK8i1i11QZpN++BSrZldkz4ttpKVRMEodOu/H7jGrn2BU+47
-        7g4y/2lqcGRdz6UIIXZcCOb0jtzHq2i9zRcg17uGVS+d4vuaFUyB/ON1mUQAThDKlilC8Tq2pHQk
-        PQDcK/BWCl12J+C5no/QIoMAHpRq+2eEKlU5om4cwQ/Olzwisd9x1A73IKnVGX56votd7Bg2NIZu
-        fdz+osQ4qLlgEVelMmFAYXbdhzBdxMskW0Cw+hasC6FxDSnJ0yQGmzE3pMEs8KePmCB7QklcKhbJ
-        pq2ZYhUlW1Z2FAdBQNAASSqFOlDXI+gPmYET9XyC7G7Xq3H7+c6OvB+1bC83WvhKyw3+a43D57hD
-        5bJidQjzjgtlEr1J3YmypiQpigwkfS/Wp5aN56ZLPMFT39xqCSPfEDUDpjVWmQa5bi6KG1nrhlH/
-        iaAzJAOb4snUqAzQvoI1eKloNsb6BQAA//9UU8FuwyAM/RUfNylNDruiSI00adqlOWS7k+AFNAIR
-        eO26r58JTZrejP1seM+PhcxpoI1XtYGr/e216AzxCm858F8wa09+0DiZSOwi6VRO9cZbP15LaApo
-        ciyq3M28T8e+D6zUYoD6Hdp1So5SMzSJ/yNwe80mb574htKShmDidyxF9VATrRyNu/Wz1QJxAnmt
-        orqfxKtTS/DCy1zj1ajt6Bh+SKVdhjXaDT72TF8OdI86/KW60wh69ziQMfqB2aCCi+Gs//MOQWHy
-        X/oLF2MtzLzWwczS2iv0CKR9ZAwvnzxwJaBkh8GP5XvOrBT/9QaePj4PzTMEqbJWDORGBHRnE7yb
-        0FEBpsSy2I1QcmKiaSz9AwAA//9sVkty2zAMvQqW8YzjHiCrTrvpKtPmBDQFWaxFQiVEO7p9H0gp
-        UdLuNDSIz/uAttCF9Vi/QowFbemiM8djJdWO9RrSiV4kMiW+rxNFB9ZHFesUaszSFb9NV3O9N4wp
-        oBigwdlwu7FupSsMjysM6UJagKJLHhEPz99f9HCin8Wlua6MG9fSxDqHCCiBamZyNxdGd4bjesmk
-        1iSKWXJD5nEHPPc9+xmj8ukCOLyDDEBYHdNGxAkq5yca5M7YuA2TDmG1UEha+j74AEit/w4xo0yk
-        IaKBvGvLGlmLYSI/gP0GrWiZpsxqO+0N3VlekXRePmN0omdfLPHKVp8lYibi1wl5kMUgHkuHj62Y
-        NO695MTuSCMnTBsAWuNyj8UEnngMMLP94iX9LsmjLg7mYJ5HfVNxFLwVXmK0jn2ZgW7rqtW0pndS
-        w+29PN9VCZn+OlDQtiSunHGMOif6ahK6JrknQ0nxcYbTugSQTMrgBU+AMYG76LILNV0Vnnhfco0S
-        zJIJT1MngD6zKc/isJtQ4tuA7oI3nb+nUBrDlWG0nbf+b80V5Te9HEn/FBeloCGGa73LPiSJAHyF
-        JvLo2kFFnW4uB24EN2rGLx8A/yTMCRpYLlj0bavCF4UtMSy4kw+SjeJx+8HNzaVhrtLfSeTQtF3t
-        DAAs0lEXzGIYA1a3OKjBrh4296PABHyaST80b0a8QFM0gKozcwJK0IXtPdMUiDiDCRpKdAiqsydY
-        YlTaCiGjufJEP5KdcQ6mGm3Ab8EYBlxsmh4cfF+L6WAqQYq7ZOVN6pAA278Svzq/boCQ7HIwjjCu
-        cdv6aQ5v0jZLKxnxkrA/FrqIwBi30DGCkB1oVff+a91pdAsSUobKbew68SYEIMQa9In+AgAA//+E
-        V0FuwjAQ/EqORaKqeugLkPqA/sBOAlhybDeJxfeZ2bWTEEF74RCCPbs7OzM8yIhD1HCtUeoR5vOT
-        KR162tMSgBkqA9LlIDsjjfTucp3fqWABLU4xgStyz3EhArs2RXITe9iYlOD/Ml+xmbLlgBhHUmO3
-        0SK6ZzAf2IjPmqnIxotFKL3OOKvnt3UfoGijo3fS4Nzc3IRG3qFLnfZ7jrzQYLEHFkGh2lRA7PzN
-        v4gLWEeCYpkGF2guWgeeK8HmPERS4advqejodxwHVSu0FgO6XCDpkwKLAZBflKsHC5cUM81NCqng
-        ZUxCVxkjxi+Loo3cHcbWrQJCv90ie0RVhUtEUFCQIbNTDJgxQK928WZ7HATHtFiXhpby+XWA3BjG
-        JgoX1VAyh+8h3OgYWUMKg3U5WCQwbg59Dt9RD5qQB0vlVcNtrz6O8ewzPlGQpe6fvk+HR+uHunMR
-        +lKDDFIPmHgElYoqIHvvMQh1neqSqql8DnADAja1Bz9Tia9vlbSyniZX3VhJXCmYxqiyRMZuIa6a
-        0+GVhDfEfCHak5MbOQrbt4bRprBJpjIa/gngi5AZaqC0enF4QP8A/7DemRTNIxvZOaYK2Kaj54Io
-        tB+EDclBx+aK7eZGUJbIKbpeEgQbgsla7DOmRy01PVDtgdzrJnBYoWdZQNNquJGHJappSRLG3Izu
-        r1vy+0ca23RNo9FyQTXOnTGC95vcRX8fLFJ2J/JMC1iOrpzROeZwBwAA//+cmMFugzAMQH8l6rkt
-        dDt0BzYNdYKy0R5grcQxKxGlZFClZdP29bMToFSytLFbYsAPx7FjB0zR/4ttC0SAZG56qE9nfZgQ
-        ld3EEDBemuxu6m3BC/aepxM0rcYuBj5JTX0AOru3dcSi/oZ8C18qNrPtsW3bxhTt53lfPtYHKaZw
-        WIsv7E76DcJlCp1DDVGnQjiWWduRJuv7UTJqH7Etl3naykJ+Oq859HphVWagQ5z3jtUJHQ9CXI+e
-        HasbO0EJVkEgoLQbOy7sPGkqtACSzJXgISgb72sn+rJ6gzWJ0OUROAfy1R46PIFbJQWHrp7YjX03
-        m4/ZJnanDAsFpR53x12dTSuVgb091VczQ7aMqb+YDGWYr+r8IEmLPRaRNntR3+i/kV5UfiwEiVmx
-        kMSswuEY2AViV5CYmITE/2CospIpvWL0eg1nxJLD3icZSxaQlGUwHLMVEgLwRHJ8kuIPh7zyIv/m
-        n5ykJCQlGU754JgnFQtFXdLxyxZ0BC9ImHVJI0iBpgHvMkSZofJmhndBbRWKd0/m5WvhDwAAAP//
-        rFhRT4MwEP4rhj/QUqHUpDYhYjKiY9nYXva2LGxidKhIzPz1Hi0dUDpjHI8cd98d1+N698HeHN86
-        EXapR5hzonwabkUyRF3tX8x9zxE1LZZ9WaxMiQoFmWShZqFkj7grKmj3R5HC9fYNlxl0Xo60UFss
-        w/O8UqvCk5fX1SF/r7I4Eoxh74ZSjrpCydI95ge4PvYmN6fFJ8R+mM3UoT5JPwm+yPaSLEvk0CQo
-        nQTr9QO5TjgyXvH6yGe7VLMhOqfYJdQRs3pBhWD7OhBM6woZMTSUa62cfYp4Cgp9EWSvfJqosU/Z
-        dASCR1m5hYYIQ3XttQkHQ79nztV081x8LIu3fFvXeOKIUO1xHPWtZLY6mH9w4AVBYHFw3w77Izih
-        hBKLE8UtjoHPsGvDl1vy5fiqKIb4TZVcDM/8AFvg5SAQlrB7lOOcg0sYtR12Cn/aEH1eQVPd5VmL
-        MId69ImtHlsWquEUOOqZ/yNWz6ODnEN3X3W4r8XmaJ7uDwAAAP//wrBJHyPXQQoA/7Sg1DRgZwXU
-        9rQzNDMHZnZMcXjhA8vKdtAJFxdg89fOxgNoXj6oXITM/UAH9kHTErB5F8g0jhLOuRPU6Q4jY9h0
-        B4qBeMzPhTiPZAs8gIWpnYGNPpi28c3MA7ZBwWohLOIdkArqHFRRx34D3PbrIwc1rE6DuMGuoAAk
-        VJyBUt9B5WBzGZ4pkLiHcxU8UyAzQ7AYgk99wZVgU52SnwmaRdIDlghm+sXwKkvD0kLTAJiPjUFz
-        QngNKMgEGhBMUKM+mrv1kZOdPuqkHwAAAP//QuOD5gUBAAAA//8DAFGFWSzSHAAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">9894351</PMID><DateCompleted><Year>1999</Year><Month>02</Month><Day>24</Day></DateCompleted><DateRevised><Year>2024</Year><Month>01</Month><Day>09</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">1011-1344</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>46</Volume><Issue>1-3</Issue><PubDate><Year>1998</Year><Month>Oct</Month></PubDate></JournalIssue><Title>Journal
+        of photochemistry and photobiology. B, Biology</Title><ISOAbbreviation>J Photochem
+        Photobiol B</ISOAbbreviation></Journal><ArticleTitle>Health risks.</ArticleTitle><Pagination><StartPage>20</StartPage><EndPage>39</EndPage><MedlinePgn>20-39</MedlinePgn></Pagination><Abstract><AbstractText>The
+        health risks associated with ozone depletion will principally be those due
+        to increased ultraviolet B (UV-B) radiation in the environment, i.e., increased
+        damage to the eyes, the immune system, and the skin. Some new risks may also
+        be introduced with the increased use of alternatives to the ozone-depleting
+        substances (ODSs). Quantitative risk estimates are available for some of the
+        UV-B-associated effects, e.g., cataract and skin cancer; however, the data
+        are insufficient to develop similar estimates for effects such as immunosuppression
+        and the toxicity of alternatives. Ocular damage from UV exposures includes
+        effects on the cornea, lens, iris, and associated epithelial and conjunctival
+        tissues. The most common acute ocular effect of environmental ultraviolet
+        radiation (UVR) is photokeratitis. Also known as snowblindness in skiers,
+        this condition also occurs in other outdoor recreationists. Chronic eye conditions
+        likely to increase with ozone depletion include cataract, squamous cell carcinoma,
+        ocular melanoma, and a variety of corneal/conjunctival effects, e.g., pterygium
+        and pinguecula. Suppression of local (at the site of UV exposure) and systemic
+        (at a distant, unexposed site) immune responses to a variety of antigens has
+        been demonstrated in both humans and animals exposed to UV-B. In experiments
+        with animals these effects have been shown to worsen the course/outcome of
+        some infectious diseases and cancers. There is reasonably good evidence that
+        such immunosuppression plays a role in human carcinogenesis; however, the
+        implications of such immunosuppression for human infectious diseases are still
+        unknown. In light-skinned populations, exposure to solar UVR appears to be
+        the most important environmental risk factor for basal and squamous cell carcinomas
+        and cutaneous melanoma. Originally it was believed that total accumulated
+        exposure to UVR was the most important environmental factor in determining
+        risk for these tumors. Recent information now suggests that only squamous
+        cell carcinoma risk is related to total exposure. In the cases of both basal
+        cell carcinoma and melanoma, new information suggests that increases in risk
+        are tied to early exposures (before about age 15), particularly those leading
+        to severe sunburns. Testing of a number of the chlorofluorocarbon (CFC) alternatives
+        indicates that most of these chemicals have low acute toxicity, and low to
+        moderate chronic toxicity. Some chemicals that were originally proposed as
+        alternatives have been dropped from consideration because these tests raised
+        concerns about toxicity and/or manufacturing difficulties. In one instance,
+        high accidental occupational exposure was associated with liver damage, underlining
+        the need for care in the use of these substitutes. Recent quantitative risk
+        estimates have been developed for cataract, melanoma, and all skin cancers
+        combined. These estimates indicate that under the Montreal Adjustments, cataract
+        and skin-cancer incidence will peak mid-century at additional incidences of
+        just under 3 per 100,000 and about 7 per 100,000, respectively.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Longstreth</LastName><ForeName>J</ForeName><Initials>J</Initials><AffiliationInfo><Affiliation>Institute
+        for Global Risk Research, Bethesda, MD 20817, USA. tigerr@cpcug.org</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>de Gruijl</LastName><ForeName>F R</ForeName><Initials>FR</Initials></Author><Author
+        ValidYN="Y"><LastName>Kripke</LastName><ForeName>M L</ForeName><Initials>ML</Initials></Author><Author
+        ValidYN="Y"><LastName>Abseck</LastName><ForeName>S</ForeName><Initials>S</Initials></Author><Author
+        ValidYN="Y"><LastName>Arnold</LastName><ForeName>F</ForeName><Initials>F</Initials></Author><Author
+        ValidYN="Y"><LastName>Slaper</LastName><ForeName>H I</ForeName><Initials>HI</Initials></Author><Author
+        ValidYN="Y"><LastName>Velders</LastName><ForeName>G</ForeName><Initials>G</Initials></Author><Author
+        ValidYN="Y"><LastName>Takizawa</LastName><ForeName>Y</ForeName><Initials>Y</Initials></Author><Author
+        ValidYN="Y"><LastName>van der Leun</LastName><ForeName>J C</ForeName><Initials>JC</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Switzerland</Country><MedlineTA>J
+        Photochem Photobiol B</MedlineTA><NlmUniqueID>8804966</NlmUniqueID><ISSNLinking>1011-1344</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>66H7ZZK23N</RegistryNumber><NameOfSubstance
+        UI="D010126">Ozone</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004777" MajorTopicYN="N">Environment</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006262" MajorTopicYN="N">Health</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010126" MajorTopicYN="N">Ozone</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018570" MajorTopicYN="N">Risk Assessment</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012867" MajorTopicYN="N">Skin</DescriptorName><QualifierName UI="Q000528"
+        MajorTopicYN="N">radiation effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014466" MajorTopicYN="Y">Ultraviolet Rays</DescriptorName></MeshHeading></MeshHeadingList><NumberOfReferences>167</NumberOfReferences></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1999</Year><Month>1</Month><Day>23</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1999</Year><Month>1</Month><Day>23</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1999</Year><Month>1</Month><Day>23</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">9894351</ArticleId><ArticleId IdType="doi">10.1016/s1011-1344(98)00183-3</ArticleId><ArticleId
+        IdType="pii">S1011-1344(98)00183-3</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -227,28 +256,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:44 GMT
+      - Tue, 20 Feb 2024 16:38:24 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB92570450000246A01C87151.1.1.m_3
+      - 939B5F7AF2370105000036A397FC1324.1.1.m_3
       NCBI-SID:
-      - F5A7BABC9A6B3E41_3A85SID
+      - 91DC06B75302DCD0_2D14SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=F5A7BABC9A6B3E41_3A85SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:45 GMT
+      - ncbi_sid=91DC06B75302DCD0_2D14SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:25 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '1'
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -337,16 +366,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:46:45 GMT
+      - Tue, 20 Feb 2024 16:38:26 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371480; Expires=Fri, 16 Feb 2024 16:46:45 GMT; Path=/; HttpOnly
-      - CFTOKEN=78664621; Expires=Fri, 16 Feb 2024 16:46:45 GMT; Path=/; HttpOnly
-      - JSESSIONID=E150F30F2EB7FA0352B4C589D893D1C6.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A45; Path=/
+      - CFID=14825872; Expires=Wed, 21 Feb 2024 16:38:26 GMT; Path=/; HttpOnly
+      - CFTOKEN=90600565; Expires=Wed, 21 Feb 2024 16:38:26 GMT; Path=/; HttpOnly
+      - JSESSIONID=ADBB69646258CE9F18EA8FFF2F44B9C3.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A26; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:

@@ -37,16 +37,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:49:30 GMT
+      - Tue, 20 Feb 2024 16:41:24 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371530; Expires=Fri, 16 Feb 2024 16:49:30 GMT; Path=/; HttpOnly
-      - CFTOKEN=69309154; Expires=Fri, 16 Feb 2024 16:49:30 GMT; Path=/; HttpOnly
-      - JSESSIONID=07088494FEBDF45932B5A91CF28D4E53.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A49%3A30; Path=/
+      - CFID=14825944; Expires=Wed, 21 Feb 2024 16:41:24 GMT; Path=/; HttpOnly
+      - CFTOKEN=93820073; Expires=Wed, 21 Feb 2024 16:41:24 GMT; Path=/; HttpOnly
+      - JSESSIONID=BFFDE431DDDD7993540B3282C17A6A2D.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A41%3A24; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -94,16 +94,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:49:31 GMT
+      - Tue, 20 Feb 2024 16:41:25 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371531; Expires=Fri, 16 Feb 2024 16:49:31 GMT; Path=/; HttpOnly
-      - CFTOKEN=21453900; Expires=Fri, 16 Feb 2024 16:49:31 GMT; Path=/; HttpOnly
-      - JSESSIONID=7A51CA543CB852BF7ABF1BA186D6843D.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A49%3A31; Path=/
+      - CFID=14825946; Expires=Wed, 21 Feb 2024 16:41:25 GMT; Path=/; HttpOnly
+      - CFTOKEN=84174894; Expires=Wed, 21 Feb 2024 16:41:25 GMT; Path=/; HttpOnly
+      - JSESSIONID=683ECFE5A73615C3EAE2A02FE97ED6BA.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A41%3A25; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -114,7 +114,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=22411696
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=22411696
     headers:
       Accept:
       - '*/*'
@@ -123,7 +123,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '45'
+      - '90'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -132,35 +132,45 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM"><PMID
+        Version="1">22411696</PMID><DateCompleted><Year>2012</Year><Month>08</Month><Day>01</Day></DateCompleted><DateRevised><Year>2012</Year><Month>04</Month><Day>11</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1521-3773</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>51</Volume><Issue>16</Issue><PubDate><Year>2012</Year><Month>Apr</Month><Day>16</Day></PubDate></JournalIssue><Title>Angewandte
+        Chemie (International ed. in English)</Title><ISOAbbreviation>Angew Chem Int
+        Ed Engl</ISOAbbreviation></Journal><ArticleTitle>Observation of methanol behavior
+        in fuel cells in situ by NMR spectroscopy.</ArticleTitle><Pagination><StartPage>3842</StartPage><EndPage>3845</EndPage><MedlinePgn>3842-5</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1002/anie.201108330</ELocationID><Abstract><AbstractText>The
+        chemical conversion of methanol in direct methanol fuel cells was followed
+        in situ by NMR spectroscopy. Comparing data of the methanol oxidation on Pt
+        and PtRu anode catalysts allowed the role of Ru in both Faradaic and non-Faradaic
+        reactions to be investigated. The spatial distributions of chemicals could
+        also be determined. (Picture: T1-T4=inlet and outlet tubes.).</AbstractText><CopyrightInformation>Copyright
+        &#xa9; 2012 WILEY-VCH Verlag GmbH &amp; Co. KGaA, Weinheim.</CopyrightInformation></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Han</LastName><ForeName>Oc Hee</ForeName><Initials>OH</Initials><AffiliationInfo><Affiliation>Analysis
+        Research Division, Daegu Center, Korea Basic Science Institute, Korea. ohhan@kbsi.re.kr</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Han</LastName><ForeName>Kee Sung</ForeName><Initials>KS</Initials></Author><Author
+        ValidYN="Y"><LastName>Shin</LastName><ForeName>Chang Woo</ForeName><Initials>CW</Initials></Author><Author
+        ValidYN="Y"><LastName>Lee</LastName><ForeName>Juhee</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Kim</LastName><ForeName>Seong-Soo</ForeName><Initials>SS</Initials></Author><Author
+        ValidYN="Y"><LastName>Um</LastName><ForeName>Myung Sup</ForeName><Initials>MS</Initials></Author><Author
+        ValidYN="Y"><LastName>Joh</LastName><ForeName>Han-Ik</ForeName><Initials>HI</Initials></Author><Author
+        ValidYN="Y"><LastName>Kim</LastName><ForeName>Soo-Kil</ForeName><Initials>SK</Initials></Author><Author
+        ValidYN="Y"><LastName>Ha</LastName><ForeName>Heung Yong</ForeName><Initials>HY</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2012</Year><Month>03</Month><Day>12</Day></ArticleDate></Article><MedlineJournalInfo><Country>Germany</Country><MedlineTA>Angew
+        Chem Int Ed Engl</MedlineTA><NlmUniqueID>0370543</NlmUniqueID><ISSNLinking>1433-7851</ISSNLinking></MedlineJournalInfo></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2011</Year><Month>11</Month><Day>26</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2012</Year><Month>3</Month><Day>14</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2012</Year><Month>3</Month><Day>14</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2012</Year><Month>3</Month><Day>14</Day><Hour>6</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">22411696</ArticleId><ArticleId IdType="doi">10.1002/anie.201108330</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -175,28 +185,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:49:31 GMT
+      - Tue, 20 Feb 2024 16:41:25 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322CC4EF5A3366C50000457934E3C60A.1.1.m_3
+      - 322C45D975EA9B45000045E0449578F2.1.1.m_3
       NCBI-SID:
-      - 796E7BF6F8F37542_DCA0SID
+      - C342345EFD315BA5_C06FSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=796E7BF6F8F37542_DCA0SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:49:32 GMT
+      - ncbi_sid=C342345EFD315BA5_C06FSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:41:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

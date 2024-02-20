@@ -18,11 +18,8 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7I1MxGH8LkstFHUwQAAAD//wMAFNuL5uIAAAA=
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>256</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -37,20 +34,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 22:12:13 GMT
+      - Tue, 20 Feb 2024 16:42:31 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322CC4EF5A3366C5000024B62AF3D879.1.1.m_1
+      - D0BD9F070703C0B500005CDBF6DB4449.1.1.m_1
       NCBI-SID:
-      - 2BB2C024A4E76044_AB94SID
+      - 5CC07DF976FA4A5E_E12BSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=2BB2C024A4E76044_AB94SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 22:12:13 GMT
+      - ncbi_sid=5CC07DF976FA4A5E_E12BSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:31 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -87,53 +84,83 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//XM49CgJBDAXgWi9j/pOBYRsrQRs9wYIWNgo6gsd3dLfY2L18PJLUdLvP2/vr1gZSq5sp1uOl
-        Hcb3RHP+2qmNjzbAz6a8rrvz/vrsYdXTwAFqSF43fZhJAyHQliQawYGJGNidl8RoZp5apALiaReJ
-        I+IfsRZMTyAZcaQWolJILAkiRJQzeTiXTGScLwKHQHqVirgU4ERYvDAsKYQsvCTq+AEAAP//ZJdb
-        riw5CAS3hMHP/W9swj3SVYXPZ6dcNIYkE698oLnGWIJIfyqvXH10CiQoepQqkXNsOpKG2jljCMqR
-        U3fkJ02b33olVaZLSmKsfWYpiTF3VTdEZjOVBG09cVSc3nb0yheqpVi1D7VWoWvePAxFtFOC8tSc
-        XXdMiLm2ob77DLU2q4omCWpnZ6gSbd8G6cO2skU+UOvLzGkUvpkmcSC+BiZjD/jlUzMgofKKO37P
-        hxVrivcZjZI1Q7FI9sscyEsn+7eEbXNDBl4QjNuiSVsnT3RDBaWzC4qzUYYvNO+1p5KYm0EQAdqE
-        OgyRIMJ3EfMHxfjWq0HfPqQmQNCk6UIDqVpqLZM3ey9daMCck441YFekoL4nZBVUk7lVVUeeFZoO
-        OJKoo67dZ0UzlHu01o8hFHnMB2JylURSQDO65Qjy8If9oIXqEMSnGMoepE1XAs7NkFi1qziUwtAI
-        vjSE3g+fWhBR84gSQs3tD6/rtAeiGWYh7b+pGcq9TJPWoy25QqPupDYM3Wsayj6JJyjOme4QEI7p
-        vCLhkqDAOJ7wuNUZzacuvTwwP2g8HxYkfCBMxqMQK2G0Ch1zkKxPXTNpjjUYyHQSsLx5hphF+GSI
-        389sIxt09oHW3s+FgEpG0RChPZ/iFMpxZAFcqHfzPiiYPQ2mooZDSF1X+CKD1UeDjXThJN+c6Aym
-        qsh1dj+KXHP5vgdfJ7SQ2xohkLGL7chYuQdo3Vzi+r5Qfuuxcb+uEdnrMrjpDEotb8V/LxF1Bguo
-        778vhHVoYLCveIiT+FyTJmDGwxRnEKn897PffqYVah28V9IFMlb4K5bj+Z3z69+lEUAno4lp7LEM
-        xdJX80z5JMKDYKhAqHeZxL+rasJ3sY7axTqh1R/0inpInNh8lglcGMrxGXYkGwUK7WX72uP2uMz7
-        erDRJr1wnCtdPnO1y75OxuX9ic1YLUysOVTWxH/O0UTT42OtJsjq9UT2ooE/xRDLksWfTfaLXI/x
-        TkkyzStl36fEcVy0I9RfZHJCGoCswx/9O1vVSe/o952jMxwo0ZeXw/JqVFe6Uo8XNuNQd4quV/kZ
-        tNjE/chiDDUYfLFtR8ViPnQm2X5Sro/YQFc/bZhLbT9Fu0pqhymwWSnOwJmkN78z6y8SLzL3H0Rv
-        NB5pXd35H/l7Rhlehml2iq0uxngRV5W2Lz02aqH0oz83ZUcVghnJvOsqkN59CBRvLnFjrzWa49D3
-        0L2w3/2vzv8BAAD//2SYWQ7DIAxErxRWm/tfrI9Gqnj0J1IscAxeZiavHxjSkKwNLlWd28hNF7n/
-        Wkb+Wc41fQ82VUIDLcP1nBOG4F1IO9cY4ZkyUKj4SftpRaQIwXVJWTqJIXp5jqKZgAAOc0oE0pWv
-        uTn4Y1oLMs88jwrCMheWLCCauCmOqBjvKkTQbXnMSxA4dNh5+LnrZXlNH81Bz7s4+FTJaokQdHx1
-        iFmL9M2+sEdTgQbLEMxtGK6a9MidlULd1qe4A8lSRnkLgRd02f9HaICfYT/fv08fAAAA///MmU1r
-        GzEQhv+K8KUJ1BgM6ckYQkvopS3UvpUelNXEEugLSXG7/7774bV3VyM5ri7xyZ53ZvTMeLRj8Gbv
-        qPaSBmH0DsJ2/HlL2tfmyRm1VWAs36y69715b7YLBYHX0nLjLRcBFr92r9ZKUKADdTX5bHQFNvwm
-        P36S2PdRSvIkQDI/ODRHTMybVXNId9hqjJVmrKyNGNfL/uTlw8dPy6qupLEtnq2dUIIJnad+Q3Rc
-        R4NRVgePy1BGm+XdetnRcPhby3vLA6dN+JW+ZwNjeF7GrlLsD6dOdgg3oKfiInJVRs6wrjNxOZuM
-        Dv8Gu69kD071h99NHKdsj9+/kAXOfd+Bp86YF8gKv5rLCFBtJHJPxvKVSzF1nZOuSVK/kblvh6gI
-        rQSLkCdqlnjm+f9AUhzBRSCdNZqKwTxvT2f2CfsHX4JXQRNqnZHiBVynRqyxCzLOrRM2xtOwaJSx
-        3GXFoPg+bvXJPG9pVMeNCAdn/oR47/VmQjUjDI7QLIV26toJfOZA2z+vTn3sHZFOTsKiPqbyz8vD
-        0o/t8y719qIJY5oSB7a5S/h4zXTsUakp0pBJTPyMnGctK8DXOnDwwr8D/FzWM2ciJ67f2JAz2BHe
-        STuS4WPxWUgR6rQskRU65M1JLKMhT5gzqj5k66DInhzJuczHDG4jynQTgkHWz0UrGhslgsFuUGfH
-        fp/1/vFD6SygEVC+D5k4Cp9chYP69i14icAXIKrffCm9baYivpGDgH2vvYKOUiclJmnQNPhsbKvn
-        s+dEEcQVvS5pGK8tOCupFzTq2UiLx28izulGYtEccrDNhVNwoLKO8UYiwjdRC+6reUXG6R8AAAD/
-        /6RazW6DMAy+9ym4jVZCHLbd0A6T2lunbm8QfqQiNQSFRCp9+iV2gECM1IoT7ffZjhPsOLHgdRFe
-        Zxwa5KO1sAK/UflriW2liakwAZgiNhFEg+BiatNbY7xTxHG/kGZ9zI7PiKXzuSCa0N4qQczAMdtu
-        BVKU5vgYriTA1JtDhsqWiaF11vBtpUbLutkYu2CCxkvqPY4EbYkKd0tsmeZZdxHXXaFvmiqrT082
-        Nq4s/IO6Ndgm6hb3ht4yhT+mFOH8izmrnnTC/wfNy19dyd4XiW0LCftH1vj5eLEP6Cs1Sa6Vg79H
-        OIrfk4LJXNx7c49t+xusDy/adpDIq+aBajx/jGhSd2K0x+u8nQzOWm8BnHwm4i480nZBKanBK5NM
-        o+jgVtWG4xmVa19Ko+Ibv5KCc6EZ+UFYWQiQpHMX1x4Z7gZ3TpTuOe8mQQDP2jX7PYRvDO0RS2NF
-        PIw/D04gDtsPMDDiePdFYHEBmcDxQoWQd8qOQtodXKchhoMfKrtL/HAsA9A7T0wzwdruJgFF03Jm
-        AiCCBQAQ2ElhZNiDIHS9xI2EjDAB91kapEJ2lFJI6Ppnl6tkXfUj1EnopvwKAyFLFyJrKvPweEFt
-        XSWdHN3tsnTx0e0/AAAA//8DABD/5usyLAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>256</Count><RetMax>256</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>38056127</Id>\n\t<Id>35810816</Id>\n\t<Id>34588381</Id>\n\t<Id>34303773</Id>\n\t<Id>33166671</Id>\n\t<Id>32540476</Id>\n\t<Id>32471116</Id>\n\t<Id>32435917</Id>\n\t<Id>31262386</Id>\n\t<Id>31152848</Id>\n\t<Id>30884453</Id>\n\t<Id>30878739</Id>\n\t<Id>30826316</Id>\n\t<Id>30384071</Id>\n\t<Id>29474903</Id>\n\t<Id>29197930</Id>\n\t<Id>28426879</Id>\n\t<Id>28284729</Id>\n\t<Id>28267557</Id>\n\t<Id>28115639</Id>\n\t<Id>27454254</Id>\n\t<Id>27040317</Id>\n\t<Id>26585812</Id>\n\t<Id>26519955</Id>\n\t<Id>26252616</Id>\n\t<Id>26188368</Id>\n\t<Id>25913319</Id>\n\t<Id>25789634</Id>\n\t<Id>25683344</Id>\n\t<Id>25270622</Id>\n\t<Id>24769090</Id>\n\t<Id>24180432</Id>\n\t<Id>24180374</Id>\n\t<Id>23899473</Id>\n\t<Id>23625783</Id>\n\t<Id>23001933</Id>\n\t<Id>22936646</Id>\n\t<Id>22588786</Id>\n\t<Id>22484601</Id>\n\t<Id>22333284</Id>\n\t<Id>22198209</Id>\n\t<Id>21856391</Id>\n\t<Id>21721021</Id>\n\t<Id>21714771</Id>\n\t<Id>21616130</Id>\n\t<Id>20954081</Id>\n\t<Id>20854900</Id>\n\t<Id>20600714</Id>\n\t<Id>20358181</Id>\n\t<Id>20307648</Id>\n\t<Id>20123618</Id>\n\t<Id>20077217</Id>\n\t<Id>19756843</Id>\n\t<Id>18639561</Id>\n\t<Id>18403868</Id>\n\t<Id>17929048</Id>\n\t<Id>17326724</Id>\n\t<Id>17098345</Id>\n\t<Id>16954067</Id>\n\t<Id>16855774</Id>\n\t<Id>16476687</Id>\n\t<Id>16326419</Id>\n\t<Id>16326050</Id>\n\t<Id>15914576</Id>\n\t<Id>15901911</Id>\n\t<Id>15838709</Id>\n\t<Id>15664438</Id>\n\t<Id>15588926</Id>\n\t<Id>15564602</Id>\n\t<Id>15486947</Id>\n\t<Id>15364543</Id>\n\t<Id>15297022</Id>\n\t<Id>14727734</Id>\n\t<Id>14630134</Id>\n\t<Id>12851149</Id>\n\t<Id>12805656</Id>\n\t<Id>12802597</Id>\n\t<Id>12668284</Id>\n\t<Id>12505296</Id>\n\t<Id>12498735</Id>\n\t<Id>12215663</Id>\n\t<Id>12151626</Id>\n\t<Id>12036039</Id>\n\t<Id>11995694</Id>\n\t<Id>11950162</Id>\n\t<Id>11940454</Id>\n\t<Id>11719701</Id>\n\t<Id>11597582</Id>\n\t<Id>11581012</Id>\n\t<Id>11560248</Id>\n\t<Id>11452036</Id>\n\t<Id>11428750</Id>\n\t<Id>11401753</Id>\n\t<Id>11341945</Id>\n\t<Id>11312035</Id>\n\t<Id>11246142</Id>\n\t<Id>11099649</Id>\n\t<Id>11091278</Id>\n\t<Id>11029268</Id>\n\t<Id>10930035</Id>\n\t<Id>10889518</Id>\n\t<Id>10869467</Id>\n\t<Id>10869455</Id>\n\t<Id>10839475</Id>\n\t<Id>10828276</Id>\n\t<Id>10728921</Id>\n\t<Id>10650916</Id>\n\t<Id>10581215</Id>\n\t<Id>10547627</Id>\n\t<Id>10536109</Id>\n\t<Id>10502499</Id>\n\t<Id>10499774</Id>\n\t<Id>10485824</Id>\n\t<Id>10478855</Id>\n\t<Id>10478332</Id>\n\t<Id>10388618</Id>\n\t<Id>10357793</Id>\n\t<Id>20654484</Id>\n\t<Id>10086319</Id>\n\t<Id>9950075</Id>\n\t<Id>9934846</Id>\n\t<Id>9538047</Id>\n\t<Id>9547862</Id>\n\t<Id>9465269</Id>\n\t<Id>9398495</Id>\n\t<Id>9367824</Id>\n\t<Id>9274804</Id>\n\t<Id>9207284</Id>\n\t<Id>9194412</Id>\n\t<Id>9013627</Id>\n\t<Id>9146736</Id>\n\t<Id>8914623</Id>\n\t<Id>8887448</Id>\n\t<Id>8761421</Id>\n\t<Id>8817083</Id>\n\t<Id>8998951</Id>\n\t<Id>8838637</Id>\n\t<Id>7590545</Id>\n\t<Id>8540215</Id>\n\t<Id>12209194</Id>\n\t<Id>8785518</Id>\n\t<Id>7538465</Id>\n\t<Id>7873979</Id>\n\t<Id>7918596</Id>\n\t<Id>7915705</Id>\n\t<Id>7800660</Id>\n\t<Id>8209376</Id>\n\t<Id>8020155</Id>\n\t<Id>8162897</Id>\n\t<Id>8269617</Id>\n\t<Id>8104013</Id>\n\t<Id>8472324</Id>\n\t<Id>12209168</Id>\n\t<Id>8352887</Id>\n\t<Id>1469623</Id>\n\t<Id>1458550</Id>\n\t<Id>1473784</Id>\n\t<Id>1336490</Id>\n\t<Id>1423834</Id>\n\t<Id>1516773</Id>\n\t<Id>1632818</Id>\n\t<Id>1600604</Id>\n\t<Id>1625184</Id>\n\t<Id>1591274</Id>\n\t<Id>1610294</Id>\n\t<Id>1755031</Id>\n\t<Id>2274965</Id>\n\t<Id>2260097</Id>\n\t<Id>2125992</Id>\n\t<Id>1979936</Id>\n\t<Id>1965743</Id>\n\t<Id>2274048</Id>\n\t<Id>2210515</Id>\n\t<Id>2311188</Id>\n\t<Id>2404574</Id>\n\t<Id>2097173</Id>\n\t<Id>2489351</Id>\n\t<Id>2804110</Id>\n\t<Id>2635147</Id>\n\t<Id>2781555</Id>\n\t<Id>2772924</Id>\n\t<Id>2731665</Id>\n\t<Id>2924396</Id>\n\t<Id>2917345</Id>\n\t<Id>3206528</Id>\n\t<Id>3180084</Id>\n\t<Id>3383337</Id>\n\t<Id>3173343</Id>\n\t<Id>3354005</Id>\n\t<Id>3378278</Id>\n\t<Id>3690505</Id>\n\t<Id>2443263</Id>\n\t<Id>3621460</Id>\n\t<Id>2887302</Id>\n\t<Id>3657395</Id>\n\t<Id>3617093</Id>\n\t<Id>3594721</Id>\n\t<Id>3617071</Id>\n\t<Id>3617070</Id>\n\t<Id>3617068</Id>\n\t<Id>3617066</Id>\n\t<Id>3303447</Id>\n\t<Id>3303446</Id>\n\t<Id>3303445</Id>\n\t<Id>3574334</Id>\n\t<Id>3564055</Id>\n\t<Id>3564043</Id>\n\t<Id>3815733</Id>\n\t<Id>3798454</Id>\n\t<Id>3594641</Id>\n\t<Id>3554467</Id>\n\t<Id>3802057</Id>\n\t<Id>3769136</Id>\n\t<Id>2877511</Id>\n\t<Id>3583306</Id>\n\t<Id>3536893</Id>\n\t<Id>3715859</Id>\n\t<Id>3770794</Id>\n\t<Id>3709461</Id>\n\t<Id>3709458</Id>\n\t<Id>3709451</Id>\n\t<Id>4091660</Id>\n\t<Id>3934796</Id>\n\t<Id>2867621</Id>\n\t<Id>4024105</Id>\n\t<Id>2859109</Id>\n\t<Id>4004798</Id>\n\t<Id>2863135</Id>\n\t<Id>3919955</Id>\n\t<Id>3966235</Id>\n\t<Id>2857115</Id>\n\t<Id>6517701</Id>\n\t<Id>6488454</Id>\n\t<Id>6147206</Id>\n\t<Id>12748680</Id>\n\t<Id>6732809</Id>\n\t<Id>6719482</Id>\n\t<Id>6143560</Id>\n\t<Id>6716514</Id>\n\t<Id>6710484</Id>\n\t<Id>6872148</Id>\n\t<Id>6355494</Id>\n\t<Id>6845354</Id>\n\t<Id>6677511</Id>\n\t<Id>7161829</Id>\n\t<Id>12778222</Id>\n\t<Id>6182138</Id>\n\t<Id>7115078</Id>\n\t<Id>6178713</Id>\n\t<Id>7397231</Id>\n\t<Id>548985</Id>\n\t<Id>734683</Id>\n\t<Id>99598</Id>\n\t<Id>598790</Id>\n\t<Id>996879</Id>\n\t<Id>769879</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>meoph</From>     <To>\"methylphosphite\"[Supplementary Concept]
+        OR \"methylphosphite\"[All Fields] OR \"meoph\"[All Fields]</To>    </Translation><Translation>
+        \    <From>mecpp</From>     <To>\"2-methyl-5,6-cyclopentapyrimidine\"[Supplementary
+        Concept] OR \"2-methyl-5,6-cyclopentapyrimidine\"[All Fields] OR \"mecpp\"[All
+        Fields]</To>    </Translation><Translation>     <From>mehp</From>     <To>\"mono-(2-ethylhexyl)phthalate\"[Supplementary
+        Concept] OR \"mono-(2-ethylhexyl)phthalate\"[All Fields] OR \"mehp\"[All Fields]</To>
+        \   </Translation><Translation>     <From>mmhp</From>     <To>\"mono-5-methylhexylphthalate\"[Supplementary
+        Concept] OR \"mono-5-methylhexylphthalate\"[All Fields] OR \"mmhp\"[All Fields]</To>
+        \   </Translation><Translation>     <From>dehp</From>     <To>\"diethylhexyl
+        phthalate\"[MeSH Terms] OR (\"diethylhexyl\"[All Fields] AND \"phthalate\"[All
+        Fields]) OR \"diethylhexyl phthalate\"[All Fields] OR \"dehp\"[All Fields]</To>
+        \   </Translation><Translation>     <From>2-ethylhexanol</From>     <To>\"2-ethylhexanol\"[Supplementary
+        Concept] OR \"2-ethylhexanol\"[All Fields] OR \"2 ethylhexanol\"[All Fields]</To>
+        \   </Translation><Translation>     <From>phthalic acid</From>     <To>\"phthalic
+        acid\"[Supplementary Concept] OR \"phthalic acid\"[All Fields]</To>    </Translation><Translation>
+        \    <From>liver</From>     <To>\"liver\"[MeSH Terms] OR \"liver\"[All Fields]
+        OR \"livers\"[All Fields] OR \"liver's\"[All Fields]</To>    </Translation><Translation>
+        \    <From>cell proliferation</From>     <To>\"cell proliferation\"[MeSH Terms]
+        OR (\"cell\"[All Fields] AND \"proliferation\"[All Fields]) OR \"cell proliferation\"[All
+        Fields]</To>    </Translation><Translation>     <From>cell</From>     <To>\"cells\"[MeSH
+        Terms] OR \"cells\"[All Fields] OR \"cell\"[All Fields]</To>    </Translation><Translation>
+        \    <From>growth</From>     <To>\"growth and development\"[Subheading] OR
+        (\"growth\"[All Fields] AND \"development\"[All Fields]) OR \"growth and development\"[All
+        Fields] OR \"growth\"[All Fields] OR \"growth\"[MeSH Terms] OR \"growths\"[All
+        Fields]</To>    </Translation><Translation>     <From>dna replication</From>
+        \    <To>\"dna replication\"[MeSH Terms] OR (\"dna\"[All Fields] AND \"replication\"[All
+        Fields]) OR \"dna replication\"[All Fields]</To>    </Translation><Translation>
+        \    <From>dna synthesis</From>     <To>\"dna replication\"[MeSH Terms] OR
+        (\"dna\"[All Fields] AND \"replication\"[All Fields]) OR \"dna replication\"[All
+        Fields] OR (\"dna\"[All Fields] AND \"synthesis\"[All Fields]) OR \"dna synthesis\"[All
+        Fields]</To>    </Translation><Translation>     <From>replicative</From>     <To>\"dna
+        replication\"[MeSH Terms] OR (\"dna\"[All Fields] AND \"replication\"[All
+        Fields]) OR \"dna replication\"[All Fields] OR \"replication\"[All Fields]
+        OR \"replicability\"[All Fields] OR \"replicable\"[All Fields] OR \"replicate\"[All
+        Fields] OR \"replicated\"[All Fields] OR \"replicates\"[All Fields] OR \"replicating\"[All
+        Fields] OR \"replicational\"[All Fields] OR \"replications\"[All Fields] OR
+        \"replicative\"[All Fields] OR \"replicatively\"[All Fields] OR \"replicator\"[All
+        Fields] OR \"replicators\"[All Fields]</To>    </Translation><Translation>
+        \    <From>mitosis</From>     <To>\"mitose\"[All Fields] OR \"mitosis\"[MeSH
+        Terms] OR \"mitosis\"[All Fields] OR \"mitoses\"[All Fields]</To>    </Translation><Translation>
+        \    <From>cell division</From>     <To>\"cell division\"[MeSH Terms] OR (\"cell\"[All
+        Fields] AND \"division\"[All Fields]) OR \"cell division\"[All Fields]</To>
+        \   </Translation><Translation>     <From>response</From>     <To>\"response\"[All
+        Fields] OR \"responses\"[All Fields] OR \"responsive\"[All Fields] OR \"responsiveness\"[All
+        Fields] OR \"responsivenesses\"[All Fields] OR \"responsives\"[All Fields]
+        OR \"responsivities\"[All Fields] OR \"responsivity\"[All Fields]</To>    </Translation><Translation>
+        \    <From>hyperplasia</From>     <To>\"hyperplasia\"[MeSH Terms] OR \"hyperplasia\"[All
+        Fields] OR \"hyperplasias\"[All Fields]</To>    </Translation><Translation>
+        \    <From>hepatomegaly</From>     <To>\"hepatomegaly\"[MeSH Terms] OR \"hepatomegaly\"[All
+        Fields]</To>    </Translation><Translation>     <From>mouse</From>     <To>\"mice\"[MeSH
+        Terms] OR \"mice\"[All Fields] OR \"mouse\"[All Fields] OR \"mouse's\"[All
+        Fields] OR \"mouses\"[All Fields]</To>    </Translation><Translation>     <From>rat</From>
+        \    <To>\"rats\"[MeSH Terms] OR \"rats\"[All Fields] OR \"rat\"[All Fields]</To>
+        \   </Translation><Translation>     <From>hamster</From>     <To>\"cricetinae\"[MeSH
+        Terms] OR \"cricetinae\"[All Fields] OR \"hamster\"[All Fields] OR \"hamsters\"[All
+        Fields] OR \"hamster's\"[All Fields]</To>    </Translation><Translation>     <From>rodent</From>
+        \    <To>\"rodent's\"[All Fields] OR \"rodentia\"[MeSH Terms] OR \"rodentia\"[All
+        Fields] OR \"rodent\"[All Fields] OR \"rodents\"[All Fields]</To>    </Translation><Translation>
+        \    <From>murine</From>     <To>\"mice\"[MeSH Terms] OR \"mice\"[All Fields]
+        OR \"murine\"[All Fields] OR \"muridae\"[MeSH Terms] OR \"muridae\"[All Fields]
+        OR \"murines\"[All Fields] OR \"murin\"[All Fields]</To>    </Translation><Translation>
+        \    <From>Mus musculus</From>     <To>\"mice\"[MeSH Terms] OR \"mice\"[All
+        Fields] OR (\"mus\"[All Fields] AND \"musculus\"[All Fields]) OR \"mus musculus\"[All
+        Fields]</To>    </Translation><Translation>     <From>Rattus</From>     <To>\"rats\"[MeSH
+        Terms] OR \"rats\"[All Fields] OR \"rattus\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>(monomethyl
+        OR MEP OR mono-n-butyl OR MBP OR mono (3-carboxypropyl) OR mcpp OR monobenzyl
+        OR mbzp OR mono-isobutyl OR mibp OR mono (2-ethylhexyl) OR mono (2-ethyl-5-oxohexyl)
+        OR meoph OR mono (2-ethyl-5-carboxypentyl) OR mecpp OR mepp OR mono (2-ethyl-5-hydroxyhexyl)
+        OR mehp OR mono (2-ethyl-5-oxyhexyl) OR mono (2-ethyl-4-hydroxyhexyl) OR mono
+        (2-ethyl-4-oxyhexyl) OR mono (2-carboxymethyl) OR mmhp OR mehp OR dehp OR
+        2-ethylhexanol OR (phthalic acid)) AND (liver OR hepato* OR hepat*) AND ((cell
+        proliferation) OR (cell growth) OR (dna replication) OR (dna synthesis) OR
+        (replicative dna synthesis) OR mitosis OR (cell division) OR (growth response)
+        OR hyperplasia OR hepatomegaly) AND (mouse OR rat OR hamster OR rodent OR
+        murine OR Mus musculus or Rattus)</QueryTranslation><ErrorList><PhraseNotFound>2-ethyl-5-oxyhexyl</PhraseNotFound><PhraseNotFound>2-ethyl-4-hydroxyhexyl</PhraseNotFound><PhraseNotFound>2-ethyl-4-oxyhexyl</PhraseNotFound></ErrorList>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -148,20 +175,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 22:12:14 GMT
+      - Tue, 20 Feb 2024 16:42:32 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322CC4EF5A3366C500004CB62DF4484D.1.1.m_1
+      - D0BD9F070703C0B5000053DBFB91F665.1.1.m_1
       NCBI-SID:
-      - B9C64697D651C169_A947SID
+      - A43C639BC87A8EEF_FFCDSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=B9C64697D651C169_A947SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 22:12:14 GMT
+      - ncbi_sid=A43C639BC87A8EEF_FFCDSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:

@@ -18,32 +18,49 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">21860499</PMID><DateCompleted><Year>2012</Year><Month>01</Month><Day>25</Day></DateCompleted><DateRevised><Year>2016</Year><Month>11</Month><Day>25</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1551-8280</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>12</Volume><PubDate><Year>2011</Year></PubDate></JournalIssue><Title>Report
+        on carcinogens : carcinogen profiles</Title><ISOAbbreviation>Rep Carcinog</ISOAbbreviation></Journal><ArticleTitle>Nitrofen.</ArticleTitle><Pagination><StartPage>296</StartPage><EndPage>297</EndPage><MedlinePgn>296-7</MedlinePgn></Pagination><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><CollectiveName>National Toxicology Program</CollectiveName></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Rep Carcinog</MedlineTA><NlmUniqueID>101157309</NlmUniqueID><ISSNLinking>1551-8272</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D002274">Carcinogens, Environmental</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010647">Phenyl Ethers</NameOfSubstance></Chemical><Chemical><RegistryNumber>N71UYG034A</RegistryNumber><NameOfSubstance
+        UI="C007350">nitrofen</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015197" MajorTopicYN="N">Carcinogenicity Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002274" MajorTopicYN="N">Carcinogens, Environmental</DescriptorName><QualifierName
+        UI="Q000737" MajorTopicYN="N">chemistry</QualifierName><QualifierName UI="Q000506"
+        MajorTopicYN="N">poisoning</QualifierName><QualifierName UI="Q000633" MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004781" MajorTopicYN="N">Environmental Exposure</DescriptorName><QualifierName
+        UI="Q000009" MajorTopicYN="N">adverse effects</QualifierName><QualifierName
+        UI="Q000331" MajorTopicYN="N">legislation &amp; jurisprudence</QualifierName><QualifierName
+        UI="Q000592" MajorTopicYN="N">standards</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D033161" MajorTopicYN="N">Government Regulation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D017408" MajorTopicYN="N">Guidelines as Topic</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015394" MajorTopicYN="N">Molecular Structure</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016273" MajorTopicYN="N">Occupational Exposure</DescriptorName><QualifierName
+        UI="Q000009" MajorTopicYN="N">adverse effects</QualifierName><QualifierName
+        UI="Q000331" MajorTopicYN="N">legislation &amp; jurisprudence</QualifierName><QualifierName
+        UI="Q000592" MajorTopicYN="N">standards</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010647" MajorTopicYN="N">Phenyl Ethers</DescriptorName><QualifierName
+        UI="Q000737" MajorTopicYN="N">chemistry</QualifierName><QualifierName UI="Q000506"
+        MajorTopicYN="N">poisoning</QualifierName><QualifierName UI="Q000633" MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2011</Year><Month>8</Month><Day>24</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2011</Year><Month>8</Month><Day>24</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2012</Year><Month>1</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">21860499</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -58,20 +75,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 22:12:17 GMT
+      - Tue, 20 Feb 2024 16:42:35 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B27BC72AC1EE500004294010F1E88.1.1.m_3
+      - 939B5F7AF2370105000049A86C3D0937.1.1.m_3
       NCBI-SID:
-      - 02C86FACEF470873_CB76SID
+      - 304A1E6DB590B1C6_5BEASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=02C86FACEF470873_CB76SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 22:12:18 GMT
+      - ncbi_sid=304A1E6DB590B1C6_5BEASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:36 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:

@@ -85,16 +85,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:46:21 GMT
+      - Tue, 20 Feb 2024 16:38:04 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371467; Expires=Fri, 16 Feb 2024 16:46:21 GMT; Path=/; HttpOnly
-      - CFTOKEN=62031145; Expires=Fri, 16 Feb 2024 16:46:21 GMT; Path=/; HttpOnly
-      - JSESSIONID=7FCF65748FD7FB6C8DC1DFA5D480E978.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A21; Path=/
+      - CFID=14825858; Expires=Wed, 21 Feb 2024 16:38:04 GMT; Path=/; HttpOnly
+      - CFTOKEN=21884536; Expires=Wed, 21 Feb 2024 16:38:04 GMT; Path=/; HttpOnly
+      - JSESSIONID=C4AC49935132AAB271775C3141587D7D.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A04; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -190,16 +190,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:46:22 GMT
+      - Tue, 20 Feb 2024 16:38:05 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371468; Expires=Fri, 16 Feb 2024 16:46:22 GMT; Path=/; HttpOnly
-      - CFTOKEN=89384795; Expires=Fri, 16 Feb 2024 16:46:22 GMT; Path=/; HttpOnly
-      - JSESSIONID=AF30E513AB2EF7C19DB8B5A58F71758C.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A22; Path=/
+      - CFID=14825859; Expires=Wed, 21 Feb 2024 16:38:05 GMT; Path=/; HttpOnly
+      - CFTOKEN=83408631; Expires=Wed, 21 Feb 2024 16:38:05 GMT; Path=/; HttpOnly
+      - JSESSIONID=03B4A2B119C5F68D372492428B710434.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A05; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -210,7 +210,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=7049025
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7049025
     headers:
       Accept:
       - '*/*'
@@ -219,7 +219,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '44'
+      - '89'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -228,34 +228,53 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        AA==
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">7049025</PMID><DateCompleted><Year>1982</Year><Month>09</Month><Day>17</Day></DateCompleted><DateRevised><Year>2006</Year><Month>11</Month><Day>15</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0003-0805</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>126</Volume><Issue>2</Issue><PubDate><Year>1982</Year><Month>Aug</Month></PubDate></JournalIssue><Title>The
+        American review of respiratory disease</Title><ISOAbbreviation>Am Rev Respir
+        Dis</ISOAbbreviation></Journal><ArticleTitle>Asbestos-related diseases of
+        the lungs and pleura: current clinical issues.</ArticleTitle><Pagination><StartPage>187</StartPage><EndPage>194</EndPage><MedlinePgn>187-94</MedlinePgn></Pagination><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Becklake</LastName><ForeName>M
+        R</ForeName><Initials>MR</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Am Rev Respir Dis</MedlineTA><NlmUniqueID>0370523</NlmUniqueID><ISSNLinking>0003-0805</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D004391">Dust</NameOfSubstance></Chemical><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
+        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
+        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001195" MajorTopicYN="N">Asbestosis</DescriptorName><QualifierName UI="Q000209"
+        MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001991" MajorTopicYN="N">Bronchitis</DescriptorName><QualifierName UI="Q000209"
+        MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004391" MajorTopicYN="N">Dust</DescriptorName><QualifierName UI="Q000032"
+        MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004781" MajorTopicYN="N">Environmental Exposure</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000032"
+        MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008171" MajorTopicYN="N">Lung Diseases</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="Y">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008175" MajorTopicYN="N">Lung Neoplasms</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008654" MajorTopicYN="N">Mesothelioma</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010995" MajorTopicYN="N">Pleural Diseases</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="Y">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011658" MajorTopicYN="N">Pulmonary Fibrosis</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012306" MajorTopicYN="N">Risk</DescriptorName></MeshHeading></MeshHeadingList><NumberOfReferences>100</NumberOfReferences></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1982</Year><Month>8</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1982</Year><Month>8</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1982</Year><Month>8</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">7049025</ArticleId><ArticleId IdType="doi">10.1164/arrd.1982.126.2.187</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -270,28 +289,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:23 GMT
+      - Tue, 20 Feb 2024 16:38:05 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB925704500003D6945D8F9FF.1.1.m_3
+      - 322C45D975EA9B45000055DB41B42C2E.1.1.m_3
       NCBI-SID:
-      - C9FDFF0BD362BE0F_58A6SID
+      - E4FA42114E293A21_D952SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C9FDFF0BD362BE0F_58A6SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:23 GMT
+      - ncbi_sid=E4FA42114E293A21_D952SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:06 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

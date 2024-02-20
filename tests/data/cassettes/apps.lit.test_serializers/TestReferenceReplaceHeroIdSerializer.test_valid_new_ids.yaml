@@ -108,16 +108,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:47:23 GMT
+      - Tue, 20 Feb 2024 16:39:11 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371497; Expires=Fri, 16 Feb 2024 16:47:23 GMT; Path=/; HttpOnly
-      - CFTOKEN=85723050; Expires=Fri, 16 Feb 2024 16:47:23 GMT; Path=/; HttpOnly
-      - JSESSIONID=B2E776B0F920AC93AB18D4FF36EBD7D5.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A23; Path=/
+      - CFID=14825896; Expires=Wed, 21 Feb 2024 16:39:11 GMT; Path=/; HttpOnly
+      - CFTOKEN=65791540; Expires=Wed, 21 Feb 2024 16:39:11 GMT; Path=/; HttpOnly
+      - JSESSIONID=9F15D96AA3660AA9D061CB719C400FF6.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A11; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -236,16 +236,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:47:24 GMT
+      - Tue, 20 Feb 2024 16:39:15 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371498; Expires=Fri, 16 Feb 2024 16:47:24 GMT; Path=/; HttpOnly
-      - CFTOKEN=84236861; Expires=Fri, 16 Feb 2024 16:47:24 GMT; Path=/; HttpOnly
-      - JSESSIONID=711206B7AE14588805C0B8B94275C6CF.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A47%3A24; Path=/
+      - CFID=14825899; Expires=Wed, 21 Feb 2024 16:39:15 GMT; Path=/; HttpOnly
+      - CFTOKEN=65581844; Expires=Wed, 21 Feb 2024 16:39:15 GMT; Path=/; HttpOnly
+      - JSESSIONID=C98174F21F8FEDB54936BF207E3C0A30.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A15; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -256,7 +256,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=23899359
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=23899359
     headers:
       Accept:
       - '*/*'
@@ -265,7 +265,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '45'
+      - '90'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -274,40 +274,47 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAHxRXW+CMBR936/o+jwon1GWWrMBDxhBMpyZTwtKM5tAS6C4+e9XkLDow156T9tz
-        T8+5xcufqgRn2rRM8AU0dQOCJXnAj8HG3+7TEKTdoaLFSyPZsaQZlSB9f11HPoAaQsk6RijYBj0p
-        nkhPwGwlWOW8y5sLsAzLQShMIIAnKev2GaFCFjovK52zk/4lzogfDwzVwztIdHKEn5ZjmIapKzZU
-        hu593B8RrByUjFOfyVyqMCBTtWsX8GpO40JqcRisoySEYPPNabOAKgAkOI2jAOymEUBi2XPPs10P
-        o/6K4CCX1BdVXVJJC4L3NG+IZZg2RgPEseDyRIw5RlekGi7EMDHqa7/etPfbN3pm7X9asxst+0Zr
-        ah6jD+MXBS1V1oZxqSKtRNfwvCQ4yrIERG3Lt5eaTvem7TrazDU+MOoJE18ROwrUBGmhRsa66k9x
-        J8quokT5HBEeyMTRXCUywP5Den9jKtP7BQAA//9Uk01rwzAMhv+K6b1Nk8FIR1boIIfC2Hoogx4V
-        203FEivYDjT/fnKypO7JsoT18erxLp+nSpZQEpfaF2f0vLsPpBbsL69AvIkKSd50ixIagUbx6YkD
-        dBX63pHrLRNmtevIOLbAKOF6J3XnscIG/SA8iTmBK5KpAgvxfagqy9KNdEQlgwbPsaXJReIpybFt
-        e0PgHAyhnRvoluqGKjRrkHZoyKC3yAsBpXrpuXthwQtwAsJUU714kE2RPBUoTlCj+W+C+bWeHSx6
-        yjg8rkVp1OTPXotkvsz8n2oTHqxDLHLxCqLc5SfJ0WTyy6Oa4FCEK/EDDarL1/vqwphsN+k23yYB
-        F6Zll2cvaZrxt4ies0SV8xakf1hnfff7w6jIHwAAAP//fFVNb9swDP0rPCZAbMRZC2zHoB2WAW2B
-        rQN22HaQbdoSalueJCfNv9+j5KTuZYcYSGKR74vURZHV/mlNRoQQRSrlKjPYloecDlOvhqsi1EPb
-        yvZMjbM9LYMwobhhnxzv7YsZ2pz2SxcuukPh936sDmUmADSsKJkHmjA///GFyjP1rIaYuhbvVRpo
-        kMPWqVGfsx4ZID9yFfAzB6y51Ze77PF5DXCqO3vjc/rJaHdkqvnInR3RTw6YxlTU28FWQAdeakBs
-        bS28Vo+qXEt4dVQkQo5kT8Zr+d3xaF0gPqpuSitOiA5kFrFMkfMgCHnkTxSloEVzZ73PHMMfj5JB
-        RydiF5Gxtp6vY0U+THXM+MM9bbHQ8bndpmH7tJUmz6NT7cTZvTp1fE49TxBqGmp2Qb3wsElN0C91
-        clyxOQqq3792mw9ZcXP3RwgGVMbKoZc2K8hXqcmhTP6DAPL4d7LR1LKzto5tYgdqrENWIAcPAUZi
-        V0TOyQHxUI4aCI+wBdN1SbR3vkmzppssmFc8VEyfH74+73P6ofm9JDEKkSYQb/Pd7QZPPHBjJsi7
-        fEuaVBMQJfCSw/HMbtbuo+hY3FLfJqonRs6Q9FE5ZANgSwu5gErbejYIKkjlOdxeyRWCZH3nFqjk
-        tnoj67U9SaRJ5l05wE5svTYjIh9OkvplUKQwLJCMzcoJaVSaVy7Ax9iIAxAPo4rgQvBeOKVsyqiW
-        vJgljI6zLc6+vZMmMunpefAmIAMhRisqndxkjxvnmt04hfgu9hYUo++nMgv2FRCuuqL4qthmRV5c
-        JF3n9G0SsI2prvORYEDeJXlpilwajGaUHhvGlC6dicqDyxm3L2M3X5bKodw/3eiNbDBu4J2EZf5r
-        xGReXAyYsCA5TNM1D8FrBcMEsnC6IZ3P7MWFuDnenATmpwwh6o3sB4QbhgoFqANAC1n/AQAA//+s
-        l99PwjAQx/+VZv9AhzFEk9pEUTLI5AlC9G3CgMatWzYXI3+9d/21djKfeIH21vV7ba93n4FwGEMq
-        MYpSFHD+e2CNnVpPgfmn1UMPFdxPc87on77mWV1DyLQq9WDGQs19hieCgjL/DvZOR6haCOZOzLFV
-        gwvWZ+KXNr8c9F2oEx1M0aQCMNFykak45lFQhViatV+rDJAjJdsKhN46skbB91MOv8tO/nQkFWSW
-        NUVFErLOyg8MRDKHTckbsfskW/KUyzOjbiY2hxuvWktGXZstYDECqAGtrg2eK6dcAx1Hr+Sxw8IL
-        TuDMpocQVJj4w7KqBw+MZLN4iJ7jyfT25i7iBjaIQQEFS/5o/seiJ6VD9LVoJQ8VZzM4a8hw/EUe
-        C4gMRq3Bjl4/BhDUW9mqKDcSUmcO5f1+Gk/jOGbUNyqsTIXEGjyESWt2MwZe0QGlc0PxAIcZZwms
-        q0IXNbMbaES+tTAPmb7Jz9EoOIcMbrE5ARc48JD6Z69CdoCisCbTUvvb6/0jrz9NoguEq1Un4/Lx
-        FeRLvXlX0Z+M61P/HGzcaR94XaOpPQUxaZ5ZWl7sdYC6LrGIafev/8JyYy4NRyIdp1DvVTpQpn5U
-        0fBD8RcAAP//QuOD+pIAAAAA//8DANSjD/sGDwAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM"><PMID
+        Version="1">23899359</PMID><DateCompleted><Year>2013</Year><Month>08</Month><Day>01</Day></DateCompleted><DateRevised><Year>2013</Year><Month>07</Month><Day>31</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">1354-750X</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>3</Volume><Issue>4-5</Issue><PubDate><Year>1998</Year></PubDate></JournalIssue><Title>Biomarkers
+        : biochemical indicators of exposure, response, and susceptibility to chemicals</Title><ISOAbbreviation>Biomarkers</ISOAbbreviation></Journal><ArticleTitle>Immunoassay
+        of haemoglobin-acrylonitrile adduct in rat as a biomarker of exposure.</ArticleTitle><Pagination><StartPage>317</StartPage><EndPage>326</EndPage><MedlinePgn>317-26</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1080/135475098231129</ELocationID><Abstract><AbstractText>Acrylonitrile
+        (AN) is a rat carcinogen. Human exposure may come from chemical industries
+        and smoking. A haemoglobin adduct of acrylonitrile (Hb-AN) has been used as
+        a biomarker of exposure by means of gas chromatography-mass spectrometry (GC-MS)
+        analysis. We have developed specific monoclonal antibodies (Mab) to human
+        Hb-AN and wish to report evaluation of an immunoassay in rats using an Mab
+        that cross-reacts with rat Hb-AN. A dose response study of LD 0, 10, 50, and
+        90 in Sprague-Dawley rats was undertaken, with each rat receiving \[2,3-14C]AN
+        at 50 Ci kg-1 sc, and Hb from an aliquot of blood was taken for covalent binding
+        analysis by liquid scintillation spectrometry and fluorescence ELISA. The
+        dose responses of rats at 0.25, 0.5, 1.0, and 2.0 h after AN doses of 20,
+        50, 80, 115 mg kg-1 were compared by both methods with Hb and globin samples.
+        Regression analysis showed a linear relationship between immunoassay and 14C-AN
+        binding. This indicates that an antigenic form of Hb-AN may be used as a surrogate
+        of Hb-AN adduct. The sensitivity of ELISA was tested in rats exposed for 1
+        h to sub-toxic doses of AN (10-1.1 mg kg-1). Quantification of Hb-AN by immunoassay
+        was achieved by calibration with a synthetic adduct HbAN4h, a reference adduct
+        prepared by treating rat Hb with excess AN for 4 h. ELISA and GC-MS analysis
+        of N-terminal valine-AN in the Hb-AN adduct were compared and similar detection
+        levels were found. This rat study appears to have validated the new immunoassay
+        method for biomonitoring of AN exposure.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>L Wong Yu Ting Zheng Junyu Li
+        Carlo H Tamburro Frederick W Benz</LastName><ForeName>J</ForeName><Initials>J</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Biomarkers</MedlineTA><NlmUniqueID>9606000</NlmUniqueID><ISSNLinking>1354-750X</ISSNLinking></MedlineJournalInfo></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2013</Year><Month>8</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>1998</Year><Month>1</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1998</Year><Month>1</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">23899359</ArticleId><ArticleId IdType="doi">10.1080/135475098231129</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -322,28 +329,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:47:25 GMT
+      - Tue, 20 Feb 2024 16:39:17 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322CC4EF5A3366C500003F76DE193066.1.1.m_3
+      - 939B5F7AF2370105000048A4B25DA987.1.1.m_3
       NCBI-SID:
-      - 2EEB20412D13E3A3_6678SID
+      - A0065852E04999D8_DA52SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=2EEB20412D13E3A3_6678SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:47:25 GMT
+      - ncbi_sid=A0065852E04999D8_DA52SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:17 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

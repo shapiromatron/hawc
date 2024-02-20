@@ -18,26 +18,8 @@ interactions:
     uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020970
   response:
     body:
-      string: "{\n  \"cpdataCount\" : null,\n  \"id\" : \"FDFD541B510CFD2C5064FD1FFDFD06FD40FD111324FDFD7D29FD0F74FD4EFD\",\n
-        \ \"casrn\" : \"1836-75-5\",\n  \"compoundId\" : 970,\n  \"genericSubstanceId\"
-        : 20970,\n  \"preferredName\" : \"Nitrofen\",\n  \"activeAssays\" : 163,\n
-        \ \"molFormula\" : \"C12H7Cl2NO3\",\n  \"monoisotopicMass\" : 282.9802985,\n
-        \ \"percentAssays\" : 16.0,\n  \"pubchemCount\" : 116,\n  \"pubmedCount\"
-        : 341.0,\n  \"sourcesCount\" : 201,\n  \"qcLevel\" : 1,\n  \"qcLevelDesc\"
-        : \"Level 1: Expert curated, highest confidence in accuracy and consistency
-        of unique chemical identifiers\",\n  \"stereo\" : \"0\",\n  \"isotope\" :
-        0,\n  \"multicomponent\" : 0,\n  \"totalAssays\" : 1029,\n  \"pubchemCid\"
-        : 15787,\n  \"relatedSubstanceCount\" : null,\n  \"relatedStructureCount\"
-        : null,\n  \"hasStructureImage\" : 1,\n  \"iupacName\" : \"2,4-Dichloro-1-(4-nitrophenoxy)benzene\",\n
-        \ \"smiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"inchiString\"
-        : \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
-        \ \"averageMass\" : 284.09,\n  \"qcNotes\" : null,\n  \"qsarReadySmiles\"
-        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"msReadySmiles\"
-        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"irisLink\" : null,\n
-        \ \"pprtvLink\" : \"Nitrofentechnicalgrade\",\n  \"descriptorStringTsv\" :
-        \"0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t1\\t1\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\",\n
-        \ \"isMarkush\" : 0,\n  \"dtxsid\" : \"DTXSID7020970\",\n  \"dtxcid\" : \"DTXCID30970\",\n
-        \ \"toxcastSelect\" : \"163/1029\",\n  \"expocatMedianPrediction\" : \"2.23E-07\",\n
+      string: "{\n  \"id\" : \"FDFD541B510CFD2C5064FD1FFDFD06FD40FD111324FDFD7D29FD0F74FD4EFD\",\n
+        \ \"cpdataCount\" : null,\n  \"expocatMedianPrediction\" : \"2.23E-07\",\n
         \ \"expocat\" : \"Y\",\n  \"nhanes\" : \"Y\",\n  \"toxvalData\" : \"Y\",\n
         \ \"waterSolubilityTest\" : 1.86209E-6,\n  \"waterSolubilityOpera\" : 3.53106E-6,\n
         \ \"viscosityCpCpTestPred\" : null,\n  \"vaporPressureMmhgTestPred\" : 4.48745E-7,\n
@@ -53,17 +35,33 @@ interactions:
         : 358.785,\n  \"biodegradationHalfLifeDays\" : 3.71673,\n  \"bioconcentrationFactorTestPred\"
         : 899.498,\n  \"bioconcentrationFactorOperaPred\" : 739.33,\n  \"atmosphericHydroxylationRate\"
         : 2.58539E-12,\n  \"amesMutagenicityTestPred\" : 0.751,\n  \"pkaaOperaPred\"
-        : null,\n  \"pkabOperaPred\" : null,\n  \"inchikey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n
-        \ \"wikipediaArticle\" : \"Nitrofen\"\n}"
+        : null,\n  \"pkabOperaPred\" : null,\n  \"qcLevel\" : 1,\n  \"qcLevelDesc\"
+        : \"Level 1: Expert curated, highest confidence in accuracy and consistency
+        of unique chemical identifiers\",\n  \"stereo\" : \"0\",\n  \"isotope\" :
+        0,\n  \"multicomponent\" : 0,\n  \"totalAssays\" : 1029,\n  \"pubchemCid\"
+        : 15787,\n  \"relatedSubstanceCount\" : null,\n  \"relatedStructureCount\"
+        : null,\n  \"hasStructureImage\" : 1,\n  \"iupacName\" : \"2,4-Dichloro-1-(4-nitrophenoxy)benzene\",\n
+        \ \"smiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"inchiString\"
+        : \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
+        \ \"averageMass\" : 284.09,\n  \"qcNotes\" : null,\n  \"casrn\" : \"1836-75-5\",\n
+        \ \"compoundId\" : 970,\n  \"genericSubstanceId\" : 20970,\n  \"preferredName\"
+        : \"Nitrofen\",\n  \"activeAssays\" : 163,\n  \"molFormula\" : \"C12H7Cl2NO3\",\n
+        \ \"monoisotopicMass\" : 282.9802985,\n  \"percentAssays\" : 16.0,\n  \"pubchemCount\"
+        : 116,\n  \"pubmedCount\" : 341.0,\n  \"sourcesCount\" : 201,\n  \"qsarReadySmiles\"
+        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"msReadySmiles\"
+        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"irisLink\" : null,\n
+        \ \"pprtvLink\" : \"Nitrofentechnicalgrade\",\n  \"descriptorStringTsv\" :
+        \"0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t1\\t1\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\",\n
+        \ \"isMarkush\" : 0,\n  \"dtxsid\" : \"DTXSID7020970\",\n  \"dtxcid\" : \"DTXCID30970\",\n
+        \ \"toxcastSelect\" : \"163/1029\",\n  \"wikipediaArticle\" : \"Nitrofen\",\n
+        \ \"inchikey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\"\n}"
     headers:
-      Age:
-      - '969'
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Date:
-      - Thu, 15 Feb 2024 16:34:06 GMT
+      - Tue, 20 Feb 2024 16:42:10 GMT
       Strict-Transport-Security:
       - max-age=31536000
       Transfer-Encoding:
@@ -71,19 +69,19 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 b4346add631a498bf6cdbf88cbc5ff12.cloudfront.net (CloudFront)
+      - 1.1 3c5c6d0ac004d7cc9b79e2835fc1f6a4.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - tDyiNcLwISk0Yhms084MK0pRZb30rbcaCIwLi4dhJEGYxa1UEwwzaw==
+      - yRB79-CD_YpJHb9gS9KffDJIsKAsS1_9nMxocH9Ji91jpeEcstB4zw==
       X-Amz-Cf-Pop:
-      - IAD89-C1
+      - EWR53-P1
       X-Cache:
-      - Hit from cloudfront
+      - Miss from cloudfront
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
       - DENY
       X-Vcap-Request-Id:
-      - f4519a8a-fa2e-4d5b-4562-e4a02404e189
+      - 9584b413-b932-4f27-4f2d-23b52d14cc74
       X-XSS-Protection:
       - 1; mode=block
     status:

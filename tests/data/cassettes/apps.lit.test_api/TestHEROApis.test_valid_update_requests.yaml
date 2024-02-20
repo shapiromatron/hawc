@@ -121,16 +121,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Feb 2024 16:46:24 GMT
+      - Tue, 20 Feb 2024 16:38:07 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14371470; Expires=Fri, 16 Feb 2024 16:46:24 GMT; Path=/; HttpOnly
-      - CFTOKEN=60684687; Expires=Fri, 16 Feb 2024 16:46:24 GMT; Path=/; HttpOnly
-      - JSESSIONID=93FC02C17B31838780C5A35F30FD2DC5.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F15%2011%3A46%3A24; Path=/
+      - CFID=14825860; Expires=Wed, 21 Feb 2024 16:38:07 GMT; Path=/; HttpOnly
+      - CFTOKEN=12726405; Expires=Wed, 21 Feb 2024 16:38:07 GMT; Path=/; HttpOnly
+      - JSESSIONID=7FDD68BEEBC8A36B2858CF6C44626D99.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A07; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -141,7 +141,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=7318792&id=6682033
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7318792&id=6682033
     headers:
       Accept:
       - '*/*'
@@ -150,7 +150,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '55'
+      - '100'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -159,55 +159,112 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        MhEAAAAA//9C44NWgwIAAAD//wMAUQOswsgqAAA=
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">7318792</PMID><DateCompleted><Year>1982</Year><Month>03</Month><Day>13</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0013-9351</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>26</Volume><Issue>2</Issue><PubDate><Year>1981</Year><Month>Dec</Month></PubDate></JournalIssue><Title>Environmental
+        research</Title><ISOAbbreviation>Environ Res</ISOAbbreviation></Journal><ArticleTitle>Early
+        lung events following low-dose asbestos exposure.</ArticleTitle><Pagination><StartPage>392</StartPage><EndPage>401</EndPage><MedlinePgn>392-401</MedlinePgn></Pagination><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>B&#xe9;gin</LastName><ForeName>R</ForeName><Initials>R</Initials></Author><Author
+        ValidYN="Y"><LastName>Rola-Pleszczynski</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Sirois</LastName><ForeName>P</ForeName><Initials>P</Initials></Author><Author
+        ValidYN="Y"><LastName>Lemaire</LastName><ForeName>I</ForeName><Initials>I</Initials></Author><Author
+        ValidYN="Y"><LastName>Nadeau</LastName><ForeName>D</ForeName><Initials>D</Initials></Author><Author
+        ValidYN="Y"><LastName>Bureau</LastName><ForeName>M A</ForeName><Initials>MA</Initials></Author><Author
+        ValidYN="Y"><LastName>Mass&#xe9;</LastName><ForeName>S</ForeName><Initials>S</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Environ
+        Res</MedlineTA><NlmUniqueID>0147621</NlmUniqueID><ISSNLinking>0013-9351</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D004391">Dust</NameOfSubstance></Chemical><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
+        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
+        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002452" MajorTopicYN="N">Cell Count</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004391" MajorTopicYN="Y">Dust</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007958" MajorTopicYN="N">Leukocyte Count</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName><QualifierName UI="Q000187" MajorTopicYN="Y">drug
+        effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008214" MajorTopicYN="N">Lymphocytes</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008264" MajorTopicYN="N">Macrophages</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012119" MajorTopicYN="N">Respiration</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012129" MajorTopicYN="N">Respiratory Function Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012756" MajorTopicYN="N">Sheep</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1981</Year><Month>12</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1981</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1981</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">7318792</ArticleId><ArticleId IdType="doi">10.1016/0013-9351(81)90215-2</ArticleId><ArticleId
+        IdType="pii">0013-9351(81)90215-2</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">6682033</PMID><DateCompleted><Year>1983</Year><Month>05</Month><Day>05</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0013-9351</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>30</Volume><Issue>1</Issue><PubDate><Year>1983</Year><Month>Feb</Month></PubDate></JournalIssue><Title>Environmental
+        research</Title><ISOAbbreviation>Environ Res</ISOAbbreviation></Journal><ArticleTitle>Asbestos-induced
+        lung injury in the sheep model: the initial alveolitis.</ArticleTitle><Pagination><StartPage>195</StartPage><EndPage>210</EndPage><MedlinePgn>195-210</MedlinePgn></Pagination><Abstract><AbstractText>In
+        order to study the cellular and biochemical changes in early asbestosis, three
+        groups of sheep were repeatedly exposed to intratracheal instillations of
+        either saline (controls), low doses of UICC chrysotile asbestos (LD), or high
+        doses of the fibers (HD) until an alveolitis was observed in all HD sheep
+        during the twelfth month of exposure. All sheep were studied bimonthly by
+        transbronchial lung biopsy (LB), bronchoalveolar lavage (BAL), pulmonary function
+        tests (PFT), and chest roentgenograms (CXR). While LBs of the HD sheep demonstrated
+        large accumulations of monocyte-macrophages in the alveolar and interstitial
+        spaces, those of controls and LD sheep did not. In BAL, there was no difference
+        in total and differential cell counts between groups, but the BAL lymphocyte
+        proliferative capacity was clearly depressed in all asbestos-exposed sheep.
+        In the BAL supernatant, total proteins (mainly albumin, beta + gamma globulins)
+        and lactate dehydrogenase were significantly elevated in the HD group only.
+        This alveolitis was associated with a fall in vital capacity, lung compliance,
+        diffusing capacity, and arterial PO2. Abnormalities on CXR appeared 3 months
+        later. Thus, the cellular and biochemical features of early asbestosis are
+        clearly distinct from those reported in idiopathic pulmonary fibrosis.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>B&#xe9;gin</LastName><ForeName>R</ForeName><Initials>R</Initials></Author><Author
+        ValidYN="Y"><LastName>Rola-Pleszczynski</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Mass&#xe9;</LastName><ForeName>S</ForeName><Initials>S</Initials></Author><Author
+        ValidYN="Y"><LastName>Lemaire</LastName><ForeName>I</ForeName><Initials>I</Initials></Author><Author
+        ValidYN="Y"><LastName>Sirois</LastName><ForeName>P</ForeName><Initials>P</Initials></Author><Author
+        ValidYN="Y"><LastName>Boctor</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Nadeau</LastName><ForeName>D</ForeName><Initials>D</Initials></Author><Author
+        ValidYN="Y"><LastName>Drapeau</LastName><ForeName>G</ForeName><Initials>G</Initials></Author><Author
+        ValidYN="Y"><LastName>Bureau</LastName><ForeName>M A</ForeName><Initials>MA</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Environ
+        Res</MedlineTA><NlmUniqueID>0147621</NlmUniqueID><ISSNLinking>0013-9351</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
+        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000542" MajorTopicYN="N">Alveolitis, Extrinsic Allergic</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
+        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001195" MajorTopicYN="N">Asbestosis</DescriptorName><QualifierName UI="Q000209"
+        MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001706" MajorTopicYN="N">Biopsy</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004195" MajorTopicYN="Y">Disease Models, Animal</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000000981"
+        MajorTopicYN="N">diagnostic imaging</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008171" MajorTopicYN="N">Lung Diseases</DescriptorName><QualifierName
+        UI="Q000209" MajorTopicYN="Y">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011859" MajorTopicYN="N">Radiography</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012129" MajorTopicYN="N">Respiratory Function Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012756" MajorTopicYN="N">Sheep</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012757" MajorTopicYN="Y">Sheep Diseases</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007507" MajorTopicYN="N">Therapeutic Irrigation</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1983</Year><Month>2</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1983</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1983</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">6682033</ArticleId><ArticleId IdType="doi">10.1016/0013-9351(83)90180-9</ArticleId><ArticleId
+        IdType="pii">0013-9351(83)90180-9</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -222,28 +279,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 16:46:25 GMT
+      - Tue, 20 Feb 2024 16:38:08 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD004AB925704500004F69533CA814.1.1.m_3
+      - 322C45D975EA9B4500002CDB4DB812B7.1.1.m_3
       NCBI-SID:
-      - 72FF30BC3D0EF643_4514SID
+      - ACA6573790EA7138_356ESID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=72FF30BC3D0EF643_4514SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 16:46:25 GMT
+      - ncbi_sid=ACA6573790EA7138_356ESID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:08 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

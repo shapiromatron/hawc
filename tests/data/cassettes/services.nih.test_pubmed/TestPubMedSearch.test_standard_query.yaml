@@ -18,11 +18,8 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7MRh/C4LLRR1MCAAAA//8DACRpkk/gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>6</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -37,20 +34,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 22:12:07 GMT
+      - Tue, 20 Feb 2024 16:42:25 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B27BC72AC1EE500005493C6F25A76.1.1.m_1
+      - 939B5F7AF2370105000022A84A73E174.1.1.m_1
       NCBI-SID:
-      - 79F2DF14CC1AD996_C0F6SID
+      - C6BC2DC1CC8F8856_D946SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=79F2DF14CC1AD996_C0F6SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 22:12:07 GMT
+      - ncbi_sid=C6BC2DC1CC8F8856_D946SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -87,18 +84,18 @@ interactions:
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7Ezs9GHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGl
-        gYGFiSFQF5ADFbKwNDI3NjNEETK3MDc0N0ARMgEKWaBqNDK2NDTCImQKEQKRELsBAAAA//+yCSlK
-        zCvOSSwBhnxwKtD1SHw7BRCwcSvKz7UrTs4ExkhqdFZ+aVFeYk6sjT5YGKIiJN9OKRiiQCnaC6LC
-        Kj4+KzPFwMTAxNTQMFbBP0gBpkRBw9DS3FITTaWFATC4TQyABgNNA5uqj+wUXO5KKkpNLC5RSE4E
-        GlwEdBQAAAD//0J1FFQ2LzW/ICexOLdYKdo3NdhDISS1KLcY7CYNqBKlaMecHAW3zNScFKCEo5+L
-        ghKSJiQ5TbBPMM1F1o7fXIhTcRuKRR5XmOijR15gaWpRJbISDaVitHiBRAVUVAEUEwgpTbALNYZL
-        sEG8A8zGFvoGhkBkBWYaGukbG0a7JJakKugqBJQm5WQmg8MKGMoYwccFzClo2R0AAAD//wMAAaw7
-        m6wEAAA=
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>6</Count><RetMax>6</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>19008416</Id>\n\t<Id>18927361</Id>\n\t<Id>18787170</Id>\n\t<Id>18487186</Id>\n\t<Id>18239126</Id>\n\t<Id>18239125</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>science[journal]</From>     <To>\"Science\"[Journal:__jid0404511]
+        OR \"Science (1979)\"[Journal:__jid8000640]</To>    </Translation><Translation>
+        \    <From>breast cancer</From>     <To>\"breast neoplasms\"[MeSH Terms] OR
+        (\"breast\"[All Fields] AND \"neoplasms\"[All Fields]) OR \"breast neoplasms\"[All
+        Fields] OR (\"breast\"[All Fields] AND \"cancer\"[All Fields]) OR \"breast
+        cancer\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>(\"science\"[Journal]
+        OR \"science 1979\"[Journal]) AND (\"breast neoplasms\"[MeSH Terms] OR (\"breast\"[All
+        Fields] AND \"neoplasms\"[All Fields]) OR \"breast neoplasms\"[All Fields]
+        OR (\"breast\"[All Fields] AND \"cancer\"[All Fields]) OR \"breast cancer\"[All
+        Fields]) AND 2008/01/01:2008/12/31[Date - Publication]</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -113,20 +110,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Feb 2024 22:12:08 GMT
+      - Tue, 20 Feb 2024 16:42:26 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B27BC72AC1EE500005093CFC56D2B.1.1.m_1
+      - 322C45D975EA9B4500003FE1629F44D5.1.1.m_1
       NCBI-SID:
-      - F98F8B81F3C01555_0D20SID
+      - 91DCE274B9BACC1D_7A71SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=F98F8B81F3C01555_0D20SID; domain=.nih.gov; path=/; expires=Sat, 15
-        Feb 2025 22:12:08 GMT
+      - ncbi_sid=91DCE274B9BACC1D_7A71SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:

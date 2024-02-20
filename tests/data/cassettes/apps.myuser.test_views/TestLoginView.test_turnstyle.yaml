@@ -18,12 +18,10 @@ interactions:
     uri: https://challenges.cloudflare.com/turnstile/v0/siteverify
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAxzKywnAIBQEwF72rA3YSvAguhEhfngbTyG9BzLneaCdMyWEM12iA82m+TwLhXCg
-        N6mN6ttY+/ZGrTlERIdOKdV/xfcDAAD//wMA9OTj90gAAAA=
+      string: '{"success":false,"error-codes":["missing-input-response"],"messages":[]}'
     headers:
       CF-RAY:
-      - 855f08928cf505eb-IAD
+      - 85882f8b1c5e3b3e-IAD
       Connection:
       - keep-alive
       Content-Encoding:
@@ -31,7 +29,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 15 Feb 2024 16:47:34 GMT
+      - Tue, 20 Feb 2024 16:39:27 GMT
       Server:
       - cloudflare
       Transfer-Encoding:
