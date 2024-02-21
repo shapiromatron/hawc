@@ -18,42 +18,7 @@
   {% include "common/helptext_popup_js.html" %}
   <script type="text/javascript">
     $(window).ready(function() {
-      $("body").on("htmx:afterSwap", function(evt) {
-        var targetHTML = evt.detail.target; // the HTML element that is being replaced
-        var newHTML = evt.detail.elt; // the new HTML element from our HTMX response
-        var workflowForm = $(newHTML).hasClass("workflow-edit-row")
-          ? newHTML
-          : $(newHTML)
-          .children(".workflow-edit-row")
-          .first();
-        if ($(workflowForm).length) {
-            // if the form exists..
-          if ($(targetHTML).hasClass("workflow-edit-row")) {
-                // if both source and target are a form (failed update/create), maintain scroll attr between elements
-            $(workflowForm).attr("scrolltop", $(targetHTML).attr("scrolltop"));
-          } else {
-                // otherwise, set scroll attr to current scroll position so we can return later
-            $(workflowForm).attr("scrolltop", $("body,html").scrollTop());
-          }
-          $("body,html").animate({scrollTop: $(workflowForm).offset().top - 20}, 400); // now animate a scroll to the form
-        } else {
-            // if the form is being replaced by a read row, then scroll back to OG position
-          if (
-            $(newHTML).hasClass("workflow-row") &&
-            $(targetHTML).hasClass("workflow-edit-row")
-          ) {
-            $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 400);
-          }
-        }
-      });
-      $("body").on("htmx:afterRequest", function(evt) {
-        // this handles unique case of successful row deletion; need to do it after request, not after swap
-        var targetHTML = evt.detail.target;
-        var newHTML = evt.detail.elt;
-        if ($(newHTML).attr("id") == "workflow-conf-delete" && evt.detail.successful) {
-          $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 800);
-        }
-      });
+      window.app.HAWCUtils.addScrollHTMX("workflow-edit-row", "workflow-row", "workflow-conf-delete");
     });
   </script>
 {% endblock %}

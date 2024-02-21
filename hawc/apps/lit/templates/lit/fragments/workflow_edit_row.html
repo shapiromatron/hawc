@@ -62,7 +62,7 @@
             <button class="btn btn-light"
                     id="workflow-cancel"
                     type='button'
-                    onclick="delRow($(this).closest('.workflow-edit-row'))"
+                    onclick="window.app.HAWCUtils.delRow($(this).closest('.workflow-edit-row'))"
                     style="width: 10rem; height: 2rem;">
               Cancel
             </button>
@@ -72,11 +72,4 @@
       {% include "common/helptext_popup_js.html" %}
     </div>
   {% endif %}
-  <script>
-    function delRow(elt) {
-      var scrollVal = $(elt).attr('scrolltop');
-      elt.remove()
-      $('body,html').animate({scrollTop: scrollVal}, 400);
-    }
-  </script>
 </div>
