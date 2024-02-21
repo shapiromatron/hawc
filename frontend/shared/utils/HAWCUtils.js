@@ -349,7 +349,7 @@ class HAWCUtils {
 
     static delRow(elt, hide = false) {
         var scrollVal = $(elt).attr("scrolltop");
-        hide ? $(elt).addClass('hidden') : elt.remove();
+        hide ? $(elt).addClass("hidden") : elt.remove();
         $("body,html").animate({scrollTop: scrollVal}, 400);
     }
 
@@ -362,12 +362,14 @@ class HAWCUtils {
                 : $(newHTML)
                       .children("." + edit_class)
                       .first();
-            if ($(editElement).length && !$(editElement).hasClass('hidden')) {
+            if ($(editElement).length && !$(editElement).hasClass("hidden")) {
                 // if the form exists..
                 if ($(targetHTML).hasClass(edit_class)) {
                     // if both source and target are a form (failed update/create), maintain scroll attr between elements
                     // if source doesn't have a scollTop attr, then set it to current scroll value
-                    var currentScrollTop = $(targetHTML).attr("scrolltop") ? $(targetHTML).attr("scrolltop") : $("body,html").scrollTop();
+                    var currentScrollTop = $(targetHTML).attr("scrolltop")
+                        ? $(targetHTML).attr("scrolltop")
+                        : $("body,html").scrollTop();
                     $(editElement).attr("scrolltop", currentScrollTop);
                 } else {
                     // otherwise, set scroll attr to current scroll position so we can return later
@@ -376,7 +378,11 @@ class HAWCUtils {
                 $("body,html").animate({scrollTop: $(editElement).offset().top - 20}, 400); // now animate a scroll to the form
             } else {
                 // if the form is being replaced by a read row, then scroll back to OG position
-                if ($(newHTML).hasClass(detail_class) && $(targetHTML).hasClass(edit_class) && !$(newHTML).hasClass('clone')) {
+                if (
+                    $(newHTML).hasClass(detail_class) &&
+                    $(targetHTML).hasClass(edit_class) &&
+                    !$(newHTML).hasClass("clone")
+                ) {
                     $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 400);
                 }
             }
