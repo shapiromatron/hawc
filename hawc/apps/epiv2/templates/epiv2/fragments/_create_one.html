@@ -1,7 +1,8 @@
-<tr id={{id}} hx-target="this" >
+<tr hx-target="this" class="{% if not text %} hidden {% endif %} epiv2-edit-row {{class}}">
   {% if text %}
     <td colspan="100%">
       <p class="text-center mb-0">No {{text}} to display. Click "Add Row" to create one.</p>
     </td>
   {% endif %}
 </tr>
+
