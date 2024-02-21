@@ -274,10 +274,10 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
         if "dtxsid" in request.data:
             dtxsid_probe = request.data["dtxsid"]
             try:
-                DSSTox.objects.get_or_create(dtxsid=dtxsid_probe)
-            except ValueError:
+                DSSTox.objects.get(dtxsid=dtxsid_probe)
+            except DSSTox.DoesNotExist:
                 raise ValidationError(
-                    f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
+                    f"dtxsid '{dtxsid_probe}' does not exist and could not be imported. Please build this DTXISD in the user interface or DSSTox API."
                 )
 
     @transaction.atomic
@@ -401,7 +401,8 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 if not post_initial_create:
                     existing_result_afs_for_type = models.ResultAdjustmentFactor.objects.filter(
-                        result=self.get_object(), included_in_final_model=is_included
+                        result=self.get_object(),
+                        included_in_final_model=is_included,
                     )
 
                     for existing_result_af in existing_result_afs_for_type:
