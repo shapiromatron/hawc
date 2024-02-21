@@ -347,13 +347,13 @@ class HAWCUtils {
             });
     }
 
-    static delRow(elt) {
+    static delRow(elt, hide = false) {
         var scrollVal = $(elt).attr("scrolltop");
-        elt.remove();
+        hide ? $(elt).addClass('hidden') : elt.remove();
         $("body,html").animate({scrollTop: scrollVal}, 400);
     }
 
-    static addScrollHTMX(edit_class, detail_class, del_button_id) {
+    static addScrollHTMX(edit_class, detail_class, del_button_id = null) {
         $("body").on("htmx:afterSwap", function(evt) {
             var targetHTML = evt.detail.target; // the HTML element that is being replaced
             var newHTML = evt.detail.elt; // the new HTML element from our HTMX response
@@ -362,11 +362,13 @@ class HAWCUtils {
                 : $(newHTML)
                       .children("." + edit_class)
                       .first();
-            if ($(editElement).length) {
+            if ($(editElement).length && !$(editElement).hasClass('hidden')) {
                 // if the form exists..
                 if ($(targetHTML).hasClass(edit_class)) {
                     // if both source and target are a form (failed update/create), maintain scroll attr between elements
-                    $(editElement).attr("scrolltop", $(targetHTML).attr("scrolltop"));
+                    // if source doesn't have a scollTop attr, then set it to current scroll value
+                    var currentScrollTop = $(targetHTML).attr("scrolltop") ? $(targetHTML).attr("scrolltop") : $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", currentScrollTop);
                 } else {
                     // otherwise, set scroll attr to current scroll position so we can return later
                     $(editElement).attr("scrolltop", $("body,html").scrollTop());
@@ -374,19 +376,21 @@ class HAWCUtils {
                 $("body,html").animate({scrollTop: $(editElement).offset().top - 20}, 400); // now animate a scroll to the form
             } else {
                 // if the form is being replaced by a read row, then scroll back to OG position
-                if ($(newHTML).hasClass(detail_class) && $(targetHTML).hasClass(edit_class)) {
+                if ($(newHTML).hasClass(detail_class) && $(targetHTML).hasClass(edit_class) && !$(newHTML).hasClass('clone')) {
                     $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 400);
                 }
             }
         });
-        $("body").on("htmx:afterRequest", function(evt) {
-            // this handles unique case of successful row deletion; need to do it after request, not after swap
-            var targetHTML = evt.detail.target;
-            var newHTML = evt.detail.elt;
-            if ($(newHTML).attr("id") == del_button_id && evt.detail.successful) {
-                $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 800);
-            }
-        });
+        if (del_button_id) {
+            $("body").on("htmx:afterRequest", function(evt) {
+                // this handles unique case of successful row deletion; need to do it after request, not after swap
+                var targetHTML = evt.detail.target;
+                var newHTML = evt.detail.elt;
+                if ($(newHTML).attr("id") == del_button_id && evt.detail.successful) {
+                    $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 800);
+                }
+            });
+        }
     }
 }
 export default HAWCUtils;
