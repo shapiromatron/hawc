@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 
 class MissingData extends Component {
@@ -45,12 +46,7 @@ class DataStatusIndicator extends Component {
                 </button>
             );
         } else {
-            component = (
-                <div className="alert alert-danger" role="alert">
-                    <i className="fa fa-close"></i>&nbsp;No dataset selected; please edit
-                    settings...
-                </div>
-            );
+            component = <Alert message="No dataset selected; please edit settings..." />;
         }
         return <div className="float-right">{component}</div>;
     }

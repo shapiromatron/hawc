@@ -15,7 +15,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2023.2"
+__version__ = "2024.1"
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
@@ -75,5 +75,22 @@ class HawcClient(BaseClient):
         """
         return self.session.set_authentication_token(token, login)
 
-    def interactive(self, headless: bool = True) -> InteractiveHawcClient:
-        return InteractiveHawcClient(client=self, headless=headless)
+    def interactive(self, headless: bool = True, timeout: float = 60) -> InteractiveHawcClient:
+        """Generate an interactive client to download images from HAWC.
+
+        This returns a async context manager of the interactive client; you'll also need to
+        set the login=True method when authenticating to start a web-session.
+
+        Args:
+            headless (bool, default True): Run browser in headless mode.
+            timeout (float, default 60): Maximum page timeout, in seconds.
+
+        Example:
+
+            client = HawcClient("https://hawc.com")
+            client.set_authentication_token(my_api_token, login=True)
+            async with client.interactive() as iclient:
+                await iclient.download_visual(123456, "filename.png")
+
+        """
+        return InteractiveHawcClient(client=self, headless=headless, timeout=timeout)
