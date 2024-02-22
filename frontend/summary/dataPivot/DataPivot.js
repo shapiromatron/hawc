@@ -10,8 +10,8 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
-import ColumnSelectManager from "./components/ColumnNameSelect";
 import {handleVisualError} from "../summary/common";
+import ColumnSelectManager from "./components/ColumnNameSelect";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
