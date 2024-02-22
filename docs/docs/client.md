@@ -58,6 +58,15 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### [2024-1](https://pypi.org/project/hawc-client/2024.1/) (February 2024)
+
+* Add new interactive client for downloading visual and data pivots images
+* Updated study evaluation/risk of bias APIs
+* Add APIs to modify EffectTags, commonly used in animal and epi models
+* Add APIs to modify epiv2 models
+* Add APIs to modify Visuals and Data Pivots
+* Add APIs to modify Assessments, Assessment Values, and Assessment Details
+
 #### [2023-2](https://pypi.org/project/hawc-client/2023.2/) (April 2023)
 
 * Add new `login` parameter to `client.set_authentication_token`, and returns  boolean instead of a dict.

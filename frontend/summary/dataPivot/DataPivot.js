@@ -11,6 +11,7 @@ import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
 import ColumnSelectManager from "./components/ColumnNameSelect";
+import {handleVisualError} from "../summary/common";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
@@ -43,12 +44,7 @@ class DataPivot {
     }
 
     static get_object(pk, callback) {
-        const url = `/summary/api/data_pivot/${pk}/`,
-            handleError = err => {
-                console.error(err);
-                alert(`An error occurred; if the error continues please contact us.`);
-                throw "Server error";
-            };
+        const url = `/summary/api/data_pivot/${pk}/`;
 
         fetch(url, h.fetchGet)
             .then(d => d.json())
@@ -62,9 +58,9 @@ class DataPivot {
                             callback(dp);
                         }
                     })
-                    .catch(err => handleError(err));
+                    .catch(err => handleVisualError(err, null));
             })
-            .catch(err => handleError(err));
+            .catch(err => handleVisualError(err, null));
     }
 
     static displayAsModal(id) {
@@ -83,12 +79,6 @@ class DataPivot {
     }
 
     static displayEditView(data_url, settings, options) {
-        const handleError = err => {
-            console.error(err);
-            alert(`An error occurred; if the error continues please contact us.`);
-            throw "Server error";
-        };
-
         fetch(data_url, h.fetchGet)
             .then(d => d.text())
             .then(data => d3.tsvParse(data))
@@ -107,7 +97,7 @@ class DataPivot {
                     return true;
                 });
             })
-            .catch(err => handleError(err));
+            .catch(err => handleVisualError(err, null));
     }
 
     static default_plot_settings() {
@@ -212,15 +202,19 @@ class DataPivot {
         this.$div.fadeIn();
     }
 
-    build_data_pivot_vis(div, editable) {
-        delete this.plot;
-        editable = editable || false;
-        this.plot = new DataPivotVisualization(
-            _.cloneDeep(this.raw_data),
-            this.settings,
-            div,
-            editable
-        );
+    build_data_pivot_vis($div, editable) {
+        try {
+            delete this.plot;
+            editable = editable || false;
+            this.plot = new DataPivotVisualization(
+                _.cloneDeep(this.raw_data),
+                this.settings,
+                $div,
+                editable
+            );
+        } catch (err) {
+            handleVisualError(err, $div);
+        }
     }
 
     build_data_table() {
