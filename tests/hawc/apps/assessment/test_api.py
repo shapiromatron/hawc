@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment import constants
+from hawc.apps.assessment.models import DSSTox
 
 from ..test_utils import get_client
 
@@ -106,6 +107,29 @@ class TestDssToxViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
+
+    @pytest.mark.vcr
+    def test_create_dtxsid(self):
+        data = {"dtxsid": "DTXSID1020190"}
+        client = APIClient()
+        url = reverse("assessment:api:dsstox-list")
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 201
+        created = DSSTox.objects.get(dtxsid=resp.json()["dtxsid"])
+        assert (
+            resp.json()["content"]["preferredName"] == created.content["preferredName"]
+        )
+
+    @pytest.mark.vcr
+    def test_existing_dtxsid(self):
+        data = {"dtxsid": "DTXSID6026296"}
+        client = APIClient()
+        url = reverse("assessment:api:dsstox-list")
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+        assert resp.json()["dtxsid"] == [
+            "DSSTox substance with this DSSTox substance identifier (DTXSID) already exists."
+        ]
 
 
 @pytest.mark.django_db
