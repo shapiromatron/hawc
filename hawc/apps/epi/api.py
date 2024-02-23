@@ -401,8 +401,7 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 if not post_initial_create:
                     existing_result_afs_for_type = models.ResultAdjustmentFactor.objects.filter(
-                        result=self.get_object(),
-                        included_in_final_model=is_included,
+                        result=self.get_object(), included_in_final_model=is_included
                     )
 
                     for existing_result_af in existing_result_afs_for_type:

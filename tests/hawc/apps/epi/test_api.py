@@ -299,10 +299,7 @@ class TestStudyPopulationApi:
 class TestCriteriaApi:
     def test_permissions(self, db_keys):
         url = reverse("epi:api:criteria-list")
-        data = {
-            "assessment": db_keys.assessment_working,
-            "description": "test criteria",
-        }
+        data = {"assessment": db_keys.assessment_working, "description": "test criteria"}
         generic_perm_tester(url, data)
 
     def test_bad_requests(self, db_keys):
@@ -338,10 +335,7 @@ class TestCriteriaApi:
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
-        base_data = {
-            "assessment": db_keys.assessment_working,
-            "description": "initial description",
-        }
+        base_data = {"assessment": db_keys.assessment_working, "description": "initial description"}
 
         just_created_criteria_id = None
 
@@ -1297,30 +1291,15 @@ class TestGroupNumericalDescriptionsApi:
             {
                 "desc": "if numeric, mean/variance/lower/upper types must be valid ids",
                 "expected_code": 400,
-                "expected_keys": {
-                    "mean_type",
-                    "variance_type",
-                    "lower_type",
-                    "upper_type",
-                },
+                "expected_keys": {"mean_type", "variance_type", "lower_type", "upper_type"},
                 "data": self.get_upload_data(
-                    {
-                        "mean_type": 999,
-                        "variance_type": 999,
-                        "lower_type": 999,
-                        "upper_type": 999,
-                    },
+                    {"mean_type": 999, "variance_type": 999, "lower_type": 999, "upper_type": 999},
                 ),
             },
             {
                 "desc": "if strings, mean/variance/lower/upper types must be valid values",
                 "expected_code": 400,
-                "expected_keys": {
-                    "mean_type",
-                    "variance_type",
-                    "lower_type",
-                    "upper_type",
-                },
+                "expected_keys": {"mean_type", "variance_type", "lower_type", "upper_type"},
                 "data": self.get_upload_data(
                     {
                         "mean_type": "bad value 1",

@@ -13,8 +13,7 @@ def pubmed_connect():
 
 
 @pytest.mark.skipif(
-    PUBMED_API_KEY is None,
-    reason="Test environment requires $PUBMED_API_KEY to be set.",
+    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
 )
 @pytest.mark.vcr
 @pytest.mark.usefixtures("pubmed_connect")
@@ -68,8 +67,7 @@ class TestPubMedSearch:
 
 
 @pytest.mark.skipif(
-    PUBMED_API_KEY is None,
-    reason="Test environment requires $PUBMED_API_KEY to be set.",
+    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
 )
 @pytest.mark.vcr
 @pytest.mark.usefixtures("pubmed_connect")
