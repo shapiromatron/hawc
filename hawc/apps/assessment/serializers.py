@@ -23,7 +23,10 @@ class DSSToxSerializer(serializers.ModelSerializer):
         read_only_fields = ["content"]
 
     def create(self, validated_data):
-        substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
+        try:
+            substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
+        except ValueError:
+            raise serializers.ValidationError(f"Invalid DTXSID: {validated_data["dtxsid"]}")
         return models.DSSTox.objects.create(dtxsid=substance.dtxsid, content=substance.content)
 
 

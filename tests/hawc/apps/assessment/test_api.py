@@ -129,6 +129,15 @@ class TestDssToxViewSet:
             "DSSTox substance with this DSSTox substance identifier (DTXSID) already exists."
         ]
 
+    @pytest.mark.vcr
+    def test_invalid_dtxsid(self):
+        data = {"dtxsid": "dtxsid0000000000"}
+        client = APIClient()
+        url = reverse("assessment:api:dsstox-list")
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+        assert resp.json() == ["Invalid DTXSID: dtxsid0000000000"]
+
 
 @pytest.mark.django_db
 class TestAssessmentDetail:
