@@ -6,18 +6,25 @@ from django.core.exceptions import ObjectDoesNotExist
 from plotly.subplots import make_subplots
 from rest_framework import serializers
 
+from hawc.services.epa.dsstox import DssSubstance
+
 from ..common.serializers import FlexibleChoiceField
 from ..study.models import Study
 from . import constants, models
 
 
 class DSSToxSerializer(serializers.ModelSerializer):
-    dashboard_url = serializers.URLField(source="get_dashboard_url")
-    img_url = serializers.URLField(source="get_img_url")
+    dashboard_url = serializers.URLField(source="get_dashboard_url", read_only=True)
+    img_url = serializers.URLField(source="get_img_url", read_only=True)
 
     class Meta:
         model = models.DSSTox
         fields = "__all__"
+        read_only_fields = ["content"]
+
+    def create(self, validated_data):
+        substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
+        return models.DSSTox.objects.create(dtxsid=substance.dtxsid, content=substance.content)
 
 
 class AssessmentSerializer(serializers.ModelSerializer):

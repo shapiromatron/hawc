@@ -24,7 +24,11 @@ from ..constants import AssessmentViewSetPermissions
 from ..filterset import EffectTagFilterSet, GlobalChemicalsFilterSet
 from .filters import InAssessmentFilter
 from .helper import get_assessment_from_query
-from .permissions import AssessmentLevelPermissions, CleanupFieldsPermissions, user_can_edit_object
+from .permissions import (
+    AssessmentLevelPermissions,
+    CleanupFieldsPermissions,
+    user_can_edit_object,
+)
 
 # all http methods except PUT
 METHODS_NO_PUT = ["get", "post", "patch", "delete", "head", "options", "trace"]
@@ -67,7 +71,10 @@ class CleanupFieldsBaseViewSet(
         cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
         TERM_FIELD_MAPPING = getattr(self.model, "TERM_FIELD_MAPPING", {})
         return Response(
-            {"text_cleanup_fields": cleanup_fields, "term_field_mapping": TERM_FIELD_MAPPING}
+            {
+                "text_cleanup_fields": cleanup_fields,
+                "term_field_mapping": TERM_FIELD_MAPPING,
+            }
         )
 
     def partial_update_bulk(self, request, *args, **kwargs):
@@ -233,13 +240,18 @@ class AssessmentRootedTagTreeViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     @action(
-        detail=True, methods=("patch",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+        detail=True,
+        methods=("patch",),
+        action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT,
     )
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.moveWithinSiblingsToIndex(request.data["newIndex"])
         create_object_log(
-            "Updated (moved)", instance, instance.get_assessment().id, self.request.user.id
+            "Updated (moved)",
+            instance,
+            instance.get_assessment().id,
+            self.request.user.id,
         )
         return Response({"status": True})
 
@@ -564,7 +576,7 @@ class DatasetViewSet(AssessmentViewSet):
         )
 
 
-class DssToxViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+class DssToxViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.CreateModelMixin):
     permission_classes = (permissions.AllowAny,)
     lookup_value_regex = RE_DTXSID
     model = models.DSSTox

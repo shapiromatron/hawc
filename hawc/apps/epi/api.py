@@ -269,7 +269,7 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
 
     def handle_dtxsid(self, request):
         """
-        Calls get_or_create for DSSTox to ensure that the appropriate DXXTox exists in the db.
+        Calls get for DSSTox to ensure that the appropriate DXXTox exists in the db.
         """
         if "dtxsid" in request.data:
             dtxsid_probe = request.data["dtxsid"]
