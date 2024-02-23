@@ -116,9 +116,7 @@ class TestDssToxViewSet:
         resp = client.post(url, data, format="json")
         assert resp.status_code == 201
         created = DSSTox.objects.get(dtxsid=resp.json()["dtxsid"])
-        assert (
-            resp.json()["content"]["preferredName"] == created.content["preferredName"]
-        )
+        assert resp.json()["content"]["preferredName"] == created.content["preferredName"]
 
     @pytest.mark.vcr
     def test_existing_dtxsid(self):

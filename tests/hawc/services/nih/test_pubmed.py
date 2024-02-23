@@ -168,7 +168,7 @@ class TestPubMedFetch:
                 "Board on Life Sciences",
                 "Division on Earth and Life Studies",
                 "The National Academies of Sciences, Engineering, and Medicine",
-            ],            
+            ],
         }
         assert obj == expected
 
