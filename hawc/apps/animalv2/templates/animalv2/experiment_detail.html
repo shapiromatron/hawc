@@ -64,5 +64,21 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Endpoints</h3>
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '40,20,20,20' %}
+            {% bs4_thead 'Name,System,Organ,Effect' %}
+            <tbody>
+                {% for object in object.v2_endpoints.all %}
+                    {% include "animalv2/fragments/_endpoint_row.html" %}
+                {% empty %}
+                    {% bs4_fullrow 'No endpoints available.' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}

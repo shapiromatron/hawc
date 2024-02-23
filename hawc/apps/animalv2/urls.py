@@ -131,4 +131,35 @@ urlpatterns = [
         {"action": "delete"},
         name="treatment-delete",
     ),
+    # endpoint
+    path(
+        "endpoint/<int:pk>/create/",
+        views.EndpointViewSet.as_view(),
+        {"action": "create"},
+        name="endpoint-create",
+    ),
+    path(
+        "endpoint/<int:pk>/",
+        views.EndpointViewSet.as_view(),
+        {"action": "read"},
+        name="endpoint-detail",
+    ),
+    path(
+        "endpoint/<int:pk>/clone/",
+        views.EndpointViewSet.as_view(),
+        {"action": "clone"},
+        name="endpoint-clone",
+    ),
+    path(
+        "endpoint/<int:pk>/update/",
+        views.EndpointViewSet.as_view(),
+        {"action": "update"},
+        name="endpoint-update",
+    ),
+    path(
+        "endpoint/<int:pk>/delete/",
+        views.EndpointViewSet.as_view(),
+        {"action": "delete"},
+        name="endpoint-delete",
+    ),
 ]

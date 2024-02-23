@@ -73,6 +73,27 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'animalv2:endpoint-create' object.pk as endpoint_create %}
+        {% include "animalv2/fragments/_create_card.html" with title="Endpoints" hx_get=endpoint_create hx_target="#endpoint-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '30,20,20,20,10' %}
+            {% bs4_thead 'Name,System,Organ,Effect,Edit' %}
+            <tbody>
+                {% if object.v2_endpoints.all %}
+                    {% for object in object.v2_endpoints.all %}
+                        {% include "animalv2/fragments/_endpoint_row.html" %}
+                    {% endfor %}
+                    {% include "animalv2/fragments/_create_one.html" with id="endpoint-empty-row" text="" %}
+                {% else %}
+                    {% include "animalv2/fragments/_create_one.html" with id="endpoint-empty-row" text="endpoints" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="animalv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>

@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
-from ..assessment.models import DSSTox
+from ..assessment.models import DSSTox, EffectTag
 from ..vocab.models import Term
 from . import constants, managers
 
@@ -277,6 +277,7 @@ class Endpoint(models.Model):
     experiment = models.ForeignKey(
         Experiment, on_delete=models.CASCADE, related_name="v2_endpoints"
     )
+    name = models.CharField(max_length=128, blank=True, help_text="Endpoint/Adverse Outcome")
     name_term = models.ForeignKey(
         Term,
         related_name="v2_endpoint_name_terms",
@@ -334,6 +335,7 @@ class Endpoint(models.Model):
     effect_modifier_reference = models.CharField(max_length=128, blank=True)
     effect_modifier_anatomical = models.CharField(max_length=128, blank=True)
     effect_modifier_location = models.CharField(max_length=128, blank=True)
+    additional_tags = models.ManyToManyField(EffectTag, blank=True)
     comments = models.TextField(blank=True, help_text="TODO")
 
     def __str__(self):
@@ -344,6 +346,32 @@ class Endpoint(models.Model):
 
     def get_study(self):
         return self.experiment.get_study()
+
+    @property
+    def resolved_name(self):
+        return self.name_term.name if self.name_term else self.name
+
+    @property
+    def resolved_system(self):
+        return self.system_term.name if self.system_term else self.system
+
+    @property
+    def resolved_organ(self):
+        return self.organ_term.name if self.organ_term else self.organ
+
+    @property
+    def resolved_effect(self):
+        return self.effect_term.name if self.effect_term else self.effect
+
+    @property
+    def resolved_effect_subtype(self):
+        return self.effect_subtype_term.name if self.effect_subtype_term else self.effect_subtype
+
+    def clone(self):
+        self.id = None
+        self.name = f"{self.name} (2)"
+        self.save()
+        return self
 
 
 class ObservationTime(models.Model):

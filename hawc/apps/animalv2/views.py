@@ -275,3 +275,10 @@ class TreatmentViewSet(ExperimentChildViewSet):
     formset_form_class = forms.DoseGroupForm
     formset_model_class = models.DoseGroup
     formset_helper_class = forms.DoseGroupFormHelper
+
+
+# Endpoint viewset
+class EndpointViewSet(ExperimentChildViewSet):
+    model = models.Endpoint
+    form_class = forms.EndpointForm
+    detail_fragment = "animalv2/fragments/_endpoint_row.html"

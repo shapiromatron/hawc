@@ -162,3 +162,38 @@ class DoseGroupFormHelper(BaseFormHelper):
         super().__init__(*args, **kwargs)
         self.form_tag = False
         self.template = "bootstrap4/table_inline_formset.html"
+
+
+class EndpointForm(forms.ModelForm):
+    class Meta:
+        model = models.Endpoint
+        # TODO - for now, we've got EHV fields for controlled vocab in the model, but we'll hide them from UI
+        exclude = (
+            "experiment",
+            "name_term",
+            "system_term",
+            "organ_term",
+            "effect_term",
+            "effect_subtype_term",
+        )
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+        # TODO - if/when we add EHV terms back in, we'll need this kind of filtering...
+        # self.fields["name_term"].queryset = Term.objects.filter(type=VocabularyTermType.endpoint_name)
+        # self.fields["system_term"].queryset = Term.objects.filter(type=VocabularyTermType.system)
+        # self.fields["organ_term"].queryset = Term.objects.filter(type=VocabularyTermType.organ)
+        # self.fields["effect_term"].queryset = Term.objects.filter(type=VocabularyTermType.effect)
+        # self.fields["effect_subtype_term"].queryset = Term.objects.filter(type=VocabularyTermType.effect_subtype)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("system", 4, "col-md-3")
+        helper.add_row("effect_modifier_timing", 4, "col-md-3")
+
+        return helper
