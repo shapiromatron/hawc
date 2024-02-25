@@ -1,5 +1,5 @@
 import django_filters as df
-from django.db.models import Q
+from django.db.models import F, Q
 from django.forms.widgets import CheckboxInput
 from django_filters.constants import EMPTY_VALUES
 
@@ -12,9 +12,14 @@ from . import constants, models
 class TaskOrderingFilter(ArrowOrderingFilter):
     def filter(self, qs, value):
         if value in EMPTY_VALUES:
-            return qs
-
-        ordering = [self.get_ordering_value(param) for param in value] + ["study_id", "type"]
+            return qs.order_by("study_id", "type")
+        ordering = [
+            F("due_date").desc(nulls_last=True)
+            if param == "-due_date"
+            else self.get_ordering_value(param)
+            for param in value
+        ]
+        ordering.extend(["study_id", "type"])
         return qs.order_by(*ordering)
 
 
@@ -68,20 +73,21 @@ class TaskFilterSet(BaseFilterSet):
         choices=StudyTypeChoices.choices,
         label="Data type",
         help_text="Data type for full-text extraction",
-        empty_label="All study data types",
+        empty_label="- Data Type -",
     )
     owner = df.ModelChoiceFilter(
         method="filter_owner",
         label="Assigned user",
         queryset=HAWCUser.objects.none(),
         help_text="Includes all tasks for a study where a user has at least one assignment",
-        empty_label="All Users",
+        empty_label="- User -",
     )
     order_by = TaskOrderingFilter(
         label="Ordering",
         fields=(
             ("study__short_citation", "citation"),
             ("study__created", "study_created"),
+            ("due_date", "due_date"),
         ),
         initial="citation",
     )
@@ -89,9 +95,14 @@ class TaskFilterSet(BaseFilterSet):
     class Meta:
         model = models.Task
         form = InlineFilterForm
-        fields = ["study_name", "data_type", "owner", "order_by"]
+        fields = ["study_name", "type", "status", "data_type", "owner", "order_by"]
         main_field = "study_name"
-        appended_fields = ["order_by", "data_type", "owner"]
+        appended_fields = ["data_type", "type", "owner", "status", "order_by"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.base_filters["status"].extra["empty_label"] = "- Status -"
+        self.base_filters["type"].extra["empty_label"] = "- Type -"
 
     def filter_owner(self, queryset, name, value):
         return queryset.filter(

@@ -1,11 +1,22 @@
-<td id="task-{{object.id}}" hx-target="this" hx-swap="outerHTML">
-  <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
-    {% crispy form %}
-    <div class="d-block container">
-      <div class="float-right">
-        <button class="btn btn-sm btn-info" hx-post="{% url 'mgmt:task-update' object.pk %}">Save</button>
-        <button class="btn btn-sm btn-light" hx-get="{% url 'mgmt:task-detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
+<tr hx-target="this" hx-swap="outerHTML">
+  <td>
+    <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
+    <br>
+    <b>Date created: </b>
+    <span>{{ object.study.created|date:"SHORT_DATE_FORMAT" }}</span>
+  </td>
+  <td>
+    <span>{{ object.get_type_display|capfirst }}</span>
+  </td>
+  <td colspan="3">
+    <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
+      {% crispy form %}
+      <div class="d-block container">
+        <div class="float-right">
+          <button class="btn btn-sm btn-info" hx-post="{% url 'mgmt:task-update' object.pk %}">Save</button>
+          <button class="btn btn-sm btn-light" hx-get="{% url 'mgmt:task-detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
+        </div>
       </div>
-    </div>
-  </form>
-</td>
+    </form>
+  </td>
+</tr>
