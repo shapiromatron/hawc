@@ -13,39 +13,58 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">21813142</PMID><DateCompleted><Year>2012</Year><Month>07</Month><Day>27</Day></DateCompleted><DateRevised><Year>2019</Year><Month>12</Month><Day>10</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1578-8989</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>138</Volume><Issue>4</Issue><PubDate><Year>2012</Year><Month>Feb</Month><Day>25</Day></PubDate></JournalIssue><Title>Medicina
+        clinica</Title><ISOAbbreviation>Med Clin (Barc)</ISOAbbreviation></Journal><ArticleTitle>[Hospitalized
+        surgical patients comanaged by Internal Medicine specialists].</ArticleTitle><Pagination><StartPage>177</StartPage><EndPage>179</EndPage><MedlinePgn>177-9</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1016/j.medcli.2011.05.017</ELocationID><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Montero Ruiz</LastName><ForeName>Eduardo</ForeName><Initials>E</Initials></Author><Author
+        ValidYN="Y"><LastName>G&#xf3;mez Ayerbe</LastName><ForeName>Cristina</ForeName><Initials>C</Initials></Author><Author
+        ValidYN="Y"><LastName>P&#xe9;rez S&#xe1;nchez</LastName><ForeName>Laura</ForeName><Initials>L</Initials></Author><Author
+        ValidYN="Y"><LastName>Melgar Molero</LastName><ForeName>Virginia</ForeName><Initials>V</Initials></Author></AuthorList><Language>spa</Language><PublicationTypeList><PublicationType
+        UI="D016422">Letter</PublicationType></PublicationTypeList><VernacularTitle>Pacientes
+        quir&#xfa;rgicos ingresados: asistencia compartida con Medicina Interna.</VernacularTitle><ArticleDate
+        DateType="Electronic"><Year>2011</Year><Month>08</Month><Day>02</Day></ArticleDate></Article><MedlineJournalInfo><Country>Spain</Country><MedlineTA>Med
+        Clin (Barc)</MedlineTA><NlmUniqueID>0376377</NlmUniqueID><ISSNLinking>0025-7753</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000368" MajorTopicYN="N">Aged</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000369" MajorTopicYN="N">Aged, 80 and over</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003430" MajorTopicYN="N">Cross-Sectional Studies</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006305" MajorTopicYN="N">Health Status Indicators</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006760" MajorTopicYN="N">Hospitalization</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007388" MajorTopicYN="N">Internal Medicine</DescriptorName><QualifierName
+        UI="Q000458" MajorTopicYN="Y">organization &amp; administration</QualifierName><QualifierName
+        UI="Q000592" MajorTopicYN="N">standards</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008875" MajorTopicYN="N">Middle Aged</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010348" MajorTopicYN="N">Patient Care Team</DescriptorName><QualifierName
+        UI="Q000458" MajorTopicYN="Y">organization &amp; administration</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D017064" MajorTopicYN="N">Process Assessment, Health Care</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013503" MajorTopicYN="N">Surgery Department, Hospital</DescriptorName><QualifierName
+        UI="Q000458" MajorTopicYN="Y">organization &amp; administration</QualifierName><QualifierName
+        UI="Q000592" MajorTopicYN="N">standards</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2011</Year><Month>5</Month><Day>6</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="revised"><Year>2011</Year><Month>5</Month><Day>24</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2011</Year><Month>5</Month><Day>24</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2011</Year><Month>8</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2011</Year><Month>8</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2012</Year><Month>7</Month><Day>28</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">21813142</ArticleId><ArticleId IdType="doi">10.1016/j.medcli.2011.05.017</ArticleId><ArticleId
+        IdType="pii">S0025-7753(11)00684-1</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -60,20 +79,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:39 GMT
+      - Tue, 20 Feb 2024 16:42:38 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD70A4A27193A50000545052E6D7CF.1.1.m_3
+      - 322C45D975EA9B45000031E1AFA96E1E.1.1.m_3
       NCBI-SID:
-      - 25862976F08C1108_CD7BSID
+      - 3994B6C270118CEB_6192SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=25862976F08C1108_CD7BSID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:40 GMT
+      - ncbi_sid=3994B6C270118CEB_6192SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:39 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -81,9 +100,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '7'
-      X-Test-Test:
-      - test42
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

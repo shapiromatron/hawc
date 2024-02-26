@@ -13,17 +13,15 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://challenges.cloudflare.com/turnstile/v0/siteverify
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAxzKywnAIBQEwF72rA3YSvAguhEhfngbTyG9BzLneaCdMyWEM12iA82m+TwLhXCg
-        N6mN6ttY+/ZGrTlERIdOKdV/xfcDAAD//wMA9OTj90gAAAA=
+      string: '{"success":false,"error-codes":["missing-input-response"],"messages":[]}'
     headers:
       CF-RAY:
-      - 79fe1c52d9a1b06f-ATL
+      - 85882f8b1c5e3b3e-IAD
       Connection:
       - keep-alive
       Content-Encoding:
@@ -31,7 +29,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 27 Feb 2023 04:17:24 GMT
+      - Tue, 20 Feb 2024 16:39:27 GMT
       Server:
       - cloudflare
       Transfer-Encoding:
@@ -39,7 +37,7 @@ interactions:
       Vary:
       - Accept-Encoding
       alt-svc:
-      - h3=":443"; ma=86400, h3-29=":443"; ma=86400
+      - h3=":443"; ma=86400
     status:
       code: 200
       message: OK

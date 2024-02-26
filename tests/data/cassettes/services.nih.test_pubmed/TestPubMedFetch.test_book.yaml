@@ -13,46 +13,78 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedBookArticle><BookDocument><PMID Version="1">26468569</PMID><ArticleIdList><ArticleId
+        IdType="bookaccession">NBK321423</ArticleId><ArticleId IdType="doi">10.17226/21775</ArticleId></ArticleIdList><Book><Publisher><PublisherName>National
+        Academies Press (US)</PublisherName><PublisherLocation>Washington (DC)</PublisherLocation></Publisher><BookTitle
+        book="nap21775">Application of Modern Toxicology Approaches for Predicting
+        Acute Toxicity for Chemical Defense</BookTitle><PubDate><Year>2015</Year><Month>09</Month><Day>01</Day></PubDate><AuthorList
+        Type="authors" CompleteYN="Y"><Author ValidYN="Y"><CollectiveName>Committee
+        on Predictive-Toxicology Approaches for Military Assessments of
+
+        Acute Exposures</CollectiveName></Author><Author ValidYN="Y"><CollectiveName>Committee
+        on Toxicology</CollectiveName></Author><Author ValidYN="Y"><CollectiveName>Board
+        on Environmental Studies and Toxicology</CollectiveName></Author><Author ValidYN="Y"><CollectiveName>Board
+        on Life Sciences</CollectiveName></Author><Author ValidYN="Y"><CollectiveName>Division
+        on Earth and Life Studies</CollectiveName></Author><Author ValidYN="Y"><CollectiveName>The
+        National Academies of Sciences, Engineering, and Medicine</CollectiveName></Author></AuthorList><Isbn>9780309376662</Isbn><ELocationID
+        EIdType="doi">10.17226/21775</ELocationID></Book><Language>eng</Language><PublicationType
+        UI="D016454">Review</PublicationType><Abstract><AbstractText>The US Department
+        of Defense (DOD) is faced with an overwhelming task in evaluating chemicals
+        that could potentially pose a threat to its deployed personnel. There are
+        over 84,000 registered chemicals, and testing them with traditional toxicity-testing
+        methods is not feasible in terms of time or money. In recent years, there
+        has been a concerted effort to develop new approaches to toxicity testing
+        that incorporate advances in systems biology, toxicogenomics, bioinformatics,
+        and computational toxicology. Given the advances, DOD asked the National Research
+        Council to determine how DOD could use modern approaches for predicting chemical
+        toxicity in its efforts to prevent debilitating, acute exposures to deployed
+        personnel. This report provides an overall conceptual approach that DOD could
+        use to develop a predictive toxicology system. <i>Application of Modern Toxicology
+        Approaches for Predicting Acute Toxicity for Chemical Defense</i> reviews
+        the current state of computational and high-throughput approaches for predicting
+        acute toxicity and suggests methods for integrating data and predictions.
+        This report concludes with lessons learned from current high-throughput screening
+        programs and suggests some initial steps for DOD investment.</AbstractText><CopyrightInformation>Copyright
+        2015 by the National Academy of Sciences. All rights reserved.</CopyrightInformation></Abstract><Sections><Section><SectionTitle
+        book="nap21775" part="sec_000001a">The National Academies of Sciences, Engineering,
+        and Medicine</SectionTitle></Section><Section><SectionTitle book="nap21775"
+        part="sec_000002">COMMITTEE ON PREDICTIVE-TOXICOLOGY APPROACHES FOR MILITARY
+        ASSESSMENTS OF ACUTE EXPOSURES</SectionTitle></Section><Section><SectionTitle
+        book="nap21775" part="sec_000006">COMMITTEE ON TOXICOLOGY</SectionTitle></Section><Section><SectionTitle
+        book="nap21775" part="sec_000009">BOARD ON ENVIRONMENTAL STUDIES AND TOXICOLOGY</SectionTitle></Section><Section><SectionTitle
+        book="nap21775" part="sec_000012">OTHER REPORTS OF THE BOARD ON ENVIRONMENTAL
+        STUDIES AND TOXICOLOGY</SectionTitle></Section><Section><SectionTitle book="nap21775"
+        part="sec_000013">BOARD ON LIFE SCIENCES</SectionTitle></Section><Section><SectionTitle
+        book="nap21775" part="sec_000016">Preface</SectionTitle></Section><Section><SectionTitle
+        book="nap21775" part="Sum1">Summary</SectionTitle></Section><Section><LocationLabel
+        Type="chapter">1</LocationLabel><SectionTitle book="nap21775" part="ch1">Introduction</SectionTitle></Section><Section><LocationLabel
+        Type="chapter">2</LocationLabel><SectionTitle book="nap21775" part="ch2">Conceptual
+        Framework and Prioritization Strategy</SectionTitle></Section><Section><LocationLabel
+        Type="chapter">3</LocationLabel><SectionTitle book="nap21775" part="ch3">Nontesting
+        Approaches Relevant to Prediction of Acute Toxicity and Potency</SectionTitle></Section><Section><LocationLabel
+        Type="chapter">4</LocationLabel><SectionTitle book="nap21775" part="ch4">Assays
+        for Predicting Acute Toxicity</SectionTitle></Section><Section><LocationLabel
+        Type="chapter">5</LocationLabel><SectionTitle book="nap21775" part="ch5">Integration
+        and Decision-Making for Predictive Toxicology</SectionTitle></Section><Section><LocationLabel
+        Type="chapter">6</LocationLabel><SectionTitle book="nap21775" part="ch6">Lessons
+        Learned and Next Steps</SectionTitle></Section><Section><SectionTitle book="nap21775"
+        part="app-group_appA">APPENDIXES</SectionTitle></Section></Sections></BookDocument><PubmedBookData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2015</Year><Month>9</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2015</Year><Month>9</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2015</Year><Month>9</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">26468569</ArticleId></ArticleIdList></PubmedBookData></PubmedBookArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -67,20 +99,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:39 GMT
+      - Tue, 20 Feb 2024 16:42:39 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C87C9180FAEF50000293793736C0D.1.1.m_3
+      - 322C45D975EA9B45000032E1B23F693F.1.1.m_3
       NCBI-SID:
-      - B1AD1F9BA6F13860_E907SID
+      - 8E875AFDA5EA6405_8E96SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=B1AD1F9BA6F13860_E907SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:40 GMT
+      - ncbi_sid=8E875AFDA5EA6405_8E96SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:39 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -88,9 +120,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '6'
-      X-Test-Test:
-      - test42
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
