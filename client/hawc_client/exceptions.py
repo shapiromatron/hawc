@@ -16,3 +16,7 @@ class HawcClientException(HawcException):
 
 class HawcServerException(HawcException):
     """An exception occurred on the HAWC server."""
+
+
+class ContentUnavailable(HawcClientException):
+    """Expected content is not available."""

@@ -13,16 +13,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>3</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -37,20 +34,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:20 GMT
+      - Tue, 20 Feb 2024 16:38:57 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD37B0AD53D83500003906C9D623EB.1.1.m_1
+      - D0BD9F070703C0B5000033D7EA671C30.1.1.m_1
       NCBI-SID:
-      - 923593F5961E145B_0196SID
+      - 87A71114DEFD6CE8_6C4CSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=923593F5961E145B_0196SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:21 GMT
+      - ncbi_sid=87A71114DEFD6CE8_6C4CSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:57 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -59,8 +56,6 @@ interactions:
       - '3'
       X-RateLimit-Remaining:
       - '2'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -84,23 +79,26 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
-        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
-        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
-        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
-        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
-        YDoEIYnNIcYW5mYWWB0TSaZjKAkVM0NzA5JDxj/Azj/IRh9I4XUaJS4zNTKyMDI0pdBpQMo9yD80
-        AFnA0c8Fn9Mx8xuJEWxpYEyN2MWawUkJQXMDM+wOoV7wocmj5m9wfrYJLE0tqkQuBLDlZQWgoQoa
-        1Cl7NKGGEV1uatroYziSC1h8o1UlAAAAAP//AwBh2EuNCAcAAA==
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>3</Count><RetMax>3</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>30473488</Id>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>\"burritos\"[All
+        Fields] AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields]
+        AND \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -115,20 +113,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:20 GMT
+      - Tue, 20 Feb 2024 16:38:58 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD37B0AD53D83500004606CA2657DB.1.1.m_1
+      - D0BD9F070703C0B500004DD7EF6FB251.1.1.m_1
       NCBI-SID:
-      - 12547C365775E4C8_3593SID
+      - C35487E3517C3724_C3EASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=12547C365775E4C8_3593SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:21 GMT
+      - ncbi_sid=C35487E3517C3724_C3EASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:58 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -137,8 +135,6 @@ interactions:
       - '10'
       X-RateLimit-Remaining:
       - '9'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -162,107 +158,226 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        AAAA//8DAABdhmDwUAAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">30473488</PMID><DateCompleted><Year>2020</Year><Month>01</Month><Day>14</Day></DateCompleted><DateRevised><Year>2020</Year><Month>01</Month><Day>14</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Print">2212-2672</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>119</Volume><Issue>3</Issue><PubDate><Year>2019</Year><Month>Mar</Month></PubDate></JournalIssue><Title>Journal
+        of the Academy of Nutrition and Dietetics</Title><ISOAbbreviation>J Acad Nutr
+        Diet</ISOAbbreviation></Journal><ArticleTitle>School Lunch Entr&#xe9;es Before
+        and After Implementation of the Healthy, Hunger-Free Kids Act of 2010.</ArticleTitle><Pagination><StartPage>490</StartPage><EndPage>499</EndPage><MedlinePgn>490-499</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1016/j.jand.2018.09.009</ELocationID><ELocationID
+        EIdType="pii" ValidYN="Y">S2212-2672(18)31975-0</ELocationID><Abstract><AbstractText
+        Label="BACKGROUND">The Healthy, Hunger-Free Kids Act (HHFKA) 2010 updated
+        standards to increase the nutritional quality of school meals. Studies of
+        HHFKA outcomes have focused primarily on fruit and vegetables, nutrient quality
+        of whole meals, and plate waste.</AbstractText><AbstractText Label="OBJECTIVE">To
+        examine changes in school lunch entr&#xe9;e nutrient quality and student selections
+        after HHFKA implementation.</AbstractText><AbstractText Label="DESIGN">Descriptive,
+        longitudinal study analyzing 1.7 million student-selected lunch entr&#xe9;es
+        in eight entr&#xe9;e categories.</AbstractText><AbstractText Label="PARTICIPANTS/SETTING">Three
+        middle schools and three high schools in an urban school district in Washington
+        State, from January 2011 to January 2014 (16 months before and 15 months after
+        HHFKA implementation).</AbstractText><AbstractText Label="MAIN OUTCOME MEASURES">Nutritional
+        quality of each entr&#xe9;e category was assessed by analyzing mean adequacy
+        ratio, energy density, and energy per serving. Selection was determined by
+        analyzing number of entr&#xe9;es in each category selected by students.</AbstractText><AbstractText
+        Label="STATISTICAL ANALYSES PERFORMED">Comparison of indices of pre- and postimplementation
+        nutritional quality using a combination of Wilcoxon two-sample test with t
+        approximation and a two-sided alternative t test assuming equal variances
+        and t test assuming unequal variances using Satterthwaite approximation. Quantity
+        of entr&#xe9;e categories selected was also determined by Satterthwaite approximation.</AbstractText><AbstractText
+        Label="RESULTS">After implementation, there was significant improvement in
+        mean adequacy ratio and energy per serving overall for all entr&#xe9;es combined.
+        There were significant improvements in both mean adequacy ratio and energy
+        per serving for salads, burritos, and pizza in middle schools and for hot
+        sandwiches and burritos in high schools. For energy density, middle schools
+        also had significant decreases for casseroles and salads, with no significant
+        changes found in high schools. The variety of entr&#xe9;es decreased by 44%,
+        and there were significant changes in the proportions of entr&#xe9;es selected
+        from specific food categories.</AbstractText><AbstractText Label="CONCLUSION">Nutritional
+        quality of lunch entr&#xe9;es, variety of entr&#xe9;es available, and student
+        entr&#xe9;e selections changed after implementation of HHFKA policy in one
+        urban school district in Washington State.</AbstractText><CopyrightInformation>Copyright
+        &#xa9; 2019 Academy of Nutrition and Dietetics. Published by Elsevier Inc.
+        All rights reserved.</CopyrightInformation></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Mozer</LastName><ForeName>Lauren</ForeName><Initials>L</Initials></Author><Author
+        ValidYN="Y"><LastName>Johnson</LastName><ForeName>Donna B</ForeName><Initials>DB</Initials></Author><Author
+        ValidYN="Y"><LastName>Podrabsky</LastName><ForeName>Mary</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Rocha</LastName><ForeName>Anita</ForeName><Initials>A</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2018</Year><Month>11</Month><Day>23</Day></ArticleDate></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>J Acad Nutr Diet</MedlineTA><NlmUniqueID>101573920</NlmUniqueID><ISSNLinking>2212-2672</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000293" MajorTopicYN="N">Adolescent</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002648" MajorTopicYN="N">Child</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005518" MajorTopicYN="N">Food Preferences</DescriptorName><QualifierName
+        UI="Q000523" MajorTopicYN="N">psychology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005522" MajorTopicYN="N">Food Services</DescriptorName><QualifierName
+        UI="Q000331" MajorTopicYN="N">legislation &amp; jurisprudence</QualifierName><QualifierName
+        UI="Q000706" MajorTopicYN="Y">statistics &amp; numerical data</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006284" MajorTopicYN="N">Health Plan Implementation</DescriptorName><QualifierName
+        UI="Q000706" MajorTopicYN="Y">statistics &amp; numerical data</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006815" MajorTopicYN="N">Hunger</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008137" MajorTopicYN="N">Longitudinal Studies</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D062409" MajorTopicYN="N">Lunch</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018673" MajorTopicYN="N">Nutrition Policy</DescriptorName><QualifierName
+        UI="Q000331" MajorTopicYN="Y">legislation &amp; jurisprudence</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009753" MajorTopicYN="N">Nutritive Value</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012572" MajorTopicYN="N">School Health Services</DescriptorName><QualifierName
+        UI="Q000331" MajorTopicYN="Y">legislation &amp; jurisprudence</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013334" MajorTopicYN="N">Students</DescriptorName><QualifierName UI="Q000523"
+        MajorTopicYN="N">psychology</QualifierName><QualifierName UI="Q000706" MajorTopicYN="Y">statistics
+        &amp; numerical data</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014861" MajorTopicYN="N" Type="Geographic">Washington</DescriptorName></MeshHeading></MeshHeadingList><KeywordList
+        Owner="NOTNLM"><Keyword MajorTopicYN="N">Food industry</Keyword><Keyword MajorTopicYN="N">Healthy,
+        Hunger-Free Kids Act</Keyword><Keyword MajorTopicYN="N">Lunch entr&#xe9;es</Keyword><Keyword
+        MajorTopicYN="N">School nutrition</Keyword><Keyword MajorTopicYN="N">Student
+        selection</Keyword></KeywordList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2017</Year><Month>9</Month><Day>20</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2018</Year><Month>9</Month><Day>12</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2018</Year><Month>11</Month><Day>27</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2020</Year><Month>1</Month><Day>15</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2018</Year><Month>11</Month><Day>27</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">30473488</ArticleId><ArticleId IdType="doi">10.1016/j.jand.2018.09.009</ArticleId><ArticleId
+        IdType="pii">S2212-2672(18)31975-0</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">16865905</PMID><DateCompleted><Year>2006</Year><Month>08</Month><Day>21</Day></DateCompleted><DateRevised><Year>2023</Year><Month>03</Month><Day>07</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0362-028X</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>69</Volume><Issue>7</Issue><PubDate><Year>2006</Year><Month>Jul</Month></PubDate></JournalIssue><Title>Journal
+        of food protection</Title><ISOAbbreviation>J Food Prot</ISOAbbreviation></Journal><ArticleTitle>Mysterious
+        outbreaks of gastrointestinal illness associated with burritos supplied through
+        school lunch programs.</ArticleTitle><Pagination><StartPage>1690</StartPage><EndPage>1698</EndPage><MedlinePgn>1690-8</MedlinePgn></Pagination><Abstract><AbstractText>From
+        October 1997 through March 1998, three outbreaks of gastrointestinal illness
+        among school children were linked to company A burritos. In September 1998,
+        a similar outbreak occurred in three North Dakota schools following lunches
+        that included company B burritos. We conducted an investigation to determine
+        the source of the North Dakota outbreak, identify other similar outbreaks,
+        characterize the illness, and gather evidence about the cause. The investigation
+        included epidemiologic analyses, environmental investigation, and laboratory
+        analyses. In North Dakota, a case was defined as nausea, headache, abdominal
+        cramps, vomiting, or diarrhea after lunch on 16 September 1998. Case definitions
+        varied in the other states. In North Dakota, 504 students and staff met the
+        case definition; predominant symptoms were nausea (72%), headache (68%), abdominal
+        cramps (54%), vomiting (24%), and diarrhea (16%). The median incubation period
+        was 35 min and median duration of illness was 6 h. Eating burritos was significantly
+        associated with illness (odds ratio, 2.6; 95% confidence interval, 1.6 to
+        4.2). We identified 16 outbreaks that occurred in seven states from October
+        1997 through October 1998, affecting more than 1,900 people who ate burritos
+        from two unrelated companies. All tortillas were made with wheat flour, but
+        the fillings differed, suggesting that tortillas contained the etiologic agent.
+        Results of plant inspections, tracebacks, and laboratory investigations were
+        unrevealing. More than two million pounds of burritos were recalled or held
+        from distribution. The short incubation period, symptoms, and laboratory data
+        suggest that these outbreaks were caused by an undetected toxin or an agent
+        not previously associated with this clinical syndrome. Mass psychogenic illness
+        is an unlikely explanation because of the large number of sites where outbreaks
+        occurred over a short period, the similarity of symptoms, the common food
+        item, the lack of publicity, and the link to only two companies. A network
+        of laboratories that can rapidly identify known and screen for unknown agents
+        in food is a critical part of protecting the food supply against natural and
+        intentional contamination.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Steinberg</LastName><ForeName>Ellen B</ForeName><Initials>EB</Initials><AffiliationInfo><Affiliation>Foodborne
+        and Diarrheal Diseases Branch, Division of Bacterial and Mycotic Diseases,
+        National Center for Infectious Diseases, Centers for Disease Control and Prevention,
+        Atlanta, Georgia 30333, USA. ellen.stevenson@choa.org</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Henderson</LastName><ForeName>Alden</ForeName><Initials>A</Initials></Author><Author
+        ValidYN="Y"><LastName>Karpati</LastName><ForeName>Adam</ForeName><Initials>A</Initials></Author><Author
+        ValidYN="Y"><LastName>Hoekstra</LastName><ForeName>Mike</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Marano</LastName><ForeName>Nina</ForeName><Initials>N</Initials></Author><Author
+        ValidYN="Y"><LastName>Souza</LastName><ForeName>Jennifer Martinelli</ForeName><Initials>JM</Initials></Author><Author
+        ValidYN="Y"><LastName>Simons</LastName><ForeName>Meg</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Kruger</LastName><ForeName>Kirby</ForeName><Initials>K</Initials></Author><Author
+        ValidYN="Y"><LastName>Giroux</LastName><ForeName>Jennifer</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Rogers</LastName><ForeName>Helen S</ForeName><Initials>HS</Initials></Author><Author
+        ValidYN="Y"><LastName>Hoffman</LastName><ForeName>Michael K</ForeName><Initials>MK</Initials></Author><Author
+        ValidYN="Y"><LastName>Kadry</LastName><ForeName>Abdel-Razak M</ForeName><Initials>AR</Initials></Author><Author
+        ValidYN="Y"><LastName>Griffin</LastName><ForeName>Patricia M</ForeName><Initials>PM</Initials></Author><Author
+        ValidYN="Y"><CollectiveName>Burrito Working Group</CollectiveName></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>J Food Prot</MedlineTA><NlmUniqueID>7703944</NlmUniqueID><ISSNLinking>0362-028X</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D002648" MajorTopicYN="N">Child</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015331" MajorTopicYN="N">Cohort Studies</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004196" MajorTopicYN="N">Disease Outbreaks</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005506" MajorTopicYN="N">Food Contamination</DescriptorName><QualifierName
+        UI="Q000032" MajorTopicYN="Y">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005516" MajorTopicYN="N">Food Microbiology</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005522" MajorTopicYN="Y">Food Services</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005759" MajorTopicYN="N">Gastroenteritis</DescriptorName><QualifierName
+        UI="Q000453" MajorTopicYN="Y">epidemiology</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009658" MajorTopicYN="N" Type="Geographic">North Dakota</DescriptorName><QualifierName
+        UI="Q000453" MajorTopicYN="N">epidemiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016017" MajorTopicYN="N">Odds Ratio</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012189" MajorTopicYN="N">Retrospective Studies</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012574" MajorTopicYN="Y">Schools</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2006</Year><Month>7</Month><Day>27</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2006</Year><Month>8</Month><Day>22</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2006</Year><Month>7</Month><Day>27</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">16865905</ArticleId><ArticleId IdType="doi">10.4315/0362-028x-69.7.1690</ArticleId><ArticleId
+        IdType="pii">S0362-028X(22)07508-1</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">16410761</PMID><DateCompleted><Year>2006</Year><Month>01</Month><Day>26</Day></DateCompleted><DateRevised><Year>2009</Year><Month>11</Month><Day>19</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1545-861X</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>55</Volume><Issue>1</Issue><PubDate><Year>2006</Year><Month>Jan</Month><Day>13</Day></PubDate></JournalIssue><Title>MMWR.
+        Morbidity and mortality weekly report</Title><ISOAbbreviation>MMWR Morb Mortal
+        Wkly Rep</ISOAbbreviation></Journal><ArticleTitle>Multiple outbreaks of gastrointestinal
+        illness among school children associated with consumption of flour tortillas--Massachusetts,
+        2003-2004.</ArticleTitle><Pagination><StartPage>8</StartPage><EndPage>11</EndPage><MedlinePgn>8-11</MedlinePgn></Pagination><Abstract><AbstractText>Ten
+        outbreaks of gastrointestinal illness among school children at nine different
+        schools were reported during February 2003-May 2004 to the Massachusetts Department
+        of Public Health (MDPH). These outbreaks occurred among children who ate lunch
+        provided by the schools and were characterized by short incubation periods
+        and short durations of illness. The clinical and epidemiologic characteristics
+        of the outbreaks were similar to those of previously reported outbreaks of
+        vomiting associated with burritos served at multiple schools in the United
+        States in 1997-1998. Epidemiologic investigation of the 1997-1998 outbreaks
+        implicated burritos made with flour tortillas as the suspect vehicle; no etiologic
+        agent was identified, but symptoms suggested either a biotoxin or chemical
+        agent. This report describes epidemiologic and laboratory findings from three
+        of the 10 outbreaks in Massachusetts. Consumption of flour tortillas from
+        a single manufacturer was significantly associated with illness. Preliminary
+        results indicated elevated levels, relative to common industry practices,
+        of potassium bromate and calcium propionate in the implicated tortillas. School
+        officials should be aware of the need for rapid action during outbreaks with
+        short incubation periods and short durations and should notify local and state
+        health officials immediately to ensure rapid response and collection of epidemiologic
+        information, clinical specimens, and food samples.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><CollectiveName>Centers for Disease Control
+        and Prevention (CDC)</CollectiveName></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>MMWR Morb Mortal Wkly Rep</MedlineTA><NlmUniqueID>7802429</NlmUniqueID><ISSNLinking>0149-2195</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D001939" MajorTopicYN="N">Bread</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002648" MajorTopicYN="N">Child</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004196" MajorTopicYN="N">Disease Outbreaks</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005522" MajorTopicYN="Y">Food Services</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005517" MajorTopicYN="N">Foodborne Diseases</DescriptorName><QualifierName
+        UI="Q000453" MajorTopicYN="Y">epidemiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005767" MajorTopicYN="N">Gastrointestinal Diseases</DescriptorName><QualifierName
+        UI="Q000453" MajorTopicYN="Y">epidemiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008404" MajorTopicYN="N" Type="Geographic">Massachusetts</DescriptorName><QualifierName
+        UI="Q000453" MajorTopicYN="N">epidemiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012574" MajorTopicYN="Y">Schools</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2006</Year><Month>1</Month><Day>18</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2006</Year><Month>1</Month><Day>27</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2006</Year><Month>1</Month><Day>18</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">16410761</ArticleId><ArticleId IdType="pii">mm5501a3</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -277,20 +392,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:21 GMT
+      - Tue, 20 Feb 2024 16:38:58 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C9B7EFD92045500005702DC6C5FF7.1.1.m_3
+      - D0BD9F070703C0B5000038D7F52E606B.1.1.m_3
       NCBI-SID:
-      - C3EA4D2B3E41911C_1473SID
+      - BB05BB3315682558_C20DSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C3EA4D2B3E41911C_1473SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:21 GMT
+      - ncbi_sid=BB05BB3315682558_C20DSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:59 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -299,8 +414,6 @@ interactions:
       - '10'
       X-RateLimit-Remaining:
       - '8'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -324,16 +437,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>2</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -348,20 +458,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:21 GMT
+      - Tue, 20 Feb 2024 16:38:59 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C9B7EFD92045500004302DD0DBA7A.1.1.m_1
+      - 939B5F7AF237010500005BA43423F1B6.1.1.m_1
       NCBI-SID:
-      - C3A586A6EE2DC285_6663SID
+      - 169B726B517229C0_3080SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C3A586A6EE2DC285_6663SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:22 GMT
+      - ncbi_sid=169B726B517229C0_3080SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:00 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -369,9 +479,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -395,26 +503,31 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
-        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
-        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
-        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
-        BgAAAP//zFZNb4MwDL3vV+y4niAfhERCuU29ja7SDruuq7Rqk5iglbZ/v5AshREr1EClnQK2wM/P
-        sZ/PuVlrkJA3T4/W7N6qKqTSmZsw4NkxpMA5LoKSRApuLtPuXVsYJmjrvfUv+uVU14dj1QxitC6X
-        UGvSndNkZS3W6W4zEf5eW+P91+dH9brXD0XiHx3cLjaAA2QnBNI5ISBM5kKCYJ4ngpnDiiB5imam
-        3OhyWyTmiEKbgyyjVFKSzYRmjvW2fNr0DablY9DDfkMWWKVsieqCDY5hME8FDOSq9EVHMbZVqEwJ
-        hRsXySY8/rHdongm1CJzJJQTJBbGmJIcniMjBe5XEKpwvLWjmoi9opxPmMujEMdEGQORC0Xya4+h
-        gf+vTlpdLB5P+/q7L6aQJtp15m4ZDV/9/uzi/cN/8E+XsVWRBBzemGV0sAX/AAAA//8DALx6jBfD
-        CwAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>2</Count><RetMax>2</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation><Translation>
+        \    <From>gastrointestinal</From>     <To>\"gastrointestinal\"[All Fields]
+        OR \"gastrointestinally\"[All Fields] OR \"gastrointestine\"[All Fields]</To>
+        \   </Translation></TranslationSet><QueryTranslation>\"burritos\"[All Fields]
+        AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields] AND
+        \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])
+        AND (\"gastrointestinal\"[All Fields] OR \"gastrointestinally\"[All Fields]
+        OR \"gastrointestine\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -429,20 +542,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:21 GMT
+      - Tue, 20 Feb 2024 16:39:00 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B05B496D5C0850000361609F93F3B.1.1.m_1
+      - 939B5F7AF2370105000043A437A514DC.1.1.m_1
       NCBI-SID:
-      - 3D472C16DAA3C9F3_F2A8SID
+      - 4139ECC1B9A67F57_4A87SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3D472C16DAA3C9F3_F2A8SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:22 GMT
+      - ncbi_sid=4139ECC1B9A67F57_4A87SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:00 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -450,9 +563,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '7'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -476,16 +587,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>3</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -500,20 +608,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:21 GMT
+      - Tue, 20 Feb 2024 16:39:00 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C9B7EFD92045500004802DE1C7E57.1.1.m_1
+      - 939B5F7AF2370105000042A43C659EE4.1.1.m_1
       NCBI-SID:
-      - FEABA050FD17F4DA_83BESID
+      - 27D2C43049868921_B192SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=FEABA050FD17F4DA_83BESID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:22 GMT
+      - ncbi_sid=27D2C43049868921_B192SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:01 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -521,9 +629,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -547,23 +653,26 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
-        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
-        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
-        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
-        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
-        YDoEIYnNIcYW5mYWWB0TSaZjKAkVM0NzA5JDxj/Azj/IRh9I4XUaJS4zNTKyMDI0pdBpQMo9yD80
-        AFnA0c8Fn9Mx8xuJEWxpYEyN2MWawUkJQXMDM+wOoV7wocmj5m9wfrYJLE0tqkQuBLDlZQWgoQoa
-        1Cl7NKGGEV1uatroYziSC1h8o1UlAAAAAP//AwBh2EuNCAcAAA==
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>3</Count><RetMax>3</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>30473488</Id>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>\"burritos\"[All
+        Fields] AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields]
+        AND \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -578,20 +687,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:22 GMT
+      - Tue, 20 Feb 2024 16:39:01 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B05B496D5C08500003F160BFE1F61.1.1.m_1
+      - D0BD9F070703C0B500005ED80AFF9769.1.1.m_1
       NCBI-SID:
-      - C6E9001F363B629F_3B86SID
+      - 92ECC1224C8BC0BB_BB78SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C6E9001F363B629F_3B86SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:23 GMT
+      - ncbi_sid=92ECC1224C8BC0BB_BB78SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:02 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -599,9 +708,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -625,16 +732,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>2</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -649,20 +753,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:22 GMT
+      - Tue, 20 Feb 2024 16:39:02 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B05B496D5C08500005B160CC24D67.1.1.m_1
+      - D0BD9F070703C0B5000032D811B2C15E.1.1.m_1
       NCBI-SID:
-      - 63C856151F679919_D8BBSID
+      - 1FDB41B5C81B6EA8_5067SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=63C856151F679919_D8BBSID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:23 GMT
+      - ncbi_sid=1FDB41B5C81B6EA8_5067SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:03 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -670,9 +774,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -696,26 +798,31 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
-        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
-        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
-        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
-        BgAAAP//zFZNb4MwDL3vV+y4niAfhERCuU29ja7SDruuq7Rqk5iglbZ/v5AshREr1EClnQK2wM/P
-        sZ/PuVlrkJA3T4/W7N6qKqTSmZsw4NkxpMA5LoKSRApuLtPuXVsYJmjrvfUv+uVU14dj1QxitC6X
-        UGvSndNkZS3W6W4zEf5eW+P91+dH9brXD0XiHx3cLjaAA2QnBNI5ISBM5kKCYJ4ngpnDiiB5imam
-        3OhyWyTmiEKbgyyjVFKSzYRmjvW2fNr0DablY9DDfkMWWKVsieqCDY5hME8FDOSq9EVHMbZVqEwJ
-        hRsXySY8/rHdongm1CJzJJQTJBbGmJIcniMjBe5XEKpwvLWjmoi9opxPmMujEMdEGQORC0Xya4+h
-        gf+vTlpdLB5P+/q7L6aQJtp15m4ZDV/9/uzi/cN/8E+XsVWRBBzemGV0sAX/AAAA//8DALx6jBfD
-        CwAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>2</Count><RetMax>2</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation><Translation>
+        \    <From>gastrointestinal</From>     <To>\"gastrointestinal\"[All Fields]
+        OR \"gastrointestinally\"[All Fields] OR \"gastrointestine\"[All Fields]</To>
+        \   </Translation></TranslationSet><QueryTranslation>\"burritos\"[All Fields]
+        AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields] AND
+        \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])
+        AND (\"gastrointestinal\"[All Fields] OR \"gastrointestinally\"[All Fields]
+        OR \"gastrointestine\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -730,20 +837,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:22 GMT
+      - Tue, 20 Feb 2024 16:39:03 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C9B7EFD92045500005E02DF827FA7.1.1.m_1
+      - D0BD9F070703C0B500004DD819278E91.1.1.m_1
       NCBI-SID:
-      - 75C805B7282EDAD1_3E42SID
+      - B234523888109D5E_0574SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=75C805B7282EDAD1_3E42SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:23 GMT
+      - ncbi_sid=B234523888109D5E_0574SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:03 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -751,9 +858,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -777,16 +882,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>3</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -801,20 +903,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:23 GMT
+      - Tue, 20 Feb 2024 16:39:04 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C9B7EFD92045500003602E03CBE20.1.1.m_1
+      - 939B5F7AF2370105000028A44D4F7856.1.1.m_1
       NCBI-SID:
-      - AA54C95A46DF8626_FE02SID
+      - BFB68960AC49B8DB_E0A1SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=AA54C95A46DF8626_FE02SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:23 GMT
+      - ncbi_sid=BFB68960AC49B8DB_E0A1SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:04 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -822,9 +924,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -848,23 +948,26 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
-        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
-        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
-        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
-        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
-        YDoEIYnNIcYW5mYWWB0TSaZjKAkVM0NzA5JDxj/Azj/IRh9I4XUaJS4zNTKyMDI0pdBpQMo9yD80
-        AFnA0c8Fn9Mx8xuJEWxpYEyN2MWawUkJQXMDM+wOoV7wocmj5m9wfrYJLE0tqkQuBLDlZQWgoQoa
-        1Cl7NKGGEV1uatroYziSC1h8o1UlAAAAAP//AwBh2EuNCAcAAA==
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>3</Count><RetMax>3</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>30473488</Id>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>\"burritos\"[All
+        Fields] AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields]
+        AND \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -879,20 +982,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:23 GMT
+      - Tue, 20 Feb 2024 16:39:04 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B05B496D5C085000060160F1ED121.1.1.m_1
+      - 939B5F7AF2370105000050A4533CE20C.1.1.m_1
       NCBI-SID:
-      - E4F86FEEBF8F5121_5FCBSID
+      - 29A290D8E76EE8AF_B7BCSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=E4F86FEEBF8F5121_5FCBSID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:24 GMT
+      - ncbi_sid=29A290D8E76EE8AF_B7BCSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:05 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -900,9 +1003,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -926,16 +1027,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>2</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -950,20 +1048,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:24 GMT
+      - Tue, 20 Feb 2024 16:39:05 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C9B7EFD92045500002802E1152036.1.1.m_1
+      - 939B5F7AF2370105000032A459D39D51.1.1.m_1
       NCBI-SID:
-      - 04F41E15280BCA97_82F9SID
+      - 655FF43B28EA75F1_F1D4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=04F41E15280BCA97_82F9SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:24 GMT
+      - ncbi_sid=655FF43B28EA75F1_F1D4SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:06 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -971,9 +1069,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -997,26 +1093,31 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
-        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
-        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
-        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
-        BgAAAP//zFZNb4MwDL3vV+y4niAfhERCuU29ja7SDruuq7Rqk5iglbZ/v5AshREr1EClnQK2wM/P
-        sZ/PuVlrkJA3T4/W7N6qKqTSmZsw4NkxpMA5LoKSRApuLtPuXVsYJmjrvfUv+uVU14dj1QxitC6X
-        UGvSndNkZS3W6W4zEf5eW+P91+dH9brXD0XiHx3cLjaAA2QnBNI5ISBM5kKCYJ4ngpnDiiB5imam
-        3OhyWyTmiEKbgyyjVFKSzYRmjvW2fNr0DablY9DDfkMWWKVsieqCDY5hME8FDOSq9EVHMbZVqEwJ
-        hRsXySY8/rHdongm1CJzJJQTJBbGmJIcniMjBe5XEKpwvLWjmoi9opxPmMujEMdEGQORC0Xya4+h
-        gf+vTlpdLB5P+/q7L6aQJtp15m4ZDV/9/uzi/cN/8E+XsVWRBBzemGV0sAX/AAAA//8DALx6jBfD
-        CwAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>2</Count><RetMax>2</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation><Translation>
+        \    <From>gastrointestinal</From>     <To>\"gastrointestinal\"[All Fields]
+        OR \"gastrointestinally\"[All Fields] OR \"gastrointestine\"[All Fields]</To>
+        \   </Translation></TranslationSet><QueryTranslation>\"burritos\"[All Fields]
+        AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields] AND
+        \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])
+        AND (\"gastrointestinal\"[All Fields] OR \"gastrointestinally\"[All Fields]
+        OR \"gastrointestine\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -1031,20 +1132,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:23 GMT
+      - Tue, 20 Feb 2024 16:39:06 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B05B496D5C0850000301610BE8943.1.1.m_1
+      - D0BD9F070703C0B5000059D83396E4EB.1.1.m_1
       NCBI-SID:
-      - 34FB4B1C56FE9FC2_0C80SID
+      - 652D48D111EDF1C3_7BB2SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=34FB4B1C56FE9FC2_0C80SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:24 GMT
+      - ncbi_sid=652D48D111EDF1C3_7BB2SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:06 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1052,9 +1153,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1078,16 +1177,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7YRh/C4LLRR1MCAAAA//8DACAZX0DgAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>3</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -1102,20 +1198,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:24 GMT
+      - Tue, 20 Feb 2024 16:39:06 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B05B496D5C08500005B1611D13A26.1.1.m_1
+      - D0BD9F070703C0B500002ED83A7E3F47.1.1.m_1
       NCBI-SID:
-      - 1D70F50C29EE78D3_70DESID
+      - 61C9B65AFC3F41C0_AE78SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=1D70F50C29EE78D3_70DESID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:25 GMT
+      - ncbi_sid=61C9B65AFC3F41C0_AE78SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:07 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1123,9 +1219,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1149,23 +1243,26 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzttGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnbGB
-        ibmxiYWFjT6QAxEyNLMwM7U0MEURMjE0MDczhAiBSIgRAAAAAP//sgkpSswrzkksAQZgcCrQEUh8
-        OwUQsHErys+1yynNS86w0QezIcIh+XZKYFGlaN/UYA+FkNSi3OJYBf8gBZiwY06Ogltmak5KcayN
-        PlA5WJs+sgW4bCtOzsjPz8GwDiJcjGkhXALJSiQJYpwCAAAA//9C4aGHBDDgk7PtwM4AWgqSVYBx
-        7JJKi4oyS/KL0ewASUE8BBKyQ0gCfQUWAUtCYt7QDJYGwIKuFQU5+Smpdn42+jAmxLkIu7G4A2vo
-        YDoEIYnNIcYW5mYWWB0TSaZjKAkVM0NzA5JDxj/Azj/IRh9I4XUaJS4zNTKyMDI0pdBpQMo9yD80
-        AFnA0c8Fn9Mx8xuJEWxpYEyN2MWawUkJQXMDM+wOoV7wocmj5m9wfrYJLE0tqkQuBLDlZQWgoQoa
-        1Cl7NKGGEV1uatroYziSC1h8o1UlAAAAAP//AwBh2EuNCAcAAA==
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>3</Count><RetMax>3</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>30473488</Id>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>\"burritos\"[All
+        Fields] AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields]
+        AND \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -1180,20 +1277,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:24 GMT
+      - Tue, 20 Feb 2024 16:39:07 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD37B0AD53D83500005D06CECB300C.1.1.m_1
+      - 939B5F7AF2370105000048A46AE975FF.1.1.m_1
       NCBI-SID:
-      - 50913868DBE935C7_811BSID
+      - DE24D1C88A1A2075_2539SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=50913868DBE935C7_811BSID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:25 GMT
+      - ncbi_sid=DE24D1C88A1A2075_2539SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:08 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1201,9 +1298,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1227,16 +1322,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7IRh/C4LLRR1MCAAAA//8DAGEC0y7gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>2</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -1251,20 +1343,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:25 GMT
+      - Tue, 20 Feb 2024 16:39:08 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD37B0AD53D83500005006CFAA7806.1.1.m_1
+      - 939B5F7AF2370105000024A4726DA203.1.1.m_1
       NCBI-SID:
-      - 575A8DFA32F47832_D584SID
+      - DC04C3F3C5A03931_8976SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=575A8DFA32F47832_D584SID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:25 GMT
+      - ncbi_sid=DC04C3F3C5A03931_8976SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:09 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1272,9 +1364,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1298,26 +1388,31 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGxG8h3zi/NK7EzstGHMGyCUkt8EytAAlAWSCS4JLGoxM4ALAZhc9l4pvhkFgMZnECWnaGZ
-        hZmppYGpjT6QAxMyMTQwNzOECIFIiHoAAAAA//+yCSlKzCvOSSwBhlZwKtBGJL6dAgjYuBXl59ql
-        JxaXFOVn5pWkFpdk5iXm2OiDhSEqQvLtlFIy00FSZakKxZXFJam5StG+qcEeCiGpRbnFsQr+QQoa
-        CCVK0Y45OQpumak5KUA5Rz8XBSWYJiQJTZAuLOYi6wWpQHcaigobfaDjwI7UR/YZLm/mlOYlZ8D8
-        BgAAAP//zFZNb4MwDL3vV+y4niAfhERCuU29ja7SDruuq7Rqk5iglbZ/v5AshREr1EClnQK2wM/P
-        sZ/PuVlrkJA3T4/W7N6qKqTSmZsw4NkxpMA5LoKSRApuLtPuXVsYJmjrvfUv+uVU14dj1QxitC6X
-        UGvSndNkZS3W6W4zEf5eW+P91+dH9brXD0XiHx3cLjaAA2QnBNI5ISBM5kKCYJ4ngpnDiiB5imam
-        3OhyWyTmiEKbgyyjVFKSzYRmjvW2fNr0DablY9DDfkMWWKVsieqCDY5hME8FDOSq9EVHMbZVqEwJ
-        hRsXySY8/rHdongm1CJzJJQTJBbGmJIcniMjBe5XEKpwvLWjmoi9opxPmMujEMdEGQORC0Xya4+h
-        gf+vTlpdLB5P+/q7L6aQJtp15m4ZDV/9/uzi/cN/8E+XsVWRBBzemGV0sAX/AAAA//8DALx6jBfD
-        CwAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>2</Count><RetMax>2</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>16865905</Id>\n\t<Id>16410761</Id>\n</IdList>\n<TranslationSet><Translation>
+        \    <From>school</From>     <To>\"educational status\"[MeSH Terms] OR (\"educational\"[All
+        Fields] AND \"status\"[All Fields]) OR \"educational status\"[All Fields]
+        OR \"schooling\"[All Fields] OR \"education\"[MeSH Terms] OR \"education\"[All
+        Fields] OR \"school's\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH
+        Terms] OR \"schools\"[All Fields] OR \"school\"[All Fields]</To>    </Translation><Translation>
+        \    <From>lunch</From>     <To>\"lunch\"[MeSH Terms] OR \"lunch\"[All Fields]
+        OR \"lunches\"[All Fields] OR \"lunching\"[All Fields]</To>    </Translation><Translation>
+        \    <From>gastrointestinal</From>     <To>\"gastrointestinal\"[All Fields]
+        OR \"gastrointestinally\"[All Fields] OR \"gastrointestine\"[All Fields]</To>
+        \   </Translation></TranslationSet><QueryTranslation>\"burritos\"[All Fields]
+        AND (\"educational status\"[MeSH Terms] OR (\"educational\"[All Fields] AND
+        \"status\"[All Fields]) OR \"educational status\"[All Fields] OR \"schooling\"[All
+        Fields] OR \"education\"[MeSH Terms] OR \"education\"[All Fields] OR \"school
+        s\"[All Fields] OR \"schooled\"[All Fields] OR \"schools\"[MeSH Terms] OR
+        \"schools\"[All Fields] OR \"school\"[All Fields]) AND (\"lunch\"[MeSH Terms]
+        OR \"lunch\"[All Fields] OR \"lunches\"[All Fields] OR \"lunching\"[All Fields])
+        AND (\"gastrointestinal\"[All Fields] OR \"gastrointestinally\"[All Fields]
+        OR \"gastrointestine\"[All Fields])</QueryTranslation>\n\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -1332,20 +1427,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 19 Jul 2022 20:30:25 GMT
+      - Tue, 20 Feb 2024 16:39:09 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD37B0AD53D83500005D06D035F1D8.1.1.m_1
+      - 322C45D975EA9B45000047DCA4FB9600.1.1.m_1
       NCBI-SID:
-      - 02177A817D82039A_775CSID
+      - CEC4899F7EECB3AE_AF6DSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=02177A817D82039A_775CSID; domain=.nih.gov; path=/; expires=Wed, 19
-        Jul 2023 20:30:26 GMT
+      - ncbi_sid=CEC4899F7EECB3AE_AF6DSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:10 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1353,9 +1448,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
