@@ -197,3 +197,36 @@ class EndpointForm(forms.ModelForm):
         helper.add_row("effect_modifier_timing", 4, "col-md-3")
 
         return helper
+
+
+class ObservationTimeForm(forms.ModelForm):
+    class Meta:
+        model = models.ObservationTime
+        exclude = ()
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        # TODO - right now with name/name_term, the associated dropdown for picking an endpoint shows
+        # an empty string for endpoints with a name_term but no freetext name.
+        #
+        # if we go back to using EHV name_term etc., we need to address this.
+        #
+        # but also, maybe the ObservationTime UI should be more like the Treatment/DoseGroup formset
+        # style, as opposed to separate entry as in the mockup? If we do it that way, then we don't
+        # need a UI widget for picking the endpoint at all, b/c it's implicit in the nested structure.
+        #
+        # in short, right now it's a minor issue, but not worth fixing til we make some other decisions.
+        if self.instance.id is not None:
+            # editing an existing timepoint
+            self.fields["endpoint"].queryset = self.instance.endpoint.experiment.v2_endpoints.all()
+        else:
+            # creating a new one
+            self.fields["endpoint"].queryset = experiment.v2_endpoints.all()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+
+        return helper

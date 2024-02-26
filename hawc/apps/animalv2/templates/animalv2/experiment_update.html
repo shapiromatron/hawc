@@ -94,6 +94,27 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'animalv2:observationtime-create' object.pk as observationtime_create %}
+        {% include "animalv2/fragments/_create_card.html" with title="Endpoint Timepoints" hx_get=observationtime_create hx_target="#observationtime-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '30,30,30,10' %}
+            {% bs4_thead 'Endpoint,Time,Units,Edit' %}
+            <tbody>
+                {% if object.v2_timepoints %}
+                    {% for object in object.v2_timepoints %}
+                        {% include "animalv2/fragments/_observationtime_row.html" %}
+                    {% endfor %}
+                    {% include "animalv2/fragments/_create_one.html" with id="observationtime-empty-row" text="" %}
+                {% else %}
+                    {% include "animalv2/fragments/_create_one.html" with id="observationtime-empty-row" text="endpoint timepoints" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="animalv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>

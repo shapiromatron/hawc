@@ -162,4 +162,35 @@ urlpatterns = [
         {"action": "delete"},
         name="endpoint-delete",
     ),
+    # observationtime
+    path(
+        "observationtime/<int:pk>/create/",
+        views.ObservationTimeViewSet.as_view(),
+        {"action": "create"},
+        name="observationtime-create",
+    ),
+    path(
+        "observationtime/<int:pk>/",
+        views.ObservationTimeViewSet.as_view(),
+        {"action": "read"},
+        name="observationtime-detail",
+    ),
+    path(
+        "observationtime/<int:pk>/clone/",
+        views.ObservationTimeViewSet.as_view(),
+        {"action": "clone"},
+        name="observationtime-clone",
+    ),
+    path(
+        "observationtime/<int:pk>/update/",
+        views.ObservationTimeViewSet.as_view(),
+        {"action": "update"},
+        name="observationtime-update",
+    ),
+    path(
+        "observationtime/<int:pk>/delete/",
+        views.ObservationTimeViewSet.as_view(),
+        {"action": "delete"},
+        name="observationtime-delete",
+    ),
 ]

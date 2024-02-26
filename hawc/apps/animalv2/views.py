@@ -282,3 +282,10 @@ class EndpointViewSet(ExperimentChildViewSet):
     model = models.Endpoint
     form_class = forms.EndpointForm
     detail_fragment = "animalv2/fragments/_endpoint_row.html"
+
+
+# ObservationTim viewset
+class ObservationTimeViewSet(ExperimentChildViewSet):
+    model = models.ObservationTime
+    form_class = forms.ObservationTimeForm
+    detail_fragment = "animalv2/fragments/_observationtime_row.html"

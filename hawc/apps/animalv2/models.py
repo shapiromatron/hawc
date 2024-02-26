@@ -60,6 +60,13 @@ class Experiment(models.Model):
     def get_has_multiple_generations_display(self) -> str:
         return "Yes" if self.has_multiple_generations else "No"
 
+    @property
+    def v2_timepoints(self):
+        timepoints = []
+        for endpoint in self.v2_endpoints.all():
+            timepoints.extend(endpoint.v2_timepoints.all())
+        return timepoints
+
 
 class Chemical(models.Model):
     objects = managers.ChemicalManager()
@@ -402,6 +409,11 @@ class ObservationTime(models.Model):
 
     def get_study(self):
         return self.endpoint.get_study()
+
+    def clone(self):
+        self.id = None
+        self.save()
+        return self
 
 
 class DataExtraction(models.Model):

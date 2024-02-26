@@ -81,4 +81,21 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Endpoint Timepoints</h3>
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '40,30,30' %}
+            {% bs4_thead 'Endpoint,Time,Units' %}
+            <tbody>
+                {% for object in object.v2_timepoints %}
+                    {% include "animalv2/fragments/_observationtime_row.html" %}
+                {% empty %}
+                    {% bs4_fullrow 'No timepoints available.' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 {% endblock %}
