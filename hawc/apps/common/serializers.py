@@ -598,7 +598,7 @@ class RequiredIdSerializer(serializers.Serializer):
     id = serializers.IntegerField()
 
 
-def check_ids(data: QueryDict) -> list[int]:
+def check_ids(data: list[dict]) -> list[int]:
     """Ensure data passed via a request contains a list of integers; else raise ValidationError
 
     Args:
