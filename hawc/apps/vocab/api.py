@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from ..common.helper import FlatExport, tryParseInt
 from ..common.renderers import PandasRenderers
+from ..common.serializers import check_ids
 from . import constants, models, serializers
 
 
@@ -109,7 +110,7 @@ class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         detail=False, methods=("patch",), permission_classes=(IsAdminUser,), url_path="bulk-update"
     )
     def bulk_update(self, request: Request) -> Response:
-        qs = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
+        qs = self.get_queryset().filter(id__in=check_ids(request.data))
         serializer = self.get_serializer(instance=qs, data=request.data, many=True, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

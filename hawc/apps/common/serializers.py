@@ -592,3 +592,21 @@ class PydanticDrfSerializer(BaseModel):
                     error_key = key if key != "__root__" else "non_field_errors"
                     errors[error_key].append(e["msg"])
             raise DrfValidationError(errors)
+
+
+class RequiredIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+
+
+def check_ids(data: QueryDict) -> list[int]:
+    """Ensure data passed via a request contains a list of integers; else raise ValidationError
+
+    Args:
+        data (list): a DRF Request data object
+
+    Returns:
+        list[int]: a list of integers from the request data
+    """
+    ser = RequiredIdSerializer(data=data, many=True)
+    ser.is_valid(raise_exception=True)
+    return [int(el["id"]) for el in ser.validated_data]
