@@ -153,14 +153,14 @@ class TestPubMedFetch:
         obj.pop("xml")
         obj.pop("abstract")
         expected = {
-            "authors_short": "Committee on Predictive-Toxicology Approaches for Military Assessments of Acute Exposures et al.",
+            "authors_short": "Committee on Predictive-Toxicology Approaches for Military Assessments of\nAcute Exposures et al.",
             "doi": "10.17226/21775",
             "year": 2015,
             "PMID": 26468569,
             "title": "Application of Modern Toxicology Approaches for Predicting Acute Toxicity for Chemical Defense",
             "citation": "(2015). Washington (DC): National Academies Press (US).",
             "authors": [
-                "Committee on Predictive-Toxicology Approaches for Military Assessments of Acute Exposures",
+                "Committee on Predictive-Toxicology Approaches for Military Assessments of\nAcute Exposures",
                 "Committee on Toxicology",
                 "Board on Environmental Studies and Toxicology",
                 "Board on Life Sciences",
@@ -183,7 +183,7 @@ class TestPubMedFetch:
             "authors_short": "Goldstein A and Falk MJ",
             "citation": "GeneReviews® (1993). Seattle (WA): University of Washington, Seattle.",
             "doi": None,
-            "title": "Mitochondrial DNA Deletion Syndromes",
+            "title": "Single Large-Scale Mitochondrial DNA Deletion Syndromes",
             "year": 1993,
         }
         assert obj == expected

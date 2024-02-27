@@ -13,76 +13,228 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        //8DADwvsNjONAAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">21813367</PMID><DateCompleted><Year>2012</Year><Month>03</Month><Day>27</Day></DateCompleted><DateRevised><Year>2021</Year><Month>10</Month><Day>20</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1552-9924</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>119</Volume><Issue>12</Issue><PubDate><Year>2011</Year><Month>Dec</Month></PubDate></JournalIssue><Title>Environmental
+        health perspectives</Title><ISOAbbreviation>Environ Health Perspect</ISOAbbreviation></Journal><ArticleTitle>Retrospective
+        exposure estimation and predicted versus observed serum perfluorooctanoic
+        acid concentrations for participants in the C8 Health Project.</ArticleTitle><Pagination><StartPage>1760</StartPage><EndPage>1765</EndPage><MedlinePgn>1760-5</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1289/ehp.1103729</ELocationID><Abstract><AbstractText
+        Label="BACKGROUND" NlmCategory="BACKGROUND">People living or working in eastern
+        Ohio and western West Virginia have been exposed to perfluorooctanoic acid
+        (PFOA) released by DuPont Washington Works facilities.</AbstractText><AbstractText
+        Label="OBJECTIVES" NlmCategory="OBJECTIVE">Our objective was to estimate historical
+        PFOA exposures and serum concentrations experienced by 45,276 non-occupationally
+        exposed participants in the C8 Health Project who consented to share their
+        residential histories and a 2005-2006 serum PFOA measurement.</AbstractText><AbstractText
+        Label="METHODS" NlmCategory="METHODS">We estimated annual PFOA exposure rates
+        for each individual based on predicted calibrated water concentrations and
+        predicted air concentrations using an environmental fate and transport model,
+        individual residential histories, and maps of public water supply networks.
+        We coupled individual exposure estimates with a one-compartment absorption,
+        distribution, metabolism, and excretion (ADME) model to estimate time-dependent
+        serum concentrations.</AbstractText><AbstractText Label="RESULTS" NlmCategory="RESULTS">For
+        all participants (n = 45,276), predicted and observed median serum concentrations
+        in 2005-2006 are 14.2 and 24.3 ppb, respectively [Spearman''s rank correlation
+        coefficient (r(s)) = 0.67]. For participants who provided daily public well
+        water consumption rate and who had the same residence and workplace in one
+        of six municipal water districts for 5 years before the serum sample (n =
+        1,074), predicted and observed median serum concentrations in 2005-2006 are
+        32.2 and 40.0 ppb, respectively (r(s) = 0.82).</AbstractText><AbstractText
+        Label="CONCLUSIONS" NlmCategory="CONCLUSIONS">Serum PFOA concentrations predicted
+        by linked exposure and ADME models correlated well with observed 2005-2006
+        human serum concentrations for C8 Health Project participants. These individualized
+        retrospective exposure and serum estimates are being used in a variety of
+        epidemiologic studies being conducted in this region.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Shin</LastName><ForeName>Hyeong-Moo</ForeName><Initials>HM</Initials><AffiliationInfo><Affiliation>School
+        of Social Ecology, University of California, Irvine, California 95616, USA.
+        hmshin@ucdavis.edu</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Vieira</LastName><ForeName>Ver&#xf3;nica
+        M</ForeName><Initials>VM</Initials></Author><Author ValidYN="Y"><LastName>Ryan</LastName><ForeName>P
+        Barry</ForeName><Initials>PB</Initials></Author><Author ValidYN="Y"><LastName>Steenland</LastName><ForeName>Kyle</ForeName><Initials>K</Initials></Author><Author
+        ValidYN="Y"><LastName>Bartell</LastName><ForeName>Scott M</ForeName><Initials>SM</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D023361">Validation
+        Study</PublicationType></PublicationTypeList><ArticleDate DateType="Electronic"><Year>2011</Year><Month>08</Month><Day>03</Day></ArticleDate></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Environ Health Perspect</MedlineTA><NlmUniqueID>0330411</NlmUniqueID><ISSNLinking>0091-6765</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D002210">Caprylates</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D060766">Drinking Water</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D004785">Environmental Pollutants</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D005466">Fluorocarbons</NameOfSubstance></Chemical><Chemical><RegistryNumber>947VD76D3L</RegistryNumber><NameOfSubstance
+        UI="C023036">perfluorooctanoic acid</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
+        RefType="ErratumIn"><RefSource>Environ Health Perspect.2013 Apr;121(4):A113</RefSource></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D002210" MajorTopicYN="N">Caprylates</DescriptorName><QualifierName UI="Q000097"
+        MajorTopicYN="Y">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D060766" MajorTopicYN="N">Drinking Water</DescriptorName><QualifierName
+        UI="Q000032" MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004781" MajorTopicYN="N">Environmental Exposure</DescriptorName><QualifierName
+        UI="Q000706" MajorTopicYN="Y">statistics &amp; numerical data</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004784" MajorTopicYN="N">Environmental Monitoring</DescriptorName><QualifierName
+        UI="Q000379" MajorTopicYN="N">methods</QualifierName><QualifierName UI="Q000706"
+        MajorTopicYN="Y">statistics &amp; numerical data</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004785" MajorTopicYN="N">Environmental Pollutants</DescriptorName><QualifierName
+        UI="Q000097" MajorTopicYN="Y">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005466" MajorTopicYN="N">Fluorocarbons</DescriptorName><QualifierName
+        UI="Q000097" MajorTopicYN="Y">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007223" MajorTopicYN="N">Infant</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007231" MajorTopicYN="N">Infant, Newborn</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008962" MajorTopicYN="Y">Models, Theoretical</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009820" MajorTopicYN="N" Type="Geographic">Ohio</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012189" MajorTopicYN="N">Retrospective Studies</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014903" MajorTopicYN="N" Type="Geographic">West Virginia</DescriptorName></MeshHeading></MeshHeadingList><CoiStatement>The
+        findings and conclusions in this paper are those of the authors. The authors
+        declare they have no actual or potential competing financial interests.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2011</Year><Month>3</Month><Day>25</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2011</Year><Month>8</Month><Day>3</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2011</Year><Month>8</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2011</Year><Month>8</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2012</Year><Month>3</Month><Day>28</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">21813367</ArticleId><ArticleId IdType="pmc">PMC3261988</ArticleId><ArticleId
+        IdType="doi">10.1289/ehp.1103729</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Abdellatif
+        AG, Preat V, Taper HS, Roberfroid M. The modulation of rat liver carcinogenesis
+        by perfluorooctanoic acid, a peroxisome proliferator. Toxicol Appl Pharmacol.
+        1991;111:530&#x2013;537.</Citation><ArticleIdList><ArticleId IdType="pubmed">1684073</ArticleId></ArticleIdList></Reference><Reference><Citation>Andersen
+        ME, Butenhoff JL, Chang SC, Farrar DG, Kennedy GL, Jr, Lau C, et al. Perfluoroalkyl
+        acids and related chemistries&#x2014;toxicokinetics and modes of action. Toxicol
+        Sci. 2008;102:3&#x2013;14.</Citation><ArticleIdList><ArticleId IdType="pubmed">18003598</ArticleId></ArticleIdList></Reference><Reference><Citation>Bartell
+        SM. Davis, CA: University of California, Davis; 2003. Statistical Methods
+        for Non-Steady-State Exposure Estimation Using Biomarkers [PhD Dissertation]</Citation></Reference><Reference><Citation>Bartell
+        SM, Calafat A, Lyu C, Kato K, Ryan B, Steenland K. Rate of decline in serum
+        PFOA concentrations after granular activated carbon filtration at two public
+        water systems in Ohio and West Virginia. Environ Health Perspect. 2010;118:222&#x2013;228.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC2831921</ArticleId><ArticleId IdType="pubmed">20123620</ArticleId></ArticleIdList></Reference><Reference><Citation>Bartell
+        SM, Griffith WC, Faustman EM. Temporal error in biomarker based mean exposure
+        estimates for individuals. J Expo Anal Environ Epidemiol. 2004;14:173&#x2013;179.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15014548</ArticleId></ArticleIdList></Reference><Reference><Citation>Begley
+        TH, White K, Honigfort P, Twaroski ML, Neches R, Walker RA. Perfluorochemicals:
+        potential sources of and migration from food packaging. Food Addit Contam.
+        2005;22:1023&#x2013;1031.</Citation><ArticleIdList><ArticleId IdType="pubmed">16227186</ArticleId></ArticleIdList></Reference><Reference><Citation>Brede
+        T, Wilhelm M, G&#xf6;en T, M&#xfc;ller J, Rauchfuss K, Kraft M, et al. Two-year
+        follow-up biomonitoring pilot study of residents&#x2019; and controls&#x2019;
+        PFC plasma levels after PFOA reduction in public water system in Arnsberg,
+        Germany. Int J Hyg Environ Health. 2010;213:217&#x2013;223.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">20488749</ArticleId></ArticleIdList></Reference><Reference><Citation>Butenhoff
+        JL, Kennedy GL, Hinderliter PM, Lieder PH, Jung R, Hansen KJ, et al. Pharmacokinetics
+        of perfluorooctanoate in cynomolgus monkeys. Toxicol Sci. 2004;82:394&#x2013;406.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15470233</ArticleId></ArticleIdList></Reference><Reference><Citation>C8
+        Science Panel. Homepage. 2011.  Available:  http://www.c8sciencepanel.org
+        [accessed 16 March 2011]</Citation></Reference><Reference><Citation>Calafat
+        AM, Wong LY, Kuklenyik Z, Reidy JA, Needham LL. Polyfluoroalkyl chemicals
+        in the U.S. population: data from the National Health and Nutrition Examination
+        Survey (NHANES) 2003&#x2013;2004 and comparisons with NHANES 1999&#x2013;2000.
+        Environ Health Perspect. 2007;115:1596&#x2013;1602.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC2072821</ArticleId><ArticleId IdType="pubmed">18007991</ArticleId></ArticleIdList></Reference><Reference><Citation>DuPont.
+        Wilmington, DE: E.I. du Pont de Nemours and Company; 2008. Data Assessment
+        DuPont Washington Works (OPPT-2004-0113 PFOA Site-Related Environmental Assessment
+        Program)</Citation></Reference><Reference><Citation>Emmett EA, Shofer FS,
+        Zhang H, Freeman D, Desai C, Shaw LM. Community exposure to perfluorooctanoate:
+        relationships between serum concentrations and exposure sources. J Occup Environ
+        Med. 2006;48:759&#x2013;770.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC3038253</ArticleId><ArticleId
+        IdType="pubmed">16902368</ArticleId></ArticleIdList></Reference><Reference><Citation>Fei
+        CY, McLaughlin JK, Tarone RE, Olsen J. Perfluorinated chemicals and fetal
+        growth: a study within the Danish National Birth Cohort. Environ Health Perspect.
+        2007;115:1677&#x2013;1682.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2072850</ArticleId><ArticleId
+        IdType="pubmed">18008003</ArticleId></ArticleIdList></Reference><Reference><Citation>Frisbee
+        SJ, Brooks AP, Maher A, Flensborg P, Arnold S, Fletcher T, et al. The C8 Health
+        Project: design, methods, and participants. Environ Health Perspect. 2009;117:1873&#x2013;1882.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC2799461</ArticleId><ArticleId IdType="pubmed">20049206</ArticleId></ArticleIdList></Reference><Reference><Citation>Fromme
+        H, Mosch C, Morovitz M, Alba-Alejandre I, Boehmer S, Kiranoglu M, et al. Pre-
+        and postnatal exposure to perfluorinated compounds (PFCs). Environ Sci Technol.
+        2010;44:7123&#x2013;7129.</Citation><ArticleIdList><ArticleId IdType="pubmed">20722423</ArticleId></ArticleIdList></Reference><Reference><Citation>Griffin
+        RL. 2008. Notice of Contamination. Little Hocking, OH:Little Hocking Water
+        Association Inc.</Citation></Reference><Reference><Citation>Hanssen L, Roellin
+        H, Odland JO, Moe MK, Sandanger TM. Perfluorinated compounds in maternal serum
+        and cord blood from selected areas of South Africa: results of a pilot study.
+        J Environ Monitor. 2010;12(6):1355&#x2013;1361.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">20424796</ArticleId></ArticleIdList></Reference><Reference><Citation>Kennedy
+        GL, Jr, Butenhoff JL, Olsen GW, O&#x2019;Connor JC, Seacat AM, Perkins RG,
+        et al. The toxicology of perfluorooctanoate. Crit Rev Toxicol. 2004;34:351&#x2013;384.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15328768</ArticleId></ArticleIdList></Reference><Reference><Citation>Kim
+        SK, Lee KT, Kang CS, Tao L, Kannan K, Kim KR, et al. Distribution of perfluorochemicals
+        between sera and milk from the same mothers and implications for prenatal
+        and postnatal exposures. Environ Pollut. 2011;159(1):169&#x2013;174.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">20932617</ArticleId></ArticleIdList></Reference><Reference><Citation>Koponen
+        JK, Asmi A, Keronen P, Puhto K, Kulmala M. Indoor air measurement campaign
+        in Helsinki, Finland 1999&#x2014;the effect of outdoor air pollution on indoor
+        air. Atmos Environ. 2001;35:1465&#x2013;1477.</Citation></Reference><Reference><Citation>Lau
+        C, Anitole K, Hodes C, Lai D, Pfahles-Hutchens A, Seed J. Perfluoroalkyl acids:
+        a review of monitoring and toxicological findings. Toxicol Sci. 2007;99:366&#x2013;394.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17519394</ArticleId></ArticleIdList></Reference><Reference><Citation>Lau
+        C, Thibodeaux JR, Hanson RG, Narotsky MG, Rogers JM, Lindstrom AB, et al.
+        Effects of perfluorooctanoic acid exposure during pregnancy in the mouse.
+        Toxicol Sci. 2006;90:510&#x2013;518.</Citation><ArticleIdList><ArticleId IdType="pubmed">16415327</ArticleId></ArticleIdList></Reference><Reference><Citation>Loganathan
+        BG, Sajwan KS, Sinclair E, Kumar KS, Kannan K. Perfluoroalkyl sulfonates and
+        perfluorocarboxylates in two wastewater treatment facilities in Kentucky and
+        Georgia. Water Res. 2007;41:4611&#x2013;4620.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17632203</ArticleId></ArticleIdList></Reference><Reference><Citation>Luebker
+        DJ, York RG, Moore JA, Hansen KJ, Butenhoff JL. Neonatal mortality from in
+        utero exposure to perfluorooctanesulfonate (PFOS) in Sprague-Dawley rats:
+        dose response, pharmacokinetics, and clinical chemistry. Toxicology. 2005;215:149&#x2013;169.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16129535</ArticleId></ArticleIdList></Reference><Reference><Citation>McMurdo
+        CJ, Ellis DA, Webster E, Butler J, Christensen RD, Reid LK. Aerosol enrichment
+        of the surfactant PFO and mediation of the water&#x2014;air transport of gaseous
+        PFOA. Environ Sci Technol. 2008;42:3969&#x2013;3974.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">18589953</ArticleId></ArticleIdList></Reference><Reference><Citation>Midasch
+        O, Drexler H, Hart N, Beckmann MW, Angerer J. Transplacental exposure of neonates
+        to perfluorooctanesulfonate and perfluorooctanoate: a pilot study. Int Arch
+        Occup Environ Health. 2007;80(7):643&#x2013;648.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17219182</ArticleId></ArticleIdList></Reference><Reference><Citation>Monroy
+        R, Morrison K, Teo K, Atkinson S, Kubwabo C, Stewart B, et al. Serum levels
+        of perfluoroalkyl compounds in human maternal and umbilical cord blood samples.
+        Environ Res. 2008;108(1):56&#x2013;62.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">18649879</ArticleId></ArticleIdList></Reference><Reference><Citation>National
+        Health and Nutrition Examination Survey. Atlanta, GA: Centers for Disease
+        Control and Prevention; 2011. Fourth National Report on Human Exposures to
+        Environmental Chemicals, Updated Tables.</Citation></Reference><Reference><Citation>Needham
+        LL, Gandjean P, Heinzow B, Jorgensen PL, Nielsen F, Patterson DG, et al. Partition
+        of environmental chemicals between maternal and fetal blood and tissues. Environ
+        Sci Technol. 2011;45:1121&#x2013;1126.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC3031182</ArticleId><ArticleId IdType="pubmed">21166449</ArticleId></ArticleIdList></Reference><Reference><Citation>Nilsson
+        R, Beije B, Preat V, Erixon K, Ramel C. On the mechanism of the hepatocarcinogenicity
+        of peroxisome proliferators. Chem Biol Interact. 1991;78:235&#x2013;250.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">2040027</ArticleId></ArticleIdList></Reference><Reference><Citation>Olsen
+        GW, Burris J, Ehresman D, Forehlich J, Seaca A, Butenhoff J, et al. Half-life
+        of serum elimination of perfluorooctanesulfonate, perluorohexanesulfonate,
+        and perefluorooctanoate in retired fluorochemical production workers. Environ
+        Health Perspect. 2007;115:1298&#x2013;1365.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1964923</ArticleId><ArticleId IdType="pubmed">17805419</ArticleId></ArticleIdList></Reference><Reference><Citation>Paustenbach
+        D, Galbraith D. Biomonitoring and biomarkers: exposure assessment will never
+        be the same. Environ Health Perspect. 2006;114:1143&#x2013;1149.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1552022</ArticleId><ArticleId IdType="pubmed">16882516</ArticleId></ArticleIdList></Reference><Reference><Citation>Shin
+        HM, Vieira VM, Ryan PB, Detwiler R, Sanders B, Steenland K, et al. Environmental
+        fate and transport modeling for perfluorooctanoic acid emitted from the Washington
+        Works Facility in West Virginia. Environ Sci Technol. 2011;45(4):1435&#x2013;1445.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">21226527</ArticleId></ArticleIdList></Reference><Reference><Citation>Sinclair
+        E, Kannan K. Mass loading and fate of perfluoroalkyl surfactants in wastewater
+        treatment plants. Environ Sci Technol. 2006;40:1408&#x2013;1414.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16568749</ArticleId></ArticleIdList></Reference><Reference><Citation>Steenland
+        K, Jin C, MacNeil J, Lally C, Ducatman A, Vieira V, et al. Predictors of PFOA
+        levels in a community surrounding a chemical plant. Environ Health Perspect.
+        2009;117:1083&#x2013;1088.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2717134</ArticleId><ArticleId
+        IdType="pubmed">19654917</ArticleId></ArticleIdList></Reference><Reference><Citation>Steenland
+        K, Savitz DA, Fletcher T. Epidemiologic evidence on the health effects of
+        perfluorooctanoic acid. Environ Health Perspect. 2010;118:1100&#x2013;1108.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC2920088</ArticleId><ArticleId IdType="pubmed">20423814</ArticleId></ArticleIdList></Reference><Reference><Citation>Strynar
+        MJ, Lindstrom AB. Perfluorinated compounds in house dust from Ohio and North
+        Carolina, USA. Environ Sci Technol. 2008;42:3751&#x2013;3756.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">18546718</ArticleId></ArticleIdList></Reference><Reference><Citation>U.S.
+        EPA (Environmental Protection Agency) Exposure Factors Handbook: 2009 Update.
+        2009.  Available:  http://cfpub.epa.gov/ncea/cfm/recordisplay.cfm?deid=209866
+        [accessed 1 February 2011]</Citation></Reference></ReferenceList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -97,20 +249,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:38 GMT
+      - Tue, 20 Feb 2024 16:42:36 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C87C9180FAEF5000042378F2AA455.1.1.m_3
+      - 939B5F7AF2370105000033A87084F65C.1.1.m_3
       NCBI-SID:
-      - C371C306B27C326E_C40BSID
+      - 8C52A59423E00E19_DED2SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C371C306B27C326E_C40BSID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:39 GMT
+      - ncbi_sid=8C52A59423E00E19_DED2SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:36 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -119,8 +271,6 @@ interactions:
       - '10'
       X-RateLimit-Remaining:
       - '8'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

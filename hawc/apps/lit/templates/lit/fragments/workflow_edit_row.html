@@ -36,7 +36,7 @@
           {% if form.instance.id %}
             <button class="btn btn-primary ml-2"
                     id="workflow-update"
-                    hx-post="{% url 'lit:workflow-update' object.pk %}"
+                    hx-post="{% url 'lit:workflow-htmx' object.pk 'update' %}"
                     hx-indicator="#spinner-{{object.pk}}"
                     hx-encoding="multipart/form-data"
                     style="width: 15rem; height: 2rem;">
@@ -45,7 +45,7 @@
             </button>
             <button class="btn btn-light"
                     id="workflow-cancel"
-                    hx-get="{% url 'lit:workflow-detail' object.pk %}"
+                    hx-get="{% url 'lit:workflow-htmx' object.pk 'read' %}"
                     hx-indicator="#spinner-{{object.pk}}"
                     style="width: 10rem; height: 2rem;">
               Cancel
@@ -53,7 +53,7 @@
           {% else %}
             <button class="btn btn-primary ml-2"
                     id="workflow-create"
-                    hx-post="{% url 'lit:workflow-create' assessment.pk %}"
+                    hx-post="{% url 'lit:workflow-htmx' assessment.pk 'create' %}"
                     hx-indicator="#spinner-{{object.pk}}"
                     hx-encoding="multipart/form-data"
                     style="width: 15rem; height: 2rem;">

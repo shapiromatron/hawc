@@ -4,7 +4,7 @@
   <h2 class="d-inline-block">Update {{object.summary}}</h2>
   <div class="float-right">
     <a id="design-update" class="btn btn-sm btn-primary" href="#"
-       hx-get="{% url 'epiv2:design-update' object.pk %}" hx-target="#design-table" hx-swap="outerHTML">
+       hx-get="{% url 'epiv2:design-htmx' object.pk 'update' %}" hx-target="#design-table" hx-swap="outerHTML">
       <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update design</a>
   </div>
 
@@ -12,7 +12,7 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'epiv2:chemical-create' object.pk as chemical_create %}
+      {% url 'epiv2:chemical-htmx' object.pk 'create' as chemical_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target=".chemical-edit-row" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '43,42,15' %}
@@ -33,7 +33,7 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'epiv2:exposure-create' object.pk as exposure_create %}
+      {% url 'epiv2:exposure-htmx' object.pk 'create' as exposure_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target=".exposure-edit-row" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '29,28,28,15' %}
@@ -54,7 +54,7 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'epiv2:exposurelevel-create' object.pk as exposurelevel_create %}
+      {% url 'epiv2:exposurelevel-htmx' object.pk 'create' as exposurelevel_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target=".exposurelevel-edit-row" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '17,17,17,17,17,15' %}
@@ -75,7 +75,7 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'epiv2:outcome-create' object.pk as outcome_create %}
+      {% url 'epiv2:outcome-htmx' object.pk 'create' as outcome_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target=".outcome-edit-row" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '22,21,21,21,15' %}
@@ -96,7 +96,7 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'epiv2:adjustmentfactor-create' object.pk as adjustmentfactor_create %}
+      {% url 'epiv2:adjustmentfactor-htmx' object.pk 'create' as adjustmentfactor_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target=".adjustmentfactor-edit-row" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '20,40,25,15' %}
@@ -117,7 +117,7 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'epiv2:dataextraction-create' object.pk as dataextraction_create %}
+      {% url 'epiv2:dataextraction-htmx' object.pk 'create' as dataextraction_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target=".dataextraction-edit-row" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '12,12,12,12,6,6,6,12,12,10' %}
