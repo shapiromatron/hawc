@@ -348,9 +348,9 @@ class HAWCUtils {
             });
     }
 
-    static hideElement(el) {
+    static hideElement(el, deleteEl) {
         const scrollVal = $(el).attr("scrolltop");
-        $(el).addClass("hidden");
+        deleteEl ? $(el).remove() : $(el).addClass("hidden");
         if (scrollVal) {
             $("body,html").animate({scrollTop: scrollVal}, 400);
         }
