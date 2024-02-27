@@ -356,47 +356,51 @@ class HAWCUtils {
         }
     }
 
-    static addScrollHtmx(edit_class, detail_class, del_button_id = null) {
+    static addScrollHtmx(editClass, detailClass, deleteBtnId = null) {
         $("body").on("htmx:afterSwap", function(evt) {
-            var targetHTML = evt.detail.target; // the HTML element that is being replaced
-            var newHTML = evt.detail.elt; // the new HTML element from our HTMX response
-            var editElement = $(newHTML).hasClass(edit_class)
-                ? newHTML
-                : $(newHTML)
-                      .children("." + edit_class)
-                      .first();
+            const elSwapOut = evt.detail.target,
+                elSwapIn = evt.detail.elt,
+                editElement = $(elSwapIn).hasClass(editClass)
+                    ? elSwapIn
+                    : $(elSwapIn)
+                          .children("." + editClass)
+                          .first();
+
             if ($(editElement).length && !$(editElement).hasClass("hidden")) {
-                // if the form exists..
-                if ($(targetHTML).hasClass(edit_class)) {
-                    // if both source and target are a form (failed update/create), maintain scroll attr between elements
-                    // if source doesn't have a scollTop attr, then set it to current scroll value
-                    var currentScrollTop = $(targetHTML).attr("scrolltop")
-                        ? $(targetHTML).attr("scrolltop")
-                        : $("body,html").scrollTop();
-                    $(editElement).attr("scrolltop", currentScrollTop);
+                if ($(elSwapOut).hasClass(editClass)) {
+                    // Maintain scroll attr between elements if source has a scollTop attr
+                    // eg., if source and target are a form (failed update/create),
+                    // otherwise set to current position.
+                    const scrollTo = $(elSwapOut).attr("scrolltop") || $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", scrollTo);
                 } else {
                     // otherwise, set scroll attr to current scroll position so we can return later
-                    $(editElement).attr("scrolltop", $("body,html").scrollTop());
+                    const scrollTo = $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", scrollTo);
                 }
-                $("body,html").animate({scrollTop: $(editElement).offset().top - 20}, 400); // now animate a scroll to the form
+                // animate scroll to form
+                const scrollTo = $(editElement).offset().top - 20;
+                $("body,html").animate({scrollTop: scrollTo}, 400);
             } else {
-                // if the form is being replaced by a read row, then scroll back to OG position
+                // if the form is being replaced by a read row, scroll to original position
                 if (
-                    $(newHTML).hasClass(detail_class) &&
-                    $(targetHTML).hasClass(edit_class) &&
-                    !$(newHTML).hasClass("clone")
+                    $(elSwapIn).hasClass(detailClass) &&
+                    $(elSwapOut).hasClass(editClass) &&
+                    !$(elSwapIn).hasClass("clone")
                 ) {
-                    $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 400);
+                    const scrollTo = $(elSwapOut).attr("scrolltop");
+                    $("body,html").animate({scrollTop: scrollTo}, 400);
                 }
             }
         });
-        if (del_button_id) {
+        if (deleteBtnId) {
             $("body").on("htmx:afterRequest", function(evt) {
-                // this handles unique case of successful row deletion; need to do it after request, not after swap
-                var targetHTML = evt.detail.target;
-                var newHTML = evt.detail.elt;
-                if ($(newHTML).attr("id") == del_button_id && evt.detail.successful) {
-                    $("body,html").animate({scrollTop: $(targetHTML).attr("scrolltop")}, 800);
+                // handle successful row deletion
+                const elSwapOut = evt.detail.target,
+                    targetEl = evt.detail.elt,
+                    scrollPosition = $(elSwapOut).attr("scrolltop");
+                if (targetEl.getAttribute("id") == deleteBtnId && evt.detail.successful) {
+                    $("body,html").animate({scrollTop: scrollPosition}, 800);
                 }
             });
         }
