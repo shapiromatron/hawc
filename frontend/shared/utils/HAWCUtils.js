@@ -354,7 +354,7 @@ class HAWCUtils {
         $("body,html").animate({scrollTop: scrollVal}, 400);
     }
 
-    static addScrollHTMX(edit_class, detail_class, del_button_id = null) {
+    static addScrollHtmx(edit_class, detail_class, del_button_id = null) {
         $("body").on("htmx:afterSwap", function(evt) {
             var targetHTML = evt.detail.target; // the HTML element that is being replaced
             var newHTML = evt.detail.elt; // the new HTML element from our HTMX response
