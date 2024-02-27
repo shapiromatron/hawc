@@ -18,7 +18,7 @@
     <button id="{{model}}-delete" class="btn btn-sm btn-danger" hx-get="{% crud_url 'epiv2' model 'delete' object.pk %}">
       <i class="fa fa-trash" aria-hidden="true"></i></button>
     <button id="{{model}}-clone" class="btn btn-sm btn-secondary" hx-post="{% crud_url 'epiv2' model 'clone' object.pk %}"
-            hx-target="#{{model}}-empty-row" hx-swap="outerHTML">
+            hx-target=".{{model}}-edit-row" hx-swap="outerHTML">
       <i class="fa fa-clone" aria-hidden="true"></i></button>
   </td>
 {% endif %}
