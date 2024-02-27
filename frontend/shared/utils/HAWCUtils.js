@@ -348,10 +348,12 @@ class HAWCUtils {
             });
     }
 
-    static deleteRow(el, hide = false) {
+    static hideElement(el) {
         const scrollVal = $(el).attr("scrolltop");
-        hide ? $(el).addClass("hidden") : el.remove();
-        $("body,html").animate({scrollTop: scrollVal}, 400);
+        $(el).addClass("hidden");
+        if (scrollVal) {
+            $("body,html").animate({scrollTop: scrollVal}, 400);
+        }
     }
 
     static addScrollHtmx(edit_class, detail_class, del_button_id = null) {
