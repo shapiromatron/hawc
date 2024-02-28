@@ -1105,6 +1105,7 @@ class Workflows(BaseList):
             .get_queryset()
             .filter(assessment=self.assessment)
             .prefetch_related("admission_tags", "removal_tags")
+            .order_by("-created")
         )
         tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         models.Workflow.annotate_tag_parents(queryset, tags)
@@ -1139,9 +1140,11 @@ class WorkflowViewSet(HtmxViewSet):
             form = forms.WorkflowForm(parent=request.item.parent)
             template = self.list_fragment
         context = self.get_context_data(form=form)
-        object_list = self.model.objects.filter(
-            assessment=request.item.assessment
-        ).prefetch_related("admission_tags", "removal_tags")
+        object_list = (
+            self.model.objects.filter(assessment=request.item.assessment)
+            .prefetch_related("admission_tags", "removal_tags")
+            .order_by("-created")
+        )
         tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
         models.Workflow.annotate_tag_parents(object_list, tags)
         context.update(object_list=object_list)

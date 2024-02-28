@@ -15,10 +15,12 @@
     <i class="fa fa-circle mgmt-circle s{{ object.status }}"></i>
     {{ object.get_status_display|capfirst }}
   </td>
-  <td class="d-flex">
-    <span>{{ object.due_date|date:"SHORT_DATE_FORMAT"|default:"---" }}</span>
-    <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-update' object.pk %}">
-      <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
-    </button>
+  <td>
+    <div class="d-flex">
+      <span>{{ object.due_date|date:"SHORT_DATE_FORMAT"|default:"---" }}</span>
+      <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-htmx' object.pk 'update' %}">
+        <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+      </button>
+    </div>
   </td>
 </tr>
