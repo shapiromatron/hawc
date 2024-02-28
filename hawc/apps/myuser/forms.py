@@ -129,6 +129,7 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 
 
 class RegisterForm(PasswordForm):
+    # TODO - add turnstyle
     class Meta:
         model = models.HAWCUser
         fields = (
@@ -323,8 +324,15 @@ class HAWCAuthenticationForm(AuthenticationForm):
                     self.error_messages["invalid_login"]
                     % {"username": self.username_field.verbose_name}
                 )
-            elif not self.user_cache.is_active:
+
+            if not self.user_cache.is_active:
                 raise forms.ValidationError(self.error_messages["inactive"])
+
+            if settings.EMAIL_VERIFICATION_REQUIRED and self.user_cache.email_verified_on is None:
+                self.user_cache.maybe_send_email_verification(self.request)
+                raise forms.ValidationError(
+                    "Email verification required - please check your email."
+                )
 
         if settings.TURNSTYLE_SITE:
             token = self.data.get("cf-turnstile-response", "")
@@ -336,6 +344,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
 
 class HAWCPasswordResetForm(PasswordResetForm):
+    # TODO - add turnstyle
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].help_text = "Email-addresses are case-sensitive."

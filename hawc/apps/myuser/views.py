@@ -14,12 +14,13 @@ from django.contrib.auth.views import (
     RedirectURLMixin,
 )
 from django.core.mail import mail_admins
+from django.forms import ValidationError
 from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import CreateView, DetailView, TemplateView, View
+from django.views.generic import CreateView, DetailView, RedirectView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import UpdateView
 
@@ -295,3 +296,38 @@ class ExternalAuth(RedirectURLMixin, View):
             )
         login(request, user)
         return HttpResponseRedirect(self.get_redirect_url())
+
+
+class VerifyEmail(MessageMixin, RedirectView):
+    url = reverse_lazy("user:login")
+    success_message = "Email successfully verified! Ready to login."
+
+    def get_user_or_404(self, uidb64: str) -> models.HAWCUser:
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            return models.HAWCUser.objects.get(pk=uid)
+        except (
+            TypeError,
+            ValueError,
+            OverflowError,
+            models.HAWCUser.DoesNotExist,
+            ValidationError,
+        ):
+            raise Http404()
+
+    def check_token_or_404(self, user: models.HAWCUser, token: str):
+        if default_token_generator.check_token(user, token) is False:
+            raise Http404()
+
+    def get(self, request, uidb64: str, token: str):
+        user = self.get_user_or_404(uidb64)
+        self.check_token_or_404(user, token)
+        user.set_email_verified()
+        self.send_message()
+        return super().get(request)
+
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from rest_framework.authtoken.models import Token
