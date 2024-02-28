@@ -7,7 +7,7 @@
         <button id="{{model}}-confirm-del" class="btn btn-sm btn-danger mx-1" hx-post="{% crud_url 'eco' model 'delete' object.pk %}"
                 hx-swap="outerHTML swap:1s">Confirm</button>
         <button id="{{model}}-cancel-del" class="btn btn-sm btn-secondary mx-1"
-                hx-get="{% crud_url 'eco' model 'detail' object.pk %}">Cancel</button>
+                hx-get="{% crud_url 'eco' model 'read' object.pk %}">Cancel</button>
       </div>
     </form>
   </td>
@@ -18,7 +18,7 @@
     <button id="{{model}}-delete" class="btn btn-sm btn-danger" hx-get="{% crud_url 'eco' model 'delete' object.pk %}">
       <i class="fa fa-trash" aria-hidden="true"></i></button>
     <button id="{{model}}-clone" class="btn btn-sm btn-secondary" hx-post="{% crud_url 'eco' model 'clone' object.pk %}"
-            hx-target="#{{model}}-empty-row" hx-swap="outerHTML">
+            hx-target=".{{model}}-edit-row" hx-swap="outerHTML">
       <i class="fa fa-clone" aria-hidden="true"></i></button>
   </td>
 {% endif %}

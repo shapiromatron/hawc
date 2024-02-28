@@ -29,16 +29,9 @@ urlpatterns = [
     ),
     # task htmx ViewSet
     path(
-        "task/<int:pk>/",
+        "task/<int:pk>/<slug:action>/",
         views.TaskViewSet.as_view(),
-        {"action": "read"},
-        name="task-detail",
-    ),
-    path(
-        "taskv/<int:pk>/update/",
-        views.TaskViewSet.as_view(),
-        {"action": "update"},
-        name="task-update",
+        name="task-htmx",
     ),
     path(
         "assessment/<int:pk>/analytics/",

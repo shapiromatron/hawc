@@ -1,4 +1,5 @@
 <div id="workflow-list" class="mr-4">
+  {% include "lit/fragments/workflow_edit_row.html" %}
   {% for object in object_list %}
     {% include "lit/fragments/workflow_row.html" %}
   {% empty %}
@@ -6,5 +7,4 @@
       <div class="alert alert-warning text-center">No Workflows created yet.</div>
     {% endif %}
   {% endfor %}
-  {% include "lit/fragments/workflow_edit_row.html" %}
 </div>
