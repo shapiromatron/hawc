@@ -13,7 +13,7 @@ from django.urls import reverse
 
 from ...constants import AuthProvider
 from ..assessment.autocomplete import AssessmentAutocomplete
-from ..common.auth.turnstyle import validate
+from ..common.auth.turnstyle import Turnstile
 from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper
 from ..common.helper import url_query
@@ -129,7 +129,6 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 
 
 class RegisterForm(PasswordForm):
-    # TODO - add turnstyle
     class Meta:
         model = models.HAWCUser
         fields = (
@@ -143,6 +142,7 @@ class RegisterForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.turnstile = Turnstile()
         if settings.ACCEPT_LICENSE_REQUIRED:
             self.fields["license_v2_accepted"].help_text = _accept_license_help_text
         else:
@@ -173,6 +173,10 @@ class RegisterForm(PasswordForm):
         if models.HAWCUser.objects.filter(email__iexact=email).count() > 0:
             raise forms.ValidationError("HAWC user with this email already exists.")
         return email
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -277,16 +281,11 @@ class HAWCAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         self.next_url = kwargs.pop("next_url")
         super().__init__(*args, **kwargs)
-        self.enable_turnstyle = len(settings.TURNSTYLE_SITE) > 0
+        self.turnstile = Turnstile()
 
     def get_extra_text(self) -> str:
-        challenge = (
-            f'<div class="cf-turnstile mb-3" data-sitekey="{settings.TURNSTYLE_SITE}"></div>'
-            if self.enable_turnstyle
-            else ""
-        )
         text = f"""<a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
-        <br/><br/>{challenge}
+        <br/><br/>{self.turnstile.get_challenge_text()}
         <a href="{reverse("user:reset_password")}">Forgot your password?</a>"""
         if AuthProvider.external in settings.AUTH_PROVIDERS:
             url = reverse("user:external_auth")
@@ -334,20 +333,16 @@ class HAWCAuthenticationForm(AuthenticationForm):
                     "Email verification required - please check your email."
                 )
 
-        if settings.TURNSTYLE_SITE:
-            token = self.data.get("cf-turnstile-response", "")
-            response = validate(token)
-            if not response.success:
-                raise forms.ValidationError("Failed bot challenge - are you human?")
+        self.turnstile.validate(self.data)
 
         return self.cleaned_data
 
 
 class HAWCPasswordResetForm(PasswordResetForm):
-    # TODO - add turnstyle
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].help_text = "Email-addresses are case-sensitive."
+        self.turnstile = Turnstile()
 
     @property
     def helper(self):
@@ -367,6 +362,10 @@ class HAWCPasswordResetForm(PasswordResetForm):
             raise forms.ValidationError("Email address not found")
 
         return email
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data
 
 
 class AdminUserForm(PasswordForm):
