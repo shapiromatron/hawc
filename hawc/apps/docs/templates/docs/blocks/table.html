@@ -1,0 +1,20 @@
+<table class="table table-sm table-striped">
+    <thead>
+    <tr>
+        <th>Chemical</th>
+        <th>Value</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    {% for row in value.rows %}
+    <tr>
+        <td>
+            {% if row.chemical_url %}<a href="{{row.chemical_url}}" target="_blank">{% endif %}
+            {{row.chemical}}
+            {% if row.chemical_url %}</a>{% endif %}
+        </td>
+        <td>{{row.value}} {{row.units}}</td>
+        <td>{{row.description}}</td>
+    </tr>
+    {% endfor %}
+</table>

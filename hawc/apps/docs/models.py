@@ -42,6 +42,21 @@ class AlertBlock(blocks.StructBlock):
         template = "docs/blocks/alert.html"
 
 
+class RowBlock(blocks.StructBlock):
+    chemical = blocks.CharBlock()
+    chemical_url = blocks.URLBlock(required=False)
+    value = blocks.FloatBlock(required=True)
+    units = blocks.CharBlock()
+    description = blocks.RichTextBlock(features=constants.RICH_TEXT_FEATURES)
+
+
+class TableBlock(blocks.StructBlock):
+    rows = blocks.ListBlock(RowBlock)
+
+    class Meta:
+        template = "docs/blocks/table.html"
+
+
 class DocumentationPageTag(TaggedItemBase):
     content_object = ParentalKey(
         "docs.DocumentationPage", related_name="docs", on_delete=models.CASCADE
@@ -63,6 +78,10 @@ class DocumentationPage(Page):
             (
                 "toc",
                 TableOfContentsBlock(label="Table of Contents"),
+            ),
+            (
+                "table",
+                TableBlock(),
             ),
         ],
         block_counts={
