@@ -29,7 +29,7 @@
         </tr>
       </thead>
       {% for object in object_list %}
-        {% include "mgmt/fragments/task_cell.html" %}
+        {% include "mgmt/fragments/task_detail.html" with fmt="tr" %}
       {% endfor %}
     </table>
     {% include "includes/paginator.html" with plural_object_name="tasks" %}

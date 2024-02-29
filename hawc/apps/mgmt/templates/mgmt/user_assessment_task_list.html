@@ -15,7 +15,7 @@
             <td>
               <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a>
             </td>
-            {% include "mgmt/fragments/task_cell.html" with object=task %}
+            {% include "mgmt/fragments/task_detail.html" with object=task fmt="td" %}
           </tr>
         {% endfor %}
       </tbody>

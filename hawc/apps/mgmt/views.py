@@ -73,8 +73,7 @@ class EnsureExtractionStartedMixin:
         return super().get_success_url()
 
 
-class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
-    filterset_class = filterset.UserTaskFilterSet
+class UserTaskList(LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_task_list.html"
 
@@ -83,26 +82,32 @@ class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
             super()
             .get_queryset()
             .owned_by(self.request.user)
+            .filter(status__in=[10, 20])
+            .order_by("-study__assessment_id", "id")
             .select_related("study__assessment")
-            .order_by("-study__assessment_id", "study__short_citation", "type")
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
-        context["studies"] = {
-            study.id: study
-            for study in studies_with_active_user_reviews(
-                self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
-            )
-        }
-        context["rob_reviews"] = incomplete_rob_reviews(self.request.user, None)
-        context["TaskType"] = constants.TaskType
+        tasks = list(context["object_list"])
+        reviews = incomplete_rob_reviews(self.request.user, assessment=None)
+        assessments = {task.study.assessment for task in tasks}
+        assessments.update({rob.study.assessment for rob in reviews})
+        context["assessments"] = [
+            {
+                "assessment": assess,
+                "num_tasks": len(list(filter(lambda d: d.study.assessment_id == assess.id, tasks))),
+                "num_robs": len(
+                    list(filter(lambda d: d.study.assessment_id == assess.id, reviews))
+                ),
+            }
+            for assess in sorted(assessments, key=lambda d: (d.year, d.id), reverse=True)
+        ]
         return context
 
 
 class UserAssessmentTaskList(BaseFilterList):
-    filterset_class = filterset.UserTaskFilterSet
+    filterset_class = filterset.TaskFilterSet
     model = models.Task
     parent_model = Assessment
     template_name = "mgmt/user_assessment_task_list.html"
@@ -231,11 +236,15 @@ class TaskViewSet(HtmxViewSet):
     parent_model = Study
     model = models.Task
     form_fragment = "mgmt/fragments/task_form.html"
-    detail_fragment = "mgmt/fragments/task_cell.html"
+    detail_fragment = "mgmt/fragments/task_detail.html"
 
     @action(permission=can_edit)
     def read(self, request: HttpRequest, *args, **kwargs):
-        return render(request, self.detail_fragment, self.get_context_data())
+        return render(
+            request,
+            self.detail_fragment,
+            self.get_context_data(fmt=request.GET.get("fmt")),
+        )
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
@@ -245,5 +254,5 @@ class TaskViewSet(HtmxViewSet):
         if request.method == "POST" and form.is_valid():
             self.perform_update(request.item, form)
             template = self.detail_fragment
-        context = self.get_context_data(form=form)
+        context = self.get_context_data(form=form, fmt=request.GET.get("fmt"))
         return render(request, template, context)

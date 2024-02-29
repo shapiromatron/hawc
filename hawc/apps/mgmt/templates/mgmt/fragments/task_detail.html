@@ -1,0 +1,56 @@
+{% if fmt == "td" %}
+  <td id="task-{{object.id}}" hx-target="this" hx-swap="outerHTML">
+    <div class="row">
+      <div class="col-auto">
+        <div>
+          <b>Status: </b>
+          <i class="fa fa-circle mgmt-circle s{{ object.status }}"></i>{{ object.get_status_display|capfirst }}
+        </div>
+        <div>
+          <b>Owner: </b>
+          <span>{{ object.owner }}</span>
+        </div>
+        <div>
+          <b>Task: </b>
+          <span>{{ object.get_type_display|capfirst }}</span>
+        </div>
+        {% if object.due_date %}<div>
+          <b>Due date: </b>
+          <span {% if object.overdue %}class="bg-warning px-2"{% endif %}>{{ object.due_date|date:"SHORT_DATE_FORMAT" }}</span>
+        </div>{% endif %}
+      </div>
+      <div class="col-md">
+        <a class="btn btn-light" href="#" hx-get="{% url 'mgmt:task-htmx' object.pk 'update' %}?fmt=td"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </td>
+{% elif fmt == "tr" %}
+  <tr class="task-row" hx-target="this" hx-swap="outerHTML">
+    <td>
+      <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
+      <br>
+      <b>Date created: </b>
+      <span>{{ object.study.created|date:"SHORT_DATE_FORMAT" }}</span>
+    </td>
+    <td>
+      <span>{{ object.get_type_display|capfirst }}</span>
+    </td>
+    <td>
+      {{object.owner|default:"---"}}
+    </td>
+    <td>
+      <i class="fa fa-circle mgmt-circle s{{ object.status }}"></i>
+      {{ object.get_status_display|capfirst }}
+    </td>
+    <td>
+      <div class="d-flex">
+      <span {% if object.overdue %}class="bg-warning px-2"{% endif %}>{{ object.due_date|date:"SHORT_DATE_FORMAT"|default:"---" }}</span>
+      <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-htmx' object.pk 'update' %}?fmt=tr">
+          <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+      </button>
+      </div>
+    </td>
+  </tr>
+{% else %}
+  {% alert danger %}Unknown format: "{{fmt}}"{% endalert %}
+{% endif %}

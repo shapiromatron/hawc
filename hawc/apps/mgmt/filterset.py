@@ -24,10 +24,10 @@ class TaskOrderingFilter(ArrowOrderingFilter):
 
 
 class UserTaskFilterSet(BaseFilterSet):
-    study_assessment_name = df.CharFilter(
+    study_name = df.CharFilter(
         method="filter_search",
-        label="Assessment/Study",
-        help_text="Filter by assessment or study name",
+        label="Study",
+        help_text="Filter by study name",
     )
 
     type = df.ChoiceFilter(
@@ -45,8 +45,8 @@ class UserTaskFilterSet(BaseFilterSet):
     class Meta:
         model = models.Task
         form = InlineFilterForm
-        fields = ["study_assessment_name", "type", "show_completed"]
-        main_field = "study_assessment_name"
+        fields = ["study_name", "type", "show_completed"]
+        main_field = "study_name"
         appended_fields = ["type", "show_completed"]
 
     def filter_show_completed(self, queryset, name, value):
@@ -55,10 +55,7 @@ class UserTaskFilterSet(BaseFilterSet):
         return queryset.exclude_completed_and_abandonded()
 
     def filter_search(self, queryset, name, value):
-        query = Q(study__assessment__name__icontains=value) | Q(
-            study__short_citation__icontains=value
-        )
-        return queryset.filter(query)
+        return queryset.filter(study__short_citation__icontains=value)
 
 
 class TaskFilterSet(BaseFilterSet):
