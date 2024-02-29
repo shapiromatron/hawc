@@ -7,9 +7,6 @@
 {% endblock content %}
 
 {% block extrajs %}
-  {% if form.enable_turnstyle %}
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  {% endif %}
   <script type="text/javascript">
     document.getElementById('id_username').focus();
   </script>

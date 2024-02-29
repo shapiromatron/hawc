@@ -2,7 +2,6 @@ import pydantic
 import requests
 from django import forms
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 
 
 class SiteVerifyRequest(pydantic.BaseModel):
@@ -37,30 +36,10 @@ def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyR
     return SiteVerifyResponse(**resp.json())
 
 
-class Turnstile:
-    # TODO - replace w/ field; pop field off if not enabled
-    # https://dash.cloudflare.com/sign-up?to=/:account/turnstile
-    def __init__(self):
-        self.enabled = len(settings.TURNSTYLE_SITE) > 0
-
-    def get_challenge_text(self) -> str:
-        if not self.enabled:
-            return ""
-        return f'<div class="cf-turnstile mb-3" data-sitekey="{settings.TURNSTYLE_SITE}"></div>'
-
-    def validate(self, data):
-        if self.enabled:
-            token = data.get("cf-turnstile-response", "")
-            response = validate(token)
-            if not response.success:
-                raise forms.ValidationError("Failed bot challenge - are you human?")
-
-
 class TurnstileWidget(forms.Widget):
     template_name = "common/widgets/turnstile.html"
 
     def __init__(self, *args, **kwargs):
-        self.extra_url = {}
         super().__init__(*args, **kwargs)
 
     def value_from_datadict(self, data, files, name):
@@ -77,12 +56,13 @@ class TurnstileWidget(forms.Widget):
         return context
 
 
-class TurnstileField2(forms.Field):
+class TurnstileField(forms.Field):
     widget = TurnstileWidget
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.enabled = len(settings.TURNSTYLE_SITE) > 0
+        self.label = ""
+        self.required = len(settings.TURNSTYLE_SITE) > 0
 
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
@@ -91,7 +71,7 @@ class TurnstileField2(forms.Field):
 
     def validate(self, value):
         super().validate(value)
-        if self.enabled:
+        if self.required:
             response = validate(value)
             if not response.success:
-                raise ValidationError("Failed bot challenge - are you human?")
+                raise forms.ValidationError("Failed bot challenge - are you human?")
