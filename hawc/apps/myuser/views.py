@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import REDIRECT_FIELD_NAME, login
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
@@ -18,10 +19,9 @@ from django.forms import ValidationError
 from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_decode
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, DetailView, RedirectView, TemplateView, View
-from django.views.generic.base import RedirectView
 from django.views.generic.edit import UpdateView
 
 from ...constants import AuthProvider
@@ -325,9 +325,3 @@ class VerifyEmail(MessageMixin, RedirectView):
         user.set_email_verified()
         self.send_message()
         return super().get(request)
-
-
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from rest_framework.authtoken.models import Token

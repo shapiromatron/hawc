@@ -1,5 +1,6 @@
 import pydantic
 import requests
+from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
 
@@ -24,7 +25,7 @@ def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyR
         return SiteVerifyResponse(success=False)
     url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
     model = SiteVerifyRequest(
-        secret=settings.TURNSTYLE_KEY, response=turnstile_response, remoteip=user_ip
+        secret=settings.TURNSTILE_KEY, response=turnstile_response, remoteip=user_ip
     )
     resp = requests.post(url, data=model.model_dump())
     if resp.status_code != 200:
@@ -36,42 +37,22 @@ def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyR
     return SiteVerifyResponse(**resp.json())
 
 
-class TurnstileWidget(forms.Widget):
-    template_name = "common/widgets/turnstile.html"
+class Turnstile:
+    def __init__(self):
+        self.enabled = len(settings.TURNSTILE_SITE) > 0
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def render(self):
+        if not self.enabled:
+            return ""
+        return cfl.HTML(
+            f"""<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <div data-sitekey="{settings.TURNSTILE_SITE}" class="cf-turnstile"></div>
+        """
+        )
 
-    def value_from_datadict(self, data, files, name):
-        return data.get("cf-turnstile-response")
-
-    def build_attrs(self, base_attrs, extra_attrs=None):
-        attrs = super().build_attrs(base_attrs, extra_attrs)
-        attrs["data-sitekey"] = settings.TURNSTYLE_SITE
-        return attrs
-
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        context["api_url"] = "https://challenges.cloudflare.com/turnstile/v0/api.js"
-        return context
-
-
-class TurnstileField(forms.Field):
-    widget = TurnstileWidget
-
-    def __init__(self, **kw):
-        super().__init__(**kw)
-        self.label = ""
-        self.required = len(settings.TURNSTYLE_SITE) > 0
-
-    def widget_attrs(self, widget):
-        attrs = super().widget_attrs(widget)
-        attrs.update({"data-sitekey": settings.TURNSTYLE_SITE})
-        return attrs
-
-    def validate(self, value):
-        super().validate(value)
-        if self.required:
+    def validate(self, data: dict):
+        if self.enabled:
+            value = data.get("cf-turnstile-response")
             response = validate(value)
             if not response.success:
                 raise forms.ValidationError("Failed bot challenge - are you human?")

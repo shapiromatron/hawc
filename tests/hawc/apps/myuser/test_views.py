@@ -121,11 +121,11 @@ class TestLoginView:
         settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION = True
 
     @pytest.mark.vcr
-    def test_turnstyle(self, settings):
+    def test_turnstile(self, settings):
         url = reverse("user:login")
         success = {"username": "pm@hawcproject.org", "password": "pw"}
 
-        # no turnstyle by default
+        # no turnstile by default
         c = Client()
         resp = c.get(url)
         assert b"challenges.cloudflare.com/turnstile" not in resp.content
@@ -134,10 +134,10 @@ class TestLoginView:
         assert resp.status_code == 302
         assert resp.url == "/portal/"
 
-        # turnstyle if enabled
+        # turnstile if enabled
         c = Client()
-        settings.TURNSTYLE_SITE = "https://test-me.org"
-        settings.TURNSTYLE_KEY = "secret"
+        settings.TURNSTILE_SITE = "https://test-me.org"
+        settings.TURNSTILE_KEY = "secret"
         resp = c.get(url)
         assert b"challenges.cloudflare.com/turnstile" in resp.content
         assert b'data-sitekey="https://test-me.org"' in resp.content
