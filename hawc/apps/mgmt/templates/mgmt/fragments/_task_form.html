@@ -1,9 +1,0 @@
-<form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
-  {% crispy form %}
-  <div class="d-block container">
-    <div class="float-right">
-      <button class="btn btn-sm btn-info" hx-post="{% url 'mgmt:task-htmx' object.pk 'update' %}?fmt={{fmt}}">Save</button>
-      <button class="btn btn-sm btn-light" hx-get="{% url 'mgmt:task-htmx' object.pk 'read' %}?fmt={{fmt}}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
-    </div>
-  </div>
-</form>

@@ -1,22 +1,22 @@
-{% if fmt == "td" %}
-  <td id="task-{{object.id}}" hx-target="this" hx-swap="outerHTML">
-    {% include "mgmt/fragments/_task_form.html" with fmt=fmt %}
+<tr hx-target="this" hx-swap="outerHTML">
+  <td>
+    <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
+    <br>
+    <b>Date created: </b>
+    <span>{{ object.study.created|date:"SHORT_DATE_FORMAT" }}</span>
   </td>
-{% elif fmt == "tr" %}
-  <tr hx-target="this" hx-swap="outerHTML">
-    <td>
-      <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
-      <br>
-      <b>Date created: </b>
-      <span>{{ object.study.created|date:"SHORT_DATE_FORMAT" }}</span>
-    </td>
-    <td>
-      <span>{{ object.get_type_display|capfirst }}</span>
-    </td>
-    <td colspan="3">
-      {% include "mgmt/fragments/_task_form.html" with fmt=fmt %}
-    </td>
-  </tr>
-{% else %}
-  {% alert danger %}Unknown format: "{{fmt}}"{% endalert %}
-{% endif %}
+  <td>
+    <span>{{ object.get_type_display|capfirst }}</span>
+  </td>
+  <td colspan="3">
+    <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
+      {% crispy form %}
+      <div class="d-block container">
+        <div class="float-right">
+          <button class="btn btn-sm btn-info" hx-post="{% url 'mgmt:task-htmx' object.pk 'update' %}">Save</button>
+          <button class="btn btn-sm btn-light" hx-get="{% url 'mgmt:task-htmx' object.pk 'read' %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
+        </div>
+      </div>
+    </form>
+  </td>
+</tr>

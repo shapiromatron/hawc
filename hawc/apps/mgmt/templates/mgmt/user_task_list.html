@@ -3,21 +3,26 @@
 {% block content %}
   <h2>My assigned tasks</h2>
   <table class="table table-sm table-striped">
-    {% bs4_colgroup "40,20,20,20" %}
-    {% bs4_thead "Assessment,# Tasks,# Study Evaluations,View Assignments" %}
+    {% bs4_colgroup "40,30,30" %}
+    {% bs4_thead "Assessment,# Tasks,# Study Evaluations" %}
     <tbody>
       {% for assess in assessments %}
         <tr>
           <td>
             <a href="{{ assess.assessment.get_absolute_url }}">{{assess.assessment}}
-            {% debug_badge assess.assessment.id %}
-          </td>
-          <td>{{assess.num_tasks}}</td>
-          <td>{{assess.num_robs}}</td>
-          <td>
-            <a class='btn btn-primary' href="{% url 'mgmt:user-assessment-task-list' assess.assessment.id %}">View</a>
-          </td>
-        <tr>
+              {% debug_badge assess.assessment.id %}
+            </td>
+            <td>
+              {% if assess.num_tasks %}
+                <a href="{% url 'mgmt:task-list' assess.assessment.id %}?owner={{user.id}}">{{assess.num_tasks}} task{{ assess.num_tasks|pluralize }}</a>
+              {% else %}---{% endif %}
+            </td>
+            <td>
+              {% if assess.num_robs %}
+                <a href="{% url 'riskofbias:rob_assignments' assess.assessment.id %}?assigned_user={{user.id}}">{{assess.num_robs}} evaluation{{ assess.num_robs|pluralize }}</a>
+              {% else %}---{% endif %}
+            </td>
+            <tr>
       {% empty %}
         <tr>
           <td colspan="4"><i>No assigned tasks!</i></td>

@@ -6,11 +6,6 @@ app_name = "mgmt"
 urlpatterns = [
     # user task-list
     path("tasks/", views.UserTaskList.as_view(), name="user-task-list"),
-    path(
-        "assessment/<int:pk>/tasks/",
-        views.UserAssessmentTaskList.as_view(),
-        name="user-assessment-task-list",
-    ),
     # assessment-level views
     path(
         "assessment/<int:pk>/",
