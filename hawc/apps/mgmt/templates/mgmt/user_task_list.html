@@ -14,7 +14,7 @@
             </td>
             <td>
               {% if assess.num_tasks %}
-                <a href="{% url 'mgmt:task-list' assess.assessment.id %}?owner={{user.id}}">{{assess.num_tasks}} task{{ assess.num_tasks|pluralize }}</a>
+                <a href="{% url 'mgmt:task-list' assess.assessment.id %}?owner={{user.id}}&status=990">{{assess.num_tasks}} task{{ assess.num_tasks|pluralize }}</a>
               {% else %}---{% endif %}
             </td>
             <td>

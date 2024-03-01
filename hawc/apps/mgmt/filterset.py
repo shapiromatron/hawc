@@ -36,14 +36,21 @@ class TaskFilterSet(BaseFilterSet):
         help_text="Data type for full-text extraction",
         empty_label="- Data Type -",
     )
-    type = df.ChoiceFilter(empty_label="- Type -", choices=constants.TaskType.choices)
+    type = df.ChoiceFilter(
+        empty_label="- Type -",
+        choices=constants.TaskType.choices,
+    )
     owner = df.ModelChoiceFilter(
         label="Assigned user",
         queryset=HAWCUser.objects.none(),
         help_text="Includes all tasks for a study where a user has at least one assignment",
         empty_label="- User -",
     )
-    status = df.ChoiceFilter(empty_label="- Status -", choices=constants.TaskStatus.choices)
+    status = df.ChoiceFilter(
+        empty_label="- Status -",
+        choices=constants.TaskStatus.extra_choices(),
+        method="filter_status",
+    )
     order_by = TaskOrderingFilter(
         label="Ordering",
         fields=(
@@ -67,6 +74,9 @@ class TaskFilterSet(BaseFilterSet):
 
     def filter_data_type(self, queryset, name, value):
         return queryset.filter(**{f"study__{value}": True})
+
+    def filter_status(self, queryset, name, value):
+        return queryset.filter(constants.TaskStatus.filter_extra(int(value)))
 
     def create_form(self):
         form = super().create_form()

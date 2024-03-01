@@ -10,32 +10,34 @@
 
   {% include 'common/inline_filter_form.html' %}
 
-  {% if object_list %}
-    <table class="table table-sm">
-      {% bs4_colgroup "20,20,20,20,20" %}
-      <thead>
-        <tr>
-          <th>Study</th>
-          <th class="popovers" data-title="Task Type Descriptions" data-html="true"
-              data-content="<ul class='list-group'>
-                            <li class='list-group-item'><b>Data preparation:</b> Content which should be extracted from study is documented for data extractors.</li>
-                            <li class='list-group-item'><b>Data extraction:</b> Data is extracted from study.</li>
-                            <li class='list-group-item'><b>QA/QC:</b> Data extracted has been QA/QC.</li>
-                            <li class='list-group-item'><b>Risk of bias/study evaluation:</b> Risk of bias/study evaluation has been completed (if enabled).</li>
-                            </ul>">Task Type {% icon "fa-question-circle" %}</th>
-          <th>Task Owner</th>
-          <th>Task Status</th>
-          <th>Task Due Date</th>
-        </tr>
-      </thead>
-      {% for object in object_list %}
-        {% include "mgmt/fragments/task_detail.html" %}
-      {% endfor %}
-    </table>
-    {% include "includes/paginator.html" with plural_object_name="tasks" %}
-  {% else %}
-    <p>No tasks available.</p>
-  {% endif %}
+  <table class="table table-sm">
+    {% bs4_colgroup "20,20,20,20,20" %}
+    <thead>
+      <tr>
+        <th>Study</th>
+        <th class="popovers" data-title="Task Type Descriptions" data-html="true"
+            data-content="<ul class='list-group'>
+                          <li class='list-group-item'><b>Data preparation:</b> Content which should be extracted from study is documented for data extractors.</li>
+                          <li class='list-group-item'><b>Data extraction:</b> Data is extracted from study.</li>
+                          <li class='list-group-item'><b>QA/QC:</b> Data extracted has been QA/QC.</li>
+                          <li class='list-group-item'><b>Risk of bias/study evaluation:</b> Risk of bias/study evaluation has been completed (if enabled).</li>
+                          </ul>">Task Type {% icon "fa-question-circle" %}</th>
+        <th>Task Owner</th>
+        <th>Task Status</th>
+        <th>Task Due Date</th>
+      </tr>
+    </thead>
+    {% for object in object_list %}
+      {% include "mgmt/fragments/task_detail.html" %}
+    {% empty %}
+      <tr>
+        <td>
+          <i>No tasks available.</i>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% include "includes/paginator.html" with plural_object_name="tasks" %}
 {% endblock %}
 
 {% block extrajs %}
