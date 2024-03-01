@@ -159,6 +159,8 @@ class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
     actions: set[str] = {"index", "time_series", "time_spent", "overview"}
 
     def index(self, request: HttpRequest, context: dict):
+        context["breadcrumbs"].append(mgmt_dashboard_breadcrumb(self.assessment))
+        context["breadcrumbs"].append(Breadcrumb(name="Analytics"))
         return render(request, "mgmt/analytics.html", context)
 
     def time_series(self, request: HttpRequest, context: dict):

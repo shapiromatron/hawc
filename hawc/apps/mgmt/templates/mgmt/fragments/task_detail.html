@@ -17,7 +17,7 @@
   </td>
   <td>
     <div class="d-flex">
-      <span {% if object.overdue %}class="bg-warning px-2"{% endif %}>{{ object.due_date|date:"SHORT_DATE_FORMAT"|default:"---" }}</span>
+      <span class="px-2 {% if object.overdue %}bg-warning{% endif %}">{{ object.due_date|date:"SHORT_DATE_FORMAT"|default:"---" }}</span>
       <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-htmx' object.pk 'update' %}">
         <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
       </button>

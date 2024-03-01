@@ -5,7 +5,7 @@
     <h2>Management dashboard</h2>
     {% actions %}
       <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
-      <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}?owner={{user.id}}">My assigned tasks</a>
+      <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}?owner={{user.id}}&status=990">My assigned tasks</a>
       <a class="dropdown-item" href="{% url 'mgmt:assessment-analytics' assessment.pk %}">Analytics</a>
     {% endactions %}
   </div>

@@ -3,9 +3,6 @@
 {% block content %}
   <div class="d-flex">
     <h2>Task assignments</h2>
-    {% actions %}
-      <a class="dropdown-item" href="?owner={{user.id}}">My assigned tasks</a>
-    {% endactions %}
   </div>
 
   {% include 'common/inline_filter_form.html' %}
