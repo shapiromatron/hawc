@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import Site
 from django.core.cache import cache
-from django.core.mail import EmailMultiAlternatives, send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -52,12 +52,6 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
-
-    def get_short_name(self):
-        return self.first_name
-
-    def email_user(self, subject, message, from_email=None):
-        send_mail(subject, message, from_email, [self.email])
 
     def get_assessments(self):
         Assessment = apps.get_model("assessment", "Assessment")
@@ -146,9 +140,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.get_full_name() + " Profile"
-
-    def get_absolute_url(self):
-        return reverse("user:settings")
-
-    def get_assessment(self):
-        return self.assessment

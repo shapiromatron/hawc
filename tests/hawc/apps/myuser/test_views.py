@@ -231,6 +231,24 @@ class ExternalAuthTests(TestCase):
 
 
 @pytest.mark.django_db
+class TestVerifyEmail:
+    def test_workflow(self, settings):
+        settings.EMAIL_VERIFICATION_REQUIRED = True
+        user = models.HAWCUser.objects.get(email="reviewer@hawcproject.org")
+        user.email_verified_on = None
+        user.save()
+
+        url = user.create_email_verification_url()
+        client = Client()
+        resp = client.get(url, follow=True)
+        assert resp.status_code == 200
+
+        user.refresh_from_db()
+        assert user.email_verified_on is not None
+        settings.EMAIL_VERIFICATION_REQUIRED = False
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("pm")
 
@@ -248,6 +266,13 @@ def test_get_200():
         reverse("user:reset_password"),
         reverse("user:reset_password_sent"),
         reverse("user:reset_password_done"),
+    ]
+    for url in urls:
+        check_200(client, url)
+
+    client = get_client("admin")
+    urls = [
+        reverse("admin:myuser_hawcuser_change", args=(1,)),
     ]
     for url in urls:
         check_200(client, url)

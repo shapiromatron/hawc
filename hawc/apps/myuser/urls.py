@@ -62,18 +62,14 @@ if AuthProvider.django in settings.AUTH_PROVIDERS:
             name="set_password",
         ),
         path("api/token-auth/", api.hawc_obtain_auth_token, name="api_token_auth"),
-    ]
-
-if AuthProvider.external in settings.AUTH_PROVIDERS:
-    urlpatterns += [
-        path("login/wam/", views.ExternalAuth.as_view(), name="external_auth"),
-    ]
-
-if settings.EMAIL_VERIFICATION_REQUIRED:
-    urlpatterns += [
         path(
             "email-verify/<uidb64>/<token>/",
             views.VerifyEmail.as_view(),
             name="verify_email",
         ),
+    ]
+
+if AuthProvider.external in settings.AUTH_PROVIDERS:
+    urlpatterns += [
+        path("login/wam/", views.ExternalAuth.as_view(), name="external_auth"),
     ]
