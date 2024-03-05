@@ -7,6 +7,9 @@ const startup = (name, cb) => {
         case "animalStartup":
             import("./animal/index.js").then(app => cb(app.default));
             break;
+        case "animalv2Startup":
+            import("./animalv2/index.js").then(app => cb(app.default));
+            break;
         case "bmds2Startup":
             import("./bmd/bmds2/index.js").then(app => cb(app.default));
             break;

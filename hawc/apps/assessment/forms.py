@@ -16,7 +16,10 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
+from ..common.autocomplete import (
+    AutocompleteSelectMultipleWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -135,7 +138,8 @@ class AssessmentDetailForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "project_type": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentDetailAutocomplete, field="project_type"
+                autocomplete_class=autocomplete.AssessmentDetailAutocomplete,
+                field="project_type",
             ),
         }
 
@@ -162,7 +166,10 @@ class AssessmentDetailForm(forms.ModelForm):
             else self.instance.assessment.get_absolute_url()
         )
         helper = BaseFormHelper(
-            self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
+            self,
+            legend_text=self.LEGEND,
+            help_text=self.HELP_TEXT,
+            cancel_url=cancel_url,
         )
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
@@ -181,35 +188,44 @@ class AssessmentValueForm(forms.ModelForm):
         exclude = ["assessment"]
         widgets = {
             "system": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="system"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="system",
             ),
             "species_studied": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="species_studied"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="species_studied",
             ),
             "duration": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="duration"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="duration",
             ),
             "tumor_type": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="tumor_type"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="tumor_type",
             ),
             "extrapolation_method": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete,
                 field="extrapolation_method",
             ),
             "evidence": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="evidence"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="evidence",
             ),
             "value_unit": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="value_unit"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="value_unit",
             ),
             "pod_unit": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_unit"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="pod_unit",
             ),
             "pod_type": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="pod_type"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="pod_type",
             ),
             "confidence": AutocompleteTextWidget(
-                autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="confidence"
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="confidence",
             ),
         }
 
@@ -317,6 +333,7 @@ class AssessmentModulesForm(forms.ModelForm):
             "rob_name",
             "vocabulary",
             "epi_version",
+            "animal_version",
         )
         model = models.Assessment
 
@@ -345,7 +362,7 @@ class AssessmentModulesForm(forms.ModelForm):
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
         helper.add_row("enable_visuals", 3, "col-lg-4")
         helper.add_row("noel_name", 3, "col-lg-4")
-        helper.add_row("epi_version", 1, "col-lg-4")
+        helper.add_row("epi_version", 2, "col-lg-4")
         return helper
 
 

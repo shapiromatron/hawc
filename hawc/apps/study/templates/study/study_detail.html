@@ -23,8 +23,12 @@
               {% if object.bioassay %}
                 <div class="dropdown-divider"></div>
                 <span class="dropdown-header">Animal bioassay editing</span>
+                {% if assessment.animal_version == 1 %}
                 <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
                 <a class="dropdown-item" href="{% url 'animal:experiment_copy' object.pk %}">Copy from existing</a>
+                {% elif assessment.animal_version == 2 %}
+                <a class="dropdown-item" href="{% url 'animalv2:experiment_create' object.pk %}">Create new experiment</a>
+                {% endif %}
               {% endif %}
 
               {% if object.in_vitro %}
@@ -105,7 +109,11 @@
     {% endif %}
 
     {% if study.bioassay %}
-      {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
+      {% if assessment.animal_version == 1 %}
+        {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
+      {% elif assessment.animal_version == 2 %}
+        {% include "animalv2/fragments/_experiment_list_tbl.html" with object_list=object.v2_experiments.all %}
+      {% endif %}
     {% endif %}
 
     {% if study.epi %}

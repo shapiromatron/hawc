@@ -20,15 +20,45 @@ class TestDatasetViewSet:
         # team-member can view anything, including versions and unpublished
         assert client.login(username="team@hawcproject.org", password="pw") is True
         for url, code in [
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)), 200),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)), 200),
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)), 200),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)), 200),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)), 200),
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)), 200),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)), 200),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_unpublished, 1)), 200),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)),
+                200,
+            ),
+            (
+                reverse(
+                    "assessment:api:dataset-version",
+                    args=(db_keys.dataset_unpublished, 1),
+                ),
+                200,
+            ),
         ]:
             resp = client.get(url)
             assert resp.status_code == code
@@ -36,15 +66,45 @@ class TestDatasetViewSet:
         # reviewers can only view published final versions
         assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         for url, code in [
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)), 200),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)), 403),
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)), 200),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)), 200),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)), 403),
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)), 403),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)), 403),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_unpublished, 1)), 403),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)),
+                403,
+            ),
+            (
+                reverse(
+                    "assessment:api:dataset-version",
+                    args=(db_keys.dataset_unpublished, 1),
+                ),
+                403,
+            ),
         ]:
             resp = client.get(url)
             assert resp.status_code == code
@@ -52,15 +112,45 @@ class TestDatasetViewSet:
         # unauthenticated can view public final but not private, versions, or unpublished
         client = APIClient()
         for url, code in [
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)), 200),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)), 403),
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)), 403),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)), 403),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)), 403),
-            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)), 403),
-            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)), 403),
-            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_unpublished, 1)), 403),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)),
+                200,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_final, 1)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)),
+                403,
+            ),
+            (
+                reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)),
+                403,
+            ),
+            (
+                reverse(
+                    "assessment:api:dataset-version",
+                    args=(db_keys.dataset_unpublished, 1),
+                ),
+                403,
+            ),
         ]:
             resp = client.get(url)
             assert resp.status_code == code
@@ -197,6 +287,7 @@ class TestAssessmentViewSet:
             "team_members": [1, 2],
             "reviewers": [1],
             "epi_version": 1,
+            "animal_version": 1,
             "dtxsids_ids": ["DTXSID7020970"],
         }
 
@@ -219,7 +310,8 @@ class TestAssessmentViewSet:
         assert resp.status_code == 403
 
         resp = client.patch(
-            reverse("assessment:api:assessment-detail", args=(db_keys.assessment_working,)), data
+            reverse("assessment:api:assessment-detail", args=(db_keys.assessment_working,)),
+            data,
         )
         assert resp.status_code == 403
 

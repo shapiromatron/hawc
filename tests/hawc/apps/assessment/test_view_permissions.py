@@ -19,6 +19,7 @@ _successful_post = {
     "team_members": ("1", "2"),
     "reviewers": ("1",),
     "epi_version": ("1",),
+    "animal_version": ("1",),
     "dtxsids": ("DTXSID7020970",),
 }
 

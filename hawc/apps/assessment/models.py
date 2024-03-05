@@ -23,7 +23,12 @@ from reversion import revisions as reversion
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.exceptions import AssessmentNotFound
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
+from ..common.helper import (
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    cacheable,
+    new_window_a,
+)
 from ..common.models import get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
@@ -293,6 +298,12 @@ class Assessment(models.Model):
         verbose_name="Epidemiology schema version",
         help_text="Data extraction schema version used for epidemiology studies",
     )
+    animal_version = models.PositiveSmallIntegerField(
+        choices=constants.AnimalVersion,
+        default=constants.AnimalVersion.V2,
+        verbose_name="Animal schema version",
+        help_text="Data extraction schema version used for animal studies",
+    )
     admin_notes = models.TextField(
         blank=True,
         help_text="Additional information about this assessment; only visible to HAWC admins",
@@ -482,7 +493,12 @@ class Assessment(models.Model):
 
     @property
     def has_animal_data(self) -> bool:
-        return self._has_data("animal", "Experiment")
+        if self.animal_version == constants.AnimalVersion.V1:
+            return self._has_data("animal", "Experiment")
+        elif self.animal_version == constants.AnimalVersion.V2:
+            return self._has_data("animalv2", "Experiment")
+        else:
+            raise ValueError("Unknown animal version")
 
     @property
     def has_epi_data(self) -> bool:

@@ -1,0 +1,6 @@
+{% extends 'animalv2/experiment_detail.html' %}
+
+{% block content %}
+  {% include "hawc/_delete_block.html" with name="experiment" notes="This will remove all content associated with this experiment." %}
+  {{ block.super }}
+{% endblock content %}

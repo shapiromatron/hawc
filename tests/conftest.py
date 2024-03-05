@@ -57,6 +57,8 @@ class Keys:
 
         self.epiv2_design = 1
 
+        self.animalv2_experiment = 1
+
 
 _keys = Keys()
 
