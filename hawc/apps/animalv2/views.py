@@ -1,5 +1,3 @@
-import inspect
-
 from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
@@ -166,7 +164,10 @@ class ExperimentChildViewSet(HtmxViewSet):
         return render(request, template, context)
 
     @transaction.atomic
-    def perform_update(self, item: Item, form, formsets=[]):
+    def perform_update(self, item: Item, form, formsets=None):
+        if formsets is None:
+            formsets = []
+
         instance = form.save()
         create_object_log("Updated", instance, item.assessment.id, self.request.user.id)
 
@@ -177,7 +178,10 @@ class ExperimentChildViewSet(HtmxViewSet):
             formset_idx += 1
 
     @transaction.atomic
-    def perform_create(self, item: Item, form, formsets=[]):
+    def perform_create(self, item: Item, form, formsets=None):
+        if formsets is None:
+            formsets = []
+
         item.object = form.save()
         create_object_log("Created", item.object, item.assessment.id, self.request.user.id)
 
