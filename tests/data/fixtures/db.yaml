@@ -11207,6 +11207,7 @@
   pk: 1
   fields:
     experiment: 1
+    name: test endpoint name
     name_term: null
     system: Cardiovascular
     system_term: null
@@ -11236,6 +11237,7 @@
     experiment: 1
     endpoint: 1
     observation_timepoint: 1
+    treatment: 1
     is_qualitative_only: false
     data_location: test location
     variance_type: 0
