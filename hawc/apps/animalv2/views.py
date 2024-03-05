@@ -1,3 +1,5 @@
+import inspect
+
 from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory
@@ -10,6 +12,7 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseUpdate,
+    FormsetConfiguration,
     create_object_log,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
@@ -93,19 +96,8 @@ class ExperimentChildViewSet(HtmxViewSet):
     form_fragment = "animalv2/fragments/_object_edit_row.html"
     detail_fragment = None  # required
 
-    # inline formset - all optional
-    formset_fragment = None
-    formset_form_class = None
-    formset_model_class = None
-    formset_helper_class = None
-
-    def supports_formset(self) -> bool:
-        return (
-            self.formset_fragment is not None
-            and self.formset_form_class is not None
-            and self.formset_model_class is not None
-            and self.formset_helper_class is not None
-        )
+    # inline formsets - all optional
+    formset_configurations = []
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -114,64 +106,88 @@ class ExperimentChildViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        formset = None
+        formsets = []
+        formsets_valid_if_present = True
         if request.method == "POST":
+            # make a copy; if we do any is_valid modifying of the data we need this...
+            request.POST = request.POST.copy()
+
             form = self.form_class(request.POST, parent=request.item.parent)
 
-            formset = None
-            if self.supports_formset():
+            for formset_config in self.formset_configurations:
                 formset = modelformset_factory(
-                    self.formset_model_class,
-                    form=self.formset_form_class,
+                    formset_config.model_class,
+                    form=formset_config.form_class,
                     can_delete=True,
-                )(request.POST)
+                )(request.POST, prefix=formset_config.form_prefix)
+                formsets.append(formset)
 
-            if form.is_valid() and (formset is None or formset.is_valid()):
-                self.perform_create(request.item, form, formset)
+                if not formset.is_valid():
+                    formsets_valid_if_present = False
+
+            if form.is_valid() and formsets_valid_if_present:
+                self.perform_create(request.item, form, formsets)
                 template = self.detail_fragment
         else:
             form = self.form_class(parent=request.item.parent)
-        context = self.get_context_data(form=form, formset=formset)
+        context = self.get_context_data(form=form, formsets=formsets)
         return render(request, template, context)
 
+    # TODO - update the update method
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
+        if request.method == "POST":
+            # make a copy; if we do any is_valid modifying of the data we need this...
+            request.POST = request.POST.copy()
+
         data = request.POST if request.method == "POST" else None
         form = self.form_class(data=data, instance=request.item.object)
 
-        formset = None
+        formsets = []
+        formsets_valid_if_present = True
 
         if request.method == "POST" and form.is_valid():
-            if self.supports_formset():
+            for formset_config in self.formset_configurations:
                 formset = modelformset_factory(
-                    self.formset_model_class,
-                    form=self.formset_form_class,
+                    formset_config.model_class,
+                    form=formset_config.form_class,
                     can_delete=True,
-                )(request.POST)
-            if formset is None or formset.is_valid():
-                self.perform_update(request.item, form, formset)
+                )(request.POST, prefix=formset_config.form_prefix)
+                formsets.append(formset)
+
+                if not formset.is_valid():
+                    formsets_valid_if_present = False
+
+            if formsets_valid_if_present:
+                self.perform_update(request.item, form, formsets)
                 template = self.detail_fragment
-        context = self.get_context_data(form=form, formset=formset)
+        context = self.get_context_data(form=form, formsets=formsets)
         return render(request, template, context)
 
     @transaction.atomic
-    def perform_update(self, item: Item, form, formset=None):
+    def perform_update(self, item: Item, form, formsets=[]):
         instance = form.save()
         create_object_log("Updated", instance, item.assessment.id, self.request.user.id)
 
-        if formset is not None:
-            self.perform_formset_cud_operations(formset, instance)
+        formset_idx = 0
+        for formset in formsets:
+            formset_config = self.formset_configurations[formset_idx]
+            self.perform_formset_cud_operations(formset, formset_config, item.object)
+            formset_idx += 1
 
     @transaction.atomic
-    def perform_create(self, item: Item, form, formset=None):
+    def perform_create(self, item: Item, form, formsets=[]):
         item.object = form.save()
         create_object_log("Created", item.object, item.assessment.id, self.request.user.id)
 
-        if formset is not None:
-            self.perform_formset_cud_operations(formset, item.object)
+        formset_idx = 0
+        for formset in formsets:
+            formset_config = self.formset_configurations[formset_idx]
+            self.perform_formset_cud_operations(formset, formset_config, item.object)
+            formset_idx += 1
 
-    def perform_formset_cud_operations(self, formset, parent_obj_instance):
+    def perform_formset_cud_operations(self, formset, formset_config, parent_obj_instance):
         # creates/updates/deletes instances represented in the sub formset; logs them; etc.
         temp_instances = formset.save(commit=False)
 
@@ -179,7 +195,7 @@ class ExperimentChildViewSet(HtmxViewSet):
             create_object_log("Deleted", obj, obj.get_assessment().id, self.request.user.id)
             obj.delete()
 
-        parent_key = self.formset_form_class.formset_parent_key
+        parent_key = formset_config.form_class.formset_parent_key
         for temp_instance in temp_instances:
             setattr(temp_instance, parent_key, parent_obj_instance.id)
             is_create = temp_instance.id is None
@@ -191,9 +207,6 @@ class ExperimentChildViewSet(HtmxViewSet):
                 temp_instance.get_assessment().id,
                 self.request.user.id,
             )
-
-    # data = self.request.POST if self.request.method == "POST" else None
-    # print(f"perform_update; data is '{data}'")
 
     @action(methods=("get", "post"), permission=can_edit)
     def delete(self, request: HttpRequest, *args, **kwargs):
@@ -214,41 +227,55 @@ class ExperimentChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
-        if self.supports_formset():
-            context["formset_template_fragment"] = self.formset_fragment
 
-            # if we can, use the previous formset to avoid losing in-progress edits, display errors, etc.
-            formset = kwargs.get("formset")
+        formset_idx = 0
+        formsets = kwargs.get("formsets", [])
+        formset_contexts = []
+        for formset_config in self.formset_configurations:
+            formset = formsets[formset_idx] if formset_idx < len(formsets) else None
+
             if formset is None:
                 formset = modelformset_factory(
-                    self.formset_model_class,
-                    form=self.formset_form_class,
+                    formset_config.model_class,
+                    form=formset_config.form_class,
                     can_delete=True,
                 )(
                     # only show the subobjects related to this parent. The filter key is dynamic
                     # so we do it using a Q object.
                     #
-                    # e.g. for DoseGroup editing:
-                    #       self.formset_form_class.formset_parent_key is "treatment_id"
-                    #       self.request.item.object.id is the id of the parent treatment
+                    # e.g. for DoseGroup editing we have a FormsetConfiguration "formset_config" where:
+                    #       formset_config.form_class.formset_parent_key    == "treatment_id"
+                    #       self.request.item.object.id                     == the id of the parent treatment
+                    #       formset_config.sort_field                       == "dose_group_id"
                     #
                     # So this Q code is like doing:
-                    #       queryset=self.formset_model_class.objects.filter(
+                    #       queryset=formset_config.model_class.objects.filter(
                     #           treatment_id=x
                     #       ).order_by("dose_group_id")
-                    queryset=self.formset_model_class.objects.filter(
+                    queryset=formset_config.model_class.objects.filter(
                         Q(
                             (
-                                self.formset_form_class.formset_parent_key,
+                                formset_config.form_class.formset_parent_key,
                                 self.request.item.object.id,
                             )
                         )
-                    ).order_by("dose_group_id")
+                    ).order_by(formset_config.sort_field)
                     if self.request.item.object is not None
-                    else self.formset_model_class.objects.none()
+                    else formset_config.model_class.objects.none(),
+                    prefix=formset_config.form_prefix,
                 )
-            context["formset_instance"] = formset
-            context["formset_helper"] = self.formset_helper_class()
+
+            formset_contexts.append(
+                {
+                    "fragment": formset_config.fragment,
+                    "instance": formset,
+                    "helper": formset_config.helper_class(),
+                }
+            )
+            formset_idx += 1
+
+        context["formset_contexts"] = formset_contexts
+
         return context
 
 
@@ -271,10 +298,16 @@ class TreatmentViewSet(ExperimentChildViewSet):
     model = models.Treatment
     form_class = forms.TreatmentForm
     detail_fragment = "animalv2/fragments/_treatment_row.html"
-    formset_fragment = "animalv2/fragments/_treatment_formset.html"
-    formset_form_class = forms.DoseGroupForm
-    formset_model_class = models.DoseGroup
-    formset_helper_class = forms.DoseGroupFormHelper
+    formset_configurations = [
+        FormsetConfiguration(
+            "animalv2/fragments/_treatment_formset.html",
+            forms.DoseGroupForm,
+            models.DoseGroup,
+            forms.DoseGroupFormHelper,
+            "dose_group_id",
+            "dosegroupform",
+        )
+    ]
 
 
 # Endpoint viewset
@@ -284,8 +317,33 @@ class EndpointViewSet(ExperimentChildViewSet):
     detail_fragment = "animalv2/fragments/_endpoint_row.html"
 
 
-# ObservationTim viewset
+# ObservationTime viewset
 class ObservationTimeViewSet(ExperimentChildViewSet):
     model = models.ObservationTime
     form_class = forms.ObservationTimeForm
     detail_fragment = "animalv2/fragments/_observationtime_row.html"
+
+
+# DataExtraction viewset
+class DataExtractionViewSet(ExperimentChildViewSet):
+    model = models.DataExtraction
+    form_class = forms.DataExtractionForm
+    detail_fragment = "animalv2/fragments/_dataextraction_row.html"
+    formset_configurations = [
+        FormsetConfiguration(
+            "animalv2/fragments/_dataextraction_formset_groupleveldata.html",
+            forms.DoseResponseGroupLevelDataForm,
+            models.DoseResponseGroupLevelData,
+            forms.DoseResponseGroupLevelDataFormHelper,
+            "id",
+            "groupleveldataform",
+        ),
+        FormsetConfiguration(
+            "animalv2/fragments/_dataextraction_formset_animalleveldata.html",
+            forms.DoseResponseAnimalLevelDataForm,
+            models.DoseResponseAnimalLevelData,
+            forms.DoseResponseAnimalLevelDataFormHelper,
+            "id",
+            "animalleveldataform",
+        ),
+    ]

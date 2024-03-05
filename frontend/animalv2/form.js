@@ -3,10 +3,9 @@ import _ from "lodash";
 import $ from "$";
 
 // general approach lifted from https://stackoverflow.com/questions/501719/dynamically-adding-a-form-to-a-django-formset
-// td#id is duping the cloned row, need to udpate that...
-const cloneSubformRow = function(selector, formIdentifier) {
-    var newElement = $(selector).clone(true);
-    var total = $("#id_" + formIdentifier + "-TOTAL_FORMS").val();
+const cloneSubformRow = function(lastRow, totalFormField) {
+    var newElement = lastRow.clone(true);
+    var total = totalFormField.val();
     newElement.find(":input").each(function() {
         var name = $(this)
             .attr("name")
@@ -24,8 +23,16 @@ const cloneSubformRow = function(selector, formIdentifier) {
         $(this).attr("for", newFor);
     });
     total++;
-    $("#id_" + formIdentifier + "-TOTAL_FORMS").val(total);
-    $(selector).after(newElement);
+    totalFormField.val(total);
+    lastRow.after(newElement);
+
+    // some of the DOM elements (the outer td and some of the help labeling)
+    // are wrong; correct them
+    newElement.find("td, small").each(function() {
+        let loopEl = $(this);
+        let incorrectId = loopEl.attr("id");
+        loopEl.attr("id", incorrectId.replace("-" + (total - 2) + "-", "-" + (total - 1) + "-"));
+    });
 };
 
 const experimentFormStartup = function(form) {
@@ -85,11 +92,62 @@ const animalGroupFormStartup = function(form) {
     });
 };
 
-const treatmentFormStartup = function(form) {
+const dataExtractionFormStartup = function(form) {
+    let onQualitativeChange = function() {
+        let isQualOnly = $(form)
+            .find("#id_is_qualitative_only")
+            .is(":checked");
+
+        let quantitativeFields = [
+            "data_location",
+            "dataset_type",
+            "variance_type",
+            "statistical_method",
+            "statistical_power",
+            "method_to_control_for_litter_effects",
+            "values_estimated",
+            "response_units",
+            "dose_response_observations",
+            "result_details",
+        ];
+
+        quantitativeFields.forEach(function(fieldName) {
+            let parentDiv = $("#id_" + fieldName).parents("div.form-group");
+            if (isQualOnly) {
+                parentDiv.addClass("hidden");
+            } else {
+                parentDiv.removeClass("hidden");
+            }
+        });
+
+        // note at this point we are NOT wiping any values; in form.is_valid
+        // we will do another check for is_qualitative_only and set appropriate
+        // values at that point if needed.
+    };
+
     $(form)
-        .find("button#add_subobject_row")
-        .click(function() {
-            cloneSubformRow("#embedded_dosegroup_form_wrapper tr:last", "form");
+        .find("#id_is_qualitative_only")
+        .change(onQualitativeChange);
+    onQualitativeChange();
+};
+
+const formsetSetup = function(form, prefixOrPrefixes) {
+    if (!Array.isArray(prefixOrPrefixes)) {
+        prefixOrPrefixes = [prefixOrPrefixes];
+    }
+
+    $(form)
+        .find("button.add-subobject")
+        .each(function(index, element) {
+            $(this).click(function() {
+                let formPrefix = prefixOrPrefixes[index];
+                let parentWrapper = $(this).parent("div.formset_wrapper");
+                let lastRow = parentWrapper.find("tr:last");
+                let totalFormField = parentWrapper.find(
+                    "input[name='" + formPrefix + "-TOTAL_FORMS']"
+                );
+                cloneSubformRow(lastRow, totalFormField);
+            });
         });
 };
 
@@ -100,7 +158,10 @@ export default document => {
         } else if (e.target.querySelector(".form-animalgroup")) {
             animalGroupFormStartup(e.target);
         } else if (e.target.querySelector(".form-treatment")) {
-            treatmentFormStartup(e.target);
+            formsetSetup(e.target, "dosegroupform");
+        } else if (e.target.querySelector(".form-dataextraction")) {
+            dataExtractionFormStartup(e.target);
+            formsetSetup(e.target, ["groupleveldataform", "animalleveldataform"]);
         }
     });
 };

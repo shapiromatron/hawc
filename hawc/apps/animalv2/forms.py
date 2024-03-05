@@ -8,7 +8,7 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, QuillField
-from . import autocomplete, models
+from . import autocomplete, constants, models
 
 
 class ExperimentForm(ModelForm):
@@ -230,3 +230,100 @@ class ObservationTimeForm(forms.ModelForm):
         helper.form_tag = False
 
         return helper
+
+
+class DataExtractionForm(forms.ModelForm):
+    class Meta:
+        model = models.DataExtraction
+        exclude = ("experiment",)
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+        self.fields["endpoint"].queryset = self.instance.experiment.v2_endpoints.all()
+        self.fields["treatment"].queryset = self.instance.experiment.v2_treatments.all()
+        self.fields["observation_timepoint"].queryset = models.ObservationTime.objects.filter(
+            endpoint__in=self.instance.experiment.v2_endpoints.all()
+        )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("data_location", 3, "col-md-4")
+        helper.add_row("statistical_method", 2, "col-md-6")
+        helper.add_row("method_to_control_for_litter_effects", 3, "col-md-4")
+
+        return helper
+
+    def is_valid(self):
+        if "is_qualitative_only" in self.data and self.data["is_qualitative_only"] == "on":
+            # if "is qualitative only" is checked, we are hiding other fields...so relax the required'ness of some...
+            for usually_required_field in [
+                "dose_response_observations",
+                "result_details",
+            ]:
+                self.fields[usually_required_field].required = False
+
+            # ...and set sensible values on the hidden ones as well.
+            hidden_defaults = {
+                "data_location": "",
+                "dataset_type": "",
+                "variance_type": constants.VarianceType.NA,
+                "statistical_method": "",
+                "statistical_power": "",
+                "method_to_control_for_litter_effects": constants.MethodToControlForLitterEffects.NA,
+                "values_estimated": False,
+                "response_units": "",
+                "dose_response_observations": "",
+                "result_details": "",
+            }
+
+            for field_name in hidden_defaults:
+                self.data[field_name] = hidden_defaults[field_name]
+
+        return super().is_valid()
+
+
+class DoseResponseGroupLevelDataForm(forms.ModelForm):
+    formset_parent_key = "data_extraction_id"
+
+    class Meta:
+        model = models.DoseResponseGroupLevelData
+        exclude = ("data_extraction",)
+
+    def __init__(self, *args, **kwargs):
+        data_extraction = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if data_extraction:
+            self.instance.data_extraction = data_extraction
+
+
+class DoseResponseGroupLevelDataFormHelper(BaseFormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_tag = False
+        self.template = "bootstrap4/table_inline_formset.html"
+
+
+class DoseResponseAnimalLevelDataForm(forms.ModelForm):
+    formset_parent_key = "data_extraction_id"
+
+    class Meta:
+        model = models.DoseResponseAnimalLevelData
+        exclude = ("data_extraction",)
+
+    def __init__(self, *args, **kwargs):
+        data_extraction = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if data_extraction:
+            self.instance.data_extraction = data_extraction
+
+
+class DoseResponseAnimalLevelDataFormHelper(BaseFormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_tag = False
+        self.template = "bootstrap4/table_inline_formset.html"

@@ -66,6 +66,15 @@ class Experiment(models.Model):
         for endpoint in self.v2_endpoints.all():
             timepoints.extend(endpoint.v2_timepoints.all())
         return timepoints
+        """
+        foo = ObservationTime.objects.filter(endpoint__in=self.v2_endpoints.all()).as_manager()
+        # foo = models.Manager.from_queryset(
+        # ObservationTime.objects.filter(endpoint__in=self.v2_endpoints.all())
+        # )
+        # print(f"foo is {type(foo)}; bar is {type(self.v2_endpoints)}")
+        print(f"v2_timepoints is {type(foo)}: {foo}")
+        return foo
+        """
 
 
 class Chemical(models.Model):
@@ -410,6 +419,11 @@ class ObservationTime(models.Model):
     def get_study(self):
         return self.endpoint.get_study()
 
+    def __str__(self):
+        return (
+            f"{self.endpoint}: {self.observation_time} {self.get_observation_time_units_display()}"
+        )
+
     def clone(self):
         self.id = None
         self.save()
@@ -425,6 +439,9 @@ class DataExtraction(models.Model):
     endpoint = models.ForeignKey(
         Endpoint, on_delete=models.CASCADE, related_name="v2_data_extractions"
     )
+    treatment = models.ForeignKey(
+        Treatment, on_delete=models.CASCADE, related_name="v2_data_extractions"
+    )
     observation_timepoint = models.ForeignKey(
         ObservationTime, on_delete=models.CASCADE, related_name="v2_data_extractions"
     )
@@ -436,10 +453,14 @@ class DataExtraction(models.Model):
         blank=True,
         help_text="""Details on where the data are found in the literature (ex: "Figure 1", "Table 2", "Text, p. 24", "Figure 1 and Text, p.24")""",
     )
+    dataset_type = models.CharField(
+        blank=True, default="", max_length=2, choices=constants.DatasetType.choices
+    )
     variance_type = models.PositiveSmallIntegerField(
         default=constants.VarianceType.SD, choices=constants.VarianceType.choices
     )
     statistical_method = models.CharField(max_length=128, blank=True, help_text="TODO")
+    statistical_power = models.CharField(max_length=128, blank=True, help_text="TODO")
     method_to_control_for_litter_effects = models.PositiveSmallIntegerField(
         choices=constants.MethodToControlForLitterEffects.choices
     )
@@ -447,10 +468,6 @@ class DataExtraction(models.Model):
         default=False,
         help_text="Response values were estimated using a digital ruler or other methods",
     )
-    dataset_type = models.CharField(
-        blank=True, default="", max_length=2, choices=constants.DatasetType.choices
-    )
-    statistical_power = models.CharField(max_length=128, blank=True, help_text="TODO")
     response_units = models.CharField(
         max_length=32,
         blank=True,
@@ -467,6 +484,11 @@ class DataExtraction(models.Model):
 
     def get_study(self):
         return self.experiment.get_study()
+
+    def clone(self):
+        self.id = None
+        self.save()
+        return self
 
 
 class DoseResponseGroupLevelData(models.Model):

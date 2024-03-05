@@ -115,6 +115,27 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        {% url 'animalv2:dataextraction-create' object.pk as dataextraction_create %}
+        {% include "animalv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '45,45,10' %}
+            {% bs4_thead 'Endpoint,Timepoint,Edit' %}
+            <tbody>
+                {% if object.v2_data_extractions.all %}
+                    {% for object in object.v2_data_extractions.all %}
+                        {% include "animalv2/fragments/_dataextraction_row.html" %}
+                    {% endfor %}
+                    {% include "animalv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="" %}
+                {% else %}
+                    {% include "animalv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="data extractions" %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="animalv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
 </div>

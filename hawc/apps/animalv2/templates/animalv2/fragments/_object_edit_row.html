@@ -8,9 +8,9 @@
 
             {% crispy form %}
 
-            {% if formset_template_fragment %}
-              {% include formset_template_fragment %}
-            {% endif %}
+            {% for fsc in formset_contexts %}
+              {% include fsc.fragment with formset_instance=fsc.instance formset_helper=fsc.helper %}
+            {% endfor %}
 
             <div class="form-row float-right">
                 {% if form.instance.id %}

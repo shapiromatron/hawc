@@ -1,9 +1,9 @@
 {{ formset.management_form|crispy }}
 
-<div id="embedded_dosegroup_form_wrapper">
+<div class="formset_wrapper" id="embedded_dosegroup_form_wrapper">
   <h3 class="card_title">Dose Groups</h3>
 
   {% crispy formset_instance formset_helper %}
 
-  <button class="btn btn-sm btn-primary" type="button" id="add_subobject_row"><i class="fa fa-plus fa-fw"></i>&nbsp;Add Row</button>
+  <button class="btn btn-sm btn-primary add-subobject" type="button" id="add_subobject_row_dosegroup"><i class="fa fa-plus fa-fw"></i>&nbsp;Add Row</button>
 </div>

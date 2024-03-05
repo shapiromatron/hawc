@@ -98,4 +98,21 @@
     </div>
 </div>
 
+<div class="card my-4 mx-2">
+    <div class="card-body">
+        <h3 class="card-title">Data Extractions</h3>
+        <table class="table table-sm table-striped">
+            {% bs4_colgroup '50,50' %}
+            {% bs4_thead 'Endpoint,Timepoint' %}
+            <tbody>
+                {% for object in object.v2_data_extractions.all %}
+                    {% include "animalv2/fragments/_dataextraction_row.html" %}
+                {% empty %}
+                    {% bs4_fullrow 'No data extractions available.' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 {% endblock %}

@@ -783,3 +783,20 @@ def htmx_required(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+
+class FormsetConfiguration:
+    fragment = None
+    form_class = None
+    model_class = None
+    helper_class = None
+    sort_field = None
+    form_prefix = None
+
+    def __init__(self, fragment, form_class, model_class, helper_class, sort_field, form_prefix):
+        self.fragment = fragment
+        self.form_class = form_class
+        self.model_class = model_class
+        self.helper_class = helper_class
+        self.sort_field = sort_field
+        self.form_prefix = form_prefix

@@ -193,4 +193,35 @@ urlpatterns = [
         {"action": "delete"},
         name="observationtime-delete",
     ),
+    # dataextraction
+    path(
+        "dataextraction/<int:pk>/create/",
+        views.DataExtractionViewSet.as_view(),
+        {"action": "create"},
+        name="dataextraction-create",
+    ),
+    path(
+        "dataextraction/<int:pk>/",
+        views.DataExtractionViewSet.as_view(),
+        {"action": "read"},
+        name="dataextraction-detail",
+    ),
+    path(
+        "dataextraction/<int:pk>/clone/",
+        views.DataExtractionViewSet.as_view(),
+        {"action": "clone"},
+        name="dataextraction-clone",
+    ),
+    path(
+        "dataextraction/<int:pk>/update/",
+        views.DataExtractionViewSet.as_view(),
+        {"action": "update"},
+        name="dataextraction-update",
+    ),
+    path(
+        "dataextraction/<int:pk>/delete/",
+        views.DataExtractionViewSet.as_view(),
+        {"action": "delete"},
+        name="dataextraction-delete",
+    ),
 ]
