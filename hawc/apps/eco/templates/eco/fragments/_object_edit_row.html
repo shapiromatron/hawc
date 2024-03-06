@@ -1,4 +1,4 @@
-<tr hx-target="this" hx-swap="outerHTML swap:0s" id="{{model}}-empty-row">
+<tr hx-target="this" hx-swap="outerHTML swap:0s" class="eco-edit-row {{model}}-edit-row">
   {% if form %}
     <td colspan="100%">
       <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-{{model}}">
@@ -10,7 +10,7 @@
           {% if form.instance.id %}
             <button id="{{model}}-save" class="btn btn-sm btn-primary" hx-post="{% crud_url 'eco' model 'update' object.pk %}">
               Save</button>
-            <button id="{{model}}-cancel" class="btn btn-sm btn-light" hx-get="{% crud_url 'eco' model 'detail' object.pk %}">
+            <button id="{{model}}-cancel" class="btn btn-sm btn-light" hx-get="{% crud_url 'eco' model 'read' object.pk %}">
               <i class="fa fa-fw fa-times mr-1"></i>
               Cancel</button>
           {% else %}
@@ -18,7 +18,7 @@
               Save
             </button>
             <button id="{{model}}-cancel" class="btn btn-sm btn-light" type='button'
-                    onclick="this.parentNode.parentNode.parentNode.setAttribute('style', 'display: none')"><i
+                    onclick="window.app.HAWCUtils.hideElement($(this).closest('.eco-edit-row'))"><i
               class="fa fa-fw fa-times mr-1"></i>
               Cancel</button>
           {% endif %}
