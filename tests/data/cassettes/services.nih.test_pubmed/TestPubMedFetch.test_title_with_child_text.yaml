@@ -13,57 +13,188 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        /+36BwAA//9C44MmZgEAAAD//wMAEO3AZ1MeAAA=
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM"><PMID
+        Version="1">27933116</PMID><DateRevised><Year>2020</Year><Month>09</Month><Day>29</Day></DateRevised><Article
+        PubModel="Electronic-eCollection"><Journal><ISSN IssnType="Print">1468-6996</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>17</Volume><Issue>1</Issue><PubDate><Year>2016</Year></PubDate></JournalIssue><Title>Science
+        and technology of advanced materials</Title><ISOAbbreviation>Sci Technol Adv
+        Mater</ISOAbbreviation></Journal><ArticleTitle><i>Phoenix dactylifera</i>
+        mediated green synthesis of Cu<sub>2</sub>O particles for arsenite uptake
+        from water.</ArticleTitle><Pagination><StartPage>760</StartPage><EndPage>768</EndPage><MedlinePgn>760-768</MedlinePgn></Pagination><Abstract><AbstractText>In
+        this study, an environmentally friendly, cost-effective, and single-step procedure
+        is used for the synthesis of polycrystalline Cu<sub>2</sub>O particles with
+        controlled morphologies. Simple sugars are extracted from date fruit pulp
+        (<i>Phoenix dactylifera</i>) and used as a reducing agent for the formation
+        of Cu<sub>2</sub>O particles in aqueous medium. The feasibility of this solution
+        is compared with the standard glucose solution. The Cu<sub>2</sub>O particles
+        are characterized by electron microscopy, X-ray diffraction, optical absorption
+        and Raman scattering techniques. It is concluded that the morphology of the
+        particles is mainly influenced by the solvents. The obtained Cu<sub>2</sub>O
+        particles are then used as an adsorbent to uptake As(III) ions from water.
+        The maximum adsorption capacity (<i>Q</i><sub>max</sub>) is estimated by Langmuir
+        and Freundlich isotherms and it is found that <i>Q</i><sub>max</sub>&#x2009;=&#x2009;14.3&#xa0;mg&#xa0;g<sup>-1</sup>.
+        Adsorption kinetics study showed that the adsorption equilibrium could be
+        achieved in 1&#xa0;h and that the purified water meets the standards of World
+        Health Organization (WHO) for acceptable amount of As(III) in drinking water.
+        Adsorption kinetic models showed that the adsorption is chemisorption in nature.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Amrani</LastName><ForeName>Mokhtar
+        Ali</ForeName><Initials>MA</Initials><AffiliationInfo><Affiliation>School
+        of Engineering Sciences and Technology (SEST), University of Hyderabad , Hyderabad
+        , India.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Srikanth</LastName><ForeName>Vadali
+        V S S</ForeName><Initials>VV</Initials><AffiliationInfo><Affiliation>School
+        of Engineering Sciences and Technology (SEST), University of Hyderabad , Hyderabad
+        , India.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Labhsetwar</LastName><ForeName>Nitin
+        K</ForeName><Initials>NK</Initials><AffiliationInfo><Affiliation>Environmental
+        Materials Division, CSIR-National Environmental Engineering Research Institute
+        (CSIR-NEERI) , Nagpur , India.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Al-Fatesh</LastName><ForeName>Ahmed S</ForeName><Initials>AS</Initials><AffiliationInfo><Affiliation>Chemical
+        Engineering Department, College of Engineering, King Saud University , Riyadh
+        , Saudi Arabia.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Shaikh</LastName><ForeName>Hamid</ForeName><Initials>H</Initials><AffiliationInfo><Affiliation>Chemical
+        Engineering Department, College of Engineering, King Saud University , Riyadh
+        , Saudi Arabia.</Affiliation></AffiliationInfo></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2016</Year><Month>11</Month><Day>16</Day></ArticleDate></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Sci Technol Adv Mater</MedlineTA><NlmUniqueID>101614420</NlmUniqueID><ISSNLinking>1468-6996</ISSNLinking></MedlineJournalInfo><KeywordList
+        Owner="NOTNLM"><Keyword MajorTopicYN="N">10 Engineering and Structural materials</Keyword><Keyword
+        MajorTopicYN="N">100 Materials</Keyword><Keyword MajorTopicYN="N">304 Powder
+        processing / Sintering</Keyword><Keyword MajorTopicYN="N">307 Kinetics and
+        energy / mass transport</Keyword><Keyword MajorTopicYN="N">501 Chemical analyses</Keyword><Keyword
+        MajorTopicYN="N">503 TEM, STEM, SEM</Keyword><Keyword MajorTopicYN="N">Phoenix
+        dactylifera</Keyword><Keyword MajorTopicYN="N">arsenic(III) ions</Keyword><Keyword
+        MajorTopicYN="N">cuprous oxide</Keyword><Keyword MajorTopicYN="N">glucose</Keyword><Keyword
+        MajorTopicYN="N">green synthesis</Keyword></KeywordList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2016</Year><Month>3</Month><Day>10</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="revised"><Year>2016</Year><Month>9</Month><Day>29</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2016</Year><Month>9</Month><Day>30</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2016</Year><Month>12</Month><Day>10</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2016</Year><Month>12</Month><Day>10</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2016</Year><Month>12</Month><Day>10</Day><Hour>6</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">27933116</ArticleId><ArticleId IdType="pmc">PMC5127256</ArticleId><ArticleId
+        IdType="doi">10.1080/14686996.2016.1244472</ArticleId><ArticleId IdType="pii">1244472</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Hara
+        M, Kondo T, Komoda M, et al. Cu 2 O as a photocatalyst for overall water splitting
+        under visible light irradiation. Chem Commun. 1998;3:357&#x2013;358.</Citation></Reference><Reference><Citation>Zoolfakar
+        AS, Rani RA, Morfa AJ, et al. Nanostructured copper oxide semiconductors:
+        a perspective on materials, synthesis methods and applications. J Mater Chem
+        C. 2014;2:5247&#x2013;5270. doi: 10.1039/c4tc00345d.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1039/c4tc00345d</ArticleId></ArticleIdList></Reference><Reference><Citation>Adeleye
+        AS, Conway JR, Garner K, et al. Engineered nanomaterials for water treatment
+        and remediation: Costs, benefits, and applicability. Chem Eng J. 2016;286:640&#x2013;662.</Citation></Reference><Reference><Citation>Li
+        B, Liu T, Hu L, et al. A facile one-pot synthesis of Cu 2 O/RGO nanocomposite
+        for removal of organic pollutant. J Phys Chem Solids. 2013;74:635&#x2013;640.
+        doi: 10.1016/j.jpcs.2012.12.020.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.jpcs.2012.12.020</ArticleId></ArticleIdList></Reference><Reference><Citation>Kou
+        T, Wang Y, Zhang C, et al. Adsorption behavior of methyl orange onto nanoporous
+        core&#x2013;shell Cu-Cu2O nanocomposite. Chem Eng J. 2013;223:76&#x2013;83.
+        doi: 10.1016/j.cej.2013.03.013.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.cej.2013.03.013</ArticleId></ArticleIdList></Reference><Reference><Citation>Hamad
+        I, AbdElgawad H, Al Jaouni S, et al. Metabolic Analysis of Various Date Palm
+        Fruit (Phoenix dactylifera L.) Cultivars from Saudi Arabia to assess their
+        nutritional quality. Molecules. 2015;20(8):13620&#x2013;13641.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC6331958</ArticleId><ArticleId IdType="pubmed">26225946</ArticleId></ArticleIdList></Reference><Reference><Citation>El-Sohaimy
+        SA, Hafez EE.Biochemical and Nutritional Characterizations of Date Palm Fruits
+        (Phoenix dactylifera L.) J Appl Sci Research .201061060&#x2013;1067.</Citation></Reference><Reference><Citation>Ahmad
+        T, Danish M, Rafatullah M, et al. The use of date palm as a potential adsorbent
+        for wastewater treatment: a review. Environ Sci Pollut Res. 2012;19:1464&#x2013;1484.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">22207239</ArticleId></ArticleIdList></Reference><Reference><Citation>Ali
+        M, Rotte NK, Srikanth VVSS. Honey aided solution synthesis of polycrystalline
+        Cu2O particles. Mater Lett. 2014;128:253&#x2013;255. doi: 10.1016/j.matlet.2014.04.150.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.matlet.2014.04.150</ArticleId></ArticleIdList></Reference><Reference><Citation>Sedighi
+        A, Montazer M, Samadi N. Synthesis of nano Cu 2 O on cotton: Morphological,
+        physical, biological and optical sensing characterizations. Carbohydr Polym.
+        2014;110:489&#x2013;498. doi: 10.1016/j.carbpol.2014.04.030.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.carbpol.2014.04.030</ArticleId><ArticleId IdType="pubmed">24906783</ArticleId></ArticleIdList></Reference><Reference><Citation>Ramesh
+        C, HariPrasad M, Ragunathan V. Effect of Arachis hypogaea L. Leaf Extract
+        on Barfoed&#x2019;s Solution; Green Synthesis of Cu2O Nanoparticles and its
+        Antibacterial Effect. Curr Nanosci. 2011;7:995&#x2013;999. doi: 10.2174/157341311798220781.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.2174/157341311798220781</ArticleId></ArticleIdList></Reference><Reference><Citation>Mandal
+        BK, Suzuki KT. Arsenic around the world: a review. Talanta. 2002;58:201&#x2013;253.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">18968746</ArticleId></ArticleIdList></Reference><Reference><Citation>Raya
+        PZ, Shipley HJ. Inorganic nano-adsorbents for the removal of heavy metals
+        and arsenic: a review. RSC Advance. 2015;5:29885&#x2013;29907.</Citation></Reference><Reference><Citation>Goswami
+        A, Raul PK, Purkait MK. Arsenic adsorption using copper (II) oxide nanoparticles.
+        Chem Eng Res Design. 2012;90(9):1387&#x2013;1396. doi: 10.1016/j.cherd.2011.12.006.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.cherd.2011.12.006</ArticleId></ArticleIdList></Reference><Reference><Citation>Reddy
+        KJ, McDonald KJ, King H. A novel arsenic removal process for water using cupric
+        oxide nanoparticles. J Colloid Interf Sci. 2013;397:96&#x2013;102. doi: 10.1016/j.jcis.2013.01.041.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.jcis.2013.01.041</ArticleId><ArticleId IdType="pubmed">23452518</ArticleId></ArticleIdList></Reference><Reference><Citation>Pillewan
+        P, Mukherjee S, Roychowdhury T, et al. Removal of As(III) and As(V) from water
+        by copper oxide incorporated mesoporous alumina. J Hazard Mater. 2011;186:367&#x2013;375.
+        doi: 10.1016/j.jhazmat.2010.11.008.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.jhazmat.2010.11.008</ArticleId><ArticleId
+        IdType="pubmed">21186080</ArticleId></ArticleIdList></Reference><Reference><Citation>Guedes
+        M, Ferreira JMF, Ferro AC. Dispersion of Cu 2 O particles in aqueous suspensions
+        containing 4,5-dihydroxy-1,3-benzenedisulfonic acid disodium salt. Ceram Int.
+        2009;35:1939&#x2013;1945. doi: 10.1016/j.ceramint.2008.10.023.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.ceramint.2008.10.023</ArticleId></ArticleIdList></Reference><Reference><Citation>Shoeib
+        MA, Abdelsalam OE, Khafagi MG, et al. Synthesis of Cu2O nanocrystallites and
+        their adsorption and photocatalysis behavior. Adv Powder Techn. 2012;23:298&#x2013;304.
+        doi: 10.1016/j.apt.2011.04.001.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.apt.2011.04.001</ArticleId></ArticleIdList></Reference><Reference><Citation>Sekhar
+        H, Narayana Rao DR. Preparation, characterization and nonlinear absorption
+        studies of cuprous oxide nanoclusters, micro-cubes and micro-particles. J
+        Nanopart Res. 2012;14:976&#x2013;986. doi: 10.1007/s11051-012-0976-4.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1007/s11051-012-0976-4</ArticleId></ArticleIdList></Reference><Reference><Citation>Qiu
+        C, Zhang L, Wang H, et al. Surface-enhanced raman scattering on hierarchical
+        porous cuprous oxide nanostructures in nanoshell and thin-film geometries.
+        J Phys Chem Lett. 2012;3:651&#x2013;657. doi: 10.1021/jz201694s.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1021/jz201694s</ArticleId><ArticleId IdType="pubmed">26286162</ArticleId></ArticleIdList></Reference><Reference><Citation>Powell
+        D, Compaan A, Macdonald JR, et al. Raman-scattering study of ion-implantation-produced
+        damage in Cu2O. Phys Rev B. 1975;12:20&#x2013;25. doi: 10.1103/PhysRevB.12.20.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1103/PhysRevB.12.20</ArticleId></ArticleIdList></Reference><Reference><Citation>Jiang
+        L, You T, Yin P. Surface-enhanced Raman scattering spectra of adsorbates on
+        Cu 2 O nanospheres: charge-transfer and electromagnetic enhancement. Nanoscale.
+        2013;5:2784&#x2013;2789. doi: 10.1039/c3nr33502j.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1039/c3nr33502j</ArticleId><ArticleId IdType="pubmed">23435689</ArticleId></ArticleIdList></Reference><Reference><Citation>Park
+        BK, Jeong S, Kim D, et al. Synthesis and size control of monodisperse copper
+        nanoparticles by polyol method. J Colloid Interf Sci. 2007;311:417&#x2013;424.
+        doi: 10.1016/j.jcis.2007.03.039.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.jcis.2007.03.039</ArticleId><ArticleId
+        IdType="pubmed">17448490</ArticleId></ArticleIdList></Reference><Reference><Citation>Tao
+        Z, Raffel R, Souid A, et al. Kinetic studies on enzyme-catalyzed reactions:
+        oxidation of glucose, decomposition of hydrogen peroxide and their combination
+        Biophysical J .2009962977&#x2013;2988.10.1016/j.bpj.2008.11.071</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.bpj.2008.11.071</ArticleId><ArticleId IdType="pmc">PMC2711289</ArticleId><ArticleId
+        IdType="pubmed">19348778</ArticleId></ArticleIdList></Reference><Reference><Citation>Hong
+        ZS, Cao Y, Deng JF. A convenient alcohol-thermal approach for low temperature
+        synthesis of CuO nanoparticles. Mater Lett. 2002;52:34&#x2013;38. doi: 10.1016/S0167-577X(01)00361-5.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/S0167-577X(01)00361-5</ArticleId></ArticleIdList></Reference><Reference><Citation>Chen
+        L, Xu J, Tanner D, et al. One-step synthesis of stoichiometrically defined
+        metal oxide nanoparticles at room temperature. Chem Eur J. 2009;15:440&#x2013;448.
+        doi: 10.1002/chem.200800992.</Citation><ArticleIdList><ArticleId IdType="doi">10.1002/chem.200800992</ArticleId><ArticleId
+        IdType="pubmed">18991306</ArticleId></ArticleIdList></Reference><Reference><Citation>Feldmann
+        C. Polyol-mediated synthesis of nanoscale functional materials. Solid State
+        Sci. 2002;7:868&#x2013;873.</Citation></Reference><Reference><Citation>Goia
+        DV. Preparation and formation mechanisms of uniform metallic particles in
+        homogeneous solutions. J Mater Chem. 2004;14:451&#x2013;458. doi: 10.1039/b311076a.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1039/b311076a</ArticleId></ArticleIdList></Reference><Reference><Citation>Amrani
+        MA, Abu-Taleb A, Remalli N, et al. Dragon&#x2019;s blood aided synthesis of
+        Ag/Ag2O core/shell nanostructures and Ag/Ag2O decked multi-layered graphene
+        for efficient As(III) uptake from water and antibacterial activity RSC . Advances.
+        2016;6:44145&#x2013;44153.</Citation></Reference><Reference><Citation>Langmuir
+        I. The adsorption of gases on plane surfaces of glass, mica and platinum.
+        J Am Chem Soc. 1918;40:1361&#x2013;1403. doi: 10.1021/ja02242a004.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1021/ja02242a004</ArticleId></ArticleIdList></Reference><Reference><Citation>Freundlich
+        H. Ueber die Adsorption in Loesungen Z. J Phys Chem. 1907;57:385&#x2013;470.</Citation></Reference><Reference><Citation>Lagergren
+        S. About the theory of so-called adsorption of soluble substances Kungliga
+        Svenska Vetenskapsakademiens Handlingar. 1898;24:1&#x2013;39.</Citation></Reference><Reference><Citation>Ho
+        YS, McKay G. Pseudo-second order model for sorption processes. Process Biochem.
+        1999;34:451&#x2013;465.</Citation></Reference><Reference><Citation>Ho YS.
+        Review of second-order models for adsorption systems. J Hazard Mater. 2006;136:681&#x2013;689.
+        doi: 10.1016/j.jhazmat.2005.12.043.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.jhazmat.2005.12.043</ArticleId><ArticleId
+        IdType="pubmed">16460877</ArticleId></ArticleIdList></Reference><Reference><Citation>Liu
+        Y. New insights into pseudo-second-order kinetic equation for adsorption.
+        Colloids Surf A Physicochem Eng Asp. 2008;320:275&#x2013;278. doi: 10.1016/j.colsurfa.2008.01.032.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.colsurfa.2008.01.032</ArticleId></ArticleIdList></Reference><Reference><Citation>Danish
+        M, Hashim R, Ibrahim MNM, et al. Characterization of physically activated
+        acacia mangium wood-based carbon for the removal of methyl orange dye. BioResources.
+        2013;8:4323&#x2013;4339.</Citation></Reference></ReferenceList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -78,20 +209,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:39 GMT
+      - Tue, 20 Feb 2024 16:42:37 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD70A4A27193A500001750526AEA5D.1.1.m_3
+      - 939B5F7AF2370105000032A877F74FF9.1.1.m_3
       NCBI-SID:
-      - DF4FF204DF2DE4A9_4DF6SID
+      - F2B8AEDDE7306C2A_AC5ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=DF4FF204DF2DE4A9_4DF6SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:40 GMT
+      - ncbi_sid=F2B8AEDDE7306C2A_AC5ASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:38 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -99,9 +230,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '7'
-      X-Test-Test:
-      - test42
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

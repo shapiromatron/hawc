@@ -19,7 +19,7 @@ class TestDesignChildren:
         init_result_ct = models.Result.objects.count()
 
         # cause create
-        url = reverse("eco:cause-create", args=[design.id])
+        url = reverse("eco:cause-htmx", args=[design.id, "create"])
         term_id = models.NestedTerm.objects.first().id
         inputs = {
             "name": "cause",
@@ -38,7 +38,7 @@ class TestDesignChildren:
         assert models.Cause.objects.count() == init_cause_ct + 1
 
         # cause clone
-        url = reverse("eco:cause-clone", args=[cause.id])
+        url = reverse("eco:cause-htmx", args=[cause.id, "clone"])
         resp = client.post(url)
         assertTemplateUsed(resp, "eco/fragments/cause_row.html")
         assert resp.status_code == 200
@@ -47,7 +47,7 @@ class TestDesignChildren:
         cause_2 = resp.context["object"]
 
         # cause read
-        url = reverse("eco:cause-detail", args=[cause.id])
+        url = reverse("eco:cause-htmx", args=[cause.id, "read"])
         resp = client.get(url)
         assertTemplateUsed(resp, "eco/fragments/cause_row.html")
         assert resp.status_code == 200
@@ -55,7 +55,7 @@ class TestDesignChildren:
         assert models.Cause.objects.count() == init_cause_ct + 2
 
         # cause update
-        url = reverse("eco:cause-update", args=[cause.id])
+        url = reverse("eco:cause-htmx", args=[cause.id, "update"])
         inputs["name"] = "cause update"
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/cause_row.html")
@@ -65,7 +65,7 @@ class TestDesignChildren:
         assert models.Cause.objects.count() == init_cause_ct + 2
 
         # effect create
-        url = reverse("eco:effect-create", args=[design.id])
+        url = reverse("eco:effect-htmx", args=[design.id, "create"])
         inputs = {
             "name": "effect",
             "term": term_id,
@@ -81,7 +81,7 @@ class TestDesignChildren:
         assert models.Effect.objects.count() == init_effect_ct + 1
 
         # effect clone
-        url = reverse("eco:effect-clone", args=[effect.id])
+        url = reverse("eco:effect-htmx", args=[effect.id, "clone"])
         resp = client.post(url)
         assertTemplateUsed(resp, "eco/fragments/effect_row.html")
         assert resp.status_code == 200
@@ -90,7 +90,7 @@ class TestDesignChildren:
         effect_2 = resp.context["object"]
 
         # effect read
-        url = reverse("eco:effect-detail", args=[effect.id])
+        url = reverse("eco:effect-htmx", args=[effect.id, "read"])
         resp = client.get(url)
         assertTemplateUsed(resp, "eco/fragments/effect_row.html")
         assert resp.status_code == 200
@@ -98,7 +98,7 @@ class TestDesignChildren:
         assert models.Effect.objects.count() == init_effect_ct + 2
 
         # effect update
-        url = reverse("eco:effect-update", args=[effect.id])
+        url = reverse("eco:effect-htmx", args=[effect.id, "update"])
         inputs["name"] = "effect update"
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/effect_row.html")
@@ -108,7 +108,7 @@ class TestDesignChildren:
         assert models.Effect.objects.count() == init_effect_ct + 2
 
         # result create
-        url = reverse("eco:result-create", args=[design.id])
+        url = reverse("eco:result-htmx", args=[design.id, "create"])
         inputs = {
             "name": "result",
             "cause": cause.id,
@@ -128,7 +128,7 @@ class TestDesignChildren:
         assert models.Result.objects.count() == init_result_ct + 1
 
         # result clone
-        url = reverse("eco:result-clone", args=[result.id])
+        url = reverse("eco:result-htmx", args=[result.id, "clone"])
         resp = client.post(url)
         assertTemplateUsed(resp, "eco/fragments/result_row.html")
         assert resp.status_code == 200
@@ -137,7 +137,7 @@ class TestDesignChildren:
         result_2 = resp.context["object"]
 
         # result read
-        url = reverse("eco:result-detail", args=[result.id])
+        url = reverse("eco:result-htmx", args=[result.id, "read"])
         resp = client.get(url)
         assertTemplateUsed(resp, "eco/fragments/result_row.html")
         assert resp.status_code == 200
@@ -145,7 +145,7 @@ class TestDesignChildren:
         assert models.Result.objects.count() == init_result_ct + 2
 
         # result update
-        url = reverse("eco:result-update", args=[result.id])
+        url = reverse("eco:result-htmx", args=[result.id, "update"])
         inputs["modifying_factors"] = "one"
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/result_row.html")
@@ -155,34 +155,34 @@ class TestDesignChildren:
         assert models.Result.objects.count() == init_result_ct + 2
 
         # result delete
-        url = reverse("eco:result-delete", args=[result.id])
+        url = reverse("eco:result-htmx", args=[result.id, "delete"])
         resp = client.post(url)
         assertTemplateUsed(resp, "eco/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Result.objects.count() == init_result_ct + 1
-        url = reverse("eco:result-delete", args=[result_2.id])
+        url = reverse("eco:result-htmx", args=[result_2.id, "delete"])
         resp = client.post(url)
         assert resp.status_code == 200
         assert models.Result.objects.count() == init_result_ct
 
         # effect delete
-        url = reverse("eco:effect-delete", args=[effect.id])
+        url = reverse("eco:effect-htmx", args=[effect.id, "delete"])
         resp = client.post(url)
         assertTemplateUsed(resp, "eco/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Effect.objects.count() == init_effect_ct + 1
-        url = reverse("eco:effect-delete", args=[effect_2.id])
+        url = reverse("eco:effect-htmx", args=[effect_2.id, "delete"])
         resp = client.post(url)
         assert resp.status_code == 200
         assert models.Effect.objects.count() == init_effect_ct
 
         # cause delete
-        url = reverse("eco:cause-delete", args=[cause.id])
+        url = reverse("eco:cause-htmx", args=[cause.id, "delete"])
         resp = client.post(url)
         assertTemplateUsed(resp, "eco/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Cause.objects.count() == init_cause_ct + 1
-        url = reverse("eco:cause-delete", args=[cause_2.id])
+        url = reverse("eco:cause-htmx", args=[cause_2.id, "delete"])
         resp = client.post(url)
         assert resp.status_code == 200
         assert models.Cause.objects.count() == init_cause_ct
