@@ -576,6 +576,12 @@ class AssessmentDetail(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.assessment_id,))
 
+    def get_peer_review_status_display(self) -> str:
+        value = constants.PeerReviewType(self.peer_review_status)
+        if value.display():
+            return value.label
+        return ""
+
 
 class AssessmentValue(models.Model):
     objects = managers.AssessmentValueManager()
