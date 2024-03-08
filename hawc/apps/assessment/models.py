@@ -919,10 +919,13 @@ class TimeSpentEditing(models.Model):
         cache.set(cache_name, now, 60 * 60 * 1)
 
     @classmethod
-    def add_time_spent_job(cls, url, session_key, obj, assessment_id):
+    def add_time_spent_job(cls, url: str, session_key: str, obj, assessment_id: int):
         cache_name = cls.get_cache_name(url, session_key)
         content_type_id = ContentType.objects.get_for_model(obj).id
-        add_time_spent.delay(cache_name, obj.id, assessment_id, content_type_id)
+        # wait 10 seconds to make sure database is populated
+        add_time_spent.s(cache_name, obj.id, assessment_id, content_type_id).apply_async(
+            countdown=10
+        )
 
     @classmethod
     def add_time_spent(cls, cache_name, object_id, assessment_id, content_type_id):
