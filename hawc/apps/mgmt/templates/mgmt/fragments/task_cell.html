@@ -19,7 +19,7 @@
       </div>{% endif %}
     </div>
     <div class="col-md">
-      <a class="btn btn-light" href="#" hx-get="{% url 'mgmt:task-update' object.pk %}"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+      <a class="btn btn-light" href="#" hx-get="{% url 'mgmt:task-htmx' object.pk 'update' %}"><i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
     </div>
   </div>
 </td>

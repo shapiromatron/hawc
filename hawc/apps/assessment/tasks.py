@@ -39,7 +39,7 @@ def run_job(self):
 
 
 @shared_task
-def add_time_spent(cache_name, object_id, assessment_id, content_type_id):
+def add_time_spent(cache_name: str, object_id: int, assessment_id: int, content_type_id: int):
     apps.get_model("assessment", "TimeSpentEditing").add_time_spent(
         cache_name, object_id, assessment_id, content_type_id
     )
