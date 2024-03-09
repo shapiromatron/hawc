@@ -555,7 +555,12 @@ class Visual(models.Model):
             raise ValueError(err)
 
     def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
-        study_ids = list(self.get_studies().values_list("id", flat=True))
+        studies = self.get_studies()
+        study_ids = (
+            list(studies.values_list("id", flat=True))
+            if isinstance(studies, models.QuerySet)
+            else [study.id for study in studies]
+        )
         settings = self.settings
 
         qs = RiskOfBiasScore.objects.filter(
