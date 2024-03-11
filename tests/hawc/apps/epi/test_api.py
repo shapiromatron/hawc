@@ -1463,12 +1463,16 @@ class TestExposureApi:
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
         scenarios = (
-            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "empty payload doesn't crash",
+                "expected_code": 400,
+                "data": {},
+            },
             {
                 "desc": "dtxsid must be a existing/importable one",
                 "expected_code": 400,
-                "expected_content": "does not exist and could not be imported",
-                "data": self.get_upload_data({"dtxsid": "bad value"}),
+                "expected_content": "DTXSID0000000 does not exist in HAWC",
+                "data": self.get_upload_data({"dtxsid": "DTXSID0000000"}),
             },
             {
                 "desc": "match data types",
