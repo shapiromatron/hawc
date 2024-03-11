@@ -108,17 +108,17 @@ class TestDssToxViewSet:
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
 
-    @pytest.mark.vcr
-    def test_create_dtxsid(self):
+    def test_create_log_required(self):
         data = {"dtxsid": "DTXSID1020190"}
         url = reverse("assessment:api:dsstox-list")
-
-        # login required
         client = get_client("", api=True)
         resp = client.post(url, data, format="json")
         assert resp.status_code == 403
 
-        # success if valid DTXSID
+    @pytest.mark.vcr
+    def test_create_dtxsid(self):
+        data = {"dtxsid": "DTXSID1020190"}
+        url = reverse("assessment:api:dsstox-list")
         client = get_client("team", api=True)
         resp = client.post(url, data, format="json")
         assert resp.status_code == 201
