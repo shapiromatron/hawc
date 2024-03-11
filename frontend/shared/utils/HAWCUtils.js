@@ -347,5 +347,63 @@ class HAWCUtils {
                 }
             });
     }
+
+    static hideElement(el, deleteEl) {
+        const scrollVal = $(el).attr("scrolltop");
+        deleteEl ? $(el).remove() : $(el).addClass("hidden");
+        if (scrollVal) {
+            $("body,html").animate({scrollTop: scrollVal}, 400);
+        }
+    }
+
+    static addScrollHtmx(editClass, detailClass, deleteBtnId = null) {
+        $("body").on("htmx:afterSwap", function(evt) {
+            const elSwapOut = evt.detail.target,
+                elSwapIn = evt.detail.elt,
+                editElement = $(elSwapIn).hasClass(editClass)
+                    ? elSwapIn
+                    : $(elSwapIn)
+                          .children("." + editClass)
+                          .first();
+
+            if ($(editElement).length && !$(editElement).hasClass("hidden")) {
+                if ($(elSwapOut).hasClass(editClass)) {
+                    // Maintain scroll attr between elements if source has a scollTop attr
+                    // eg., if source and target are a form (failed update/create),
+                    // otherwise set to current position.
+                    const scrollTo = $(elSwapOut).attr("scrolltop") || $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", scrollTo);
+                } else {
+                    // otherwise, set scroll attr to current scroll position so we can return later
+                    const scrollTo = $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", scrollTo);
+                }
+                // animate scroll to form
+                const scrollTo = $(editElement).offset().top - 20;
+                $("body,html").animate({scrollTop: scrollTo}, 400);
+            } else {
+                // if the form is being replaced by a read row, scroll to original position
+                if (
+                    $(elSwapIn).hasClass(detailClass) &&
+                    $(elSwapOut).hasClass(editClass) &&
+                    !$(elSwapIn).hasClass("clone")
+                ) {
+                    const scrollTo = $(elSwapOut).attr("scrolltop");
+                    $("body,html").animate({scrollTop: scrollTo}, 400);
+                }
+            }
+        });
+        if (deleteBtnId) {
+            $("body").on("htmx:afterRequest", function(evt) {
+                // handle successful row deletion
+                const elSwapOut = evt.detail.target,
+                    targetEl = evt.detail.elt,
+                    scrollPosition = $(elSwapOut).attr("scrolltop");
+                if (targetEl.getAttribute("id") == deleteBtnId && evt.detail.successful) {
+                    $("body,html").animate({scrollTop: scrollPosition}, 800);
+                }
+            });
+        }
+    }
 }
 export default HAWCUtils;
