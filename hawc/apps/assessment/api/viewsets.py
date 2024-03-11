@@ -564,8 +564,8 @@ class DatasetViewSet(AssessmentViewSet):
         )
 
 
-class DssToxViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.CreateModelMixin):
-    permission_classes = (permissions.AllowAny,)
+class DssToxViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     lookup_value_regex = RE_DTXSID
     model = models.DSSTox
     serializer_class = serializers.DSSToxSerializer

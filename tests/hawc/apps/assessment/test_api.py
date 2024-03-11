@@ -102,7 +102,7 @@ class TestDatasetViewSet:
 class TestDssToxViewSet:
     def test_expected_response(self):
         dtxsid = "DTXSID6026296"
-        client = APIClient()
+        client = get_client("team", api=True)
         url = reverse("assessment:api:dsstox-detail", args=(dtxsid,))
         resp = client.get(url)
         assert resp.status_code == 200
@@ -111,8 +111,15 @@ class TestDssToxViewSet:
     @pytest.mark.vcr
     def test_create_dtxsid(self):
         data = {"dtxsid": "DTXSID1020190"}
-        client = APIClient()
         url = reverse("assessment:api:dsstox-list")
+
+        # login required
+        client = get_client("", api=True)
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 403
+
+        # success if valid DTXSID
+        client = get_client("team", api=True)
         resp = client.post(url, data, format="json")
         assert resp.status_code == 201
         created = DSSTox.objects.get(dtxsid=resp.json()["dtxsid"])
@@ -121,7 +128,7 @@ class TestDssToxViewSet:
     @pytest.mark.vcr
     def test_existing_dtxsid(self):
         data = {"dtxsid": "DTXSID6026296"}
-        client = APIClient()
+        client = get_client("team", api=True)
         url = reverse("assessment:api:dsstox-list")
         resp = client.post(url, data, format="json")
         assert resp.status_code == 400
@@ -132,7 +139,7 @@ class TestDssToxViewSet:
     @pytest.mark.vcr
     def test_invalid_dtxsid(self):
         data = {"dtxsid": "dtxsid0000000000"}
-        client = APIClient()
+        client = get_client("team", api=True)
         url = reverse("assessment:api:dsstox-list")
         resp = client.post(url, data, format="json")
         assert resp.status_code == 400
