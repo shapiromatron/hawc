@@ -2,6 +2,7 @@ import {inject, observer, Provider} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
+import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
@@ -11,6 +12,7 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
+import {handleVisualError} from "./common";
 import {NULL_VALUE} from "./constants";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import DatasetTable from "./heatmap/DatasetTable";
@@ -18,27 +20,21 @@ import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
 const startupHeatmapAppRender = function(el, settings, datastore, options) {
-        const store = new HeatmapDatastore(settings, datastore, options);
-        try {
-            if (store.withinRenderableBounds) {
-                store.initialize();
-            }
-            ReactDOM.render(
-                <Provider store={store}>
-                    <ExploreHeatmapComponent options={options} />
-                </Provider>,
-                el
-            );
-        } catch (err) {
-            console.error(err);
-            ReactDOM.render(<p>An error occurred</p>, el);
+    const store = new HeatmapDatastore(settings, datastore, options);
+    try {
+        if (store.withinRenderableBounds) {
+            store.initialize();
         }
-    },
-    getErrorDiv = function() {
-        return `<div class="alert alert-danger" role="alert">
-            <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
-        </div>`;
-    };
+        ReactDOM.render(
+            <Provider store={store}>
+                <ExploreHeatmapComponent options={options} />
+            </Provider>,
+            el
+        );
+    } catch (err) {
+        handleVisualError(err, $(el));
+    }
+};
 
 @inject("store")
 @observer
@@ -59,27 +55,13 @@ class ExploreHeatmapComponent extends Component {
             hasFilters = store.settings.filter_widgets.length > 0;
 
         if (!store.hasDataset) {
-            return (
-                <div className="alert alert-danger">
-                    <p className="mb-0">
-                        <i className="fa fa-exclamation-circle"></i>&nbsp;No data are available.
-                    </p>
-                </div>
-            );
+            return <Alert message={"No data are available."} />;
         }
 
         if (!store.withinRenderableBounds) {
-            const {n_rows, n_cols, n_cells, maxCells} = this.props.store;
-            return (
-                <div className="alert alert-danger" role="alert">
-                    <p className="mb-0">
-                        <i className="fa fa-exclamation-circle"></i>&nbsp;This heatmap is too large
-                        and cannot be rendered. Using the settings specified, the current heatmap
-                        will have {n_rows} rows, {n_cols} columns, and {n_cells} cells. Please
-                        change the settings to have fewer than {maxCells} cells.
-                    </p>
-                </div>
-            );
+            const {n_rows, n_cols, n_cells, maxCells} = this.props.store,
+                message = `This heatmap is too large and cannot be rendered. Using the settings specified, the current heatmap will have ${n_rows} rows, ${n_cols} columns, and ${n_cells} cells. Please change the settings to have fewer than ${maxCells} cells.`;
+            return <Alert message={message} />;
         }
 
         return (
@@ -203,35 +185,34 @@ class ExploreHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             callback = resp => {
                 if (resp.dataset || resp.error) {
-                    const settings = this.getSettings(),
-                        dataset = resp.dataset;
-
-                    const actions = this.data.title ? this.addActionsMenu(window.isEditable) : null;
-
-                    $el.empty().append($plotDiv);
-
-                    if (!options.visualOnly) {
-                        var headerRow = $('<div class="d-flex">').append([
-                            title,
-                            HAWCUtils.unpublished(this.data.published, window.isEditable),
-                            actions,
-                        ]);
-                        $el.prepend(headerRow).append(captionDiv);
-                    }
-
                     // exit early if we got an error
                     if (resp.error) {
-                        console.error(resp.error);
-                        $plotDiv.append(getErrorDiv());
+                        HAWCUtils.addAlert(resp.error, $plotDiv);
+                        $el.empty().append($plotDiv);
                         return;
                     }
 
                     try {
+                        const settings = this.getSettings(),
+                            dataset = resp.dataset,
+                            actions = this.data.title
+                                ? this.addActionsMenu(window.isEditable)
+                                : null;
+
+                        $el.empty().append($plotDiv);
+
+                        if (!options.visualOnly) {
+                            var headerRow = $('<div class="d-flex">').append([
+                                title,
+                                HAWCUtils.unpublished(this.data.published, window.isEditable),
+                                actions,
+                            ]);
+                            $el.prepend(headerRow).append(captionDiv);
+                        }
+
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                     } catch (err) {
-                        console.error(err);
-                        $plotDiv.append(getErrorDiv());
-                        return;
+                        return handleVisualError(err, $plotDiv);
                     }
 
                     if (options.cb) {
@@ -256,40 +237,41 @@ class ExploreHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             modal = new HAWCModal(),
             callback = resp => {
+                // exit early if we got an error
                 if (resp.error) {
-                    const settings = this.getSettings(),
-                        dataset = resp.dataset;
-
-                    modal.getModal().on("shown.bs.modal", function() {
-                        try {
-                            startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
-                        } catch (err) {
-                            console.error(err);
-                            $plotDiv.append(getErrorDiv());
-                        }
-                        caption.renderAndEnable();
-                    });
-
+                    const $errDiv = $("<div>");
+                    HAWCUtils.addAlert(resp.error, $errDiv);
                     modal
                         .addHeader([
                             $("<h4>").text(this.data.title),
                             HAWCUtils.unpublished(this.data.published, window.isEditable),
                         ])
-                        .addBody([$plotDiv, captionDiv])
+                        .addBody($errDiv)
                         .addFooter("")
                         .show({maxWidth: 1200});
-                } else if (resp.error) {
-                    modal
-                        .addHeader([
-                            $("<h4>").text(this.data.title),
-                            HAWCUtils.unpublished(this.data.published, window.isEditable),
-                        ])
-                        .addBody(getErrorDiv())
-                        .addFooter("")
-                        .show({maxWidth: 1200});
-                } else {
-                    throw "Unknown status.";
+                    return;
                 }
+
+                const settings = this.getSettings(),
+                    dataset = resp.dataset;
+
+                modal.getModal().on("shown.bs.modal", function() {
+                    try {
+                        startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
+                    } catch (err) {
+                        return handleVisualError(err, $plotDiv);
+                    }
+                    caption.renderAndEnable();
+                });
+
+                modal
+                    .addHeader([
+                        $("<h4>").text(this.data.title),
+                        HAWCUtils.unpublished(this.data.published, window.isEditable),
+                    ])
+                    .addBody([$plotDiv, captionDiv])
+                    .addFooter("")
+                    .show({maxWidth: 1200});
             };
 
         options = options || {};

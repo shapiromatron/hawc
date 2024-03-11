@@ -1,4 +1,4 @@
-<tr hx-target="this" hx-swap="outerHTML" class="exposure-{{object.pk}}">
+<tr hx-target="this" hx-swap="outerHTML" class="epiv2-obj-row {{action}} exposure-{{object.pk}}">
   <td>{{object.name}}</td>
   <td>
     {% if object.measurement_type %}
@@ -13,5 +13,5 @@
   {% include "epiv2/fragments/_object_row.html" with model="exposure" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
-  <tr style="display: none" id="exposure-empty-row" hx-target="this"></tr>
+  <tr class="hidden exposure-edit-row" hx-target="this"></tr>
 {% endif %}

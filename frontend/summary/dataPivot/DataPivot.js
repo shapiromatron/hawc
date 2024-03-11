@@ -9,6 +9,7 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
+import {handleVisualError} from "../summary/common";
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
@@ -47,11 +48,7 @@ class DataPivot {
                         return dp;
                     }
                 },
-                error => {
-                    console.error(error);
-                    alert(`An error occurred; if the error continues please contact us.`);
-                    throw "Server error";
-                }
+                error => handleVisualError(error, error)
             );
         });
     }
@@ -88,11 +85,7 @@ class DataPivot {
                     return true;
                 });
             },
-            error => {
-                console.error(arguments);
-                alert(`An error occurred; if the error continues please contact us.`);
-                throw "Server error";
-            }
+            error => handleVisualError(error, null)
         );
     }
 
@@ -214,11 +207,15 @@ class DataPivot {
         this.$div.fadeIn();
     }
 
-    build_data_pivot_vis(div, editable) {
-        delete this.plot;
-        editable = editable || false;
-        var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
-        this.plot = new DataPivotVisualization(data, this.settings, div, editable);
+    build_data_pivot_vis($div, editable) {
+        try {
+            delete this.plot;
+            editable = editable || false;
+            var data = JSON.parse(JSON.stringify(this.data)); // deep-copy
+            this.plot = new DataPivotVisualization(data, this.settings, $div, editable);
+        } catch (err) {
+            handleVisualError(err, $div);
+        }
     }
 
     build_data_table() {
