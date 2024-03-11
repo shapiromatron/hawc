@@ -6,8 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from plotly.subplots import make_subplots
 from rest_framework import serializers
 
-from hawc.services.epa.dsstox import DssSubstance
-
+from ...services.epa.dsstox import DssSubstance
 from ..common.serializers import FlexibleChoiceField
 from ..study.models import Study
 from . import constants, models
