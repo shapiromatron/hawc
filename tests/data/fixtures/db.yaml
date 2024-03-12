@@ -11113,10 +11113,10 @@
 - model: udf.ModelBinding
   pk: 1
   fields:
-    assessment: 1
+    assessment: 4
     content_type:
-    - animal
-    - endpoint
+    - study
+    - study
     form: 1
     creator:
     - pm@hawcproject.org
@@ -11132,6 +11132,19 @@
     - pm@hawcproject.org
     created: 2023-09-17 04:10:29.880052+00:00
     last_updated: 2023-09-17 04:15:33.309627+00:00
+- model: udf.modeludfcontent
+  pk: 1
+  fields:
+    model_binding: 1
+    content_type:
+    - study
+    - study
+    object_id: 9
+    content:
+      field1: test
+      field2: 123
+    created: 2024-03-12 15:19:07.533314+00:00
+    last_updated: 2024-03-12 15:19:07.533329+00:00
 - model: reversion.revision
   pk: 1
   fields:

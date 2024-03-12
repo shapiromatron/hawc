@@ -158,3 +158,6 @@ class DynamicFormWidget(Widget):
         form = self.form_class(data=data, **self.form_kwargs)
         form.full_clean()
         return form.cleaned_data
+
+    class Media:
+        js = ["js/udf.js"]

@@ -3,3 +3,11 @@
 {% block content %}
   {% crispy form %}
 {% endblock %}
+
+{% block extrajs %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      htmx.on("htmx:afterSwap", window.app.HAWCUtils.dynamicFormListeners);
+    });
+  </script>
+{% endblock extrajs %}

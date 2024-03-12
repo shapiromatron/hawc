@@ -72,6 +72,9 @@ class DynamicForm(forms.Form):
         if self.is_bound:
             self.fields = fields
 
+    class Media:
+        js = ["js/udf.js"]
+
 
 class DynamicFormHelper(BaseFormHelper):
     """Django crispy form helper."""
