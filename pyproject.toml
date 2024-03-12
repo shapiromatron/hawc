@@ -75,7 +75,7 @@ known-first-party = ["hawc", "hawc_client"]
 "**/migrations/**.py" = ["T201"]
 
 [tool.pytest.ini_options]
-addopts = "--ds=hawc.main.settings.unittest --reuse-db --nomigrations"
+addopts = "--ds=hawc.main.settings.unittest --record-mode=once --reuse-db --nomigrations"
 testpaths = [
   "tests/hawc",
   "tests/integration",

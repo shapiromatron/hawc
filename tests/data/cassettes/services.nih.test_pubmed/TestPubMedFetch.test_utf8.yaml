@@ -13,84 +13,162 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAFxRwU7rMBC88xXG50ccp4W2T44RNDkENW1F+5A4PYVmRS05duU4hf4961BFlIu9
-        9s6MZ9bi/rPR5AiuVdaklEcxJffySlxnq/n2dZ2TdffWQP3gvNpp2IAn63+Pi2JO6A1jy0XJWLbN
-        AqgcQH8Ibz15qkxXuRNJYj5jLF9SQvfeH9q/jNW+joxuIqP20bs9MrN7U+zQv8Ns58/lfz6Lecwj
-        RFM09NuHvLyRAg1oZWCufOUxC9ng3rUpLfNsUSxzSlYfBlxK0TRFcllk5GWITWUymk6m0/GtYKEl
-        RVZ5mNvmoMFDLcUrVE5iFuz3pSit8XsZzwT7rpBwkgm2wx7WC3o4PsNRtT+0Ev5LK7nUmvzUGsjn
-        vP3IbQ06pWunjMdIT7ZzptJSFJvNkhRta7anA6Q017Dzzhq1o5LPRnc3E343EiygBhKiOyA4O6hx
-        jqprUloYD85AUH6xumtAjseCnUvREySPUaevwm8En8M/4OELAAD//5RX7XLaOBR9FQ0z2yUzgA3k
-        c+t6JiW0SZePNJDOdP8JW2CltuVKchL6Vvsi+0x75A+wgXbZ/EhsSb733HPP1b1hhrA+mYjn9g3z
-        EFxlBzSXH1hVDK4z5xrp/JwiKKYUiz1GeAYlSysNSfM9k7DTIh+ZjGi8Jn+Q7tXl2Ylj5Z8i/un1
-        YiHBWPZJ3RbCMrHXT2wwbPjNTT3Q2BcR/8F84sEl9+CePdMwzSUmlkQHjLDlEgybNy8IhQzYK/cR
-        J8GJRCgtEiZx/pkRIFAcT1yvzWmzySQXknhQisAWI5IpHpvfWsjMieo4Vg2Tc09XPC5wF5Ter2L3
-        4qrfvtyQbFbAceXocCS87BHCH975uTZ8wRvkCw25/3XyrvEVArE7/d6VbT11vvMO7dvdi3PHqnwK
-        ghZKS+rp7dOcvWoyogsjxun7T8PB/O7LcNYgkzAaIMMrIdeVjYY7rDH4c4p4XKFIM6aDghik44Xj
-        jWkvQIbaBBWgGKF+APZgBGt7lNIlDBGaJCH3Nr57v+2kTEHeZtOQXonucKzj4fx2ekOuJzdkfD0f
-        Ptxdj3ajzo/MGu484BIhJdSkkic01iqPQfGIh1QSn8Ua6vKo5EwZ6SxEtuubt1xnT/QFHzFpWDI1
-        zfwOuc7C8mhGWCIZHGTRtQijXkC0MFZeqCJyK2UtYJ+VVpciDMULj1dV1ZEIbAtfdcg84x0EmrMe
-        ricpQrKSIk1yKJuMpMrYMClpm5zkKSm4LxPTnOEMLq/3IvZbpD8mw9n98CTLVxpz04VAQcQ9KYL1
-        QvL9LDY/8FCzb+Sv3pm9NdAhDxXoJq4qaPYKdfEo57dADkJK4sHGfmjs1WOJxgbVPxcJaQ4ErpRE
-        cdUijyH0YZJ4klnPhAZWRIEBtODN7APVEno+t5FFODUcz9LFE/KpSkZxzYQ4bY6xI2sFOLvEp2s0
-        X1hh38zfyDSTVsbuef4CX7hzae6H4r5bGz0s1uQDVwF0xF4hcbCH/t3852/yjnTss5OjauFhOHsc
-        zXflX65C/gfzoALxAgCKr2K+RF3GOlyTEFf1LyJtXubpPcnEQTeXwX4Smz27PEp1tt9tg6KCYNK8
-        J29C/dbE+HafAIgK2X02Ccu6TvVKzvnL3dMF9Gw0lElOS4bgC0R11QACahE+CvcaVKgMxCoHcRzR
-        g+lkMHqc3U0nO1xvN8D3oC7YGr8+84ASwwThEQYotEB2bJ/auYQhnJ0C3QvBqrSLFFeKHHGIq5yM
-        iqZTbNUakTOiSk8oZo1b+sR/oLQCx9qsOR8AIN9FETvW5tW5i4Gchsq9RZsvnwEj8/Afnj4G9JlG
-        MVVc8oPOxlQ+0dggOeBw/P8djhEaMsTpQW8zqOugp9lBT9aWYOMiXqV0xVwWr4zx4s2MaWUDNBNA
-        fnhnkTzevWvc2N3z095lwy0mI1IMIdngVj39i89PrxrVEWqQV6e52uYS4I831T+9PIMppjAuo6vN
-        0iQRUrcwWsbtx86sQz6K59/1AXu7K3m81u4/DeUEGi+F6wxECpxrtxgvHatcKE/Prw+MlNs9B2X5
-        GPPvKcO4ZPdPe+cXGOWri9mEPuLxN3RD17b7/fb52UUvH8nL5Y3FOraARWYKzeMo31znga2wIteT
-        NFow6WIs31lxjISmS3QapakBXTDb63YvMmbRrltktkaTYOAGeOvngWfr7ad+H07/nNo3X896o2MB
-        2L2Lrr1zX/3auVXnYMxUcMsovlvtLeAfKaY8yRNcV8ZkzSdB8Qk5Fwn3TF1O9kDUv3WdzylqeMnZ
-        1tRn2/xc7ppCiVM/Qlmbmy9r3W9olLwlvlCoQceqGcoSXUF8BPw+Rv0D8G/yzloZhVrkPtMwMwI9
-        HM6/AAAA///MmVtv2zYUx78KkScbsGOrji8BigBuHCzZ0KxYmr0rFi0RlShDlJJ6n77/w0NdLMtu
-        0gXYnhKblHhuPJefD9W57FSHerNy0jHvoMJiPD+iAvqjh7r+vFbuqXfwPsiNhthVcOcC1yD8ewVm
-        i7HXocBtAXObQ6Hf+n7P8xZdPv6yV6dtGXXZrePQ/4WlOMMcHtiRck4bbXRw00ct5FMiIWpxrz7e
-        KroHO/slNjrcQNykJEPQN5P/nNVwZ7IPZOb7PObC8ZhbJOQrTMX278fPShe5pIzr/rM1pz7wxPnM
-        uf678xM239lRutWCW7NfFGDUdEUZryzE1XZLX5lor1K7tZLF3AXs7+qjKPFFacEa3lV7OrcrdXa1
-        uMDlnf9kJ3GRbhbSeGzUkm/UDL9RC0++L630ZuPF+HIyPk0rx7PThHHxBlrptd7led3R+a60cjrx
-        hlPUu1+ileM2rVwcwsrSUK3AXxZhpd1PQGXZHtOcZIepTK2FKbJQZrujRPJ3FGa7F61sFr6eR95w
-        /bWHZVL7VO9RJX00G0YsB+KGp/3rEjtEu226jTFZQKYI+vGjG0nPoYY4BAVJtlHmh4nP+zIMJK+l
-        jt6H2eVwfnGCO57mhZ+W13/89tefj/er0fLu83FmeK8QFBuphdJBscbgbNWpFFQ+ZvBQ2vmaZ+9U
-        hxIzEhTtUk/0rle3fSJEZIZzauEhmYzjgpBQihbQTcKoEMaIRIVRLp5kk5slkuCjMom1KdRqEOGc
-        KjTk0ewP5yKxFJFv8BqoQeRDEzegukutFcFO0giP142WeIkk4TNuJmVmWUlSxOiKZVoYDPMYLfGq
-        jOZ6JpwqPxdfI2UgehHgSwX5fEYaxOfKqKBjsMkCrlo8EpYhhU+9AJlBV+so1qbA9AUVbjjMBjBz
-        ERNH2GYprJXs0rWfwd4wOtSK0y3RHkGdRYcmMZUjHBtCNNeu+iJW3yR0KYzcFLEgYJQyCKvinZAF
-        l4nXQVpHZhnTOhx7DNKqRA4TC3AetoiYQg5X/kssd7gyiY80xneG4I/8vk0Ns1SprMWeZWRTXc91
-        Tn3yjTceiySksNBlAPeaHKxPN5WY1OX5lHZVtqCQFBMYLFAOQFmmBR+QBxF3kOdQlNqTvTwlY3lT
-        dHzi7rE/qNZuGmu8AjnLxevWohPPCG82EN6cw9lbUIhJyiPwU00tEQIZI0/S6IPHuxk8w6cltG5k
-        ojyC5HxhcR/5RQilNU3W7PaIWoc4DSmpIqCJjfcw/+F2fd8h3wxlagEzzuFYwT5/rYLhwzpSmw2e
-        8RFwOjRQc3XPAY4DcomHyE9wgmExv6nhbC56WES3K3l+YjKNaIVpbEzjUF3AyWmugl0sEGza0GaD
-        sGGSFojg8euX4ZNKaZCRmsIccUhXr+cjV+WQ1/RLXdiOASSF5prSmp8gcTlfO0wLW1hzPO0Y2dK9
-        he2e/UzZQdqa71Oq8Q6qm6NVofmHExGla3vxjdUDKTJCNotS3Fg8X0PBtc1pNQ19D+DbytfBYb4m
-        Og/LWl1qJGm3jZ5SpK4XSVkXOQZpWSQwg+hZNNzyY39QfiImVILy2o0wJ73B1Tqly5Mqb5yLv6vo
-        J/D+zH7k45sS22CAvyZ1zWUPOQTsuGhDYPsELdC1tn2u0FBwqFOM5bHYqLDIpGkJnHI81/K9DQu3
-        XbLHhZc6/wEAAP//Qi3WAQAAAP//Qm84pGeCCmuMohkRMFgqXlAdkpgMHg7PA2VQUFaGzr0A/aOQ
-        C2r4QSulksxcUIQUl6ang9MlWC9IYVJqXiowMYKqDljdlwgu21KLShDTKMB8X1oEnQcGAAAA///U
-        Ws1u2kAQfhWrZyztH2tzQbJiEpJSSpPmkCOBTWTFxQjDAd6mxx76FLxYZ3cxhXiSrh0j1BtY1n6z
-        szM733xjbw7FVNno2deaU+jPV9lss/2Zqo1/q9Yqf0OqTbMf21//Vmujp6cktSzPKnoHD7qxHt8t
-        Tc3UCbmnk3eWTra8vQIKp641nkw/7Gf53BCdeztCg99wE8Ir3mi8aXksJEJC/z1dJFNot+djq9If
-        wB79s1a5yteL5fb3TG1QnwwUZGQ6zVCnDKqL5d8zuPJQpJvVGGoeinMT/Rda+VkEbogXQ3UgxXVY
-        IzL36z7lLZGbtJnk9F2RmzGfCxmeReSGfj/41P1q7728prbtDkekALgREF7gCD1NDk+PyQPGgcAW
-        fcfpAUVIIWJ3lbMuHKWUcL8d+KICLqF7XJ309YAFkT4NK+HqOUWB26uJ2yEENtvxmfN8RDAdTMB5
-        aiIOA3r/cEW4iNwgL8BC3oatFg1LTdzRN3nxORzF5NZ5q5QRCKkon2SLR6h6EfD4SqOgQkzTL6tl
-        9/oLvHD8qNa0iIS0NOIZaiplerAGtP6AlYcuGqAggK7KPg2xmcp0sXpubnBjzgix9fjQ3OwVHYEs
-        BbQOyPFEN33rkr34QpJhEwZ98Y7naqVVH+hTP753k4rI0ErnpuN0jTNkgaKra8BC2sFOJ05y3fN4
-        RoKFfteG7scjV5d9bJB6adSSJtbnaOpdGgGzrxsR97km6vlH24kBP1Rl958vyyTnmF/Njr1YGZSW
-        /p5ip3E63xAcu2gmu1s0XRfdurMrsNm3cYVNvnICV3dFW2Ah0DcybsuLD8Xdk7uhqvWyLcsH+VBY
-        n78y//0TrYrNCEMj9Xrm3SXLlTdMJi9+D5r+wU6gaqCSGaJdhvzLvBssDH8AAAD//xo8FQOkwY9l
-        sh61B0D5mgDs9U9AUWp6HrBthGWtBBlWWOKwAjL47goaay4tSgUWQjmJlcDOoyusyKPUalNDYwts
-        KyqCEqlhOqiNhc1jINN10Ab7qWAbuDeGaRty94xiO0ywr0BB6hkNfGbzo0FmA3fEcPvbdRj7G1vb
-        DtEDH3hvk1y2Un9ND/qaGvSZfQuUVQsoK1osabGkBn0JhjGK/YbUth99SRNtvE/7BT2I9S2EF/QE
-        wwcXNQxMNYF9LDNLXTMi1/cYAtss+ll6WQWpKaA1G3qgEAPNgBmANvaRudQHAAAA//9C44P2KgIA
-        AAD//wMAAfq0F2Y5AAA=
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">23878845</PMID><DateCompleted><Year>2015</Year><Month>09</Month><Day>25</Day></DateCompleted><DateRevised><Year>2021</Year><Month>02</Month><Day>27</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1936-7163</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>44</Volume><Issue>10</Issue><PubDate><Year>2013</Year><Season>Nov-Dec</Season></PubDate></JournalIssue><Title>Quintessence
+        international (Berlin, Germany : 1985)</Title><ISOAbbreviation>Quintessence
+        Int</ISOAbbreviation></Journal><ArticleTitle>Randomized clinical evaluation
+        of the effect of chlorhexidine on postoperative sensitivity of posterior composite
+        resin restorations.</ArticleTitle><Pagination><StartPage>793</StartPage><EndPage>798</EndPage><MedlinePgn>793-8</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.3290/j.qi.a30176</ELocationID><Abstract><AbstractText
+        Label="OBJECTIVES" NlmCategory="OBJECTIVE">Evaluation of postoperative sensitivity
+        in posterior teeth restored with etchand- rinse adhesive and composite resin
+        after application of 2% chlorhexidine solution.</AbstractText><AbstractText
+        Label="METHOD AND MATERIALS" NlmCategory="METHODS">Thirty participants with
+        similar dental caries on both sides of the jaws were selected. After cavity
+        preparation, each tooth was randomized to one of the following restoration
+        methods. Teeth in the control group were restored using etch-and-rinse resin
+        adhesive (Single Bond, 3M ESPE) and universal microhybrid composite resin
+        (Filtek Z250, 3M ESPE). Restoration of teeth in the experimental group was
+        similar to the control group except that 2% chlorhexidine solution (Concepsis,
+        Ultradent) was applied on the etched dentin for 60 seconds. Subjects were
+        recalled for evaluation of postoperative sensitivity at 1 day, 1 week, 1 month,
+        and 6 months. Data were analyzed by Fisher exact test (&#x3b1; = .05).</AbstractText><AbstractText
+        Label="RESULTS" NlmCategory="RESULTS">The experimental group showed significantly
+        less postoperative sensitivity (8 teeth) compared with the control group (20
+        teeth) at the 1-day recall (P &lt; .05; Fisher exact test). Conventional restorations
+        were comparable to teeth treated with chlorhexidine at other recall times
+        (P &gt; .05).</AbstractText><AbstractText Label="CONCLUSION" NlmCategory="CONCLUSIONS">Chlorhexidine
+        significantly decreased immediate postoperative sensitivity of posterior teeth
+        restored by composite resin.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Hajizadeh</LastName><ForeName>Hila</ForeName><Initials>H</Initials></Author><Author
+        ValidYN="Y"><LastName>Ghavamnasiri</LastName><ForeName>Marjaneh</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Majidinia</LastName><ForeName>Sara</ForeName><Initials>S</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D016449">Randomized
+        Controlled Trial</PublicationType><PublicationType UI="D013485">Research Support,
+        Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Germany</Country><MedlineTA>Quintessence
+        Int</MedlineTA><NlmUniqueID>0342677</NlmUniqueID><ISSNLinking>0033-6572</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D012117">Resins, Synthetic</NameOfSubstance></Chemical><Chemical><RegistryNumber>R4KO0DY52L</RegistryNumber><NameOfSubstance
+        UI="D002710">Chlorhexidine</NameOfSubstance></Chemical></ChemicalList><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D002710" MajorTopicYN="N">Chlorhexidine</DescriptorName><QualifierName
+        UI="Q000008" MajorTopicYN="Y">administration &amp; dosage</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003793" MajorTopicYN="N">Dental Restoration, Permanent</DescriptorName><QualifierName
+        UI="Q000009" MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003807" MajorTopicYN="N">Dentin Sensitivity</DescriptorName><QualifierName
+        UI="Q000517" MajorTopicYN="Y">prevention &amp; control</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011183" MajorTopicYN="N">Postoperative Complications</DescriptorName><QualifierName
+        UI="Q000517" MajorTopicYN="Y">prevention &amp; control</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012117" MajorTopicYN="Y">Resins, Synthetic</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2013</Year><Month>7</Month><Day>24</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2013</Year><Month>7</Month><Day>24</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2015</Year><Month>9</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">23878845</ArticleId><ArticleId IdType="doi">10.3290/j.qi.a30176</ArticleId><ArticleId
+        IdType="pii">840687</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">16080930</PMID><DateCompleted><Year>2006</Year><Month>02</Month><Day>28</Day></DateCompleted><DateRevised><Year>2016</Year><Month>11</Month><Day>24</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1531-5037</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>40</Volume><Issue>8</Issue><PubDate><Year>2005</Year><Month>Aug</Month></PubDate></JournalIssue><Title>Journal
+        of pediatric surgery</Title><ISOAbbreviation>J Pediatr Surg</ISOAbbreviation></Journal><ArticleTitle>Effects
+        of prenatal vitamins A, E, and C on the hypoplastic hearts of fetal rats with
+        diaphragmatic hernia.</ArticleTitle><Pagination><StartPage>1269</StartPage><EndPage>1274</EndPage><MedlinePgn>1269-74</MedlinePgn></Pagination><Abstract><AbstractText
+        Label="BACKGROUND/AIM" NlmCategory="OBJECTIVE">Nitrofen induces heart hypoplasia
+        together with congenital diaphragmatic hernia (CDH) in rats. Intracellular
+        oxidative stress might be one of the mechanisms of action of the teratogen,
+        and vitamin A has been shown to reverse in part these effects when administered
+        simultaneously or shortly after it. This study aims at testing the hypothesis
+        that vitamin A and other antioxidant vitamins, such as E and C, could improve
+        myocardial development even when administered late in gestation, a likely
+        useful period for prenatal medication.</AbstractText><AbstractText Label="MATERIAL
+        AND METHODS" NlmCategory="METHODS">Time-mated Sprague-Dawley female rats were
+        exposed to either vehicle (control) or 100 mg of nitrofen (experimental) on
+        day 9.5 of gestation. In 3 additional groups, the animals were exposed to
+        vitamin A (total 15000 IU), vitamin E (total 150 IU), or vitamin C (total
+        150 IU) on days 16, 17, and 18. The fetuses were recovered on day 21, and
+        randomly selected hearts of those with CDH were processed for histologic studies
+        (hematoxylin-eosin and periodic acid-Schiff stainings), DNA and protein contents,
+        and ki-67 (proliferation) and terminal deoxynucleotidyl transferase-mediated
+        dUTP-biotin end labeling (apoptosis) studies. The differences among groups
+        were assessed by analysis of variance with Bonferroni/Dunn post hoc tests
+        and a threshold of significance of P &lt; .05.</AbstractText><AbstractText
+        Label="RESULTS" NlmCategory="RESULTS">Nitrofen induced heart hypoplasia in
+        terms of decreased heart/body weight, cell mass (less DNA and protein), and
+        proportion of proliferating cells with increased apoptosis. Vitamin C alleviated
+        weight hypoplasia and the 3 vitamins were able to restore cell mass and to
+        reestablish near-normal figures of proliferation and apoptosis.</AbstractText><AbstractText
+        Label="CONCLUSIONS" NlmCategory="CONCLUSIONS">Antioxidant vitamins A, E, and
+        C given late in gestation alleviate heart hypoplasia that accompanies CDH
+        in the rat model. This timing suggests that the beneficial effects are exerted
+        on the maturational phase of development.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Gonz&#xe1;lez-Reyes</LastName><ForeName>Salom&#xe9;</ForeName><Initials>S</Initials><AffiliationInfo><Affiliation>Department
+        of Pediatric Surgery, Research Laboratory, Hospital Universitario La Paz,
+        28046 Madrid, Spain.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Mart&#xed;nez</LastName><ForeName>Leopoldo</ForeName><Initials>L</Initials></Author><Author
+        ValidYN="Y"><LastName>Tovar</LastName><ForeName>Juan A</ForeName><Initials>JA</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>J Pediatr Surg</MedlineTA><NlmUniqueID>0052631</NlmUniqueID><ISSNLinking>0022-3468</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D016877">Oxidants</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010647">Phenyl Ethers</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D013723">Teratogens</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D014815">Vitamins</NameOfSubstance></Chemical><Chemical><RegistryNumber>11103-57-4</RegistryNumber><NameOfSubstance
+        UI="D014801">Vitamin A</NameOfSubstance></Chemical><Chemical><RegistryNumber>1406-18-4</RegistryNumber><NameOfSubstance
+        UI="D014810">Vitamin E</NameOfSubstance></Chemical><Chemical><RegistryNumber>9007-49-2</RegistryNumber><NameOfSubstance
+        UI="D004247">DNA</NameOfSubstance></Chemical><Chemical><RegistryNumber>N71UYG034A</RegistryNumber><NameOfSubstance
+        UI="C007350">nitrofen</NameOfSubstance></Chemical><Chemical><RegistryNumber>PQ6CK8PD0R</RegistryNumber><NameOfSubstance
+        UI="D001205">Ascorbic Acid</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D017209" MajorTopicYN="N">Apoptosis</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001205" MajorTopicYN="N">Ascorbic Acid</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="N">pharmacology</QualifierName><QualifierName UI="Q000627"
+        MajorTopicYN="Y">therapeutic use</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004247" MajorTopicYN="N">DNA</DescriptorName><QualifierName UI="Q000032"
+        MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004195" MajorTopicYN="N">Disease Models, Animal</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005318" MajorTopicYN="N">Fetal Heart</DescriptorName><QualifierName UI="Q000002"
+        MajorTopicYN="N">abnormalities</QualifierName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006330" MajorTopicYN="N">Heart Defects, Congenital</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="N">chemically induced</QualifierName><QualifierName
+        UI="Q000188" MajorTopicYN="Y">drug therapy</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006548" MajorTopicYN="N">Hernia, Diaphragmatic</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="N">chemically induced</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D065630" MajorTopicYN="Y">Hernias, Diaphragmatic, Congenital</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020287" MajorTopicYN="N">In Situ Nick-End Labeling</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016877" MajorTopicYN="N">Oxidants</DescriptorName><QualifierName UI="Q000494"
+        MajorTopicYN="N">pharmacology</QualifierName><QualifierName UI="Q000627" MajorTopicYN="Y">therapeutic
+        use</QualifierName></MeshHeading><MeshHeading><DescriptorName UI="D010647"
+        MajorTopicYN="N">Phenyl Ethers</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011247" MajorTopicYN="N">Pregnancy</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011297" MajorTopicYN="N">Prenatal Exposure Delayed Effects</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D017207" MajorTopicYN="N">Rats, Sprague-Dawley</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013723" MajorTopicYN="N">Teratogens</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014801" MajorTopicYN="N">Vitamin A</DescriptorName><QualifierName UI="Q000494"
+        MajorTopicYN="N">pharmacology</QualifierName><QualifierName UI="Q000627" MajorTopicYN="N">therapeutic
+        use</QualifierName></MeshHeading><MeshHeading><DescriptorName UI="D014810"
+        MajorTopicYN="N">Vitamin E</DescriptorName><QualifierName UI="Q000494" MajorTopicYN="N">pharmacology</QualifierName><QualifierName
+        UI="Q000627" MajorTopicYN="N">therapeutic use</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014815" MajorTopicYN="N">Vitamins</DescriptorName><QualifierName UI="Q000494"
+        MajorTopicYN="N">pharmacology</QualifierName><QualifierName UI="Q000627" MajorTopicYN="Y">therapeutic
+        use</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2005</Year><Month>8</Month><Day>6</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2006</Year><Month>3</Month><Day>1</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2005</Year><Month>8</Month><Day>6</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">16080930</ArticleId><ArticleId IdType="doi">10.1016/j.jpedsurg.2005.05.009</ArticleId><ArticleId
+        IdType="pii">S0022-3468(05)00369-6</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -105,20 +183,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:37 GMT
+      - Tue, 20 Feb 2024 16:42:34 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B44F6B46659C50000494F59E3A5CA.1.1.m_3
+      - D0BD9F070703C0B5000060DC0D6420A0.1.1.m_3
       NCBI-SID:
-      - FCCDD2961DE34E0E_E809SID
+      - 2AE3D5A9A1663D5C_31B4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=FCCDD2961DE34E0E_E809SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:35 GMT
+      - ncbi_sid=2AE3D5A9A1663D5C_31B4SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:35 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -126,9 +204,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '7'
-      X-Test-Test:
-      - test42
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
