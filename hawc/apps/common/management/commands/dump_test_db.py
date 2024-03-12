@@ -49,6 +49,7 @@ class Command(BaseCommand):
         call_command("dumpdata", "invitro", **shared_kwargs)
         call_command("dumpdata", "epimeta", **shared_kwargs)
         call_command("dumpdata", "summary", **shared_kwargs)
+        call_command("dumpdata", "udf", **shared_kwargs)
         call_command("dumpdata", "docs", **shared_kwargs)
         call_command("dumpdata", "mgmt", **shared_kwargs)
 
