@@ -4,9 +4,12 @@
   <div class="d-flex">
     <h2>Management dashboard</h2>
     {% actions %}
+      <span class="dropdown-header">Tasks</span>
       <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
       <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}?owner={{user.id}}&status=990">My assigned tasks</a>
-      <a class="dropdown-item" href="{% url 'mgmt:assessment-analytics' assessment.pk %}">Analytics</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-tasks' assessment.pk %}?format=xlsx">Download Tasks Export (xlsx)</a>
+      <span class="dropdown-header">Assessment Analytics</span>
+      <a class="dropdown-item" href="{% url 'mgmt:assessment-analytics' assessment.pk %}">View Analytics</a>
     {% endactions %}
   </div>
   {% if object_list %}
