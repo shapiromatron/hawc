@@ -13,7 +13,7 @@
         "format": "eslint --cache --fix .",
         "test": "./node_modules/mochapack/bin/mochapack \"tests/**/*.js\"",
         "test-windows": "node_modules\\.bin\\mochapack \"tests/**/*.js\"",
-        "foobar": "peggy ./shared/parsers/query.pegjs && peggy ./shared/parsers/format.pegjs"
+        "generate-parsers": "peggy ./shared/parsers/query.pegjs && peggy ./shared/parsers/format.pegjs"
     },
     "repository": {
         "type": "git",
