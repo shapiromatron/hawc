@@ -1,3 +1,5 @@
+from typing import Self
+
 import reversion
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -36,7 +38,7 @@ class UserDefinedForm(models.Model):
         ordering = ("-last_updated",)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     def get_absolute_url(self):
         return reverse("udf:udf_detail", args=(self.pk,))
@@ -64,7 +66,7 @@ class ModelBinding(models.Model):
         unique_together = (("assessment", "content_type"),)
 
     def __str__(self):
-        return f"{self.assessment}/{self.content_type.model} form"
+        return f"{self.assessment} / {self.content_type.model} form"
 
     def form_field(self, *args, **kwargs) -> JSONField | DynamicFormField:
         prefix = kwargs.pop("prefix", "udf")
@@ -81,6 +83,11 @@ class ModelBinding(models.Model):
 
     def get_absolute_url(self):
         return reverse("udf:model_detail", args=(self.id,))
+
+    @classmethod
+    def get_binding(cls, assessment: Assessment, Model: type[models.Model]) -> Self | None:
+        content_type = ContentType.objects.get_for_model(Model)
+        return assessment.udf_bindings.filter(content_type=content_type).first()
 
 
 class TagBinding(models.Model):
@@ -153,6 +160,20 @@ class ModelUDFContent(models.Model):
                     value = "|".join(map(str, value))
                 items.append((label, value))
         return items
+
+    @classmethod
+    def get_instance(cls, assessment_id, object: models.Model) -> Self | None:
+        if object.pk is None:
+            return
+        return (
+            cls.objects.filter(
+                model_binding__assessment=assessment_id,
+                content_type=ContentType.objects.get_for_model(object),
+                object_id=object.pk,
+            )
+            .select_related("model_binding")
+            .first()
+        )
 
 
 reversion.register(TagBinding)
