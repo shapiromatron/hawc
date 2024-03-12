@@ -130,7 +130,7 @@ class ModelUDFContent(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (("model_binding", "object_id"),)
+        unique_together = (("model_binding", "content_type", "object_id"),)
 
     def get_content_as_list(self):
         schema = dynamic_forms.Schema.parse_obj(self.model_binding.form.schema)
