@@ -2,13 +2,9 @@
   <h3>User defined fields</h3>
   <table class="table table-sm table-striped">
     {% bs4_colgroup '30,70' %}
-    {% bs4_thead 'Attribute, Value' %}
     <tbody>
       {% for key, value in object.get_content_as_list %}
-        <tr>
-          <td>{{key}}</td>
-          <td>{{value}}</td>
-        </tr>
+        {% optional_table_row key value %}
       {% endfor %}
     </tbody>
   </table>
