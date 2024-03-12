@@ -1,7 +1,7 @@
 import assert from "assert";
 import Format from "shared/parsers/format";
 
-const obj = {one: 1, two: "two"},
+const obj = {one: 1, two: "two", three: "", four: null},
     getValue = prop => obj[prop],
     options = {getValue};
 
@@ -55,6 +55,29 @@ describe("shared/parsers/format", function() {
         it("handles ternary string match", function() {
             let actual = Format.parse('match(two,"two")?This is true:This is false', options),
                 expected = "This is true";
+            assert.ok(actual == expected);
+        });
+        it("handles ternary exists for existing value", function() {
+            let actual = Format.parse("exists(one)?This is true:This is false", options),
+                expected = "This is true";
+            assert.ok(actual == expected);
+        });
+        it("handles ternary exists for empty string", function() {
+            let actual = Format.parse("exists(three)?This is true:This is false", options),
+                expected = "This is false";
+            assert.ok(actual == expected);
+        });
+        it("handles ternary exists for null value", function() {
+            let actual = Format.parse("exists(four)?This is true:This is false", options),
+                expected = "This is false";
+            assert.ok(actual == expected);
+        });
+        it("handles complex ternary", function() {
+            let actual = Format.parse(
+                    'match(one,1)?match(two,"two")?${one}=1 and ${two}=two:${two}!=two:${one}!=1',
+                    options
+                ),
+                expected = "1=1 and two=two";
             assert.ok(actual == expected);
         });
         it("unable to parse bad strings", function() {

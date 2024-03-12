@@ -20,7 +20,7 @@ TernarySection = Placeholder / TernaryFiller
 // ==========
 Condition = Match / Exists
 Match = "match(" id:ConditionIdentifier "," val:(String / Integer) ")" { return options.getValue(id) == val; }
-Exists = "exists(" id:ConditionIdentifier ",)" { return options.getValue(id) != null & options.getValue(id) != ""; }
+Exists = "exists(" id:ConditionIdentifier ")" { return options.getValue(id) != null & options.getValue(id) != ""; }
 
 // Block of characters
 // ==========
