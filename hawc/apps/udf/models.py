@@ -124,13 +124,13 @@ class ModelUDFContent(models.Model):
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True)
-    content_object = GenericForeignKey(
-        "content_type",
-        "object_id",
-    )
+    content_object = GenericForeignKey("content_type", "object_id")
     content = models.JSONField(blank=True, default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("model_binding", "object_id"),)
 
     def get_content_as_list(self):
         schema = dynamic_forms.Schema.parse_obj(self.model_binding.form.schema)
