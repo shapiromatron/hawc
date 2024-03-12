@@ -71,7 +71,7 @@ class ModelBinding(models.Model):
     def form_field(self, *args, **kwargs) -> JSONField | DynamicFormField:
         prefix = kwargs.pop("prefix", "udf")
         form_kwargs = kwargs.pop("form_kwargs", None)
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form_field(
             prefix, form_kwargs, *args, **kwargs
         )
 
@@ -111,7 +111,7 @@ class TagBinding(models.Model):
     def form_field(
         self, prefix="", form_kwargs=None, *args, **kwargs
     ) -> JSONField | DynamicFormField:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form_field(
             prefix, form_kwargs, *args, **kwargs
         )
 
@@ -140,24 +140,21 @@ class ModelUDFContent(models.Model):
         unique_together = (("model_binding", "content_type", "object_id"),)
 
     def get_content_as_list(self):
-        schema = dynamic_forms.Schema.parse_obj(self.model_binding.form.schema)
-
+        schema = dynamic_forms.Schema.model_validate(self.model_binding.form.schema)
         items = []
         for field in schema.fields:
             field_value = self.content.get(field.name)
             field_kwargs = field.get_form_field_kwargs()
+            value = field_value
             if "choices" in field_kwargs and field_value is not None:
                 choice_map = dict(field_kwargs["choices"])
-                if field.type == "multiple_choice":
-                    value = [choice_map[i] for i in field_value]
-                else:
-                    value = choice_map[field_value]
-            else:
-                value = field_value
+                value = (
+                    "|".join([choice_map[i] for i in field_value])
+                    if isinstance(value, list)
+                    else choice_map[field_value]
+                )
             if value:
                 label = field.get_verbose_name()
-                if isinstance(value, list) and field.type != "multiple_choice":
-                    value = "|".join(map(str, value))
                 items.append((label, value))
         return items
 
