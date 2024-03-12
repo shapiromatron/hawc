@@ -43,7 +43,7 @@ class Turnstile:
 
     def render(self):
         if not self.enabled:
-            return ""
+            return None
         return cfl.HTML(
             f"""<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <div data-sitekey="{settings.TURNSTILE_SITE}" class="cf-turnstile"></div>
