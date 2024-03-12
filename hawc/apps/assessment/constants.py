@@ -70,6 +70,7 @@ class EpiVersion(models.IntegerChoices):
 class Status(models.IntegerChoices):
     SCOPING = 0, "Scoping"
     PROBLEM_FORM = 5, "Problem Formulation"
+    PROTOCOL = 8, "Protocol"
     INTERNAL_REVIEW = 10, "Internal Review"
     INTERAGENCY_REVIEW = 15, "Interagency Review"
     PUBLIC_COMMENT = 20, "Public Comment"
@@ -83,7 +84,13 @@ class PeerReviewType(models.IntegerChoices):
     FACA = 5, "FACA Panel"
     NASEM = 10, "NASEM"
     JOURNAL = 15, "Journal Review"
+    OTHER = 18, "Other"
     NONE = 20, "No Review"
+    NA = 25, "Not Applicable"
+
+    def display(self) -> bool:
+        hidden = self in [self.NONE, self.OTHER, self.NA]
+        return not hidden
 
 
 class EvaluationType(models.IntegerChoices):
