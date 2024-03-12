@@ -1,3 +1,5 @@
+from typing import Self
+
 import reversion
 from crispy_forms.utils import render_crispy_form
 from django.conf import settings
@@ -37,7 +39,7 @@ class UserDefinedForm(models.Model):
         ordering = ("-last_updated",)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     def get_absolute_url(self):
         return reverse("udf:udf_detail", args=(self.pk,))
@@ -65,12 +67,12 @@ class ModelBinding(models.Model):
         unique_together = (("assessment", "content_type"),)
 
     def __str__(self):
-        return f"{self.assessment}/{self.content_type.model} form"
+        return f"{self.assessment} / {self.content_type.model} form"
 
     def form_field(self, *args, **kwargs) -> JSONField | DynamicFormField:
         prefix = kwargs.pop("prefix", "udf")
         form_kwargs = kwargs.pop("form_kwargs", None)
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form_field(
             prefix, form_kwargs, *args, **kwargs
         )
 
@@ -82,6 +84,11 @@ class ModelBinding(models.Model):
 
     def get_absolute_url(self):
         return reverse("udf:model_detail", args=(self.id,))
+
+    @classmethod
+    def get_binding(cls, assessment: Assessment, Model: type[models.Model]) -> Self | None:
+        content_type = ContentType.objects.get_for_model(Model)
+        return assessment.udf_bindings.filter(content_type=content_type).first()
 
 
 class TagBinding(models.Model):
@@ -110,7 +117,7 @@ class TagBinding(models.Model):
     def form_field(
         self, prefix="", form_kwargs=None, *args, **kwargs
     ) -> JSONField | DynamicFormField:
-        return dynamic_forms.Schema.parse_obj(self.form.schema).to_form_field(
+        return dynamic_forms.Schema.model_validate(self.form.schema).to_form_field(
             prefix, form_kwargs, *args, **kwargs
         )
 
@@ -118,7 +125,7 @@ class TagBinding(models.Model):
         return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_form_html(self, **kwargs) -> SafeText:
-        form = dynamic_forms.Schema.parse_obj(self.form.schema).to_form(
+        form = dynamic_forms.Schema.model_validate(self.form.schema).to_form(
             prefix=self.tag_id, **kwargs
         )
         return render_crispy_form(form, helper=form.helper)
@@ -136,35 +143,46 @@ class ModelUDFContent(models.Model):
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True)
-    content_object = GenericForeignKey(
-        "content_type",
-        "object_id",
-    )
+    content_object = GenericForeignKey("content_type", "object_id")
     content = models.JSONField(blank=True, default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    def get_content_as_list(self):
-        schema = dynamic_forms.Schema.parse_obj(self.model_binding.form.schema)
+    class Meta:
+        unique_together = (("model_binding", "content_type", "object_id"),)
 
+    def get_content_as_list(self):
+        schema = dynamic_forms.Schema.model_validate(self.model_binding.form.schema)
         items = []
         for field in schema.fields:
             field_value = self.content.get(field.name)
             field_kwargs = field.get_form_field_kwargs()
+            value = field_value
             if "choices" in field_kwargs and field_value is not None:
                 choice_map = dict(field_kwargs["choices"])
-                if field.type == "multiple_choice":
-                    value = [choice_map[i] for i in field_value]
-                else:
-                    value = choice_map[field_value]
-            else:
-                value = field_value
+                value = (
+                    "|".join([choice_map[i] for i in field_value])
+                    if isinstance(value, list)
+                    else choice_map[field_value]
+                )
             if value:
                 label = field.get_verbose_name()
-                if isinstance(value, list) and field.type != "multiple_choice":
-                    value = "|".join(map(str, value))
                 items.append((label, value))
         return items
+
+    @classmethod
+    def get_instance(cls, assessment_id, object: models.Model) -> Self | None:
+        if object.pk is None:
+            return
+        return (
+            cls.objects.filter(
+                model_binding__assessment=assessment_id,
+                content_type=ContentType.objects.get_for_model(object),
+                object_id=object.pk,
+            )
+            .select_related("model_binding")
+            .first()
+        )
 
 
 class TagUDFContent(models.Model):
@@ -180,7 +198,8 @@ class TagUDFContent(models.Model):
         unique_together = (("reference", "tag_binding"),)
 
     def get_content_as_list(self):
-        schema = dynamic_forms.Schema.parse_obj(self.tag_binding.form.schema)
+        # todo - refactor
+        schema = dynamic_forms.Schema.model_validate(self.tag_binding.form.schema)
 
         items = []
         for field in schema.fields:
@@ -205,3 +224,4 @@ class TagUDFContent(models.Model):
 reversion.register(TagBinding)
 reversion.register(ModelBinding)
 reversion.register(UserDefinedForm)
+reversion.register(TagUDFContent)

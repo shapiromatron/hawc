@@ -1,4 +1,4 @@
-<tr hx-target="this" hx-swap="outerHTML" class="dataextraction-{{object.pk}} outcome-{{object.outcome_id}} exposurelevel-{{object.exposure_level_id}} chemical-{{object.exposure_level.chemical_id}} exposure-{{object.exposure_level.exposure_measurement_id}} adjustmentfactor-{{object.factors_id}}">
+<tr hx-target="this" hx-swap="outerHTML" class="epiv2-obj-row {{action}} dataextraction-{{object.pk}} outcome-{{object.outcome_id}} exposurelevel-{{object.exposure_level_id}} chemical-{{object.exposure_level.chemical_id}} exposure-{{object.exposure_level.exposure_measurement_id}} adjustmentfactor-{{object.factors_id}}">
   <td>{{object.group|default:"-"}}</td>
   <td>{{object.outcome}}</td>
   <td>{{object.exposure_level}}</td>
@@ -11,5 +11,5 @@
   {% include "epiv2/fragments/_object_row.html" with model="dataextraction" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
-  <tr style="display: none" id="dataextraction-empty-row" hx-target="this"></tr>
+  <tr class="hidden dataextraction-edit-row" hx-target="this"></tr>
 {% endif %}

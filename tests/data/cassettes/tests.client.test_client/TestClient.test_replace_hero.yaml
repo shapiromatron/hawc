@@ -5,11 +5,11 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1037739/recordsperpage/100.json
   response:
@@ -37,18 +37,18 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Dec 2022 02:19:33 GMT
+      - Tue, 20 Feb 2024 16:41:24 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.54 (Win64) OpenSSL/1.1.1p mod_jk/1.2.46
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=3580539; Expires=Fri, 16-Dec-2022 02:19:33 GMT; Path=/; HttpOnly
-      - CFTOKEN=64770042; Expires=Fri, 16-Dec-2022 02:19:33 GMT; Path=/; HttpOnly
-      - JSESSIONID=2F355909D07D8220C6E0AE9019E26C6E.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F12%2F14%2021%3A19%3A33; Path=/
+      - CFID=14825944; Expires=Wed, 21 Feb 2024 16:41:24 GMT; Path=/; HttpOnly
+      - CFTOKEN=93820073; Expires=Wed, 21 Feb 2024 16:41:24 GMT; Path=/; HttpOnly
+      - JSESSIONID=BFFDE431DDDD7993540B3282C17A6A2D.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A41%3A24; Path=/
       Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-Frame-Options:
@@ -62,11 +62,11 @@ interactions:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1037739/recordsperpage/100.json
   response:
@@ -94,18 +94,18 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Thu, 15 Dec 2022 02:19:34 GMT
+      - Tue, 20 Feb 2024 16:41:25 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.54 (Win64) OpenSSL/1.1.1p mod_jk/1.2.46
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=3580542; Expires=Fri, 16-Dec-2022 02:19:34 GMT; Path=/; HttpOnly
-      - CFTOKEN=17112346; Expires=Fri, 16-Dec-2022 02:19:34 GMT; Path=/; HttpOnly
-      - JSESSIONID=2C3EA7EFB0426D9217DC5F6C4EA10E07.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F12%2F14%2021%3A19%3A34; Path=/
+      - CFID=14825946; Expires=Wed, 21 Feb 2024 16:41:25 GMT; Path=/; HttpOnly
+      - CFTOKEN=84174894; Expires=Wed, 21 Feb 2024 16:41:25 GMT; Path=/; HttpOnly
+      - JSESSIONID=683ECFE5A73615C3EAE2A02FE97ED6BA.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A41%3A25; Path=/
       Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-Frame-Options:
@@ -114,53 +114,63 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=22411696
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=22411696
     headers:
       Accept:
       - '*/*'
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '45'
+      - '90'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM"><PMID
+        Version="1">22411696</PMID><DateCompleted><Year>2012</Year><Month>08</Month><Day>01</Day></DateCompleted><DateRevised><Year>2012</Year><Month>04</Month><Day>11</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1521-3773</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>51</Volume><Issue>16</Issue><PubDate><Year>2012</Year><Month>Apr</Month><Day>16</Day></PubDate></JournalIssue><Title>Angewandte
+        Chemie (International ed. in English)</Title><ISOAbbreviation>Angew Chem Int
+        Ed Engl</ISOAbbreviation></Journal><ArticleTitle>Observation of methanol behavior
+        in fuel cells in situ by NMR spectroscopy.</ArticleTitle><Pagination><StartPage>3842</StartPage><EndPage>3845</EndPage><MedlinePgn>3842-5</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1002/anie.201108330</ELocationID><Abstract><AbstractText>The
+        chemical conversion of methanol in direct methanol fuel cells was followed
+        in situ by NMR spectroscopy. Comparing data of the methanol oxidation on Pt
+        and PtRu anode catalysts allowed the role of Ru in both Faradaic and non-Faradaic
+        reactions to be investigated. The spatial distributions of chemicals could
+        also be determined. (Picture: T1-T4=inlet and outlet tubes.).</AbstractText><CopyrightInformation>Copyright
+        &#xa9; 2012 WILEY-VCH Verlag GmbH &amp; Co. KGaA, Weinheim.</CopyrightInformation></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Han</LastName><ForeName>Oc Hee</ForeName><Initials>OH</Initials><AffiliationInfo><Affiliation>Analysis
+        Research Division, Daegu Center, Korea Basic Science Institute, Korea. ohhan@kbsi.re.kr</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Han</LastName><ForeName>Kee Sung</ForeName><Initials>KS</Initials></Author><Author
+        ValidYN="Y"><LastName>Shin</LastName><ForeName>Chang Woo</ForeName><Initials>CW</Initials></Author><Author
+        ValidYN="Y"><LastName>Lee</LastName><ForeName>Juhee</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Kim</LastName><ForeName>Seong-Soo</ForeName><Initials>SS</Initials></Author><Author
+        ValidYN="Y"><LastName>Um</LastName><ForeName>Myung Sup</ForeName><Initials>MS</Initials></Author><Author
+        ValidYN="Y"><LastName>Joh</LastName><ForeName>Han-Ik</ForeName><Initials>HI</Initials></Author><Author
+        ValidYN="Y"><LastName>Kim</LastName><ForeName>Soo-Kil</ForeName><Initials>SK</Initials></Author><Author
+        ValidYN="Y"><LastName>Ha</LastName><ForeName>Heung Yong</ForeName><Initials>HY</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2012</Year><Month>03</Month><Day>12</Day></ArticleDate></Article><MedlineJournalInfo><Country>Germany</Country><MedlineTA>Angew
+        Chem Int Ed Engl</MedlineTA><NlmUniqueID>0370543</NlmUniqueID><ISSNLinking>1433-7851</ISSNLinking></MedlineJournalInfo></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2011</Year><Month>11</Month><Day>26</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2012</Year><Month>3</Month><Day>14</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2012</Year><Month>3</Month><Day>14</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2012</Year><Month>3</Month><Day>14</Day><Hour>6</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">22411696</ArticleId><ArticleId IdType="doi">10.1002/anie.201108330</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -175,28 +185,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Thu, 15 Dec 2022 02:19:33 GMT
+      - Tue, 20 Feb 2024 16:41:25 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B19B7031BEDD5000041C51C293A37.1.1.m_3
+      - 322C45D975EA9B45000045E0449578F2.1.1.m_3
       NCBI-SID:
-      - 38CEDC0C12A1E8BF_E6C9SID
+      - C342345EFD315BA5_C06FSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=38CEDC0C12A1E8BF_E6C9SID; domain=.nih.gov; path=/; expires=Fri, 15
-        Dec 2023 02:19:34 GMT
+      - ncbi_sid=C342345EFD315BA5_C06FSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:41:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

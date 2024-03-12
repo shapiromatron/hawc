@@ -70,6 +70,8 @@
 
   <div id="study_details"></div>
 
+  {% include "udf/fragments/table.html" with object=udf_content %}
+
   {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
       <colgroup>

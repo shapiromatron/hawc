@@ -40,4 +40,8 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
+        migrations.AlterUniqueTogether(
+            name="modeludfcontent",
+            unique_together={("model_binding", "content_type", "object_id")},
+        ),
     ]

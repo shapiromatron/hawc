@@ -60,13 +60,13 @@ class TestTaskDashboard:
         assert c.login(username="team@hawcproject.org", password="pw") is True
 
         # detail - GET
-        url = reverse("mgmt:task-detail", args=(3,))
+        url = reverse("mgmt:task-htmx", args=(3, "read"))
         response = c.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/fragments/task_cell.html")
 
         # update - (GET, POST)
-        url = reverse("mgmt:task-update", args=(3,))
+        url = reverse("mgmt:task-htmx", args=(3, "update"))
         response = c.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/fragments/task_form.html")

@@ -1401,13 +1401,13 @@ class Workflow(models.Model):
         return f"{self.title} Workflow"
 
     def get_absolute_url(self):
-        return reverse("lit:workflow-detail", args=[self.pk])
+        return reverse("lit:workflow-htmx", args=[self.pk, "read"])
 
     def get_edit_url(self):
-        return reverse("lit:workflow-update", args=[self.pk])
+        return reverse("lit:workflow-htmx", args=[self.pk, "update"])
 
     def get_delete_url(self):
-        return reverse("lit:workflow-delete", args=[self.pk])
+        return reverse("lit:workflow-htmx", args=[self.pk, "delete"])
 
     def get_assessment(self):
         return self.assessment
