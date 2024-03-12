@@ -1,9 +1,8 @@
 {% if object %}
-  {% load bs4 %}
   <h3>User defined fields</h3>
   <table class="table table-sm table-striped">
     {% bs4_colgroup '30,70' %}
-    {% bs4_thead 'Field, Value' %}
+    {% bs4_thead 'Attribute, Value' %}
     <tbody>
       {% for key, value in object.get_content_as_list %}
         <tr>

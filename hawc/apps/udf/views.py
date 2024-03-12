@@ -204,7 +204,7 @@ class DeleteTagBindingView(BaseDelete):
 
 
 class UDFDetailMixin:
-    """Mixin to add saved UDF contents to the context of a BaseDetail view."""
+    """Add UDF content to a BaseDetail."""
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
