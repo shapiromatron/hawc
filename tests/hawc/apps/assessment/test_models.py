@@ -51,3 +51,12 @@ class TestContent:
         assert cache.get(key) == "<h1>Hello Thor!</h1>"
         page.clear_cache()
         assert cache.get(key) is None
+
+
+class TestAssessmentDetail:
+    def test_get_peer_review_status_display(self):
+        obj = models.AssessmentDetail(peer_review_status=constants.PeerReviewType.JOURNAL)
+        assert obj.get_peer_review_status_display() == constants.PeerReviewType.JOURNAL.label
+
+        obj = models.AssessmentDetail(peer_review_status=constants.PeerReviewType.OTHER)
+        assert obj.get_peer_review_status_display() == ""
