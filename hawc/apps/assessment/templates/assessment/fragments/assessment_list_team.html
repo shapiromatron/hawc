@@ -6,7 +6,7 @@
       {% for object in object_list %}
         <tr>
           <td>
-            <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
+            <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a>{% debug_badge object.id %}</p>
             {% if object.assessment_objective %}
               <div class='text-muted'>{{object.assessment_objective|striptags|truncatewords:30|safe}}</div>
             {% endif %}

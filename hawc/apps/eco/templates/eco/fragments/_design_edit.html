@@ -7,8 +7,8 @@
     {% crispy form %}
     <div class="d-block container">
       <div class="float-right">
-        <button class="btn btn-sm btn-info" hx-post="{% url 'eco:design-update' object.pk %}">Save</button>
-        <button class="btn btn-sm btn-light" hx-get="{% url 'eco:design-detail' object.pk %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
+        <button class="btn btn-sm btn-info" hx-post="{% url 'eco:design-htmx' object.pk 'update' %}">Save</button>
+        <button class="btn btn-sm btn-light" hx-get="{% url 'eco:design-htmx' object.pk 'read' %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
       </div>
     </div>
   </form>

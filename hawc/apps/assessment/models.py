@@ -576,6 +576,12 @@ class AssessmentDetail(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.assessment_id,))
 
+    def get_peer_review_status_display(self) -> str:
+        value = constants.PeerReviewType(self.peer_review_status)
+        if value.display():
+            return value.label
+        return ""
+
 
 class AssessmentValue(models.Model):
     objects = managers.AssessmentValueManager()
@@ -731,13 +737,13 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("assessment:attachment-detail", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk, "read"])
 
     def get_edit_url(self):
-        return reverse("assessment:attachment-update", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk, "update"])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment-delete", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk, "delete"])
 
     def get_dict(self):
         return {
@@ -919,10 +925,13 @@ class TimeSpentEditing(models.Model):
         cache.set(cache_name, now, 60 * 60 * 1)
 
     @classmethod
-    def add_time_spent_job(cls, url, session_key, obj, assessment_id):
+    def add_time_spent_job(cls, url: str, session_key: str, obj, assessment_id: int):
         cache_name = cls.get_cache_name(url, session_key)
         content_type_id = ContentType.objects.get_for_model(obj).id
-        add_time_spent.delay(cache_name, obj.id, assessment_id, content_type_id)
+        # wait 10 seconds to make sure database is populated
+        add_time_spent.s(cache_name, obj.id, assessment_id, content_type_id).apply_async(
+            countdown=10
+        )
 
     @classmethod
     def add_time_spent(cls, cache_name, object_id, assessment_id, content_type_id):

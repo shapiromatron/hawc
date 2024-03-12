@@ -1,0 +1,11 @@
+{% if object %}
+  <h3>User defined fields</h3>
+  <table class="table table-sm table-striped">
+    {% bs4_colgroup '30,70' %}
+    <tbody>
+      {% for key, value in object.get_content_as_list %}
+        {% optional_table_row key value %}
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

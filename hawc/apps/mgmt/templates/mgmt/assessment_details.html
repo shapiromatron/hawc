@@ -5,6 +5,7 @@
     <h2>Task assignments</h2>
     {% actions %}
       <a class="dropdown-item" href="{% url 'mgmt:user-assessment-task-list' assessment.pk %}">My assigned tasks</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-tasks' assessment.pk %}?format=xlsx">Download Export (xlsx)</a>
     {% endactions %}
   </div>
 
