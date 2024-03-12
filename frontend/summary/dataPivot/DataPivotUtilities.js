@@ -1,4 +1,5 @@
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
+import Format from "shared/parsers/format";
 
 import $ from "$";
 
@@ -355,10 +356,13 @@ class _DataPivot_settings_calculated {
         this.values = values;
 
         const checkFormula = function() {
-            // TODO - a formula is invalid if it contains "test"; replace with real check
-            const el = $(this),
-                isValid = !el.val().includes("test");
-            isValid ? el.removeClass("is-invalid") : el.addClass("is-invalid");
+            const el = $(this);
+            try {
+                Format.parse(el.val(), {getValue: () => null});
+                el.removeClass("is-invalid");
+            } catch (err) {
+                el.addClass("is-invalid");
+            }
         };
 
         // create fields

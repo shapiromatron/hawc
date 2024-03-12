@@ -212,9 +212,13 @@ class DataPivotVisualization extends D3Plot {
             settings.calculated_columns
                 .filter(d => d.name && d.formula)
                 .forEach(d => {
-                    row[d.name] = Format.parse(d.formula, {
-                        getValue: identifier => row[identifier],
-                    });
+                    try {
+                        row[d.name] = Format.parse(d.formula, {
+                            getValue: identifier => row[identifier],
+                        });
+                    } catch (err) {
+                        row[d.name] = "";
+                    }
                 });
             return row;
         };
