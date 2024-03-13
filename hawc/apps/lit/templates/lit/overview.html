@@ -99,8 +99,8 @@
                 <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
               </div>
             </a>
-            <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
-              <div>
+            <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&tags=untagged">
+              <div title='Has no consensus tags and < 2 user reviews'>
                 <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
                 <p class="small">need{{ overview.needs_tagging|pluralize:"s," }} further tagging</p>
               </div>

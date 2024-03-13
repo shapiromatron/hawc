@@ -889,10 +889,12 @@ class ReferenceManager(BaseManager):
             UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
             user_refs = UserReferenceTag.objects.filter(reference__in=refs)
             refs = refs.annotate(
+                tags_count=Count("tags"),
                 user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
                 n_unapplied_reviews=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
             )
-            needs_tagging = refs.filter(user_tag_count__lt=2)
+            # has no consensus tags and there are currently < 2 unresolved user reviews
+            needs_tagging = refs.filter(tags_count=0, user_tag_count__lt=2)
             conflicts = refs.filter(n_unapplied_reviews__gt=1)
             for workflow in workflows:
                 workflow_refs = refs.in_workflow(workflow)
