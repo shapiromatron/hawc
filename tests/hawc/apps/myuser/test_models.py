@@ -1,4 +1,6 @@
 import pytest
+from django.core import mail
+from django.test.client import RequestFactory
 
 from hawc.apps.myuser.models import HAWCUser
 
@@ -23,3 +25,20 @@ class TestMyUser:
 
         # cleanup; required for test suite
         group.delete()
+
+    def test_welcome_email(self):
+        team = HAWCUser.objects.get(email="team@hawcproject.org")
+        team.send_welcome_email()
+
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].subject == "Welcome to HAWC!"
+
+    def test_send_email_verification(self):
+        team = HAWCUser.objects.get(email="team@hawcproject.org")
+
+        rf = RequestFactory()
+        request = rf.get("/")
+        team.send_email_verification(request)
+
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].subject == "HAWC - email verification"

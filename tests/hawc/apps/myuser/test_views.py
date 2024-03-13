@@ -121,11 +121,11 @@ class TestLoginView:
         settings.HAWC_FEATURES.ANONYMOUS_ACCOUNT_CREATION = True
 
     @pytest.mark.vcr
-    def test_turnstyle(self, settings):
+    def test_turnstile(self, settings):
         url = reverse("user:login")
         success = {"username": "pm@hawcproject.org", "password": "pw"}
 
-        # no turnstyle by default
+        # no turnstile by default
         c = Client()
         resp = c.get(url)
         assert b"challenges.cloudflare.com/turnstile" not in resp.content
@@ -134,10 +134,10 @@ class TestLoginView:
         assert resp.status_code == 302
         assert resp.url == "/portal/"
 
-        # turnstyle if enabled
+        # turnstile if enabled
         c = Client()
-        settings.TURNSTYLE_SITE = "https://test-me.org"
-        settings.TURNSTYLE_KEY = "secret"
+        settings.TURNSTILE_SITE = "https://test-me.org"
+        settings.TURNSTILE_KEY = "secret"
         resp = c.get(url)
         assert b"challenges.cloudflare.com/turnstile" in resp.content
         assert b'data-sitekey="https://test-me.org"' in resp.content
@@ -231,6 +231,24 @@ class ExternalAuthTests(TestCase):
 
 
 @pytest.mark.django_db
+class TestVerifyEmail:
+    def test_workflow(self, settings):
+        settings.EMAIL_VERIFICATION_REQUIRED = True
+        user = models.HAWCUser.objects.get(email="reviewer@hawcproject.org")
+        user.email_verified_on = None
+        user.save()
+
+        url = user.create_email_verification_url()
+        client = Client()
+        resp = client.get(url, follow=True)
+        assert resp.status_code == 200
+
+        user.refresh_from_db()
+        assert user.email_verified_on is not None
+        settings.EMAIL_VERIFICATION_REQUIRED = False
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("pm")
 
@@ -248,6 +266,13 @@ def test_get_200():
         reverse("user:reset_password"),
         reverse("user:reset_password_sent"),
         reverse("user:reset_password_done"),
+    ]
+    for url in urls:
+        check_200(client, url)
+
+    client = get_client("admin")
+    urls = [
+        reverse("admin:myuser_hawcuser_change", args=(1,)),
     ]
     for url in urls:
         check_200(client, url)
