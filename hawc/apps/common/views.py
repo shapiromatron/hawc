@@ -300,7 +300,6 @@ class TimeSpentOnPageMixin:
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
-        # TODO - move to form_valid - it's always supered; get_success_url is not
         TimeSpentEditing.add_time_spent_job(self.request, self.object, self.assessment.id)
         return super().get_success_url()
 

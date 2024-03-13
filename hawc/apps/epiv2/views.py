@@ -43,7 +43,7 @@ class DesignCreate(EnsureExtractionStartedMixin, BaseCreate):
     form_class = forms.DesignForm
 
     def get_success_url(self):
-        super().get_success_url()  # trigger EnsureExtractionStarted
+        super().get_success_url()  # trigger EnsureExtractionStarted + TimeSpentOnPageMixin
         return self.object.get_update_url()
 
 

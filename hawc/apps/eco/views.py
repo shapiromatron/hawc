@@ -39,7 +39,7 @@ class DesignCreate(BaseCreate):
     form_class = forms.DesignForm
 
     def get_success_url(self):
-        super().get_success_url()  # trigger TimeSpentEditing
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.get_update_url()
 
     def get_context_data(self, **kwargs):
