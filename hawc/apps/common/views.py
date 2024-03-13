@@ -296,21 +296,12 @@ class AssessmentPermissionsMixin:
 
 class TimeSpentOnPageMixin:
     def get(self, request, *args, **kwargs):
-        TimeSpentEditing.set_start_time(
-            self.request.session.session_key,
-            self.request.path,
-        )
+        TimeSpentEditing.set_start_time(request)
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
-        response = super().get_success_url()
-        TimeSpentEditing.add_time_spent_job(
-            self.request.session.session_key,
-            self.request.path,
-            self.object,
-            self.assessment.id,
-        )
-        return response
+        TimeSpentEditing.add_time_spent_job(self.request, self.object, self.assessment.id)
+        return super().get_success_url()
 
 
 class WebappMixin:
