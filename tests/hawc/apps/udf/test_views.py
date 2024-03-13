@@ -14,14 +14,14 @@ class TestUDFViews:
             ("login", reverse("udf:udf_detail", args=(1,))),
             ("owner", reverse("udf:udf_update", args=(1,))),
             # model + tag bindings
-            ("read", reverse("udf:binding-list", args=(db_keys.assessment_working,))),
+            ("read", reverse("udf:binding-list", args=(db_keys.assessment_conflict_resolution,))),
             # model bindings
-            ("update", reverse("udf:model_create", args=(db_keys.assessment_working,))),
+            ("update", reverse("udf:model_create", args=(db_keys.assessment_conflict_resolution,))),
             ("read", reverse("udf:model_detail", args=(1,))),
             ("update", reverse("udf:model_update", args=(1,))),
             ("update", reverse("udf:model_delete", args=(1,))),
             # tag bindings
-            ("update", reverse("udf:tag_create", args=(db_keys.assessment_working,))),
+            ("update", reverse("udf:tag_create", args=(db_keys.assessment_conflict_resolution,))),
             ("read", reverse("udf:tag_detail", args=(1,))),
             ("update", reverse("udf:tag_update", args=(1,))),
             ("update", reverse("udf:tag_delete", args=(1,))),
