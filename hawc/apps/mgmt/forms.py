@@ -21,4 +21,5 @@ class TaskForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.add_row("owner", 3, "col-md-4")
         return helper

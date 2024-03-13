@@ -22,7 +22,6 @@ class TestTaskDashboard:
         for url in [
             reverse("mgmt:task-dashboard", args=(1,)),
             reverse("mgmt:task-list", args=(1,)),
-            reverse("mgmt:user-assessment-task-list", args=(1,)),
         ]:
             response = c.get(url)
             assert response.status_code == 403
@@ -49,12 +48,6 @@ class TestTaskDashboard:
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/assessment_details.html")
 
-        # assessment user task list
-        url = reverse("mgmt:user-assessment-task-list", args=(1,))
-        response = c.get(url)
-        assertTemplateUsed(response, "mgmt/user_assessment_task_list.html")
-        assert response.status_code == 200
-
     def test_htmx(self):
         c = Client(HTTP_HX_REQUEST="true")
         assert c.login(username="team@hawcproject.org", password="pw") is True
@@ -63,7 +56,7 @@ class TestTaskDashboard:
         url = reverse("mgmt:task-htmx", args=(3, "read"))
         response = c.get(url)
         assert response.status_code == 200
-        assertTemplateUsed(response, "mgmt/fragments/task_cell.html")
+        assertTemplateUsed(response, "mgmt/fragments/task_detail.html")
 
         # update - (GET, POST)
         url = reverse("mgmt:task-htmx", args=(3, "update"))
@@ -73,7 +66,7 @@ class TestTaskDashboard:
 
         response = c.post(url, data=dict(status=20))
         assert response.status_code == 200
-        assertTemplateUsed(response, "mgmt/fragments/task_cell.html")
+        assertTemplateUsed(response, "mgmt/fragments/task_detail.html")
 
 
 @pytest.mark.django_db

@@ -1,0 +1,26 @@
+<tr class="task-row" hx-target="this" hx-swap="outerHTML">
+  <td>
+    <a href="{{ object.study.get_absolute_url }}">{{ object.study }}</a>
+    <br>
+    <b>Date created: </b>
+    <span>{{ object.study.created|date:"SHORT_DATE_FORMAT" }}</span>
+  </td>
+  <td>
+    <span>{{ object.get_type_display }}</span>
+  </td>
+  <td>
+    {{object.owner|default:"---"}}
+  </td>
+  <td>
+    <i class="fa fa-circle mgmt-circle s{{ object.status }}"></i>
+    {{ object.get_status_display }}
+  </td>
+  <td>
+    <div class="d-flex">
+      <span class="px-2 {% if object.overdue %}bg-warning{% endif %}">{{ object.due_date|date:"SHORT_DATE_FORMAT"|default:"---" }}</span>
+      <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-htmx' object.pk 'update' %}">
+        <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+      </button>
+    </div>
+  </td>
+</tr>

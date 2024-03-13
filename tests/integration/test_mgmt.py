@@ -18,4 +18,4 @@ class TestMgmt(PlaywrightTestCase):
 
         # /mgmt/assessment/:id/details/
         page.goto(self.live_server_url + "/mgmt/assessment/1/details/")
-        expect(page.locator(".task-row")).to_have_count(1)
+        expect(page.locator(".task-row")).to_have_count(4)
