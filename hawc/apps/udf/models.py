@@ -168,7 +168,7 @@ class ModelUDFContent(models.Model):
                 content_type=ContentType.objects.get_for_model(object),
                 object_id=object.pk,
             )
-            .select_related("model_binding")
+            .select_related("model_binding__form")
             .first()
         )
 
