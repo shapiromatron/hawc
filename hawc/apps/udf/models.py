@@ -47,6 +47,10 @@ class UserDefinedForm(models.Model):
     def user_can_edit(self, user):
         return self.creator == user or user in self.editors.all()
 
+    def data_list(self, data: dict):
+        schema = dynamic_forms.Schema.model_validate(self.schema)
+        return schema.to_list(data)
+
 
 class ModelBinding(models.Model):
     assessment = models.ForeignKey(
@@ -152,23 +156,7 @@ class ModelUDFContent(models.Model):
         unique_together = (("model_binding", "content_type", "object_id"),)
 
     def get_content_as_list(self):
-        schema = dynamic_forms.Schema.model_validate(self.model_binding.form.schema)
-        items = []
-        for field in schema.fields:
-            field_value = self.content.get(field.name)
-            field_kwargs = field.get_form_field_kwargs()
-            value = field_value
-            if "choices" in field_kwargs and field_value is not None:
-                choice_map = dict(field_kwargs["choices"])
-                value = (
-                    "|".join([choice_map[i] for i in field_value])
-                    if isinstance(value, list)
-                    else choice_map[field_value]
-                )
-            if value:
-                label = field.get_verbose_name()
-                items.append((label, value))
-        return items
+        return self.model_binding.form.data_list(self.content)
 
     @classmethod
     def get_instance(cls, assessment_id, object: models.Model) -> Self | None:
@@ -198,27 +186,7 @@ class TagUDFContent(models.Model):
         unique_together = (("reference", "tag_binding"),)
 
     def get_content_as_list(self):
-        # todo - refactor
-        schema = dynamic_forms.Schema.model_validate(self.tag_binding.form.schema)
-
-        items = []
-        for field in schema.fields:
-            field_value = self.content.get(field.name)
-            field_kwargs = field.get_form_field_kwargs()
-            if "choices" in field_kwargs and field_value is not None:
-                choice_map = dict(field_kwargs["choices"])
-                if field.type == "multiple_choice":
-                    value = [choice_map[i] for i in field_value]
-                else:
-                    value = choice_map[field_value]
-            else:
-                value = field_value
-            if value:
-                label = field.get_verbose_name()
-                if isinstance(value, list) and field.type != "multiple_choice":
-                    value = "|".join(map(str, value))
-                items.append((label, value))
-        return items
+        return self.tag_binding.form.data_list(self.content)
 
 
 reversion.register(TagBinding)
