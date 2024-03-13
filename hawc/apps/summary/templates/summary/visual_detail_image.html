@@ -19,7 +19,11 @@
       {% endif %}
     </div>
     <div id="visual-image">
-      <img src="{{object.image.url}}" style="max-width: 100%" />
+      <img src="{{object.image.url}}"
+        alt="{{object.settings.alt_text}}"
+        class="img-fluid"
+        {% if object.settings.max_width %}style="width: {{object.settings.max_width}}px"{% endif %}
+      />
     </div>
     <p>{{object.caption|safe}}</p>
   </div>
