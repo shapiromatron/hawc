@@ -200,3 +200,14 @@ class DeleteTagBindingView(BaseDelete):
 
     def get_success_url(self):
         return self.assessment.get_udf_list_url()
+
+
+class UDFDetailMixin:
+    """Add UDF content to a BaseDetail."""
+
+    def get_context_data(self, **kw):
+        context = super().get_context_data(**kw)
+        context.update(
+            udf_content=models.ModelUDFContent.get_instance(self.assessment, self.object)
+        )
+        return context

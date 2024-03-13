@@ -14,6 +14,7 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, CopyForm, QuillField
+from ..udf.forms import UDFModelFormMixin
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
@@ -370,7 +371,7 @@ def dosegroup_formset_factory(groups, num_dose_groups):
     return FS(data)
 
 
-class EndpointForm(ModelForm):
+class EndpointForm(UDFModelFormMixin, ModelForm):
     class Meta:
         model = models.Endpoint
         fields = (
@@ -448,6 +449,7 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
+        self.set_udf_field(self.instance.assessment)
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
     @property

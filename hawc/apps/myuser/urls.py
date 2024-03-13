@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path, re_path
+from django.urls import path
 
 from ...constants import AuthProvider
 from . import api, views
@@ -36,8 +36,8 @@ if AuthProvider.django in settings.AUTH_PROVIDERS:
             views.PasswordResetSent.as_view(),
             name="reset_password_sent",
         ),
-        re_path(
-            r"^password-reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$",
+        path(
+            "password-reset/confirm/<uidb64>/<token>/",
             views.HawcPasswordResetConfirmView.as_view(),
             name="reset_password_confirm",
         ),
@@ -62,6 +62,11 @@ if AuthProvider.django in settings.AUTH_PROVIDERS:
             name="set_password",
         ),
         path("api/token-auth/", api.hawc_obtain_auth_token, name="api_token_auth"),
+        path(
+            "email-verify/<uidb64>/<token>/",
+            views.VerifyEmail.as_view(),
+            name="verify_email",
+        ),
     ]
 
 if AuthProvider.external in settings.AUTH_PROVIDERS:
