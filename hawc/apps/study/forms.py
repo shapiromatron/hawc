@@ -8,10 +8,11 @@ from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessme
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
+from ..udf.forms import UDFModelFormMixin
 from . import models
 
 
-class BaseStudyForm(forms.ModelForm):
+class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
@@ -49,6 +50,7 @@ class BaseStudyForm(forms.ModelForm):
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
+        self.set_udf_field(self.instance.assessment)
         self.helper = self.setHelper()
 
     def setHelper(self, inputs: dict | None = None):
