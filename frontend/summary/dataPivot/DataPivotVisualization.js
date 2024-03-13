@@ -454,8 +454,7 @@ class DataPivotVisualization extends D3Plot {
             settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
-                        var hash = new Map();
-                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                        var hash = buildStyleMap(cf, false);
                         rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
@@ -474,11 +473,10 @@ class DataPivotVisualization extends D3Plot {
         } else {
             this.dp_settings.dataline_settings.forEach(dl => {
                 dl.conditional_formatting.forEach(cf => {
-                    const styles = "bars",
-                        hash = new Map();
+                    const styles = "bars";
                     switch (cf.condition_type) {
                         case "discrete-style":
-                            cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                            var hash = buildStyleMap(cf, false);
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
                                     d._styles[styles] = get_associated_style(
@@ -536,7 +534,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var mapping = buildStyleMap(cf);
+                            var mapping = buildStyleMap(cf, false);
                             rows.forEach(d => {
                                 let key = _.toString(d[cf.field_name]),
                                     value = mapping.get(key);
@@ -682,9 +680,9 @@ class DataPivotVisualization extends D3Plot {
 
     getDomain() {
         let domain,
-            fields,
             bars = this.settings.bars,
-            barchart = this.settings.barchart;
+            barchart = this.settings.barchart,
+            logscale = this.dp_settings.plot_settings.logscale;
 
         // use user-specified domain if valid
         domain = _.map(this.dp_settings.plot_settings.domain.split(","), parseFloat);
@@ -693,25 +691,25 @@ class DataPivotVisualization extends D3Plot {
         }
 
         // otherwise calculate domain from data
-        fields = _.chain(this.settings.datapoints)
-            .map("field_name")
-            .push(
-                bars.low_field_name,
-                bars.high_field_name,
-                barchart.field_name,
-                barchart.error_low_field_name,
-                barchart.error_high_field_name
-            )
-            .compact()
-            .value();
-
-        return d3.extent(
-            _.chain(this.datarows)
+        const fields = _.chain(this.settings.datapoints)
+                .map("field_name")
+                .push(
+                    bars.low_field_name,
+                    bars.high_field_name,
+                    barchart.field_name,
+                    barchart.error_low_field_name,
+                    barchart.error_high_field_name
+                )
+                .compact()
+                .value(),
+            values = _.chain(this.datarows)
                 .map(d => _.map(fields, f => d[f]))
                 .flattenDeep()
                 .map(parseFloat)
-                .value()
-        );
+                .filter(logscale ? d => d > 0 : Number.isFinite)
+                .value();
+
+        return d3.extent(values);
     }
 
     add_axes() {

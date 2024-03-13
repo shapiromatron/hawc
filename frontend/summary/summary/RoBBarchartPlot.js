@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
 import {NR_KEYS, SCORE_SHADES} from "riskofbias/constants";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import D3Visualization from "./D3Visualization";
 import RoBLegend from "./RoBLegend";
@@ -17,7 +18,11 @@ class RoBBarchartPlot extends D3Visualization {
         this.plot_div = $div.html("");
         this.processData();
         if (this.dataset.length === 0) {
-            return this.plot_div.html(`<p>Error: no studies with evaluations selected.</p>`);
+            let robName = this.data.assessment_rob_name.toLowerCase();
+            return HAWCUtils.addAlert(
+                `Error: no studies with ${robName} selected. Please select at least one study with ${robName}.`,
+                this.plot_div
+            );
         }
         this.get_plot_sizes();
         this.build_plot_skeleton(true, "A risk of bias/study evaluation stacked barchart");

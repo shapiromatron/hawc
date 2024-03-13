@@ -1,8 +1,8 @@
-<tr hx-target="this" hx-swap="outerHTML" class="chemical-{{object.id}}">
+<tr hx-target="this" hx-swap="outerHTML" class="epiv2-obj-row {{action}} chemical-{{object.id}}">
   <td>{{object.name}}</td>
   <td>{{object.dsstox.verbose_link|safe|default:"-"   }}</td>
   {% include "epiv2/fragments/_object_row.html" with model="chemical" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
-  <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
+  <tr class="hidden chemical-edit-row" hx-target="this"></tr>
 {% endif %}

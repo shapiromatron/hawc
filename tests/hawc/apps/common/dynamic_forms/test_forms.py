@@ -20,20 +20,25 @@ class TestDynamicForm:
         schema = Schema.model_validate(yesno)
         form_rendering = render_crispy_form(schema.to_form({}))
         expected = """
-            <div id="div_id_yesno" class="form-group">
-                <label class="">Yes/no field?</label>
-                <div>
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
-                        <label class="custom-control-label" for="id_yesno_0">Yes</label>
+        <div class="form-row">
+            <div class="col-6">
+                <div id="div_id_yesno" class="form-group">
+                    <label class="">Yes/no field?</label>
+                    <div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
+                            <label class="custom-control-label" for="id_yesno_0">Yes</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
+                            <label class="custom-control-label" for="id_yesno_1">No</label>
+                        </div>
+                        <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
                     </div>
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
-                        <label class="custom-control-label" for="id_yesno_1">No</label>
-                    </div>
-                    <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
                 </div>
-            </div>"""
+            </div>
+        </div>
+        """
         assertInHTML(expected, form_rendering)
 
     def test_validation(self):

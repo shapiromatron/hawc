@@ -9,17 +9,23 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
+import {handleVisualError} from "./common";
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
 
 class EndpointAggregation extends BaseVisual {
     constructor(data) {
         super(data);
-        this.endpoints = data.endpoints.map(function(d) {
-            var e = new Endpoint(d);
-            e.doseUnits.activate(data.dose_units);
-            return e;
-        });
+        this.endpoints = data.endpoints
+            .filter(d => {
+                var e = new Endpoint(d);
+                return e.doseUnits.hasUnits(data.dose_units);
+            })
+            .map(d => {
+                var e = new Endpoint(d);
+                e.doseUnits.activate(data.dose_units);
+                return e;
+            });
         delete this.data.endpoints;
     }
 
@@ -54,11 +60,15 @@ class EndpointAggregation extends BaseVisual {
             ]);
             $el.prepend(headerRow).append(captionDiv);
         }
+        try {
+            this.buildTbl();
+            this.plotData = this.getPlotData();
+            this.buildPlot();
+            caption.renderAndEnable();
+        } catch (error) {
+            handleVisualError(error, null);
+        }
 
-        this.buildTbl();
-        this.plotData = this.getPlotData();
-        this.buildPlot();
-        caption.renderAndEnable();
         return this;
     }
 

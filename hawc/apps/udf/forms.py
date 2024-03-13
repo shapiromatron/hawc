@@ -12,7 +12,7 @@ from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, TextareaBu
 from hawc.apps.myuser.autocomplete import UserAutocomplete
 
 from ..assessment.models import Assessment
-from . import constants, models
+from . import cache, constants, models
 
 
 class UDFForm(forms.ModelForm):
@@ -144,3 +144,30 @@ class TagBindingForm(forms.ModelForm):
         legend_text = "Update a tag binding" if self.instance.id else "Create a tag binding"
         helper = BaseFormHelper(self, legend_text=legend_text, cancel_url=cancel_url)
         return helper
+
+
+class UDFModelFormMixin:
+    """Add UDF to model form."""
+
+    def set_udf_field(self, assessment: Assessment):
+        """Set UDF field on model form in a binding exists."""
+
+        self.model_binding = cache.UDFCache.get_model_binding(
+            assessment=assessment, Model=self.Meta.model
+        )
+        if self.model_binding:
+            udf_content = models.ModelUDFContent.get_instance(assessment, self.instance)
+            initial = udf_content.content if udf_content else None
+            udf = self.model_binding.form_field(label="User Defined Fields", initial=initial)
+            self.fields["udf"] = udf
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit and "udf" in self.changed_data:
+            models.ModelUDFContent.objects.update_or_create(
+                defaults=dict(content=self.cleaned_data["udf"]),
+                model_binding=self.model_binding,
+                content_type=self.model_binding.content_type,
+                object_id=instance.id,
+            )
+        return instance
