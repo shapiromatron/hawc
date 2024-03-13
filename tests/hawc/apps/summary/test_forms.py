@@ -224,6 +224,7 @@ class TestImageVisualForm:
         visual_type = VisualType.IMAGE
         file = SimpleUploadedFile("file.png", create_image((2000, 2000)), content_type="image/png")
         data = dict(title="title", slug="slug", caption="hi")
+        data.update({"settings-alt_text": "hi"})
         form = ImageVisualForm(
             data=data, files={"image": file}, parent=assessment, visual_type=visual_type
         )

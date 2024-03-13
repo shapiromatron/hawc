@@ -10301,8 +10301,10 @@
     evidence_type: 3
     dose_units: null
     prefilters: {}
-    settings: {}
-    caption: ''
+    settings:
+      alt_text: Hello alt text
+      max_width: 600
+    caption: Hello caption.
     image: "summary/visual/images/iris.png"
     published: true
     sort_order: short_citation
