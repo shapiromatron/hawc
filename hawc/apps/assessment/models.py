@@ -899,7 +899,7 @@ class BaseEndpoint(models.Model):
 class TimeSpentEditing(models.Model):
     objects = managers.TimeSpentEditingManager()
 
-    seconds = models.FloatField(validators=(MinValueValidator,))
+    seconds = models.FloatField()
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
