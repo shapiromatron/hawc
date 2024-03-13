@@ -157,7 +157,7 @@ class AssessmentRootMixin:
         return root.get_descendants()
 
     @classmethod
-    def annotate_nested_names(cls, qs: QuerySet):
+    def annotate_nested_names(cls, qs: QuerySet) -> QuerySet:
         """
         Include the nested name for each item in the queryset. Assumes the queryset is correctly
         ordered; uses the `name` field and saves to `nested_name` field.
