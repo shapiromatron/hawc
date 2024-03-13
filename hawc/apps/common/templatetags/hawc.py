@@ -59,7 +59,7 @@ def crud_url(app, model, action, id):
     Creates a url via reverse using the appropriate app, model, action, and id
 
     """
-    return reverse(f"{app}:{model}-{action}", args=[id])
+    return reverse(f"{app}:{model}-htmx", args=[id, action])
 
 
 @register.filter

@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/2199697/recordsperpage/100.json
   response:
@@ -25,34 +25,34 @@ interactions:
         a pronounced west-east gradient.  The chlorine content of the PCBs detected
         was about 54%, an unexplained finding since the majority of the PCBs produced
         in the U.S.  contains less chlorine.","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/2199697","hasPDF":false,"YEAR":1972,"allAuthors":["Carmignani
-        GM $; Harvey, GR; Miklas, H; Risebrough, RW; Vreeland"],"HEROID":2199697,"id":2199697,"project_key":[384,2932],"referencetype":["technical
-        report"],"type":"reference","sortYear":1972,"tag_path_text":["IRIS|PCBs|Litsearches|Remaining","IRIS|PCBs|Litsearches|LitSearch
+        GM $; Harvey, GR; Miklas, H; Risebrough, RW; Vreeland"],"HEROID":2199697,"id":"2199697","project_key":[384,2932],"referencetype":["technical
+        report"],"type":"reference","sortYear":1972,"tag_path_text":["IRIS|PCBs|Excluded","IRIS|PCBs|Litsearches|Remaining","IRIS|PCBs|Litsearches|LitSearch
         August 2015|Toxline","IRIS|PCBs|Considered","Other|PCB Support Projects|PCB
         Commercial Mixture Congener Profiles|Screened (TIAB in SWIFT)|Excluded studies
-        (TIAB)"],"category_key":[2,18],"PROJECTS":[{"PROJECT":"PCB Support Projects","PROJECT_ID":2932,"USAGES":[{"USAGE_ID":29718,"USAGE":"PCB
-        Commercial Mixture Congener Profiles","USAGES":[{"USAGE_ID":29950,"USAGE":"Screened
-        (TIAB in SWIFT)","USAGES":[{"USAGE_ID":29952,"USAGE":"Excluded studies (TIAB)","USAGES":[]}]}]}]},{"PROJECT":"PCBs","PROJECT_ID":384,"USAGES":[{"USAGE_ID":7109,"USAGE":"Litsearches","USAGES":[{"USAGE_ID":7110,"USAGE":"LitSearch
-        August 2015","USAGES":[{"USAGE_ID":7113,"USAGE":"Toxline","USAGES":[]}]},{"USAGE_ID":7127,"USAGE":"Remaining","USAGES":[]}]},{"USAGE_ID":4737,"USAGE":"Considered","USAGES":[]}]}],"tag_path_key":["2|384|7109|7127","2|384|7109|7110|7113","2|384|4737","18|2932|29718|29950|29952"],"firstAuthor":"Carmignani
-        GM $","AUTHORS":"Carmignani GM $; Harvey, GR; Miklas, H; Risebrough, RW; Vreeland","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage|usage","category|project|usage","category|project|usage|usage|usage"],"isPeerReviewed":false,"code":"re","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"(HAPAB/73/01317).","TITLE":"PCB
-        residues in Atlantic zooplankton","modified":"2022-02-11T16:23:23Z","PMID":"","_version_":1724484528219619328}],"isValid":true,"message":"Success","error":""} '
+        (TIAB)"],"category_key":[2,18],"PROJECTS":[{"PROJECT":"PCB Support Projects","PROJECT_ID":2932,"USAGES":[{"USAGE_ID":"29718","USAGE":"PCB
+        Commercial Mixture Congener Profiles","USAGES":[{"USAGE_ID":"29950","USAGE":"Screened
+        (TIAB in SWIFT)","USAGES":[{"USAGE_ID":"29952","USAGE":"Excluded studies (TIAB)","USAGES":[]}]}]}]},{"PROJECT":"PCBs","PROJECT_ID":384,"USAGES":[{"USAGE_ID":"14699","USAGE":"Excluded","USAGES":[]},{"USAGE_ID":"7109","USAGE":"Litsearches","USAGES":[{"USAGE_ID":"7110","USAGE":"LitSearch
+        August 2015","USAGES":[{"USAGE_ID":"7113","USAGE":"Toxline","USAGES":[]}]},{"USAGE_ID":"7127","USAGE":"Remaining","USAGES":[]}]},{"USAGE_ID":"4737","USAGE":"Considered","USAGES":[]}]}],"tag_path_key":["2|384|14699","2|384|7109|7127","2|384|7109|7110|7113","2|384|4737","18|2932|29718|29950|29952"],"firstAuthor":"Carmignani
+        GM $","AUTHORS":"Carmignani GM $; Harvey, GR; Miklas, H; Risebrough, RW; Vreeland","noPDFAvailable":false,"tag_path_type":["category|project|usage","category|project|usage|usage","category|project|usage|usage|usage","category|project|usage","category|project|usage|usage|usage"],"isPeerReviewed":false,"code":"re","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"(HAPAB/73/01317).","TITLE":"PCB
+        residues in Atlantic zooplankton","modified":"2022-08-10T20:53:52Z","PMID":"","_version_":1740808999740112896}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Mon, 07 Mar 2022 08:27:21 GMT
+      - Tue, 20 Feb 2024 16:39:33 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=11205102; Expires=Tue, 08-Mar-2022 08:27:21 GMT; Path=/; HttpOnly
-      - CFTOKEN=50529846; Expires=Tue, 08-Mar-2022 08:27:21 GMT; Path=/; HttpOnly
-      - JSESSIONID=66E856043B1D544462B876D9009994F1.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F03%2F07%2003%3A27%3A21; Path=/
+      - CFID=14825907; Expires=Wed, 21 Feb 2024 16:39:33 GMT; Path=/; HttpOnly
+      - CFTOKEN=41864474; Expires=Wed, 21 Feb 2024 16:39:33 GMT; Path=/; HttpOnly
+      - JSESSIONID=C158A4FA11E68F7781317BC4BD987E8C.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A33; Path=/
       Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-Frame-Options:
@@ -61,7 +61,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=10357793
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=10357793
     headers:
       Accept:
       - '*/*'
@@ -70,62 +70,105 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '45'
+      - '90'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAGxR0W6CMBR931d0fZ5cKjrDUmo28AEjSIYz8WlBaWYTKASKm3+/lhk2zV56T9tz
-        T889pfOvskAn3rSikh4mlo3RnN3R+2Dtb3bJAiXdvuT5c6PEoeApVyh5e1mFPsIjgHgVAQSbwJCi
-        gfSASKvQMpNd1pzR2CYuwCLGCB+VqtsngFzllixKS4qj9VGdQB72Aur+Hag6dYHvxLWJTSzNxtrQ
-        rQ92fcKoNlAIyX2hMqVnQamuXevhaBGswniB0fpT8sbD2jTWzVEYoO0wNmbEdqazmetQMFeMBpni
-        flXWBVc8Z3THs4YR13Up9JBGlVRHZs8o/CDdcGbjMQVTzXrVbrav/CTaQcvkcqM1vdIizl+tofky
-        bx95lfPCw0kjpNIjLauukVnBaJimMQrbVm7ONR/ubTJxRo7jTCgYwsDXxI4jHRvPdYSiK38Vt1XR
-        lVxbpXCBtGezR63RA/MJxt6/AX0DAAD//5xX73PaOBD9V3by4UpmAuT39a6UGUrSkJZwnpK004/C
-        FlhzssVIchL3r7+3sjHQuHOX+wReyfv27b5dWUzlU5E3rPrN5v4u9nBwrzwqOBY2VrlZyVw65Qb9
-        ygo2f40WCwv+oa4vtv283jhvclU5msg1NsSUIil2rYVTgkSeUCzyWFpSOVnh3Z8ktJc2uHJsjM0a
-        +ymTXiyMVi7rDfp7fgeRWKm8xq5FGK1yCOqPky4StWNCBnb2jhbOWxH77b97+eyH3yStmY0pnC4p
-        kRkCwSrKQz4VPkRJ8nltHFsMjHhBWvOsnMn4XUS5ZAbGUieKDilR0qelTuVzqdcpfGg4o87V9QSL
-        qUjIyqSI4cxJW2SEZBTacIIy0O+MsQm+E+EkIUT1qHx5RE+pilNyxWolHcLxKoiozlUiEZxikj0a
-        VyblKFWrFIQ8nMWcWPkcS+eOQg2sdIX2Vb6l1oUW8CIysZJhOeXSmWYlrhSQCUedyXh82KP7FADO
-        F0lJIkngzUlHcSpyhFdhrdnIY8Es6zC7VuqQ1aCkgMNF1mAZFxmAwhTBy41gWD1aYVaGzb7IjGXv
-        VfIWJUVRj+4EejOU6ElaSUuscP4RDXpAqFzlK+LME6oTa7NUCxuqMZ5+PKQljGfdy2NwL8FtR6mH
-        AfK8G6faWNO97HZOj84IBVUJMnHYPe2uS6syfip116fKdGbdBeh00zKBNsogAXiJYcM2GbBOjinj
-        1mzyeFVYDnAHmOtDKsOgVRwnRwGFrUI2HyVKHVvJ0kCeKvmMo0Ym9IQKmQXsj0hDJ6LftH9Hx73j
-        i0O4rTMUxNd0W/ZlNiItH6V2IcKF8WlwCdxvSjuTv3FIqAuYXDjqfLsKf+CRoq5H5DS6j7B8uI8I
-        kXDBkBQROIYasfq1QRwtwf8cLyLYBFIh7gW75QKqIFKro8UJFisRucJaU+QJR7PZPp++CPuORakN
-        1zSXmxS5FFEnlBvWFcagl7lvBJ+8qGJN3m3eE3Tau+gujU4q/fq6M7I2rBYOgk56p5v3twqYTwEk
-        s7WxaKPNgtsyrucDtwLHa9Bo1nKHtMjuSaHyWx8IrgasBxeHcdY7q22hfTAcm97Zz+F4H5h1eboh
-        wHOpmv9tNQs4J73ff947n74jZZG1RHEZ/DYP/MIPPDW9gVFR50SXPKoKDL06E3ujJhxG25nVMqV2
-        51gmSlrIQMmqReE5gUuIt5pJdcJzaeqTDqYI7YGA2BmLv0dT40JiIeudAbwNe2klz7JExSini8Wj
-        RGw8ftci5g4JUxB0QiwyT/kgrc4KH2ZDNcD3BqTj03P3tNs+4hgsfGrsFGqmzafT99n7g+8HmyX6
-        KjDwNrYpJvJM4KPkWqwMvjKa58FHY2X4F9HnQb95GtzmOJWEdsMI5uZhMFoula6+Hm7zpdkzDL+O
-        iD+LOAVjaEfaI4qU925R2FWK/yM6uTg9Pz6ih/mIye28uvdUee5XRP6F0L2Ua9lKaEQ3rYRGN7uE
-        /hvKtc5aMe5o3opxN389xj2rpxVlTletKPOr/8EEWil/weVTO5dPr0f5IJWWthXmA123wny4fj3M
-        PMWJ/qP4W7QiTVpxJq+H+SJMK8BnmrVCfJ61YvS3TcvO81WBnh9iULDz+mlwY0XuW/s6rNQ/uHWN
-        Rxdn5xe4+GwMg1GMIVtmWAFU/X8wwjCMy+FsfEuz2wlNJlBmbRuMcaR6Ww4fcr7RhFugxC1hY65d
-        b36ruHEv0ehwblO+MrUa6eH2/cHV8cnl+enbg2F9xaD6JhCuNru7f/n62fnbi4PhF4kvGIsv6Hmx
-        xsngj2hm8u5Db96jG/P4xr/K32Wbv62vynfUm8Dy0u8/AAAA///cWW1v2jAQ/isRn2mx47xZiiKh
-        QEc3yqBjlfoxpYFmS4DxIrX/vuckHonjUDfLpKofMc495zv77rm7M3Ltt+TWyhRXMoP2xFKdF4Fp
-        ZOQOGq5XMSSWgsfy3fN+pfQ7/eNO4gQ8/ucYwqVxEHKQCdV0cTGtisfR+jckSrEW5st/JZY1ewoT
-        Fv+zU/BfnnsbrmBl9zI5Jg/hzoMiWVhx2RP6vvxxhAyX5sbcttg2SMebcsLOrqewEzQ54bSAqMNZ
-        wZuTfheSGRRHLI83BDXJ9ArhmW5QVXSkUwp33s+qHaih+ovosSG67dCfrC/km8rohCAE6CmbaohK
-        EXEuqHGhK4M6lgVRQqDuTdEtOr6bW1++KsL7EKQoAvhtBLQ6eo7ihsC+oX9D0xEmvvK5DWTijjco
-        dBy0KW85NNRi6AP/xtYlucTqN860mc+LnYzz6D3hkedNRLY5PHjXN7ChvARRaf80CgNWvWXfFBY8
-        dxDuF7toC2ycoXK1kIOdjnYT/Nrs5ptttGBZcNLx+usogazq9spfpeGoIFMBID13FUAwhAgzOwJD
-        WEbhSdQMdNWJKRHFYi9EcVC29FWdEGLLDnxqplXEvP/ILLhIjixEG7UzWxAmq7LSlhUUPP+ubBqL
-        JMrmwUlNSYlN79u1afqKq2rWPeuPYVuLWrKLMDo1FVp4YA6iVAIyZtW2qiEwMKuqiMfdcaWFy2W4
-        OPy3xyUXY9gVx8B92gbA6+PNqgXPOBgbdUbTJlmLItl3teEzuCpKoMoOYmVjEpk/Fnk0j194+6G5
-        SVt+W45OZe5nfeM27ifjHRLpIhH5TCkg49NViBLB/hAxKuPhVQCRmH8m75iYOLJkchscWmA8GFNs
-        1UjvatfrB9ZeviKG8RZUr8LnesJAmQ+cB8Eh8NwR7Nmw6jQbfeeTTTaV5XPnbIrdqZ2MWqVpr8mH
-        vSV5Z8QnmXbvlT/avAIAAP//KgV3HMG0jW8mAAAA///KKwXaAmxYQ1nE2w8spYtSq6hivQFu6/WR
-        wxk2pABxAgAAAP//sisoAAkVZ6AMN0DlYFO/nimQyIRzFTxTILPisOhBzPvD1WBTnpKfCVKrZ2hg
-        aawPmYDUNzLQMwMJGKLo1UezWh852eijLloAAAAA//9C44OWNQAAAAD//wMADCd6EJEhAAA=
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">10357793</PMID><DateCompleted><Year>1999</Year><Month>07</Month><Day>22</Day></DateCompleted><DateRevised><Year>2019</Year><Month>05</Month><Day>13</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0143-3334</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>20</Volume><Issue>6</Issue><PubDate><Year>1999</Year><Month>Jun</Month></PubDate></JournalIssue><Title>Carcinogenesis</Title><ISOAbbreviation>Carcinogenesis</ISOAbbreviation></Journal><ArticleTitle>Hepatic
+        hyperplasia and cancer in rats: alterations in copper metabolism.</ArticleTitle><Pagination><StartPage>1091</StartPage><EndPage>1096</EndPage><MedlinePgn>1091-6</MedlinePgn></Pagination><Abstract><AbstractText>We
+        previously demonstrated that rats exposed to the peroxisome proliferator (PP)
+        diethylhexylphthalate (DEHP) had reduced serum ceruloplasmin (CP) oxidase
+        activity, which suggests tissue copper deposition. Copper is highly toxic
+        in excess, and results in cellular damage and hepatocellular carcinomas (HCC).
+        This study addresses changes in expression of copper-related genes and metal
+        accumulation in hyperplastic liver and tumors induced by PP. Male rats were
+        fed diets containing DEHP or clofibrate (CLF) for 3-60 days (hyperplasia)
+        and 4-chloro-6-(2,3 xylidino)-2-pyrimidinyl-thio(N-beta-hydroxyethyl) acetamide
+        for 10 months (HCC). During hyperplasia, an immediate and progressive decrease
+        in serum CP activity was observed (P &lt; 0.05), as were reductions in mRNA
+        levels for both CP and Wilson''s disease gene (WD gene, a P-type ATPase) (P
+        &lt; 0.05). Tumor-bearing rats had lower serum CP activity (P &lt; 0.05),
+        and CP and WD gene mRNA levels were reduced in tumors (P &lt; 0.05), and in
+        liver surrounding tumors (SL) (P &lt; 0.05). Metallothionein mRNA showed no
+        consistent changes during hyperplasia. Tumors showed a 2.5-fold induction
+        of metallothionein mRNA (P &lt; 0.05), and a 1.2-fold increase in SL. Temporal
+        increases in liver copper content occurred during hyperplasia, with increases
+        of 2-fold (DEHP) and 3.3-fold (CLF) at 60 days (P &lt; 0.05). Copper content
+        was 2.2-fold higher in tumors (P &lt; 0.05) and 1.7-fold higher in SL; iron
+        did not increase and zinc decreased temporally. Thus, copper accumulation
+        and changes in copper-related gene expression may be contributing factors
+        in liver neoplasia in PP-treated rats. Loss of CP results in decreased free
+        radical scavenger capacity and thus may enhance oxidative damage induced by
+        PPs.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author ValidYN="Y"><LastName>Eagon</LastName><ForeName>P
+        K</ForeName><Initials>PK</Initials><AffiliationInfo><Affiliation>VA Medical
+        Center, Pittsburgh, PA 15240, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Teepe</LastName><ForeName>A G</ForeName><Initials>AG</Initials></Author><Author
+        ValidYN="Y"><LastName>Elm</LastName><ForeName>M S</ForeName><Initials>MS</Initials></Author><Author
+        ValidYN="Y"><LastName>Tadic</LastName><ForeName>S D</ForeName><Initials>SD</Initials></Author><Author
+        ValidYN="Y"><LastName>Epley</LastName><ForeName>M J</ForeName><Initials>MJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Beiler</LastName><ForeName>B E</ForeName><Initials>BE</Initials></Author><Author
+        ValidYN="Y"><LastName>Shinozuka</LastName><ForeName>H</ForeName><Initials>H</Initials></Author><Author
+        ValidYN="Y"><LastName>Rao</LastName><ForeName>K N</ForeName><Initials>KN</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>CA53453</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType><PublicationType UI="D013487">Research
+        Support, U.S. Gov''t, P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Carcinogenesis</MedlineTA><NlmUniqueID>8008055</NlmUniqueID><ISSNLinking>0143-3334</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D011743">Pyrimidines</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D012333">RNA, Messenger</NameOfSubstance></Chemical><Chemical><RegistryNumber>53PF01Q249</RegistryNumber><NameOfSubstance
+        UI="D002995">Clofibric Acid</NameOfSubstance></Chemical><Chemical><RegistryNumber>789U1901C5</RegistryNumber><NameOfSubstance
+        UI="D003300">Copper</NameOfSubstance></Chemical><Chemical><RegistryNumber>9038-94-2</RegistryNumber><NameOfSubstance
+        UI="D008668">Metallothionein</NameOfSubstance></Chemical><Chemical><RegistryNumber>969LVT6GJ2</RegistryNumber><NameOfSubstance
+        UI="C016908">pirinixil</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        1.16.3.1</RegistryNumber><NameOfSubstance UI="D002570">Ceruloplasmin</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002570" MajorTopicYN="N">Ceruloplasmin</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002995" MajorTopicYN="N">Clofibric Acid</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003300" MajorTopicYN="N">Copper</DescriptorName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006965" MajorTopicYN="N">Hyperplasia</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008099" MajorTopicYN="N">Liver</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName><QualifierName
+        UI="Q000473" MajorTopicYN="Y">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008114" MajorTopicYN="N">Liver Neoplasms, Experimental</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="N">chemically induced</QualifierName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008668" MajorTopicYN="N">Metallothionein</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011743" MajorTopicYN="N">Pyrimidines</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012333" MajorTopicYN="N">RNA, Messenger</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011916" MajorTopicYN="N">Rats, Inbred F344</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1999</Year><Month>6</Month><Day>5</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1999</Year><Month>6</Month><Day>5</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1999</Year><Month>6</Month><Day>5</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">10357793</ArticleId><ArticleId IdType="doi">10.1093/carcin/20.6.1091</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -140,30 +183,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Mon, 07 Mar 2022 08:27:22 GMT
+      - Tue, 20 Feb 2024 16:39:36 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C5754094EF30500004A3A090BBEB4.1.1.m_3
+      - 322C45D975EA9B4500004ADD562B37B7.1.1.m_3
       NCBI-SID:
-      - 6AC399CD7F7F9E23_49E6SID
+      - C2ECE0508D0FFA05_6272SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=6AC399CD7F7F9E23_49E6SID; domain=.nih.gov; path=/; expires=Tue, 07
-        Mar 2023 08:27:22 GMT
+      - ncbi_sid=C2ECE0508D0FFA05_6272SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:37 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

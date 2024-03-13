@@ -1,9 +1,14 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
 
-from . import views
+from . import api, views
+
+router = SimpleRouter()
+router.register("assessment", api.MgmtViewSet, basename="assessment")
 
 app_name = "mgmt"
 urlpatterns = [
+    path("api/", include((router.urls, "api"))),
     # user task-list
     path("tasks/", views.UserTaskList.as_view(), name="user-task-list"),
     path(
@@ -24,16 +29,9 @@ urlpatterns = [
     ),
     # task htmx ViewSet
     path(
-        "task/<int:pk>/",
+        "task/<int:pk>/<slug:action>/",
         views.TaskViewSet.as_view(),
-        {"action": "read"},
-        name="task-detail",
-    ),
-    path(
-        "taskv/<int:pk>/update/",
-        views.TaskViewSet.as_view(),
-        {"action": "update"},
-        name="task-update",
+        name="task-htmx",
     ),
     path(
         "assessment/<int:pk>/analytics/",

@@ -678,9 +678,9 @@ class DataPivotVisualization extends D3Plot {
 
     getDomain() {
         let domain,
-            fields,
             bars = this.settings.bars,
-            barchart = this.settings.barchart;
+            barchart = this.settings.barchart,
+            logscale = this.dp_settings.plot_settings.logscale;
 
         // use user-specified domain if valid
         domain = _.map(this.dp_settings.plot_settings.domain.split(","), parseFloat);
@@ -689,25 +689,25 @@ class DataPivotVisualization extends D3Plot {
         }
 
         // otherwise calculate domain from data
-        fields = _.chain(this.settings.datapoints)
-            .map("field_name")
-            .push(
-                bars.low_field_name,
-                bars.high_field_name,
-                barchart.field_name,
-                barchart.error_low_field_name,
-                barchart.error_high_field_name
-            )
-            .compact()
-            .value();
-
-        return d3.extent(
-            _.chain(this.datarows)
+        const fields = _.chain(this.settings.datapoints)
+                .map("field_name")
+                .push(
+                    bars.low_field_name,
+                    bars.high_field_name,
+                    barchart.field_name,
+                    barchart.error_low_field_name,
+                    barchart.error_high_field_name
+                )
+                .compact()
+                .value(),
+            values = _.chain(this.datarows)
                 .map(d => _.map(fields, f => d[f]))
                 .flattenDeep()
                 .map(parseFloat)
-                .value()
-        );
+                .filter(logscale ? d => d > 0 : Number.isFinite)
+                .value();
+
+        return d3.extent(values);
     }
 
     add_axes() {

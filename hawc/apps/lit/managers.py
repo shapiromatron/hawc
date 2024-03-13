@@ -262,7 +262,8 @@ class IdentifiersManager(BaseManager):
             content = json.dumps(ref)
             ident = self.filter(database=constants.ReferenceDatabase.RIS, unique_id=id_).first()
             if ident:
-                ident.update(content=content)
+                ident.content = content
+                ident.save()
             else:
                 ident = self.create(
                     database=constants.ReferenceDatabase.RIS, unique_id=id_, content=content
