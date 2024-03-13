@@ -11,6 +11,7 @@ from ..assessment.views import check_published_status
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
+from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
 
 
@@ -115,7 +116,7 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
         return context
 
 
-class StudyDetail(BaseDetail):
+class StudyDetail(UDFDetailMixin, BaseDetail):
     model = models.Study
 
     def get_context_data(self, **kwargs):

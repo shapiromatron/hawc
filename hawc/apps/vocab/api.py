@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ..common.helper import FlatExport, tryParseInt
+from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import check_ids
 from . import constants, models, serializers
@@ -15,6 +15,7 @@ from . import constants, models, serializers
 class EhvTermViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
+    lookup_value_regex = re_digits
 
     def get_queryset(self) -> QuerySet:
         return models.Term.objects.filter(

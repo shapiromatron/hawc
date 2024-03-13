@@ -7,18 +7,18 @@
         <div class="form-row d-flex flex-row-reverse px-3 pb-3">
           {% if form.instance.id %}
             <button class="btn btn-primary ml-2"
-                    hx-post="{% url 'assessment:attachment-update' object.pk %}"
+                    hx-post="{% url 'assessment:attachment-htmx' object.pk 'update' %}"
                     hx-encoding="multipart/form-data">
               <i class="fa fa-fw fa-save"></i>&nbsp;
               Update
             </button>
             <button class="btn btn-light"
-                    hx-get="{% url 'assessment:attachment-detail' object.pk %}">
+                    hx-get="{% url 'assessment:attachment-htmx' object.pk 'read' %}">
               Cancel
             </button>
           {% else %}
             <button class="btn btn-primary ml-2"
-                    hx-post="{% url 'assessment:attachment-create' assessment.pk %}"
+                    hx-post="{% url 'assessment:attachment-htmx' assessment.pk 'create' %}"
                     hx-encoding="multipart/form-data">
               <i class="fa fa-fw fa-save"></i>&nbsp;Create
             </button>

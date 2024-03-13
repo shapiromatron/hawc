@@ -210,9 +210,10 @@ SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
-TURNSTYLE_SITE = os.environ.get("TURNSTYLE_SITE", "")
-TURNSTYLE_KEY = os.environ.get("TURNSTYLE_KEY", "")
+TURNSTILE_SITE = os.environ.get("TURNSTILE_SITE", "")
+TURNSTILE_KEY = os.environ.get("TURNSTILE_KEY", "")
 INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
+EMAIL_VERIFICATION_REQUIRED = bool(os.environ.get("EMAIL_VERIFICATION_REQUIRED", "False") == "True")
 
 # Server URL settings
 ROOT_URLCONF = "hawc.main.urls"

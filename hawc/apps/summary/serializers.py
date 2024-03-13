@@ -15,7 +15,17 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DataPivot
-        fields = ("id", "title", "url", "visual_type")
+        fields = (
+            "id",
+            "slug",
+            "title",
+            "url",
+            "visual_type",
+            "caption",
+            "published",
+            "created",
+            "last_updated",
+        )
 
 
 class DataPivotSerializer(serializers.ModelSerializer):
