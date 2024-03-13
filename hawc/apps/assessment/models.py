@@ -10,7 +10,6 @@ from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.http import HttpRequest
 from django.template import RequestContext, Template
