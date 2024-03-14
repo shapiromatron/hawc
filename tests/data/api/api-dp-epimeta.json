@@ -20,6 +20,7 @@
       "field_name": "---",
       "header_name": ""
     },
+    "calculated_columns": [],
     "dataline_settings": [
       {
         "conditional_formatting": [],
@@ -55,43 +56,43 @@
     "description_settings": [
       {
         "dpe": "study",
-        "field_index": "study name",
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_protocol",
-        "field_index": "protocol name",
         "field_name": "protocol name",
         "header_name": "protocol name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_result",
-        "field_index": "health outcome",
         "field_name": "health outcome",
         "header_name": "health outcome",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_result",
-        "field_index": "total references",
         "field_name": "total references",
         "header_name": "total references",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_result",
-        "field_index": "N",
         "field_name": "N",
         "header_name": "N",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       }
     ],
     "filters": [
