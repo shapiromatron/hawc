@@ -148,7 +148,7 @@ class ModelUDFContent(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True)
     content_object = GenericForeignKey("content_type", "object_id")
-    content = models.JSONField(blank=True, default=dict)
+    content = models.JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -177,8 +177,8 @@ class TagUDFContent(models.Model):
     reference = models.ForeignKey(
         "lit.Reference", on_delete=models.CASCADE, related_name="saved_tag_contents"
     )
-    tag_binding = models.ForeignKey(TagBinding, on_delete=models.PROTECT)
-    content = models.JSONField(blank=True, default=dict)
+    tag_binding = models.ForeignKey(TagBinding, on_delete=models.CASCADE)
+    content = models.JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -189,7 +189,8 @@ class TagUDFContent(models.Model):
         return self.tag_binding.form.data_list(self.content)
 
 
-reversion.register(TagBinding)
-reversion.register(ModelBinding)
 reversion.register(UserDefinedForm)
+reversion.register(ModelBinding)
+reversion.register(TagBinding)
+reversion.register(ModelUDFContent)
 reversion.register(TagUDFContent)
