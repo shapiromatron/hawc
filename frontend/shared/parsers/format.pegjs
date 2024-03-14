@@ -31,13 +31,16 @@ Filler = chars:FillerChar+ { return chars.join(""); }
 TernaryFiller = chars:TernaryFillerChar+ { return chars.join(""); }
 String = "\"" chars:StringChar* "\"" { return chars.join(""); }
 Integer = integer:[0-9]+ { return parseInt(integer, 10); }
-Round = "round(" id:ConditionIdentifier "," val:(Integer) ")" { return isFinite(parseFloat(options.getValue(id))) ? parseFloat(options.getValue(id)).toFixed(val) : ""; }
+Round = "round(" id:ConditionIdentifier "," digits:(Integer) ")" {
+    var val = parseFloat(options.getValue(id));
+    return isFinite(val) ? val.toFixed(digits) : "";
+}
 
 // Characters
 // ==========
 IdentifierChar = _EscapedChar / !"}" @.
 ConditionIdentifierChar = _EscapedChar / !"," !")" @.
-FillerChar = _EscapedChar / !"${" @.
+FillerChar = _EscapedChar / !"${" !"round" @.
 TernaryFillerChar = _EscapedChar / !"${" !":" @.
 StringChar = _EscapedChar / !"\"" @.
 _EscapedChar = "\\" @.

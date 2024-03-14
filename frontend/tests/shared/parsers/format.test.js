@@ -76,6 +76,7 @@ describe("shared/parsers/format", function() {
             assert.ok(Format.parse("round(float,0)", options) == "123");
             assert.ok(Format.parse("round(float,1)", options) == "123.1");
             assert.ok(Format.parse("round(float,2)", options) == "123.12");
+            assert.ok(Format.parse("***round(float,2)***", options) == "***123.12***");
         });
         it("handles bad round", function() {
             assert.ok(Format.parse("round(two,0)", options) == "");
