@@ -1261,6 +1261,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.156609+00:00
+    email_verified_on: 2020-01-25 14:23:16.156609+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1277,6 +1278,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.170965+00:00
+    email_verified_on: 2020-01-25 14:23:16.170965+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1293,6 +1295,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.172427+00:00
+    email_verified_on: 2020-01-25 14:23:16.172427+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1309,6 +1312,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.173584+00:00
+    email_verified_on: 2020-01-25 14:23:16.173584+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1325,6 +1329,7 @@
     license_v1_accepted: false
     license_v2_accepted: false
     date_joined: 2020-01-25 14:23:16.175169+00:00
+    email_verified_on: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
 - model: authtoken.token
@@ -10296,8 +10301,10 @@
     evidence_type: 3
     dose_units: null
     prefilters: {}
-    settings: {}
-    caption: ''
+    settings:
+      alt_text: Hello alt text
+      max_width: 600
+    caption: Hello caption.
     image: "summary/visual/images/iris.png"
     published: true
     sort_order: short_citation

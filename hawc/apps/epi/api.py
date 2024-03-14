@@ -269,21 +269,17 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
 
     def handle_dtxsid(self, request):
         """
-        Calls get_or_create for DSSTox to ensure that the appropriate DXXTox exists in the db.
+        Check that DTXSID exists in HAWC and can be added.
         """
-        if "dtxsid" in request.data:
-            dtxsid_probe = request.data["dtxsid"]
+        if dtxsid := request.data.get("dtxsid"):
             try:
-                DSSTox.objects.get_or_create(dtxsid=dtxsid_probe)
-            except ValueError:
-                raise ValidationError(
-                    f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
-                )
+                DSSTox.objects.get(dtxsid=dtxsid)
+            except DSSTox.DoesNotExist:
+                raise ValidationError(f"{dtxsid} does not exist in HAWC")
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         self.handle_dtxsid(request)
-
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic

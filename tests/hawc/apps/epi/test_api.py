@@ -1463,12 +1463,16 @@ class TestExposureApi:
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
         scenarios = (
-            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "empty payload doesn't crash",
+                "expected_code": 400,
+                "data": {},
+            },
             {
                 "desc": "dtxsid must be a existing/importable one",
                 "expected_code": 400,
-                "expected_content": "does not exist and could not be imported",
-                "data": self.get_upload_data({"dtxsid": "bad value"}),
+                "expected_content": "DTXSID0000000 does not exist in HAWC",
+                "data": self.get_upload_data({"dtxsid": "DTXSID0000000"}),
             },
             {
                 "desc": "match data types",
@@ -1502,8 +1506,6 @@ class TestExposureApi:
 
         just_created_exposure_id = None
 
-        new_dtxsid = "DTXSID1020190"
-
         base_data = self.get_upload_data()
 
         def exposure_lookup_test(resp):
@@ -1515,12 +1517,6 @@ class TestExposureApi:
 
             if just_created_exposure_id is None:
                 just_created_exposure_id = exposure_id
-
-        def exposure_lookup_test_with_new_dtxsid(resp):
-            exposure_id = resp.json()["id"]
-            exposure = models.Exposure.objects.get(id=exposure_id)
-            assert exposure.name == base_data["name"]
-            assert exposure.dtxsid.dtxsid == new_dtxsid
 
         def exposure_lookup_test_with_new_metric_unit(resp):
             exposure_id = resp.json()["id"]
@@ -1553,13 +1549,6 @@ class TestExposureApi:
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(),
                 "post_request_test": exposure_lookup_test,
-            },
-            {
-                "desc": "on the fly dtxsid creation",
-                "expected_code": 201,
-                "expected_keys": {"id"},
-                "data": self.get_upload_data({"dtxsid": new_dtxsid}),
-                "post_request_test": exposure_lookup_test_with_new_dtxsid,
             },
             {
                 "desc": "dose unit by name",

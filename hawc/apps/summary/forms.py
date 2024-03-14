@@ -17,6 +17,7 @@ from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
 from ..common.clean import sanitize_html
+from ..common.dynamic_forms import Schema
 from ..common.forms import (
     BaseFormHelper,
     CopyForm,
@@ -593,9 +594,34 @@ class PlotlyVisualForm(VisualForm):
 
 
 class ImageVisualForm(VisualForm):
+    settings_schema = {
+        "fields": [
+            {
+                "name": "alt_text",
+                "type": "char",
+                "label": "Image alt-text",
+                "help_text": "Alternative text if an image fails to display and for accessibility support.",
+                "widget": "textarea",
+                "css_class": "col-4",
+            },
+            {
+                "name": "max_width",
+                "type": "integer",
+                "label": "Image maximum width",
+                "help_text": "Max width of the image (in pixels). The image will always shrink to be visible in your browser, but if unset, image will grow to be the full size of your browser, which can be huge for high resolution uploads.",
+                "initial": 1000,
+                "css_class": "col-4",
+                "required": False,
+            },
+        ]
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["image"].required = True
+        self.fields["settings"] = DynamicFormField(
+            "settings", Schema.model_validate(self.settings_schema).to_form, label=""
+        )
         self.helper = self.setHelper()
 
     def clean_image(self):
@@ -611,7 +637,7 @@ class ImageVisualForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        fields = ("title", "slug", "image", "caption", "published")
+        fields = ("title", "slug", "image", "settings", "caption", "published")
         widgets = {"image": forms.FileInput}
 
 
