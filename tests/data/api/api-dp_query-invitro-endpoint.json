@@ -65,35 +65,40 @@
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
         "field_name": "chemical name",
         "header_name": "chemical name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
         "field_name": "cell species",
         "header_name": "cell species",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
         "field_name": "IVEndpoint name",
         "header_name": "IVEndpoint name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
         "field_name": "---",
         "header_name": "---",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       }
     ],
     "filters": [

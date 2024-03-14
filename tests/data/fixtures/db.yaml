@@ -10325,11 +10325,11 @@
       "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "percent control low", "high_field_name": "percent control high", "header_name": "percent
       control low", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "percent control mean", "header_name": "percent
       control mean", "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study
-      name", "header_style": "header", "text_style": "base", "dpe": "study"}, {"field_name": "experiment name", "header_name": "experiment
-      name", "header_style": "header", "text_style": "base", "dpe": "experiment"}, {"field_name": "animal group name", "header_name":
-      "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group"}, {"field_name": "endpoint name",
-      "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe": "endpoint_complete"}, {"field_name":
-      "dose", "header_name": "dose (mg/kg/d)", "header_style": "header", "text_style": "base", "dpe": "---"}], "barchart": {"dpe": "---", "field_name":
+      name", "header_style": "header", "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "experiment name", "header_name": "experiment
+      name", "header_style": "header", "text_style": "base", "dpe": "experiment", "to_right": false}, {"field_name": "animal group name", "header_name":
+      "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "to_right": false}, {"field_name": "endpoint name",
+      "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe": "endpoint_complete", "to_right": false}, {"field_name":
+      "dose", "header_name": "dose (mg/kg/d)", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name":
       "---", "error_low_field_name": "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style":
       "base", "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space":
       false}], "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name":
@@ -10439,8 +10439,8 @@
       2", "marker_style": "base", "dpe": "endpoint_complete", "conditional_formatting": []}, {"field_name": "Dose 3", "header_name": "Dose 3", "marker_style": "base",
       "dpe": "endpoint_complete", "conditional_formatting": []}, {"field_name": "Dose 4", "header_name": "Dose 4", "marker_style": "base", "dpe": "endpoint_complete",
       "conditional_formatting": []}, {"field_name": "Dose 5", "header_name": "Dose 5", "marker_style": "base", "dpe": "endpoint_complete", "conditional_formatting":
-      []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "study"}, {"field_name": "experiment name", "header_name": "experiment name", "header_style": "header", "text_style": "base", "dpe": "experiment"}, {"field_name": "animal group name", "header_name": "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group"}, {"field_name": "endpoint name", "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe":
-      "endpoint_complete"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
+      []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "experiment name", "header_name": "experiment name", "header_style": "header", "text_style": "base", "dpe": "experiment", "to_right": false}, {"field_name": "animal group name", "header_name": "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "to_right": false}, {"field_name": "endpoint name", "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe":
+      "endpoint_complete", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
       "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true},
       "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom":
       null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---",
@@ -10546,11 +10546,11 @@
       []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name":
       "---", "header_name": "---", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---", "marker_style":
       "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header",
-      "text_style": "base", "dpe": "study"}, {"field_name": "protocol name", "header_name": "protocol name", "header_style": "header",
-      "text_style": "base", "dpe": "meta_protocol"}, {"field_name": "health outcome", "header_name": "health outcome", "header_style":
-      "header", "text_style": "base", "dpe": "meta_result"}, {"field_name": "total references", "header_name": "total references",
-      "header_style": "header", "text_style": "base", "dpe": "meta_result"}, {"field_name": "N", "header_name": "N", "header_style":
-      "header", "text_style": "base", "dpe": "meta_result"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
+      "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "protocol name", "header_name": "protocol name", "header_style": "header",
+      "text_style": "base", "dpe": "meta_protocol", "to_right": false}, {"field_name": "health outcome", "header_name": "health outcome", "header_style":
+      "header", "text_style": "base", "dpe": "meta_result", "to_right": false}, {"field_name": "total references", "header_name": "total references",
+      "header_style": "header", "text_style": "base", "dpe": "meta_result", "to_right": false}, {"field_name": "N", "header_name": "N", "header_style":
+      "header", "text_style": "base", "dpe": "meta_result", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
       "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true},
       "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom":
       null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---",
@@ -10654,12 +10654,12 @@
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width":
-      150}, {"field_name": "study population name", "header_name": "study population name", "header_style": "header", "text_style": "base",
-      "dpe": "---", "max_width": 100}, {"field_name": "outcome name", "header_name": "outcome name", "header_style": "header",
-      "text_style": "base", "dpe": "---"}, {"field_name": "comparison set name", "header_name": "comparison set name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "max_width": 100}, {"field_name": "exposure group name", "header_name":
-      "exposure group name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width": 100}, {"field_name":
-      "N", "header_name": "N", "header_style": "header", "text_style": "base", "dpe": "---"}], "barchart": {"dpe": "---", "field_name": "---",
+      150, "to_right": false}, {"field_name": "study population name", "header_name": "study population name", "header_style": "header", "text_style": "base",
+      "dpe": "---", "max_width": 100, "to_right": false}, {"field_name": "outcome name", "header_name": "outcome name", "header_style": "header",
+      "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "comparison set name", "header_name": "comparison set name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "max_width": 100, "to_right": false}, {"field_name": "exposure group name", "header_name":
+      "exposure group name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width": 100, "to_right": false}, {"field_name":
+      "N", "header_name": "N", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---",
       "error_low_field_name": "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base",
       "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}],
       "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier":
@@ -10764,11 +10764,11 @@
       "minimum dose", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "Dose 1", "header_name": "Dose 1", "marker_style":
       "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "Dose 2", "header_name": "Dose 2", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}, {"field_name": "Dose 3", "header_name": "Dose 3", "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name":
-      "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---"}, {"field_name": "chemical
-      name", "header_name": "chemical name", "header_style": "header", "text_style": "base", "dpe": "---"}, {"field_name": "cell species",
-      "header_name": "cell species", "header_style": "header", "text_style": "base", "dpe": "---"}, {"field_name": "IVEndpoint name",
-      "header_name": "IVEndpoint name", "header_style": "header", "text_style": "base", "dpe": "---"}, {"field_name": "---", "header_name":
-      "---", "header_style": "header", "text_style": "base", "dpe": "---"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name":
+      "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "chemical
+      name", "header_name": "chemical name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "cell species",
+      "header_name": "cell species", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "IVEndpoint name",
+      "header_name": "IVEndpoint name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "---", "header_name":
+      "---", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name":
       "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting":
       [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name":
       "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains",
@@ -10873,11 +10873,11 @@
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "dose", "header_name": "dose", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}, {"field_name": "---", "header_name": "---", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---",
       "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style":
-      "header", "text_style": "base", "dpe": "---"}, {"field_name": "chemical name", "header_name": "chemical name", "header_style":
-      "header", "text_style": "base", "dpe": "---"}, {"field_name": "cell species", "header_name": "cell species", "header_style":
-      "header", "text_style": "base", "dpe": "---"}, {"field_name": "IVEndpoint name", "header_name": "IVEndpoint name", "header_style":
-      "header", "text_style": "base", "dpe": "---"}, {"field_name": "---", "header_name": "---", "header_style": "header", "text_style":
-      "base", "dpe": "---"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name": "---",
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "chemical name", "header_name": "chemical name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "cell species", "header_name": "cell species", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "IVEndpoint name", "header_name": "IVEndpoint name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "---", "header_name": "---", "header_style": "header", "text_style":
+      "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name": "---",
       "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true}, "spacers":
       [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name":
       "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---", "quantifier": "contains",

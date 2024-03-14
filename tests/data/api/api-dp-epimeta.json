@@ -59,35 +59,40 @@
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_protocol",
         "field_name": "protocol name",
         "header_name": "protocol name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_result",
         "field_name": "health outcome",
         "header_name": "health outcome",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_result",
         "field_name": "total references",
         "header_name": "total references",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "meta_result",
         "field_name": "N",
         "header_name": "N",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       }
     ],
     "filters": [

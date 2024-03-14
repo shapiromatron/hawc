@@ -52,7 +52,8 @@
         "header_name": "study name",
         "header_style": "header",
         "max_width": 150,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
@@ -60,14 +61,16 @@
         "header_name": "study population name",
         "header_style": "header",
         "max_width": 100,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
         "field_name": "outcome name",
         "header_name": "outcome name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
@@ -75,7 +78,8 @@
         "header_name": "comparison set name",
         "header_style": "header",
         "max_width": 100,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
@@ -83,14 +87,16 @@
         "header_name": "exposure group name",
         "header_style": "header",
         "max_width": 100,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
         "field_name": "N",
         "header_name": "N",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       }
     ],
     "filters": [

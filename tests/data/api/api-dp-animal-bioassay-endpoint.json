@@ -73,28 +73,32 @@
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "experiment",
         "field_name": "experiment name",
         "header_name": "experiment name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "animal_group",
         "field_name": "animal group name",
         "header_name": "animal group name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "endpoint_complete",
         "field_name": "endpoint name",
         "header_name": "endpoint name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       }
     ],
     "filters": [
