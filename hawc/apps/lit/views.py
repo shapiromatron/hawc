@@ -28,6 +28,7 @@ from ..common.views import (
     create_object_log,
     htmx_required,
 )
+from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
 
 
@@ -417,7 +418,7 @@ class TagReferences(BaseFilterList):
                 descendant_tags=descendant_tags,
                 refs=references,
                 csrf=get_token(self.request),
-                udfs=self.assessment.get_tag_udfs(),
+                udfs=TagCache.get_forms(self.assessment),
             ),
         )
 

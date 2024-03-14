@@ -16,7 +16,7 @@ from django.http import HttpRequest
 from django.template import RequestContext, Template
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
-from django.utils import safestring, timezone
+from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
@@ -313,21 +313,6 @@ class Assessment(models.Model):
 
     def get_udf_list_url(self):
         return reverse("udf:binding-list", args=(self.id,))
-
-    def get_tag_udfs(self, **kwargs) -> dict[int, safestring.SafeText] | None:
-        # TODO - move?
-        key = f"assessment-{self.pk}-tag-forms"
-        forms = cache.get(key)
-        if forms is not None:
-            return forms
-        tag_bindings = self.udf_tag_bindings.select_related("form")
-        if tag_bindings.count() == 0:
-            return None
-        forms = {
-            tag_binding.tag_id: tag_binding.get_form_html(**kwargs) for tag_binding in tag_bindings
-        }
-        cache.set(key, forms)
-        return forms
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
