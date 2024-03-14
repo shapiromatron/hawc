@@ -21,7 +21,7 @@ def unset_right(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("summary", "0052_visual_image_alter_visual_visual_type"),
+        ("summary", "0053_right_text"),
     ]
 
     operations = [
