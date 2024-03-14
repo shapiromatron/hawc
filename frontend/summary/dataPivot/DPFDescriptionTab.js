@@ -69,7 +69,21 @@ let buildDescriptionTable = function(tab, dp) {
             addDataRow(i);
         }
 
-        return tab.append([newRowBtn, $("<h3>Calculated columns</h3>")], tbl);
+        return tab.append(
+            [newRowBtn, $("<h3>Calculated columns</h3>")],
+            tbl,
+            `<div class="text-muted-text">
+                <p>Build new columns from existing columns. The mini-language is described below:</p>
+                <ul>
+                    <li><code>\${COLNAME}</code>: print a column value</li>
+                    <li><code>\${round(COLNAME,2)}</code>: rounds a column to 2 decimal points</li>
+                    <li><code>\${exits(COLNAME)}?hello:world</code>: if COLNAME is not empty, print hello, else world</li>
+                    <li><code>\${match(COLNAME,"hello")}?hello:goodbye</code>: if COLNAME equals "hello", print hello, else goodbye</li>
+
+                </ul>
+                <p>You can compose the language to build complex strings, for example: <code>\${response} ± round(stdev,2) (round(percent control mean,1)%)</code>. We are in the process of writing better documentation with examples. Please contact us if you'd like sooner!</p>
+            </div>`
+        );
     },
     buildDescriptionTab = function(dp) {
         let tab = $('<div class="tab-pane active" id="data_pivot_settings_description">');
