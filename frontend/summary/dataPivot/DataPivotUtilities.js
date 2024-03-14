@@ -288,6 +288,7 @@ class _DataPivot_settings_description {
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
             text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
             max_width: $('<input class="form-control" type="number">').val(values.max_width),
+            to_right: $('<input type="checkbox">').prop("checked", values.to_right),
             dpe: $('<select class="form-control"></select>')
                 .html(this.data_pivot.interactivity_options)
                 .val(values.dpe),
@@ -308,6 +309,7 @@ class _DataPivot_settings_description {
             .append($("<td>").append(this.content.header_style))
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))
+            .append($("<td>").append(this.content.to_right))
             .append($("<td>").append(this.content.dpe))
             .on("change", "input,select", () => self.data_push());
 
@@ -330,6 +332,7 @@ class _DataPivot_settings_description {
             text_style: "base",
             dpe: NULL_CASE,
             max_width: undefined,
+            to_right: false,
         };
     }
 
@@ -339,6 +342,7 @@ class _DataPivot_settings_description {
         this.values.header_style = this.content.header_style.find("option:selected").val();
         this.values.text_style = this.content.text_style.find("option:selected").val();
         this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
+        this.values.to_right = this.content.to_right.prop("checked");
         this.values.dpe = NULL_CASE;
         if (this.values.header_name === "") {
             this.values.header_name = this.values.field_name;

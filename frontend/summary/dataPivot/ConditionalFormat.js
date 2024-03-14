@@ -289,7 +289,7 @@ class _DataPivot_settings_conditional {
                 }
 
                 // build rows for all unique items; tokens must be a string
-                let mapping = buildStyleMap(values);
+                let mapping = buildStyleMap(values, true);
                 vals.unique_tokens.forEach(v => {
                     var select = dp.style_manager
                         .add_select(parent.settings.type, mapping.get(v), true)

@@ -108,9 +108,9 @@ By default, sentry integration is disabled.
 
 ### Human verification
 
-To prevent bots from attempting to login to the server, you can optionally enable [Turnstyle](https://www.cloudflare.com/products/turnstile/). To enable, set these two additional environment variables:
+To prevent bots from attempting to login to the server, you can optionally enable [Turnstile](https://www.cloudflare.com/products/turnstile/). To enable, set these two additional environment variables:
 
-- `TURNSTYLE_SITE`: site key, this is used by the client to interact (public)
-- `TURNSTYLE_KEY`: secret key, used by the server to verify the response (private)
+- `TURNSTILE_SITE`: site key, this is used by the client to interact (public)
+- `TURNSTILE_KEY`: secret key, used by the server to verify the response (private)
 
 By default. human verification is disabled.

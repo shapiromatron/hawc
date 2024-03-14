@@ -15,11 +15,12 @@ let buildDescriptionTable = function(tab, dp) {
                     "Header style",
                     "Text style",
                     "Maximum width (pixels)",
+                    "To right",
                     "On-click",
                     "Ordering",
                 ])
             ),
-            colgroup = buildColGroup(["", "", "", "", "120px", "", "120px"]),
+            colgroup = buildColGroup(["", "", "", "", "", "", "", "120px"]),
             tbody = $("<tbody>"),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.description_settings,

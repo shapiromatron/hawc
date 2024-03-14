@@ -11,6 +11,7 @@ from ..common.views import (
     BaseUpdate,
     HeatmapBase,
 )
+from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from . import filterset, forms, models
 
@@ -34,7 +35,7 @@ class OutcomeView(BaseFilterList):
 
 
 # Design (Study Population)
-class DesignCreate(BaseCreate):
+class DesignCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Study-population created."
     parent_model = Study
     parent_template_name = "study"
@@ -42,6 +43,7 @@ class DesignCreate(BaseCreate):
     form_class = forms.DesignForm
 
     def get_success_url(self):
+        super().get_success_url()  # trigger EnsureExtractionStarted
         return self.object.get_update_url()
 
 
