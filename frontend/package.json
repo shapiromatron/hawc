@@ -46,7 +46,7 @@
         "express": "^4.18.2",
         "mocha": "^10.2.0",
         "mochapack": "^2.1.4",
-        "peggy": "^4.0.0",
+        "peggy": "^4.0.2",
         "prettier": "^1.19.1",
         "rimraf": "^5.0.1",
         "style-loader": "^3.3.3",
