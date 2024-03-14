@@ -217,6 +217,7 @@ class DataPivotVisualization extends D3Plot {
                             getValue: identifier => row[identifier],
                         });
                     } catch (err) {
+                        console.warn(d.formula, row);
                         row[d.name] = "";
                     }
                 });

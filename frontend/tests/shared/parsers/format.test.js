@@ -1,7 +1,7 @@
 import assert from "assert";
 import Format from "shared/parsers/format";
 
-const obj = {one: 1, two: "two", three: "", four: null},
+const obj = {one: 1, two: "two", three: "", four: null, float: 123.123456},
     getValue = prop => obj[prop],
     options = {getValue};
 
@@ -71,6 +71,14 @@ describe("shared/parsers/format", function() {
             let actual = Format.parse("exists(four)?This is true:This is false", options),
                 expected = "This is false";
             assert.ok(actual == expected);
+        });
+        it("handles good round", function() {
+            assert.ok(Format.parse("round(float,0)", options) == "123");
+            assert.ok(Format.parse("round(float,1)", options) == "123.1");
+            assert.ok(Format.parse("round(float,2)", options) == "123.12");
+        });
+        it("handles bad round", function() {
+            assert.ok(Format.parse("round(two,0)", options) == "");
         });
         it("handles complex ternary", function() {
             let actual = Format.parse(

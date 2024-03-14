@@ -13,14 +13,14 @@ TernaryStatement = sections:TernarySection* { return sections.join(""); }
 
 // Sections
 // ==========
-Section = Placeholder / Filler
+Section = Round / Placeholder / Filler
 TernarySection = Placeholder / TernaryFiller
 
 // Conditions
 // ==========
 Condition = Match / Exists
 Match = "match(" id:ConditionIdentifier "," val:(String / Integer) ")" { return options.getValue(id) == val; }
-Exists = "exists(" id:ConditionIdentifier ")" { return options.getValue(id) != null & options.getValue(id) != ""; }
+Exists = "exists(" id:ConditionIdentifier ")" { return options.getValue(id) != null && options.getValue(id) != ""; }
 
 // Block of characters
 // ==========
@@ -31,6 +31,7 @@ Filler = chars:FillerChar+ { return chars.join(""); }
 TernaryFiller = chars:TernaryFillerChar+ { return chars.join(""); }
 String = "\"" chars:StringChar* "\"" { return chars.join(""); }
 Integer = integer:[0-9]+ { return parseInt(integer, 10); }
+Round = "round(" id:ConditionIdentifier "," val:(Integer) ")" { return isFinite(parseFloat(options.getValue(id))) ? parseFloat(options.getValue(id)).toFixed(val) : ""; }
 
 // Characters
 // ==========
