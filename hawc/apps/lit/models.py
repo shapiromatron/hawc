@@ -13,14 +13,17 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
+from django.forms import MultipleChoiceField
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
+
+from hawc.apps.udf.models import TagBinding, TagUDFContent
 
 from ...constants import ColorblindColors
 from ...services.nih import pubmed
@@ -728,6 +731,22 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         return tags
 
     @classmethod
+    def get_nested_tag_names(cls, assessment_pk: int) -> dict[int, str]:
+        """Return a dictionary of tag ID to fully nested name
+        Args:
+            assessment_pk (int): assessment id
+        Returns:
+            tag_names (dict): Keys are tag IDs, values are tag nested names
+        """
+        tag_names = {
+            tag.id: tag.nested_name.replace("|", " ➤ ")
+            for tag in ReferenceFilterTag.annotate_nested_names(
+                ReferenceFilterTag.get_assessment_qs(assessment_pk)
+            )
+        }
+        return tag_names
+
+    @classmethod
     def build_default(cls, assessment):
         """
         Constructor to define default literature-tags.
@@ -894,7 +913,8 @@ class Reference(models.Model):
         self.last_updated = timezone.now()
         self.save()
 
-    def update_tags(self, user, tag_pks: list[int]) -> bool:
+    @transaction.atomic
+    def update_tags(self, user, tag_pks: list[int], udf_data: dict | None = None) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
@@ -919,6 +939,46 @@ class Reference(models.Model):
         if not (deleted_tags or added_tags):
             user_tag.is_resolved = True
         user_tag.save()
+
+        # save udf data if applicable
+        if udf_data is not None:
+            tags = ReferenceFilterTag.get_all_tags(self.assessment_id)
+            descendant_tags = ReferenceFilterTag.get_tree_descendants(tags)
+            form_errors = {}
+            for udf_tag, udf in udf_data.items():
+                # if there's any intersection between the descendant tags of the UDf tag and the tag_pks, create the udf
+                if not descendant_tags[int(udf_tag)].isdisjoint(tag_pks):
+                    try:
+                        # Get form from tag binding
+                        binding = TagBinding.objects.get(
+                            assessment=self.assessment_id, tag=int(udf_tag)
+                        )
+                        # use tag_pk prefix (same as form creation)
+                        empty_form = binding.form_instance()
+                        for field, data in udf.items():
+                            if isinstance(
+                                empty_form.fields[field.removeprefix(f"{udf_tag}-")],
+                                MultipleChoiceField,
+                            ) and not isinstance(udf[field], list):
+                                udf[field] = [data]
+                        form = binding.form_instance(prefix=int(udf_tag), data=udf)
+                        if form.is_valid():
+                            TagUDFContent.objects.update_or_create(
+                                reference_id=self.id,
+                                tag_binding_id=binding.id,
+                                defaults={"content": form.cleaned_data},
+                            )
+                        else:
+                            form_errors.update(
+                                {
+                                    f"{udf_tag}-{field}": errors
+                                    for (field, errors) in form.errors.items()
+                                }
+                            )
+                    except TagBinding.DoesNotExist:
+                        pass
+            if form_errors:
+                raise ValidationError(form_errors)
 
         # determine if we should save the reference-level tags
         update_reference_tags = False
@@ -969,6 +1029,9 @@ class Reference(models.Model):
     def __str__(self):
         return self.ref_short_citation
 
+    def get_tag_udf_contents(self):
+        return {t.tag_binding.tag_id: t.content for t in self.saved_tag_contents.all()}
+
     def to_dict(self):
         d = {}
         fields = (
@@ -994,6 +1057,7 @@ class Reference(models.Model):
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
+        d["tag_udf_contents"] = self.get_tag_udf_contents()
 
         d["tags"] = [tag.id for tag in self.tags.all()]
         return d

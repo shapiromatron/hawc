@@ -1,10 +1,13 @@
+import $ from "jquery";
+import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, {Component} from "react";
+import React, {Component, useEffect} from "react";
 import Alert from "shared/components/Alert";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import Modal from "shared/components/Modal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
@@ -28,12 +31,14 @@ class ReferenceListItem extends Component {
                     {store.config.conflict_resolution && reference.userTags ? (
                         <i
                             className="fa fa-fw fa-tags small-tag-icon user"
+                            style={{margin: "0.1rem"}}
                             title={"has tags from you"}
                             aria-hidden="true"></i>
                     ) : null}
                     {reference.tags.length > 0 ? (
                         <i
-                            className="fa fa-fw fa-tags small-tag-icon consensus mr-1"
+                            className="fa fa-fw fa-tags small-tag-icon consensus"
+                            style={{margin: "0.1rem"}}
                             title={title}
                             aria-hidden="true"></i>
                     ) : null}
@@ -48,6 +53,84 @@ ReferenceListItem.propTypes = {
     store: PropTypes.object,
 };
 
+var ReferenceUDF = inject("store")(
+    observer(({currentUDF, UDFValues, UDFError}) => {
+        useEffect(() => {
+            // clear the entire form of existing data
+            $("#udf-form :input").each(function() {
+                switch ($(this).prop("type")) {
+                    case "radio":
+                    case "checkbox":
+                        $(this).attr("checked", false);
+                        break;
+                    default:
+                        $(this).val("");
+                }
+            });
+            // add data for current tags/reference
+            _.forEach(UDFValues, function(value, name) {
+                _.forEach(value, function(val) {
+                    var input = $(`[name="${name}"]`);
+                    if (input.prop("multiple")) {
+                        input.children(`option[value="${val}"]`).prop("selected", true);
+                    } else {
+                        switch (input.prop("type")) {
+                            case "radio":
+                            case "checkbox":
+                                input.each(function() {
+                                    // multiple select checkbox
+                                    if ($(this).attr("value") == val) {
+                                        $(this).attr("checked", val);
+                                    }
+                                    // single checkbox
+                                    else if (
+                                        $(this).attr("value") == undefined &&
+                                        (val == "on" || val == true)
+                                    ) {
+                                        $(this).attr("checked", true);
+                                    }
+                                });
+                                break;
+                            default:
+                                // text/number fields
+                                input.val(val);
+                        }
+                    }
+                });
+            });
+            HAWCUtils.dynamicFormListeners();
+            $("#udf-form .invalid-feedback").remove();
+            $("#udf-form .is-invalid").removeClass("is-invalid");
+            $("#udf-form .bg-pink").removeClass("bg-pink");
+            _.forEach(_.fromPairs(UDFError), function(error, field) {
+                var input = $(`[name="${field}"]`);
+                input.addClass("is-invalid");
+                input
+                    .closest("div.form-group")
+                    .append(`<div class="invalid-feedback d-block">${error.join(" ")}</div>`);
+                input
+                    .closest('[id^="collapse-"]')
+                    .siblings('[id^="udf-header-"]')
+                    .addClass("bg-pink");
+            });
+        });
+
+        return currentUDF.length > 0 ? (
+            <form id="udf-form">
+                <div dangerouslySetInnerHTML={{__html: currentUDF}} />
+            </form>
+        ) : (
+            ""
+        );
+    })
+);
+
+ReferenceUDF.propTypes = {
+    currentUDF: PropTypes.string.isRequired,
+    UDFValues: PropTypes.object.isRequired,
+    UDFError: PropTypes.array,
+};
+
 @inject("store")
 @observer
 class TagReferencesMain extends Component {
@@ -55,14 +138,24 @@ class TagReferencesMain extends Component {
         super(props);
         this.showFullTag = new LocalStorageBoolean("lit-showFullTag", true);
         this.pinInstructions = new LocalStorageBoolean("lit-pinInstructions", false);
+        this.expandAbstract = new LocalStorageBoolean("lit-expandAbstract", true);
         this.state = {
             showFullTag: this.showFullTag.value,
             pinInstructions: this.pinInstructions.value,
+            expandAbstract: this.expandAbstract.value,
         };
     }
     render() {
         const {store} = this.props,
-            {hasReference, reference, referenceTags, referenceUserTags} = store,
+            {
+                hasReference,
+                reference,
+                referenceTags,
+                referenceUserTags,
+                currentUDF,
+                UDFValues,
+                UDFError,
+            } = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
 
         return (
@@ -124,12 +217,18 @@ class TagReferencesMain extends Component {
                                     <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
                             </div>
-                            {store.errorOnSave ? (
-                                <Alert
-                                    className="alert-danger mt-2"
-                                    message="An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
-                                />
-                            ) : null}
+                            <Alert
+                                className={
+                                    store.errorOnSave
+                                        ? "alert-danger mt-2 slide showing"
+                                        : "alert-danger mt-2 slide gone"
+                                }
+                                message={
+                                    store.UDFError
+                                        ? "An error was found with your tag form data."
+                                        : "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
+                                }
+                            />
                             <div className="well" style={{minHeight: "50px"}}>
                                 {store.successMessage ? (
                                     <Alert
@@ -182,7 +281,7 @@ class TagReferencesMain extends Component {
                                 showTags={false}
                                 showActionsTagless={true}
                                 actionsBtnClassName={"btn-sm btn-secondary"}
-                                expanded={true}
+                                expanded={this.expandAbstract.value}
                                 extraActions={[
                                     <div
                                         className="dropdown-item cursor-pointer"
@@ -202,15 +301,34 @@ class TagReferencesMain extends Component {
                                             ? "Show collapsed tag"
                                             : "Show full tag"}
                                     </div>,
+                                    <div
+                                        className="dropdown-item cursor-pointer"
+                                        key={6}
+                                        onClick={() => {
+                                            this.expandAbstract.toggle();
+                                            this.setState({
+                                                expandAbstract: this.expandAbstract.value,
+                                            });
+                                        }}>
+                                        &nbsp;
+                                        {this.state.expandAbstract
+                                            ? "Use collapsed view"
+                                            : "Use expanded view"}
+                                    </div>,
                                     store.config.instructions.length > 0 ? (
                                         <div
                                             className="dropdown-item cursor-pointer"
-                                            key={6}
+                                            key={7}
                                             onClick={() => store.setInstructionsModal(true)}>
                                             &nbsp;View instructions
                                         </div>
                                     ) : null,
                                 ]}
+                            />
+                            <ReferenceUDF
+                                currentUDF={currentUDF}
+                                UDFValues={UDFValues}
+                                UDFError={UDFError}
                             />
                         </div>
                     ) : (
