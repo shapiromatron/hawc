@@ -30,7 +30,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..assessment.models import Log
-from ..common.helper import SerializerHelper, cacheable
+from ..common.helper import SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -731,22 +731,19 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         return tags
 
     @classmethod
-    def get_nested_tag_names(cls, assessment_pk: int):
-        """_summary_
+    def get_nested_tag_names(cls, assessment_pk: int) -> dict[int, str]:
+        """Return a dictionary of tag ID to fully nested name
         Args:
             assessment_pk (int): assessment id
         Returns:
             tag_names (dict): Keys are tag IDs, values are tag nested names
         """
-        tag_names = cacheable(
-            lambda: {
-                tag.id: tag.nested_name.replace("|", " ➤ ")
-                for tag in ReferenceFilterTag.annotate_nested_names(
-                    ReferenceFilterTag.get_assessment_qs(assessment_pk)
-                )
-            },
-            f"assessment-{assessment_pk}-tag-names",
-        )
+        tag_names = {
+            tag.id: tag.nested_name.replace("|", " ➤ ")
+            for tag in ReferenceFilterTag.annotate_nested_names(
+                ReferenceFilterTag.get_assessment_qs(assessment_pk)
+            )
+        }
         return tag_names
 
     @classmethod
@@ -946,10 +943,7 @@ class Reference(models.Model):
         # save udf data if applicable
         if udf_data is not None:
             tags = ReferenceFilterTag.get_all_tags(self.assessment_id)
-            descendant_tags = cacheable(
-                lambda: ReferenceFilterTag.get_tree_descendants(tags),
-                f"assessment-{self.assessment_id}-tag-descendants",
-            )
+            descendant_tags = ReferenceFilterTag.get_tree_descendants(tags)
             form_errors = {}
             for udf_tag, udf in udf_data.items():
                 # if there's any intersection between the descendant tags of the UDf tag and the tag_pks, create the udf
@@ -1036,9 +1030,7 @@ class Reference(models.Model):
         return self.ref_short_citation
 
     def get_tag_udf_contents(self):
-        values = self.saved_tag_contents.values("content", "tag_binding__tag")
-        # key is tag id, value is the saved udf content
-        return {value["tag_binding__tag"]: value["content"] for value in values}
+        return {t.tag_binding.tag_id: t.content for t in self.saved_tag_contents.all()}
 
     def to_dict(self):
         d = {}
