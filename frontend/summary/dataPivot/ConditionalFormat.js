@@ -192,15 +192,11 @@ class _DataPivot_settings_conditional {
                 var lbl = $("<label>").html(desc_txt);
                 parent.append(lbl, inp);
             },
-            fieldName = $('<select class="form-control" name="field_name">')
-                .html(dp._get_header_options(true))
+            fieldName = dp.column_select_manager
+                .createSelect(true, {name: "field_name"})
                 .val(values.field_name || defaults.field_name),
             conditionType = $('<select class="form-control" name="condition_type">')
-                .html(
-                    formattingTypes.map(function(v) {
-                        return `<option value="${v}">${v}</option>`;
-                    })
-                )
+                .html(formattingTypes.map(v => `<option value="${v}">${v}</option>`))
                 .val(values.condition_type || defaults.condition_type),
             changeConditionType = function() {
                 div.find(".conditionalDivs").hide();

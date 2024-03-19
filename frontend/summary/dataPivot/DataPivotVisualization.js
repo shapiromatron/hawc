@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+import Format from "shared/parsers/format";
 import Query from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -21,7 +22,7 @@ class DataPivotVisualization extends D3Plot {
         // Metadata viewer visualization
         super();
         this.editable = editable || false;
-        this.dp_data = dp_data;
+        this.dp_data = DataPivotVisualization.processDataset(dp_data, dp_settings);
         this.dp_settings = dp_settings;
         this.plot_div = plot_div;
         this.set_defaults();
@@ -194,6 +195,35 @@ class DataPivotVisualization extends D3Plot {
         )
             return true;
         return $.isNumeric(row[bar.low_field_name]) && $.isNumeric(row[bar.high_field_name]);
+    }
+
+    static processDataset(dataset, settings) {
+        const parseRow = (row, i) => {
+            // make numbers in data numeric if possible
+            // see https://github.com/mbostock/d3/wiki/CSV
+            _.each(row, (_, key) => {
+                row[key] = +row[key] || row[key];
+            });
+
+            // add data-pivot row-level key and index
+            row._dp_y = i;
+            row._dp_pk = row["key"] || i;
+
+            settings.calculated_columns
+                .filter(d => d.name && d.formula)
+                .forEach(d => {
+                    try {
+                        row[d.name] = Format.parse(d.formula, {
+                            getValue: identifier => row[identifier],
+                        });
+                    } catch (err) {
+                        console.warn(d.formula, row);
+                        row[d.name] = "";
+                    }
+                });
+            return row;
+        };
+        return _.cloneDeep(dataset).map(d => parseRow(d));
     }
 
     set_defaults() {
