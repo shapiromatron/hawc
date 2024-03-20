@@ -2071,6 +2071,16 @@
     template: <h1>Resources</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.timespentediting
+  pk: 1
+  fields:
+    seconds: 5.0
+    assessment: 1
+    content_type:
+    - assessment
+    - assessment
+    object_id: 1
+    created: 2024-03-13 11:30:01.123456+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:

@@ -634,7 +634,7 @@ class DataPivotNew(BaseCreate):
     template_name = "summary/datapivot_form.html"
 
     def get_success_url(self):
-        super().get_success_url()
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.get_visualization_update_url()
 
     def get_form_kwargs(self):
