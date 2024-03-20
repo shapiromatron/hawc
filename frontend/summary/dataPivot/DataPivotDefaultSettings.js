@@ -43,6 +43,7 @@ export default {
     legend: DataPivotLegend.default_settings(),
     dataline_settings: [],
     datapoint_settings: [],
+    calculated_columns: [],
     description_settings: [],
     barchart: _DataPivot_settings_barchart.defaults(),
     spacers: [],
