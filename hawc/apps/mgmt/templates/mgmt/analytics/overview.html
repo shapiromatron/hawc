@@ -31,6 +31,7 @@
       {% include 'common/analytics_plot.html' with title='References by publication year' plot=refs_by_year_plot %}
       {% include 'common/analytics_plot.html' with title='References and tags plot' plot=refs_tags_plot %}
     </div>
+    <hr/>
   </div>
 
 
@@ -76,6 +77,7 @@
       {% analytics_card value=n_endpoints_ehv label='endpoints using Environmental Health Vocabulary (EHV)' %}
       {% analytics_card value=n_dose_res_groups label='total dose response groups' %}
     </div>
+    <hr/>
   </div>
 
   <div class="my-4">
@@ -87,5 +89,23 @@
       {% include 'common/analytics_plot.html' with title='Visuals by type' plot=summary_count.visual_barchart %}
       {% include 'common/analytics_plot.html' with title='Tables by type' plot=summary_count.table_barchart %}
     </div>
+    <hr/>
+  </div>
+
+  <div class="my-4">
+    <h3>Epidemiology</h3>
+    <div class="card-columns">
+      {% analytics_card value=epi_counts.n_epi_studies label="total studies" %}
+      {% analytics_card value=epi_counts.n_epi_outcomes label="epidemiological outcomes" %}
+      {% include 'common/analytics_plot.html' with title='Study Populations by Design' plot=study_pop_design_plot %}
+    </div>
+    <hr/>
+  </div>
+
+  <div class="my-4">
+    <h3>Epidemiology V2</h3>
+    <div class="card-columns">
+    </div>
+    <hr/>
   </div>
 {% endblock %}

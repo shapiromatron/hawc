@@ -5,6 +5,8 @@ from django.db.models import Count, Q
 
 from ...animal import constants
 from ...animal.models import Endpoint, EndpointGroup, Experiment
+from ...epi.constants import Design
+from ...epi.models import Outcome, StudyPopulation
 from ...lit import constants as lc
 from ...lit.models import Reference, Search
 from ...study.models import Study
@@ -311,6 +313,34 @@ def summary_counts(assessment_id):
     }
 
 
+def epi_counts(assessment_id):
+    return {
+        "n_epi_studies": Study.objects.filter(assessment_id=assessment_id)
+        .annotate(n_sp=Count("study_populations"))
+        .filter(n_sp__gt=0)
+        .count(),
+        "n_epi_outcomes": Outcome.objects.filter(
+            study_population__study__assessment_id=assessment_id
+        ).count(),
+    }
+
+
+def sp_design_plot(assessment_id):
+    types = (
+        StudyPopulation.objects.filter(study__assessment_id=assessment_id)
+        .values_list("design")
+        .annotate(total=Count("design"))
+        .order_by("design")
+    )
+    data = []
+    for type, n in list(types):
+        data.append((Design(type).label, n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
+    return barchart_count_plot(df, labels={"type": "Design type", "count": "# Study Populations"})
+
+
 def get_context_data(id: int) -> dict:
     return {
         # literature screening
@@ -331,4 +361,7 @@ def get_context_data(id: int) -> dict:
         "experiment_type_plot": experiment_type_plot(id),
         # summary
         "summary_count": summary_counts(id),
+        # epi
+        "epi_counts": epi_counts(id),
+        "study_pop_design_plot": sp_design_plot(id),
     }
