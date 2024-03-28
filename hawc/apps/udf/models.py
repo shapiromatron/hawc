@@ -12,6 +12,7 @@ from ..assessment.models import Assessment
 from ..common import dynamic_forms
 from ..common.forms import DynamicFormField
 from ..lit.models import ReferenceFilterTag
+from . import managers
 
 
 class UserDefinedForm(models.Model):
@@ -126,6 +127,8 @@ class TagBinding(models.Model):
 
 
 class ModelUDFContent(models.Model):
+    objects = managers.ModelUDFContentManager()
+
     model_binding = models.ForeignKey(
         ModelBinding, on_delete=models.CASCADE, related_name="saved_contents"
     )
