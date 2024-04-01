@@ -105,6 +105,9 @@
   <div class="my-4">
     <h3>Epidemiology V2</h3>
     <div class="card-columns">
+      {% analytics_card value=epiv2_counts.n_epiv2_studies label='total studies' %}
+      {% analytics_card value=epiv2_counts.n_epiv2_outcomes label='epi v2 outcomes' %}
+      {% include 'common/analytics_plot.html' with title='Study Design' plot=epiv2_study_design_plot %}
     </div>
     <hr/>
   </div>

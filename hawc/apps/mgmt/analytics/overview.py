@@ -5,8 +5,10 @@ from django.db.models import Count, Q
 
 from ...animal import constants
 from ...animal.models import Endpoint, EndpointGroup, Experiment
-from ...epi.constants import Design
+from ...epi import constants as ec
 from ...epi.models import Outcome, StudyPopulation
+from ...epiv2 import constants as ec2
+from ...epiv2 import models
 from ...lit import constants as lc
 from ...lit.models import Reference, Search
 from ...study.models import Study
@@ -313,6 +315,7 @@ def summary_counts(assessment_id):
     }
 
 
+# epi data
 def epi_counts(assessment_id):
     return {
         "n_epi_studies": Study.objects.filter(assessment_id=assessment_id)
@@ -325,7 +328,7 @@ def epi_counts(assessment_id):
     }
 
 
-def sp_design_plot(assessment_id):
+def study_pop_design_plot(assessment_id):
     types = (
         StudyPopulation.objects.filter(study__assessment_id=assessment_id)
         .values_list("design")
@@ -334,11 +337,40 @@ def sp_design_plot(assessment_id):
     )
     data = []
     for type, n in list(types):
-        data.append((Design(type).label, n))
+        data.append((ec.Design(type).label, n))
     df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
     if df.empty:
         return empty_plot()
     return barchart_count_plot(df, labels={"type": "Design type", "count": "# Study Populations"})
+
+
+# epiv2 data
+def epiv2_counts(assessment_id):
+    return {
+        "n_epiv2_studies": Study.objects.filter(assessment_id=assessment_id)
+        .annotate(n_des=Count("designs"))
+        .filter(n_des__gt=0)
+        .count(),
+        "n_epiv2_outcomes": models.Outcome.objects.filter(
+            design__study__assessment_id=assessment_id
+        ).count(),
+    }
+
+
+def study_design_plot(assessment_id):
+    types = (
+        models.Design.objects.filter(study__assessment_id=assessment_id)
+        .values_list("study_design")
+        .annotate(total=Count("study_design"))
+        .order_by("study_design")
+    )
+    data = []
+    for type, n in list(types):
+        data.append((ec2.StudyDesign(type).label, n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
+    return barchart_count_plot(df, labels={"type": "Study design type", "count": "# Study Designs"})
 
 
 def get_context_data(id: int) -> dict:
@@ -363,5 +395,8 @@ def get_context_data(id: int) -> dict:
         "summary_count": summary_counts(id),
         # epi
         "epi_counts": epi_counts(id),
-        "study_pop_design_plot": sp_design_plot(id),
+        "study_pop_design_plot": study_pop_design_plot(id),
+        # epiv2
+        "epiv2_counts": epiv2_counts(id),
+        "epiv2_study_design_plot": study_design_plot(id),
     }
