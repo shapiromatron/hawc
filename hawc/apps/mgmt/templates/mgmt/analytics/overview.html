@@ -111,4 +111,15 @@
     </div>
     <hr/>
   </div>
+
+  <div class="my-4">
+    <h3>Risk of Bias</h3>
+    <div class="card-columns">
+      {% analytics_card value=rob_counts.n_robs label='reviews' %}
+      {% analytics_card value=rob_counts.n_active label='active reviews' %}
+      {% analytics_card value=rob_counts.n_final label='final reviews' %}
+      {% include 'common/analytics_plot.html' with title='Score Counts' plot=rob_score_plot %}
+    </div>
+    <hr/>
+  </div>
 {% endblock %}

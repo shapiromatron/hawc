@@ -11,6 +11,8 @@ from ...epiv2 import constants as ec2
 from ...epiv2 import models
 from ...lit import constants as lc
 from ...lit.models import Reference, Search
+from ...riskofbias import constants as robc
+from ...riskofbias.models import RiskOfBias, RiskOfBiasScore
 from ...study.models import Study
 from ...summary import constants as sc
 from ...summary.models import DataPivot, SummaryTable, Visual
@@ -373,6 +375,35 @@ def study_design_plot(assessment_id):
     return barchart_count_plot(df, labels={"type": "Study design type", "count": "# Study Designs"})
 
 
+# risk of bias
+def rob_counts(assessment_id):
+    return {
+        "n_robs": RiskOfBias.objects.filter(study__assessment_id=assessment_id).count(),
+        "n_active": RiskOfBias.objects.filter(study__assessment_id=assessment_id)
+        .filter(active=True)
+        .count(),
+        "n_final": RiskOfBias.objects.filter(study__assessment_id=assessment_id)
+        .filter(final=True)
+        .count(),
+    }
+
+
+def rob_score_plot(assessment_id):
+    types = (
+        RiskOfBiasScore.objects.filter(riskofbias__study__assessment_id=assessment_id)
+        .values_list("score")
+        .annotate(total=Count("score"))
+        .order_by("score")
+    )
+    data = []
+    for score, n in list(types):
+        data.append((robc.SCORE_CHOICES_MAP.get(score, "Unknown"), n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
+    return barchart_count_plot(df, labels={"type": "Risk of Bias Score", "count": "# Studies"})
+
+
 def get_context_data(id: int) -> dict:
     return {
         # literature screening
@@ -399,4 +430,7 @@ def get_context_data(id: int) -> dict:
         # epiv2
         "epiv2_counts": epiv2_counts(id),
         "epiv2_study_design_plot": study_design_plot(id),
+        # rob
+        "rob_counts": rob_counts(id),
+        "rob_score_plot": rob_score_plot(id),
     }
