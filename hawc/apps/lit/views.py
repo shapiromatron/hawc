@@ -397,6 +397,7 @@ class TagReferences(BaseFilterList):
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
             flattened_contents = {}
+            # prepend UDF tag ID to name to prevent UDF name namespace conflicts
             for tag_id, field in reference["tag_udf_contents"].items():
                 for name, value in field.items():
                     flattened_contents[f"{tag_id}-{name}"] = (
