@@ -480,11 +480,11 @@ div.smart-tag.active {
 .alert.slide.gone {
     height: 0rem;
     padding: 0 1.25rem;
-} 
+}
 .alert.slide.showing {
     height: 50px;
     transition: all 0.5s ease-out;
-} 
+}
 .ref_small {
     font-size: 0.8465em;
     display: block;
@@ -926,6 +926,9 @@ table.bordered td {
 .smaller {
     font-size: .8em;
     font-weight: 400;
+}
+.m-xs {
+    margin: 0.1rem !important;
 }
 
 /* table column text alignment */

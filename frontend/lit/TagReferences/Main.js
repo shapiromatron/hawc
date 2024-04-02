@@ -30,15 +30,13 @@ class ReferenceListItem extends Component {
                 <div className="mr-1 d-flex" style={{flexWrap: "nowrap"}}>
                     {store.config.conflict_resolution && reference.userTags ? (
                         <i
-                            className="fa fa-fw fa-tags small-tag-icon user"
-                            style={{margin: "0.1rem"}}
+                            className="fa fa-fw fa-tags small-tag-icon user m-xs"
                             title={"has tags from you"}
                             aria-hidden="true"></i>
                     ) : null}
                     {reference.tags.length > 0 ? (
                         <i
-                            className="fa fa-fw fa-tags small-tag-icon consensus"
-                            style={{margin: "0.1rem"}}
+                            className="fa fa-fw fa-tags small-tag-icon consensus m-xs"
                             title={title}
                             aria-hidden="true"></i>
                     ) : null}
