@@ -65,15 +65,7 @@ class TagReferencesMain extends Component {
     }
     render() {
         const {store} = this.props,
-            {
-                hasReference,
-                reference,
-                referenceTags,
-                referenceUserTags,
-                currentUDF,
-                UDFValues,
-                UDFError,
-            } = store,
+            {hasReference, reference, referenceTags, referenceUserTags, udfStore} = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
 
         return (
@@ -142,8 +134,8 @@ class TagReferencesMain extends Component {
                                         : "alert-danger mt-2 slide gone"
                                 }
                                 message={
-                                    store.UDFError
-                                        ? "An error was found with your tag form data."
+                                    store.udfStore.errors
+                                        ? "An error was found with tag form data."
                                         : "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
                                 }
                             />
@@ -243,11 +235,7 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
-                            <ReferenceUdf
-                                currentUDF={currentUDF}
-                                UDFValues={UDFValues}
-                                UDFError={UDFError}
-                            />
+                            <ReferenceUdf store={udfStore} />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>

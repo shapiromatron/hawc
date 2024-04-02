@@ -1,0 +1,109 @@
+import $ from "jquery";
+import _ from "lodash";
+import {action, autorun, computed, observable} from "mobx";
+
+class UdfStore {
+    @observable formHtml = "";
+    @observable activeIds = [];
+    @observable values = null;
+    @observable errors = null;
+
+    constructor(parent) {
+        this.parent = parent;
+        this.config = parent.config;
+
+        // change udf values whenever reference changes
+        autorun(() => {
+            this.values = this.parent.reference
+                ? this.parent.reference.data.tag_udf_contents
+                : null;
+        });
+
+        // change form displays whenever selected tags change
+        autorun(() => {
+            if (!this.parent.reference) {
+                return;
+            }
+            const referenceUserTagIDs = this.parent.referenceUserTags.map(tag => tag.data.pk),
+                tagNames = this.config.tag_names,
+                referenceId = this.referenceId,
+                {udfs, descendant_tags} = this.parent.config,
+                activeIds = [],
+                tagFormDivs = [];
+
+            // check all tag UDFs for the assessment
+            _.each(udfs, (udf, tagId) => {
+                // if any descendant of the UDF tag is on the reference
+                const showUdf = descendant_tags[tagId].some(tag =>
+                    referenceUserTagIDs.includes(tag)
+                );
+                if (showUdf) {
+                    tagFormDivs.push(
+                        `<div class='box-shadow rounded mt-3 mb-4'>
+                            <a
+                                class="text-black text-decoration-none clickable bg-gray rounded-top px-3 d-flex justify-content-start align-items-center flex-wrap border-bottom-light"
+                                type="button"
+                                data-toggle="collapse"
+                                id="udf-header-${tagId}-${referenceId}"
+                                data-target="#collapse-${tagId}-${referenceId}-udf"
+                                aria-expanded="true" aria-controls="collapse-${tagId}-udf">
+                                    <span class="refTag px-1 py-0 my-3">${tagNames[tagId]}</span>
+                                    <span class="h5 m-0">Tag Form</span>
+                            </a>
+                            <div class="px-4 py-3 collapse show" id="collapse-${tagId}-${referenceId}-udf">
+                                ${udf}
+                            </div>
+                        </div>`
+                    );
+                    activeIds.push(tagId); // add to current UDF tag ids list
+                }
+            });
+            this.activeIds = activeIds;
+            this.formHtml = tagFormDivs.join("");
+        });
+    }
+
+    @computed get referenceId() {
+        return this.parent.reference.data.pk;
+    }
+
+    @action.bound updateValues() {
+        const formData = $("#udf-forms").serializeArray(),
+            values = {};
+        // Save form data as a dictionary of field-name: field-value pairs
+        // This makes it easy to set the form fields in the ReferenceUDF component
+        formData.forEach(
+            ({name, value}) =>
+                (values[name] = name in values ? values[name].concat(value) : [].concat(value))
+        );
+        // overwrite changed fields while keeping data from fields removed from the form; allows
+        // users to remove then re-add a tag and use existing UDF data for that tag
+        Object.assign(this.values, values);
+    }
+
+    @action.bound getSubmissionValues() {
+        const newValuesSubmit = {},
+            newValues = {},
+            formData = $("#udf-forms").serializeArray();
+
+        this.activeIds.forEach(tagId => {
+            newValuesSubmit[tagId] = {};
+            formData.forEach(({name, value}) => {
+                if (!name.includes(`${tagId}-`)) {
+                    return;
+                }
+                if (name in newValues) {
+                    newValues[name] = newValues[name].concat(value);
+                    newValuesSubmit[tagId][name] = [value].concat(newValuesSubmit[tagId][name]);
+                } else {
+                    newValues[name] = [].concat(value);
+                    newValuesSubmit[tagId][name] = value;
+                }
+            });
+        });
+        this.values = newValues;
+        return newValuesSubmit;
+    }
+}
+
+export default UdfStore;

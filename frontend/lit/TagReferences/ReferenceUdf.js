@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {inject, observer} from "mobx-react";
+import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {useEffect} from "react";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -9,7 +9,6 @@ const resetDynamicForm = function(formSelector, values, errors) {
         if (root.length === 0) {
             return;
         }
-
         // clear the entire form of existing data
         root[0].reset();
 
@@ -24,15 +23,14 @@ const resetDynamicForm = function(formSelector, values, errors) {
                         case "radio":
                         case "checkbox":
                             input.each(function() {
-                                // multiple select checkbox
                                 if ($(this).attr("value") == val) {
+                                    // multiple select checkbox
                                     $(this).attr("checked", val);
-                                }
-                                // single checkbox
-                                else if (
+                                } else if (
                                     $(this).attr("value") == undefined &&
                                     (val == "on" || val == true)
                                 ) {
+                                    // single checkbox
                                     $(this).attr("checked", true);
                                 }
                             });
@@ -60,23 +58,24 @@ const resetDynamicForm = function(formSelector, values, errors) {
                 .addClass("bg-pink");
         });
     },
-    ReferenceUdf = inject("store")(
-        observer(({currentUDF, UDFValues, UDFError}) => {
-            useEffect(() => resetDynamicForm("#udf-forms", UDFValues, UDFError));
-            if (!currentUDF) {
-                return null;
-            }
-            return (
-                <form id="udf-forms">
-                    <div dangerouslySetInnerHTML={{__html: currentUDF}} />
-                </form>
-            );
-        })
-    );
+    ReferenceUdf = observer(({store}) => {
+        const {values, errors, formHtml} = store;
+
+        useEffect(() => resetDynamicForm("#udf-forms", values, errors));
+
+        if (formHtml.length === 0) {
+            return null;
+        }
+
+        return (
+            <form id="udf-forms">
+                <div dangerouslySetInnerHTML={{__html: formHtml}} />
+            </form>
+        );
+    });
+
 ReferenceUdf.propTypes = {
-    currentUDF: PropTypes.string.isRequired,
-    UDFValues: PropTypes.object.isRequired,
-    UDFError: PropTypes.array,
+    store: PropTypes.object.isRequired,
 };
 
 export default ReferenceUdf;

@@ -478,11 +478,11 @@ div.smart-tag.active {
     overflow: hidden;
 }
 .alert.slide.gone {
-    height: 0rem;
+    height: 0px;
     padding: 0 1.25rem;
 }
 .alert.slide.showing {
-    height: 50px;
+    height: 75px;
     transition: all 0.5s ease-out;
 }
 .ref_small {
