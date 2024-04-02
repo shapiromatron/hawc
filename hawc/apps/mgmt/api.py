@@ -31,3 +31,20 @@ class MgmtViewSet(BaseAssessmentViewSet):
         )
         exporter = exports.TaskExporter.flat_export(qs, filename=f"{assessment}-task")
         return Response(exporter)
+
+    @action(
+        detail=True,
+        url_path="time-spent",
+        action_perms=AssessmentViewSetPermissions.PROJECT_MANAGER_OR_HIGHER,
+        renderer_classes=PandasRenderers,
+    )
+    def time_spent(self, request, pk):
+        """Time spent export."""
+        assessment: Assessment = self.get_object()
+        qs = (
+            models.Task.objects.get_qs(assessment)
+            .select_related("study", "owner")
+            .order_by("study_id", "type", "id")
+        )
+        exporter = exports.TaskExporter.flat_export(qs, filename=f"{assessment}-task")
+        return Response(exporter)

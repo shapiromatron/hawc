@@ -401,7 +401,7 @@ def rob_score_plot(assessment_id):
     df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
     if df.empty:
         return empty_plot()
-    return barchart_count_plot(df, labels={"type": "Risk of Bias Score", "count": "# Studies"})
+    return barchart_count_plot(df, labels={"type": "Judgement Score", "count": "# Studies"})
 
 
 def get_context_data(id: int) -> dict:

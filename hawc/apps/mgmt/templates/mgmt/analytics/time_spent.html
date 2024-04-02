@@ -1,4 +1,9 @@
 {% block content %}
+  <div class="d-flex">
+    {% actions %}
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-tasks' assessment_pk %}?format=xlsx">Download Time Spent Export (xlsx)</a>
+    {% endactions %}
+  </div>
   <div class="card-columns">
     {% analytics_card value=total_time_spent label='spent on assessment' %}
   </div>

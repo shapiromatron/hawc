@@ -62,6 +62,7 @@ def time_tbl(df: pd.DataFrame) -> str:
 def get_context_data(id: int) -> dict:
     df = time_spent_df(id)
     return {
+        "assessment_pk": id,
         "time_spent_per_model_plot": time_spent_per_model_plot(df),
         "total_time_spent": total_time_spent(df),
         "time_spent_tbl": time_tbl(df),
