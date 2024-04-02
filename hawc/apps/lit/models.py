@@ -15,6 +15,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
+from django.forms import MultipleChoiceField
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
@@ -959,6 +960,16 @@ class Reference(models.Model):
                     binding = TagBinding.objects.get(assessment=self.assessment_id, tag=udf_tag_id)
                 except TagBinding.DoesNotExist:
                     raise ValidationError("UDF binding not found")
+
+                # fix edge-case where a select multiple only has one selected
+                # todo - remove this code? this is a JS form serialization issue
+                empty_form = binding.form_instance()
+                for field, data in udf.items():
+                    if isinstance(
+                        empty_form.fields[field.removeprefix(f"{udf_tag}-")],
+                        MultipleChoiceField,
+                    ) and not isinstance(udf[field], list):
+                        udf[field] = [data]
 
                 form = binding.form_instance(prefix=udf_tag_id, data=udf)
                 if form.is_valid():

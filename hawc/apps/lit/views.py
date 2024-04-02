@@ -401,7 +401,7 @@ class TagReferences(BaseFilterList):
             for tag_id, field in reference["tag_udf_contents"].items():
                 for name, value in field.items():
                     flattened_contents[f"{tag_id}-{name}"] = (
-                        value if isinstance(value, list) else [value]
+                        value if isinstance(value, list) else [value]  # TODO - why cast to list?
                     )
             reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(
