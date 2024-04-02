@@ -1,17 +1,15 @@
-import $ from "jquery";
-import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, {Component, useEffect} from "react";
+import React, {Component} from "react";
 import Alert from "shared/components/Alert";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import Modal from "shared/components/Modal";
-import HAWCUtils from "shared/utils/HAWCUtils";
 import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
 import TagTree from "../components/TagTree";
+import ReferenceUdf from "./ReferenceUdf";
 
 @inject("store")
 @observer
@@ -49,25 +47,6 @@ ReferenceListItem.propTypes = {
     reference: PropTypes.object.isRequired,
     selectedReferencePk: PropTypes.number.isRequired,
     store: PropTypes.object,
-};
-
-const ReferenceUDF = inject("store")(
-    observer(({currentUDF, UDFValues, UDFError}) => {
-        useEffect(() => HAWCUtils.resetDynamicForm("#udf-form", UDFValues, UDFError));
-        if (!currentUDF) {
-            return null;
-        }
-        return (
-            <form id="udf-form">
-                <div dangerouslySetInnerHTML={{__html: currentUDF}} />
-            </form>
-        );
-    })
-);
-ReferenceUDF.propTypes = {
-    currentUDF: PropTypes.string.isRequired,
-    UDFValues: PropTypes.object.isRequired,
-    UDFError: PropTypes.array,
 };
 
 @inject("store")
@@ -264,7 +243,7 @@ class TagReferencesMain extends Component {
                                     ) : null,
                                 ]}
                             />
-                            <ReferenceUDF
+                            <ReferenceUdf
                                 currentUDF={currentUDF}
                                 UDFValues={UDFValues}
                                 UDFError={UDFError}

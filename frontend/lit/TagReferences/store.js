@@ -60,11 +60,11 @@ class Store {
                     )
                 ) {
                     udfHTML += `<div class='box-shadow rounded mt-3 mb-4'>
-                                    <a class="text-black text-decoration-none clickable bg-gray 
-                                        rounded-top px-3 d-flex justify-content-start 
-                                        align-items-center flex-wrap border-bottom-light" 
+                                    <a class="text-black text-decoration-none clickable bg-gray
+                                        rounded-top px-3 d-flex justify-content-start
+                                        align-items-center flex-wrap border-bottom-light"
                                         type="button" data-toggle="collapse" id="udf-header-${tagID}-${this.reference.data.pk}"
-                                        data-target="#collapse-${tagID}-${this.reference.data.pk}-udf" 
+                                        data-target="#collapse-${tagID}-${this.reference.data.pk}-udf"
                                         aria-expanded="true" aria-controls="collapse-${tagID}-udf">
                                             <span class="refTag px-1 py-0 my-3">${this.tagNames[tagID]}</span>
                                             <span class="h5 m-0">Tag Form</span>
@@ -80,7 +80,7 @@ class Store {
         var newValues = {};
         // Save form data as a dictionary of field-name: field-value pairs
         // This makes it easy to set the form fields in the ReferenceUDF component
-        _.each($("#udf-form").serializeArray(), function(field) {
+        _.each($("#udf-forms").serializeArray(), function(field) {
             newValues[field["name"]] =
                 field["name"] in newValues
                     ? newValues[field["name"]].concat(field["value"])
@@ -95,7 +95,7 @@ class Store {
         var newValues = {};
         for (const tagID of this.udfIDs) {
             newValuesSubmit[tagID] = {};
-            for (const field of $("#udf-form").serializeArray()) {
+            for (const field of $("#udf-forms").serializeArray()) {
                 if (field["name"].includes(`${tagID}-`)) {
                     if (field["name"] in newValues) {
                         newValues[field["name"]] = newValues[field["name"]].concat(field["value"]);
