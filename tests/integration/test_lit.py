@@ -159,7 +159,7 @@ class TestLiterature(PlaywrightTestCase):
 
         # Tagging without filling out UDF returns error
         page.get_by_role("button", name="Save and next").click()
-        expect(page.get_by_text("An error was found with your tag form data.")).to_be_visible()
+        expect(page.get_by_text("An error was found with tag form data.")).to_be_visible()
         expect(
             page.locator("#div_id_2-field1").get_by_text("This field is required.")
         ).to_be_visible()
