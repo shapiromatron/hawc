@@ -43,20 +43,39 @@ def total_time_spent(df: pd.DataFrame) -> str:
         return f"{hr/8/5:,.1f} work weeks"
 
 
-def time_tbl(df: pd.DataFrame) -> str:
+def time_tbl(df: pd.DataFrame) -> pd.DataFrame:
     return (
         (df.groupby("model").seconds.sum() / 3600)
         .reset_index()
         .rename(columns={"seconds": "hours"})
         .sort_values("hours", ascending=False)
-        .to_html(
-            index=False,
-            classes="table table-striped",
-            bold_rows=False,
-            float_format=lambda d: f"{d:0.2f}",
-            border=0,
-        )
     )
+
+
+def standard_deviation_tbl(df: pd.DataFrame) -> pd.DataFrame:
+    df["hours"] = df["seconds"] / 3600
+    percentiles = df.groupby("model")["hours"].quantile([0.05, 0.95, 0.25, 0.75]).unstack()
+    percentiles.columns = ["5", "95", "25", "75"]
+    for col in percentiles.columns:
+        percentiles[col] = percentiles[col].round(2)
+    return percentiles
+
+
+def time_tbl_with_sd(df: pd.DataFrame) -> str:
+    hours_df = time_tbl(df)
+    sd_df = standard_deviation_tbl(df)
+    merged = pd.merge(hours_df, sd_df, on="model", how="left")
+    merged["SD 5/95"] = merged.apply(lambda row: f"{row["5"]} / {row["95"]}", axis=1)
+    merged["SD 25/75"] = merged.apply(lambda row: f"{row["25"]} / {row["75"]}", axis=1)
+    merged = merged.drop(columns=["5", "95", "25", "75"])
+    html = merged.to_html(
+        index=False,
+        classes="table table-striped",
+        bold_rows=False,
+        float_format=lambda d: f"{d:0.2f}",
+        border=0,
+    )
+    return html
 
 
 def get_context_data(id: int) -> dict:
@@ -65,5 +84,5 @@ def get_context_data(id: int) -> dict:
         "assessment_pk": id,
         "time_spent_per_model_plot": time_spent_per_model_plot(df),
         "total_time_spent": total_time_spent(df),
-        "time_spent_tbl": time_tbl(df),
+        "time_spent_tbl": time_tbl_with_sd(df),
     }
