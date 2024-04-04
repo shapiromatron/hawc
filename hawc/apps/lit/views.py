@@ -398,10 +398,11 @@ class TagReferences(BaseFilterList):
             reference["user_tags"] = ref_tags.get(reference["pk"])
             flattened_contents = {}
             # prepend UDF tag ID to name to prevent UDF name namespace conflicts
+            # TODO - can this code + JS be removed the always list? it's needed for yes/no radio
             for tag_id, field in reference["tag_udf_contents"].items():
                 for name, value in field.items():
                     flattened_contents[f"{tag_id}-{name}"] = (
-                        value if isinstance(value, list) else [value]  # TODO - why cast to list?
+                        value if isinstance(value, list) else [value]
                     )
             reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(

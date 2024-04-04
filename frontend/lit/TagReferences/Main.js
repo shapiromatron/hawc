@@ -207,9 +207,7 @@ class TagReferencesMain extends Component {
                                             this.setState({showFullTag: this.showFullTag.value});
                                         }}>
                                         &nbsp;
-                                        {this.state.showFullTag
-                                            ? "Show collapsed tag"
-                                            : "Show full tag"}
+                                        {this.state.showFullTag ? "Collapse tag" : "Expand tag"}
                                     </div>,
                                     <div
                                         className="dropdown-item cursor-pointer"
@@ -222,8 +220,8 @@ class TagReferencesMain extends Component {
                                         }}>
                                         &nbsp;
                                         {this.state.expandAbstract
-                                            ? "Use collapsed view"
-                                            : "Use expanded view"}
+                                            ? "Collapse reference"
+                                            : "Expand reference"}
                                     </div>,
                                     store.config.instructions.length > 0 ? (
                                         <div

@@ -11,6 +11,9 @@ const resetDynamicForm = function(formSelector, values, errors) {
         }
         // clear the entire form of existing data
         root[0].reset();
+        root.find(".invalid-feedback").remove();
+        root.find(".is-invalid").removeClass("is-invalid");
+        root.find(".bg-pink").removeClass("bg-pink");
 
         // add data to form
         _.forEach(values, function(value, name) {
@@ -42,10 +45,8 @@ const resetDynamicForm = function(formSelector, values, errors) {
                 }
             });
         });
-        HAWCUtils.dynamicFormListeners();
-        root.find(".invalid-feedback").remove();
-        root.find(".is-invalid").removeClass("is-invalid");
-        root.find(".bg-pink").removeClass("bg-pink");
+
+        // add errors to form
         _.forEach(_.fromPairs(errors), function(error, field) {
             const input = root.find(`[name="${field}"]`);
             input.addClass("is-invalid");
@@ -57,9 +58,12 @@ const resetDynamicForm = function(formSelector, values, errors) {
                 .siblings('[id^="udf-header-"]')
                 .addClass("bg-pink");
         });
+
+        // enable conditional logic
+        HAWCUtils.dynamicFormListeners();
     },
     ReferenceUdf = observer(({store}) => {
-        const {values, errors, formHtml} = store;
+        const {formHtml, values, errors} = store;
 
         useEffect(() => resetDynamicForm("#udf-forms", values, errors));
 

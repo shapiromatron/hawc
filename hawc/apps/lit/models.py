@@ -962,7 +962,7 @@ class Reference(models.Model):
                     raise ValidationError("UDF binding not found")
 
                 # fix edge-case where a select multiple only has one selected
-                # todo - remove this code? this is a JS form serialization issue
+                # todo - can this code + JS be removed to fix this issue?
                 empty_form = binding.form_instance()
                 for field, data in udf.items():
                     if isinstance(

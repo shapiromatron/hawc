@@ -36,13 +36,12 @@ class Store {
         this.udfStore.errors = null;
     }
     @action.bound setReference(reference) {
+        this.resetReferenceErrors();
         this.reference = reference;
         this.referenceTags = reference.tags.slice(0); // shallow copy
         this.referenceUserTags = reference.userTags
             ? reference.userTags.slice(0)
             : reference.tags.slice(0);
-
-        this.resetReferenceErrors();
     }
     hasTag(tags, tag) {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
