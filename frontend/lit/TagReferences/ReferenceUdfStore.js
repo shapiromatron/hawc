@@ -46,19 +46,15 @@ class UdfStore {
                 tagNames = this.config.tag_names,
                 referenceId = this.referenceId,
                 {udfs, descendant_tags} = this.parent.config,
-                activeIds = [],
-                tagFormDivs = [];
+                activeIds = _.keys(udfs).filter(tagId =>
+                    descendant_tags[tagId].some(tag => tagIds.includes(tag))
+                ),
+                tagFormDivs = activeIds
+                    .map(tagId => renderTagForm(tagId, referenceId, tagNames, udfs[tagId]))
+                    .join("");
 
-            // check all tag UDFs for the assessment
-            _.each(udfs, (udf, tagId) => {
-                // if any descendant of the UDF tag is on the reference
-                if (descendant_tags[tagId].some(tag => tagIds.includes(tag))) {
-                    tagFormDivs.push(renderTagForm(tagId, referenceId, tagNames, udf));
-                    activeIds.push(tagId); // add to current UDF tag ids list
-                }
-            });
             this.activeIds = activeIds;
-            this.formHtml = tagFormDivs.join("");
+            this.formHtml = tagFormDivs;
         });
     }
 
