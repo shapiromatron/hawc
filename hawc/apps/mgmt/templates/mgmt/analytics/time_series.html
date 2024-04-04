@@ -1,7 +1,13 @@
 {% block content %}
   <div class="d-flex mb-2">
     {% actions %}
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk %}?format=xlsx">Download Time Series Export (xlsx)</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'reference' %}?format=xlsx">Download Reference Export (xlsx)</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'study' %}?format=xlsx">Download Study Export (xlsx)</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'rob' %}?format=xlsx">Download Risk of Bias Export (xlsx)</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'visual' %}?format=xlsx">Download Visual Export (xlsx)</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'data_pivot' %}?format=xlsx">Download Data Pivot Export (xlsx)</a>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'total_visuals' %}?format=xlsx">Download Total Visuals Export (xlsx)</a>
+
     {% endactions %}
   </div>
   <div class="row card-group">
