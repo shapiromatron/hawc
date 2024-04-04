@@ -1,4 +1,9 @@
 {% block content %}
+  <div class="d-flex mb-2">
+    {% actions %}
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk %}?format=xlsx">Download Time Series Export (xlsx)</a>
+    {% endactions %}
+  </div>
   <div class="row card-group">
     {% include 'common/analytics_plot.html' with title='References created over time' plot=refs %}
     {% include 'common/analytics_plot.html' with title='Studies created over time' plot=studies %}

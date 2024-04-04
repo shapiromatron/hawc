@@ -37,6 +37,7 @@ def get_context_data(id: int) -> dict:
     viz_per_year = get_data(Visual, "month", id)
     dp_per_year = get_data(DataPivot, "month", id)
     return {
+        "assessment_pk": id,
         "refs": time_series(get_data(Reference, "month", id)),
         "studies": time_series(get_data(Study, "month", id)),
         "robs": time_series(get_data(RiskOfBias, "month", id, "study__assessment_id")),
