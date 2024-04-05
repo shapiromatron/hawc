@@ -59,7 +59,9 @@ class UDFForm(forms.ModelForm):
     def helper(self):
         self.fields["description"].widget.attrs["rows"] = 8
         legend_text = (
-            "Update User Defined Form" if self.instance.id else "Create a User Defined Form"
+            "Update User Defined Form (UDF)"
+            if self.instance.id
+            else "Create a User Defined Form (UDF)"
         )
         helper = BaseFormHelper(self)
         helper.layout = cfl.Layout(
