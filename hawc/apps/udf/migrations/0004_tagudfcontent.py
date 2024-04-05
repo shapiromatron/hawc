@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("content", models.JSONField(blank=True, default=dict)),
+                ("content", models.JSONField(default=dict)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 (
                     "tag_binding",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, to="udf.tagbinding"
+                        on_delete=django.db.models.deletion.CASCADE, to="udf.tagbinding"
                     ),
                 ),
             ],

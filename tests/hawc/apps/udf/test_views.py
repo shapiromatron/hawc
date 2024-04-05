@@ -8,10 +8,10 @@ from ..test_utils import check_200, check_302, check_403, get_client
 class TestUDFViews:
     def test_permissions(self, db_keys):
         urls = [
+            # TODO - add more
             # udf
             ("login", reverse("udf:udf_list")),
             ("owner", reverse("udf:udf_update", args=(1,))),
-            # model + tag bindings list
             ("read", reverse("udf:binding-list", args=(db_keys.assessment_conflict_resolution,))),
         ]
         anon = get_client()

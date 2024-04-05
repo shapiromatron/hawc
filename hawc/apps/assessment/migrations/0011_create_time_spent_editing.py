@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "seconds",
-                    models.FloatField(validators=(django.core.validators.MinValueValidator,)),
+                    models.FloatField(),
                 ),
                 (
                     "assessment",

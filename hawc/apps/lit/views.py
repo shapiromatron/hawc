@@ -15,7 +15,7 @@ from django.views.generic import TemplateView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, cacheable, tryParseInt
+from ..common.helper import WebappConfig, tryParseInt
 from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
@@ -28,6 +28,7 @@ from ..common.views import (
     create_object_log,
     htmx_required,
 )
+from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
 
 
@@ -258,7 +259,7 @@ class TagReferences(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents__tag_binding")
         )
 
     def get_context_data(self, **kwargs):
@@ -390,15 +391,14 @@ class TagReferences(BaseFilterList):
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
         tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         tag_names = models.ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
-        descendant_tags = cacheable(
-            lambda: models.ReferenceFilterTag.get_tree_descendants(tags),
-            f"assessment-{self.assessment.id}-tag-descendants",
-        )
-        for tag in descendant_tags:
-            descendant_tags[tag] = list(descendant_tags[tag])
+        descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+        # dict[int,set] -> dict[int,list] so we can JSON-encode
+        descendant_tags = {key: list(val) for key, val in descendant_tags.items()}
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
             flattened_contents = {}
+            # prepend UDF tag ID to name to prevent UDF name namespace conflicts
+            # TODO - can this code + JS be removed the always list? it's needed for yes/no radio
             for tag_id, field in reference["tag_udf_contents"].items():
                 for name, value in field.items():
                     flattened_contents[f"{tag_id}-{name}"] = (
@@ -417,7 +417,7 @@ class TagReferences(BaseFilterList):
                 descendant_tags=descendant_tags,
                 refs=references,
                 csrf=get_token(self.request),
-                udfs=self.assessment.get_tag_udfs(),
+                udfs=TagCache.get_forms(self.assessment),
             ),
         )
 
@@ -1123,6 +1123,7 @@ class Workflows(BaseList):
             .get_queryset()
             .filter(assessment=self.assessment)
             .prefetch_related("admission_tags", "removal_tags")
+            .order_by("-created")
         )
         tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         models.Workflow.annotate_tag_parents(queryset, tags)
@@ -1157,9 +1158,11 @@ class WorkflowViewSet(HtmxViewSet):
             form = forms.WorkflowForm(parent=request.item.parent)
             template = self.list_fragment
         context = self.get_context_data(form=form)
-        object_list = self.model.objects.filter(
-            assessment=request.item.assessment
-        ).prefetch_related("admission_tags", "removal_tags")
+        object_list = (
+            self.model.objects.filter(assessment=request.item.assessment)
+            .prefetch_related("admission_tags", "removal_tags")
+            .order_by("-created")
+        )
         tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
         models.Workflow.annotate_tag_parents(object_list, tags)
         context.update(object_list=object_list)

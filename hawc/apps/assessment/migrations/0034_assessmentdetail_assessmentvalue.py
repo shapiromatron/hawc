@@ -238,6 +238,7 @@ class Migration(migrations.Migration):
                         choices=[
                             (0, "Scoping"),
                             (5, "Problem Formulation"),
+                            (8, "Protocol"),
                             (10, "Internal Review"),
                             (15, "Interagency Review"),
                             (20, "Public Comment"),
@@ -266,7 +267,9 @@ class Migration(migrations.Migration):
                             (5, "FACA Panel"),
                             (10, "NASEM"),
                             (15, "Journal Review"),
+                            (18, "Other"),
                             (20, "No Review"),
+                            (25, "Not Applicable"),
                         ],
                         default=20,
                         help_text="Define the current status of peer review of this assessment, if any",

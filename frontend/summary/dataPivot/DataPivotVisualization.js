@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+import Format from "shared/parsers/format";
 import Query from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -21,7 +22,7 @@ class DataPivotVisualization extends D3Plot {
         // Metadata viewer visualization
         super();
         this.editable = editable || false;
-        this.dp_data = dp_data;
+        this.dp_data = DataPivotVisualization.processDataset(dp_data, dp_settings);
         this.dp_settings = dp_settings;
         this.plot_div = plot_div;
         this.set_defaults();
@@ -194,6 +195,35 @@ class DataPivotVisualization extends D3Plot {
         )
             return true;
         return $.isNumeric(row[bar.low_field_name]) && $.isNumeric(row[bar.high_field_name]);
+    }
+
+    static processDataset(dataset, settings) {
+        const parseRow = (row, i) => {
+            // make numbers in data numeric if possible
+            // see https://github.com/mbostock/d3/wiki/CSV
+            _.each(row, (_, key) => {
+                row[key] = +row[key] || row[key];
+            });
+
+            // add data-pivot row-level key and index
+            row._dp_y = i;
+            row._dp_pk = row["key"] || i;
+
+            settings.calculated_columns
+                .filter(d => d.name && d.formula)
+                .forEach(d => {
+                    try {
+                        row[d.name] = Format.parse(d.formula, {
+                            getValue: identifier => row[identifier],
+                        });
+                    } catch (err) {
+                        console.warn(d.formula, row);
+                        row[d.name] = "";
+                    }
+                });
+            return row;
+        };
+        return _.cloneDeep(dataset).map(d => parseRow(d));
     }
 
     set_defaults() {
@@ -454,8 +484,7 @@ class DataPivotVisualization extends D3Plot {
             settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
-                        var hash = new Map();
-                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                        var hash = buildStyleMap(cf, false);
                         rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
@@ -474,11 +503,10 @@ class DataPivotVisualization extends D3Plot {
         } else {
             this.dp_settings.dataline_settings.forEach(dl => {
                 dl.conditional_formatting.forEach(cf => {
-                    const styles = "bars",
-                        hash = new Map();
+                    const styles = "bars";
                     switch (cf.condition_type) {
                         case "discrete-style":
-                            cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                            var hash = buildStyleMap(cf, false);
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
                                     d._styles[styles] = get_associated_style(
@@ -536,7 +564,7 @@ class DataPivotVisualization extends D3Plot {
                             break;
 
                         case "discrete-style":
-                            var mapping = buildStyleMap(cf);
+                            var mapping = buildStyleMap(cf, false);
                             rows.forEach(d => {
                                 let key = _.toString(d[cf.field_name]),
                                     value = mapping.get(key);
@@ -602,6 +630,7 @@ class DataPivotVisualization extends D3Plot {
         this.title_str = this.dp_settings.plot_settings.title || "";
         this.x_label_text = this.dp_settings.plot_settings.axis_label || "";
         this.settings = settings;
+        this.hasRightText = this.settings.descriptions.filter(d => d.to_right).length > 0;
         this.headers = this.settings.descriptions.map(function(v, i) {
             return {
                 row: 0,
@@ -611,6 +640,7 @@ class DataPivotVisualization extends D3Plot {
                 cursor: "auto",
                 onclick() {},
                 max_width: v.max_width,
+                to_right: v.to_right,
             };
         });
     }
@@ -680,9 +710,9 @@ class DataPivotVisualization extends D3Plot {
 
     getDomain() {
         let domain,
-            fields,
             bars = this.settings.bars,
-            barchart = this.settings.barchart;
+            barchart = this.settings.barchart,
+            logscale = this.dp_settings.plot_settings.logscale;
 
         // use user-specified domain if valid
         domain = _.map(this.dp_settings.plot_settings.domain.split(","), parseFloat);
@@ -691,25 +721,25 @@ class DataPivotVisualization extends D3Plot {
         }
 
         // otherwise calculate domain from data
-        fields = _.chain(this.settings.datapoints)
-            .map("field_name")
-            .push(
-                bars.low_field_name,
-                bars.high_field_name,
-                barchart.field_name,
-                barchart.error_low_field_name,
-                barchart.error_high_field_name
-            )
-            .compact()
-            .value();
-
-        return d3.extent(
-            _.chain(this.datarows)
+        const fields = _.chain(this.settings.datapoints)
+                .map("field_name")
+                .push(
+                    bars.low_field_name,
+                    bars.high_field_name,
+                    barchart.field_name,
+                    barchart.error_low_field_name,
+                    barchart.error_high_field_name
+                )
+                .compact()
+                .value(),
+            values = _.chain(this.datarows)
                 .map(d => _.map(fields, f => d[f]))
                 .flattenDeep()
                 .map(parseFloat)
-                .value()
-        );
+                .filter(logscale ? d => d > 0 : Number.isFinite)
+                .value();
+
+        return d3.extent(values);
     }
 
     add_axes() {
@@ -752,20 +782,21 @@ class DataPivotVisualization extends D3Plot {
         this.vis.moveToFront();
     }
 
-    calcBackgroundRectanglesAndGridlines() {
+    renderTextBackgroundRectangles() {
         var bgs = [],
             gridlines = [],
             everyOther = true,
             {datarows} = this,
-            {left} = this.padding,
+            {left, right} = this.padding,
             behindPlot = this.dp_settings.plot_settings.text_background_extend,
-            LEFT_BORDER_PADDING = _.min([4, left]), // don't extend background to full padding
-            LEFT_BORDER_PADDING_OFFSET = _.max([0, left - LEFT_BORDER_PADDING]),
+            LEFT_BORDER_PADDING = _.min([10, left]), // don't extend background to full padding
+            RIGHT_BORDER_PADDING = _.min([10, right]), // don't extend background to full padding
+            widthBehindPlot = behindPlot ? this.w + this.rightTextWidth + RIGHT_BORDER_PADDING : 0,
             pushBG = (first, last) => {
                 bgs.push({
-                    x: LEFT_BORDER_PADDING_OFFSET,
+                    x: this.padding.left - LEFT_BORDER_PADDING,
                     y: this.row_heights[first].min,
-                    w: LEFT_BORDER_PADDING + this.text_width + (behindPlot ? this.w : 0),
+                    w: LEFT_BORDER_PADDING + this.leftTextWidth + widthBehindPlot,
                     h: this.row_heights[last].max - this.row_heights[first].min,
                 });
             };
@@ -783,14 +814,14 @@ class DataPivotVisualization extends D3Plot {
                     gridlines.push(this.row_heights[first_index].min);
                 }
                 // edge-case to push final-row if needed
-                if (i === datarows.length - 1 && everyOther) pushBG(first_index, i);
+                if (i === datarows.length - 1 && everyOther) {
+                    pushBG(first_index, i);
+                }
             }
         }
         this.bg_rectangles_data = this.dp_settings.plot_settings.text_background ? bgs : [];
         this.y_gridlines_data = this.dp_settings.plot_settings.show_yticks ? gridlines : [];
-    }
 
-    renderTextBackgroundRectangles() {
         // add background rectangles behind text
         this.g_text_bg_rects = d3
             .select(this.svg)
@@ -866,14 +897,16 @@ class DataPivotVisualization extends D3Plot {
             });
 
         // draw horizontal-spacer lines
-        this.g_spacer_lines = this.vis.append("g");
-        this.spacer_lines = this.g_spacer_lines
+        const spacerX1 = -this.plotXStart,
+            spacerX2 = this.w + (this.hasRightText ? this.rightTextWidth + this.padding.right : 0);
+        this.vis
+            .append("g")
             .selectAll("line")
             .data(this.settings.spacer_lines)
             .enter()
             .append("svg:line")
-            .attr("x1", -this.text_width - this.padding.left)
-            .attr("x2", this.w)
+            .attr("x1", spacerX1)
+            .attr("x2", spacerX2)
             .attr("y1", d => this.row_heights[d.index].max)
             .attr("y2", d => this.row_heights[d.index].max)
             .each(function(d) {
@@ -1174,17 +1207,17 @@ class DataPivotVisualization extends D3Plot {
             matrix = [],
             row,
             textPadding = this.textPadding,
-            left = this.padding.left,
             top = this.padding.top,
             min_row_height = this.dp_settings.plot_settings.minimum_row_height,
             heights = [],
             height_offset;
+
         // build n x m array-matrix of text-component-data (including header, where):
         // n = number of rows, m = number of columns
         matrix = [this.headers];
-        this.datarows.forEach(function(v, i) {
+        this.datarows.forEach((v, i) => {
             row = [];
-            self.settings.descriptions.forEach(function(desc, j) {
+            self.settings.descriptions.forEach((desc, j) => {
                 var txt = v[desc.field_name];
                 if ($.isNumeric(txt)) {
                     if (txt % 1 === 0) txt = parseInt(txt, 10);
@@ -1198,7 +1231,7 @@ class DataPivotVisualization extends D3Plot {
                     text: txt,
                     style: v._styles["text_" + j],
                     cursor: desc.interactivity ? "pointer" : "auto",
-                    onclick() {
+                    onclick: () => {
                         if (desc.interactivity) {
                             showAsModal(desc.interactivity, v);
                         }
@@ -1226,7 +1259,7 @@ class DataPivotVisualization extends D3Plot {
             .attr("x", 0)
             .attr("y", 0)
             .attr("class", "with_whitespace")
-            .text(function(d) {
+            .text(d => {
                 // return "display" version of object, or object
                 var dObj = HAWCUtils.parseJsonOrNull(d.text);
                 return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
@@ -1237,85 +1270,54 @@ class DataPivotVisualization extends D3Plot {
                 applyStyles(self.svg, this, d.style);
             });
 
-        // apply wrap text method
-        this.headers.forEach(function(v, i) {
-            let textColumn = self.g_text_columns.selectAll("text").filter(v => v.col === i);
+        // apply wrap text method; get column widths
+        const columnWidths = [];
+        this.headers.forEach((v, i) => {
+            const textColumn = self.g_text_columns.selectAll("text").filter(v => v.col === i);
 
-            // wrap text if we have to
+            // wrap text where needed
             if (v.max_width) {
                 textColumn.each(function() {
                     HAWCUtils.wrapText(this, v.max_width);
                 });
             }
 
-            // get maximum column dimension and layout columns
             const maxWidth = d3.max(textColumn.nodes().map(v => v.getBBox().width));
-            textColumn.each(function() {
-                var val = d3.select(this),
-                    anchor = val.style("text-anchor");
-                if (anchor === "end") {
-                    val.attr("x", left + maxWidth);
-                    val.selectAll("tspan").attr("x", left + maxWidth);
-                } else if (anchor === "middle") {
-                    val.attr("x", left + maxWidth / 2);
-                    val.selectAll("tspan").attr("x", left + maxWidth / 2);
-                } else {
-                    // default: left-aligned
-                    val.attr("x", left);
-                    val.selectAll("tspan").attr("x", left);
-                }
-            });
-            left += maxWidth + 2 * textPadding;
+            columnWidths.push(maxWidth);
         });
 
         // get maximum row dimension and layout rows
-        var merged_row_height,
-            extra_space,
-            prior_extra = 0,
-            text_rows = this.text_rows.nodes(),
-            j;
-
-        text_rows.forEach(function(v, i) {
-            v = d3
-                .select(v)
-                .selectAll("text")
-                .nodes();
-            for (j = 0; j < v.length; j++) {
-                var val = d3.select(v[j]);
-                val.attr("y", textPadding + top);
-                val.selectAll("tspan").attr("y", textPadding + top);
-            }
-
-            // get maximum-height of rendered text, and row-height
-            var cellHeights = v.map(function(v) {
-                    return v.getBBox().height;
-                }),
-                actual_height = d3.max(cellHeights),
-                row_height = d3.max([min_row_height, actual_height]);
-
-            // Peek-ahead and see if other rows are merged with this row; if so we may
-            // want to adjust the actual row-height to allow for even spacing.
-            // Only check for data rows (not header rows)
-            if (i > 0 && !self.datarows[i - 1]._dp_isMerged) {
-                var numRows = 1,
+        let extra_space,
+            prior_extra = 0;
+        const text_rows = this.text_rows.nodes(),
+            adjustMerged = (i, cellHeights, actual_height) => {
+                // Peek-ahead and see if other rows are merged with this row; if so we may
+                // want to adjust the actual row-height to allow for even spacing.
+                // Only check for data rows (not header rows)
+                if (i == 0 || self.datarows[i - 1]._dp_isMerged) {
+                    return null;
+                }
+                let j,
+                    merged_row_height,
+                    numRows = 1,
                     min_height = 0;
                 for (j = i + 1; j < self.datarows.length; j++) {
                     // the row height should be the maximum-height of a non-merged cell
                     if (j === i + 1) {
-                        let next_row = d3
-                            .select(text_rows[j])
+                        d3.select(text_rows[j])
                             .selectAll("text")
-                            .nodes();
-                        next_row
-                            .map(function(v) {
-                                return v.getBBox().height;
-                            })
+                            .nodes()
+                            .map(v => v.getBBox().height)
                             .forEach(function(d, i) {
-                                if (d > 0) min_height = Math.max(min_height, cellHeights[i]);
+                                if (d > 0) {
+                                    min_height = Math.max(min_height, cellHeights[i]);
+                                }
                             });
                     }
 
-                    if (!self.datarows[j]._dp_isMerged) break;
+                    if (!self.datarows[j]._dp_isMerged) {
+                        break;
+                    }
                     numRows += 1;
                 }
                 var extra = actual_height - min_row_height;
@@ -1326,15 +1328,40 @@ class DataPivotVisualization extends D3Plot {
                 } else {
                     merged_row_height = min_row_height + extra / numRows;
                 }
-                row_height = Math.max(min_height, merged_row_height);
+                return Math.max(min_height, merged_row_height);
+            };
+
+        text_rows.forEach((v, i) => {
+            d3.select(v)
+                .selectAll("text")
+                .attr("y", textPadding + top);
+
+            d3.select(v)
+                .selectAll("tspan")
+                .attr("y", textPadding + top);
+
+            // get maximum-height of rendered text, and row-height
+            var cellHeights = d3
+                    .select(v)
+                    .selectAll("text")
+                    .nodes()
+                    .map(d => d.getBBox().height),
+                actual_height = d3.max(cellHeights),
+                row_height = d3.max([min_row_height, actual_height]),
+                adjustedHeight = adjustMerged(i, cellHeights, actual_height);
+
+            if (adjustedHeight !== null) {
+                row_height = adjustedHeight;
             }
 
             // add spacer if needed
-            var spacer = self.settings.spacers["row_" + i];
+            var spacer = self.settings.spacers[`row_${i}`];
             extra_space = spacer && spacer.extra_space ? min_row_height / 2 : 0;
 
             // get the starting point for the top-row and offset all dimensions from this
-            if (i === 1) height_offset = top;
+            if (i === 1) {
+                height_offset = top;
+            }
 
             // save object of relative heights of data rows, with-respect to first-data row
             if (i > 0) {
@@ -1353,16 +1380,68 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // remove blank text elements; can mess-up size calculations
-        $(
-            this.g_text_columns
-                .selectAll("text")
-                .nodes()
-                .filter(el => el.textContent.length === 0)
-        ).remove();
+        this.g_text_columns
+            .selectAll("text")
+            .nodes()
+            .filter(el => el.textContent.length === 0)
+            .forEach(d => d.remove());
 
-        // calculate plot-height, text-width, and save heights array
-        var textDim = this.g_text_columns.node().getBBox();
-        this.text_width = textDim.width + textDim.x;
+        // move columns to locations
+        const moveElement = function(el, left, colWidth) {
+            var anchor = el.style("text-anchor");
+            if (anchor === "end") {
+                el.attr("x", left + colWidth);
+                el.selectAll("tspan").attr("x", left + colWidth);
+            } else if (anchor === "middle") {
+                el.attr("x", left + colWidth / 2);
+                el.selectAll("tspan").attr("x", left + colWidth / 2);
+            } else {
+                // default: left-aligned
+                el.attr("x", left);
+                el.selectAll("tspan").attr("x", left);
+            }
+        };
+
+        let xStart = this.padding.left;
+        this.headers.forEach(function(d, i) {
+            const textColumn = self.g_text_columns.selectAll("text").filter(v => v.col === i),
+                colWidth = columnWidths[i];
+
+            if (d.to_right) {
+                return;
+            }
+
+            // get maximum column dimension and layout columns
+            textColumn.each(function() {
+                moveElement(d3.select(this), xStart, colWidth);
+            });
+
+            xStart += colWidth + 2 * textPadding;
+        });
+
+        this.leftTextWidth = xStart - this.padding.left;
+        this.plotXStart = xStart;
+
+        xStart += this.w + 2 * textPadding;
+        this.headers.forEach(function(d, i) {
+            const textColumn = self.g_text_columns.selectAll("text").filter(v => v.col === i),
+                colWidth = columnWidths[i];
+
+            if (!d.to_right) {
+                return;
+            }
+
+            // get maximum column dimension and layout columns
+            textColumn.each(function() {
+                moveElement(d3.select(this), xStart, colWidth);
+            });
+
+            xStart += colWidth + 2 * textPadding;
+        });
+
+        const rightOffset = this.hasRightText ? 2 * textPadding : 0;
+        this.textRightEnd = xStart - rightOffset;
+        this.rightTextWidth = this.hasRightText ? this.textRightEnd - this.plotXStart - this.w : 0;
         this.h = heights[heights.length - 1].max;
         this.row_heights = heights;
     }
@@ -1374,15 +1453,13 @@ class DataPivotVisualization extends D3Plot {
                 .selectAll("g")
                 .nodes()[1]
                 .getBBox(),
-            top = firstDataRow.y - this.textPadding,
-            textDims = this.g_text_columns.node().getBBox(),
-            left = textDims.width + textDims.x + this.padding.left;
+            top = firstDataRow.y - this.textPadding;
 
-        this.vis.attr("transform", `translate(${left},${top})`);
+        this.vis.attr("transform", `translate(${this.plotXStart},${top})`);
         this.bg_rect.attr("height", this.h);
 
         // resize SVG to account for new size
-        var w = this.text_width + this.padding.left + this.w + this.padding.right,
+        var w = this.textRightEnd + this.padding.right,
             svgDims = this.svg.getBBox(),
             h = svgDims.height + svgDims.y + this.padding.bottom;
 
@@ -1395,8 +1472,6 @@ class DataPivotVisualization extends D3Plot {
         this.full_width = w;
         this.full_height = h;
 
-        // render background text rectangles
-        this.calcBackgroundRectanglesAndGridlines();
         this.renderTextBackgroundRectangles();
     }
 }

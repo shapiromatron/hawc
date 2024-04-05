@@ -17,6 +17,7 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 from ..common.forms import BaseFormHelper, CopyForm, QuillField
+from ..udf.forms import UDFModelFormMixin
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
@@ -373,7 +374,7 @@ def dosegroup_formset_factory(groups, num_dose_groups):
     return FS(data)
 
 
-class EndpointForm(ModelForm):
+class EndpointForm(UDFModelFormMixin, ModelForm):
     class Meta:
         model = models.Endpoint
         fields = (
@@ -451,22 +452,8 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
+        self.set_udf_field(self.instance.assessment)
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
-
-        # User Defined Form
-        if assessment is None:
-            assessment = self.instance.get_assessment()
-        self.model_binding = UDFCache.get_model_binding_cache(
-            assessment=assessment, model=self.Meta.model
-        )
-        if self.model_binding:
-            udf_content = UDFCache.get_udf_contents_cache(
-                model_binding=self.model_binding, object_id=self.instance.id
-            )
-            initial = udf_content.content if udf_content is not None else None
-
-            udf = self.model_binding.form_field(label="User Defined Form fields", initial=initial)
-            self.fields["udf"] = udf
 
     @property
     def helper(self):

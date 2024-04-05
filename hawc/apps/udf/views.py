@@ -19,7 +19,6 @@ from hawc.apps.lit.models import ReferenceFilterTag
 
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from . import constants, forms, models
-from .cache import UDFCache
 
 
 # UDF views
@@ -254,14 +253,11 @@ class BindingViewSet(HtmxViewSet):
 
 
 class UDFDetailMixin:
-    """Mixin to add saved UDF contents to the context of a BaseDetail view."""
+    """Add UDF content to a BaseDetail."""
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        model_binding = UDFCache.get_model_binding_cache(self.assessment, self.model)
-        context["udf_content"] = (
-            UDFCache.get_udf_contents_cache(model_binding, self.object.pk)
-            if model_binding is not None
-            else None
+    def get_context_data(self, **kw):
+        context = super().get_context_data(**kw)
+        context.update(
+            udf_content=models.ModelUDFContent.get_instance(self.assessment, self.object)
         )
         return context

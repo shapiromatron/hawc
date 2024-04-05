@@ -8,12 +8,11 @@ from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessme
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
-from ..udf.cache import UDFCache
-from ..udf.models import ModelUDFContent
+from ..udf.forms import UDFModelFormMixin
 from . import models
 
 
-class BaseStudyForm(forms.ModelForm):
+class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
@@ -49,23 +48,10 @@ class BaseStudyForm(forms.ModelForm):
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
 
-        # User Definied Form
-        assessment = self.instance.get_assessment()
-        self.model_binding = UDFCache.get_model_binding_cache(
-            assessment=assessment, model=self.Meta.model
-        )
-        if self.model_binding:
-            udf_content = UDFCache.get_udf_contents_cache(
-                model_binding=self.model_binding, object_id=self.instance.id
-            )
-            initial = udf_content.content if udf_content is not None else None
-
-            udf = self.model_binding.form_field(label="User Defined Form fields", initial=initial)
-            self.fields["udf"] = udf
-
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
+        self.set_udf_field(self.instance.assessment)
         self.helper = self.setHelper()
 
     def setHelper(self, inputs: dict | None = None):
@@ -108,14 +94,6 @@ class BaseStudyForm(forms.ModelForm):
         instance = super().save(commit=commit)
         if commit and "internal_communications" in self.changed_data:
             instance.set_communications(self.cleaned_data["internal_communications"])
-        if commit and "udf" in self.changed_data:
-            udf_content, _ = ModelUDFContent.objects.update_or_create(
-                defaults=dict(content=self.cleaned_data["udf"]),
-                model_binding=self.model_binding,
-                content_type=self.model_binding.content_type,
-                object_id=instance.id,
-            )
-            UDFCache.set_udf_contents_cache(udf_content)
         return instance
 
 

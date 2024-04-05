@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("object_id", models.PositiveIntegerField(null=True)),
-                ("content", models.JSONField(blank=True, default=dict)),
+                ("content", models.JSONField(default=dict)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
@@ -39,5 +39,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
+        ),
+        migrations.AlterUniqueTogether(
+            name="modeludfcontent",
+            unique_together={("model_binding", "content_type", "object_id")},
         ),
     ]

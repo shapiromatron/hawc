@@ -1,77 +1,64 @@
 # Cache class for User Defined Forms.
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.db.models import Model
+from django.db import models
+from django.utils import safestring
 
-from hawc.apps.assessment.models import Assessment
-from hawc.apps.udf.models import ModelBinding, ModelUDFContent
-
+from ..assessment.models import Assessment
 from ..common.helper import cacheable
+from .models import ModelBinding
+
+
+def _get_mb_cache_key(assessment: Assessment, content_type: ContentType):
+    return f"assessment-{assessment.id}-udf-model-binding-{content_type.id}"
+
+
+def _get_model_binding(assessment: Assessment, Model: type[models.Model]):
+    return ModelBinding.get_binding(assessment, Model)
 
 
 class UDFCache:
     @classmethod
-    def get_model_binding_cache(
-        cls,
-        assessment: Assessment,
-        model: type[Model],
-        flush: bool = False,
-        cache_duration: int = -1,
-    ):
-        def _get_model_binding(assessment: Assessment, model: type[Model]):
-            # get UDF model binding for given assessment/model combo
-            return assessment.get_model_binding(model)
+    def get_model_binding(
+        cls, assessment: Assessment, Model: type[models.Model]
+    ) -> ModelBinding | None:
+        """Get model binding instance if one exists
 
-        cache_key = f"assessment-{assessment.pk}-{model}-model-binding"
-        return cacheable(
-            _get_model_binding,
-            cache_key,
-            flush,
-            cache_duration,
-            assessment=assessment,
-            model=model,
-        )
+        Args:
+            assessment (Assessment): assessment instance
+            Model (type[models.Model]): the model class
+
+        Returns:
+            A ModelBinding instance or None
+        """
+        ct = ContentType.objects.get_for_model(Model)
+        key = _get_mb_cache_key(assessment, ct)
+        return cacheable(_get_model_binding, key, assessment=assessment, Model=Model)
 
     @classmethod
     def clear_model_binding_cache(cls, model_binding: ModelBinding):
-        cache_key = f"assessment-{model_binding.assessment_id}-{model_binding.content_type.model}-model-binding"
-        cache.delete(cache_key)
+        """Clear ModelBinding cache"""
+        key = _get_mb_cache_key(model_binding.assessment, model_binding.content_type)
+        cache.delete(key)
+
+
+def _get_tag_cache_key(assessment_id: int) -> str:
+    return f"assessment-{assessment_id}-tag-forms"
+
+
+class TagCache:
+    @classmethod
+    def get_forms(cls, assessment: Assessment) -> dict[int, safestring.SafeText]:
+        key = _get_tag_cache_key(assessment.id)
+
+        def _get_forms(assessment: Assessment) -> dict[int, safestring.SafeText]:
+            bindings = assessment.udf_tag_bindings.select_related("form")
+            forms = {binding.tag_id: binding.get_form_html() for binding in bindings}
+            return forms
+
+        return cacheable(_get_forms, key, assessment=assessment)
 
     @classmethod
-    def get_udf_contents_cache(
-        cls,
-        model_binding: ModelBinding,
-        object_id: int | None,
-        flush: bool = False,
-        cache_duration: int = -1,
-    ):
-        def _get_udf_contents(model_binding, object_id):
-            # get saved UDF contents for this object id, if it exists
-            try:
-                udf_content = model_binding.saved_contents.get(object_id=object_id)
-                return udf_content
-            except ModelUDFContent.DoesNotExist:
-                return None
-
-        # if this is a new instance don't bother trying to fetch from the cache
-        if object_id is None:
-            return None
-        cache_key = f"model-binding-{model_binding.pk}-object-{object_id}-udf-contents"
-        return cacheable(
-            _get_udf_contents,
-            cache_key,
-            flush,
-            cache_duration,
-            model_binding=model_binding,
-            object_id=object_id,
-        )
-
-    @classmethod
-    def set_udf_contents_cache(
-        cls,
-        udf_content: ModelUDFContent,
-        cache_duration: int = -1,
-    ):
-        cache_key = f"model-binding-{udf_content.model_binding_id}-object-{udf_content.object_id}-udf-contents"
-        return cacheable(
-            lambda c: c, cache_key, flush=True, cache_duration=cache_duration, c=udf_content
-        )
+    def clear(cls, assessment_id: int):
+        key = _get_tag_cache_key(assessment_id)
+        cache.delete(key)

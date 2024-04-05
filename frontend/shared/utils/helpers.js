@@ -384,5 +384,9 @@ const helpers = {
             depth = keys.length;
         return groupToNest(group, depth);
     },
+    castNumberOrKeepString: text => {
+        const maybeNumber = parseFloat(text);
+        return isNaN(maybeNumber) ? text : maybeNumber;
+    },
 };
 export default helpers;

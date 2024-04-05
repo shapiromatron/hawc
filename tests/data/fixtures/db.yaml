@@ -1261,6 +1261,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.156609+00:00
+    email_verified_on: 2020-01-25 14:23:16.156609+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1277,6 +1278,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.170965+00:00
+    email_verified_on: 2020-01-25 14:23:16.170965+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1293,6 +1295,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.172427+00:00
+    email_verified_on: 2020-01-25 14:23:16.172427+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1309,6 +1312,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.173584+00:00
+    email_verified_on: 2020-01-25 14:23:16.173584+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -1325,6 +1329,7 @@
     license_v1_accepted: false
     license_v2_accepted: false
     date_joined: 2020-01-25 14:23:16.175169+00:00
+    email_verified_on: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
 - model: authtoken.token
@@ -2066,6 +2071,16 @@
     template: <h1>Resources</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.timespentediting
+  pk: 1
+  fields:
+    seconds: 5.0
+    assessment: 1
+    content_type:
+    - assessment
+    - assessment
+    object_id: 1
+    created: 2024-03-13 11:30:01.123456+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -10296,8 +10311,10 @@
     evidence_type: 3
     dose_units: null
     prefilters: {}
-    settings: {}
-    caption: ''
+    settings:
+      alt_text: Hello alt text
+      max_width: 600
+    caption: Hello caption.
     image: "summary/visual/images/iris.png"
     published: true
     sort_order: short_citation
@@ -10318,11 +10335,11 @@
       "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "percent control low", "high_field_name": "percent control high", "header_name": "percent
       control low", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "percent control mean", "header_name": "percent
       control mean", "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study
-      name", "header_style": "header", "text_style": "base", "dpe": "study", "field_index": "study name"}, {"field_name": "experiment name", "header_name": "experiment
-      name", "header_style": "header", "text_style": "base", "dpe": "experiment", "field_index": "experiment name"}, {"field_name": "animal group name", "header_name":
-      "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "field_index": "animal group name"}, {"field_name": "endpoint name",
-      "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe": "endpoint_complete", "field_index": "endpoint name"}, {"field_name":
-      "dose", "header_name": "dose (mg/kg/d)", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "dose"}], "barchart": {"dpe": "---", "field_name":
+      name", "header_style": "header", "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "experiment name", "header_name": "experiment
+      name", "header_style": "header", "text_style": "base", "dpe": "experiment", "to_right": false}, {"field_name": "animal group name", "header_name":
+      "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "to_right": false}, {"field_name": "endpoint name",
+      "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe": "endpoint_complete", "to_right": false}, {"field_name":
+      "dose", "header_name": "dose (mg/kg/d)", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name":
       "---", "error_low_field_name": "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style":
       "base", "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space":
       false}], "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name":
@@ -10408,7 +10425,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>caption</p>
     published: true
     created: 2020-05-08 17:48:36.143248+00:00
@@ -10432,11 +10449,8 @@
       2", "marker_style": "base", "dpe": "endpoint_complete", "conditional_formatting": []}, {"field_name": "Dose 3", "header_name": "Dose 3", "marker_style": "base",
       "dpe": "endpoint_complete", "conditional_formatting": []}, {"field_name": "Dose 4", "header_name": "Dose 4", "marker_style": "base", "dpe": "endpoint_complete",
       "conditional_formatting": []}, {"field_name": "Dose 5", "header_name": "Dose 5", "marker_style": "base", "dpe": "endpoint_complete", "conditional_formatting":
-      []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "study", "field_index":
-      "study name"}, {"field_name": "experiment name", "header_name": "experiment name", "header_style": "header", "text_style": "base", "dpe": "experiment", "field_index":
-      "experiment name"}, {"field_name": "animal group name", "header_name": "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group",
-      "field_index": "animal group name"}, {"field_name": "endpoint name", "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe":
-      "endpoint_complete", "field_index": "endpoint name"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
+      []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "experiment name", "header_name": "experiment name", "header_style": "header", "text_style": "base", "dpe": "experiment", "to_right": false}, {"field_name": "animal group name", "header_name": "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "to_right": false}, {"field_name": "endpoint name", "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe":
+      "endpoint_complete", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
       "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true},
       "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom":
       null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---",
@@ -10522,7 +10536,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
     created: 2020-05-08 17:52:21.928839+00:00
@@ -10542,11 +10556,11 @@
       []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name":
       "---", "header_name": "---", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---", "marker_style":
       "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header",
-      "text_style": "base", "dpe": "study", "field_index": "study name"}, {"field_name": "protocol name", "header_name": "protocol name", "header_style": "header",
-      "text_style": "base", "dpe": "meta_protocol", "field_index": "protocol name"}, {"field_name": "health outcome", "header_name": "health outcome", "header_style":
-      "header", "text_style": "base", "dpe": "meta_result", "field_index": "health outcome"}, {"field_name": "total references", "header_name": "total references",
-      "header_style": "header", "text_style": "base", "dpe": "meta_result", "field_index": "total references"}, {"field_name": "N", "header_name": "N", "header_style":
-      "header", "text_style": "base", "dpe": "meta_result", "field_index": "N"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
+      "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "protocol name", "header_name": "protocol name", "header_style": "header",
+      "text_style": "base", "dpe": "meta_protocol", "to_right": false}, {"field_name": "health outcome", "header_name": "health outcome", "header_style":
+      "header", "text_style": "base", "dpe": "meta_result", "to_right": false}, {"field_name": "total references", "header_name": "total references",
+      "header_style": "header", "text_style": "base", "dpe": "meta_result", "to_right": false}, {"field_name": "N", "header_name": "N", "header_style":
+      "header", "text_style": "base", "dpe": "meta_result", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
       "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true},
       "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom":
       null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---",
@@ -10632,7 +10646,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
     created: 2020-05-09 03:22:01.190725+00:00
@@ -10650,12 +10664,12 @@
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width":
-      150, "field_index": "study name"}, {"field_name": "study population name", "header_name": "study population name", "header_style": "header", "text_style": "base",
-      "dpe": "---", "max_width": 100, "field_index": "study population name"}, {"field_name": "outcome name", "header_name": "outcome name", "header_style": "header",
-      "text_style": "base", "dpe": "---", "field_index": "outcome name"}, {"field_name": "comparison set name", "header_name": "comparison set name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "max_width": 100, "field_index": "comparison set name"}, {"field_name": "exposure group name", "header_name":
-      "exposure group name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width": 100, "field_index": "exposure group name"}, {"field_name":
-      "N", "header_name": "N", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "N"}], "barchart": {"dpe": "---", "field_name": "---",
+      150, "to_right": false}, {"field_name": "study population name", "header_name": "study population name", "header_style": "header", "text_style": "base",
+      "dpe": "---", "max_width": 100, "to_right": false}, {"field_name": "outcome name", "header_name": "outcome name", "header_style": "header",
+      "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "comparison set name", "header_name": "comparison set name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "max_width": 100, "to_right": false}, {"field_name": "exposure group name", "header_name":
+      "exposure group name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width": 100, "to_right": false}, {"field_name":
+      "N", "header_name": "N", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---",
       "error_low_field_name": "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base",
       "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}],
       "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier":
@@ -10741,7 +10755,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>Example.</p>
     published: true
     created: 2020-05-11 02:26:51.725098+00:00
@@ -10760,11 +10774,11 @@
       "minimum dose", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "Dose 1", "header_name": "Dose 1", "marker_style":
       "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "Dose 2", "header_name": "Dose 2", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}, {"field_name": "Dose 3", "header_name": "Dose 3", "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name":
-      "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "study name"}, {"field_name": "chemical
-      name", "header_name": "chemical name", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "chemical name"}, {"field_name": "cell species",
-      "header_name": "cell species", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "cell species"}, {"field_name": "IVEndpoint name",
-      "header_name": "IVEndpoint name", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "IVEndpoint name"}, {"field_name": "---", "header_name":
-      "---", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "---"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name":
+      "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "chemical
+      name", "header_name": "chemical name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "cell species",
+      "header_name": "cell species", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "IVEndpoint name",
+      "header_name": "IVEndpoint name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "---", "header_name":
+      "---", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name":
       "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting":
       [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name":
       "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains",
@@ -10850,7 +10864,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:10:29.880052+00:00
@@ -10869,11 +10883,11 @@
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "dose", "header_name": "dose", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}, {"field_name": "---", "header_name": "---", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---",
       "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "study name"}, {"field_name": "chemical name", "header_name": "chemical name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "chemical name"}, {"field_name": "cell species", "header_name": "cell species", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "cell species"}, {"field_name": "IVEndpoint name", "header_name": "IVEndpoint name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "IVEndpoint name"}, {"field_name": "---", "header_name": "---", "header_style": "header", "text_style":
-      "base", "dpe": "---", "field_index": "---"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name": "---",
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "chemical name", "header_name": "chemical name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "cell species", "header_name": "cell species", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "IVEndpoint name", "header_name": "IVEndpoint name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "---", "header_name": "---", "header_style": "header", "text_style":
+      "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name": "---",
       "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true}, "spacers":
       [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name":
       "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---", "quantifier": "contains",
@@ -10959,7 +10973,7 @@
       "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity":
       0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke":
       "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c",
-      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:12:54.866928+00:00
@@ -11115,8 +11129,8 @@
   fields:
     assessment: 4
     content_type:
-    - animal
-    - endpoint
+    - study
+    - study
     form: 1
     creator:
     - pm@hawcproject.org
@@ -11132,6 +11146,19 @@
     - pm@hawcproject.org
     created: 2023-09-17 04:10:29.880052+00:00
     last_updated: 2023-09-17 04:15:33.309627+00:00
+- model: udf.modeludfcontent
+  pk: 1
+  fields:
+    model_binding: 1
+    content_type:
+    - study
+    - study
+    object_id: 9
+    content:
+      field1: test
+      field2: 123
+    created: 2024-03-12 15:19:07.533314+00:00
+    last_updated: 2024-03-12 15:19:07.533329+00:00
 - model: reversion.revision
   pk: 1
   fields:

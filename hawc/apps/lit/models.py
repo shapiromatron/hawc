@@ -30,7 +30,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..assessment.models import Log
-from ..common.helper import SerializerHelper, cacheable
+from ..common.helper import SerializerHelper, tryParseInt
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -731,24 +731,20 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         return tags
 
     @classmethod
-    def get_nested_tag_names(cls, assessment_pk: int):
-        """_summary_
+    def get_nested_tag_names(cls, assessment_pk: int) -> dict[int, str]:
+        """Return a dictionary of tag ID to fully nested name
 
         Args:
             assessment_pk (int): assessment id
-
         Returns:
             tag_names (dict): Keys are tag IDs, values are tag nested names
         """
-        tag_names = cacheable(
-            lambda: {
-                tag.id: tag.nested_name.replace("|", " ➤ ")
-                for tag in ReferenceFilterTag.annotate_nested_names(
-                    ReferenceFilterTag.get_assessment_qs(assessment_pk)
-                )
-            },
-            f"assessment-{assessment_pk}-tag-names",
-        )
+        tag_names = {
+            tag.id: tag.nested_name.replace("|", " ➤ ")
+            for tag in ReferenceFilterTag.annotate_nested_names(
+                ReferenceFilterTag.get_assessment_qs(assessment_pk)
+            )
+        }
         return tag_names
 
     @classmethod
@@ -924,11 +920,14 @@ class Reference(models.Model):
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
         the reference model has the required select and prefetch related, the tag comparisons
-        should not require any additional queries (but it may cause up to 5 db writes).
+        should not require any additional queries.
+
+        Also writes tag-level UDF data as needed.
 
         Args:
             user: The user requesting the tag changes
             tag_pks (list[int]): A list of tag IDs
+            udf_data (dict[int,dict]): UDF data
 
         Returns:
             bool: If tags were also saved as consensus for Reference
@@ -945,48 +944,47 @@ class Reference(models.Model):
             user_tag.is_resolved = True
         user_tag.save()
 
-        # save udf data if applicable
-        if udf_data is not None:
+        if udf_data:
             tags = ReferenceFilterTag.get_all_tags(self.assessment_id)
-            descendant_tags = cacheable(
-                lambda: ReferenceFilterTag.get_tree_descendants(tags),
-                f"assessment-{self.assessment_id}-tag-descendants",
-            )
-            form_errors = {}
+            descendant_tags = ReferenceFilterTag.get_tree_descendants(tags)
+            udf_validation_errors = {}
             for udf_tag, udf in udf_data.items():
-                # if there's any intersection between the descendant tags of the UDf tag and the tag_pks, create the udf
-                if not descendant_tags[int(udf_tag)].isdisjoint(tag_pks):
-                    try:
-                        # Get form from tag binding
-                        binding = TagBinding.objects.get(
-                            assessment=self.assessment_id, tag=int(udf_tag)
-                        )
-                        # use tag_pk prefix (same as form creation)
-                        empty_form = binding.form_instance()
-                        for field, data in udf.items():
-                            if isinstance(
-                                empty_form.fields[field.removeprefix(f"{udf_tag}-")],
-                                MultipleChoiceField,
-                            ) and not isinstance(udf[field], list):
-                                udf[field] = [data]
-                        form = binding.form_instance(prefix=int(udf_tag), data=udf)
-                        if form.is_valid():
-                            TagUDFContent.objects.update_or_create(
-                                reference_id=self.id,
-                                tag_binding_id=binding.id,
-                                defaults={"content": form.cleaned_data},
-                            )
-                        else:
-                            form_errors.update(
-                                {
-                                    f"{udf_tag}-{field}": errors
-                                    for (field, errors) in form.errors.items()
-                                }
-                            )
-                    except TagBinding.DoesNotExist:
-                        pass
-            if form_errors:
-                raise ValidationError(form_errors)
+                udf_tag_id = tryParseInt(udf_tag)
+                if not udf_tag_id:
+                    raise ValidationError({udf_tag: "UDF tag must be an integer"})
+
+                if not set(descendant_tags.get(udf_tag_id, [])).intersection(tag_pks):
+                    raise ValidationError("UDF binding not found for selected tags")
+
+                try:
+                    binding = TagBinding.objects.get(assessment=self.assessment_id, tag=udf_tag_id)
+                except TagBinding.DoesNotExist:
+                    raise ValidationError("UDF binding not found")
+
+                # handle edge-case where a select multiple only has one selected
+                # TODO - can this code + JS be removed to fix this issue?
+                empty_form = binding.form_instance()
+                for field, data in udf.items():
+                    if isinstance(
+                        empty_form.fields[field.removeprefix(f"{udf_tag}-")],
+                        MultipleChoiceField,
+                    ) and not isinstance(udf[field], list):
+                        udf[field] = [data]
+
+                form = binding.form_instance(prefix=udf_tag_id, data=udf)
+                if form.is_valid():
+                    TagUDFContent.objects.update_or_create(
+                        reference_id=self.id,
+                        tag_binding_id=binding.id,
+                        defaults={"content": form.cleaned_data},
+                    )
+                else:
+                    udf_validation_errors.update(
+                        {f"{udf_tag_id}-{field}": errors for (field, errors) in form.errors.items()}
+                    )
+
+            if udf_validation_errors:
+                raise ValidationError(udf_validation_errors)
 
         # determine if we should save the reference-level tags
         update_reference_tags = False
@@ -1038,9 +1036,7 @@ class Reference(models.Model):
         return self.ref_short_citation
 
     def get_tag_udf_contents(self):
-        values = self.saved_tag_contents.values("content", "tag_binding__tag")
-        # key is tag id, value is the saved udf content
-        return {value["tag_binding__tag"]: value["content"] for value in values}
+        return {t.tag_binding.tag_id: t.content for t in self.saved_tag_contents.all()}
 
     def to_dict(self):
         d = {}
@@ -1403,13 +1399,13 @@ class Workflow(models.Model):
         return f"{self.title} Workflow"
 
     def get_absolute_url(self):
-        return reverse("lit:workflow-detail", args=[self.pk])
+        return reverse("lit:workflow-htmx", args=[self.pk, "read"])
 
     def get_edit_url(self):
-        return reverse("lit:workflow-update", args=[self.pk])
+        return reverse("lit:workflow-htmx", args=[self.pk, "update"])
 
     def get_delete_url(self):
-        return reverse("lit:workflow-delete", args=[self.pk])
+        return reverse("lit:workflow-htmx", args=[self.pk, "delete"])
 
     def get_assessment(self):
         return self.assessment

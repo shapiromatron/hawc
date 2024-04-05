@@ -153,28 +153,9 @@ urlpatterns = [
     ),
     # workflow objects
     path(
-        "workflows/<int:pk>/create/",
+        "workflows/<int:pk>/<slug:action>/",
         views.WorkflowViewSet.as_view(),
-        {"action": "create"},
-        name="workflow-create",
-    ),
-    path(
-        "workflows/<int:pk>/",
-        views.WorkflowViewSet.as_view(),
-        {"action": "read"},
-        name="workflow-detail",
-    ),
-    path(
-        "workflows/<int:pk>/update/",
-        views.WorkflowViewSet.as_view(),
-        {"action": "update"},
-        name="workflow-update",
-    ),
-    path(
-        "workflows/<int:pk>/delete/",
-        views.WorkflowViewSet.as_view(),
-        {"action": "delete"},
-        name="workflow-delete",
+        name="workflow-htmx",
     ),
     path("api/", include((router.urls, "api"))),
 ]

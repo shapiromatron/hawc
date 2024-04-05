@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&id=10357793&id=20358181&id=6355494&id=8998951&id=3383337
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=10357793&id=20358181&id=6355494&id=8998951&id=3383337
     headers:
       Accept:
       - '*/*'
@@ -9,168 +9,419 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '90'
+      - '135'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">10357793</PMID><DateCompleted><Year>1999</Year><Month>07</Month><Day>22</Day></DateCompleted><DateRevised><Year>2019</Year><Month>05</Month><Day>13</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0143-3334</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>20</Volume><Issue>6</Issue><PubDate><Year>1999</Year><Month>Jun</Month></PubDate></JournalIssue><Title>Carcinogenesis</Title><ISOAbbreviation>Carcinogenesis</ISOAbbreviation></Journal><ArticleTitle>Hepatic
+        hyperplasia and cancer in rats: alterations in copper metabolism.</ArticleTitle><Pagination><StartPage>1091</StartPage><EndPage>1096</EndPage><MedlinePgn>1091-6</MedlinePgn></Pagination><Abstract><AbstractText>We
+        previously demonstrated that rats exposed to the peroxisome proliferator (PP)
+        diethylhexylphthalate (DEHP) had reduced serum ceruloplasmin (CP) oxidase
+        activity, which suggests tissue copper deposition. Copper is highly toxic
+        in excess, and results in cellular damage and hepatocellular carcinomas (HCC).
+        This study addresses changes in expression of copper-related genes and metal
+        accumulation in hyperplastic liver and tumors induced by PP. Male rats were
+        fed diets containing DEHP or clofibrate (CLF) for 3-60 days (hyperplasia)
+        and 4-chloro-6-(2,3 xylidino)-2-pyrimidinyl-thio(N-beta-hydroxyethyl) acetamide
+        for 10 months (HCC). During hyperplasia, an immediate and progressive decrease
+        in serum CP activity was observed (P &lt; 0.05), as were reductions in mRNA
+        levels for both CP and Wilson''s disease gene (WD gene, a P-type ATPase) (P
+        &lt; 0.05). Tumor-bearing rats had lower serum CP activity (P &lt; 0.05),
+        and CP and WD gene mRNA levels were reduced in tumors (P &lt; 0.05), and in
+        liver surrounding tumors (SL) (P &lt; 0.05). Metallothionein mRNA showed no
+        consistent changes during hyperplasia. Tumors showed a 2.5-fold induction
+        of metallothionein mRNA (P &lt; 0.05), and a 1.2-fold increase in SL. Temporal
+        increases in liver copper content occurred during hyperplasia, with increases
+        of 2-fold (DEHP) and 3.3-fold (CLF) at 60 days (P &lt; 0.05). Copper content
+        was 2.2-fold higher in tumors (P &lt; 0.05) and 1.7-fold higher in SL; iron
+        did not increase and zinc decreased temporally. Thus, copper accumulation
+        and changes in copper-related gene expression may be contributing factors
+        in liver neoplasia in PP-treated rats. Loss of CP results in decreased free
+        radical scavenger capacity and thus may enhance oxidative damage induced by
+        PPs.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author ValidYN="Y"><LastName>Eagon</LastName><ForeName>P
+        K</ForeName><Initials>PK</Initials><AffiliationInfo><Affiliation>VA Medical
+        Center, Pittsburgh, PA 15240, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Teepe</LastName><ForeName>A G</ForeName><Initials>AG</Initials></Author><Author
+        ValidYN="Y"><LastName>Elm</LastName><ForeName>M S</ForeName><Initials>MS</Initials></Author><Author
+        ValidYN="Y"><LastName>Tadic</LastName><ForeName>S D</ForeName><Initials>SD</Initials></Author><Author
+        ValidYN="Y"><LastName>Epley</LastName><ForeName>M J</ForeName><Initials>MJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Beiler</LastName><ForeName>B E</ForeName><Initials>BE</Initials></Author><Author
+        ValidYN="Y"><LastName>Shinozuka</LastName><ForeName>H</ForeName><Initials>H</Initials></Author><Author
+        ValidYN="Y"><LastName>Rao</LastName><ForeName>K N</ForeName><Initials>KN</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>CA53453</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType><PublicationType UI="D013487">Research
+        Support, U.S. Gov''t, P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Carcinogenesis</MedlineTA><NlmUniqueID>8008055</NlmUniqueID><ISSNLinking>0143-3334</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D011743">Pyrimidines</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D012333">RNA, Messenger</NameOfSubstance></Chemical><Chemical><RegistryNumber>53PF01Q249</RegistryNumber><NameOfSubstance
+        UI="D002995">Clofibric Acid</NameOfSubstance></Chemical><Chemical><RegistryNumber>789U1901C5</RegistryNumber><NameOfSubstance
+        UI="D003300">Copper</NameOfSubstance></Chemical><Chemical><RegistryNumber>9038-94-2</RegistryNumber><NameOfSubstance
+        UI="D008668">Metallothionein</NameOfSubstance></Chemical><Chemical><RegistryNumber>969LVT6GJ2</RegistryNumber><NameOfSubstance
+        UI="C016908">pirinixil</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        1.16.3.1</RegistryNumber><NameOfSubstance UI="D002570">Ceruloplasmin</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002570" MajorTopicYN="N">Ceruloplasmin</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002995" MajorTopicYN="N">Clofibric Acid</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003300" MajorTopicYN="N">Copper</DescriptorName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006965" MajorTopicYN="N">Hyperplasia</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008099" MajorTopicYN="N">Liver</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName><QualifierName
+        UI="Q000473" MajorTopicYN="Y">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008114" MajorTopicYN="N">Liver Neoplasms, Experimental</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="N">chemically induced</QualifierName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008668" MajorTopicYN="N">Metallothionein</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011743" MajorTopicYN="N">Pyrimidines</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012333" MajorTopicYN="N">RNA, Messenger</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011916" MajorTopicYN="N">Rats, Inbred F344</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1999</Year><Month>6</Month><Day>5</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1999</Year><Month>6</Month><Day>5</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1999</Year><Month>6</Month><Day>5</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">10357793</ArticleId><ArticleId IdType="doi">10.1093/carcin/20.6.1091</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">20358181</PMID><DateCompleted><Year>2011</Year><Month>04</Month><Day>18</Day></DateCompleted><DateRevised><Year>2013</Year><Month>11</Month><Day>21</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1432-0738</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>85</Volume><Issue>1</Issue><PubDate><Year>2011</Year><Month>Jan</Month></PubDate></JournalIssue><Title>Archives
+        of toxicology</Title><ISOAbbreviation>Arch Toxicol</ISOAbbreviation></Journal><ArticleTitle>26-Week
+        carcinogenicity study of di-isodecyl phthalate by dietary administration to
+        CB6F1-rasH2 transgenic mice.</ArticleTitle><Pagination><StartPage>59</StartPage><EndPage>66</EndPage><MedlinePgn>59-66</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1007/s00204-010-0536-6</ELocationID><Abstract><AbstractText>This
+        study examined the carcinogenic potential of di-isodecyl phthalate (DIDP)
+        in rasH2 mice. DIDP was administered to 15 rasH2 mice/gender/group at dietary
+        levels of 0, 0.1, 0.33, or 1% and 15 wild-type mice/gender/group at dietary
+        levels of 0 and 1% for 26 weeks. Non-neoplastic changes were observed in the
+        liver (parenchymal inflammation, fatty changes, diffuse hepatocyte hypertrophy
+        with eosinophilic granules and focal necrosis) and kidneys (tubular basophilia
+        and tubular hyperplasia) after administration of DIDP in the rasH2 and wild-type
+        mice. In the neoplastic lesions, there were a higher number of hepatocellular
+        adenomas in the male rasH2 mice receiving 1% DIDP, compared with the findings
+        in the liver of control rasH2 mice or wild-type mice. The incidence of hepatocellular
+        adenomas in the 0.1, 0.33, and 1% DIDP exposed rasH2 mice was 7% (1/15), 7%
+        (1/15), and 33% (5/15), respectively. This study adds a set of results for
+        an additional test chemical for the performance of the rasH2 short-term transgenic
+        model to the existing database of 3 compounds (WY-14643, DEHP, and clofibrate)
+        tested in the ILSI/HESI ACT project.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Cho</LastName><ForeName>Wan-Seob</ForeName><Initials>WS</Initials><AffiliationInfo><Affiliation>Centre
+        for Inflammation Research, The Queen''s Medical Research Institute, The University
+        of Edinburgh, UK.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Jeong</LastName><ForeName>Jayoung</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Choi</LastName><ForeName>Mina</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Park</LastName><ForeName>Sue Nie</ForeName><Initials>SN</Initials></Author><Author
+        ValidYN="Y"><LastName>Han</LastName><ForeName>Beom Seok</ForeName><Initials>BS</Initials></Author><Author
+        ValidYN="Y"><LastName>Son</LastName><ForeName>Woo-Chan</ForeName><Initials>WC</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2010</Year><Month>04</Month><Day>01</Day></ArticleDate></Article><MedlineJournalInfo><Country>Germany</Country><MedlineTA>Arch
+        Toxicol</MedlineTA><NlmUniqueID>0417615</NlmUniqueID><ISSNLinking>0340-5761</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D002273">Carcinogens</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010795">Phthalic Acids</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D011743">Pyrimidines</NameOfSubstance></Chemical><Chemical><RegistryNumber>684-93-5</RegistryNumber><NameOfSubstance
+        UI="D008770">Methylnitrosourea</NameOfSubstance></Chemical><Chemical><RegistryNumber>86C4MRT55A</RegistryNumber><NameOfSubstance
+        UI="C006253">pirinixic acid</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>HPN91K7FU3</RegistryNumber><NameOfSubstance
+        UI="D002994">Clofibrate</NameOfSubstance></Chemical><Chemical><RegistryNumber>WF93T741QI</RegistryNumber><NameOfSubstance
+        UI="C042080">diisodecyl phthalate</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D018248" MajorTopicYN="N">Adenoma, Liver Cell</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="Y">chemically induced</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000284" MajorTopicYN="N">Administration, Oral</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015197" MajorTopicYN="N">Carcinogenicity Tests</DescriptorName><QualifierName
+        UI="Q000379" MajorTopicYN="Y">methods</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002273" MajorTopicYN="N">Carcinogens</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002994" MajorTopicYN="N">Clofibrate</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004195" MajorTopicYN="N">Disease Models, Animal</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011905" MajorTopicYN="N">Genes, ras</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008114" MajorTopicYN="N">Liver Neoplasms, Experimental</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="Y">chemically induced</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008770" MajorTopicYN="N">Methylnitrosourea</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008822" MajorTopicYN="N">Mice, Transgenic</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010795" MajorTopicYN="N">Phthalic Acids</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011743" MajorTopicYN="N">Pyrimidines</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013997" MajorTopicYN="N">Time Factors</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2009</Year><Month>11</Month><Day>7</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2010</Year><Month>3</Month><Day>18</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2010</Year><Month>4</Month><Day>2</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2010</Year><Month>4</Month><Day>2</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2011</Year><Month>4</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">20358181</ArticleId><ArticleId IdType="doi">10.1007/s00204-010-0536-6</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">6355494</PMID><DateCompleted><Year>1983</Year><Month>12</Month><Day>17</Day></DateCompleted><DateRevised><Year>2013</Year><Month>11</Month><Day>21</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0098-4108</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>12</Volume><Issue>1</Issue><PubDate><Year>1983</Year><Month>Jul</Month></PubDate></JournalIssue><Title>Journal
+        of toxicology and environmental health</Title><ISOAbbreviation>J Toxicol Environ
+        Health</ISOAbbreviation></Journal><ArticleTitle>The carcinogenicity of di(2-ethylhexyl)
+        phthalate (DEHP) in perspective.</ArticleTitle><Pagination><StartPage>159</StartPage><EndPage>169</EndPage><MedlinePgn>159-69</MedlinePgn></Pagination><Abstract><AbstractText>The
+        commonly used plasticizer di(2-ethylhexyl) phthalate (DEHP) was recently tested
+        for chronic toxic potential by incorporation into the diet of rats and mice
+        for approximately 2 yr. Upon reviewing the test results, the sponsoring organization
+        concluded that DEHP was carcinogenic to the rats and mice, as indicated by
+        increased occurrences of liver tumors in the DEHP-exposed animals in comparison
+        to controls. Another group has disagreed with this conclusion, however, citing
+        perceived methodological deficiencies and improper interpretations in the
+        study, and has also suggested that rodents may not be adequate models of human
+        response to DEHP. This communication compares the conduct of the DEHP bioassay
+        favorably with state-of-the-art procedures in animal carcinogenicity testing
+        and documents approval of the study interpretations by several independent
+        peer review groups. The carcinogenic potential of DEHP is placed in perspective
+        by evaluating the evidence for DEHP-induced tumors in rodent species in light
+        of dose response relationships, other biochemical and toxicological effects
+        of DEHP, and its comparative metabolism and disposition in rodent and primate
+        species. A composite analysis of the currently available information indicates
+        that DEHP has been shown to be carcinogenic to rodents in a valid chronic
+        test, indicating that it should be considered as a potential carcinogen in
+        humans, as well. Further experimental inquiry will be required, however, to
+        accurately assess the potential health risks posed to humans by exposure to
+        small amounts of this plasticizer.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Kluwe</LastName><ForeName>W M</ForeName><Initials>WM</Initials></Author><Author
+        ValidYN="Y"><LastName>Haseman</LastName><ForeName>J K</ForeName><Initials>JK</Initials></Author><Author
+        ValidYN="Y"><LastName>Huff</LastName><ForeName>J E</ForeName><Initials>JE</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D003160">Comparative Study</PublicationType><PublicationType UI="D016428">Journal
+        Article</PublicationType><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>J Toxicol Environ Health</MedlineTA><NlmUniqueID>7513622</NlmUniqueID><ISSNLinking>0098-4108</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010795">Phthalic Acids</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010968">Plasticizers</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001835" MajorTopicYN="N">Body Weight</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName><QualifierName UI="Q000633"
+        MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004305" MajorTopicYN="N">Dose-Response Relationship, Drug</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006168" MajorTopicYN="N">Guinea Pigs</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008452" MajorTopicYN="N">Maximum Allowable Concentration</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008722" MajorTopicYN="N">Methods</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009374" MajorTopicYN="N">Neoplasms, Experimental</DescriptorName><QualifierName
+        UI="Q000139" MajorTopicYN="Y">chemically induced</QualifierName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009928" MajorTopicYN="N">Organ Specificity</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010795" MajorTopicYN="N">Phthalic Acids</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010968" MajorTopicYN="N">Plasticizers</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName><QualifierName UI="Q000633"
+        MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013045" MajorTopicYN="N">Species Specificity</DescriptorName></MeshHeading></MeshHeadingList><NumberOfReferences>35</NumberOfReferences></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1983</Year><Month>7</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1983</Year><Month>7</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1983</Year><Month>7</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">6355494</ArticleId><ArticleId IdType="doi">10.1080/15287398309530414</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">8998951</PMID><DateCompleted><Year>1997</Year><Month>01</Month><Day>17</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>09</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0272-0590</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>31</Volume><Issue>1</Issue><PubDate><Year>1996</Year><Month>May</Month></PubDate></JournalIssue><Title>Fundamental
+        and applied toxicology : official journal of the Society of Toxicology</Title><ISOAbbreviation>Fundam
+        Appl Toxicol</ISOAbbreviation></Journal><ArticleTitle>Oncogenicity testing
+        of 2-ethylhexanol in Fischer 344 rats and B6C3F1 mice.</ArticleTitle><Pagination><StartPage>29</StartPage><EndPage>41</EndPage><MedlinePgn>29-41</MedlinePgn></Pagination><Abstract><AbstractText>2-Ethylhexanol
+        (2EH) is a weak nongenotoxic hepatic peroxisome proliferator in the rat. It
+        is a high-volume chemical intermediate in the preparation of the plasticizers
+        bis-(2-ethylhexyl) adipate (DEHA), bis-(2-ethylhexyl) phthalate (DEHP), and
+        tris-(2-ethylhexyl) phosphate (TEHP), which are weak hepatocellular tumorigens
+        in female mice. In consequence, the oncogenic potential of 2EH was evaluated
+        in male (M) and female (F) rats and mice (50 animals/sex/group). Oral gavage
+        doses of 2EH in 0.005% aqueous Cremophor EL (polyoxyl-35 castor oil) were
+        given five times a week to rats: 0 (water), 0 (vehicle), 50, 150, and 500
+        mg/kg for 24 months, and to mice: 0 (water), 0 (vehicle), 50, 200, and 750
+        mg/kg for 18 months. Statistical comparisons of data were made between vehicle
+        controls and treatment groups. There were no differences of biological significance
+        between data from vehicle and water control groups. In rats, there were no
+        dose-related changes at 50 mg/kg. There was reduced body weight gain at 150
+        mg/kg (M, 16; F, 12%) and 500 mg/kg (M, 33; F, 31%) and an increased incidence
+        of lethargy and unkemptness. There were dose-related increases in relative
+        liver, stomach, brain, kidney, and testis weights at sacrifice. Female rat
+        mortality was markedly increased at 500 mg/kg. There was marked aspiration-induced
+        bronchopneumonia in rats at 500 mg/kg; hematologic, gross, and microscopic
+        changes, including tumors, were otherwise comparable among all rat groups.
+        In mice at 50 and 200 mg/kg there were no dose-related changes and essentially
+        no time-dependent or time-independent adverse trends in liver tumor incidence
+        at the 5% significance level. At 750 mg/kg mouse body weight gain was reduced
+        (M, 26; F, 24%), and mortality increased (M and F, 30%) versus vehicle controls.
+        At 750 mg/kg there was a slight increase in nonneoplastic focal hyperplasia
+        in the forestomach of mice (M 5/50, F 4/50) versus vehicle controls (M 1/50,
+        F 1/50). There were increases in mouse relative liver (F, 21%) and stomach
+        (M, 13%; F, 19%) weights at 750 mg/kg. There was a 12% incidence of hepatic
+        basophilic foci and an 18% incidence of hepatocellular carcinomas in male
+        mice at 750 mg/kg, not statistically significant compared with either control
+        by Fisher''s exact test. There was a 12% incidence of hepatic basophilic foci
+        and a 10% incidence of hepatocellular carcinomas in female mice at 750 mg/kg,
+        statistically significant (p &lt; 0.05) compared with vehicle but not with
+        water controls by Fisher''s exact test. There were no metastases. Time-dependent
+        and -independent statistical analyses showed an adverse trend in the incidence
+        of hepatocellular carcinomas in male and female mice, correlated with toxicity
+        (expressed as mortality) at 750 mg/kg. The time-adjusted incidence of hepatocellular
+        carcinomas in male mice (18.8%) was within the historical normal range at
+        the testing facility (0-22%), but that in females (13.1%) lay outside the
+        normal range (0-2%). Under the conditions of these studies 2EH was not oncogenic
+        in rats, but there were weak adverse trends in hepatocellular carcinoma incidence
+        in mice at high dose levels which may have been associated with toxicity.
+        The major effects of chronic dosing were mortality in female rats at 500 mg/kg
+        and in male and female mice at 750 mg/kg, accompanied by reductions in body
+        weight gain in rats at 150 and 500 mg/kg and in mice at 750 mg/kg. Direct
+        comparison of any tumorogenic effects of 2EH given alone to female mice with
+        those due to 2EH formed in vivo from DEHA, DEHP, or TEHP is limited by the
+        high mortality caused by 2ER in female mice at equivalent doses of 2EH. While
+        2EH may be a contributing factor in the hepatocellular carcinogenesis in female
+        mice associated with the chronic administration of DEHA and DEHP, it is unlikely
+        to be the entire proximate carcinogen.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Astill</LastName><ForeName>B
+        D</ForeName><Initials>BD</Initials><AffiliationInfo><Affiliation>Toxicology
+        Research Task Group, Chemical Manufacturers Association, Washington, DC 20037,
+        USA.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Gingell</LastName><ForeName>R</ForeName><Initials>R</Initials></Author><Author
+        ValidYN="Y"><LastName>Guest</LastName><ForeName>D</ForeName><Initials>D</Initials></Author><Author
+        ValidYN="Y"><LastName>Hellwig</LastName><ForeName>J</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Hodgson</LastName><ForeName>J R</ForeName><Initials>JR</Initials></Author><Author
+        ValidYN="Y"><LastName>Kuettler</LastName><ForeName>K</ForeName><Initials>K</Initials></Author><Author
+        ValidYN="Y"><LastName>Mellert</LastName><ForeName>W</ForeName><Initials>W</Initials></Author><Author
+        ValidYN="Y"><LastName>Murphy</LastName><ForeName>S R</ForeName><Initials>SR</Initials></Author><Author
+        ValidYN="Y"><LastName>Sielken</LastName><ForeName>R L</ForeName><Initials>RL</Initials><Suffix>Jr</Suffix></Author><Author
+        ValidYN="Y"><LastName>Tyler</LastName><ForeName>T R</ForeName><Initials>TR</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Fundam Appl Toxicol</MedlineTA><NlmUniqueID>8200838</NlmUniqueID><ISSNLinking>0272-0590</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D002273">Carcinogens</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D000441">Hexanols</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D014677">Pharmaceutical Vehicles</NameOfSubstance></Chemical><Chemical><RegistryNumber>XZV7TAA77P</RegistryNumber><NameOfSubstance
+        UI="C034017">2-ethylhexanol</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001522" MajorTopicYN="N">Behavior, Animal</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001772" MajorTopicYN="N">Blood Cell Count</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001835" MajorTopicYN="N">Body Weight</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015197" MajorTopicYN="N">Carcinogenicity Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002273" MajorTopicYN="N">Carcinogens</DescriptorName><QualifierName UI="Q000008"
+        MajorTopicYN="N">administration &amp; dosage</QualifierName><QualifierName
+        UI="Q000633" MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004435" MajorTopicYN="N">Eating</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000441" MajorTopicYN="N">Hexanols</DescriptorName><QualifierName UI="Q000008"
+        MajorTopicYN="N">administration &amp; dosage</QualifierName><QualifierName
+        UI="Q000633" MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007441" MajorTopicYN="N">Intubation, Gastrointestinal</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008815" MajorTopicYN="N">Mice, Inbred Strains</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009929" MajorTopicYN="N">Organ Size</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014677" MajorTopicYN="N">Pharmaceutical Vehicles</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011916" MajorTopicYN="N">Rats, Inbred F344</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1996</Year><Month>5</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2001</Year><Month>3</Month><Day>28</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1996</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">8998951</ArticleId><ArticleId IdType="doi">10.1006/faat.1996.0073</ArticleId><ArticleId
+        IdType="pii">S0272059096900731</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">3383337</PMID><DateCompleted><Year>1988</Year><Month>08</Month><Day>03</Day></DateCompleted><DateRevised><Year>2019</Year><Month>05</Month><Day>10</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0143-3334</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>9</Volume><Issue>7</Issue><PubDate><Year>1988</Year><Month>Jul</Month></PubDate></JournalIssue><Title>Carcinogenesis</Title><ISOAbbreviation>Carcinogenesis</ISOAbbreviation></Journal><ArticleTitle>Failure
+        of the peroxisome proliferator WY-14,643 to induce unscheduled DNA synthesis
+        in rat hepatocytes following in vivo treatment.</ArticleTitle><Pagination><StartPage>1179</StartPage><EndPage>1183</EndPage><MedlinePgn>1179-83</MedlinePgn></Pagination><Abstract><AbstractText>Peroxisome
+        proliferator hepatocarcinogens lack genotoxic activity in numerous in vitro
+        assays using non-target cells which do not respond with peroxisome proliferation.
+        Therefore, the effect of in vivo treatment with WY-14,643 on DNA repair was
+        quantitated in rat hepatocytes, the target cell for carcinogenesis. Palmitoyl
+        CoA oxidase and carnitine acetyltransferase activities in isolated hepatocytes
+        were elevated by WY-14,643 (50 mg/kg/day by gavage for up to 5 consecutive
+        days) and by WY-14,643 (0.1%) or di(2-ethyl-hexyl)phthalate (DEHP) (1.2%)
+        feeding (for up to 28 days), indicating peroxisome proliferation had occurred.
+        DNA repair as unscheduled DNA synthesis (UDS) was measured autoradiographically
+        as net nuclear grains following thymidine incorporation in primary hepatocyte
+        cultures. Treatment of rats with WY-14,643 (gavage or feeding) or DEHP (feeding)
+        did not induce UDS. Addition of 2-acetylaminofluorene to replicate cultures
+        demonstrated that WY-14,643 or DEHP treatment did not prevent repair response.
+        Additional cultures were treated with H2O2 (0.8 mM H2O2 3x at 1-h intervals)
+        to evaluate the ability of UDS to detect any repair which may be induced by
+        peroxisomal metabolism. H2O2 did not induce UDS at this concentration, nor
+        did it prevent 2-acetylaminofluorene-induced repair. UDS was, however, observed
+        in a separate experiment using a higher concentration of H2O2. In summary,
+        a highly carcinogenic peroxisome proliferator did not induce UDS in the target
+        cell for carcinogenesis in spite of peroxisome proliferation following in
+        vivo treatment.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Cattley</LastName><ForeName>R C</ForeName><Initials>RC</Initials><AffiliationInfo><Affiliation>Chemical
+        Industry Institute of Toxicology, Research Triangle Park, NC 27709.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Smith-Oliver</LastName><ForeName>T</ForeName><Initials>T</Initials></Author><Author
+        ValidYN="Y"><LastName>Butterworth</LastName><ForeName>B E</ForeName><Initials>BE</Initials></Author><Author
+        ValidYN="Y"><LastName>Popp</LastName><ForeName>J A</ForeName><Initials>JA</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>CA 07945</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013487">Research
+        Support, U.S. Gov''t, P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Carcinogenesis</MedlineTA><NlmUniqueID>8008055</NlmUniqueID><ISSNLinking>0143-3334</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D011743">Pyrimidines</NameOfSubstance></Chemical><Chemical><RegistryNumber>86C4MRT55A</RegistryNumber><NameOfSubstance
+        UI="C006253">pirinixic acid</NameOfSubstance></Chemical><Chemical><RegistryNumber>9007-49-2</RegistryNumber><NameOfSubstance
+        UI="D004247">DNA</NameOfSubstance></Chemical><Chemical><RegistryNumber>9M98QLJ2DL</RegistryNumber><NameOfSubstance
+        UI="D015073">2-Acetylaminofluorene</NameOfSubstance></Chemical><Chemical><RegistryNumber>BBX060AN9V</RegistryNumber><NameOfSubstance
+        UI="D006861">Hydrogen Peroxide</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        1.-</RegistryNumber><NameOfSubstance UI="D010088">Oxidoreductases</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        1.3.3.-</RegistryNumber><NameOfSubstance UI="C028427">palmitoyl CoA oxidase</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.3.1.7</RegistryNumber><NameOfSubstance UI="D002332">Carnitine O-Acetyltransferase</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D015073" MajorTopicYN="N">2-Acetylaminofluorene</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="N">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002332" MajorTopicYN="N">Carnitine O-Acetyltransferase</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004247" MajorTopicYN="N">DNA</DescriptorName><QualifierName UI="Q000096"
+        MajorTopicYN="N">biosynthesis</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004260" MajorTopicYN="N">DNA Repair</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="N">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006861" MajorTopicYN="N">Hydrogen Peroxide</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="N">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D066298" MajorTopicYN="N">In Vitro Techniques</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008099" MajorTopicYN="N">Liver</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008830" MajorTopicYN="N">Microbodies</DescriptorName><QualifierName UI="Q000502"
+        MajorTopicYN="Y">physiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010088" MajorTopicYN="N">Oxidoreductases</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011743" MajorTopicYN="N">Pyrimidines</DescriptorName><QualifierName UI="Q000494"
+        MajorTopicYN="Y">pharmacology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1988</Year><Month>7</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1988</Year><Month>7</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1988</Year><Month>7</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">3383337</ArticleId><ArticleId IdType="doi">10.1093/carcin/9.7.1179</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -185,30 +436,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Mon, 07 Mar 2022 03:15:06 GMT
+      - Tue, 20 Feb 2024 16:41:01 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD6ED2C856ED2500004BB03A6012D1.1.1.m_3
+      - D0BD9F070703C0B500005BDA74037ED8.1.1.m_3
       NCBI-SID:
-      - 3CA260ED0F7BC5DF_C864SID
+      - E8078A258278320C_5307SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3CA260ED0F7BC5DF_C864SID; domain=.nih.gov; path=/; expires=Tue, 07
-        Mar 2023 03:15:07 GMT
+      - ncbi_sid=E8078A258278320C_5307SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:41:02 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

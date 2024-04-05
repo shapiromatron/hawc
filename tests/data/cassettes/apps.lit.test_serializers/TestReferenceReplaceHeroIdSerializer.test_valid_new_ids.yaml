@@ -9,12 +9,46 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1010101,1010102/recordsperpage/100.json
   response:
     body:
-      string: '{"results":[{"REFERENCE_ID":1010101,"ABSTRACT":"BIOSIS  COPYRIGHT:
+      string: '{"results":[{"REFERENCE_ID":1010102,"ABSTRACT":"The project ''Accumulation
+        of environmental risks'' was aimed at developing methods to illustrate the
+        geographical differences in risks to human health due to several types of
+        environmental pollution. The following risks were considered: possible major
+        accidents, radioactive substances and radiation, several carcinogenic substances
+        in air and environmental noise, with the methods used based on the risk concept
+        implemented in the Netherlands environmental policy. Starting with information
+        on  sources and emissions of several contaminants, their dispersion in air
+        and human exposure to them were calculated, and the effects on human health
+        estimated. The results were presented in a number of national maps. In spite
+        of the complexity of discussions on risk-related subjects, applying the methods
+        developed during the project has been shown to lead to insight into the geographical
+        distribution and the comparison of different kinds of risk. The maps on possible
+        major accidents and","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010102","hasPDF":true,"YEAR":1998,"allAuthors":["Pruppers,
+        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME"],"HEROID":1010102,"id":"1010102","project_key":[420,3008],"referencetype":["journal
+        article"],"type":"reference","doi":"10.1016/s0304-3894(98)00122-8","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
+        (ACN)|Legacy (private)","IRIS|Acrylonitrile (ACN)|Feb 2012 search and screening|2012
+        New Search Results pre2003","Other|Scientific Integrity Program|Lit Search
+        Feb 2021|WOS"],"category_key":[2,18],"PROJECTS":[{"PROJECT":"Acrylonitrile
+        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":"2721","USAGE":"Legacy (private)","USAGES":[]},{"USAGE_ID":"2572","USAGE":"Feb
+        2012 search and screening","USAGES":[{"USAGE_ID":"550","USAGE":"2012 New Search
+        Results pre2003","USAGES":[]}]}]},{"PROJECT":"Scientific Integrity Program","PROJECT_ID":3008,"USAGES":[{"USAGE_ID":"29876","USAGE":"Lit
+        Search Feb 2021","USAGES":[{"USAGE_ID":"29877","USAGE":"WOS","USAGES":[]}]}]}],"tag_path_key":["2|420|2721","2|420|2572|550","18|3008|29876|29877"],"firstAuthor":"Pruppers","AUTHORS":"Pruppers,
+        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME","noPDFAvailable":false,"tag_path_type":["category|project|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
+        of Hazardous Materials 61:187-196.","wosid":"WOS:000075646300023","TITLE":"Accumulation
+        of environmental risks to human health: Geographical differences in the Netherlands","modified":"2022-06-09T06:22:07Z","PMID":"","keywords":["<?xml
+        version=\"1.0\" encoding=\"UTF-8\"?><kw>Radiation-Radiation Effects and Protective
+        Measures</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Studies-General</kw>;
+        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Toxicology-Environmental and
+        Industrial Toxicology</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Neoplasms
+        and Neoplastic Agents-Carcinogens and Carcinogenesis</kw>; <?xml version=\"1.0\"
+        encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Air</kw>; <?xml
+        version=\"1.0\" encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Radiation
+        Health</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Hominidae</kw>"],"journalTitle":"Journal
+        of Hazardous Materials","_version_":1735137142588309504},{"REFERENCE_ID":1010101,"ABSTRACT":"BIOSIS  COPYRIGHT:
         BIOL ABS.  Acrylonitrile (AN) is a rat carcinogen. Human exposure may come
         from chemical industries and smoking. A haemoglobin adduct of acrylonitrile
         (Hb-AN) has been used as a biomarker of exposure by means of gas chromatography-mass
@@ -27,88 +61,69 @@ interactions:
         ELISA. The dose responses of rats at 0.25, 0.5, 1.0, and 2.0 h after AN doses
         of 20, 50, 80, 115 mg kg-1 were compared by both methods with Hb and globin
         samples. Regression analysis showed a linear relationship between immunoassay
-        and 14C-AN binding. This indicates that an antigenic for","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010101","hasPDF":false,"YEAR":1998,"allAuthors":["Wong,
-        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW"],"HEROID":1010101,"id":1010101,"referencetype":["journal
-        article"],"type":"reference","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
+        and 14C-AN binding. This indicates that an antigenic for","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010101","hasPDF":true,"YEAR":1998,"allAuthors":["Wong,
+        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW"],"HEROID":1010101,"id":"1010101","project_key":[420,4753,4822],"referencetype":["journal
+        article"],"type":"reference","pdfURL":"<go to isi>://wos:000075572800003","doi":"10.1080/135475098231129","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
         (ACN)|Database searches|Toxline","IRIS|Acrylonitrile (ACN)|Database searches|WOS","IRIS|Acrylonitrile
         (ACN)|Source 2012 & 2013 (private)|Toxline","IRIS|Acrylonitrile (ACN)|Source
         2012 & 2013 (private)|WOS","IRIS|Acrylonitrile (ACN)|Source 2012 & 2013 (private)|Merged
         reference set","IRIS|Acrylonitrile (ACN)|Source 2012 & 2013 (private)|Previous
         HERO References","IRIS|Acrylonitrile (ACN)|Source 2012 & 2013 (private)|Previous
         HERO references to be Rescreened by Toxicologist","IRIS|Acrylonitrile (ACN)|Secondary
-        Sources of Health Effects Information|Exposure levels"],"PROJECTS":[{"PROJECT":"Acrylonitrile
-        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":2565,"USAGE":"Source 2012 &
-        2013 (private)","USAGES":[{"USAGE_ID":2568,"USAGE":"WOS","USAGES":[]},{"USAGE_ID":2578,"USAGE":"Previous
-        HERO references to be Rescreened by Toxicologist","USAGES":[]},{"USAGE_ID":2567,"USAGE":"Toxline","USAGES":[]},{"USAGE_ID":2577,"USAGE":"Previous
-        HERO References","USAGES":[]},{"USAGE_ID":2640,"USAGE":"Merged reference set","USAGES":[]}]},{"USAGE_ID":2586,"USAGE":"Secondary
-        Sources of Health Effects Information","USAGES":[{"USAGE_ID":2593,"USAGE":"Exposure
-        levels","USAGES":[]}]},{"USAGE_ID":5234,"USAGE":"Database searches","USAGES":[{"USAGE_ID":5236,"USAGE":"Toxline","USAGES":[]},{"USAGE_ID":5237,"USAGE":"WOS","USAGES":[]}]},{"USAGE_ID":2572,"USAGE":"Feb
-        2012 search and screening","USAGES":[{"USAGE_ID":550,"USAGE":"2012 New Search
-        Results pre2003","USAGES":[]}]}]}],"tag_path_key":["2|420|5234|5236","2|420|5234|5237","2|420|2565|2567","2|420|2565|2568","2|420|2565|2640","2|420|2565|2577","2|420|2565|2578","2|420|2586|2593"],"firstAuthor":"Wong","AUTHORS":"Wong,
-        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":false,"hasPublicDoc":false,"SOURCE":"Biomarkers
-        3:4-5.","TITLE":"Immunoassay of haemoglobin-acrylonitrile adduct in rat as
-        a biomarker of exposure","modified":"2018-04-19T19:37:32Z","PMID":"","keywords":["<?xml
+        Sources of Health Effects Information|Exposure levels","IRIS|Acrylonitrile
+        (ACN)|Feb 2012 search and screening|2012 New Search Results pre2003","OPPT
+        REs|OPPT Evidence Map: Acrylonitrile|Peer-Reviewed Literature|Initial Search:
+        January 2023 (Undated)","OPPT REs|OPPT Evidence Map: Acrylonitrile|Peer-Reviewed
+        Literature|Supplemental Search","OPPT REs|OPPT Evidence Map: Acrylonitrile|Systematic
+        Review|Exposure","Other|Acrylonitrile|June 2023 Literature Search|Pubmed","Other|Acrylonitrile|June
+        2023 Literature Search|Scopus","Other|Acrylonitrile|June 2023 Literature Search|Web
+        of Science"],"category_key":[2,18,32],"PROJECTS":[{"PROJECT":"Acrylonitrile
+        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":"2565","USAGE":"Source 2012
+        & 2013 (private)","USAGES":[{"USAGE_ID":"2568","USAGE":"WOS","USAGES":[]},{"USAGE_ID":"2567","USAGE":"Toxline","USAGES":[]},{"USAGE_ID":"2578","USAGE":"Previous
+        HERO references to be Rescreened by Toxicologist","USAGES":[]},{"USAGE_ID":"2577","USAGE":"Previous
+        HERO References","USAGES":[]},{"USAGE_ID":"2640","USAGE":"Merged reference
+        set","USAGES":[]}]},{"USAGE_ID":"5234","USAGE":"Database searches","USAGES":[{"USAGE_ID":"5236","USAGE":"Toxline","USAGES":[]},{"USAGE_ID":"5237","USAGE":"WOS","USAGES":[]}]},{"USAGE_ID":"2586","USAGE":"Secondary
+        Sources of Health Effects Information","USAGES":[{"USAGE_ID":"2593","USAGE":"Exposure
+        levels","USAGES":[]}]},{"USAGE_ID":"2572","USAGE":"Feb 2012 search and screening","USAGES":[{"USAGE_ID":"550","USAGE":"2012
+        New Search Results pre2003","USAGES":[]}]}]},{"PROJECT":"OPPT Evidence Map:
+        Acrylonitrile","PROJECT_ID":4753,"USAGES":[{"USAGE_ID":"42457","USAGE":"Peer-Reviewed
+        Literature","USAGES":[{"USAGE_ID":"42458","USAGE":"Initial Search: January
+        2023 (Undated)","USAGES":[]},{"USAGE_ID":"42469","USAGE":"Supplemental Search","USAGES":[]}]},{"USAGE_ID":"42515","USAGE":"Systematic
+        Review","USAGES":[{"USAGE_ID":"42526","USAGE":"Exposure","USAGES":[]}]}]},{"PROJECT":"Acrylonitrile","PROJECT_ID":4822,"USAGES":[{"USAGE_ID":"43890","USAGE":"June
+        2023 Literature Search","USAGES":[{"USAGE_ID":"43891","USAGE":"Pubmed","USAGES":[]},{"USAGE_ID":"43892","USAGE":"Scopus","USAGES":[]},{"USAGE_ID":"43893","USAGE":"Web
+        of Science","USAGES":[]}]}]}],"tag_path_key":["2|420|5234|5236","2|420|5234|5237","2|420|2565|2567","2|420|2565|2568","2|420|2565|2640","2|420|2565|2577","2|420|2565|2578","2|420|2586|2593","2|420|2572|550","32|4753|42457|42458","32|4753|42457|42469","32|4753|42515|42526","18|4822|43890|43891","18|4822|43890|43892","18|4822|43890|43893"],"firstAuthor":"Wong","AUTHORS":"Wong,
+        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Biomarkers
+        3:4-5.","wosid":"WOS:000075572800003","TITLE":"Immunoassay of haemoglobin-acrylonitrile
+        adduct in rat as a biomarker of exposure","modified":"2024-02-05T22:12:41Z","PMID":23899359,"keywords":["<?xml
         version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Methods-General</kw>;
         <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Studies-General</kw>;
         <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Blood</kw>; <?xml version=\"1.0\"
         encoding=\"UTF-8\"?><kw>Toxicology-General</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Neoplasms
         and Neoplastic Agents-General</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Immunology
         and Immunochemistry-General</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Hominidae</kw>;
-        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Muridae</kw>"],"journalTitle":"Biomarkers","_version_":1598204581423087617},{"REFERENCE_ID":1010102,"usage_path_key":[2721,"2572|550|29876|29877"],"ABSTRACT":"The
-        project ''Accumulation of environmental risks'' was aimed at developing methods
-        to illustrate the geographical differences in risks to human health due to
-        several types of environmental pollution. The following risks were considered:
-        possible major accidents, radioactive substances and radiation, several carcinogenic
-        substances in air and environmental noise, with the methods used based on
-        the risk concept implemented in the Netherlands environmental policy. Starting
-        with information on  sources and emissions of several contaminants, their
-        dispersion in air and human exposure to them were calculated, and the effects
-        on human health estimated. The results were presented in a number of national
-        maps. In spite of the complexity of discussions on risk-related subjects,
-        applying the methods developed during the project has been shown to lead to
-        insight into the geographical distribution and the comparison of different
-        kinds of risk. The maps on possible major accidents and","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010102","hasPDF":true,"YEAR":1998,"allAuthors":["Pruppers,
-        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME"],"HEROID":1010102,"id":1010102,"project_key":[420,3008],"referencetype":["journal
-        article"],"type":"reference","doi":"10.1016/s0304-3894(98)00122-8","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
-        (ACN)|Legacy (private)","IRIS|Acrylonitrile (ACN)|Feb 2012 search and screening|2012
-        New Search Results pre2003","Other|Scientific Integrity Program|Lit Search
-        Feb 2021|WOS"],"category_key":[2,18],"PROJECTS":[{"PROJECT":"Acrylonitrile
-        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":2721,"USAGE":"Legacy (private)","USAGES":[]},{"USAGE_ID":2572,"USAGE":"Feb
-        2012 search and screening","USAGES":[{"USAGE_ID":550,"USAGE":"2012 New Search
-        Results pre2003","USAGES":[]}]}]},{"PROJECT":"Scientific Integrity Program","PROJECT_ID":3008,"USAGES":[{"USAGE_ID":29876,"USAGE":"Lit
-        Search Feb 2021","USAGES":[{"USAGE_ID":29877,"USAGE":"WOS","USAGES":[]}]}]}],"tag_path_key":["2|420|2721","2|420|2572|550","18|3008|29876|29877"],"firstAuthor":"Pruppers","AUTHORS":"Pruppers,
-        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME","noPDFAvailable":false,"tag_path_type":["category|project|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
-        of Hazardous Materials 61:187-196.","wosid":"WOS:000075646300023","TITLE":"Accumulation
-        of environmental risks to human health: Geographical differences in the Netherlands","modified":"2021-02-17T14:03:12Z","PMID":"","keywords":["<?xml
-        version=\"1.0\" encoding=\"UTF-8\"?><kw>Radiation-Radiation Effects and Protective
-        Measures</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Studies-General</kw>;
-        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Toxicology-Environmental and
-        Industrial Toxicology</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Neoplasms
-        and Neoplastic Agents-Carcinogens and Carcinogenesis</kw>; <?xml version=\"1.0\"
-        encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Air</kw>; <?xml
-        version=\"1.0\" encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Radiation
-        Health</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Hominidae</kw>"],"journalTitle":"Journal
-        of Hazardous Materials","_version_":1691951403712380928}],"isValid":true,"message":"Success","error":""} '
+        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Muridae</kw>"],"journalTitle":"Biomarkers","_version_":1790098772844347400}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 26 Jan 2022 16:22:51 GMT
+      - Tue, 20 Feb 2024 16:39:11 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=9523745; Expires=Thu, 27-Jan-2022 16:22:51 GMT; Path=/; HttpOnly
-      - CFTOKEN=66658557; Expires=Thu, 27-Jan-2022 16:22:51 GMT; Path=/; HttpOnly
-      - JSESSIONID=C0C96D8201DCD14A9A663722557CD04D.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F01%2F26%2011%3A22%3A51; Path=/
+      - CFID=14825896; Expires=Wed, 21 Feb 2024 16:39:11 GMT; Path=/; HttpOnly
+      - CFTOKEN=65791540; Expires=Wed, 21 Feb 2024 16:39:11 GMT; Path=/; HttpOnly
+      - JSESSIONID=9F15D96AA3660AA9D061CB719C400FF6.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A11; Path=/
       Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
     status:
       code: 200
       message: OK
@@ -122,12 +137,46 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1010101,1010102/recordsperpage/100.json
   response:
     body:
-      string: '{"results":[{"REFERENCE_ID":1010101,"ABSTRACT":"BIOSIS  COPYRIGHT:
+      string: '{"results":[{"REFERENCE_ID":1010102,"ABSTRACT":"The project ''Accumulation
+        of environmental risks'' was aimed at developing methods to illustrate the
+        geographical differences in risks to human health due to several types of
+        environmental pollution. The following risks were considered: possible major
+        accidents, radioactive substances and radiation, several carcinogenic substances
+        in air and environmental noise, with the methods used based on the risk concept
+        implemented in the Netherlands environmental policy. Starting with information
+        on  sources and emissions of several contaminants, their dispersion in air
+        and human exposure to them were calculated, and the effects on human health
+        estimated. The results were presented in a number of national maps. In spite
+        of the complexity of discussions on risk-related subjects, applying the methods
+        developed during the project has been shown to lead to insight into the geographical
+        distribution and the comparison of different kinds of risk. The maps on possible
+        major accidents and","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010102","hasPDF":true,"YEAR":1998,"allAuthors":["Pruppers,
+        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME"],"HEROID":1010102,"id":"1010102","project_key":[420,3008],"referencetype":["journal
+        article"],"type":"reference","doi":"10.1016/s0304-3894(98)00122-8","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
+        (ACN)|Legacy (private)","IRIS|Acrylonitrile (ACN)|Feb 2012 search and screening|2012
+        New Search Results pre2003","Other|Scientific Integrity Program|Lit Search
+        Feb 2021|WOS"],"category_key":[2,18],"PROJECTS":[{"PROJECT":"Acrylonitrile
+        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":"2721","USAGE":"Legacy (private)","USAGES":[]},{"USAGE_ID":"2572","USAGE":"Feb
+        2012 search and screening","USAGES":[{"USAGE_ID":"550","USAGE":"2012 New Search
+        Results pre2003","USAGES":[]}]}]},{"PROJECT":"Scientific Integrity Program","PROJECT_ID":3008,"USAGES":[{"USAGE_ID":"29876","USAGE":"Lit
+        Search Feb 2021","USAGES":[{"USAGE_ID":"29877","USAGE":"WOS","USAGES":[]}]}]}],"tag_path_key":["2|420|2721","2|420|2572|550","18|3008|29876|29877"],"firstAuthor":"Pruppers","AUTHORS":"Pruppers,
+        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME","noPDFAvailable":false,"tag_path_type":["category|project|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
+        of Hazardous Materials 61:187-196.","wosid":"WOS:000075646300023","TITLE":"Accumulation
+        of environmental risks to human health: Geographical differences in the Netherlands","modified":"2022-06-09T06:22:07Z","PMID":"","keywords":["<?xml
+        version=\"1.0\" encoding=\"UTF-8\"?><kw>Radiation-Radiation Effects and Protective
+        Measures</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Studies-General</kw>;
+        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Toxicology-Environmental and
+        Industrial Toxicology</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Neoplasms
+        and Neoplastic Agents-Carcinogens and Carcinogenesis</kw>; <?xml version=\"1.0\"
+        encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Air</kw>; <?xml
+        version=\"1.0\" encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Radiation
+        Health</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Hominidae</kw>"],"journalTitle":"Journal
+        of Hazardous Materials","_version_":1735137142588309504},{"REFERENCE_ID":1010101,"ABSTRACT":"BIOSIS  COPYRIGHT:
         BIOL ABS.  Acrylonitrile (AN) is a rat carcinogen. Human exposure may come
         from chemical industries and smoking. A haemoglobin adduct of acrylonitrile
         (Hb-AN) has been used as a biomarker of exposure by means of gas chromatography-mass
@@ -140,88 +189,174 @@ interactions:
         ELISA. The dose responses of rats at 0.25, 0.5, 1.0, and 2.0 h after AN doses
         of 20, 50, 80, 115 mg kg-1 were compared by both methods with Hb and globin
         samples. Regression analysis showed a linear relationship between immunoassay
-        and 14C-AN binding. This indicates that an antigenic for","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010101","hasPDF":false,"YEAR":1998,"allAuthors":["Wong,
-        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW"],"HEROID":1010101,"id":1010101,"referencetype":["journal
-        article"],"type":"reference","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
+        and 14C-AN binding. This indicates that an antigenic for","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010101","hasPDF":true,"YEAR":1998,"allAuthors":["Wong,
+        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW"],"HEROID":1010101,"id":"1010101","project_key":[420,4753,4822],"referencetype":["journal
+        article"],"type":"reference","pdfURL":"<go to isi>://wos:000075572800003","doi":"10.1080/135475098231129","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
         (ACN)|Database searches|Toxline","IRIS|Acrylonitrile (ACN)|Database searches|WOS","IRIS|Acrylonitrile
         (ACN)|Source 2012 & 2013 (private)|Toxline","IRIS|Acrylonitrile (ACN)|Source
         2012 & 2013 (private)|WOS","IRIS|Acrylonitrile (ACN)|Source 2012 & 2013 (private)|Merged
         reference set","IRIS|Acrylonitrile (ACN)|Source 2012 & 2013 (private)|Previous
         HERO References","IRIS|Acrylonitrile (ACN)|Source 2012 & 2013 (private)|Previous
         HERO references to be Rescreened by Toxicologist","IRIS|Acrylonitrile (ACN)|Secondary
-        Sources of Health Effects Information|Exposure levels"],"PROJECTS":[{"PROJECT":"Acrylonitrile
-        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":2565,"USAGE":"Source 2012 &
-        2013 (private)","USAGES":[{"USAGE_ID":2568,"USAGE":"WOS","USAGES":[]},{"USAGE_ID":2578,"USAGE":"Previous
-        HERO references to be Rescreened by Toxicologist","USAGES":[]},{"USAGE_ID":2567,"USAGE":"Toxline","USAGES":[]},{"USAGE_ID":2577,"USAGE":"Previous
-        HERO References","USAGES":[]},{"USAGE_ID":2640,"USAGE":"Merged reference set","USAGES":[]}]},{"USAGE_ID":2586,"USAGE":"Secondary
-        Sources of Health Effects Information","USAGES":[{"USAGE_ID":2593,"USAGE":"Exposure
-        levels","USAGES":[]}]},{"USAGE_ID":5234,"USAGE":"Database searches","USAGES":[{"USAGE_ID":5236,"USAGE":"Toxline","USAGES":[]},{"USAGE_ID":5237,"USAGE":"WOS","USAGES":[]}]},{"USAGE_ID":2572,"USAGE":"Feb
-        2012 search and screening","USAGES":[{"USAGE_ID":550,"USAGE":"2012 New Search
-        Results pre2003","USAGES":[]}]}]}],"tag_path_key":["2|420|5234|5236","2|420|5234|5237","2|420|2565|2567","2|420|2565|2568","2|420|2565|2640","2|420|2565|2577","2|420|2565|2578","2|420|2586|2593"],"firstAuthor":"Wong","AUTHORS":"Wong,
-        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":false,"hasPublicDoc":false,"SOURCE":"Biomarkers
-        3:4-5.","TITLE":"Immunoassay of haemoglobin-acrylonitrile adduct in rat as
-        a biomarker of exposure","modified":"2018-04-19T19:37:32Z","PMID":"","keywords":["<?xml
+        Sources of Health Effects Information|Exposure levels","IRIS|Acrylonitrile
+        (ACN)|Feb 2012 search and screening|2012 New Search Results pre2003","OPPT
+        REs|OPPT Evidence Map: Acrylonitrile|Peer-Reviewed Literature|Initial Search:
+        January 2023 (Undated)","OPPT REs|OPPT Evidence Map: Acrylonitrile|Peer-Reviewed
+        Literature|Supplemental Search","OPPT REs|OPPT Evidence Map: Acrylonitrile|Systematic
+        Review|Exposure","Other|Acrylonitrile|June 2023 Literature Search|Pubmed","Other|Acrylonitrile|June
+        2023 Literature Search|Scopus","Other|Acrylonitrile|June 2023 Literature Search|Web
+        of Science"],"category_key":[2,18,32],"PROJECTS":[{"PROJECT":"Acrylonitrile
+        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":"2565","USAGE":"Source 2012
+        & 2013 (private)","USAGES":[{"USAGE_ID":"2568","USAGE":"WOS","USAGES":[]},{"USAGE_ID":"2567","USAGE":"Toxline","USAGES":[]},{"USAGE_ID":"2578","USAGE":"Previous
+        HERO references to be Rescreened by Toxicologist","USAGES":[]},{"USAGE_ID":"2577","USAGE":"Previous
+        HERO References","USAGES":[]},{"USAGE_ID":"2640","USAGE":"Merged reference
+        set","USAGES":[]}]},{"USAGE_ID":"5234","USAGE":"Database searches","USAGES":[{"USAGE_ID":"5236","USAGE":"Toxline","USAGES":[]},{"USAGE_ID":"5237","USAGE":"WOS","USAGES":[]}]},{"USAGE_ID":"2586","USAGE":"Secondary
+        Sources of Health Effects Information","USAGES":[{"USAGE_ID":"2593","USAGE":"Exposure
+        levels","USAGES":[]}]},{"USAGE_ID":"2572","USAGE":"Feb 2012 search and screening","USAGES":[{"USAGE_ID":"550","USAGE":"2012
+        New Search Results pre2003","USAGES":[]}]}]},{"PROJECT":"OPPT Evidence Map:
+        Acrylonitrile","PROJECT_ID":4753,"USAGES":[{"USAGE_ID":"42457","USAGE":"Peer-Reviewed
+        Literature","USAGES":[{"USAGE_ID":"42458","USAGE":"Initial Search: January
+        2023 (Undated)","USAGES":[]},{"USAGE_ID":"42469","USAGE":"Supplemental Search","USAGES":[]}]},{"USAGE_ID":"42515","USAGE":"Systematic
+        Review","USAGES":[{"USAGE_ID":"42526","USAGE":"Exposure","USAGES":[]}]}]},{"PROJECT":"Acrylonitrile","PROJECT_ID":4822,"USAGES":[{"USAGE_ID":"43890","USAGE":"June
+        2023 Literature Search","USAGES":[{"USAGE_ID":"43891","USAGE":"Pubmed","USAGES":[]},{"USAGE_ID":"43892","USAGE":"Scopus","USAGES":[]},{"USAGE_ID":"43893","USAGE":"Web
+        of Science","USAGES":[]}]}]}],"tag_path_key":["2|420|5234|5236","2|420|5234|5237","2|420|2565|2567","2|420|2565|2568","2|420|2565|2640","2|420|2565|2577","2|420|2565|2578","2|420|2586|2593","2|420|2572|550","32|4753|42457|42458","32|4753|42457|42469","32|4753|42515|42526","18|4822|43890|43891","18|4822|43890|43892","18|4822|43890|43893"],"firstAuthor":"Wong","AUTHORS":"Wong,
+        JL; Zheng, YT; Li, J; Tamburro, CH; Benz, FW","noPDFAvailable":false,"tag_path_type":["category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Biomarkers
+        3:4-5.","wosid":"WOS:000075572800003","TITLE":"Immunoassay of haemoglobin-acrylonitrile
+        adduct in rat as a biomarker of exposure","modified":"2024-02-05T22:12:41Z","PMID":23899359,"keywords":["<?xml
         version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Methods-General</kw>;
         <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Studies-General</kw>;
         <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Blood</kw>; <?xml version=\"1.0\"
         encoding=\"UTF-8\"?><kw>Toxicology-General</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Neoplasms
         and Neoplastic Agents-General</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Immunology
         and Immunochemistry-General</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Hominidae</kw>;
-        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Muridae</kw>"],"journalTitle":"Biomarkers","_version_":1598204581423087617},{"REFERENCE_ID":1010102,"usage_path_key":[2721,"2572|550|29876|29877"],"ABSTRACT":"The
-        project ''Accumulation of environmental risks'' was aimed at developing methods
-        to illustrate the geographical differences in risks to human health due to
-        several types of environmental pollution. The following risks were considered:
-        possible major accidents, radioactive substances and radiation, several carcinogenic
-        substances in air and environmental noise, with the methods used based on
-        the risk concept implemented in the Netherlands environmental policy. Starting
-        with information on  sources and emissions of several contaminants, their
-        dispersion in air and human exposure to them were calculated, and the effects
-        on human health estimated. The results were presented in a number of national
-        maps. In spite of the complexity of discussions on risk-related subjects,
-        applying the methods developed during the project has been shown to lead to
-        insight into the geographical distribution and the comparison of different
-        kinds of risk. The maps on possible major accidents and","url":"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1010102","hasPDF":true,"YEAR":1998,"allAuthors":["Pruppers,
-        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME"],"HEROID":1010102,"id":1010102,"project_key":[420,3008],"referencetype":["journal
-        article"],"type":"reference","doi":"10.1016/s0304-3894(98)00122-8","sortYear":1998,"tag_path_text":["IRIS|Acrylonitrile
-        (ACN)|Legacy (private)","IRIS|Acrylonitrile (ACN)|Feb 2012 search and screening|2012
-        New Search Results pre2003","Other|Scientific Integrity Program|Lit Search
-        Feb 2021|WOS"],"category_key":[2,18],"PROJECTS":[{"PROJECT":"Acrylonitrile
-        (ACN)","PROJECT_ID":420,"USAGES":[{"USAGE_ID":2721,"USAGE":"Legacy (private)","USAGES":[]},{"USAGE_ID":2572,"USAGE":"Feb
-        2012 search and screening","USAGES":[{"USAGE_ID":550,"USAGE":"2012 New Search
-        Results pre2003","USAGES":[]}]}]},{"PROJECT":"Scientific Integrity Program","PROJECT_ID":3008,"USAGES":[{"USAGE_ID":29876,"USAGE":"Lit
-        Search Feb 2021","USAGES":[{"USAGE_ID":29877,"USAGE":"WOS","USAGES":[]}]}]}],"tag_path_key":["2|420|2721","2|420|2572|550","18|3008|29876|29877"],"firstAuthor":"Pruppers","AUTHORS":"Pruppers,
-        MJM; Janssen, MPM; Ale, BJM; Pennders, RMJ; van den Hout, KD; Miedema, HME","noPDFAvailable":false,"tag_path_type":["category|project|usage","category|project|usage|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
-        of Hazardous Materials 61:187-196.","wosid":"WOS:000075646300023","TITLE":"Accumulation
-        of environmental risks to human health: Geographical differences in the Netherlands","modified":"2021-02-17T14:03:12Z","PMID":"","keywords":["<?xml
-        version=\"1.0\" encoding=\"UTF-8\"?><kw>Radiation-Radiation Effects and Protective
-        Measures</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Biochemical Studies-General</kw>;
-        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Toxicology-Environmental and
-        Industrial Toxicology</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Neoplasms
-        and Neoplastic Agents-Carcinogens and Carcinogenesis</kw>; <?xml version=\"1.0\"
-        encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Air</kw>; <?xml
-        version=\"1.0\" encoding=\"UTF-8\"?><kw>Public Health: Environmental Health-Radiation
-        Health</kw>; <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Hominidae</kw>"],"journalTitle":"Journal
-        of Hazardous Materials","_version_":1691951403712380928}],"isValid":true,"message":"Success","error":""} '
+        <?xml version=\"1.0\" encoding=\"UTF-8\"?><kw>Muridae</kw>"],"journalTitle":"Biomarkers","_version_":1790098772844347400}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 26 Jan 2022 16:22:52 GMT
+      - Tue, 20 Feb 2024 16:39:15 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=9523746; Expires=Thu, 27-Jan-2022 16:22:52 GMT; Path=/; HttpOnly
-      - CFTOKEN=71964324; Expires=Thu, 27-Jan-2022 16:22:52 GMT; Path=/; HttpOnly
-      - JSESSIONID=5301654DA38E85F217805C63E5F0953A.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F01%2F26%2011%3A22%3A52; Path=/
+      - CFID=14825899; Expires=Wed, 21 Feb 2024 16:39:15 GMT; Path=/; HttpOnly
+      - CFTOKEN=65581844; Expires=Wed, 21 Feb 2024 16:39:15 GMT; Path=/; HttpOnly
+      - JSESSIONID=C98174F21F8FEDB54936BF207E3C0A30.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A15; Path=/
       Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=23899359
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '90'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
+  response:
+    body:
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM"><PMID
+        Version="1">23899359</PMID><DateCompleted><Year>2013</Year><Month>08</Month><Day>01</Day></DateCompleted><DateRevised><Year>2013</Year><Month>07</Month><Day>31</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">1354-750X</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>3</Volume><Issue>4-5</Issue><PubDate><Year>1998</Year></PubDate></JournalIssue><Title>Biomarkers
+        : biochemical indicators of exposure, response, and susceptibility to chemicals</Title><ISOAbbreviation>Biomarkers</ISOAbbreviation></Journal><ArticleTitle>Immunoassay
+        of haemoglobin-acrylonitrile adduct in rat as a biomarker of exposure.</ArticleTitle><Pagination><StartPage>317</StartPage><EndPage>326</EndPage><MedlinePgn>317-26</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1080/135475098231129</ELocationID><Abstract><AbstractText>Acrylonitrile
+        (AN) is a rat carcinogen. Human exposure may come from chemical industries
+        and smoking. A haemoglobin adduct of acrylonitrile (Hb-AN) has been used as
+        a biomarker of exposure by means of gas chromatography-mass spectrometry (GC-MS)
+        analysis. We have developed specific monoclonal antibodies (Mab) to human
+        Hb-AN and wish to report evaluation of an immunoassay in rats using an Mab
+        that cross-reacts with rat Hb-AN. A dose response study of LD 0, 10, 50, and
+        90 in Sprague-Dawley rats was undertaken, with each rat receiving \[2,3-14C]AN
+        at 50 Ci kg-1 sc, and Hb from an aliquot of blood was taken for covalent binding
+        analysis by liquid scintillation spectrometry and fluorescence ELISA. The
+        dose responses of rats at 0.25, 0.5, 1.0, and 2.0 h after AN doses of 20,
+        50, 80, 115 mg kg-1 were compared by both methods with Hb and globin samples.
+        Regression analysis showed a linear relationship between immunoassay and 14C-AN
+        binding. This indicates that an antigenic form of Hb-AN may be used as a surrogate
+        of Hb-AN adduct. The sensitivity of ELISA was tested in rats exposed for 1
+        h to sub-toxic doses of AN (10-1.1 mg kg-1). Quantification of Hb-AN by immunoassay
+        was achieved by calibration with a synthetic adduct HbAN4h, a reference adduct
+        prepared by treating rat Hb with excess AN for 4 h. ELISA and GC-MS analysis
+        of N-terminal valine-AN in the Hb-AN adduct were compared and similar detection
+        levels were found. This rat study appears to have validated the new immunoassay
+        method for biomonitoring of AN exposure.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>L Wong Yu Ting Zheng Junyu Li
+        Carlo H Tamburro Frederick W Benz</LastName><ForeName>J</ForeName><Initials>J</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Biomarkers</MedlineTA><NlmUniqueID>9606000</NlmUniqueID><ISSNLinking>1354-750X</ISSNLinking></MedlineJournalInfo></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2013</Year><Month>8</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>1998</Year><Month>1</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1998</Year><Month>1</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">23899359</ArticleId><ArticleId IdType="doi">10.1080/135475098231129</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - X-RateLimit-Limit,X-RateLimit-Remaining
+      Cache-Control:
+      - private
+      Connection:
+      - Keep-Alive
+      Content-Security-Policy:
+      - upgrade-insecure-requests
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Date:
+      - Tue, 20 Feb 2024 16:39:17 GMT
+      Keep-Alive:
+      - timeout=4, max=40
+      NCBI-PHID:
+      - 939B5F7AF2370105000048A4B25DA987.1.1.m_3
+      NCBI-SID:
+      - A0065852E04999D8_DA52SID
+      Referrer-Policy:
+      - origin-when-cross-origin
+      Server:
+      - Finatra
+      Set-Cookie:
+      - ncbi_sid=A0065852E04999D8_DA52SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:39:17 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-RateLimit-Limit:
+      - '10'
+      X-RateLimit-Remaining:
+      - '9'
+      X-UA-Compatible:
+      - IE=Edge
+      X-XSS-Protection:
+      - 1; mode=block
+      content-encoding:
+      - gzip
     status:
       code: 200
       message: OK

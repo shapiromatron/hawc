@@ -7,6 +7,7 @@ import plotly.express as px
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.timezone import now
 from plotly.graph_objs._figure import Figure
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
@@ -120,3 +121,11 @@ class Task(models.Model):
             hovermode=False,
         )
         return plot
+
+    @property
+    def overdue(self):
+        return (
+            self.due_date
+            and self.status in [constants.TaskStatus.NOT_STARTED, constants.TaskStatus.STARTED]
+            and self.due_date < now()
+        )
