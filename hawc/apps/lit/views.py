@@ -28,6 +28,7 @@ from ..common.views import (
     create_object_log,
     htmx_required,
 )
+from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
 
 
@@ -258,7 +259,7 @@ class TagReferences(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents__tag_binding")
         )
 
     def get_context_data(self, **kwargs):
@@ -388,8 +389,22 @@ class TagReferences(BaseFilterList):
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
+        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        tag_names = models.ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
+        descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+        # dict[int,set] -> dict[int,list] so we can JSON-encode
+        descendant_tags = {key: list(val) for key, val in descendant_tags.items()}
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
+            flattened_contents = {}
+            # prepend UDF tag ID to name to prevent UDF name namespace conflicts
+            # TODO - can this code + JS be removed the always list? it's needed for yes/no radio
+            for tag_id, field in reference["tag_udf_contents"].items():
+                for name, value in field.items():
+                    flattened_contents[f"{tag_id}-{name}"] = (
+                        value if isinstance(value, list) else [value]
+                    )
+            reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
@@ -397,9 +412,12 @@ class TagReferences(BaseFilterList):
                 conflict_resolution=self.assessment.literature_settings.conflict_resolution,
                 keywords=self.assessment.literature_settings.get_keyword_data(),
                 instructions=self.assessment.literature_settings.screening_instructions,
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                tags=tags,
+                tag_names=tag_names,
+                descendant_tags=descendant_tags,
                 refs=references,
                 csrf=get_token(self.request),
+                udfs=TagCache.get_forms(self.assessment),
             ),
         )
 
