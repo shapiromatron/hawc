@@ -5,7 +5,6 @@ from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
-from hawc.apps.assessment.autocomplete import AssessmentAutocomplete
 from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from hawc.apps.common.dynamic_forms.schemas import Schema
 from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, form_actions_big
@@ -27,6 +26,17 @@ class UDFForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.id is None:
             self.instance.creator = user
+
+        # filter assessment list to a subset of those available
+        self.fields["assessments"].queryset = (
+            Assessment.objects.all().user_can_view(self.instance.creator).order_by("name")
+        )
+        self.fields[
+            "assessments"
+        ].help_text += (
+            f" Only assessments the creator ({self.instance.creator}) can view are shown."
+        )
+
         self.fields["schema"].label_append_button = {
             "btn_attrs": {
                 "hx-indicator": "#spinner",
@@ -52,7 +62,6 @@ class UDFForm(forms.ModelForm):
         )
         widgets = {
             "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
-            "assessments": AutocompleteSelectMultipleWidget(AssessmentAutocomplete),
         }
 
     @property
