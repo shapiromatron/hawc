@@ -10,13 +10,12 @@ from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.http import HttpRequest
 from django.template import RequestContext, Template
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
-from django.utils import safestring, timezone
+from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
@@ -313,33 +312,6 @@ class Assessment(models.Model):
 
     def get_udf_list_url(self):
         return reverse("udf:binding-list", args=(self.id,))
-
-    def get_model_binding(self, model: type[models.Model] | models.Model):
-        """Get the UDF Model Binding from this assessment for the given model class/instance.
-
-        Args:
-            model: a model class or an instance of a model that has a UDF bound to it in this
-            assessment.
-        """
-        content_type = ContentType.objects.get_for_model(model)
-        try:
-            return self.udf_bindings.get(content_type=content_type)
-        except ObjectDoesNotExist:
-            return None
-
-    def get_tag_udfs(self, **kwargs) -> dict[int, safestring.SafeText] | None:
-        key = f"assessment-{self.pk}-tag-forms"
-        forms = cache.get(key)
-        if forms is not None:
-            return forms
-        tag_bindings = self.udf_tag_bindings.select_related("form")
-        if tag_bindings.count() == 0:
-            return None
-        forms = {
-            tag_binding.tag_id: tag_binding.get_form_html(**kwargs) for tag_binding in tag_bindings
-        }
-        cache.set(key, forms)
-        return forms
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))

@@ -7,9 +7,6 @@ from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 
-from hawc.apps.udf.cache import UDFCache
-from hawc.apps.udf.models import ModelUDFContent
-
 from ..assessment.autocomplete import DSSToxAutocomplete, EffectTagAutocomplete
 from ..common.autocomplete import (
     AutocompleteSelectMultipleWidget,
@@ -600,18 +597,6 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
             self.add_error(None, self.NAME_REQ)
 
         return cleaned_data
-
-    def save(self, commit=True):
-        instance = super().save(commit=commit)
-        if commit and "udf" in self.changed_data:
-            udf_content, _ = ModelUDFContent.objects.update_or_create(
-                defaults=dict(content=self.cleaned_data["udf"]),
-                model_binding=self.model_binding,
-                content_type=self.model_binding.content_type,
-                object_id=instance.id,
-            )
-            UDFCache.set_udf_contents_cache(udf_content)
-        return instance
 
 
 class EndpointGroupForm(forms.ModelForm):
