@@ -22,22 +22,9 @@ urlpatterns = (
             name="binding_create",
         ),
         path(
-            "bindings/<slug:binding_type>/<int:pk>/",
+            "bindings/<slug:binding_type>/<int:pk>/<slug:action>/",
             views.BindingViewSet.as_view(),
-            {"action": "read"},
-            name="binding_detail",
-        ),
-        path(
-            "bindings/<slug:binding_type>/<int:pk>/update/",
-            views.BindingViewSet.as_view(),
-            {"action": "update"},
-            name="binding_update",
-        ),
-        path(
-            "bindings/<slug:binding_type>/<int:pk>/delete/",
-            views.BindingViewSet.as_view(),
-            {"action": "delete"},
-            name="binding_delete",
+            name="binding_htmx",
         ),
     ]
     if settings.HAWC_FEATURES.ENABLE_UDF

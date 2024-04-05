@@ -7,7 +7,7 @@
   </div>
   <div class="list-group mb-4">
     {% for object in object_list %}
-      {% include "udf/fragments/_udf_item.html" with udf=object only %}
+      {% include "udf/fragments/udf_row.html" with udf=object only %}
     {% empty %}
       {% alert info %}No forms found.{% endalert %}
     {% endfor %}

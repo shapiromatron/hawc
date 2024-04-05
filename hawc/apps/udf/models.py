@@ -115,10 +115,10 @@ class ModelBinding(models.Model):
         return reverse("udf:model_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("udf:binding_update", args=("model", self.id))
+        return reverse("udf:binding_htmx", args=("model", self.id, "update"))
 
     def get_delete_url(self):
-        return reverse("udf:binding_delete", args=("model", self.id))
+        return reverse("udf:binding_htmx", args=("model", self.id, "delete"))
 
     @classmethod
     def get_binding(cls, assessment: Assessment, Model: type[models.Model]) -> Self | None:
@@ -168,14 +168,11 @@ class TagBinding(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_absolute_url(self):
-        return reverse("udf:tag_detail", args=(self.id,))
-
     def get_update_url(self):
-        return reverse("udf:binding_update", args=("tag", self.id))
+        return reverse("udf:binding_htmx", args=("tag", self.id, "update"))
 
     def get_delete_url(self):
-        return reverse("udf:binding_delete", args=("tag", self.id))
+        return reverse("udf:binding_htmx", args=("tag", self.id, "delete"))
 
 
 class ModelUDFContent(models.Model):

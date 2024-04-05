@@ -5,12 +5,11 @@
     <h2 class="mt-0 mb-2">{{assessment.name}} UDF Bindings</h2>
     {% if obj_perms.edit_assessment %}
       {% actions %}
-        <button class="dropdown-item" hx-target="#binding-list" hx-swap="outerHTML" hx-get="{% url 'udf:binding_create' assessment.pk tag_binding  %}">Create literature tag binding</button>
-        <button class="dropdown-item" hx-target="#binding-list" hx-swap="outerHTML" hx-get="{% url 'udf:binding_create' assessment.pk model_binding %}">Create data extraction binding</button>
-        <a class="dropdown-item" href="{% url 'udf:udf_list' %}">View UDFs</a>
+        <button class="dropdown-item" hx-target="#binding-list" hx-swap="afterbegin" hx-get="{% url 'udf:binding_create' assessment.pk tag_binding %}">Create literature tag binding</button>
+        <button class="dropdown-item" hx-target="#binding-list" hx-swap="afterbegin" hx-get="{% url 'udf:binding_create' assessment.pk model_binding %}">Create data extraction binding</button>
+        <a class="dropdown-item" href="{% url 'udf:udf_list' %}">View UDF list</a>
       {% endactions %}
     {% endif %}
-
   </div>
   {% include "udf/fragments/binding_list.html" %}
 {% endblock %}

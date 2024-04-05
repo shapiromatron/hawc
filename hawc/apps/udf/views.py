@@ -151,8 +151,7 @@ class BindingViewSet(HtmxViewSet):
     binding_type = BindingType = None
 
     form_fragment = "udf/fragments/binding_edit_row.html"
-    detail_fragment = "udf/fragments/_udf_item.html"
-    list_fragment = "udf/fragments/binding_list.html"
+    detail_fragment = "udf/fragments/udf_row.html"
 
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         self.binding_type = self.kwargs.get("binding_type", None)
@@ -200,28 +199,15 @@ class BindingViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "POST":
-            form = self.form(request.POST, parent=request.item.parent, user=request.user)
-            context = self.get_context_data(form=form)
-            if form.is_valid():
-                self.perform_create(request.item, form)
-                udf = request.item.object.form
-                template = self.detail_fragment
-                self.add_tag_names(request.item.object, request.item.assessment.id)
-                context.update(udf=udf, binding=request.item.object)
-        else:
-            form = self.form(parent=request.item.parent, user=request.user)
-            template = self.list_fragment
-            object_list = models.ModelBinding.objects.filter(
-                assessment=request.item.assessment
-            ).order_by("-created")
-            tag_object_list = models.TagBinding.objects.filter(
-                assessment=request.item.assessment
-            ).order_by("-created")
-            context = self.get_context_data(
-                form=form, object_list=object_list, tag_object_list=tag_object_list
-            )
-            self.add_tag_names(tag_object_list, request.item.assessment.id)
+        form_data = request.POST if request.method == "POST" else None
+        form = self.form(data=form_data, parent=request.item.parent, user=request.user)
+        context = self.get_context_data(form=form)
+        if request.method == "POST" and form.is_valid():
+            self.perform_create(request.item, form)
+            udf = request.item.object.form
+            template = self.detail_fragment
+            self.add_tag_names(request.item.object, request.item.assessment.id)
+            context.update(udf=udf, binding=request.item.object)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)

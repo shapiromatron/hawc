@@ -26,33 +26,39 @@ class TestBindings:
             "tag": tags[1].id,
         }
         resp = client.post(url, data=inputs)
-        assertTemplateUsed(resp, "udf/fragments/_udf_item.html")
+        assertTemplateUsed(resp, "udf/fragments/udf_row.html")
         assert resp.status_code == 200
         assert tags[1].name in str(resp.content)
         tag_binding = resp.context["binding"]
         assert models.TagBinding.objects.count() == initial_tagbinding_count + 1
 
         # tag binding read
-        url = reverse("udf:binding_detail", args=[constants.BindingType.TAG.value, tag_binding.id])
+        url = reverse(
+            "udf:binding_htmx", args=[constants.BindingType.TAG.value, tag_binding.id, "read"]
+        )
         resp = client.get(url)
-        assertTemplateUsed(resp, "udf/fragments/_udf_item.html")
+        assertTemplateUsed(resp, "udf/fragments/udf_row.html")
         assert resp.status_code == 200
         assert "tag" in str(resp.content)
 
         # tag binding update
-        url = reverse("udf:binding_update", args=[constants.BindingType.TAG.value, tag_binding.id])
+        url = reverse(
+            "udf:binding_htmx", args=[constants.BindingType.TAG.value, tag_binding.id, "update"]
+        )
         inputs = {
             "form": udf_id,
             "tag": tags[2].id,
         }
         resp = client.post(url, data=inputs)
-        assertTemplateUsed(resp, "udf/fragments/_udf_item.html")
+        assertTemplateUsed(resp, "udf/fragments/udf_row.html")
         assert resp.status_code == 200
         assert tags[2].name in str(resp.content)
         assert models.TagBinding.objects.count() == initial_tagbinding_count + 1
 
         # tag binding delete
-        url = reverse("udf:binding_delete", args=[constants.BindingType.TAG.value, tag_binding.id])
+        url = reverse(
+            "udf:binding_htmx", args=[constants.BindingType.TAG.value, tag_binding.id, "delete"]
+        )
         resp = client.get(url)
         assert resp.status_code == 200
         assert "Are you sure you want to delete?" in str(resp.content)
@@ -76,7 +82,7 @@ class TestBindings:
             "content_type": 87,
         }
         resp = client.post(url, data=inputs)
-        assertTemplateUsed(resp, "udf/fragments/_udf_item.html")
+        assertTemplateUsed(resp, "udf/fragments/udf_row.html")
         assert resp.status_code == 200
         assert "Study" in str(resp.content)
         model_binding = resp.context["binding"]
@@ -84,30 +90,30 @@ class TestBindings:
 
         # model binding read
         url = reverse(
-            "udf:binding_detail", args=[constants.BindingType.MODEL.value, model_binding.id]
+            "udf:binding_htmx", args=[constants.BindingType.MODEL.value, model_binding.id, "read"]
         )
         resp = client.get(url)
-        assertTemplateUsed(resp, "udf/fragments/_udf_item.html")
+        assertTemplateUsed(resp, "udf/fragments/udf_row.html")
         assert resp.status_code == 200
         assert "Study" in str(resp.content)
 
         # model binding update
         url = reverse(
-            "udf:binding_update", args=[constants.BindingType.MODEL.value, model_binding.id]
+            "udf:binding_htmx", args=[constants.BindingType.MODEL.value, model_binding.id, "update"]
         )
         inputs = {
             "form": udf_id,
             "content_type": 91,
         }
         resp = client.post(url, data=inputs)
-        assertTemplateUsed(resp, "udf/fragments/_udf_item.html")
+        assertTemplateUsed(resp, "udf/fragments/udf_row.html")
         assert resp.status_code == 200
         assert "endpoint" in str(resp.content)
         assert models.ModelBinding.objects.count() == initial_modelbinding_count + 1
 
         # model binding delete
         url = reverse(
-            "udf:binding_delete", args=[constants.BindingType.MODEL.value, model_binding.id]
+            "udf:binding_htmx", args=[constants.BindingType.MODEL.value, model_binding.id, "delete"]
         )
         resp = client.get(url)
         assert resp.status_code == 200

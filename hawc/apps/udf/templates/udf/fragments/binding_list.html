@@ -1,20 +1,14 @@
-{% if tag_object_list or object_list %}
-  <div class="mt-2 mb-4 vw75" id="binding-list">
-    <div class="list-group mb-4 rounded">
-      {% include "udf/fragments/binding_edit_row.html" %}
-      {% for object in tag_object_list %}
-        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=tag_binding %}
-      {% endfor %}
-      {% for object in object_list %}
-        {% include "udf/fragments/_udf_item.html" with udf=object.form binding=object binding_type=model_binding %}
-      {% endfor %}
-    </div>
-  </div>
-  <script>
+<div class="list-group mt-2 mb-4 rounded" id="binding-list">
+  {% for object in tag_object_list %}
+    {% include "udf/fragments/udf_row.html" with udf=object.form binding=object binding_type=tag_binding %}
+  {% endfor %}
+  {% for object in object_list %}
+    {% include "udf/fragments/udf_row.html" with udf=object.form binding=object binding_type=model_binding %}
+  {% endfor %}
+  <div class="alert alert-warning text-center show-only-child">No UDF model bindings created yet.</div>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", function(){
     window.app.HAWCUtils.dynamicFormListeners();
-  </script>
-{% endif %}
-
-{% if not object_list and not tag_object_list %}
-  <div class="alert alert-warning text-center">No UDF model bindings created yet.</div>
-{% endif %}
+  });
+</script>

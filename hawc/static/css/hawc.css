@@ -934,6 +934,12 @@ table.bordered td {
 .m-xs {
     margin: 0.1rem !important;
 }
+.show-only-child {
+    display: none;
+}
+.show-only-child:only-child {
+    display: initial;
+}
 
 /* table column text alignment */
 .col-r-1 td:nth-child(1),
