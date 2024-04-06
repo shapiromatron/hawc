@@ -139,7 +139,7 @@ class UDFBindingList(BaseList):
         )
         tag_names = ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
         for binding in context["tag_object_list"]:
-            binding.tag_name = tag_names[binding.tag.id]
+            binding.tag_name = tag_names[binding.tag_id]
         return context
 
 

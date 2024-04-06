@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex align-items-start">
-    <h2 class="mt-0 mb-2">{{assessment.name}} UDF Bindings</h2>
+    <h2 class="mt-0 mb-2">User Defined Form (UDF) Bindings</h2>
     {% if obj_perms.edit_assessment %}
       {% actions %}
         <button class="dropdown-item" hx-target="#binding-list" hx-swap="afterbegin" hx-get="{% url 'udf:binding_create' assessment.pk tag_binding %}">Create literature tag binding</button>
@@ -11,5 +11,21 @@
       {% endactions %}
     {% endif %}
   </div>
-  {% include "udf/fragments/binding_list.html" %}
+  <div class="list-group mt-2 mb-4 rounded" id="binding-list">
+    {% for object in tag_object_list %}
+      {% include "udf/fragments/udf_row.html" with udf=object.form binding=object binding_type=tag_binding %}
+    {% endfor %}
+    {% for object in object_list %}
+      {% include "udf/fragments/udf_row.html" with udf=object.form binding=object binding_type=model_binding %}
+    {% endfor %}
+    <div class="alert alert-info text-center show-only-child">No tag or model bindings exist for this assessment.</div>
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    $(document).ready(function(){
+      window.app.HAWCUtils.dynamicFormListeners();
+    });
+  </script>
 {% endblock %}
