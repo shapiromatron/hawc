@@ -709,10 +709,6 @@ a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     cursor: pointer;
 }
 
-div.udf-info-row>p, div.udf-info-row>div.card>p {
-    line-height: 1.6rem;
-}
-
 /* custom inline filterset forms */
 .form-sm-field {
     font-size: 0.88rem;
@@ -850,6 +846,11 @@ table th.sort-header a {
 table.bordered th,
 table.bordered td {
     border: 1px solid #dddddd;
+}
+
+/* UDF */
+div.udf-info-row>p, div.udf-info-row>div.card>p {
+    line-height: 1.6rem;
 }
 
 /* react-datepicker */
