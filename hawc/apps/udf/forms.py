@@ -47,10 +47,9 @@ class UDFForm(forms.ModelForm):
             },
             "btn_content": "Preview",
         }
-        self.fields[
-            "schema"
-        ].help_text = (
-            "Schema documentation coming soon. <a id='load-example' href='#'>Load example</a>."
+        self.fields["schema"].help_text = (
+            models.UserDefinedForm.schema.field.help_text
+            + "&nbsp;<a id='load-example' href='#'>Load an example</a>."
         )
 
     class Meta:
