@@ -214,20 +214,21 @@ class BindingViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "POST":
-            form = self.form(request.POST, instance=request.item.object, user=request.user)
-            if form.is_valid():
-                self.perform_update(request.item, form)
-                template = self.detail_fragment
-                self.add_tag_names(request.item.object, request.item.assessment.id)
-        else:
-            form = self.form(data=None, instance=request.item.object, user=request.user)
-        context = self.get_context_data(
-            form=form,
-            udf=request.item.object.form,
-            binding=request.item.object,
+        form_data = request.POST if request.method == "POST" else None
+        form = self.form(data=form_data, instance=request.item.object, user=request.user)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+            self.add_tag_names(request.item.object, request.item.assessment.id)
+        return render(
+            request,
+            template,
+            self.get_context_data(
+                form=form,
+                udf=request.item.object.form,
+                binding=request.item.object,
+            ),
         )
-        return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
     def delete(self, request: HttpRequest, *args, **kwargs):
