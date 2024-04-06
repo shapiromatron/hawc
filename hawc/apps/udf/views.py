@@ -7,17 +7,17 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
-from hawc.apps.assessment.models import Assessment
-from hawc.apps.common import dynamic_forms
-from hawc.apps.common.views import (
+from ..assessment.constants import AssessmentViewPermissions
+from ..assessment.models import Assessment
+from ..common import dynamic_forms
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..common.views import (
     BaseList,
     LoginRequiredMixin,
     MessageMixin,
     htmx_required,
 )
-from hawc.apps.lit.models import ReferenceFilterTag
-
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..lit.models import ReferenceFilterTag
 from . import constants, forms, models
 
 
@@ -122,6 +122,7 @@ class UDFBindingList(BaseList):
     parent_template_name = "assessment"
     model = models.ModelBinding
     template_name = "udf/udfbinding_list.html"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         return super().get_queryset().filter(assessment=self.assessment).order_by("-created")

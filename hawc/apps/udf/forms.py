@@ -5,13 +5,12 @@ from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
-from hawc.apps.common.autocomplete.forms import AutocompleteSelectMultipleWidget
-from hawc.apps.common.dynamic_forms.schemas import Schema
-from hawc.apps.common.forms import BaseFormHelper, PydanticValidator, form_actions_big
-from hawc.apps.myuser.autocomplete import UserAutocomplete
-
 from ..assessment.models import Assessment
+from ..common.autocomplete.forms import AutocompleteSelectMultipleWidget
+from ..common.dynamic_forms.schemas import Schema
+from ..common.forms import BaseFormHelper, PydanticValidator, form_actions_big
 from ..lit.models import ReferenceFilterTag
+from ..myuser.autocomplete import UserAutocomplete
 from . import cache, constants, models
 
 
