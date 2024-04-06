@@ -5,46 +5,46 @@
     </div>
     <div class="col-md p-0">
       {% if form.instance.id %}
-        <div>
-          <div class="d-flex row justify-content-end m-0 flex-shrink-0">
-            {% if action == 'delete' %}
-              {% csrf_token %}
-              <div class="d-flex row justify-content-end m-0 flex-shrink-0 mb-2">
-                <p class="m-0 d-flex row align-items-center"><i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?</p>
-                <div class="row w-100 pb-1"></div>
-                <div class="d-flex pl-2">
-                  <button class="btn btn-sm btn-danger"
-                          id="workflow-conf-delete"
-                          hx-post="{{ object.get_delete_url }}"
-                          hx-indicator="#spinner-{{object.pk}}"
-                          hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
-                </div>
+        <div class="d-flex row justify-content-end m-0 flex-shrink-0">
+          {% if action == 'delete' %}
+            {% csrf_token %}
+            <div class="d-flex row justify-content-end m-0 flex-shrink-0 mb-2">
+              <p class="m-0 d-flex row align-items-center">
+                <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
+              </p>
+              <div class="row w-100 pb-1"></div>
+              <div class="d-flex pl-2">
+                <button class="btn btn-sm btn-danger"
+                        id="workflow-conf-delete"
+                        hx-post="{{ object.get_delete_url }}"
+                        hx-indicator="#spinner-{{object.pk}}"
+                        hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
               </div>
-              </form>
-            {% else %}
-              <button
-                class="btn btn-sm btn-danger p-2 flex-shrink-0 align-self-end mb-2"
-                id="workflow-delete"
-                hx-get="{{ object.get_delete_url }}">
-                <i class="fa fa-fw fa-trash"></i>&nbsp;</button>
-            {% endif %}
-            <div class="row w-100"></div>
-            <div class="d-flex">
-              <i class="fa fa-spinner fa-spin align-self-center htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i>
-              <button class="btn btn-primary px-4 py-2 ml-2"
-                      id="binding-update"
-                      hx-post="{% url 'udf:binding_htmx' binding_type object.pk 'update' %}"
-                      hx-indicator="#spinner-{{object.pk}}">
-                <i class="fa fa-fw fa-save"></i>&nbsp;
-                Update
-              </button>
-              <button class="btn btn-light px-3 py-2 ml-2"
-                      id="binding-cancel"
-                      hx-get="{% url 'udf:binding_htmx'  binding_type object.pk 'read' %}"
-                      hx-indicator="#spinner-{{object.pk}}">
-                Cancel
-              </button>
             </div>
+          {% else %}
+            <button
+              class="btn btn-sm btn-danger p-2 flex-shrink-0 align-self-end mb-2"
+              id="workflow-delete"
+              hx-get="{{ object.get_delete_url }}">
+              <i class="fa fa-fw fa-trash"></i>
+            </button>
+          {% endif %}
+          <div class="row w-100"></div>
+          <div class="d-flex">
+            <i class="fa fa-spinner fa-spin align-self-center htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i>
+            <button class="btn btn-primary px-4 py-2 ml-2"
+                    id="binding-update"
+                    hx-post="{% url 'udf:binding_htmx' binding_type object.pk 'update' %}"
+                    hx-indicator="#spinner-{{object.pk}}">
+              <i class="fa fa-fw fa-save"></i>&nbsp;
+              Update
+            </button>
+            <button class="btn btn-light px-3 py-2 ml-2"
+                    id="binding-cancel"
+                    hx-get="{% url 'udf:binding_htmx'  binding_type object.pk 'read' %}"
+                    hx-indicator="#spinner-{{object.pk}}">
+              Cancel
+            </button>
           </div>
         </div>
       {% else %}
