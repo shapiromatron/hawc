@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import HelpTextPopup from "shared/components/HelpTextPopup";
+import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
@@ -20,9 +21,10 @@ class FilterWidgetTable extends Component {
         return (
             <table className="table table-sm table-striped">
                 <colgroup>
-                    <col width="25%" />
-                    <col width="25%" />
                     <col width="20%" />
+                    <col width="20%" />
+                    <col width="20%" />
+                    <col width="10%" />
                     <col width="20%" />
                     <col width="10%" />
                 </colgroup>
@@ -37,6 +39,7 @@ class FilterWidgetTable extends Component {
                             Delimiter
                             <HelpTextPopup content={HelpText.delimiter} />
                         </th>
+                        <th>Height</th>
                         <th>Interactivity</th>
                         <ActionsTh onClickNew={createNewFilterWidget} />
                     </tr>
@@ -79,6 +82,15 @@ class FilterWidgetTable extends Component {
                         className="col-md-12"
                         value={row.delimiter}
                         onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-height-${index}`}
+                        value={row.height}
+                        onChange={e =>
+                            changeArraySettings(key, index, "height", parseInt(e.target.value) || 8)
+                        }
                     />
                 </td>
                 <td>

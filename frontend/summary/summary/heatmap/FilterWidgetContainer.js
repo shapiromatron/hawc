@@ -35,7 +35,7 @@ class FilterWidget extends Component {
             ),
             action = getAction(widget.on_click_event),
             widgetTitle = widget.header ? widget.header : h.titleCase(widget.column);
-
+        // todo - implement height?
         return (
             <div
                 className="pb-2"

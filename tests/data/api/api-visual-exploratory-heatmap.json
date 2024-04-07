@@ -30,12 +30,14 @@
         "column": "species",
         "delimiter": "",
         "header": "",
+        "height": 8,
         "on_click_event": "---"
       },
       {
         "column": "strain",
         "delimiter": "",
         "header": "",
+        "height": 8,
         "on_click_event": "---"
       }
     ],

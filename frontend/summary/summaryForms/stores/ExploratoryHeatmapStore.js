@@ -15,7 +15,13 @@ let createDefaultAxisItem = function() {
         return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
-        return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
+        return {
+            column: NULL_VALUE,
+            header: "",
+            delimiter: "",
+            height: 8,
+            on_click_event: NULL_VALUE,
+        };
     },
     createTableRow = function() {
         return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};

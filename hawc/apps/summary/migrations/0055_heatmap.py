@@ -11,6 +11,9 @@ def add_options(apps, schema_editor):
         totals = obj.settings.pop("show_totals", False)
         obj.settings["show_totals_x"] = totals
         obj.settings["show_totals_y"] = totals
+        # filter widget height
+        for item in obj.settings.get("filter_widgets", []):
+            item["height"] = 8
 
         updated_objs.append(obj)
 
@@ -24,6 +27,9 @@ def remove_options(apps, schema_editor):
         # totals
         totals = bool(obj.settings.pop("show_totals_x") or obj.settings.pop("show_totals_y"))
         obj.settings["show_totals"] = totals
+        # filter widget height
+        for item in obj.settings.get("filter_widgets", []):
+            item.pop("height")
 
         updated_objs.append(obj)
 
