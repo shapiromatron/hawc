@@ -49,8 +49,8 @@ class ExploreHeatmapPlot {
             settings.compress_y ? totals.y[i] > 0 : true
         ).length;
 
-        this.x_steps = settings.show_totals ? this.x_steps + 1 : this.x_steps;
-        this.y_steps = settings.show_totals ? this.y_steps + 1 : this.y_steps;
+        this.x_steps = settings.show_totals_x ? this.x_steps + 1 : this.x_steps;
+        this.y_steps = settings.show_totals_y ? this.y_steps + 1 : this.y_steps;
 
         // calculated padding based on labels
         this.x_axis_label_padding = 0;
@@ -276,7 +276,7 @@ class ExploreHeatmapPlot {
                 numItems += 1;
                 lastItem = thisItem;
             }
-            if (settings.show_totals && i == numXAxes - 1) {
+            if (settings.show_totals_x && i == numXAxes - 1) {
                 let label = axis.append("g");
                 label
                     .append("text")
@@ -326,8 +326,7 @@ class ExploreHeatmapPlot {
             this.bind_tooltip(border, "axis");
             yOffset = newYOffset;
         }
-
-        if (settings.show_totals) {
+        if (settings.show_totals_x) {
             const x1 = this.xs.length * this.cellDimensions.width,
                 x2 = x1 + this.cellDimensions.width,
                 y1 = settings.x_axis_bottom
@@ -418,7 +417,7 @@ class ExploreHeatmapPlot {
                 numItems += 1;
                 lastItem = thisItem;
             }
-            if (settings.show_totals && i == numYAxes - 1) {
+            if (settings.show_totals_y && i == numYAxes - 1) {
                 let label = axis.append("g");
                 label
                     .append("text")
@@ -464,7 +463,7 @@ class ExploreHeatmapPlot {
             this.bind_tooltip(border, "axis");
             xOffset = xOffset + width;
         }
-        if (settings.show_totals) {
+        if (settings.show_totals_y) {
             const x1 = -yAxis.node().getBBox().width,
                 x2 = 0,
                 y1 = this.ys.length * this.cellDimensions.height,

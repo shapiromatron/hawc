@@ -325,41 +325,53 @@ class HeatmapDatastore {
                         });
                 })
                 .flat();
-        if (this.settings.show_totals) {
+
+        if (this.settings.show_totals_x || this.settings.show_totals_y) {
             const x_steps = scales.x.filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
                     .length,
                 y_steps = scales.y.filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
                     .length;
-            xy_map.push(
-                ...scales.x
-                    .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
-                    .map((x, i) => {
-                        index += 1;
-                        return {
-                            index,
-                            type: "total",
-                            x_filters: x,
-                            y_filters: [],
-                            x_step: i,
-                            y_step: y_steps,
-                            rows: getRows(x),
-                        };
-                    }),
-                ...scales.y
-                    .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
-                    .map((y, i) => {
-                        index += 1;
-                        return {
-                            index,
-                            type: "total",
-                            x_filters: [],
-                            y_filters: y,
-                            x_step: x_steps,
-                            y_step: i,
-                            rows: getRows(y),
-                        };
-                    }),
-                {
+
+            if (this.settings.show_totals_y) {
+                xy_map.push(
+                    ...scales.x
+                        .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
+                        .map((x, i) => {
+                            index += 1;
+                            return {
+                                index,
+                                type: "total",
+                                x_filters: x,
+                                y_filters: [],
+                                x_step: i,
+                                y_step: y_steps,
+                                rows: getRows(x),
+                            };
+                        })
+                );
+            }
+
+            if (this.settings.show_totals_x) {
+                xy_map.push(
+                    ...scales.y
+                        .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                        .map((y, i) => {
+                            index += 1;
+                            return {
+                                index,
+                                type: "total",
+                                x_filters: [],
+                                y_filters: y,
+                                x_step: x_steps,
+                                y_step: i,
+                                rows: getRows(y),
+                            };
+                        })
+                );
+            }
+
+            if (this.settings.show_totals_x && this.settings.show_totals_y) {
+                xy_map.push({
                     index: ++index,
                     type: "total",
                     x_filters: [],
@@ -367,9 +379,10 @@ class HeatmapDatastore {
                     x_step: x_steps,
                     y_step: y_steps,
                     rows: h.setDifference(this.usableRows, this.rowsRemovedByFilters),
-                }
-            );
+                });
+            }
         }
+
         this.matrixDatasetCache[hash] = xy_map;
         return xy_map;
     }

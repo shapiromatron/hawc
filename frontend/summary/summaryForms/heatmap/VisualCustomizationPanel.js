@@ -293,10 +293,16 @@ class VisualCustomizationPanel extends Component {
                             </div>
                             <div className="col-md-3">
                                 <CheckboxInput
-                                    label="Show grand totals"
-                                    name="show_totals"
+                                    label="Show grand totals (rows)"
+                                    name="show_totals_x"
                                     onChange={e => changeSettings(e.target.name, e.target.checked)}
-                                    checked={settings.show_totals}
+                                    checked={settings.show_totals_x}
+                                />
+                                <CheckboxInput
+                                    label="Show grand totals (columns)"
+                                    name="show_totals_y"
+                                    onChange={e => changeSettings(e.target.name, e.target.checked)}
+                                    checked={settings.show_totals_y}
                                 />
                             </div>
                         </div>

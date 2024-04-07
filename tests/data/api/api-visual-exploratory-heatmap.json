@@ -53,7 +53,8 @@
     "show_grid": true,
     "show_null": true,
     "show_tooltip": true,
-    "show_totals": true,
+    "show_totals_x": true,
+    "show_totals_y": true,
     "table_fields": [
       {
         "column": "study citation",
