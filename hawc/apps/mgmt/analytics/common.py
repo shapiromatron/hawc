@@ -38,3 +38,12 @@ def empty_plot() -> go.Figure:
         font=dict(size=15),
     )
     return fig
+
+
+pd_html_config = dict(
+    index=False,
+    classes="table table-striped",
+    bold_rows=False,
+    float_format=lambda d: f"{d:0.2f}",
+    border=0,
+)

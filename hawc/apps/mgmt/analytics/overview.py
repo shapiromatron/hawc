@@ -5,8 +5,15 @@ from django.db.models import Count, Q
 
 from ...animal import constants
 from ...animal.models import Endpoint, EndpointGroup, Experiment
+from ...assessment.models import Assessment
+from ...epi import constants as ec
+from ...epi.models import Outcome, StudyPopulation
+from ...epiv2 import constants as ec2
+from ...epiv2 import models
 from ...lit import constants as lc
 from ...lit.models import Reference, Search
+from ...riskofbias import constants as robc
+from ...riskofbias.models import RiskOfBias, RiskOfBiasScore
 from ...study.models import Study
 from ...summary import constants as sc
 from ...summary.models import DataPivot, SummaryTable, Visual
@@ -311,8 +318,97 @@ def summary_counts(assessment_id):
     }
 
 
-def get_context_data(id: int) -> dict:
+# epi data
+def epi_counts(assessment_id):
     return {
+        "n_epi_studies": Study.objects.filter(assessment_id=assessment_id)
+        .annotate(n_sp=Count("study_populations"))
+        .filter(n_sp__gt=0)
+        .count(),
+        "n_epi_outcomes": Outcome.objects.filter(
+            study_population__study__assessment_id=assessment_id
+        ).count(),
+    }
+
+
+def study_pop_design_plot(assessment_id):
+    types = (
+        StudyPopulation.objects.filter(study__assessment_id=assessment_id)
+        .values_list("design")
+        .annotate(total=Count("design"))
+        .order_by("design")
+    )
+    data = []
+    for type, n in list(types):
+        data.append((ec.Design(type).label, n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
+    return barchart_count_plot(df, labels={"type": "Design type", "count": "# Study Populations"})
+
+
+# epiv2 data
+def epiv2_counts(assessment_id):
+    return {
+        "n_epiv2_studies": Study.objects.filter(assessment_id=assessment_id)
+        .annotate(n_des=Count("designs"))
+        .filter(n_des__gt=0)
+        .count(),
+        "n_epiv2_outcomes": models.Outcome.objects.filter(
+            design__study__assessment_id=assessment_id
+        ).count(),
+    }
+
+
+def study_design_plot(assessment_id):
+    types = (
+        models.Design.objects.filter(study__assessment_id=assessment_id)
+        .values_list("study_design")
+        .annotate(total=Count("study_design"))
+        .order_by("study_design")
+    )
+    data = []
+    for type, n in list(types):
+        data.append((ec2.StudyDesign(type).label, n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
+    return barchart_count_plot(df, labels={"type": "Study design type", "count": "# Study Designs"})
+
+
+# risk of bias
+def rob_counts(assessment_id):
+    return {
+        "n_robs": RiskOfBias.objects.filter(study__assessment_id=assessment_id).count(),
+        "n_final": RiskOfBias.objects.filter(study__assessment_id=assessment_id)
+        .filter(final=True)
+        .count(),
+        "n_scores": RiskOfBiasScore.objects.filter(
+            riskofbias__study__assessment_id=assessment_id
+        ).count(),
+    }
+
+
+def rob_score_plot(assessment_id):
+    types = (
+        RiskOfBiasScore.objects.filter(riskofbias__study__assessment_id=assessment_id)
+        .values_list("score")
+        .annotate(total=Count("score"))
+        .order_by("score")
+    )
+    data = []
+    for score, n in list(types):
+        data.append((robc.SCORE_CHOICES_MAP.get(score, "Unknown"), n))
+    df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
+    if df.empty:
+        return empty_plot()
+    return barchart_count_plot(df, labels={"type": "Judgement", "count": "# Studies"})
+
+
+def get_context_data(assessment: Assessment) -> dict:
+    id = assessment.id
+    return {
+        "assessment": assessment,
         # literature screening
         "n": get_search_count(id),
         "search_source": get_search_source(id),
@@ -329,6 +425,15 @@ def get_context_data(id: int) -> dict:
         "n_endpoints_ehv": endpoints_ehv(id),
         "n_dose_res_groups": n_dose_response_groups(id),
         "experiment_type_plot": experiment_type_plot(id),
+        # epi
+        "epi_counts": epi_counts(id),
+        "study_pop_design_plot": study_pop_design_plot(id),
+        # epiv2
+        "epiv2_counts": epiv2_counts(id),
+        "epiv2_study_design_plot": study_design_plot(id),
+        # rob
+        "rob_counts": rob_counts(id),
+        "rob_score_plot": rob_score_plot(id),
         # summary
         "summary_count": summary_counts(id),
     }
