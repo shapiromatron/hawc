@@ -143,3 +143,44 @@ class TestLiterature(PlaywrightTestCase):
         expect(page.get_by_text("Are you sure you want to")).to_be_visible()
         page.get_by_role("button", name=" Delete").click()
         expect(page.get_by_role("heading", name="Title/Abstract 2")).not_to_be_visible()
+
+    def test_udf_tagging(self):
+        page = self.page
+        page.goto(self.live_server_url)
+
+        self.login_and_goto_url(
+            page, f"{self.live_server_url}/lit/assessment/1/tag/", "team@hawcproject.org"
+        )
+
+        page.get_by_text("Human Study", exact=True).click()
+        expect(page.get_by_text("Tag Form")).to_be_visible()
+        expect(page.get_by_label("Field1")).to_be_visible()
+        expect(page.get_by_label("Field2")).to_be_visible()
+
+        # Tagging without filling out UDF returns error
+        page.get_by_role("button", name="Save and next").click()
+        expect(page.get_by_text("An error was found with tag form data.")).to_be_visible()
+        expect(
+            page.locator("#div_id_2-field1").get_by_text("This field is required.")
+        ).to_be_visible()
+        expect(
+            page.locator("#div_id_2-field2").get_by_text("This field is required.")
+        ).to_be_visible()
+
+        # tagging with UDF data should work
+        page.get_by_label("Field1").fill("1001")
+        page.get_by_label("Field2").fill("2002")
+        page.get_by_role("button", name="Save and next").click()
+        expect(page.get_by_text("HERO3 HAWC3")).to_be_visible()  # on to next reference
+
+        # go back to reference, check data stays
+        page.get_by_text("Frédéric Chopin 2010").click()
+        expect(page.get_by_title("Inclusion ➤ Human Study")).to_be_visible()
+        expect(page.get_by_label("Field1")).to_have_value("1001")
+        expect(page.get_by_label("Field2")).to_have_value("2002")
+
+        # remove tag, UDF goes away
+        page.get_by_title("Inclusion ➤ Human Study").click()
+        expect(page.get_by_label("Field1")).not_to_be_visible()
+        expect(page.get_by_label("Field2")).not_to_be_visible()
+        page.get_by_role("button", name="Save and next").click()

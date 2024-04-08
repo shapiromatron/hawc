@@ -47,6 +47,7 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
             self.instance.assessment = parent
         elif type(parent) is Reference:
             self.instance.reference_ptr = parent
+
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
