@@ -1,7 +1,7 @@
 <div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form" style="max-width: 90rem;">
   {% if form %}
     <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
-      <form class="workflow-form" method=post enctype="multipart/form-data">
+      <form class="workflow-form" method="post">
         {% if form.instance.id %}
           <div class="d-flex">
             <h3 class="py-2">Update Workflow</h3>

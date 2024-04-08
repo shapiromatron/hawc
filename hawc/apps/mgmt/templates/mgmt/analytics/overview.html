@@ -31,8 +31,8 @@
       {% include 'common/analytics_plot.html' with title='References by publication year' plot=refs_by_year_plot %}
       {% include 'common/analytics_plot.html' with title='References and tags plot' plot=refs_tags_plot %}
     </div>
+    <hr/>
   </div>
-
 
   <div class="my-4">
     <h3>Study</h3>
@@ -76,6 +76,35 @@
       {% analytics_card value=n_endpoints_ehv label='endpoints using Environmental Health Vocabulary (EHV)' %}
       {% analytics_card value=n_dose_res_groups label='total dose response groups' %}
     </div>
+    <hr/>
+  </div>
+
+  <div class="my-4">
+    <h3>Epidemiology</h3>
+    <div class="card-columns">
+      {% if assessment.epi_version == 1 %}
+        {% analytics_card value=epi_counts.n_epi_studies label="total studies" %}
+        {% analytics_card value=epi_counts.n_epi_outcomes label="epidemiological outcomes" %}
+        {% include 'common/analytics_plot.html' with title='Study Populations by design' plot=study_pop_design_plot %}
+      {% elif assessment.epi_version == 2 %}
+        {% analytics_card value=epiv2_counts.n_epiv2_studies label='total studies' %}
+        {% analytics_card value=epiv2_counts.n_epiv2_outcomes label='epidemiological outcomes' %}
+        {% include 'common/analytics_plot.html' with title='Study Population by design' plot=epiv2_study_design_plot %}
+      {% endif %}
+    </div>
+    <hr/>
+  </div>
+
+  <div class="my-4">
+    <h3>{{assessment.get_rob_name_display}}</h3>
+    <div class="card-columns">
+      {% analytics_card value=study_types.rob label='studies with a review' %}
+      {% analytics_card value=rob_counts.n_robs label='reviews' %}
+      {% analytics_card value=rob_counts.n_final label='final reviews' %}
+      {% analytics_card value=rob_counts.n_scores label='judgments' %}
+      {% include 'common/analytics_plot.html' with title='Judgement by type' plot=rob_score_plot %}
+    </div>
+    <hr/>
   </div>
 
   <div class="my-4">
@@ -87,5 +116,6 @@
       {% include 'common/analytics_plot.html' with title='Visuals by type' plot=summary_count.visual_barchart %}
       {% include 'common/analytics_plot.html' with title='Tables by type' plot=summary_count.table_barchart %}
     </div>
+    <hr/>
   </div>
 {% endblock %}
