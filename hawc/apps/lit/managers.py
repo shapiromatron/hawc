@@ -892,7 +892,6 @@ class ReferenceManager(BaseManager):
                 tags_count=Count("tags"),
                 user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
             )
-            # has no consensus tags and there are currently < 2 unresolved user reviews
             needs_tagging = refs.filter(user_tag_count__lt=2)
             conflicts = refs.filter(user_tag_count__gt=1)
             for workflow in workflows:
@@ -907,6 +906,7 @@ class ReferenceManager(BaseManager):
                     if workflow.link_conflict_resolution
                     else None
                 )
+            # needs_tagging = 0 consensus tags and < 2 unresolved user reviews
             overview.update(
                 needs_tagging=needs_tagging.filter(tags_count=0).count(),
                 conflicts=conflicts.count(),
