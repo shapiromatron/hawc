@@ -106,6 +106,7 @@ class ModelBinding(models.Model):
         )
 
     def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
+        kwargs.setdefault("prefix", self.id)
         return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_assessment(self):
@@ -157,6 +158,7 @@ class TagBinding(models.Model):
         )
 
     def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
+        kwargs.setdefault("prefix", self.id)
         return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_form_html(self, **kwargs) -> SafeText:
