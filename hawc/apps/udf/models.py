@@ -13,16 +13,26 @@ from django.utils.safestring import SafeText
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
 from ..common.forms import DynamicFormField
+from . import managers
 
 
 class UserDefinedForm(models.Model):
+    objects = managers.UserDefinedFormManager()
+
     name = models.CharField(max_length=128)
     description = models.TextField()
-    schema = models.JSONField()
+    schema = models.JSONField(
+        help_text="The schema defines the structure and behavior of the UDF. It is composed of JSON that specifies fields and conditional logic. Contact us for help defining a schema for your UDF."
+    )
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="udf_forms_creator"
     )
-    editors = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="udf_forms")
+    editors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="udf_forms",
+        help_text="Editors have the ability to update this form, and can use it for any of their assessments.",
+    )
     parent = models.ForeignKey(
         "self",
         blank=True,
@@ -30,7 +40,19 @@ class UserDefinedForm(models.Model):
         on_delete=models.SET_NULL,
         related_name="children",
     )
-    deprecated = models.BooleanField(default=False)
+    assessments = models.ManyToManyField(
+        Assessment,
+        blank=True,
+        related_name="udf_forms",
+        help_text="Users in selected assessments will be able to apply this form to models in their assessment.",
+    )
+    published = models.BooleanField(
+        default=False,
+        help_text="Published UDFs are visible for all users and usable for all assessments.",
+    )
+    deprecated = models.BooleanField(
+        default=False, help_text="Select if this UDF should no longer be used."
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -44,8 +66,11 @@ class UserDefinedForm(models.Model):
     def get_absolute_url(self):
         return reverse("udf:udf_detail", args=(self.pk,))
 
+    def get_update_url(self):
+        return reverse("udf:udf_update", args=(self.pk,))
+
     def user_can_edit(self, user):
-        return self.creator == user or user in self.editors.all()
+        return self.creator == user or user in self.editors.all() or user.is_staff
 
     def data_list(self, data: dict):
         schema = dynamic_forms.Schema.model_validate(self.schema)
@@ -81,6 +106,7 @@ class ModelBinding(models.Model):
         )
 
     def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
+        kwargs.setdefault("prefix", self.id)
         return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_assessment(self):
@@ -88,6 +114,12 @@ class ModelBinding(models.Model):
 
     def get_absolute_url(self):
         return reverse("udf:model_detail", args=(self.id,))
+
+    def get_update_url(self):
+        return reverse("udf:binding_htmx", args=("model", self.id, "update"))
+
+    def get_delete_url(self):
+        return reverse("udf:binding_htmx", args=("model", self.id, "delete"))
 
     @classmethod
     def get_binding(cls, assessment: Assessment, Model: type[models.Model]) -> Self | None:
@@ -126,6 +158,7 @@ class TagBinding(models.Model):
         )
 
     def form_instance(self, *args, **kwargs) -> dynamic_forms.DynamicForm:
+        kwargs.setdefault("prefix", self.id)
         return dynamic_forms.Schema.model_validate(self.form.schema).to_form(*args, **kwargs)
 
     def get_form_html(self, **kwargs) -> SafeText:
@@ -137,8 +170,11 @@ class TagBinding(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_absolute_url(self):
-        return reverse("udf:tag_detail", args=(self.id,))
+    def get_update_url(self):
+        return reverse("udf:binding_htmx", args=("tag", self.id, "update"))
+
+    def get_delete_url(self):
+        return reverse("udf:binding_htmx", args=("tag", self.id, "delete"))
 
 
 class ModelUDFContent(models.Model):

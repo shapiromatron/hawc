@@ -2,24 +2,27 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12 pad-form">
       {% crispy form %}
-    </div>
-    <div class="col-md-6 card">
-      <div class="card-body">
-        <h4 class="card-title">Form Preview</h4>
-        <div id="schema-preview-frame">
-          <div class="alert alert-info" role="alert">Click Preview to see what your form will look like!</div>
-        </div>
-      </div>
     </div>
   </div>
 {% endblock %}
 
 {% block extrajs %}
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      htmx.on("htmx:afterSwap", window.app.HAWCUtils.dynamicFormListeners);
+    $(window).ready(function() {
+      $("#schema-preview-btn").on("click", function() {
+        $("#schema-preview-frame").removeClass('show');
+      });
+      $("#schema-preview-btn").on("htmx:afterOnLoad", function() {
+        window.app.HAWCUtils.dynamicFormListeners();
+        $("#schema-preview-frame").collapse("show");
+      });
+      $('#load-example').on("click", function(e){
+        e.preventDefault();
+        const demo = '{"fields": [{"type": "char","name": "name","label": "Name","help_text": "First and last name","css_class": "col-6"},{"type": "integer","name": "age","required": false,"label": "Age","min_value": 21,"css_class": "col-6"},{"type": "multiple_choice","name": "favorite_foods","required": false,"label": "Favorite foods","widget": "checkbox_select_multiple","choices": [["pizza", "Pizza"],["ice_cream", "Ice cream"],["taco", "Tacos"]]}]}';
+        $('#id_schema').val(demo)
+      })
     });
   </script>
 {% endblock extrajs %}

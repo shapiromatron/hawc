@@ -961,8 +961,8 @@ class Reference(models.Model):
                 except TagBinding.DoesNotExist:
                     raise ValidationError("UDF binding not found")
 
-                # fix edge-case where a select multiple only has one selected
-                # todo - can this code + JS be removed to fix this issue?
+                # handle edge-case where a select multiple only has one selected
+                # TODO - can this code + JS be removed to fix this issue?
                 empty_form = binding.form_instance()
                 for field, data in udf.items():
                     if isinstance(
@@ -983,8 +983,8 @@ class Reference(models.Model):
                         {f"{udf_tag_id}-{field}": errors for (field, errors) in form.errors.items()}
                     )
 
-                if udf_validation_errors:
-                    raise ValidationError(udf_validation_errors)
+            if udf_validation_errors:
+                raise ValidationError(udf_validation_errors)
 
         # determine if we should save the reference-level tags
         update_reference_tags = False

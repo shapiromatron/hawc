@@ -482,7 +482,7 @@ div.smart-tag.active {
     padding: 0 1.25rem;
 }
 .alert.slide.showing {
-    height: 75px;
+    height: unset;
     transition: all 0.5s ease-out;
 }
 .ref_small {
@@ -848,6 +848,11 @@ table.bordered td {
     border: 1px solid #dddddd;
 }
 
+/* UDF */
+div.udf-info-row>p, div.udf-info-row>div.card>p {
+    line-height: 1.6rem;
+}
+
 /* react-datepicker */
 .react-datepicker-wrapper {
     display: block !important;
@@ -929,6 +934,12 @@ table.bordered td {
 }
 .m-xs {
     margin: 0.1rem !important;
+}
+.show-only-child {
+    display: none;
+}
+.show-only-child:only-child {
+    display: initial;
 }
 
 /* table column text alignment */
