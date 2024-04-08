@@ -482,7 +482,7 @@ div.smart-tag.active {
     padding: 0 1.25rem;
 }
 .alert.slide.showing {
-    height: 75px;
+    height: unset;
     transition: all 0.5s ease-out;
 }
 .ref_small {
