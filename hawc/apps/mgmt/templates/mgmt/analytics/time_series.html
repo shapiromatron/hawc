@@ -1,23 +1,20 @@
 {% block content %}
-  <div class="d-flex mb-2">
-    {% actions %}
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'reference' %}?format=xlsx">Download Reference Export (xlsx)</a>
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'study' %}?format=xlsx">Download Study Export (xlsx)</a>
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'rob' %}?format=xlsx">Download Risk of Bias Export (xlsx)</a>
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'visual' %}?format=xlsx">Download Visual Export (xlsx)</a>
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'data_pivot' %}?format=xlsx">Download Data Pivot Export (xlsx)</a>
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-series' assessment_pk 'total_visuals' %}?format=xlsx">Download Total Visuals Export (xlsx)</a>
-
-    {% endactions %}
+  <div class="row card-group">
+    {% include 'common/analytics_plot_data.html' with title='References created over time' data=refs %}
+    {% include 'common/analytics_plot_data.html' with title='Studies created over time' data=studies %}
+    {% include 'common/analytics_plot_data.html' with title=rob_title data=robs %}
   </div>
   <div class="row card-group">
-    {% include 'common/analytics_plot.html' with title='References created over time' plot=refs %}
-    {% include 'common/analytics_plot.html' with title='Studies created over time' plot=studies %}
-    {% include 'common/analytics_plot.html' with title='Risk Of Bias created over time' plot=robs %}
+    {% include 'common/analytics_plot_data.html' with title='Bioassay experiments created over time' data=experiments %}
+    {% include 'common/analytics_plot_data.html' with title='Bioassay endpoints created over time' data=endpoints %}
   </div>
   <div class="row card-group">
-    {% include 'common/analytics_plot.html' with title='Data pivots created over time' plot=datapivots %}
-    {% include 'common/analytics_plot.html' with title='Visuals created over time' plot=visuals %}
-    {% include 'common/analytics_plot.html' with title='Total visuals and data pivots over time' plot=total_visuals %}
+    {% include 'common/analytics_plot_data.html' with title='Epidemiology study populations created over time' data=sp %}
+    {% include 'common/analytics_plot_data.html' with title='Epidemiology outcomes created over time' data=outcome %}
+  </div>
+  <div class="row card-group">
+    {% include 'common/analytics_plot_data.html' with title='Data pivots created over time' data=datapivots %}
+    {% include 'common/analytics_plot_data.html' with title='Visuals created over time' data=visuals %}
+    {% include 'common/analytics_plot_data.html' with title='Total visuals and data pivots over time' data=total_visuals %}
   </div>
 {% endblock %}

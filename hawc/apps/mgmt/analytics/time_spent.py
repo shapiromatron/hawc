@@ -5,7 +5,7 @@ from django.db.models.functions import Concat
 
 from ...assessment.models import Assessment, TimeSpentEditing
 from ...common.helper import df_move_column
-from .common import update_xscale
+from .common import pd_html_config, update_xscale
 
 
 def time_spent_df(assessment_id: int) -> pd.DataFrame:
@@ -81,11 +81,5 @@ def get_context_data(assessment: Assessment) -> dict:
         "assessment_pk": assessment.id,
         "time_spent_per_model_plot": time_spent_per_model_plot(df),
         "total_time_spent": total_time_spent(df),
-        "time_spent_tbl": time_spent_summary_df(df).to_html(
-            index=False,
-            classes="table table-striped",
-            bold_rows=False,
-            float_format=lambda d: f"{d:0.2f}",
-            border=0,
-        ),
+        "time_spent_tbl": time_spent_summary_df(df).to_html(**pd_html_config),
     }

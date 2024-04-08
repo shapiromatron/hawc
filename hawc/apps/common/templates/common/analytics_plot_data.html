@@ -1,0 +1,26 @@
+<div class="card box-shadow">
+  <div class="card-body">
+    <h3 class="text-center">{{ title }}</h3>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <button class="nav-link active" data-toggle="pill" data-target="#{{data.key}}-plot">Plot</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-toggle="pill" data-target="#{{data.key}}-data">Data</button>
+      </li>
+    </ul>
+    <div class="tab-content mx-2 mt-2">
+      <div class="tab-pane fade show active" id="{{data.key}}-plot" role="tabpanel">
+        {% plotly data.figure event="htmx" resizable="True" %}
+      </div>
+      <div class="tab-pane fade" id="{{data.key}}-data" role="tabpanel">
+        {% if data.table_html %}
+          {{ data.table_html|safe }}
+        {% else %}
+          <p class="text-muted">No data available.</p>
+        {% endif %}
+      </div>
+    </div>
+    <p class="text-muted text-center"> {{ caption }}</p>
+  </div>
+</div>
