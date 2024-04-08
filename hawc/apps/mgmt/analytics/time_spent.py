@@ -3,7 +3,7 @@ import plotly.express as px
 from django.db.models import Value
 from django.db.models.functions import Concat
 
-from ...assessment.models import TimeSpentEditing
+from ...assessment.models import Assessment, TimeSpentEditing
 from .common import update_xscale
 
 
@@ -71,10 +71,11 @@ def time_tbl_with_sd(df: pd.DataFrame) -> pd.DataFrame:
     return merged
 
 
-def get_context_data(id: int) -> dict:
-    df = time_spent_df(id)
+def get_context_data(assessment: Assessment) -> dict:
+    df = time_spent_df(assessment.id)
     return {
-        "assessment_pk": id,
+        "assessment": assessment,
+        "assessment_pk": assessment.id,
         "time_spent_per_model_plot": time_spent_per_model_plot(df),
         "total_time_spent": total_time_spent(df),
         "time_spent_tbl": time_tbl_with_sd(df).to_html(

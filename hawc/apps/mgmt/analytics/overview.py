@@ -5,6 +5,7 @@ from django.db.models import Count, Q
 
 from ...animal import constants
 from ...animal.models import Endpoint, EndpointGroup, Experiment
+from ...assessment.models import Assessment
 from ...epi import constants as ec
 from ...epi.models import Outcome, StudyPopulation
 from ...epiv2 import constants as ec2
@@ -379,12 +380,12 @@ def study_design_plot(assessment_id):
 def rob_counts(assessment_id):
     return {
         "n_robs": RiskOfBias.objects.filter(study__assessment_id=assessment_id).count(),
-        "n_active": RiskOfBias.objects.filter(study__assessment_id=assessment_id)
-        .filter(active=True)
-        .count(),
         "n_final": RiskOfBias.objects.filter(study__assessment_id=assessment_id)
         .filter(final=True)
         .count(),
+        "n_scores": RiskOfBiasScore.objects.filter(
+            riskofbias__study__assessment_id=assessment_id
+        ).count(),
     }
 
 
@@ -404,8 +405,10 @@ def rob_score_plot(assessment_id):
     return barchart_count_plot(df, labels={"type": "Judgement Score", "count": "# Studies"})
 
 
-def get_context_data(id: int) -> dict:
+def get_context_data(assessment: Assessment) -> dict:
+    id = assessment.id
     return {
+        "assessment": assessment,
         # literature screening
         "n": get_search_count(id),
         "search_source": get_search_source(id),
@@ -422,8 +425,6 @@ def get_context_data(id: int) -> dict:
         "n_endpoints_ehv": endpoints_ehv(id),
         "n_dose_res_groups": n_dose_response_groups(id),
         "experiment_type_plot": experiment_type_plot(id),
-        # summary
-        "summary_count": summary_counts(id),
         # epi
         "epi_counts": epi_counts(id),
         "study_pop_design_plot": study_pop_design_plot(id),
@@ -433,4 +434,6 @@ def get_context_data(id: int) -> dict:
         # rob
         "rob_counts": rob_counts(id),
         "rob_score_plot": rob_score_plot(id),
+        # summary
+        "summary_count": summary_counts(id),
     }

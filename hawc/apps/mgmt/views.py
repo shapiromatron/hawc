@@ -165,21 +165,21 @@ class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
 
     def time_series(self, request: HttpRequest, context: dict):
         context = cacheable(
-            lambda: time_series.get_context_data(self.assessment.id),
+            lambda: time_series.get_context_data(self.assessment),
             f"mgmt:analytics:time_series:{self.assessment.id}",
         )
         return render(request, "mgmt/analytics/time_series.html", context)
 
     def time_spent(self, request: HttpRequest, context: dict):
         context = cacheable(
-            lambda: time_spent.get_context_data(self.assessment.id),
+            lambda: time_spent.get_context_data(self.assessment),
             f"mgmt:analytics:time_spent:{self.assessment.id}",
         )
         return render(request, "mgmt/analytics/time_spent.html", context)
 
     def overview(self, request: HttpRequest, context: dict):
         context = cacheable(
-            lambda: overview.get_context_data(self.assessment.id),
+            lambda: overview.get_context_data(self.assessment),
             f"mgmt:analytics:overview:{self.assessment.id}",
         )
         return render(request, "mgmt/analytics/overview.html", context)

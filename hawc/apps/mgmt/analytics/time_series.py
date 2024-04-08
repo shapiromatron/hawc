@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from django.db.models import Count
 from django.db.models.functions import Trunc
 
+from ...animal.models import Assessment
 from ...lit.models import Reference
 from ...riskofbias.models import RiskOfBias
 from ...study.models import Study
@@ -33,10 +34,12 @@ def time_series(df: pd.DataFrame) -> go.Figure:
     return fig
 
 
-def get_context_data(id: int) -> dict:
+def get_context_data(assessment: Assessment) -> dict:
+    id = assessment.id
     viz_per_year = get_data(Visual, "month", id)
     dp_per_year = get_data(DataPivot, "month", id)
     return {
+        "assessment": assessment,
         "assessment_pk": id,
         "refs": time_series(get_data(Reference, "month", id)),
         "studies": time_series(get_data(Study, "month", id)),

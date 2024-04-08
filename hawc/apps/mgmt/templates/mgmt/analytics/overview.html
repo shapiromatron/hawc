@@ -34,7 +34,6 @@
     <hr/>
   </div>
 
-
   <div class="my-4">
     <h3>Study</h3>
     <div class="card-columns">
@@ -81,6 +80,34 @@
   </div>
 
   <div class="my-4">
+    <h3>Epidemiology</h3>
+    <div class="card-columns">
+      {% if assessment.epi_version == 1 %}
+        {% analytics_card value=epi_counts.n_epi_studies label="total studies" %}
+        {% analytics_card value=epi_counts.n_epi_outcomes label="epidemiological outcomes" %}
+        {% include 'common/analytics_plot.html' with title='Study Populations by design' plot=study_pop_design_plot %}
+      {% elif assessment.epi_version == 2 %}
+        {% analytics_card value=epiv2_counts.n_epiv2_studies label='total studies' %}
+        {% analytics_card value=epiv2_counts.n_epiv2_outcomes label='epidemiological outcomes' %}
+        {% include 'common/analytics_plot.html' with title='Study Population by design' plot=epiv2_study_design_plot %}
+      {% endif %}
+    </div>
+    <hr/>
+  </div>
+
+  <div class="my-4">
+    <h3>{{assessment.get_rob_name_display}}</h3>
+    <div class="card-columns">
+      {% analytics_card value=study_types.rob label='studies with a review' %}
+      {% analytics_card value=rob_counts.n_robs label='reviews' %}
+      {% analytics_card value=rob_counts.n_final label='final reviews' %}
+      {% analytics_card value=rob_counts.n_scores label='judgments' %}
+      {% include 'common/analytics_plot.html' with title='Judgement by type' plot=rob_score_plot %}
+    </div>
+    <hr/>
+  </div>
+
+  <div class="my-4">
     <h3>Summary Tables and Visuals</h3>
     <div class="card-columns">
       {% analytics_card value=summary_count.visual label='total visuals' %}
@@ -88,37 +115,6 @@
       {% analytics_card value=summary_count.table label='total tables' %}
       {% include 'common/analytics_plot.html' with title='Visuals by type' plot=summary_count.visual_barchart %}
       {% include 'common/analytics_plot.html' with title='Tables by type' plot=summary_count.table_barchart %}
-    </div>
-    <hr/>
-  </div>
-
-  <div class="my-4">
-    <h3>Epidemiology</h3>
-    <div class="card-columns">
-      {% analytics_card value=epi_counts.n_epi_studies label="total studies" %}
-      {% analytics_card value=epi_counts.n_epi_outcomes label="epidemiological outcomes" %}
-      {% include 'common/analytics_plot.html' with title='Study Populations by Design' plot=study_pop_design_plot %}
-    </div>
-    <hr/>
-  </div>
-
-  <div class="my-4">
-    <h3>Epidemiology V2</h3>
-    <div class="card-columns">
-      {% analytics_card value=epiv2_counts.n_epiv2_studies label='total studies' %}
-      {% analytics_card value=epiv2_counts.n_epiv2_outcomes label='epi v2 outcomes' %}
-      {% include 'common/analytics_plot.html' with title='Study Design' plot=epiv2_study_design_plot %}
-    </div>
-    <hr/>
-  </div>
-
-  <div class="my-4">
-    <h3>Risk of Bias</h3>
-    <div class="card-columns">
-      {% analytics_card value=rob_counts.n_robs label='reviews' %}
-      {% analytics_card value=rob_counts.n_active label='active reviews' %}
-      {% analytics_card value=rob_counts.n_final label='final reviews' %}
-      {% include 'common/analytics_plot.html' with title='Score Counts' plot=rob_score_plot %}
     </div>
     <hr/>
   </div>
