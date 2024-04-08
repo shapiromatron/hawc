@@ -1,5 +1,6 @@
 """Schemas to build dynamic Django forms."""
 from enum import Enum
+from typing import Any
 
 from django.forms import HiddenInput, JSONField
 from pydantic import BaseModel, conlist, field_validator, model_validator
@@ -92,3 +93,22 @@ class Schema(BaseModel):
         if len(self.fields) == 0:
             return JSONField(widget=HiddenInput(), required=False)
         return DynamicFormField(prefix, self.to_form, form_kwargs, *args, **kwargs)
+
+    def to_list(self, data: dict) -> list[tuple[str, Any]]:
+        """Return a list of key, value tuples for data in this schema."""
+        items = []
+        for field in self.fields:
+            field_value = data.get(field.name)
+            field_kwargs = field.get_form_field_kwargs()
+            value = field_value
+            if "choices" in field_kwargs and field_value is not None:
+                choice_map = dict(field_kwargs["choices"])
+                value = (
+                    "|".join([choice_map[i] for i in field_value])
+                    if isinstance(value, list)
+                    else choice_map[field_value]
+                )
+            if value:
+                label = field.get_verbose_name()
+                items.append((label, value))
+        return items
