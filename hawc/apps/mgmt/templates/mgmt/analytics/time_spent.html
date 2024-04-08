@@ -1,7 +1,8 @@
 {% block content %}
   <div class="d-flex">
     {% actions %}
-      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-spent' assessment_pk %}?format=xlsx">Download Time Spent Export (xlsx)</a>
+      <span class="dropdown-header">Time spent data</span>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-spent' assessment_pk %}?format=xlsx">Download (xlsx)</a>
     {% endactions %}
   </div>
   <div class="card-columns">

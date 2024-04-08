@@ -9,13 +9,13 @@ from .common import update_xscale
 
 def time_spent_df(assessment_id: int) -> pd.DataFrame:
     qs = TimeSpentEditing.objects.filter(seconds__gt=0, assessment_id=assessment_id).values_list(
-        "id",
-        "seconds",
         "content_type__app_label",
         Concat("content_type__app_label", Value("."), "content_type__model"),
+        "id",
+        "seconds",
     )
-    df = pd.DataFrame(data=qs, columns="id|seconds|app|model".split("|")).sort_values(
-        ["app", "model"]
+    df = pd.DataFrame(data=qs, columns="app|model|id|seconds".split("|")).sort_values(
+        ["app", "model", "id"]
     )
     return df
 

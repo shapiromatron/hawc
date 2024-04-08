@@ -43,15 +43,13 @@ class MgmtViewSet(BaseAssessmentViewSet):
     @action(
         detail=True,
         url_path="time-spent",
-        action_perms=AssessmentViewSetPermissions.PROJECT_MANAGER_OR_HIGHER,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
         renderer_classes=PandasRenderers,
     )
     def time_spent(self, request, pk):
         """Time spent export."""
         assessment: Assessment = self.get_object()
-        df = time_spent.time_spent_df(pk)
-        time_table = time_spent.time_tbl_with_sd(df)
-        export = FlatExport(df=time_table, filename=f"{assessment}-time-spent")
+        export = FlatExport(df=time_spent.time_spent_df(pk), filename=f"{assessment}-time-spent")
         return Response(export)
 
     @action(
