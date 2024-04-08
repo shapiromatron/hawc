@@ -4,6 +4,7 @@ from django.db.models import Value
 from django.db.models.functions import Concat
 
 from ...assessment.models import Assessment, TimeSpentEditing
+from ...common.helper import df_move_column
 from .common import update_xscale
 
 
@@ -43,32 +44,34 @@ def total_time_spent(df: pd.DataFrame) -> str:
         return f"{hr/8/5:,.1f} work weeks"
 
 
-def time_tbl(df: pd.DataFrame) -> pd.DataFrame:
-    return (
-        (df.groupby("model").seconds.sum() / 3600)
+def time_spent_summary_df(df: pd.DataFrame) -> pd.DataFrame:
+    df2 = (
+        df.groupby("model")["seconds"]
+        .describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])
+        .merge(df.groupby("model")["seconds"].sum() / 60 / 60, left_index=True, right_index=True)
+        .rename(
+            columns={
+                "count": "N",
+                "mean": "Mean (seconds)",
+                "std": "SD (seconds)",
+                "min": "Minimum (seconds)",
+                "5%": "5th (seconds)",
+                "25%": "25th (seconds)",
+                "50%": "50th (seconds)",
+                "75%": "75th (seconds)",
+                "95%": "95th (seconds)",
+                "max": "Maximum (seconds)",
+                "seconds": "Total (hours)",
+            }
+        )
+        .fillna("-")
         .reset_index()
-        .rename(columns={"seconds": "hours"})
-        .sort_values("hours", ascending=False)
     )
-
-
-def standard_deviation_tbl(df: pd.DataFrame) -> pd.DataFrame:
-    df["hours"] = df["seconds"] / 3600
-    percentiles = df.groupby("model")["hours"].quantile([0.05, 0.95, 0.25, 0.75]).unstack()
-    percentiles.columns = ["5", "95", "25", "75"]
-    for col in percentiles.columns:
-        percentiles[col] = percentiles[col].round(2)
-    return percentiles
-
-
-def time_tbl_with_sd(df: pd.DataFrame) -> pd.DataFrame:
-    hours_df = time_tbl(df)
-    sd_df = standard_deviation_tbl(df)
-    merged = pd.merge(hours_df, sd_df, on="model", how="left")
-    merged["SD 5/95"] = merged.apply(lambda row: f"{row["5"]} / {row["95"]}", axis=1)
-    merged["SD 25/75"] = merged.apply(lambda row: f"{row["25"]} / {row["75"]}", axis=1)
-    merged = merged.drop(columns=["5", "95", "25", "75"])
-    return merged
+    df2["N"] = df2["N"].astype(int)
+    df2 = df_move_column(df2, "Total (hours)", "N")
+    df2 = df_move_column(df2, "Mean (seconds)", "Total (hours)")
+    df2 = df_move_column(df2, "SD (seconds)", "Mean (seconds)")
+    return df2
 
 
 def get_context_data(assessment: Assessment) -> dict:
@@ -78,7 +81,7 @@ def get_context_data(assessment: Assessment) -> dict:
         "assessment_pk": assessment.id,
         "time_spent_per_model_plot": time_spent_per_model_plot(df),
         "total_time_spent": total_time_spent(df),
-        "time_spent_tbl": time_tbl_with_sd(df).to_html(
+        "time_spent_tbl": time_spent_summary_df(df).to_html(
             index=False,
             classes="table table-striped",
             bold_rows=False,
