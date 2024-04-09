@@ -939,7 +939,7 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     display: none;
 }
 .show-only-child:only-child {
-    display: initial;
+    display: block;
 }
 
 /* table column text alignment */
