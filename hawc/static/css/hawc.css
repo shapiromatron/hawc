@@ -85,6 +85,9 @@ tfoot > tr > td {
 .vw75 {
     max-width: 75vw;
 }
+.m-vh75 {
+    max-height: 75vh;
+}
 .clickable, .clickable .bg-gray {
     transition: background-color 0.25s ease;
 }
