@@ -3,6 +3,7 @@
 import json
 import os
 
+from ... import __version__
 from .base import *
 
 SERVER_ROLE = os.environ.get("HAWC_SERVER_ROLE", "staging")
@@ -85,4 +86,6 @@ if SENTRY_DSN := os.environ.get("HAWC_SENTRY_DSN"):
             "HAWC_SENTRY_SETTINGS", '{"traces_sample_rate": 1.0, "send_default_pii": false}'
         )
     )
+    release = COMMIT.sha if "undefined" not in COMMIT.sha else __version__
+    SENTRY_SETTINGS.update(release=release)
     sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()], **SENTRY_SETTINGS)

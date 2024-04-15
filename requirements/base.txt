@@ -1,5 +1,5 @@
 # web application
-Django~=5.0.0
+Django~=5.0.4
 django-crispy-forms==2.1
 crispy-bootstrap4==2023.1
 django-filter==23.5
