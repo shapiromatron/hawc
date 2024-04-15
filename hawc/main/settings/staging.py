@@ -87,5 +87,5 @@ if SENTRY_DSN := os.environ.get("HAWC_SENTRY_DSN"):
         )
     )
     release = COMMIT.sha if "undefined" not in COMMIT.sha else __version__
-    SENTRY_SETTINGS.update(release=release)
+    SENTRY_SETTINGS.setdefault("release", release)
     sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()], **SENTRY_SETTINGS)
