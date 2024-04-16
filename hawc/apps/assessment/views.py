@@ -455,11 +455,7 @@ class AttachmentViewSet(HtmxViewSet):
                 template = self.detail_fragment
         else:
             form = forms.AttachmentForm()
-            template = self.list_fragment
         context = self.get_context_data(form=form)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            request.item.assessment, False
-        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)

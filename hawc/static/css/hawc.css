@@ -996,6 +996,14 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     text-align: left;
 }
 
+#attach_table {
+    display: none;
+}
+
+#attach_table:has(tbody>tr) {
+    display: block;
+}
+
 /* anchor links */
 .anchor-link {
     opacity: 0;
