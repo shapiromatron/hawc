@@ -17,8 +17,8 @@
       <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
     <button id="{{model}}-delete" class="btn btn-sm btn-danger" hx-get="{% crud_url 'eco' model 'delete' object.pk %}">
       <i class="fa fa-trash" aria-hidden="true"></i></button>
-    <button id="{{model}}-clone" class="btn btn-sm btn-secondary" hx-post="{% crud_url 'eco' model 'clone' object.pk %}"
-            hx-target=".{{model}}-edit-row" hx-swap="outerHTML">
+    <button id="{{model}}-clone" class="btn btn-sm btn-secondary" hx-swap="beforeend" hx-post="{% crud_url 'eco' model 'clone' object.pk %}"
+            hx-target="#{{model}}-tbody" hx-swap="outerHTML">
       <i class="fa fa-clone" aria-hidden="true"></i></button>
   </td>
 {% endif %}

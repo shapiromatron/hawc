@@ -1,4 +1,4 @@
-<tr hx-target="this" hx-swap="outerHTML" class="eco-obj-row {{action}}" id="result-{{object.id}}">
+<tr hx-target="this" hx-swap="outerHTML" class="eco-obj-row {{action}} result-{{object.id}} cause-{{object.cause.id}} effect-{{object.effect.id}}">
   <td>{{object.name}}</td>
   <td>{{object.cause.name}}</td>
   <td>{{object.effect.name }}</td>
@@ -12,6 +12,3 @@
   <td>{{object.derived_value }}</td>
   {% include "eco/fragments/_object_row.html" with model="result" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden eco-edit-row result-edit-row" hx-target="this"></tr>
-{% endif %}

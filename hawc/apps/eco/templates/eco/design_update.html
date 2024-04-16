@@ -13,19 +13,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'eco:cause-htmx' object.pk 'create' as cause_create %}
-      {% include "eco/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target=".cause-edit-row" model="cause" %}
+      {% include "eco/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target="#cause-tbody" model="cause" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '10,15,15,15,15,15,15' %}
         {% bs4_thead 'Name,Term,Species,Level,Level Units,Comment,Edit' %}
-        <tbody>
-          {% if causes %}
-            {% for object in causes %}
-              {% include "eco/fragments/cause_row.html" %}
-            {% endfor %}
-            {% include "eco/fragments/_create_one.html" with class="cause-edit-row" text="" %}
-          {% else %}
-            {% include "eco/fragments/_create_one.html" with class="cause-edit-row" text="causes" %}
-          {% endif %}
+        <tbody id="cause-tbody">
+          {% include "eco/fragments/_create_one.html" with text="effects" %}
+          {% for object in causes %}
+            {% include "eco/fragments/cause_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -34,19 +30,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'eco:effect-htmx' object.pk 'create' as effect_create %}
-      {% include "eco/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target=".effect-edit-row" model="effect" %}
+      {% include "eco/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target="#effect-tbody" model="effect" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '10,15,15,15,15,15,15' %}
         {% bs4_thead 'Name,Term,Species,Units,As Reported,Comment,Edit' %}
-        <tbody>
-          {% if effects %}
-            {% for object in effects %}
-              {% include "eco/fragments/effect_row.html" %}
-            {% endfor %}
-            {% include "eco/fragments/_create_one.html" with class="effect-edit-row" text="" %}
-          {% else %}
-            {% include "eco/fragments/_create_one.html" with class="effect-edit-row" text="effects" %}
-          {% endif %}
+        <tbody id="effect-tbody">
+          {% include "eco/fragments/_create_one.html" with text="effects" %}
+          {% for object in effects %}
+            {% include "eco/fragments/effect_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -55,19 +47,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'eco:result-htmx' object.pk 'create' as result_create %}
-      {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target=".result-edit-row" model="result" %}
+      {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-tbody" model="result" %}
       <table class="table table-sm table-striped">
         {% bs4_colgroup '15,15,15,10,15,15,15' %}
         {% bs4_thead 'Name,Cause,Effect,Relationship Direction,Modifying Factors,Value,Edit' %}
-        <tbody>
-          {% if results %}
-            {% for object in results %}
-              {% include "eco/fragments/result_row.html" %}
-            {% endfor %}
-            {% include "eco/fragments/_create_one.html" with class="result-edit-row" text="" %}
-          {% else %}
-            {% include "eco/fragments/_create_one.html" with class="result-edit-row" text="results" %}
-          {% endif %}
+        <tbody id="result-tbody">
+          {% include "eco/fragments/_create_one.html" with text="effects" %}
+          {% for object in results %}
+            {% include "eco/fragments/result_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
