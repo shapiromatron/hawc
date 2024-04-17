@@ -251,7 +251,7 @@ class TagReferences(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
     paginate_by = 100
 
     def get_queryset(self):
@@ -514,7 +514,7 @@ class ConflictResolution(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_filterset_form_kwargs(self):
         return dict(
@@ -820,7 +820,7 @@ class RefUploadExcel(BaseUpdate):
     model = Assessment
     template_name = "lit/reference_upload_excel.html"
     form_class = forms.ReferenceExcelUploadForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
     success_message = "Reference full text URLs updated."
 
     def get_form_kwargs(self):
@@ -850,7 +850,7 @@ class RefListExtract(BaseUpdate):
     model = Assessment
     form_class = forms.BulkReferenceStudyExtractForm
     success_message = "Selected references were successfully converted to studies."
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1005,7 +1005,7 @@ class TagsUpdate(BaseDetail):
 
     model = Assessment
     template_name = "lit/tags_update.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1041,7 +1041,7 @@ class LiteratureAssessmentUpdate(BaseUpdate):
     success_message = "Literature assessment settings updated."
     model = models.LiteratureAssessment
     form_class = forms.LiteratureAssessmentForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1061,7 +1061,7 @@ class TagsCopy(BaseUpdate):
     template_name = "lit/tags_copy.html"
     form_class = forms.TagsCopyForm
     success_message = "Literature tags for this assessment have been updated"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1087,7 +1087,7 @@ class TagsCopy(BaseUpdate):
 class BulkTagReferences(BaseDetail):
     model = Assessment
     template_name = "lit/bulk_tag_references.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

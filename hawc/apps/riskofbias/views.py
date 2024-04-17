@@ -89,7 +89,7 @@ class ARoBEdit(BaseDetail):
     crud = "Update"
     model = models.Assessment
     template_name = "riskofbias/arob_edit.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,7 +118,7 @@ class ARoBTextEdit(BaseUpdate):
     template_name = "riskofbias/arob_text_form.html"
     form_class = forms.RobTextForm
     success_message = "Help text has been updated."
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -249,7 +249,7 @@ class RobAssignmentUpdate(BaseFilterList):
     template_name = "riskofbias/rob_assignment_update.html"
     filterset_class = StudyFilterSet
     paginate_by = 50
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_queryset(self):
         if not self.assessment.user_can_edit_assessment(self.request.user):

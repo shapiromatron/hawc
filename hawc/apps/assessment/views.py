@@ -312,21 +312,21 @@ class AssessmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
     model = models.Assessment
     form_class = forms.AssessmentForm
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
 
 class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = "Assessment modules updated."
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
 
 class AssessmentDelete(BaseDelete):
     model = models.Assessment
     success_url = reverse_lazy("portal")
     success_message = "Assessment deleted."
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
 
 class AssessmentClearCache(MessageMixin, View):
@@ -604,7 +604,7 @@ class CleanExtractedData(BaseEndpointList):
 
     breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
-    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -652,7 +652,7 @@ class CleanStudyRoB(BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
     breadcrumb_active_name = "Clean reviews"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(

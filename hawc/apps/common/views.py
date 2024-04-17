@@ -192,9 +192,8 @@ class AssessmentPermissionsMixin:
         # determine relevant study for a given object, and then checks its editable status.
         # If not set, raises a PermissionDenied.
         study_editability = self.check_study_editability(user, assessment, obj)
-        if study_editability is not None:
-            if study_editability is False:
-                raise PermissionDenied
+        if study_editability is False:
+            raise PermissionDenied()
 
     def check_study_editability(self, user, assessment, obj):
         # TODO - investigate refactoring only in the case where an object is being mutated; not read
@@ -239,10 +238,17 @@ class AssessmentPermissionsMixin:
             self.assessment = obj.get_assessment()
 
         permission_checked = False
-        if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
+        if self.assessment_permission in [
+            AssessmentViewPermissions.PROJECT_MANAGER,
+            AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE,
+        ]:
             permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
-            self.deny_for_locked_study(self.request.user, self.assessment, obj)
+        elif self.assessment_permission in [
+            AssessmentViewPermissions.TEAM_MEMBER,
+            AssessmentViewPermissions.TEAM_MEMBER_EDITABLE,
+        ]:
+            if self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
+                self.deny_for_locked_study(self.request.user, self.assessment, obj)
             permission_checked = self.assessment.user_can_edit_object(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
             permission_checked = self.assessment.user_can_view_object(self.request.user)
@@ -264,11 +270,19 @@ class AssessmentPermissionsMixin:
             raise ValueError("No assessment object; required to check permission")
 
         permission_checked = False
-        if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
-            self.check_queryset_study_editability(queryset)
+        if self.assessment_permission in [
+            AssessmentViewPermissions.PROJECT_MANAGER,
+            AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE,
+        ]:
+            if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+                self.check_queryset_study_editability(queryset)
             permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
-            self.check_queryset_study_editability(queryset)
+        elif self.assessment_permission in [
+            AssessmentViewPermissions.TEAM_MEMBER,
+            AssessmentViewPermissions.TEAM_MEMBER_EDITABLE,
+        ]:
+            if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+                self.check_queryset_study_editability(queryset)
             permission_checked = self.assessment.user_can_edit_object(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
             permission_checked = self.assessment.user_can_view_object(self.request.user)
@@ -342,7 +356,7 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
 
 class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
     # remove `delete` from method names
     # delete method CBV different than post; we only need to implement POST
     # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L220
@@ -395,7 +409,7 @@ class BaseUpdate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
 ):
     crud = "Update"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     @transaction.atomic
     def form_valid(self, form):
@@ -435,7 +449,7 @@ class BaseCreate(
     parent_model: type[models.Model]
     parent_template_name: str
     crud = "Create"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def dispatch(self, *args, **kwargs):
         parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
