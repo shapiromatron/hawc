@@ -6,6 +6,3 @@
   <td>{{object.comments|default:"-"}}</td>
   {% include "epiv2/fragments/_object_row.html" with model="exposurelevel" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden exposurelevel-edit-row" hx-target="this"></tr>
-{% endif %}

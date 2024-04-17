@@ -5,6 +5,3 @@
   <td>{{object.endpoint}}</td>
   {% include "epiv2/fragments/_object_row.html" with model="outcome" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden outcome-edit-row" hx-target="this"></tr>
-{% endif %}

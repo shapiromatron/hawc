@@ -3,6 +3,3 @@
   <td>{{object.dsstox.verbose_link|safe|default:"-"   }}</td>
   {% include "epiv2/fragments/_object_row.html" with model="chemical" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden chemical-edit-row" hx-target="this"></tr>
-{% endif %}

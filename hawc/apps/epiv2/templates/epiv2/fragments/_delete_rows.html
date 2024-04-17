@@ -1,6 +1,7 @@
-<script>
+<script id="delete-script">
   elements = document.getElementsByClassName("{{attribute}}-{{id}}")
   while (elements.length > 0){
     elements[0].parentNode.removeChild(elements[0]);
   }
+  document.getElementById("delete-script").remove()
 </script>
