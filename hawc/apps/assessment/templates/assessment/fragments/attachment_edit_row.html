@@ -1,5 +1,5 @@
 
-<tr hx-target="this" hx-swap="outerHTML">
+<tr hx-target="this" hx-swap="outerHTML" class="attachment-edit-row">
   {% if form %}
     <td colspan="3" class="bg-lightblue">
       <form class="attachment-form pad-form p-3" method="post" enctype="multipart/form-data">
@@ -24,7 +24,7 @@
             </button>
             <button class="btn btn-light"
                     type='button'
-                    onclick="$(this).closest('tr').remove()">
+                    onclick="window.app.HAWCUtils.hideElement($(this).closest('.attachment-edit-row'), true)">
               Cancel
             </button>
           {% endif %}
