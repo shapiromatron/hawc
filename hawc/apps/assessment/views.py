@@ -305,6 +305,7 @@ class AssessmentDetail(BaseDetail):
         )
         context["values"] = self.object.values.order_by("value_type")
         context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        context["is_team_member"] = self.object.user_is_team_member_or_higher(self.request.user)
         return context
 
 
