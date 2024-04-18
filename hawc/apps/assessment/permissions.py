@@ -1,7 +1,13 @@
+from typing import TYPE_CHECKING, Self
+
 from django.core.cache import cache
 from pydantic import BaseModel
 
 from ..common.helper import cacheable
+
+if TYPE_CHECKING:
+    from ..myuser.models import HAWCUser
+    from ..study.models import Study
 
 
 class AssessmentPermissions(BaseModel):
@@ -21,10 +27,10 @@ class AssessmentPermissions(BaseModel):
         cache.delete(key)
 
     @classmethod
-    def get(cls, assessment) -> "AssessmentPermissions":
+    def get(cls, assessment) -> Self:
         key = cls.get_cache_key(assessment.id)
 
-        def get_perms() -> "AssessmentPermissions":
+        def get_perms() -> Self:
             return cls(
                 public=(assessment.public_on is not None),
                 editable=assessment.editable,
@@ -36,7 +42,7 @@ class AssessmentPermissions(BaseModel):
         perms = cacheable(get_perms, key)
         return perms
 
-    def project_manager_or_higher(self, user) -> bool:
+    def project_manager_or_higher(self, user: HAWCUser) -> bool:
         """
         Check if user is superuser or project-manager
         """
@@ -45,9 +51,9 @@ class AssessmentPermissions(BaseModel):
         elif user.is_anonymous:
             return False
         else:
-            return user.id in self.project_manager
+            return user.pk in self.project_manager
 
-    def team_member_or_higher(self, user) -> bool:
+    def team_member_or_higher(self, user: HAWCUser) -> bool:
         """
         Check if person is superuser, project manager, or team member
         """
@@ -56,9 +62,9 @@ class AssessmentPermissions(BaseModel):
         elif user.is_anonymous:
             return False
         else:
-            return user.id in self.project_manager or user.id in self.team_members
+            return user.pk in self.project_manager or user.pk in self.team_members
 
-    def reviewer_or_higher(self, user) -> bool:
+    def reviewer_or_higher(self, user: HAWCUser) -> bool:
         """
         If person is superuser, project manager, team member, or reviewer
         """
@@ -68,12 +74,12 @@ class AssessmentPermissions(BaseModel):
             return False
         else:
             return (
-                user.id in self.project_manager
-                or user.id in self.team_members
-                or user.id in self.reviewers
+                user.pk in self.project_manager
+                or user.pk in self.team_members
+                or user.pk in self.reviewers
             )
 
-    def can_edit_object(self, user) -> bool:
+    def can_edit_object(self, user: HAWCUser) -> bool:
         """
         If person has enhanced permissions beyond the general public, which may
         be used to view attachments associated with a study.
@@ -82,7 +88,7 @@ class AssessmentPermissions(BaseModel):
             return True
         return self.editable and self.team_member_or_higher(user)
 
-    def can_view_object(self, user) -> bool:
+    def can_view_object(self, user: HAWCUser) -> bool:
         """
         Superusers can view all, noneditible reviews can be viewed, team
         members or project managers can view.
@@ -93,7 +99,7 @@ class AssessmentPermissions(BaseModel):
             return True
         return self.reviewer_or_higher(user)
 
-    def can_edit_study(self, study, user) -> bool:
+    def can_edit_study(self, study: Study, user: HAWCUser) -> bool:
         """
         Check if user can edit a study; dependent on if study is editable
         """
@@ -101,7 +107,7 @@ class AssessmentPermissions(BaseModel):
             study.editable and self.can_edit_object(user)
         )
 
-    def can_view_study(self, study, user) -> bool:
+    def can_view_study(self, study: Study, user: HAWCUser) -> bool:
         """
         Check if user can view a study object; dependent on if a study is published
         """
