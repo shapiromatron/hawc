@@ -281,7 +281,7 @@ class AssessmentPermissionsMixin:
             AssessmentViewPermissions.TEAM_MEMBER,
             AssessmentViewPermissions.TEAM_MEMBER_EDITABLE,
         ]:
-            if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+            if self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
                 self.check_queryset_study_editability(queryset)
             permission_checked = self.assessment.user_can_edit_object(self.request.user)
         elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
