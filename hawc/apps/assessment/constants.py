@@ -24,11 +24,9 @@ class PublishedStatus(models.TextChoices):
 
 
 class AssessmentViewPermissions(models.IntegerChoices):
-    PROJECT_MANAGER = 1  # project manager or higher
-    TEAM_MEMBER = 2  # team member or higher
+    PROJECT_MANAGER = 1
+    TEAM_MEMBER = 2
     VIEWER = 3
-    TEAM_MEMBER_EDITABLE = 4  # team member or higher and content must be editable
-    PROJECT_MANAGER_EDITABLE = 5  # team member or higher and content must be editable
 
 
 class AssessmentViewSetPermissions(models.IntegerChoices):
