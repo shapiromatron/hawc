@@ -214,6 +214,7 @@ class RobAssignmentList(BaseFilterList):
     template_name = "riskofbias/rob_assignment_list.html"
     paginate_by = 50
     filterset_class = StudyFilterSet
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         if not self.assessment.user_can_edit_object(self.request.user):
@@ -284,6 +285,7 @@ class RobAssignmentUpdate(BaseFilterList):
 class RobNumberReviewsUpdate(BaseUpdate):
     model = models.RiskOfBiasAssessment
     form_class = forms.NumberOfReviewersForm
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
     success_message = "Number of reviewers updated."
     template_name = "riskofbias/reviewers_form.html"
 
