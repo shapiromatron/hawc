@@ -515,7 +515,6 @@ class ContactForm(forms.Form):
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         if self.user.is_anonymous:
-            self.turnstile = Turnstile()
             self.fields["name"].disabled = False
             self.fields["email"].disabled = False
         else:

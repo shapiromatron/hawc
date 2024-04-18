@@ -260,7 +260,7 @@ class TestContactUsPage:
         resp = team.get(url, follow=True)
         form = resp.context["form"]
         assert isinstance(form, ContactForm)
-        assert b"challenges.cloudflare.com/turnstile" not in resp.content
+        assert form.enable_turnstile is False
 
         # turnstile enabled
         settings.TURNSTILE_SITE = "https://test-me.org"
@@ -270,13 +270,13 @@ class TestContactUsPage:
         resp = anon.get(url)
         form = resp.context["form"]
         assert isinstance(form, ContactForm)
-        assert b"challenges.cloudflare.com/turnstile" in resp.content
+        assert form.enable_turnstile is True
 
         # auth - form displayed; no challenge
         resp = team.get(url, follow=True)
         form = resp.context["form"]
         assert isinstance(form, ContactForm)
-        assert b"challenges.cloudflare.com/turnstile" not in resp.content
+        assert form.enable_turnstile is False
 
         # turnstile disabled
         settings.TURNSTILE_SITE = ""
