@@ -853,15 +853,6 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     line-height: 1.6rem;
 }
 
-/* react-datepicker */
-.react-datepicker-wrapper {
-    display: block !important;
-}
-
-.react-datepicker__input-container {
-    display: block !important;
-}
-
 /* base header/footer */
 .base-footer-div {
   background-color: #646D76;

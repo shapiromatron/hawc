@@ -69,7 +69,6 @@
         "quill": "^1.3.7",
         "react": "^16.14.0",
         "react-autosuggest": "^10.1.0",
-        "react-datepicker": "~4.16.0",
         "react-dom": "^16.14.0",
         "react-plotly.js": "^2.6.0",
         "react-quill": "^1.3.5",
