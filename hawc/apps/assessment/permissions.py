@@ -1,11 +1,13 @@
-from typing import TYPE_CHECKING, Self
+from __future__ import annotations
+
+import typing
 
 from django.core.cache import cache
 from pydantic import BaseModel
 
 from ..common.helper import cacheable
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from ..myuser.models import HAWCUser
     from ..study.models import Study
 
@@ -27,10 +29,10 @@ class AssessmentPermissions(BaseModel):
         cache.delete(key)
 
     @classmethod
-    def get(cls, assessment) -> Self:
+    def get(cls, assessment) -> typing.Self:
         key = cls.get_cache_key(assessment.id)
 
-        def get_perms() -> Self:
+        def get_perms() -> typing.Self:
             return cls(
                 public=(assessment.public_on is not None),
                 editable=assessment.editable,
