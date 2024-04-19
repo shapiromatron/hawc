@@ -124,19 +124,6 @@
     window.app.startup("epiv2Startup", function(app){
       app.formStartup(document);
     });
-    // htmx.onLoad(function (target) {
-    //   const form = $(target).find('.epiv2-edit-row');
-    //   console.log(form);
-    //   console.log(target);
-    // });
-    // $(window).ready(function() {
-    //   $("body").on("htmx:afterSwap", function(evt) { 
-    //     console.log($(evt.detail.elt).children(".epiv2-edit-row").first());
-    //     if ($(evt.detail.elt).children(".epiv2-edit-row").first().length) {
-    //       $(evt.detail.elt).children(".epiv2-edit-row").first().collapse('show');
-    //   }
-    //   });
-    // })
     $(window).ready(function() {
       window.app.HAWCUtils.addScrollHtmx("epiv2-edit-row", "epiv2-obj-row");
     });
