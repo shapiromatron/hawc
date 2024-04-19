@@ -245,10 +245,10 @@ class AssessmentPermissionsMixin:
         user = self.request.user
         match self.assessment_permission:
             case AssessmentViewPermissions.PROJECT_MANAGER:
-                permission_checked = self.assessment.user_can_edit_assessment(user)
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
             case AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
                 self.deny_for_locked_assessment(self.assessment)
-                permission_checked = self.assessment.user_can_edit_assessment(user)
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
             case AssessmentViewPermissions.TEAM_MEMBER:
                 permission_checked = self.assessment.user_can_edit_object(user)
             case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
@@ -277,10 +277,10 @@ class AssessmentPermissionsMixin:
         user = self.request.user
         match self.assessment_permission:
             case AssessmentViewPermissions.PROJECT_MANAGER:
-                permission_checked = self.assessment.user_can_edit_assessment(user)
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
             case AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
                 self.deny_for_locked_assessment(self.assessment)
-                permission_checked = self.assessment.user_can_edit_assessment(user)
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
             case AssessmentViewPermissions.TEAM_MEMBER:
                 permission_checked = self.assessment.user_can_edit_object(user)
             case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
