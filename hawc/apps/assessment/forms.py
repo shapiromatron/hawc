@@ -16,6 +16,7 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.auth.turnstile import Turnstile
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
@@ -513,8 +514,15 @@ class ContactForm(forms.Form):
         self.back_href = kwargs.pop("back_href")
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        self.fields["name"].initial = self.user.get_full_name()
-        self.fields["email"].initial = self.user.email
+        if self.user.is_anonymous:
+            self.fields["name"].disabled = False
+            self.fields["email"].disabled = False
+        else:
+            self.fields["name"].initial = self.user.get_full_name()
+            self.fields["email"].initial = self.user.email
+        self.enable_turnstile: bool = self.user.is_anonymous
+        if self.enable_turnstile:
+            self.turnstile = Turnstile()
         self.fields["previous_page"].initial = self.back_href
 
     def send_email(self):
@@ -532,12 +540,20 @@ class ContactForm(forms.Form):
 
     @property
     def helper(self):
-        return BaseFormHelper(
+        helper = BaseFormHelper(
             self,
             legend_text="Contact us",
             help_text="Have a question, comment, or need some help? Use this form to to let us know what's going on.",
             cancel_url=self.back_href,
         )
+        if self.enable_turnstile:
+            helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
+        return helper
+
+    def clean(self):
+        if self.enable_turnstile:
+            self.turnstile.validate(self.data)
+        return self.cleaned_data
 
 
 class DatasetForm(forms.ModelForm):
