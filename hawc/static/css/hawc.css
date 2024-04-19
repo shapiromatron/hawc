@@ -996,12 +996,12 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     text-align: left;
 }
 
-#attach_table {
+.hide-empty-table {
     display: none;
 }
 
-#attach_table:has(tbody>tr) {
-    display: block;
+.hide-empty-table:has(tbody>tr) {
+    display: revert;
 }
 
 /* anchor links */
