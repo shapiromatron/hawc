@@ -195,6 +195,10 @@ class AssessmentPermissionsMixin:
         if study_editability is False:
             raise PermissionDenied()
 
+    def deny_for_locked_assessment(self, assessment):
+        if not assessment.editable:
+            raise PermissionDenied()
+
     def check_study_editability(self, user, assessment, obj):
         # TODO - investigate refactoring only in the case where an object is being mutated; not read
         # (will reduce db query load for getting study for all objects)
@@ -238,20 +242,20 @@ class AssessmentPermissionsMixin:
             self.assessment = obj.get_assessment()
 
         permission_checked = False
-        if self.assessment_permission in [
-            AssessmentViewPermissions.PROJECT_MANAGER,
-            AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE,
-        ]:
-            permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
-        elif self.assessment_permission in [
-            AssessmentViewPermissions.TEAM_MEMBER,
-            AssessmentViewPermissions.TEAM_MEMBER_EDITABLE,
-        ]:
-            if self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
-                self.deny_for_locked_study(self.request.user, self.assessment, obj)
-            permission_checked = self.assessment.user_can_edit_object(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
-            permission_checked = self.assessment.user_can_view_object(self.request.user)
+        user = self.request.user
+        match self.assessment_permission:
+            case AssessmentViewPermissions.PROJECT_MANAGER:
+                permission_checked = self.assessment.user_can_edit_assessment(user)
+            case AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+                self.deny_for_locked_assessment(self.assessment)
+                permission_checked = self.assessment.user_can_edit_assessment(user)
+            case AssessmentViewPermissions.TEAM_MEMBER:
+                permission_checked = self.assessment.user_can_edit_object(user)
+            case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
+                self.deny_for_locked_study(user, self.assessment, obj)
+                permission_checked = self.assessment.user_can_edit_object(user)
+            case AssessmentViewPermissions.VIEWER:
+                permission_checked = self.assessment.user_can_view_object(user)
 
         if not permission_checked:
             raise PermissionDenied()
@@ -270,26 +274,23 @@ class AssessmentPermissionsMixin:
             raise ValueError("No assessment object; required to check permission")
 
         permission_checked = False
-        if self.assessment_permission in [
-            AssessmentViewPermissions.PROJECT_MANAGER,
-            AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE,
-        ]:
-            if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+        user = self.request.user
+        match self.assessment_permission:
+            case AssessmentViewPermissions.PROJECT_MANAGER:
+                permission_checked = self.assessment.user_can_edit_assessment(user)
+            case AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+                self.deny_for_locked_assessment(self.assessment)
+                permission_checked = self.assessment.user_can_edit_assessment(user)
+            case AssessmentViewPermissions.TEAM_MEMBER:
+                permission_checked = self.assessment.user_can_edit_object(user)
+            case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
                 self.check_queryset_study_editability(queryset)
-            permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
-        elif self.assessment_permission in [
-            AssessmentViewPermissions.TEAM_MEMBER,
-            AssessmentViewPermissions.TEAM_MEMBER_EDITABLE,
-        ]:
-            if self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
-                self.check_queryset_study_editability(queryset)
-            permission_checked = self.assessment.user_can_edit_object(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
-            permission_checked = self.assessment.user_can_view_object(self.request.user)
-
+                permission_checked = self.assessment.user_can_edit_object(user)
+            case AssessmentViewPermissions.VIEWER:
+                permission_checked = self.assessment.user_can_view_object(user)
         if not permission_checked:
             raise PermissionDenied()
-        logger.debug("Permissions checked: queryset)")
+        logger.debug("Permissions checked: queryset")
 
         return queryset
 

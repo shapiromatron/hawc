@@ -327,7 +327,7 @@ class AssessmentDelete(BaseDelete):
     model = models.Assessment
     success_url = reverse_lazy("portal")
     success_message = "Assessment deleted."
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentClearCache(MessageMixin, View):
