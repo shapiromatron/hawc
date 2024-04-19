@@ -307,6 +307,7 @@ class AssessmentDetail(BaseDetail):
         )
         context["values"] = self.object.values.order_by("value_type")
         context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        context["is_team_member"] = self.object.user_is_team_member_or_higher(self.request.user)
         return context
 
 
@@ -321,7 +322,7 @@ class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = "Assessment modules updated."
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
 
 class AssessmentDelete(BaseDelete):
@@ -606,7 +607,7 @@ class CleanExtractedData(BaseEndpointList):
 
     breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
-    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -654,7 +655,7 @@ class CleanStudyRoB(BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
     breadcrumb_active_name = "Clean reviews"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
