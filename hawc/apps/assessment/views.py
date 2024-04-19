@@ -115,7 +115,7 @@ class Resources(TemplateView):
         return context
 
 
-class Contact(LoginRequiredMixin, MessageMixin, FormView):
+class Contact(MessageMixin, FormView):
     template_name = "hawc/contact.html"
     form_class = forms.ContactForm
     success_url = reverse_lazy("home")
@@ -124,6 +124,8 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         if settings.EXTERNAL_CONTACT_US:
             return HttpResponseRedirect(settings.EXTERNAL_CONTACT_US)
+        elif self.request.user.is_anonymous and not settings.TURNSTILE_SITE:
+            return HttpResponseRedirect(settings.LOGIN_URL)
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):

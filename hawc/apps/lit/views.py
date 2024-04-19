@@ -793,7 +793,7 @@ class RefFilterList(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents")
         )
 
     def get_context_data(self, **kwargs):
