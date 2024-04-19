@@ -313,7 +313,7 @@ class AssessmentUpdate(BaseUpdate):
     success_message = "Assessment updated."
     model = models.Assessment
     form_class = forms.AssessmentForm
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
 
 
 class AssessmentModulesUpdate(AssessmentUpdate):
