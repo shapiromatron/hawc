@@ -250,7 +250,7 @@ class AssessmentPermissionsMixin:
                 self.deny_for_locked_assessment(self.assessment)
                 permission_checked = self.assessment.user_is_project_manager_or_higher(user)
             case AssessmentViewPermissions.TEAM_MEMBER:
-                permission_checked = self.assessment.user_can_edit_object(user)
+                permission_checked = self.assessment.user_is_team_member_or_higher(user)
             case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
                 self.deny_for_locked_study(user, self.assessment, obj)
                 permission_checked = self.assessment.user_can_edit_object(user)
@@ -282,7 +282,7 @@ class AssessmentPermissionsMixin:
                 self.deny_for_locked_assessment(self.assessment)
                 permission_checked = self.assessment.user_is_project_manager_or_higher(user)
             case AssessmentViewPermissions.TEAM_MEMBER:
-                permission_checked = self.assessment.user_can_edit_object(user)
+                permission_checked = self.assessment.user_is_team_member_or_higher(user)
             case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
                 self.check_queryset_study_editability(queryset)
                 permission_checked = self.assessment.user_can_edit_object(user)
