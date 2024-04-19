@@ -46,6 +46,7 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
         if type(parent) is Assessment:
             self.instance.assessment = parent
         elif type(parent) is Reference:
+            self.instance.assessment = parent.assessment
             self.instance.reference_ptr = parent
 
         if self.instance:

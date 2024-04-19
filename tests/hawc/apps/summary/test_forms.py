@@ -270,6 +270,10 @@ class TestDataPivotUploadForm:
                 {"excel_file": SimpleUploadedFile("test.xlsx", b"a,b,c\n1,2,3\n")},
                 "Unable to read Excel file. Please upload an Excel file in XLSX format.",
             ),
+            (
+                {"excel_file": SimpleUploadedFile("test.csv", b"a,b,c\n1,2,3\n")},
+                "Unable to read Excel file. Please upload an Excel file in XLSX format.",
+            ),
         ]
         for files, error_msg in bad_files:
             form = DataPivotUploadForm(

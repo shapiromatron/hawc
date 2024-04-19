@@ -136,7 +136,7 @@
     </tbody>
   </table>
 
-  {% if obj_perms.edit %}
+  {% if is_team_member %}
     <h3>Assessment details for team members*</h3>
     <table id="assessment_table" class="table table-sm table-striped">
       {% bs4_colgroup '25,25,25,25' %}

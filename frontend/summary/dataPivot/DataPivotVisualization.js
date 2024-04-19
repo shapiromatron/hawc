@@ -223,7 +223,7 @@ class DataPivotVisualization extends D3Plot {
                 });
             return row;
         };
-        return _.cloneDeep(dataset).map(d => parseRow(d));
+        return _.cloneDeep(dataset).map((d, i) => parseRow(d, i));
     }
 
     set_defaults() {
