@@ -14,7 +14,7 @@
     <div class="card-body">
       {% url 'epiv2:chemical-htmx' object.pk 'create' as chemical_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-tbody" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '43,42,15' %}
         {% bs4_thead 'Name,DTXSID,Edit' %}
         <tbody id="chemical-tbody">
@@ -31,7 +31,7 @@
     <div class="card-body">
       {% url 'epiv2:exposure-htmx' object.pk 'create' as exposure_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target="#exposure-tbody" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '29,28,28,15' %}
         {% bs4_thead 'Name,Measurement Type, Measurement Timing,Edit' %}
         <tbody id="exposure-tbody">
@@ -48,7 +48,7 @@
     <div class="card-body">
       {% url 'epiv2:exposurelevel-htmx' object.pk 'create' as exposurelevel_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target="#exposurelevel-tbody" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '17,17,17,17,17,15' %}
         {% bs4_thead 'Name,Chemical,Exposure,Central Tendency,Comments,Edit' %}
         <tbody id="exposurelevel-tbody">
@@ -65,7 +65,7 @@
     <div class="card-body">
       {% url 'epiv2:outcome-htmx' object.pk 'create' as outcome_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-tbody" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '22,21,21,21,15' %}
         {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
         <tbody id="outcome-tbody">
@@ -82,7 +82,7 @@
     <div class="card-body">
       {% url 'epiv2:adjustmentfactor-htmx' object.pk 'create' as adjustmentfactor_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target="#adjustmentfactor-tbody" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '20,40,25,15' %}
         {% bs4_thead 'Name,Description,Comments,Edit' %}
         <tbody id="adjustmentfactor-tbody">
@@ -99,7 +99,7 @@
     <div class="card-body">
       {% url 'epiv2:dataextraction-htmx' object.pk 'create' as dataextraction_create %}
       {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-tbody" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '12,12,12,12,6,6,6,12,12,10' %}
         {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments,Edit' %}
         <tbody id="dataextraction-tbody">
@@ -124,6 +124,19 @@
     window.app.startup("epiv2Startup", function(app){
       app.formStartup(document);
     });
+    // htmx.onLoad(function (target) {
+    //   const form = $(target).find('.epiv2-edit-row');
+    //   console.log(form);
+    //   console.log(target);
+    // });
+    // $(window).ready(function() {
+    //   $("body").on("htmx:afterSwap", function(evt) { 
+    //     console.log($(evt.detail.elt).children(".epiv2-edit-row").first());
+    //     if ($(evt.detail.elt).children(".epiv2-edit-row").first().length) {
+    //       $(evt.detail.elt).children(".epiv2-edit-row").first().collapse('show');
+    //   }
+    //   });
+    // })
     $(window).ready(function() {
       window.app.HAWCUtils.addScrollHtmx("epiv2-edit-row", "epiv2-obj-row");
     });

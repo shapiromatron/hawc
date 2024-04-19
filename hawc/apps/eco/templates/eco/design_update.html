@@ -14,7 +14,7 @@
     <div class="card-body">
       {% url 'eco:cause-htmx' object.pk 'create' as cause_create %}
       {% include "eco/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target="#cause-tbody" model="cause" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '10,15,15,15,15,15,15' %}
         {% bs4_thead 'Name,Term,Species,Level,Level Units,Comment,Edit' %}
         <tbody id="cause-tbody">
@@ -31,7 +31,7 @@
     <div class="card-body">
       {% url 'eco:effect-htmx' object.pk 'create' as effect_create %}
       {% include "eco/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target="#effect-tbody" model="effect" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '10,15,15,15,15,15,15' %}
         {% bs4_thead 'Name,Term,Species,Units,As Reported,Comment,Edit' %}
         <tbody id="effect-tbody">
@@ -48,7 +48,7 @@
     <div class="card-body">
       {% url 'eco:result-htmx' object.pk 'create' as result_create %}
       {% include "eco/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-tbody" model="result" %}
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '15,15,15,10,15,15,15' %}
         {% bs4_thead 'Name,Cause,Effect,Relationship Direction,Modifying Factors,Value,Edit' %}
         <tbody id="result-tbody">

@@ -1004,6 +1004,13 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     display: revert;
 }
 
+.table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(even) {
+    background-color: #ffffff;
+  }
+.table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(odd) {
+    background-color: #f0f4f9;
+}
+
 /* anchor links */
 .anchor-link {
     opacity: 0;
