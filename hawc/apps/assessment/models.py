@@ -341,11 +341,13 @@ class Assessment(models.Model):
         return perms.to_dict(user)
 
     def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
+        # reviewer or higher OR assessment is public
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
     def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
+        # team member or higher AND assessment is editable
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
