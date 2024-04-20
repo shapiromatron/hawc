@@ -445,6 +445,7 @@ class VerifyEmailForm(Form):
         self.user = kw.pop("user")
         super().__init__(*args, **kw)
         self.fields["email"].initial = self.user.email
+        self.turnstile = Turnstile()
 
     @property
     def helper(self):
@@ -456,4 +457,9 @@ class VerifyEmailForm(Form):
             cancel_url=login_url,
             submit_text="Verify",
         )
+        helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
         return helper
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data
