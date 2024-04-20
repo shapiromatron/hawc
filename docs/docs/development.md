@@ -568,3 +568,15 @@ python scripts/test_iclient.py
 ```
 
 Make sure the standard unit tests pass as well as the addition `test_iclient.py` tests before distributing a new version of the `hawc-client` package.
+
+### Testing with Turnstile
+
+Turnstile can be enabled for human verification on select views in HAWC, generally related to authentication requests. For testing (in development mode), use the following keys keys in django settings:
+
+```py
+TURNSTILE_SITE = "1x00000000000000000000AA"  # always passes, or
+TURNSTILE_SITE = "2x00000000000000000000AB"  # always blocks
+TURNSTILE_KEY = "1x0000000000000000000000000000000AA"  # valid key
+```
+
+These options are described in detail in the turnstile testing [documentation](https://developers.cloudflare.com/turnstile/reference/testing/).
