@@ -390,6 +390,7 @@ class AdminUserForm(PasswordForm):
             "first_name",
             "last_name",
             "external_id",
+            "is_superuser",
             "is_active",
             "is_staff",
             "password1",
@@ -400,6 +401,7 @@ class AdminUserForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["is_superuser"].disabled = True
         if self.instance.external_id:
             for field in (
                 "email",
