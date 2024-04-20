@@ -395,6 +395,7 @@ class AdminUserForm(PasswordForm):
             "password1",
             "password2",
             "groups",
+            "email_verified_on",
         )
 
     def __init__(self, *args, **kwargs):
