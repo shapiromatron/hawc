@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (
     PasswordResetForm,
     SetPasswordForm,
 )
-from django.forms import ModelForm
+from django.forms import Form, ModelForm
 from django.urls import reverse
 
 from ...constants import AuthProvider
@@ -433,3 +433,24 @@ class AdminUserForm(PasswordForm):
             user.assessment_teams.set(self.cleaned_data["team_member"])
             user.assessment_reviewers.set(self.cleaned_data["reviewer"])
         return user
+
+
+class VerifyEmailForm(Form):
+    email = forms.EmailField(disabled=True, widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kw):
+        self.user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["email"].initial = self.user.email
+
+    @property
+    def helper(self):
+        login_url = reverse("home")
+        helper = BaseFormHelper(
+            self,
+            legend_text=f"Verify <b>{self.user.email}</b>",
+            help_text='Click the "Verify" button to mark your email address as verified; you can then login using the account registered to that email address.',
+            cancel_url=login_url,
+            submit_text="Verify",
+        )
+        return helper
