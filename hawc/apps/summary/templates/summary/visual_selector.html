@@ -16,7 +16,7 @@
             Exploratory heatmap</option>
           <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
             Embedded external website</option>
-          {% if feature_flags.ENABLE_PLOTLY_VISUAL %}
+          {% if feature_flags.ENABLE_WIP_VISUALS %}
             <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
               Plotly visual</option>
           {% endif %}

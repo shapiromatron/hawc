@@ -388,6 +388,8 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             return "summary/visual_detail_plotly.html"
         elif self.object.visual_type == constants.VisualType.IMAGE:
             return "summary/visual_detail_image.html"
+        elif self.object.visual_type == constants.VisualType.PRISMA:
+            return "summary/visual_detail_prisma.html"
         else:
             return super().get_template_names()
 
@@ -460,10 +462,11 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.PRISMA,
         }:
             if (
-                visual_type == constants.VisualType.PLOTLY
-                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+                visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+                and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
             ):
                 raise PermissionDenied()
             return "summary/visual_form_django.html"
@@ -566,7 +569,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         }:
             if (
                 visual_type == constants.VisualType.PLOTLY
-                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
+                and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
             ):
                 raise PermissionDenied()
             return "summary/visual_form_django.html"
