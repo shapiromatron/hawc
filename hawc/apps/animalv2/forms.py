@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.urls import reverse
 
+from ..assessment import models as assessment_models
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import (
     AutocompleteSelectWidget,
@@ -119,6 +120,17 @@ class AnimalGroupForm(forms.ModelForm):
             "Create strain",
         )
         return helper
+
+    def is_valid(self):
+        if "species" in self.data and "strain" in self.data:
+            species_obj = assessment_models.Species.objects.get(pk=self.data["species"])
+            strain_obj = assessment_models.Strain.objects.get(pk=self.data["strain"])
+            if species_obj.id != strain_obj.species.id:
+                self.add_error(
+                    "strain",
+                    "Strain must be of the same species as the selected species",
+                )
+        return super().is_valid()
 
 
 class TreatmentForm(forms.ModelForm):

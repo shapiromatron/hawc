@@ -594,6 +594,54 @@
   fields:
     app_label: docs
     model: documentationpagetag
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: experiment
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: dosegroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalendpointtimepoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: doseresponseanimalleveldata
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: doseresponsegroupleveldata
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalgroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: dataextraction
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: treatment
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: endpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: observationtime
 - model: auth.permission
   fields:
     name: Can access Wagtail admin
