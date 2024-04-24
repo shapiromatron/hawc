@@ -1,5 +1,6 @@
 import logging
 import math
+import re
 from html import unescape
 
 import pandas as pd
@@ -616,3 +617,12 @@ def pd_strip_tags(df: pd.DataFrame, columns: list[str]):
 class NumericTextField(models.CharField):
     generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
     validators = [validators.NumericTextValidator()]
+
+
+def clone_name(instance: models.Model, field: str) -> str:
+    # Get a valid clone name for an instance of a model, that's under the required char size limit.
+    value = getattr(instance, field)
+    if m := re.search(r" \((\d)\)$", value):
+        return f"{value[:-2]}{int(m[1]) + 1})"
+    max_length = instance._meta.get_field(field).max_length - 4
+    return value[:max_length] + " (2)"

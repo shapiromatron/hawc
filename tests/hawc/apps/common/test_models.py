@@ -2,7 +2,8 @@ import pytest
 
 # use concrete implementations to test
 from hawc.apps.animal.models import DoseGroup, Experiment
-from hawc.apps.common.models import apply_flavored_help_text, sql_format
+from hawc.apps.common.models import apply_flavored_help_text, clone_name, sql_format
+from hawc.apps.epiv2.models import ExposureLevel
 from hawc.apps.lit.models import ReferenceFilterTag
 from hawc.apps.riskofbias import models
 
@@ -68,3 +69,12 @@ def test_apply_flavored_help_text(settings):
     apply_flavored_help_text("riskofbias")
     changed = models.RiskOfBiasAssessment._meta.get_field("help_text").help_text
     assert initial != changed
+
+
+def test_clone_name():
+    m = ExposureLevel(name="a")
+    assert clone_name(m, "name") == "a (2)"
+    m.name = "b (2)"
+    assert clone_name(m, "name") == "b (3)"
+    m.name = "c" * 64
+    assert clone_name(m, "name") == ("c" * 60) + " (2)"
