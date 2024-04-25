@@ -1,6 +1,7 @@
 import CrossviewForm from "./CrossviewForm";
 import RoBBarchartForm from "./RoBBarchartForm";
 import RoBHeatmapForm from "./RoBHeatmapForm";
+import PrismaForm from "./PrismaForm";
 
 class VisualForm {
     static create(visual_type, $el, config) {
@@ -15,11 +16,14 @@ class VisualForm {
             case 3:
                 Cls = RoBBarchartForm;
                 break;
+            case 9:
+                Cls = PrismaForm;
             case 0:
             case 4:
             case 5:
             case 6:
             case 7:
+            case 8:
                 Cls = null;
                 break;
             default:
