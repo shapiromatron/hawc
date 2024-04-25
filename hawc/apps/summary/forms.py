@@ -593,6 +593,18 @@ class PlotlyVisualForm(VisualForm):
         return json.loads(settings)
 
 
+class PrismaVisualForm(VisualForm):
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "settings",
+            "caption",
+            "published",
+        )
+
+
 class ImageVisualForm(VisualForm):
     settings_schema = {
         "fields": [
@@ -653,6 +665,7 @@ def get_visual_form(visual_type):
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
             constants.VisualType.PLOTLY: PlotlyVisualForm,
             constants.VisualType.IMAGE: ImageVisualForm,
+            constants.VisualType.PRISMA: PrismaVisualForm,
         }[visual_type]
     except Exception:
         raise ValueError()

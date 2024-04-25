@@ -19,6 +19,8 @@
           {% if feature_flags.ENABLE_WIP_VISUALS %}
             <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
               Plotly visual</option>
+            <option value="9" data-url="{% url viz_url_pattern assessment.id 9 %}">
+            PRISMA visual</option>
           {% endif %}
           <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
             {{assessment.get_rob_name_display}} heatmap</option>
@@ -171,6 +173,12 @@
         <h3>Static image</h3>
         <p class="form-text text-muted">
           Upload an image to be displayed as a visual. The file formats .jpeg, .jpg, and .png are supported.
+        </p>
+      </div>
+      <div id="detail-9" class="col-md-12">
+        <h3>PRISMA Visual</h3>
+        <p class="form-text text-muted">
+          Create a PRISMA visual.
         </p>
       </div>
     </div>

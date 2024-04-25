@@ -566,9 +566,10 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.PRISMA,
         }:
             if (
-                visual_type == constants.VisualType.PLOTLY
+                visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
                 and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
             ):
                 raise PermissionDenied()
