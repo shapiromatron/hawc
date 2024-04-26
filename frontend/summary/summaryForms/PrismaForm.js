@@ -1,9 +1,10 @@
 import _ from "lodash";
+import {DEFAULT} from "shared/constants";
 
 import $ from "$";
 
 import BaseVisualForm from "./BaseVisualForm";
-
+import {CheckboxField, IntegerField, TextField} from "./Fields";
 
 class PrismaForm extends BaseVisualForm {
     afterGetDataHook(data) {
@@ -17,7 +18,7 @@ class PrismaForm extends BaseVisualForm {
     initDataForm() {
         ["system", "organ", "effect", "effect_subtype"].forEach(d => {
             $(`#id_prefilter_${d}`)
-                .on("change", function () {
+                .on("change", function() {
                     var div = $(`#div_id_${d}s`);
                     $(this).prop("checked") ? div.show(1000) : div.hide(0);
                 })
@@ -34,10 +35,10 @@ class PrismaForm extends BaseVisualForm {
 
 _.extend(PrismaForm, {
     tabs: [
-        { name: "overall", label: "General settings" },
-        { name: "metrics", label: "Included metrics" },
-        { name: "excluded_scores", label: "Included judgments" },
-        { name: "legend", label: "Legend settings" },
+        {name: "overall", label: "General settings"},
+        {name: "metrics", label: "Included metrics"},
+        {name: "excluded_scores", label: "Included judgments"},
+        {name: "legend", label: "Legend settings"},
     ],
     schema: [
         {
