@@ -1,4 +1,4 @@
-from django.db.models import QuerySet
+from django.db.models import Manager, Q, QuerySet
 
 from ..common.models import BaseManager
 
@@ -13,3 +13,20 @@ class ModelUDFContentManager(BaseManager):
 
     def get_queryset(self):
         return ModelUDFContentQuerySet(self.model, using=self._db)
+
+
+class UserDefinedFormManager(Manager):
+    def get_queryset(self):
+        return UserDefinedFormQuerySet(self.model, using=self._db)
+
+
+class UserDefinedFormQuerySet(QuerySet):
+    def get_available_udfs(self, user, assessment=None):
+        if user.is_staff:
+            return self
+        return self.filter(
+            Q(creator=user)
+            | Q(editors=user)
+            | Q(published=True)
+            | (Q(assessments=assessment) if assessment else Q())
+        ).distinct()

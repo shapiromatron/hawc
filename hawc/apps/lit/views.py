@@ -28,6 +28,7 @@ from ..common.views import (
     create_object_log,
     htmx_required,
 )
+from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
 
 
@@ -250,7 +251,7 @@ class TagReferences(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
     paginate_by = 100
 
     def get_queryset(self):
@@ -258,7 +259,7 @@ class TagReferences(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents__tag_binding")
         )
 
     def get_context_data(self, **kwargs):
@@ -388,8 +389,22 @@ class TagReferences(BaseFilterList):
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
+        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        tag_names = models.ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
+        descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+        # dict[int,set] -> dict[int,list] so we can JSON-encode
+        descendant_tags = {key: list(val) for key, val in descendant_tags.items()}
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
+            flattened_contents = {}
+            # prepend UDF tag ID to name to prevent UDF name namespace conflicts
+            # TODO - can this code + JS be removed the always list? it's needed for yes/no radio
+            for tag_id, field in reference["tag_udf_contents"].items():
+                for name, value in field.items():
+                    flattened_contents[f"{tag_id}-{name}"] = (
+                        value if isinstance(value, list) else [value]
+                    )
+            reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
@@ -397,9 +412,12 @@ class TagReferences(BaseFilterList):
                 conflict_resolution=self.assessment.literature_settings.conflict_resolution,
                 keywords=self.assessment.literature_settings.get_keyword_data(),
                 instructions=self.assessment.literature_settings.screening_instructions,
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                tags=tags,
+                tag_names=tag_names,
+                descendant_tags=descendant_tags,
                 refs=references,
                 csrf=get_token(self.request),
+                udfs=TagCache.get_forms(self.assessment),
             ),
         )
 
@@ -496,7 +514,7 @@ class ConflictResolution(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_filterset_form_kwargs(self):
         return dict(
@@ -775,7 +793,7 @@ class RefFilterList(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents")
         )
 
     def get_context_data(self, **kwargs):
@@ -802,7 +820,7 @@ class RefUploadExcel(BaseUpdate):
     model = Assessment
     template_name = "lit/reference_upload_excel.html"
     form_class = forms.ReferenceExcelUploadForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
     success_message = "Reference full text URLs updated."
 
     def get_form_kwargs(self):
@@ -832,7 +850,7 @@ class RefListExtract(BaseUpdate):
     model = Assessment
     form_class = forms.BulkReferenceStudyExtractForm
     success_message = "Selected references were successfully converted to studies."
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -987,7 +1005,7 @@ class TagsUpdate(BaseDetail):
 
     model = Assessment
     template_name = "lit/tags_update.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1023,7 +1041,7 @@ class LiteratureAssessmentUpdate(BaseUpdate):
     success_message = "Literature assessment settings updated."
     model = models.LiteratureAssessment
     form_class = forms.LiteratureAssessmentForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1043,7 +1061,7 @@ class TagsCopy(BaseUpdate):
     template_name = "lit/tags_copy.html"
     form_class = forms.TagsCopyForm
     success_message = "Literature tags for this assessment have been updated"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1069,7 +1087,7 @@ class TagsCopy(BaseUpdate):
 class BulkTagReferences(BaseDetail):
     model = Assessment
     template_name = "lit/bulk_tag_references.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

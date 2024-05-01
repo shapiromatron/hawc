@@ -314,7 +314,7 @@ class DosingRegimeUpdate(BaseUpdate):
         return context
 
     def get_success_url(self):
-        super().get_success_url()
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.dosed_animals.get_absolute_url()
 
 

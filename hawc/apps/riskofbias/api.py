@@ -189,10 +189,10 @@ class RiskOfBias(AssessmentEditViewSet):
         # send time complete task
         if not serializer.errors:
             TimeSpentEditing.add_time_spent_job(
-                self.request.session.session_key,
-                serializer.instance.get_edit_url(),
+                self.request,
                 serializer.instance,
                 serializer.instance.get_assessment().id,
+                url=serializer.instance.get_edit_url(),
             )
 
     def create(self, request, *args, **kwargs):

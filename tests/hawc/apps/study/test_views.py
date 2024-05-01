@@ -166,6 +166,7 @@ def test_get_200():
         reverse("study:list", args=(main,)),
         reverse("study:detail", args=(main,)),
         reverse("study:delete", args=(main,)),
+        reverse("study:new_study", args=(3,)),
     ]
     for url in urls:
         check_200(client, url)
