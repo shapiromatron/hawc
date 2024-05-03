@@ -5,7 +5,7 @@ from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
-from ..assessment.models import Assessment
+from ..assessment.models import Assessment, Log
 from ..common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from ..common.dynamic_forms.schemas import Schema
 from ..common.forms import BaseFormHelper, PydanticValidator, form_actions_big
@@ -221,10 +221,15 @@ class UDFModelFormMixin:
     def save(self, commit=True):
         instance = super().save(commit=commit)
         if commit and "udf" in self.changed_data:
-            models.ModelUDFContent.objects.update_or_create(
+            obj, created = models.ModelUDFContent.objects.update_or_create(
                 defaults=dict(content=self.cleaned_data["udf"]),
                 model_binding=self.model_binding,
                 content_type=self.model_binding.content_type,
                 object_id=instance.id,
+            )
+            Log.objects.create(
+                assessment_id=self.instance.get_assessment().id,
+                message=f"Updated UDF data for model type {self.model_binding.content_type} on instance {instance.id} (binding {self.model_binding.id}).",
+                content_object=obj,
             )
         return instance

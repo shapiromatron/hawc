@@ -973,10 +973,16 @@ class Reference(models.Model):
 
                 form = binding.form_instance(prefix=udf_tag_id, data=udf)
                 if form.is_valid():
-                    TagUDFContent.objects.update_or_create(
+                    obj, created = TagUDFContent.objects.update_or_create(
                         reference_id=self.id,
                         tag_binding_id=binding.id,
                         defaults={"content": form.cleaned_data},
+                    )
+                    Log.objects.create(
+                        assessment_id=self.assessment_id,
+                        user_id=user.id,
+                        message=f"Updated UDF data for tag {udf_tag_id} on reference {self.id} (binding {binding.id}).",
+                        content_object=obj,
                     )
                 else:
                     udf_validation_errors.update(
@@ -1397,9 +1403,6 @@ class Workflow(models.Model):
 
     def __str__(self):
         return f"{self.title} Workflow"
-
-    def get_absolute_url(self):
-        return reverse("lit:workflow-htmx", args=[self.pk, "read"])
 
     def get_edit_url(self):
         return reverse("lit:workflow-htmx", args=[self.pk, "update"])
