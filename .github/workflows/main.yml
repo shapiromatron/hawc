@@ -30,18 +30,12 @@ jobs:
         - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
         architecture: 'x64'
-    - name: try to restore pip cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+        cache: 'pip'
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
@@ -90,40 +84,32 @@ jobs:
     name: frontend
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '18.x'
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-    - name: try to restore yarn cache
-      uses: actions/cache@v3
-      id: yarn-cache
-      with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/package.json') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
+        node-version: 20
+        cache: 'yarn'
+        cache-dependency-path: 'frontend/yarn.lock'
     - name: install
       run: |
-        yarn --cwd ./frontend install
+        yarn --cwd ./frontend install --frozen-lockfile
     - name: lint
       run: |
-        make lint-js
+        yarn --cwd ./frontend run lint
     - name: test
       run: |
-        npm --prefix ./frontend run test
+        yarn --cwd ./frontend run test
     - name: build for integration tests
       run: |
-        npm --prefix ./frontend run build
+        yarn --cwd ./frontend run build
     - name: Upload webpack build
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: webpack-build
         path: |
           hawc/webpack-stats.json
           hawc/static/bundles/
+        retention-days: 1
 
   integration:
     name: integration
@@ -152,20 +138,14 @@ jobs:
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
         architecture: 'x64'
-    - name: try to restore pip cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+        cache: 'pip'
     - name: Download webpack build
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: webpack-build
         path: hawc
