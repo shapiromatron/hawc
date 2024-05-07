@@ -12,6 +12,51 @@ class Reference extends Component {
     toggleAbstract = () => {
         this.setState({abstractExpanded: !this.state.abstractExpanded});
     };
+
+    render_udfs(tag_udf_contents, reference_pk, expanded) {
+        const udfs = [];
+        _.forEach(tag_udf_contents, function(tag_content) {
+            const values = [];
+            tag_content.udf_content.forEach(function(value) {
+                values.push(
+                    <div className="list-group-item" key={h.randomString()}>
+                        <b>{value[0]}</b> {value[1]}
+                    </div>
+                );
+            });
+            udfs.push(
+                <div
+                    className="col-md-5 card flex-shrink-0 d-flex px-0 mr-2 mt-2"
+                    key={h.randomString()}>
+                    <a
+                        className="p-1 mb-0 text-center box-shadow-minor clickable"
+                        data-toggle="collapse"
+                        style={expanded ? {} : {fontSize: "0.85rem"}}
+                        href={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}
+                        aria-expanded="false"
+                        aria-controls={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}>
+                        <span
+                            className="refTag px-1 font-weight-normal my-1"
+                            style={expanded ? {} : {fontSize: "0.85rem"}}>
+                            {tag_content.tag_name}
+                        </span>
+                        <span className="rounded bg-lightblue px-2 py-1 text-dark">
+                            {tag_content.udf_name}
+                        </span>
+                        <span className="ml-2 text-dark">UDF Data</span>
+                        <i className="fa fa-angle-down ml-2" aria-hidden="true"></i>
+                    </a>
+                    <div
+                        id={`ref_${reference_pk}-tag_${tag_content.tag_pk}`}
+                        className="collapse list-group list-group-flush rounded"
+                        style={{maxHeight: "20rem", overflowY: "auto"}}>
+                        {values}
+                    </div>
+                </div>
+            );
+        });
+        return <div className="d-flex align-items-start flex-wrap">{udfs}</div>;
+    }
     renderIdentifiers(data, study_url, expanded) {
         const nodes = [];
 
@@ -113,6 +158,7 @@ class Reference extends Component {
                 extraActions,
                 keywordDict,
                 expanded,
+                tagUDFContents,
             } = this.props,
             {data, tags} = reference,
             authors = !expanded
@@ -129,30 +175,31 @@ class Reference extends Component {
 
         return (
             <div className={expanded ? "referenceDetail expanded" : "referenceDetail"}>
-                <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div>
-                        <div className="d-flex ref_small">
-                            <div className="vw75 mb-2">
-                                <span title={expanded ? null : data.authors}>
-                                    {authors}&nbsp;{year}
-                                    {year != "" && data.journal && !expanded ? ". " : ""}
-                                    <i>{data.journal && !expanded ? data.journal : null}</i>
-                                </span>
+                        {authors || year || data.journal ? (
+                            <div className="d-flex ref_small">
+                                <div className="vw75 mb-2">
+                                    <span title={expanded ? null : data.authors}>
+                                        {authors}&nbsp;{year}
+                                        {year != "" && data.journal && !expanded ? ". " : ""}
+                                        <i>{data.journal && !expanded ? data.journal : null}</i>
+                                    </span>
+                                </div>
+                                {showActionsTagless ? (
+                                    <ActionsButton
+                                        dropdownClasses={actionsBtnClassName}
+                                        items={actionItems.slice(1)}
+                                    />
+                                ) : null}
+                                {showActions ? (
+                                    <ActionsButton
+                                        dropdownClasses={actionsBtnClassName}
+                                        items={actionItems}
+                                    />
+                                ) : null}
                             </div>
-                            {showActionsTagless ? (
-                                <ActionsButton
-                                    dropdownClasses={actionsBtnClassName}
-                                    items={actionItems.slice(1)}
-                                />
-                            ) : null}
-                            {showActions ? (
-                                <ActionsButton
-                                    dropdownClasses={actionsBtnClassName}
-                                    items={actionItems}
-                                />
-                            ) : null}
-                        </div>
+                        ) : null}
                         <div className="vw75">
                             {data.title ? (
                                 keywordDict ? (
@@ -197,7 +244,7 @@ class Reference extends Component {
                     />
                 ) : null}
                 {showTags && tags.length > 0 ? (
-                    <p>
+                    <p className="m-0">
                         {tags.map((tag, i) => (
                             <a
                                 key={i}
@@ -218,6 +265,9 @@ class Reference extends Component {
                         ))}
                     </div>
                 ) : null}
+                {tagUDFContents !== undefined
+                    ? this.render_udfs(tagUDFContents[data.pk], data.pk, expanded)
+                    : null}
                 {showHr ? <hr className="my-4" /> : null}
             </div>
         );
@@ -234,6 +284,7 @@ Reference.propTypes = {
     extraActions: PropTypes.arrayOf(PropTypes.element),
     keywordDict: PropTypes.object,
     expanded: PropTypes.bool,
+    tagUDFContents: PropTypes.object,
 };
 
 Reference.defaultProps = {
@@ -245,6 +296,7 @@ Reference.defaultProps = {
     extraActions: null,
     keywordDict: null,
     expanded: false,
+    tagUDFContents: undefined,
 };
 
 export default Reference;

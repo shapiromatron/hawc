@@ -725,6 +725,31 @@ class RefList(BaseList):
         return _get_reference_list(self.assessment, context["obj_perms"])
 
 
+def _get_tag_binding_contents(assessment, reference_list):
+    tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+    tag_names = models.ReferenceFilterTag.get_nested_tag_names(assessment.id)
+    descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+    descendant_tags = {key: list(val) for key, val in descendant_tags.items()}
+    tag_binding_contents = {}
+    for reference in reference_list:
+        tag_binding_contents[reference.pk] = [
+            {
+                "tag_name": tag_names[tag_content.tag_binding.tag.pk],
+                "tag_pk": tag_content.tag_binding.tag.pk,
+                "udf_content": tag_content.get_content_as_list(),
+                "udf_name": tag_content.tag_binding.form.name,
+            }
+            for tag_content in reference.saved_tag_contents.all()
+            if set(descendant_tags.get(tag_content.tag_binding.tag.pk, [])).intersection(
+                set(reference.tags.values_list("pk", flat=True))
+            )
+        ]
+    return {
+        "tags": tags,
+        "tag_binding_contents": tag_binding_contents,
+    }
+
+
 class RefFilterList(BaseFilterList):
     template_name = "lit/reference_search.html"
     breadcrumb_active_name = "Reference search"
@@ -806,7 +831,7 @@ class RefFilterList(BaseFilterList):
             app="litStartup",
             page="startupReferenceTable",
             data=dict(
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                **_get_tag_binding_contents(self.assessment, context["object_list"]),
                 references=[ref.to_dict() for ref in context["object_list"]],
             ),
         )
@@ -889,7 +914,7 @@ def _get_ref_app_startup(view, context) -> WebappConfig:
         app="litStartup",
         page="startupReferenceDetail",
         data={
-            "tags": models.ReferenceFilterTag.get_all_tags(view.assessment.id),
+            **_get_tag_binding_contents(view.assessment, [view.object]),
             "reference": view.object.to_dict(),
             "canEdit": context["obj_perms"]["edit"],
         },
