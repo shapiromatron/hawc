@@ -26,7 +26,7 @@ class Reference extends Component {
             });
             udfs.push(
                 <div
-                    className="col-md-5 card flex-shrink-0 d-flex px-0 mr-2 mt-2"
+                    className="col-md-3 card flex-shrink-0 d-flex px-0 mr-2 mt-2"
                     key={h.randomString()}>
                     <a
                         className="p-1 mb-0 text-center box-shadow-minor clickable"
@@ -35,15 +35,13 @@ class Reference extends Component {
                         href={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}
                         aria-expanded="false"
                         aria-controls={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}>
-                        <span
-                            className="refTag px-1 font-weight-normal my-1"
-                            style={expanded ? {} : {fontSize: "0.85rem"}}>
+                        <span className="text-dark" style={expanded ? {} : {fontSize: "0.85rem"}}>
                             {tag_content.tag_name}
                         </span>
-                        <span className="rounded bg-lightblue px-2 py-1 text-dark">
+                        <span className="rounded bg-lightblue px-1 text-dark mx-2">
                             {tag_content.udf_name}
                         </span>
-                        <span className="ml-2 text-dark">UDF Data</span>
+                        <span className="text-dark">Data</span>
                         <i className="fa fa-angle-down ml-2" aria-hidden="true"></i>
                     </a>
                     <div
