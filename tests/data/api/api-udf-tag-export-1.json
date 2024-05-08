@@ -1,0 +1,15 @@
+[
+  {
+    "content-content": {
+      "field1": "testing",
+      "field2": 321
+    },
+    "content-created": 1715170867533,
+    "content-field-field1": "testing",
+    "content-field-field2": 321,
+    "content-last_updated": 1715170867533,
+    "content-pk": 1,
+    "content-reference": 1,
+    "content-tag": 2
+  }
+]
