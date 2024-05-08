@@ -1404,6 +1404,9 @@ class Workflow(models.Model):
     def __str__(self):
         return f"{self.title} Workflow"
 
+    def get_absolute_url(self):
+        return reverse("lit:workflow-htmx", args=[self.pk, "read"])
+
     def get_edit_url(self):
         return reverse("lit:workflow-htmx", args=[self.pk, "update"])
 
