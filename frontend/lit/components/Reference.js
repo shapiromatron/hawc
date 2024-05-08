@@ -19,21 +19,27 @@ class Reference extends Component {
             const values = [];
             tag_content.udf_content.forEach(function(value) {
                 values.push(
-                    <div className="list-group-item" key={h.randomString()}>
+                    <div
+                        className={`list-group-item ${expanded ? "" : "small"}`}
+                        key={h.randomString()}>
                         <b>{value[0]}</b> {value[1]}
                     </div>
                 );
             });
             udfs.push(
                 <div
-                    className="col-md-3 card flex-shrink-0 d-flex px-0 mr-2 mt-2"
+                    className={`${
+                        expanded ? "col-md-5" : "col-md-3"
+                    } card flex-shrink-0 d-flex px-0 mr-2 mt-2`}
                     key={h.randomString()}>
                     <a
-                        className="p-1 mb-0 text-center box-shadow-minor clickable"
+                        className={`p-1 mb-0 text-center box-shadow-minor clickable z-top ${
+                            expanded ? "" : "collapsed"
+                        }`}
                         data-toggle="collapse"
                         style={expanded ? {} : {fontSize: "0.85rem"}}
                         href={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}
-                        aria-expanded="false"
+                        aria-expanded={`${expanded}`}
                         aria-controls={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}>
                         <span className="text-dark" style={expanded ? {} : {fontSize: "0.85rem"}}>
                             {tag_content.tag_name}
@@ -46,7 +52,9 @@ class Reference extends Component {
                     </a>
                     <div
                         id={`ref_${reference_pk}-tag_${tag_content.tag_pk}`}
-                        className="collapse list-group list-group-flush rounded"
+                        className={`collapse list-group list-group-flush rounded ${
+                            expanded ? "show" : ""
+                        }`}
                         style={{maxHeight: "20rem", overflowY: "auto"}}>
                         {values}
                     </div>
@@ -132,7 +140,7 @@ class Reference extends Component {
                         <i className="fa fa-cloud-download" aria-hidden="true"></i>
                         &nbsp;Source
                     </a>
-                    <div className="dropdown-menu dropdown-menu-right">
+                    <div className="dropdown-menu dropdown-menu-right py-0">
                         {data.searches.map((d, i) => (
                             <a className="dropdown-item small" key={d.url} href={d.url}>
                                 {d.title}
