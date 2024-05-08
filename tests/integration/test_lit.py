@@ -155,7 +155,9 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_text("Human Study", exact=True).click()
         expect(page.get_by_text("Tag Form")).to_be_visible()
         expect(page.get_by_label("Field1")).to_be_visible()
+        page.get_by_label("Field1").fill("")
         expect(page.get_by_label("Field2")).to_be_visible()
+        page.get_by_label("Field2").fill("")
 
         # Tagging without filling out UDF returns error
         page.get_by_role("button", name="Save and next").click()
