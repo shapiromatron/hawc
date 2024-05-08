@@ -15,6 +15,20 @@ class ModelUDFContentManager(BaseManager):
         return ModelUDFContentQuerySet(self.model, using=self._db)
 
 
+class TagUDFContentQuerySet(QuerySet):
+    def filter_tag(self, tag: int):
+        # ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
+        # tag = ReferenceFilterTag.objects.get(id=tag)
+        return self.filter(tag_binding__tag=tag)
+
+
+class TagUDFContentManager(BaseManager):
+    assessment_relation = "tag_binding__assessment"
+
+    def get_queryset(self):
+        return TagUDFContentQuerySet(self.model, using=self._db)
+
+
 class UserDefinedFormManager(Manager):
     def get_queryset(self):
         return UserDefinedFormQuerySet(self.model, using=self._db)

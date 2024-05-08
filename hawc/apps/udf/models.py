@@ -13,7 +13,6 @@ from django.utils.safestring import SafeText
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
 from ..common.forms import DynamicFormField
-
 from . import managers
 
 
@@ -213,6 +212,8 @@ class ModelUDFContent(models.Model):
 
 
 class TagUDFContent(models.Model):
+    objects = managers.TagUDFContentManager()
+
     reference = models.ForeignKey(
         "lit.Reference", on_delete=models.CASCADE, related_name="saved_tag_contents"
     )

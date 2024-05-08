@@ -39,3 +39,33 @@ class ModelUDFContentExporter(Exporter):
             ContentTypeExport("content_type", "content_type"),
             ModelUDFContentExport("content", ""),
         ]
+
+
+class TagUDFContentExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "pk": "pk",
+            "reference": "reference",
+            "tag": "tag_binding__tag",
+            "content": "content",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        # expand JSON representation into individual columns
+        if df.shape[0] > 0 and "content-content" in df.columns:
+            df2 = (
+                pd.DataFrame(data=list(df["content-content"].values))
+                .fillna("-")
+                .add_prefix("content-field-")
+            )
+            df = df.merge(df2, left_index=True, right_index=True)
+        return df
+
+
+class TagUDFContentExporter(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            TagUDFContentExport("content", ""),
+        ]
