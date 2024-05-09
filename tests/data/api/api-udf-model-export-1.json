@@ -1,15 +1,13 @@
 [
   {
-    "content-content": {
+    "content": {
       "field1": "test",
       "field2": 123
     },
-    "content-created": 1710256747533,
-    "content-field-field1": "test",
-    "content-field-field2": 123,
-    "content-last_updated": 1710256747533,
-    "content-object_id": 9,
-    "content-pk": 1,
+    "created": 1710256747533,
+    "last_updated": 1710256747533,
+    "object_id": 9,
+    "pk": 1,
     "content_type-app": "study",
     "content_type-model": "study"
   }

@@ -37,7 +37,7 @@ class ModelUDFContentExporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
             ContentTypeExport("content_type", "content_type"),
-            ModelUDFContentExport("content", ""),
+            ModelUDFContentExport(),
         ]
 
 
@@ -67,5 +67,5 @@ class TagUDFContentExport(ModelExport):
 class TagUDFContentExporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
-            TagUDFContentExport("content", ""),
+            TagUDFContentExport(),
         ]
