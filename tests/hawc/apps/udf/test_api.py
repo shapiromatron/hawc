@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
 from hawc.apps.udf.models import ModelUDFContent, TagUDFContent
@@ -90,11 +91,26 @@ class TestUdfAssessmentViewSet:
         data = {
             "tag_binding": 1,
             "reference": 1,
-            "content": {"field1": "updated data", "field2": 123},
+            "content": {"field1": "updated data", "field2": 1234},
         }
         resp = client.post(url, data, format="json")
-        import pdb
-
-        pdb.set_trace()
+        assert resp.status_code == 200
         tag_content = TagUDFContent.objects.get(reference=1, tag_binding=1)
         assert tag_content.content == data["content"]
+
+    def test_model_content_create(self, rewrite_data_files):
+        url = reverse("udf:api:assessment-model-content", args=(4,))
+        client = get_client("team", api=True)
+        data = {
+            "model_binding": 1,
+            "content_type": "study.study",
+            "object_id": 9,
+            "content": {"field1": "updated data", "field2": 1234},
+        }
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 200
+        content_type = ContentType.objects.get(app_label="study", model="study")
+        model_content = ModelUDFContent.objects.get(
+            object_id=9, model_binding=1, content_type=content_type
+        )
+        assert model_content.content == data["content"]
