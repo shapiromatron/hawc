@@ -69,3 +69,45 @@ class TagUDFContentExporter(Exporter):
         return [
             TagUDFContentExport(),
         ]
+
+
+class ModelBindingExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "pk": "pk",
+            "assessment": "assessment",
+            "form_id": "form",
+            "form_schema": "form__schema",
+            "creator": "creator",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+
+class ModelBindingContentExporter(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            ContentTypeExport("content_type", "content_type"),
+            ModelBindingExport("model_binding", ""),
+        ]
+
+
+class TagBindingExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "pk": "pk",
+            "assessment": "assessment",
+            "tag": "tag",
+            "form_id": "form",
+            "form_schema": "form__schema",
+            "creator": "creator",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+
+class TagBindingContentExporter(Exporter):
+    def build_modules(self) -> list[ModelExport]:
+        return [
+            TagBindingExport("tag_binding", ""),
+        ]

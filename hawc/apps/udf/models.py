@@ -78,6 +78,8 @@ class UserDefinedForm(models.Model):
 
 
 class ModelBinding(models.Model):
+    objects = managers.ModelBindingManager()
+
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_bindings"
     )
@@ -128,6 +130,8 @@ class ModelBinding(models.Model):
 
 
 class TagBinding(models.Model):
+    objects = managers.TagBindingManager()
+
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_tag_bindings"
     )

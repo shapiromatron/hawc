@@ -29,6 +29,14 @@ class TagUDFContentManager(BaseManager):
         return TagUDFContentQuerySet(self.model, using=self._db)
 
 
+class ModelBindingManager(BaseManager):
+    assessment_relation = "assessment"
+
+
+class TagBindingManager(BaseManager):
+    assessment_relation = "assessment"
+
+
 class UserDefinedFormManager(Manager):
     def get_queryset(self):
         return UserDefinedFormQuerySet(self.model, using=self._db)
