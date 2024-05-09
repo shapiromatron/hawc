@@ -10,6 +10,7 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
+from ..lit.models import Reference
 from . import exports, models
 
 
@@ -96,7 +97,7 @@ class UdfAssessmentViewSet(BaseAssessmentViewSet):
     def tag_content(self, request, pk):
         assessment: Assessment = self.get_object()
         tag_binding = get_object_or_404(models.TagBinding, id=request.data.get("tag_binding", -1))
-        reference = get_object_or_404(models.TagBinding, id=request.data.get("reference", -1))
+        reference = get_object_or_404(Reference, id=request.data.get("reference", -1))
         content = request.data.get("content", None)
         if not tag_binding or not reference or not content:
             return Response("Must provide tag_binding, reference, and content", status=400)
