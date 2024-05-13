@@ -720,14 +720,18 @@ class DataPivotUploadForm(DataPivotForm):
         worksheet_name = cleaned_data.get("worksheet_name", "")
 
         if excel_file:
+            cannot_read = "Unable to read Excel file. Please upload an Excel file in XLSX format."
+
+            # ensure it has correct extension
+            if not excel_file.name.endswith(".xlsx"):
+                self.add_error("excel_file", cannot_read)
+                return
+
             # see if it loads
             try:
                 wb = load_workbook(excel_file, read_only=True)
             except (BadZipFile, InvalidFileException):
-                self.add_error(
-                    "excel_file",
-                    "Unable to read Excel file. Please upload an Excel file in XLSX format.",
-                )
+                self.add_error("excel_file", cannot_read)
                 return
 
             # check worksheet name

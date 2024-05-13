@@ -251,6 +251,16 @@ This makes the test database useful when writing new features. There are multipl
  **Team member**     | team@hawcproject.org     | pw
  **Reviewer**        | reviewer@hawcproject.org | pw
 
+
+There are currently four assessments in the database:
+
+ID | Name | Editable | Public
+---|---|---|---
+1 | Chemical Z | Yes | No
+2 | Chemical X | No | Yes
+3 | Chemical Y | Yes | Yes
+4 | Chemical A | Yes | No
+
 As new features are added, adding and changing content in the test database will be required to test these features. Instructions for loading and dumping are described below.
 
 #### Generating the test database
