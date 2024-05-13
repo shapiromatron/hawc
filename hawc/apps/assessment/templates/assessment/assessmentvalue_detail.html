@@ -65,6 +65,15 @@
       {% endfor %}
     </tbody>
   </table>
+{% if pod_message %}
+<div class="usa-alert usa-alert--info usa-alert--slim">
+  <div class="usa-alert__body">
+    <p class="usa-alert__text">
+      {{pod_message}}
+    </p>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extrajs %}

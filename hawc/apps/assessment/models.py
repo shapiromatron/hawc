@@ -533,7 +533,7 @@ class AssessmentDetail(models.Model):
         default=constants.PeerReviewType.NONE,
     )
     qa_id = models.CharField(
-        max_length=16,
+        max_length=32,
         blank=True,
         verbose_name="Quality Assurance (QA) tracking identifier",
         help_text="Quality Assurance (QA) tracking identifier, if one exists.",

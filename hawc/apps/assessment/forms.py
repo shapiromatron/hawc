@@ -238,18 +238,6 @@ class AssessmentValueForm(forms.ModelForm):
             if not cleaned_data.get("uncertainty"):
                 msg = "Required for Noncancer evaluation types."
                 self.add_error("uncertainty", msg)
-        if (
-            cleaned_data.get("value")
-            and cleaned_data.get("pod_value")
-            and cleaned_data.get("uncertainty")
-        ):
-            if not np.isclose(
-                cleaned_data["value"],
-                cleaned_data["pod_value"] / cleaned_data["uncertainty"],
-                rtol=0.01,
-            ):
-                msg = "POD / uncertainty is not equal to value."
-                self.add_error("value", msg)
 
     @property
     def helper(self):
