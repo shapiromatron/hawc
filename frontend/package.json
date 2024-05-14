@@ -6,8 +6,6 @@
     "scripts": {
         "clean": "rimraf ../hawc/static/bundles/* && rimraf ../hawc/webpack-stats.json",
         "build": "npm run clean && webpack --config webpack.config.js",
-        "uswds-compile": "gulp -f ./uswds/gulpfile.js compileSass",
-        "uswds-copy-assets": "gulp -f ./uswds/gulpfile.js copyAssets",
         "start": "node devServer.js",
         "lint": "eslint --cache .",
         "format": "eslint --cache --fix .",
@@ -30,8 +28,6 @@
         "@babel/preset-env": "^7.22.7",
         "@babel/preset-react": "^7.22.5",
         "@babel/runtime": "^7.22.6",
-        "@uswds/compile": "^1.0.0",
-        "@uswds/uswds": "^3.5.0",
         "assert": "^2.0.0",
         "babel-eslint": "^10.1.0",
         "babel-loader": "^8.3.0",
