@@ -1,7 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-import numpy as np
 from django import forms
 from django.conf import settings
 from django.contrib import admin
