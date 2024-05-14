@@ -8,7 +8,7 @@ following applications installed on your local development system:
 - [Python](https://www.python.org/) == 3.12
 - [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com/) < 2
-- [PostgreSQL](https://www.postgresql.org/) >= 12
+- [PostgreSQL](https://www.postgresql.org/) >= 16
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
