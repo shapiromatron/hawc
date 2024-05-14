@@ -53,7 +53,7 @@
         "webpack": "^5.88.1",
         "webpack-bundle-tracker": "^2.0.1",
         "webpack-cli": "^5.1.4",
-        "webpack-dev-middleware": "^6.1.1"
+        "webpack-dev-middleware": "^6.1.2"
     },
     "dependencies": {
         "clipboard": "~2.0.11",
