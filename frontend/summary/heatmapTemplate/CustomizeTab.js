@@ -83,7 +83,7 @@ class CustomizeTab extends Component {
                     <div className="col-md-3">
                         <SelectInput
                             label="Count column"
-                            name={"count_column"}
+                            name="count_column"
                             choices={store.getColumnsOptionsWithNull}
                             multiple={false}
                             handleSelect={store.changeCountColumn}
