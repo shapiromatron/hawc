@@ -65,14 +65,13 @@
       {% endfor %}
     </tbody>
   </table>
-  {% if pod_message %}
-    <div class="usa-alert usa-alert--info usa-alert--slim">
-      <div class="usa-alert__body">
-        <p class="usa-alert__text">
-          {{pod_message}}
-        </p>
-      </div>
-    </div>
+  {% if obj_perms.edit and value_warning %}
+    {% alert warning %}
+      The POD/UF = Value is different than what is reported.
+      ({{object.pod_value}}/{{object.uncertainty}} = {{value_warning}}, which is different than
+      value entered, {{object.value}}). This is likely due to rounding issues and the level of
+      precision we report the value, but please double-check just in case. Note: this message only appears to team members and higher.
+    {% endalert %}
   {% endif %}
 {% endblock %}
 
