@@ -58,7 +58,7 @@ dependencies = [
   # exports
   "rispy==0.8.1",
   "python-docx==1.0.1",
-  ]
+]
 
 [project.optional-dependencies]
 dev = [
