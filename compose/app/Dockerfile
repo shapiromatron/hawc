@@ -1,6 +1,7 @@
 FROM python:3.12-slim-bullseye
 
 ENV PYTHONUNBUFFERED 1
+ENV HAWC_VERSION "2024.1"
 
 RUN groupadd -g 555 -r app && \
     useradd -u 555 -r -g app app
@@ -28,7 +29,7 @@ COPY ./dist /app/build/dist
 
 WORKDIR /app/build
 RUN pip install -U pip && \
-    pip install "dist/dist/hawc-2024.1-py3-none-any.whl[prod]" --no-cache-dir && \
+    pip install "./dist/hawc-${HAWC_VERSION}-py3-none-any.whl[prod]" --no-cache-dir && \
     pip uninstall -y pip setuptools && \
     rm -rf /app/build && \
     chown -R app:app /app
