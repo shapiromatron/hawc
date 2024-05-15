@@ -39,14 +39,15 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        pip install -U pip wheel
-        pip install -r requirements/dev.txt
+        python -m pip install -U pip wheel
+        python -m pip install -e ".[dev,docs]"
+        python -m pip install -e client
     - name: lint-py
       run: |
         make lint-py
@@ -161,7 +162,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Download webpack build
@@ -171,8 +172,9 @@ jobs:
         path: hawc
     - name: install hawc
       run: |
-        pip install -U pip
-        pip install -r requirements/dev.txt
+        python -m pip install -U pip wheel
+        python -m pip install -e ".[dev,docs]"
+        python -m pip install -e client
         playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
