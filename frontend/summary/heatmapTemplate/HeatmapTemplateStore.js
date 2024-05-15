@@ -2,6 +2,7 @@ import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
+import {NULL_VALUE} from "../summary/constants";
 import {DATA_FILTER_LOGIC_AND} from "../summary/filters";
 import OPTIONS from "./dataDefinitions";
 
@@ -23,6 +24,7 @@ class HeatmapTemplateStore {
     @observable showNull = false;
     @observable showCounts = 1;
     @observable upperColor = null;
+    @observable countColumn = NULL_VALUE;
 
     constructor(config) {
         this.config = config;
@@ -43,6 +45,9 @@ class HeatmapTemplateStore {
     }
     @action.bound changeUpperColor(color) {
         this.upperColor = color;
+    }
+    @action.bound changeCountColumn(value) {
+        this.countColumn = value;
     }
 
     @action.bound changeDashboard(id) {
@@ -115,11 +120,24 @@ class HeatmapTemplateStore {
             y_fields: this.selectedYAxis.settings,
             y_label: {text: this.selectedYAxis.label, x: 0, y: 0, rotate: -90},
             y_tick_rotate: 0,
+            count_column: this.countColumn,
         };
     }
 
     @computed get settingsHash() {
         return h.hashString(JSON.stringify(toJS(this.settings)));
+    }
+
+    @computed get getColumnsOptionsWithNull() {
+        let nullOption = {id: NULL_VALUE, label: "<none>"};
+        if (!this.dataset) {
+            return [nullOption];
+        }
+        let columns = _.keys(this.dataset[0]).map(d => {
+            return {id: d, label: d};
+        });
+        columns.unshift(nullOption);
+        return columns;
     }
 }
 

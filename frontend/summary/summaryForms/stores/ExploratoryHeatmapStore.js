@@ -66,6 +66,7 @@ class ExploratoryHeatmapStore {
             y_label: {text: "", x: 0, y: 0, rotate: 0},
             y_tick_rotate: -90,
             x_axis_bottom: true,
+            count_column: NULL_VALUE,
         };
     }
 
