@@ -68,8 +68,8 @@
   {% if obj_perms.edit and value_warning %}
     {% alert warning %}
       The POD/UF = Value is different than what is reported.
-      ({{object.pod_value}}/{{object.uncertainty}} = {{value_warning}}, which is different than
-      value entered, {{object.value}}). This is likely due to rounding issues and the level of
+      ({{object.pod_value|floatformat:'-3'}}/{{object.uncertainty|floatformat:'-3'}} = {{value_warning|floatformat:'-3'}}, which is different than
+      value entered, {{object.value|floatformat:'-3'}}). This is likely due to rounding issues and the level of
       precision we report the value, but please double-check just in case. Note: this message only appears to team members and higher.
     {% endalert %}
   {% endif %}
