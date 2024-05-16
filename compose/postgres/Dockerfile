@@ -1,4 +1,4 @@
-FROM postgres:12-alpine
+FROM postgres:16-alpine
 
 RUN apk update && \
     apk upgrade --available && \

@@ -8,7 +8,7 @@ following applications installed on your local development system:
 - [Python](https://www.python.org/) == 3.12
 - [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com/) < 2
-- [PostgreSQL](https://www.postgresql.org/) >= 12
+- [PostgreSQL](https://www.postgresql.org/) >= 16
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
@@ -492,26 +492,6 @@ Possible values include:
 - PRIME (default application; as hosted at <https://hawcproject.org>)
 - EPA (EPA application; as hosted at EPA)
 
-### Compiling USWDS
-
-The EPA flavor of HAWC uses a framework from the [U.S. Web Design System](https://designsystem.digital.gov/) (USWDS) adapted for the agency. USWDS is a large package with thousands of resources; HAWC only includes a subset of these files. Including further components requires installing USWDS, and adding the component names to [`frontend/uswds/sass/styles.scss`](https://designsystem.digital.gov/components/packages/). The following command will rebuild this code:
-
-```bash
-cd ~/dev/hawc/frontend
-
-# rebuild CSS
-npm run uswds-compile
-
-# copy fonts, img, js
-npm run uswds-copy-assets
-```
-
-After running, manually delete unused fonts and images.
-
-A few major revisions were made to the compiled USWDS assets, most notably:
-
-- Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
-
 ### Updating EPA.gov style
 
 There are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
@@ -524,6 +504,10 @@ There are multiple styles available when using HAWC; and the EPA style has to be
     *  Edit font locations in style sheet to point to `//www.epa.gov/themes/epa_theme/` instead of relative paths
 6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
 7. Test changes locally to ensure HAWC matches EPA.gov styling.  On the base.html, you may want to disable caching for the header and footer components (or cache for 1 second) so it makes it easier to see the changes.
+
+A few revisions were made to USWDS assets:
+
+* Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
 
 ### Materialized views
 
