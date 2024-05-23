@@ -356,21 +356,24 @@ class IdentifiersManager(BaseManager):
             failed_join = ", ".join(str(el) for el in fetched_content["failure"])
             raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_join}")
         if len(fetched_content["success"]) > 0:
-            df = pd.DataFrame(
-                [
+            df = []
+            for ref in fetched_content["success"]:
+                if doi := constants.DOI_EXTRACT.search(ref["json"].get("doi", "")):
+                    doi = doi.group(0)
+                df.append(
                     {
                         "HEROID": ref["json"]["HEROID"],
                         "PMID": ref["json"].get("PMID", ""),
-                        "doi": ref["json"].get("doi", ""),
+                        "doi": doi if doi else None,
                         "wosid": ref["json"].get("wosid", ""),
                     }
-                    for ref in fetched_content["success"]
-                ]
-            ).replace("", np.nan)
+                )
+            df = pd.DataFrame(df).replace("", np.nan)
             hero_dupes = df[df.HEROID.notna() & df.HEROID.duplicated(keep=False)]
             pubmed_dupes = df[df.PMID.notna() & df.PMID.duplicated(keep=False)]
             doi_dupes = df[df.doi.notna() & df.doi.duplicated(keep=False)]
             wos_dupes = df[df.wosid.notna() & df.wosid.duplicated(keep=False)]
+            error_msg = []
             for dupes, id_type in [
                 (hero_dupes, "HERO IDs"),
                 (pubmed_dupes, "PubMed IDs"),
@@ -378,9 +381,11 @@ class IdentifiersManager(BaseManager):
                 (wos_dupes, "WoS IDs"),
             ]:
                 if dupes.shape[0] > 0:
-                    raise ValidationError(
-                        f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}"
+                    error_msg.append(
+                        f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}. "
                     )
+            if len(error_msg) > 0:
+                raise ValidationError("".join(error_msg))
         return fetched_content
 
     def bulk_create_hero_ids(self, content):
