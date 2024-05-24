@@ -1,8 +1,9 @@
 import pandas as pd
-from django.db.models import CharField, Count, F, Func, QuerySet, Value
+from django.db.models import CharField, F, Func, QuerySet, Value
 
 from hawc.apps.common.helper import FlatFileExporter
 from hawc.apps.riskofbias.constants import SCORE_CHOICES_MAP
+from hawc.apps.riskofbias.models import RiskOfBiasScore
 
 from ..common.exports import Exporter, ModelExport
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
@@ -222,40 +223,29 @@ class DataExtractionExport(ModelExport):
         }
 
 
-class EpiV2RoBScoreExport(ModelExport):
-    def get_value_map(self):
-        return {
-            "score": "score",
-            "metric_id": "metric_id",
-            "metric_name": "metric__name",
-        }
-
-    def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        temp_df = df[
-            [
-                "study-id",
-                self.key_prefix + "score",
-                self.key_prefix + "metric_id",
-                self.key_prefix + "metric_name",
-            ]
-        ]
-
-        temp_df["score_expanded"] = temp_df[self.key_prefix + "score"].apply(
-            lambda d: {"sortValue": d, "display": f"{SCORE_CHOICES_MAP[d]}"}
-        )
-        temp_df = (
-            temp_df.drop_duplicates(["study-id"])
-            .pivot(
-                index=["study-id"],
-                columns=[self.key_prefix + "metric_id", self.key_prefix + "metric_name"],
-            )["score_expanded"]
-            .droplevel(0, axis=1)  # type: ignore
-        )
-
-        return df.join(temp_df, on="study-id")  # type: ignore
-
-
 class EpiV2Exporter(Exporter):
+    def get_df(self, qs: QuerySet) -> pd.DataFrame:
+        df = super().get_df(qs)
+
+        # Add available RoB data
+        data = RiskOfBiasScore.objects.filter(
+            riskofbias__study__in=df["study-id"], riskofbias__final=True
+        ).values_list("score", "riskofbias__study_id", "metric_id", "metric__name")
+        if data.count() == 0:
+            return df
+        rob_df = pd.DataFrame(data=data, columns=["score", "study-id", "metric_id", "metric_name"])
+
+        rob_df.metric_name = rob_df.metric_name.apply(lambda x: f"RoB ({x})")
+        rob_df["score_expanded"] = rob_df.score.apply(
+            lambda d: {"sortValue": d, "display": SCORE_CHOICES_MAP[d]}
+        )
+
+        rob_df = rob_df.pivot(index=["study-id"], columns=["metric_id", "metric_name"])[
+            "score_expanded"
+        ].droplevel(0, axis=1)  # type: ignore
+
+        return df.join(rob_df, "study-id")
+
     def build_modules(self) -> list[ModelExport]:
         return [
             StudyExport("study", "design__study"),
@@ -266,7 +256,6 @@ class EpiV2Exporter(Exporter):
             OutcomeExport("outcome", "outcome"),
             AdjustmentFactorExport("adjustment_factor", "factors"),
             DataExtractionExport("data_extraction", ""),
-            EpiV2RoBScoreExport("riskofbias", "design__study__riskofbiases__scores"),
         ]
 
 
