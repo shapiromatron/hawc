@@ -1,7 +1,8 @@
 import pandas as pd
-from django.db.models import CharField, F, Func, Value
+from django.db.models import CharField, Count, F, Func, QuerySet, Value
 
 from hawc.apps.common.helper import FlatFileExporter
+from hawc.apps.riskofbias.constants import SCORE_CHOICES_MAP
 
 from ..common.exports import Exporter, ModelExport
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
@@ -221,6 +222,39 @@ class DataExtractionExport(ModelExport):
         }
 
 
+class EpiV2RoBScoreExport(ModelExport):
+    def get_value_map(self):
+        return {
+            "score": "score",
+            "metric_id": "metric_id",
+            "metric_name": "metric__name",
+        }
+
+    def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        temp_df = df[
+            [
+                "study-id",
+                self.key_prefix + "score",
+                self.key_prefix + "metric_id",
+                self.key_prefix + "metric_name",
+            ]
+        ]
+
+        temp_df["score_expanded"] = temp_df[self.key_prefix + "score"].apply(
+            lambda d: {"sortValue": d, "display": f"{SCORE_CHOICES_MAP[d]}"}
+        )
+        temp_df = (
+            temp_df.drop_duplicates(["study-id"])
+            .pivot(
+                index=["study-id"],
+                columns=[self.key_prefix + "metric_id", self.key_prefix + "metric_name"],
+            )["score_expanded"]
+            .droplevel(0, axis=1)  # type: ignore
+        )
+
+        return df.join(temp_df, on="study-id")  # type: ignore
+
+
 class EpiV2Exporter(Exporter):
     def build_modules(self) -> list[ModelExport]:
         return [
@@ -232,6 +266,7 @@ class EpiV2Exporter(Exporter):
             OutcomeExport("outcome", "outcome"),
             AdjustmentFactorExport("adjustment_factor", "factors"),
             DataExtractionExport("data_extraction", ""),
+            EpiV2RoBScoreExport("riskofbias", "design__study__riskofbiases__scores"),
         ]
 
 
