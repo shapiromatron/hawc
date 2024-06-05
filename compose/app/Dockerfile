@@ -24,12 +24,11 @@ RUN apt-get update && \
     \
     mkdir -p /app/logs
 
-COPY ./requirements /app/build/requirements
 COPY ./dist /app/build/dist
 
 WORKDIR /app/build
 RUN pip install -U pip && \
-    pip install -r /app/build/requirements/production.txt --no-cache-dir && \
+    pip install "$(ls dist/hawc-*.whl | head -1)[prod]" --no-cache-dir && \
     pip uninstall -y pip setuptools && \
     rm -rf /app/build && \
     chown -R app:app /app
