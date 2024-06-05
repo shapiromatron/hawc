@@ -65,12 +65,12 @@
       {% endfor %}
     </tbody>
   </table>
-  {% if obj_perms.edit and value_warning %}
+  {% if obj_perms.edit and object.check_calculated_value.show_warning %}
     {% alert warning %}
-      The POD/UF = Value is different than what is reported.
-      ({{object.pod_value|floatformat:'-3'}}/{{object.uncertainty|floatformat:'-3'}} = {{value_warning|floatformat:'-3'}}, which is different than
-      value entered, {{object.value|floatformat:'-3'}}). This is likely due to rounding issues and the level of
-      precision we report the value, but please double-check just in case. Note: this message only appears to team members and higher.
+      <p><b>Note: this message only appears to team members and higher.</b></p>
+      <p>
+        The calculated {{object.get_value_type_display}} ({{object.check_calculated_value.calculated_value|stringformat:'.3g'}} {{object.value_unit|default:""}}), is > {{object.check_calculated_value.tolerance|percentage}} different than the reported value ({{object.value}} {{object.value_unit|default:""}}). The calculated value was generated using the formula POD / UF, or {{object.pod_value}} / {{object.uncertainty}} = {{object.check_calculated_value.calculated_value|stringformat:'.3g'}}. This difference may be due to the level of precision the {{object.get_value_type_display}} is reported, but please review in case of an error.
+      </p>
     {% endalert %}
   {% endif %}
 {% endblock %}

@@ -2,7 +2,6 @@ import json
 import logging
 from typing import Any
 
-import numpy as np
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -420,13 +419,6 @@ class AssessmentValueDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["adaf_footnote"] = constants.ADAF_FOOTNOTE
-        # add a message if POD/UF is not equal to the value
-        obj = self.object
-        if obj.value and obj.pod_value and obj.uncertainty:
-            calc_value = obj.pod_value / obj.uncertainty
-            if not np.isclose(obj.value, calc_value, rtol=0.01):
-                context["value_warning"] = calc_value
-
         return context
 
 
