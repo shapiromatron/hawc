@@ -9,3 +9,6 @@ mkdocs:
 python:
   install:
   - requirements: requirements/docs.txt
+  - method: pip
+    extra_requirements:
+      - docs
