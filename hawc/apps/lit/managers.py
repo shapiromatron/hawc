@@ -364,7 +364,7 @@ class IdentifiersManager(BaseManager):
                     {
                         "HEROID": ref["json"]["HEROID"],
                         "PMID": ref["json"].get("PMID", ""),
-                        "doi": doi if doi else None,
+                        "doi": doi or "",
                         "wosid": ref["json"].get("wosid", ""),
                     }
                 )
