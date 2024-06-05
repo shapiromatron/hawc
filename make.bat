@@ -51,7 +51,7 @@ goto :eof
 :sync-dev
 python -m pip install -U pip uv
 uv pip install -e ".[dev,docs]"
-uv pip install -e client
+uv pip install -e "client/"
 yarn --cwd frontend
 python manage.py migrate
 python manage.py recreate_views
