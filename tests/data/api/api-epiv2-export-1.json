@@ -1,5 +1,9 @@
 [
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": null,
     "adjustment_factor-created": null,
     "adjustment_factor-description": null,
@@ -118,6 +122,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641849370393,
     "adjustment_factor-description": "age, sex, BMI, parental education, ETS exposure, month of survey",
@@ -236,6 +244,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641849370393,
     "adjustment_factor-description": "age, sex, BMI, parental education, ETS exposure, month of survey",
@@ -354,6 +366,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641849370393,
     "adjustment_factor-description": "age, sex, BMI, parental education, ETS exposure, month of survey",
@@ -472,6 +488,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": null,
     "adjustment_factor-created": null,
     "adjustment_factor-description": null,
@@ -590,6 +610,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641849370393,
     "adjustment_factor-description": "age, sex, BMI, parental education, ETS exposure, month of survey",
@@ -708,6 +732,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641849370393,
     "adjustment_factor-description": "age, sex, BMI, parental education, ETS exposure, month of survey",
@@ -826,6 +854,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641849370393,
     "adjustment_factor-description": "age, sex, BMI, parental education, ETS exposure, month of survey",
@@ -944,6 +976,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641850914332,
     "adjustment_factor-description": "age, sex",
@@ -1062,6 +1098,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "",
     "adjustment_factor-created": 1641850914345,
     "adjustment_factor-description": "age, sex, booster type, child's specific antibody concentrations at 5 years",
@@ -1180,6 +1220,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641850914332,
     "adjustment_factor-description": "age, sex",
@@ -1298,6 +1342,10 @@
     "study-url": "/study/1/"
   },
   {
+    "RoB (example metric)": {
+      "display": "Probably low risk of bias",
+      "sortValue": 16
+    },
     "adjustment_factor-comments": "Example",
     "adjustment_factor-created": 1641850914336,
     "adjustment_factor-description": "age, sex, time since vaccination, booster type",

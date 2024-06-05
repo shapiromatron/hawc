@@ -239,6 +239,7 @@ class EpiV2Exporter(Exporter):
         rob_df["score_expanded"] = rob_df.score.apply(
             lambda d: {"sortValue": d, "display": SCORE_CHOICES_MAP[d]}
         )
+        rob_df = rob_df.drop_duplicates("study-id")
 
         rob_df = rob_df.pivot(index=["study-id"], columns=["metric_id", "metric_name"])[
             "score_expanded"
