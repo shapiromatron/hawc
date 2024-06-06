@@ -1,8 +1,10 @@
 import json
 import logging
 import uuid
+from collections import namedtuple
 from typing import Any, NamedTuple
 
+import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
@@ -16,6 +18,7 @@ from django.template import RequestContext, Template
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
@@ -341,11 +344,13 @@ class Assessment(models.Model):
         return perms.to_dict(user)
 
     def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
+        # reviewer or higher OR assessment is public
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
     def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
+        # team member or higher AND assessment is editable
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
@@ -531,7 +536,7 @@ class AssessmentDetail(models.Model):
         default=constants.PeerReviewType.NONE,
     )
     qa_id = models.CharField(
-        max_length=16,
+        max_length=32,
         blank=True,
         verbose_name="Quality Assurance (QA) tracking identifier",
         help_text="Quality Assurance (QA) tracking identifier, if one exists.",
@@ -717,6 +722,16 @@ class AssessmentValue(models.Model):
 
     def get_absolute_url(self):
         return reverse("assessment:values-detail", args=[self.pk])
+
+    @cached_property
+    def check_calculated_value(self, rtol: float = 0.01) -> NamedTuple:
+        # check if calculated value is different than reported value
+        check = namedtuple("check", ["show_warning", "calculated_value", "tolerance"])
+        if self.value and self.pod_value and self.uncertainty and self.uncertainty > 0:
+            calculated = self.pod_value / self.uncertainty
+            if not np.isclose(self.value, calculated, rtol=rtol):
+                return check(True, calculated, rtol)
+        return check(False, 0, rtol)
 
 
 class Attachment(models.Model):
