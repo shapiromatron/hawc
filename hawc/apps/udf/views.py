@@ -15,7 +15,6 @@ from ..common.views import (
     BaseList,
     LoginRequiredMixin,
     MessageMixin,
-    create_object_log,
     htmx_required,
 )
 from ..lit.models import ReferenceFilterTag
@@ -67,11 +66,6 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
         kwargs.update(user=self.request.user)
         return kwargs
 
-    def form_valid(self, form):
-        instance = super().form_valid(form)
-        create_object_log("Created", form.instance, None, self.request.user.id, "")
-        return instance
-
 
 class UpdateUDFView(MessageMixin, UpdateView):
     template_name = "udf/udf_form.html"
@@ -90,11 +84,6 @@ class UpdateUDFView(MessageMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs.update(user=self.request.user)
         return kwargs
-
-    def form_valid(self, form):
-        instance = super().form_valid(form)
-        create_object_log("Updated", form.instance, None, self.request.user.id, "")
-        return instance
 
 
 @method_decorator(htmx_required, name="dispatch")

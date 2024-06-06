@@ -1,6 +1,7 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
@@ -9,6 +10,7 @@ from ..assessment.models import Assessment, Log
 from ..common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from ..common.dynamic_forms.schemas import Schema
 from ..common.forms import BaseFormHelper, PydanticValidator, form_actions_big
+from ..common.views import create_object_log
 from ..lit.models import ReferenceFilterTag
 from ..myuser.autocomplete import UserAutocomplete
 from . import cache, constants, models
@@ -61,6 +63,14 @@ class UDFForm(forms.ModelForm):
         ):
             raise forms.ValidationError("The UDF name must be unique for your account.")
         return name
+
+    @transaction.atomic
+    def save(self, commit=True):
+        verb = "Created" if self.instance.id is None else "Updated"
+        instance = super().save(commit=commit)
+        if commit:
+            create_object_log(verb, instance, None, self.instance.creator_id, "")
+        return instance
 
     class Meta:
         model = models.UserDefinedForm
@@ -228,6 +238,7 @@ class UDFModelFormMixin:
             udf = self.model_binding.form_field(label="User Defined Fields", initial=initial)
             self.fields["udf"] = udf
 
+    @transaction.atomic
     def save(self, commit=True):
         instance = super().save(commit=commit)
         if commit and "udf" in self.changed_data:
