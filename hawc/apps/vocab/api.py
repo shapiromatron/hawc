@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -33,7 +33,7 @@ class EhvTermViewSet(viewsets.GenericViewSet):
             qs = qs.filter(parent=parent)
         return qs[:limit]
 
-    @action(detail=False, renderer_classes=PandasRenderers)
+    @action(detail=False, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
     def nested(self, request: Request):
         df = models.Term.ehv_dataframe()
         return FlatExport.api_response(df=df, filename="ehv")

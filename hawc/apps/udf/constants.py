@@ -6,5 +6,5 @@ class BindingType(models.TextChoices):
     MODEL = "model"
 
 
-# Models that are able to be linked to User Defined Forms
-SUPPORTED_MODELS = ["animal.endpoint", "study.study"]
+# Models that are able to be linked to User Defined Fields
+SUPPORTED_MODELS = ("animal.endpoint", "study.study")
