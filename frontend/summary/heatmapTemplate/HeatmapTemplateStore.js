@@ -129,13 +129,10 @@ class HeatmapTemplateStore {
     }
 
     @computed get getColumnsOptionsWithNull() {
-        let nullOption = {id: NULL_VALUE, label: "<none>"};
-        if (!this.dataset) {
-            return [nullOption];
-        }
-        let columns = _.keys(this.dataset[0]).map(d => {
-            return {id: d, label: d};
-        });
+        const nullOption = {id: NULL_VALUE, label: "<none>"},
+            columns = _.keys(this.dataset[0]).map(d => {
+                return {id: d, label: d};
+            });
         columns.unshift(nullOption);
         return columns;
     }

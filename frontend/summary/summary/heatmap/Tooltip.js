@@ -4,7 +4,8 @@ import h from "shared/utils/helpers";
 
 class CellTooltip extends Component {
     getRows() {
-        const {x_filters, y_filters} = this.props.data;
+        const {x_filters, y_filters} = this.props.data,
+            {count} = this.props;
         let rows = [];
         rows.push(
             ...x_filters.map((e, i) => {
@@ -30,7 +31,7 @@ class CellTooltip extends Component {
         rows.push(
             <tr key="count">
                 <th>Count</th>
-                <td>{this.props.count}</td>
+                <td>{count}</td>
             </tr>
         );
 
