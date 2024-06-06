@@ -6,10 +6,11 @@ from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
 
-from ..assessment.models import Assessment, Log
+from ..assessment.models import Assessment
 from ..common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from ..common.dynamic_forms.schemas import Schema
 from ..common.forms import BaseFormHelper, PydanticValidator, form_actions_big
+from ..common.helper import get_current_user
 from ..common.views import create_object_log
 from ..lit.models import ReferenceFilterTag
 from ..myuser.autocomplete import UserAutocomplete
@@ -248,9 +249,11 @@ class UDFModelFormMixin:
                 content_type=self.model_binding.content_type,
                 object_id=instance.id,
             )
-            Log.objects.create(
-                assessment_id=self.instance.get_assessment().id,
-                message=f"Updated UDF data for model type {self.model_binding.content_type} on instance {instance.id} (binding {self.model_binding.id}).",
-                content_object=obj,
+            create_object_log(
+                "",
+                obj,
+                self.model_binding.assessment_id,
+                get_current_user().id,
+                f"Updated UDF data for model type {self.model_binding.content_type} on instance {instance.id} (binding {self.model_binding.id}).",
             )
         return instance
