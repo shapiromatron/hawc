@@ -52,6 +52,16 @@ class UDFForm(forms.ModelForm):
             + "&nbsp;<a id='load-example' href='#'>Load an example</a>."
         )
 
+    def clean_name(self):
+        # check unique_together ("creator", "name")
+        name = self.cleaned_data.get("name")
+        if (
+            name != self.instance.name
+            and self._meta.model.objects.filter(creator=self.instance.creator, name=name).exists()
+        ):
+            raise forms.ValidationError("The UDF name must be unique for your account.")
+        return name
+
     class Meta:
         model = models.UserDefinedForm
         fields = (
