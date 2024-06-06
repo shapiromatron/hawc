@@ -1,5 +1,6 @@
 import logging
 import math
+from collections.abc import Iterable, Iterator
 from html import unescape
 
 import pandas as pd
@@ -616,3 +617,21 @@ def pd_strip_tags(df: pd.DataFrame, columns: list[str]):
 class NumericTextField(models.CharField):
     generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
     validators = [validators.NumericTextValidator()]
+
+
+def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dict]:
+    """Return a list of dictionaries from a SQL SELECT statement.
+
+    Args:
+        sql (str): A SQL query; must start with SELECT
+        params (Iterable | None, optional): Parameters for the query; defaults to None.
+
+    Yields:
+        Iterator[dict]: an iterator of dictionaries
+    """
+    if sql.upper().startswith("SELECT") is False:
+        raise ValueError("Query must start with SELECT")
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        columns = [col[0] for col in cursor.description]
+        yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())

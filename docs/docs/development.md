@@ -28,7 +28,7 @@ mkdir -p ~/dev
 cd ~/dev
 git clone https://github.com/shapiromatron/hawc.git
 
-# create virtual environment and install requirements
+# create virtual environment
 cd ~/dev/hawc
 python -m venv venv
 
@@ -36,7 +36,9 @@ python -m venv venv
 source ./venv/bin/activate
 
 # install requirements
-./venv/bin/pip install -r ./requirements/dev.txt
+python -m pip install -U pip uv
+uv pip install -e ".[dev,docs]"
+uv pip install -e client
 
 # create a PostgreSQL database and superuser
 createuser --superuser --no-password hawc
@@ -60,8 +62,9 @@ git clone https://github.com/shapiromatron/hawc.git
 
 :: install python requirements
 cd %HOMEPATH%\dev\hawc
-python -m pip install --upgrade pip
-pip install -r requirements\dev.txt
+python -m pip install -U pip uv
+uv pip install -e ".[dev,docs]"
+uv pip install -e client
 
 :: setup and start PostgreSQL; in this example we'll put it in dev
 cd %HOMEPATH%\dev
