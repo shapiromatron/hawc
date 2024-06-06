@@ -325,7 +325,7 @@ class VisualCustomizationPanel extends Component {
                                     handleSelect={value => changeSettings("count_column", value)}
                                     value={settings.count_column}
                                     helpText={
-                                        "Change column on which to get the count of. Defaults to unique rows."
+                                        "Column used to calculate heatmap and filter widget counts; defaults to number of rows in the dataset."
                                     }
                                 />
                             </div>

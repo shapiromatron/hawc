@@ -89,7 +89,7 @@ class CustomizeTab extends Component {
                             handleSelect={store.changeCountColumn}
                             value={store.countColumn}
                             helpText={
-                                "Change column on which to get the count of. Defaults to unique rows."
+                                "Column used to calculate heatmap and filter widget counts; defaults to number of rows in the dataset."
                             }
                         />
                     </div>
