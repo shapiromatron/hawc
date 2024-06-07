@@ -900,7 +900,7 @@ class TestClient(LiveServerTestCase, TestCase):
         df = epi_client.data(
             assessment_id=self.db_keys.assessment_working, retrieve_unpublished_data=True
         )
-        assert isinstance(df, pd.DataFrame) and df.shape == (12, 117)
+        assert isinstance(df, pd.DataFrame) and df.shape == (12, 116)
 
     #######################
     # EpiMetaClient tests #

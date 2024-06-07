@@ -2,7 +2,6 @@ import pandas as pd
 from django.db.models import CharField, F, Func, QuerySet, Value
 
 from hawc.apps.common.helper import FlatFileExporter
-from hawc.apps.riskofbias.constants import SCORE_CHOICES_MAP
 from hawc.apps.riskofbias.models import RiskOfBiasScore
 
 from ..common.exports import Exporter, ModelExport
@@ -224,29 +223,6 @@ class DataExtractionExport(ModelExport):
 
 
 class EpiV2Exporter(Exporter):
-    def get_df(self, qs: QuerySet) -> pd.DataFrame:
-        df = super().get_df(qs)
-
-        # Add available RoB data
-        data = RiskOfBiasScore.objects.filter(
-            riskofbias__study__in=df["study-id"], riskofbias__final=True
-        ).values_list("score", "riskofbias__study_id", "metric_id", "metric__name")
-        if data.count() == 0:
-            return df
-        rob_df = pd.DataFrame(data=data, columns=["score", "study-id", "metric_id", "metric_name"])
-
-        rob_df.metric_name = rob_df.metric_name.apply(lambda x: f"RoB ({x})")
-        rob_df["score_expanded"] = rob_df.score.apply(
-            lambda d: {"sortValue": d, "display": SCORE_CHOICES_MAP[d]}
-        )
-        rob_df = rob_df.drop_duplicates("study-id")
-
-        rob_df = rob_df.pivot(index=["study-id"], columns=["metric_id", "metric_name"])[
-            "score_expanded"
-        ].droplevel(0, axis=1)  # type: ignore
-
-        return df.join(rob_df, "study-id")
-
     def build_modules(self) -> list[ModelExport]:
         return [
             StudyExport("study", "design__study"),
@@ -260,6 +236,37 @@ class EpiV2Exporter(Exporter):
         ]
 
 
+class EpiV2ExporterWithRob(EpiV2Exporter):
+    def study_evaluation_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        qs = (
+            RiskOfBiasScore.objects.filter(
+                riskofbias__study__in=df["study-id"],
+                metric__required_epi=True,
+                riskofbias__final=True,
+                riskofbias__active=True,
+                is_default=True,
+            )
+            .data_pivot_json()
+            .annotate(metric_column=sql_format("RoB ({})", "metric__name"))
+            .values_list("riskofbias__study_id", "metric_id", "metric_column", "score_json")
+        )
+        if qs.count() == 0:
+            return df
+
+        rob_df = (
+            pd.DataFrame(data=qs, columns=["study-id", "m-id", "metric_name", "rob_score_json"])
+            .pivot(index=["study-id"], columns=["m-id", "metric_name"])["rob_score_json"]
+            .droplevel(0, axis=1)
+            .reset_index()
+        )
+        return df.merge(rob_df, how="left", on="study-id")
+
+    def get_df(self, qs: QuerySet) -> pd.DataFrame:
+        df = super().get_df(qs)
+        df = self.study_evaluation_data(df)
+        return df
+
+
 class EpiFlatComplete(FlatFileExporter):
     """
     Returns a complete export of all data required to rebuild the the
@@ -267,4 +274,4 @@ class EpiFlatComplete(FlatFileExporter):
     """
 
     def build_df(self) -> pd.DataFrame:
-        return EpiV2Exporter().get_df(self.queryset)
+        return EpiV2ExporterWithRob().get_df(self.queryset)
