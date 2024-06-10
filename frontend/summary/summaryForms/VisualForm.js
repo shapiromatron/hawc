@@ -1,5 +1,4 @@
 import CrossviewForm from "./CrossviewForm";
-import PrismaForm from "./PrismaForm";
 import RoBBarchartForm from "./RoBBarchartForm";
 import RoBHeatmapForm from "./RoBHeatmapForm";
 
@@ -15,9 +14,6 @@ class VisualForm {
                 break;
             case 3:
                 Cls = RoBBarchartForm;
-                break;
-            case 9:
-                Cls = PrismaForm;
                 break;
             case 0:
             case 4:

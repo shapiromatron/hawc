@@ -1,5 +1,6 @@
 import BaseStore from "./BaseStore";
 import ExploratoryHeatmapStore from "./ExploratoryHeatmapStore";
+import PrismaStore from "./PrismaStore";
 
 class ExploratoryHeatmap {
     constructor(config) {
@@ -8,8 +9,16 @@ class ExploratoryHeatmap {
     }
 }
 
-const createExploratoryHeatmapStore = function(config) {
-    return new ExploratoryHeatmap(config);
-};
+class Prisma {
+    constructor(config) {
+        this.base = new BaseStore(this, config);
+        this.subclass = new PrismaStore(this);
+    }
+}
 
-export {createExploratoryHeatmapStore};
+export const createExploratoryHeatmapStore = function(config) {
+        return new ExploratoryHeatmap(config);
+    },
+    createPrismaStore = function(config) {
+        return new Prisma(config);
+    };
