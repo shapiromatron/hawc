@@ -28,12 +28,6 @@ class RoBHeatmapForm extends BaseVisualForm {
                 .trigger("change");
         });
     }
-
-    updateSettingsFromPreview() {
-        var plotSettings = JSON.stringify(this.preview.data.settings);
-        $("#id_settings").val(plotSettings);
-        this.unpackSettings();
-    }
 }
 
 _.extend(RoBHeatmapForm, {

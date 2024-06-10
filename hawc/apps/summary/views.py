@@ -456,22 +456,20 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
+        if (
+            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
+        ):
+            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
-            constants.VisualType.PRISMA,
         }:
-            if (
-                visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-                and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-            ):
-                raise PermissionDenied()
             return "summary/visual_form_django.html"
-        else:
-            return super().get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -560,22 +558,20 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
+        if (
+            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
+        ):
+            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
-            constants.VisualType.PRISMA,
         }:
-            if (
-                visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-                and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-            ):
-                raise PermissionDenied()
             return "summary/visual_form_django.html"
-        else:
-            return super().get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
