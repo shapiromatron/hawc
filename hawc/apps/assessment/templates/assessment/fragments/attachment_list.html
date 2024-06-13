@@ -1,25 +1,13 @@
 <div class="hide-empty-tbody">
   <h2>Attachments</h2>
   <table class="table table-sm table-striped">
-    <colgroup>
-      {% if canEdit %}
-        <col style="width: 25%;">
-        <col style="width: 50%;">
-        <col style="width: 25%;">
-      {% else %}
-        <col style="width: 30%;">
-        <col style="width: 70%;">
-      {% endif %}
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Attachment</th>
-        <th>Description</th>
-        {% if canEdit %}
-          <th>Editing</th>
-        {% endif %}
-      </tr>
-    </thead>
+    {% if canEdit %}
+      {% bs4_colgroup '25,50,25' %}
+      {% bs4_thead 'Attachment,Description,Editing' %}
+    {% else %}
+      {% bs4_colgroup '30,70' %}
+      {% bs4_thead 'Attachment,Description' %}
+    {% endif %}
     <tbody id="attach-tbody">
       {% for object in object_list %}
         {% include "assessment/fragments/attachment_row.html" %}
