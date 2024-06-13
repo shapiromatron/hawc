@@ -990,17 +990,16 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     text-align: left;
 }
 
-.hide-empty-table {
+.hide-empty-tbody {
     display: none;
 }
-
-.hide-empty-table:has(tbody>tr) {
+.hide-empty-tbody:has(tbody>tr) {
     display: revert;
 }
 
 .table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(even) {
     background-color: #ffffff;
-  }
+}
 .table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(odd) {
     background-color: #f0f4f9;
 }
