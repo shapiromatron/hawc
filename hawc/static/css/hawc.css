@@ -85,6 +85,9 @@ tfoot > tr > td {
 .vw75 {
     max-width: 75vw;
 }
+.m-vh75 {
+    max-height: 75vh;
+}
 .clickable, .clickable .bg-gray {
     transition: background-color 0.25s ease;
 }
@@ -851,15 +854,6 @@ table.bordered td {
 /* UDF */
 div.udf-info-row>p, div.udf-info-row>div.card>p {
     line-height: 1.6rem;
-}
-
-/* react-datepicker */
-.react-datepicker-wrapper {
-    display: block !important;
-}
-
-.react-datepicker__input-container {
-    display: block !important;
 }
 
 /* base header/footer */

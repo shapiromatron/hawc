@@ -130,6 +130,7 @@ class ExpandableFilterForm(InlineFilterForm):
         """Remove 'is_expanded' from form data before data is used for filtering."""
         cleaned_data = super().clean()
         cleaned_data.pop("is_expanded", None)
+        return cleaned_data
 
 
 class BaseFilterSet(df.FilterSet):

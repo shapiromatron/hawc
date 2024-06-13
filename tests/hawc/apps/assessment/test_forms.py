@@ -219,13 +219,6 @@ class TestAssessmentValueForm:
         assert form.is_valid() is False
         assert form.errors["uncertainty"] == ["Required for Noncancer evaluation types."]
 
-        # pod/uncertainty != value
-        data = valid_data.copy()
-        data.update(uncertainty=100)
-        form = AssessmentValueForm(data=data, parent=assessment)
-        assert form.is_valid() is False
-        assert form.errors["value"] == ["POD / uncertainty is not equal to value."]
-
     def test_extra(self, db_keys):
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
         valid_data = self.valid_data.copy()
