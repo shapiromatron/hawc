@@ -24,8 +24,9 @@ export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 sync-dev:  ## Sync dev environment after code checkout
-	python -m pip install -U pip
-	python -m pip install -r requirements/dev.txt
+	python -m pip install -U pip uv
+	uv pip install -e ".[dev,docs]"
+	uv pip install -e client
 	yarn --cwd frontend
 	python manage.py migrate
 	python manage.py recreate_views

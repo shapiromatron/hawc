@@ -2,7 +2,12 @@ import pytest
 
 # use concrete implementations to test
 from hawc.apps.animal.models import DoseGroup, Experiment
-from hawc.apps.common.models import apply_flavored_help_text, clone_name, sql_format
+from hawc.apps.common.models import (
+    apply_flavored_help_text,
+    clone_name,
+    sql_format,
+    sql_query_to_dicts,
+)
 from hawc.apps.epiv2.models import ExposureLevel
 from hawc.apps.lit.models import ReferenceFilterTag
 from hawc.apps.riskofbias import models
@@ -78,3 +83,13 @@ def test_clone_name():
     assert clone_name(m, "name") == "b (3)"
     m.name = "c" * 64
     assert clone_name(m, "name") == ("c" * 60) + " (2)"
+    m.name = "c" * 60 + " (9)"
+    assert len(m.name) == 64
+    assert clone_name(m, "name") == ("c" * 59) + " (10)"
+
+
+@pytest.mark.django_db
+def test_sql_query_to_dicts():
+    query = "SELECT id, name FROM assessment_assessment ORDER BY id LIMIT %s "
+    results = sql_query_to_dicts(query, (2,))
+    assert list(results) == [{"id": 1, "name": "Chemical Z"}, {"id": 2, "name": "Chemical X"}]
