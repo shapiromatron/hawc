@@ -11,7 +11,7 @@
         <p class="dropdown-item help-block">Assessment creation disabled - please <a href="{% url 'contact' %}">contact us</a> if needed.</p>
       {% endif %}
       {% if feature_flags.ENABLE_UDF %}
-        <span class="dropdown-header">User Defined Forms</span>
+        <span class="dropdown-header">User Defined Fields</span>
         <a class="dropdown-item" href="{% url 'udf:udf_list' %}">View form list</a>
       {% endif %}
     {% endactions %}
