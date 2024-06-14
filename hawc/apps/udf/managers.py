@@ -16,10 +16,8 @@ class ModelUDFContentManager(BaseManager):
 
 
 class TagUDFContentQuerySet(QuerySet):
-    def filter_tag(self, tag: int):
-        # ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
-        # tag = ReferenceFilterTag.objects.get(id=tag)
-        return self.filter(tag_binding__tag=tag)
+    def filter_tag(self, tag_id: int):
+        return self.filter(tag_binding__tag_id=tag_id)
 
 
 class TagUDFContentManager(BaseManager):
