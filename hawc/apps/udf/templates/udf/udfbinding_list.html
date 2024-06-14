@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex align-items-start">
-    <h2 class="mt-0 mb-2">User Defined Form (UDF) Bindings</h2>
+    <h2 class="mt-0 mb-2">User Defined Field (UDF) Bindings</h2>
     {% if obj_perms.edit_assessment %}
       {% actions %}
         <button class="dropdown-item" hx-target="#binding-list" hx-swap="afterbegin" hx-get="{% url 'udf:binding_create' assessment.pk tag_binding %}">Create literature tag binding</button>
