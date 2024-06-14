@@ -13,56 +13,53 @@ class Reference extends Component {
         this.setState({abstractExpanded: !this.state.abstractExpanded});
     };
 
-    render_udfs(tag_udf_contents, reference_pk, expanded) {
-        const udfs = [];
-        _.forEach(tag_udf_contents, function(tag_content) {
-            const values = [];
-            tag_content.udf_content.forEach(function(value) {
-                values.push(
-                    <div
-                        className={`list-group-item ${expanded ? "" : "small"}`}
-                        key={h.randomString()}>
-                        <b>{value[0]}</b> {value[1]}
-                    </div>
-                );
-            });
-            udfs.push(
+    renderUdfs(udfContents, expanded) {
+        if (!udfContents || udfContents.length === 0) {
+            return null;
+        }
+        const udfs = udfContents.map((tag_content, i) => {
+            const id = `ref-${this.props.reference.data.pk}-tag-${tag_content.tag_pk}`;
+            return (
                 <div
                     className={`${
                         expanded ? "col-md-5" : "col-md-3"
                     } card flex-shrink-0 d-flex px-0 mr-2 mt-2`}
-                    key={h.randomString()}>
+                    key={i}>
                     <a
                         className={`p-1 mb-0 text-center box-shadow-minor clickable z-top ${
                             expanded ? "" : "collapsed"
                         }`}
                         data-toggle="collapse"
                         style={expanded ? {} : {fontSize: "0.85rem"}}
-                        href={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}
+                        href={`#${id}`}
                         aria-expanded={`${expanded}`}
-                        aria-controls={`#ref_${reference_pk}-tag_${tag_content.tag_pk}`}>
+                        aria-controls={`#${id}`}>
                         <span className="text-dark" style={expanded ? {} : {fontSize: "0.85rem"}}>
                             {tag_content.tag_name}
                         </span>
                         <span className="rounded bg-lightblue px-1 text-dark mx-2">
                             {tag_content.udf_name}
                         </span>
-                        <span className="text-dark">Data</span>
                         <i className="fa fa-angle-down ml-2" aria-hidden="true"></i>
                     </a>
                     <div
-                        id={`ref_${reference_pk}-tag_${tag_content.tag_pk}`}
+                        id={id}
                         className={`collapse list-group list-group-flush rounded ${
                             expanded ? "show" : ""
                         }`}
                         style={{maxHeight: "20rem", overflowY: "auto"}}>
-                        {values}
+                        {tag_content.udf_content.map((value, j) => (
+                            <div className={`list-group-item ${expanded ? "" : "small"}`} key={j}>
+                                <b>{value[0]}</b> {value[1]}
+                            </div>
+                        ))}
                     </div>
                 </div>
             );
         });
         return <div className="d-flex align-items-start flex-wrap">{udfs}</div>;
     }
+
     renderIdentifiers(data, study_url, expanded) {
         const nodes = [];
 
@@ -271,9 +268,7 @@ class Reference extends Component {
                         ))}
                     </div>
                 ) : null}
-                {tagUDFContents !== undefined
-                    ? this.render_udfs(tagUDFContents[data.pk], data.pk, expanded)
-                    : null}
+                {this.renderUdfs(tagUDFContents[data.pk], expanded)}
                 {showHr ? <hr className="my-4" /> : null}
             </div>
         );
@@ -302,7 +297,7 @@ Reference.defaultProps = {
     extraActions: null,
     keywordDict: null,
     expanded: false,
-    tagUDFContents: undefined,
+    tagUDFContents: null,
 };
 
 export default Reference;
