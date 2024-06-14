@@ -1,75 +1,72 @@
 <div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form" style="max-width: 90rem;">
-  {% if form %}
-    <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
-      <form class="workflow-form" method="post">
-        {% if form.instance.id %}
-          <div class="d-flex">
-            <h3 class="py-2">Update Workflow</h3>
-            {% if action == 'delete' %}
-              {% csrf_token %}
-              <div class="d-flex ml-auto align-self-start align-items-center alert alert-danger mb-0 flex-shrink-0">
-                <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
-                <div class="d-flex pl-2">
-                  <button class="btn btn-sm btn-danger"
-                          id="workflow-conf-delete"
-                          hx-post="{{ object.get_delete_url }}"
-                          hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
-                  <button class="btn btn-sm btn-light ml-2"
-                          hx-get="{{ object.get_edit_url }}">Cancel</button>
-                </div>
+  <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
+    <form class="workflow-form" method="post">
+      {% if form.instance.id %}
+        <div class="d-flex">
+          <h3 class="py-2">Update Workflow</h3>
+          {% if action == 'delete' %}
+            {% csrf_token %}
+            <div class="d-flex ml-auto align-self-start align-items-center alert alert-danger mb-0 flex-shrink-0">
+              <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
+              <div class="d-flex pl-2">
+                <button class="btn btn-sm btn-danger"
+                        id="workflow-conf-delete"
+                        hx-post="{{ object.get_delete_url }}"
+                        hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+                <button class="btn btn-sm btn-light ml-2"
+                        hx-get="{{ object.get_edit_url }}">Cancel</button>
               </div>
-              </form>
-            {% else %}
-              <button
-                class="btn btn-sm btn-danger ml-auto flex-shrink-0 align-self-start"
-                id="workflow-delete"
-                hx-get="{{ object.get_delete_url }}">
-                <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
-            {% endif %}
-          </div>
-        {% else %}
-          <h3 class="py-2">Create Workflow</h3>
-        {% endif %}
-        {% crispy form %}
-        <div class="form-row d-flex flex-row-reverse justify-content-center align-items-center px-3 pb-3">
-          <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
-          {% if form.instance.id %}
-            <button class="btn btn-primary ml-2"
-                    id="workflow-update"
-                    hx-post="{% url 'lit:workflow-htmx' object.pk 'update' %}"
-                    hx-indicator="#spinner-{{object.pk}}"
-                    hx-encoding="multipart/form-data"
-                    style="width: 15rem; height: 2rem;">
-              <i class="fa fa-fw fa-save"></i>&nbsp;
-              Update
-            </button>
-            <button class="btn btn-light"
-                    id="workflow-cancel"
-                    hx-get="{% url 'lit:workflow-htmx' object.pk 'read' %}"
-                    hx-indicator="#spinner-{{object.pk}}"
-                    style="width: 10rem; height: 2rem;">
-              Cancel
-            </button>
+            </div>
           {% else %}
-            <button class="btn btn-primary ml-2"
-                    id="workflow-create"
-                    hx-post="{% url 'lit:workflow-htmx' assessment.pk 'create' %}"
-                    hx-indicator="#spinner-{{object.pk}}"
-                    hx-encoding="multipart/form-data"
-                    style="width: 15rem; height: 2rem;">
-              <i class="fa fa-fw fa-save"></i>&nbsp;Create
-            </button>
-            <button class="btn btn-light"
-                    id="workflow-cancel"
-                    type='button'
-                    onclick="window.app.HAWCUtils.hideElement($(this).closest('.workflow-edit-row'), deleteEl=true)"
-                    style="width: 10rem; height: 2rem;">
-              Cancel
-            </button>
+            <button
+              class="btn btn-sm btn-danger ml-auto flex-shrink-0 align-self-start"
+              id="workflow-delete"
+              hx-get="{{ object.get_delete_url }}">
+              <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
           {% endif %}
         </div>
-      </form>
-      {% include "common/helptext_popup_js.html" %}
-    </div>
-  {% endif %}
+      {% else %}
+        <h3 class="py-2">Create Workflow</h3>
+      {% endif %}
+      {% crispy form %}
+      <div class="form-row d-flex flex-row-reverse justify-content-center align-items-center px-3 pb-3">
+        <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
+        {% if form.instance.id %}
+          <button class="btn btn-primary ml-2"
+                  id="workflow-update"
+                  hx-post="{% url 'lit:workflow-htmx' object.pk 'update' %}"
+                  hx-indicator="#spinner-{{object.pk}}"
+                  hx-encoding="multipart/form-data"
+                  style="width: 15rem; height: 2rem;">
+            <i class="fa fa-fw fa-save"></i>&nbsp;
+            Update
+          </button>
+          <button class="btn btn-light"
+                  id="workflow-cancel"
+                  hx-get="{% url 'lit:workflow-htmx' object.pk 'read' %}"
+                  hx-indicator="#spinner-{{object.pk}}"
+                  style="width: 10rem; height: 2rem;">
+            Cancel
+          </button>
+        {% else %}
+          <button class="btn btn-primary ml-2"
+                  id="workflow-create"
+                  hx-post="{% url 'lit:workflow-htmx' assessment.pk 'create' %}"
+                  hx-indicator="#spinner-{{object.pk}}"
+                  hx-encoding="multipart/form-data"
+                  style="width: 15rem; height: 2rem;">
+            <i class="fa fa-fw fa-save"></i>&nbsp;Create
+          </button>
+          <button class="btn btn-light"
+                  id="workflow-cancel"
+                  type='button'
+                  onclick="window.app.HAWCUtils.hideElement($(this).closest('.workflow-edit-row'), deleteEl=true)"
+                  style="width: 10rem; height: 2rem;">
+            Cancel
+          </button>
+        {% endif %}
+      </div>
+    </form>
+    {% include "common/helptext_popup_js.html" %}
+  </div>
 </div>
