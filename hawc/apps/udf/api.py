@@ -1,17 +1,13 @@
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import (
-    BaseAssessmentViewSet,
-)
+from ..assessment.api import BaseAssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
+from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
-from ..lit.models import Reference
-from . import exports, models
+from ..common.serializers import UnusedSerializer, validate_pydantic
+from . import exports, models, schemas
 
 
 class UdfAssessmentViewSet(BaseAssessmentViewSet):
@@ -56,9 +52,9 @@ class UdfAssessmentViewSet(BaseAssessmentViewSet):
         assessment: Assessment = self.get_object()
         export_name = f"{assessment}-udf-tags"
         qs = models.TagUDFContent.objects.assessment_qs(assessment)
-        tag = request.query_params.get("tag", None)
-        if tag:
-            qs = qs.filter_tag(tag=tag)
+        if tag_id := tryParseInt(request.query_params.get("tag")):
+            qs = qs.filter_tag(tag_id=tag_id)
+        # TODO - filter to only show resolved tags
         exporter = exports.TagUDFContentExporter.flat_export(qs, filename=export_name)
         return Response(exporter)
 
@@ -96,24 +92,22 @@ class UdfAssessmentViewSet(BaseAssessmentViewSet):
     )
     def tag_content(self, request, pk):
         assessment: Assessment = self.get_object()
-        tag_binding = get_object_or_404(models.TagBinding, id=request.data.get("tag_binding", -1))
-        reference = get_object_or_404(Reference, id=request.data.get("reference", -1))
-        content = request.data.get("content", None)
-        if not tag_binding or not reference or not content:
-            return Response("Must provide tag_binding, reference, and content", status=400)
-        if reference.assessment.pk != assessment.pk or tag_binding.assessment.pk != assessment.pk:
-            return Response("Reference and tag binding must be in the assessment.")
-        obj, created = models.TagUDFContent.objects.update_or_create(
-            reference=reference,
-            tag_binding=tag_binding,
-            defaults={"content": content},
+        validated_data = validate_pydantic(
+            schemas.ModifyTagUDFContent,
+            field=None,
+            data={"assessment": assessment.id, **request.data},
+        )
+        instance, _ = models.TagUDFContent.objects.update_or_create(
+            reference=validated_data.reference_obj,
+            tag_binding=validated_data.tag_binding_obj,
+            defaults={"content": validated_data.content},
         )
         return Response(
             {
-                "id": obj.id,
-                "reference": obj.reference.id,
-                "tag_binding": obj.tag_binding.id,
-                "content": obj.content,
+                "id": instance.id,
+                "reference": instance.reference.id,
+                "tag_binding": instance.tag_binding.id,
+                "content": instance.content,
             }
         )
 
@@ -125,39 +119,23 @@ class UdfAssessmentViewSet(BaseAssessmentViewSet):
     )
     def model_content(self, request, pk):
         assessment: Assessment = self.get_object()
-        model_binding = get_object_or_404(
-            models.ModelBinding, id=request.data.get("model_binding", -1)
+        validated_data = validate_pydantic(
+            schemas.ModifyModelUDFContent,
+            field=None,
+            data={"assessment": assessment.id, **request.data},
         )
-        content_type = request.data.get("content_type", "").split(".")
-        try:
-            content_type = get_object_or_404(
-                ContentType,
-                app_label=content_type[0],
-                model=content_type[1],
-            )
-        except IndexError:
-            return Response("Must provide a content_type in the form {app_label}.{model}")
-        object_id = request.data.get("object_id", None)
-        content_object = content_type.get_object_for_this_type(id=object_id)
-        content = request.data.get("content", None)
-        if not model_binding or not content_type or not content:
-            return Response("Must provide model_binding, content_type, and content", status=400)
-        if (
-            content_object.get_assessment().pk != assessment.pk
-            or model_binding.assessment.pk != assessment.pk
-        ):
-            return Response("Reference and model binding must be in the assessment.")
-        obj, created = models.ModelUDFContent.objects.update_or_create(
-            model_binding=model_binding,
-            content_type=content_type,
-            object_id=object_id,
-            defaults={"content": content},
+        instance, _ = models.ModelUDFContent.objects.update_or_create(
+            model_binding=validated_data.binding_obj,
+            content_type=validated_data.content_type_obj,
+            object_id=validated_data.obj.id,
+            defaults={"content": validated_data.content},
         )
         return Response(
             {
-                "id": obj.id,
-                "object": obj.content_object.id,
-                "model_binding": obj.model_binding.id,
-                "content": obj.content,
+                "id": instance.id,
+                "content_type": validated_data.content_type,
+                "object_id": instance.object_id,
+                "model_binding": instance.model_binding_id,
+                "content": instance.content,
             }
         )

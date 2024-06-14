@@ -102,7 +102,6 @@ class TestUdfAssessmentViewSet:
         url = reverse("udf:api:assessment-model-content", args=(4,))
         client = get_client("team", api=True)
         data = {
-            "model_binding": 1,
             "content_type": "study.study",
             "object_id": 9,
             "content": {"field1": "updated data", "field2": 1234},
