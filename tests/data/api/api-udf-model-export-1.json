@@ -4,6 +4,8 @@
       "field1": "test",
       "field2": 123
     },
+    "content-field-field1": "test",
+    "content-field-field2": 123,
     "content_type-app": "study",
     "content_type-model": "study",
     "created": 1710256747533,

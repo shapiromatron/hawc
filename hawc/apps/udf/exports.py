@@ -3,6 +3,11 @@ import pandas as pd
 from ..common.exports import Exporter, ModelExport
 
 
+def expand_content(df: pd.DataFrame, content_column: str) -> pd.DataFrame:
+    # expand JSON representation into individual columns
+    return pd.DataFrame(data=list(df[content_column].values)).add_prefix(f"{content_column}-field-")
+
+
 class ContentTypeExport(ModelExport):
     def get_value_map(self):
         return {
@@ -22,13 +27,8 @@ class ModelUDFContentExport(ModelExport):
         }
 
     def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        # expand JSON representation into individual columns
-        if df.shape[0] > 0 and "content-content" in df.columns:
-            df2 = (
-                pd.DataFrame(data=list(df["content-content"].values))
-                .fillna("-")
-                .add_prefix("content-field-")
-            )
+        if df.shape[0] > 0:
+            df2 = expand_content(df, content_column=self.get_column_name("content"))
             df = df.merge(df2, left_index=True, right_index=True)
         return df
 
@@ -53,13 +53,8 @@ class TagUDFContentExport(ModelExport):
         }
 
     def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        # expand JSON representation into individual columns
-        if df.shape[0] > 0 and "content-content" in df.columns:
-            df2 = (
-                pd.DataFrame(data=list(df["content-content"].values))
-                .fillna("-")
-                .add_prefix("content-field-")
-            )
+        if df.shape[0] > 0:
+            df2 = expand_content(df, content_column=self.get_column_name("content"))
             df = df.merge(df2, left_index=True, right_index=True)
         return df
 

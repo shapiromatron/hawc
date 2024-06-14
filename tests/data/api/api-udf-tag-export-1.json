@@ -4,6 +4,8 @@
       "field1": "testing",
       "field2": 321
     },
+    "content-field-field1": "testing",
+    "content-field-field2": 321,
     "created": 1715170867533,
     "last_updated": 1715170867533,
     "pk": 1,
