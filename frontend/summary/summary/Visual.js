@@ -7,6 +7,7 @@ import EndpointAggregation from "./EndpointAggregation";
 import ExploreHeatmap from "./ExploreHeatmap";
 import ExternalSiteVisual from "./ExternalSiteVisual";
 import LiteratureTagtree from "./LiteratureTagtree";
+import Prisma from "./Prisma";
 import RoBBarchart from "./RoBBarchart";
 import RoBHeatmap from "./RoBHeatmap";
 
@@ -37,6 +38,9 @@ class Visual {
                     break;
                 case "exploratory heatmap":
                     Cls = ExploreHeatmap;
+                    break;
+                case "PRISMA":
+                    Cls = Prisma;
                     break;
                 default:
                     throw `Error - unknown visualization-type: ${d.visual_type}`;

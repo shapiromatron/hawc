@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                     (6, "exploratory heatmap"),
                     (7, "plotly"),
                     (8, "static image"),
+                    (9, "PRISMA"),
                 ]
             ),
         ),
