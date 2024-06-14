@@ -98,6 +98,12 @@ class TestUdfAssessmentViewSet:
         tag_content = TagUDFContent.objects.get(reference=1, tag_binding=1)
         assert tag_content.content == data["content"]
 
+        # check returns a 400 w/ error message
+        url = reverse("udf:api:assessment-tag-content", args=(4,))
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+        assert b"Tag binding not found" in resp.content
+
     def test_model_content_create(self, rewrite_data_files):
         url = reverse("udf:api:assessment-model-content", args=(4,))
         client = get_client("team", api=True)
@@ -113,3 +119,9 @@ class TestUdfAssessmentViewSet:
             object_id=9, model_binding=1, content_type=content_type
         )
         assert model_content.content == data["content"]
+
+        # check returns a 400 w/ error message
+        url = reverse("udf:api:assessment-model-content", args=(1,))
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+        assert b"Object not found" in resp.content

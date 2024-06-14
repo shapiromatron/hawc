@@ -81,7 +81,7 @@ class UserDefinedForm(models.Model):
         schema = dynamic_forms.Schema.model_validate(self.schema)
         form = dynamic_forms.DynamicForm(schema, data=data)
         if not form.is_valid():
-            raise ValueError(form.errors.get_json_data())
+            raise ValueError(form.errors.as_data())
 
 
 class ModelBinding(models.Model):
