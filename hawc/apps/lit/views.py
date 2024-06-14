@@ -726,6 +726,7 @@ class RefList(BaseList):
 
 
 def _get_tag_binding_contents(assessment, reference_list):
+    # Get assessment tags and UDF data for all consensus tags in a reference list
     tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
     tag_names = models.ReferenceFilterTag.get_nested_tag_names(assessment.id)
     descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
