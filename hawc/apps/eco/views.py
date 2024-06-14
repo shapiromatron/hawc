@@ -143,7 +143,7 @@ class DesignChildViewSet(HtmxViewSet):
     parent_model = models.Design
     model = None  # required
     form_class = None  # required
-    form_fragment = "eco/fragments/_object_edit_row.html"
+    form_fragment = "common/fragments/_object_edit_row.html"
     detail_fragment = None  # required
 
     @action(permission=can_view)
@@ -188,7 +188,7 @@ class DesignChildViewSet(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": self.model.__name__.lower(), "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "eco/fragments/_delete_rows.html", context)
+            return render(request, "common/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -199,6 +199,7 @@ class DesignChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
+        context["app"] = "eco"
         return context
 
 

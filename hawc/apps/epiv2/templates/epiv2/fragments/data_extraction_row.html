@@ -8,8 +8,5 @@
   <td>{{object.get_estimate_value}}</td>
   <td>{{object.confidence|default:"-"}}</td>
   <td>{{object.comments|default:"-"}}</td>
-  {% include "epiv2/fragments/_object_row.html" with model="dataextraction" %}
+  {% include "common/fragments/_object_row.html" with app="epiv2" model="dataextraction" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden dataextraction-edit-row" hx-target="this"></tr>
-{% endif %}

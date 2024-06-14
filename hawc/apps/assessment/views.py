@@ -437,7 +437,6 @@ class AttachmentViewSet(HtmxViewSet):
     model = models.Attachment
     form_fragment = "assessment/fragments/attachment_edit_row.html"
     detail_fragment = "assessment/fragments/attachment_row.html"
-    list_fragment = "assessment/fragments/attachment_list.html"
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -458,11 +457,7 @@ class AttachmentViewSet(HtmxViewSet):
                 template = self.detail_fragment
         else:
             form = forms.AttachmentForm()
-            template = self.list_fragment
         context = self.get_context_data(form=form)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            request.item.assessment, False
-        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
