@@ -27,6 +27,7 @@ class VisualType(models.IntegerChoices):
     EXPLORE_HEATMAP = 6, "exploratory heatmap"
     PLOTLY = 7, "plotly"
     IMAGE = 8, "static image"
+    PRISMA = 9, "PRISMA"
 
 
 VISUAL_EVIDENCE_CHOICES = {
@@ -39,6 +40,7 @@ VISUAL_EVIDENCE_CHOICES = {
     VisualType.EXPLORE_HEATMAP: {StudyType.OTHER},
     VisualType.PLOTLY: {StudyType.OTHER},
     VisualType.IMAGE: {StudyType.OTHER},
+    VisualType.PRISMA: {StudyType.OTHER},
 }
 
 

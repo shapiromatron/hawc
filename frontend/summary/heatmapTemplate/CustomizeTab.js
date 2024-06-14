@@ -65,7 +65,7 @@ class CustomizeTab extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                         <CheckboxInput
                             label="Show null field values"
                             name="show_null"
@@ -74,13 +74,26 @@ class CustomizeTab extends Component {
                             helpText={"Display data with <null> values in selected axes."}
                         />
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                         <ValueDisplaySelect
                             onChange={store.changeShowCounts}
                             value={store.showCounts}
                         />
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-3">
+                        <SelectInput
+                            label="Count column"
+                            name="count_column"
+                            choices={store.getColumnsOptionsWithNull}
+                            multiple={false}
+                            handleSelect={store.changeCountColumn}
+                            value={store.countColumn}
+                            helpText={
+                                "Column used to calculate heatmap and filter widget counts; defaults to number of rows in the dataset."
+                            }
+                        />
+                    </div>
+                    <div className="col-md-3">
                         <TextInput
                             label="Color"
                             name="upperColor"

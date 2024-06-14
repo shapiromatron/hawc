@@ -121,7 +121,9 @@ class ExploreHeatmapPlot {
         }
 
         if (type === "cell") {
-            bindTooltip(this.$tooltipDiv, selection, (event, d) => <CellTooltip data={d} />);
+            bindTooltip(this.$tooltipDiv, selection, (event, d) => (
+                <CellTooltip data={d} count={this.store.getCount(d.rows)} />
+            ));
         } else if (type === "axis") {
             bindTooltip(this.$tooltipDiv, selection, (event, d) => <AxisTooltip data={d} />);
         } else {
@@ -610,12 +612,13 @@ class ExploreHeatmapPlot {
             showCounts = settings.show_counts,
             cellColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
+                    count = this.store.getCount(d.rows),
                     value =
                         tableDataFilters.size == 0
-                            ? d.rows.length
+                            ? count
                             : _.includes(filterIndices, d.index)
                             ? maxValue
-                            : d.rows.length / 3;
+                            : count / 3;
                 return showCounts <= 2
                     ? colorScale(value)
                     : value === 0
@@ -685,7 +688,7 @@ class ExploreHeatmapPlot {
                     .transition(t)
                     .style("fill", textColor)
                     .style("display", d => (d.rows.length == 0 ? "none" : null))
-                    .text(d => (showCounts == 1 ? d.rows.length : "＋"));
+                    .text(d => (showCounts == 1 ? this.store.getCount(d.rows) : "＋"));
 
                 this.bind_tooltip(g, "cell");
             });
