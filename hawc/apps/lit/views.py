@@ -1163,7 +1163,6 @@ class WorkflowViewSet(HtmxViewSet):
 
     form_fragment = "lit/fragments/workflow_edit_row.html"
     detail_fragment = "lit/fragments/workflow_row.html"
-    list_fragment = "lit/fragments/workflow_list.html"
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -1175,38 +1174,29 @@ class WorkflowViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "POST":
-            form = forms.WorkflowForm(request.POST, parent=request.item.parent)
-            if form.is_valid():
-                self.perform_create(request.item, form)
-                template = self.detail_fragment
-        else:
-            form = forms.WorkflowForm(parent=request.item.parent)
-            template = self.list_fragment
+        form_data = request.POST if request.method == "POST" else None
+        form = forms.WorkflowForm(data=form_data, parent=request.item.parent)
         context = self.get_context_data(form=form)
-        object_list = (
-            self.model.objects.filter(assessment=request.item.assessment)
-            .prefetch_related("admission_tags", "removal_tags")
-            .order_by("-created")
-        )
-        tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
-        models.Workflow.annotate_tag_parents(object_list, tags)
-        context.update(object_list=object_list)
+        if request.method == "POST" and form.is_valid():
+            self.perform_create(request.item, form)
+            template = self.detail_fragment
+            context.update(object=request.item.object)
+            tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+            prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+            models.Workflow.annotate_tag_parents([request.item.object], tags)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "POST":
-            form = forms.WorkflowForm(request.POST, instance=request.item.object)
-            if form.is_valid():
-                self.perform_update(request.item, form)
-                template = self.detail_fragment
-                tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
-                prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
-                models.Workflow.annotate_tag_parents([request.item.object], tags)
-        else:
-            form = forms.WorkflowForm(data=None, instance=request.item.object)
+        form_data = request.POST if request.method == "POST" else None
+        form = forms.WorkflowForm(data=form_data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+            tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+            prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+            models.Workflow.annotate_tag_parents([request.item.object], tags)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 

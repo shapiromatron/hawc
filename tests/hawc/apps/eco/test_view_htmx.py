@@ -157,7 +157,7 @@ class TestDesignChildren:
         # result delete
         url = reverse("eco:result-htmx", args=[result.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "eco/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Result.objects.count() == init_result_ct + 1
         url = reverse("eco:result-htmx", args=[result_2.id, "delete"])
@@ -168,7 +168,7 @@ class TestDesignChildren:
         # effect delete
         url = reverse("eco:effect-htmx", args=[effect.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "eco/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Effect.objects.count() == init_effect_ct + 1
         url = reverse("eco:effect-htmx", args=[effect_2.id, "delete"])
@@ -179,7 +179,7 @@ class TestDesignChildren:
         # cause delete
         url = reverse("eco:cause-htmx", args=[cause.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "eco/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Cause.objects.count() == init_cause_ct + 1
         url = reverse("eco:cause-htmx", args=[cause_2.id, "delete"])
