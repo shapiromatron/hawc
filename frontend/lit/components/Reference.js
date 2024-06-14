@@ -297,7 +297,7 @@ Reference.defaultProps = {
     extraActions: null,
     keywordDict: null,
     expanded: false,
-    tagUDFContents: null,
+    tagUDFContents: {},
 };
 
 export default Reference;
