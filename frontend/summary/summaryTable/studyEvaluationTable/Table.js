@@ -390,9 +390,9 @@ class Table extends Component {
             onClick = store.interactiveOnClick(rowIdx, colIdx);
 
         return onClick == null ? null : (
-            <p className="previewModalIcon float-right">
+            <span className="previewModalIcon float-right">
                 <i className="fa fa-external-link" onClick={onClick}></i>
-            </p>
+            </span>
         );
     }
     renderSubheaders() {
@@ -474,7 +474,7 @@ class Table extends Component {
                                     key={col.key}
                                     className={
                                         editable && editingColumn && editIndex == idx
-                                            ? "bg-light"
+                                            ? "bg-lightblue"
                                             : null
                                     }
                                     style={
@@ -508,7 +508,7 @@ class Table extends Component {
                                 key={rowIdx}
                                 className={
                                     editable && editingRow && editIndex == rowIdx
-                                        ? "bg-light"
+                                        ? "bg-lightblue"
                                         : null
                                 }>
                                 {workingSettings.columns.map((col, colIdx) => {
@@ -518,7 +518,7 @@ class Table extends Component {
                                             key={colIdx}
                                             className={`previewModalParent${
                                                 editable && store.editingCell(rowIdx, colIdx)
-                                                    ? " bg-light"
+                                                    ? " bg-lightblue"
                                                     : col.attribute == COL_ATTRIBUTE.ROB.id
                                                     ? " text-center align-middle cursor-pointer"
                                                     : ""

@@ -153,6 +153,7 @@ class VisualForm(forms.ModelForm):
             constants.VisualType.EXPLORE_HEATMAP,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.PRISMA,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
         if self.instance.id is None:
@@ -593,6 +594,16 @@ class PlotlyVisualForm(VisualForm):
         return json.loads(settings)
 
 
+class PrismaVisualForm(VisualForm):
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "settings", "caption", "published")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+
 class ImageVisualForm(VisualForm):
     settings_schema = {
         "fields": [
@@ -653,6 +664,7 @@ def get_visual_form(visual_type):
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
             constants.VisualType.PLOTLY: PlotlyVisualForm,
             constants.VisualType.IMAGE: ImageVisualForm,
+            constants.VisualType.PRISMA: PrismaVisualForm,
         }[visual_type]
     except Exception:
         raise ValueError()
