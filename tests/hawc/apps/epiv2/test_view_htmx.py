@@ -336,7 +336,7 @@ class TestDesignChildren:
         # data extraction delete
         url = reverse("epiv2:dataextraction-htmx", args=[data_extract.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "epiv2/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.DataExtraction.objects.count() == initial_dataextraction_count + 1
         url = reverse("epiv2:dataextraction-htmx", args=[data_extract_2.id, "delete"])
@@ -347,7 +347,7 @@ class TestDesignChildren:
         # adjustment factor delete
         url = reverse("epiv2:adjustmentfactor-htmx", args=[adjust_factor.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "epiv2/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.AdjustmentFactor.objects.count() == initial_adjustmentfactor_count + 1
         url = reverse("epiv2:adjustmentfactor-htmx", args=[adjust_factor_2.id, "delete"])
@@ -358,7 +358,7 @@ class TestDesignChildren:
         # outcome delete
         url = reverse("epiv2:outcome-htmx", args=[outcome.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "epiv2/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Outcome.objects.count() == initial_outcome_count + 1
         url = reverse("epiv2:outcome-htmx", args=[outcome_2.id, "delete"])
@@ -369,7 +369,7 @@ class TestDesignChildren:
         # exposure level delete
         url = reverse("epiv2:exposurelevel-htmx", args=[exposure_level.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "epiv2/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.ExposureLevel.objects.count() == initial_exposurelevel_count + 1
         url = reverse("epiv2:exposurelevel-htmx", args=[exposure_level_2.id, "delete"])
@@ -380,7 +380,7 @@ class TestDesignChildren:
         # exposure delete
         url = reverse("epiv2:exposure-htmx", args=[exposure.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "epiv2/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Exposure.objects.count() == initial_exposure_count + 1
         url = reverse("epiv2:exposure-htmx", args=[exposure_2.id, "delete"])
@@ -391,7 +391,7 @@ class TestDesignChildren:
         # chemical delete
         url = reverse("epiv2:chemical-htmx", args=[chemical.id, "delete"])
         resp = client.post(url)
-        assertTemplateUsed(resp, "epiv2/fragments/_delete_rows.html")
+        assertTemplateUsed(resp, "common/fragments/_delete_rows.html")
         assert resp.status_code == 200
         assert models.Chemical.objects.count() == initial_chem_count + 1
         url = reverse("epiv2:chemical-htmx", args=[chemical_2.id, "delete"])
