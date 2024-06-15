@@ -14,6 +14,10 @@
       $("#schema-preview-btn").on("click", function() {
         $("#schema-preview-frame").removeClass('show');
       });
+      $("#submit-id-save").on("click", function() {
+        $("#schema-preview-frame").removeClass('show');
+        $("#schema-preview-frame").empty();
+      });
       $("#schema-preview-btn").on("htmx:afterOnLoad", function() {
         window.app.HAWCUtils.dynamicFormListeners();
         $("#schema-preview-frame").collapse("show");
