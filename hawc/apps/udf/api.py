@@ -51,10 +51,10 @@ class UdfAssessmentViewSet(BaseAssessmentViewSet):
         """
         assessment: Assessment = self.get_object()
         export_name = f"{assessment}-udf-tags"
-        qs = models.TagUDFContent.objects.assessment_qs(assessment)
+        qs = models.TagUDFContent.objects.assessment_qs(assessment.id)
         if tag_id := tryParseInt(request.query_params.get("tag")):
             qs = qs.filter_tag(tag_id=tag_id)
-        # TODO - filter to only show resolved tags
+        qs = qs if request.query_params.get("all") else qs.consensus_tags_only(assessment.id)
         exporter = exports.TagUDFContentExporter.flat_export(qs, filename=export_name)
         return Response(exporter)
 

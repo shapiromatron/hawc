@@ -7,9 +7,9 @@ from hawc.apps.udf import schemas
 @pytest.fixture
 def valid_tag_content():
     return {
-        "assessment": 1,
+        "assessment": 4,
         "tag_binding": 1,
-        "reference": 1,
+        "reference": 13,
         "content": {"field1": "updated data", "field2": 1234},
     }
 

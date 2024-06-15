@@ -38,7 +38,7 @@ class TestUdfAssessmentViewSet:
         assert len(response.json()) == 0
 
     def test_tag_export(self, rewrite_data_files):
-        url = reverse("udf:api:assessment-export-tag-udfs", args=(1,))
+        url = reverse("udf:api:assessment-export-tag-udfs", args=(4,))
         client = get_client(api=True)
 
         # anon get 403
@@ -53,20 +53,20 @@ class TestUdfAssessmentViewSet:
         check_api_json_data(data, key, rewrite_data_files)
 
     def test_tag_export_filter(self):
-        url = reverse("udf:api:assessment-export-tag-udfs", args=(1,))
+        url = reverse("udf:api:assessment-export-tag-udfs", args=(4,))
         client = get_client("team", api=True)
 
         # check content_type filter
-        url += "?tag=2"
+        url += "?tag=32"
         response = check_200(client, url)
         assert len(response.json()) == 1
 
-        url = url.replace("?tag=2", "?tag=234")
+        url = url.replace("?tag=32", "?tag=999999")
         response = check_200(client, url)
         assert len(response.json()) == 0
 
     def test_tag_binding_export(self, rewrite_data_files):
-        url = reverse("udf:api:assessment-export-tag-bindings", args=(1,))
+        url = reverse("udf:api:assessment-export-tag-bindings", args=(4,))
         client = get_client("team", api=True)
 
         response = check_200(client, url)
@@ -86,20 +86,20 @@ class TestUdfAssessmentViewSet:
         check_api_json_data(data, key, rewrite_data_files)
 
     def test_tag_content_create(self, rewrite_data_files):
-        url = reverse("udf:api:assessment-tag-content", args=(1,))
+        url = reverse("udf:api:assessment-tag-content", args=(4,))
         client = get_client("team", api=True)
         data = {
             "tag_binding": 1,
-            "reference": 1,
+            "reference": 13,
             "content": {"field1": "updated data", "field2": 1234},
         }
         resp = client.post(url, data, format="json")
         assert resp.status_code == 200
-        tag_content = TagUDFContent.objects.get(reference=1, tag_binding=1)
+        tag_content = TagUDFContent.objects.get(reference=13, tag_binding=1)
         assert tag_content.content == data["content"]
 
         # check returns a 400 w/ error message
-        url = reverse("udf:api:assessment-tag-content", args=(4,))
+        url = reverse("udf:api:assessment-tag-content", args=(1,))
         resp = client.post(url, data, format="json")
         assert resp.status_code == 400
         assert b"Tag binding not found" in resp.content

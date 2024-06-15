@@ -2756,6 +2756,11 @@
   fields:
     tag: 33
     content_object: 11
+- model: lit.referencetags
+  pk: 7
+  fields:
+    tag: 33
+    content_object: 13
 - model: lit.reference
   pk: 1
   fields:
@@ -3132,11 +3137,20 @@
     - 2
     identifiers:
     - 9
-- model: lit.userreferencetags
-  pk: 1
+- model: lit.reference
+  pk: 13
   fields:
-    tag: 33
-    content_object: 1
+    assessment: 4
+    title: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
+    year: 2024
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2024-06-14 14:23:16.370427+00:00
+    last_updated: 2024-06-14 20:14:41.479008+00:00
+    block_id: null
 - model: lit.userreferencetags
   pk: 2
   fields:
@@ -11139,8 +11153,8 @@
 - model: udf.TagBinding
   pk: 1
   fields:
-    assessment: 1
-    tag: 2
+    assessment: 4
+    tag: 32
     form: 1
     creator:
     - pm@hawcproject.org
@@ -11162,7 +11176,7 @@
 - model: udf.TagUDFContent
   pk: 1
   fields:
-    reference: 1
+    reference: 13
     tag_binding: 1
     content:
       field1: testing

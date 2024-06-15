@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db.models import Manager, Q, QuerySet
 
 from ..common.models import BaseManager
@@ -18,6 +19,21 @@ class ModelUDFContentManager(BaseManager):
 class TagUDFContentQuerySet(QuerySet):
     def filter_tag(self, tag_id: int):
         return self.filter(tag_binding__tag_id=tag_id)
+
+    def consensus_tags_only(self, assessment_id: int):
+        TagBinding = apps.get_model("udf", "TagBinding")
+        binding_paths = TagBinding.objects.assessment_qs(assessment_id).values_list(
+            "tag__path", flat=True
+        )
+        qs = [self.filter(reference__tags__path__startswith=path) for path in binding_paths]
+        # we use unions instead of a Q() because it could be possible that if you use a Q()
+        # there could a reference with an unresolved UDF that matches a different UDF
+        if len(qs) == 0:
+            return self.none()
+        elif len(qs) == 1:
+            return qs[0]
+        else:
+            return qs[0].union(*qs[1:])
 
 
 class TagUDFContentManager(BaseManager):
