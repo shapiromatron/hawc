@@ -4,6 +4,7 @@ import {action, computed, observable, toJS} from "mobx";
 import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 
+import {NULL_VALUE} from "../../summary/constants";
 import {applyRowFilters} from "../../summary/filters";
 
 class HeatmapDatastore {
@@ -186,11 +187,19 @@ class HeatmapDatastore {
     }
 
     setColorScale() {
-        this.maxValue = d3.max(this.matrixDataset, d => (d.type == "cell" ? d.rows.length : 0));
+        this.maxValue = d3.max(this.matrixDataset, d =>
+            d.type == "cell" ? this.getCount(d.rows) : 0
+        );
         this.colorScale = d3
             .scaleLinear()
             .domain([0, this.maxValue])
             .range(this.settings.color_range);
+    }
+
+    getCount(rows) {
+        let {count_column} = this.settings,
+            dataRows = rows.map(i => this.dataset[i]);
+        return count_column == NULL_VALUE ? rows.length : _.uniqBy(dataRows, count_column).length;
     }
 
     @computed get filterWidgetState() {
