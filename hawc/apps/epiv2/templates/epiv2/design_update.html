@@ -13,19 +13,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'epiv2:chemical-htmx' object.pk 'create' as chemical_create %}
-      {% include "epiv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target=".chemical-edit-row" %}
-      <table class="table table-sm table-striped">
+      {% include "common/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-tbody" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '43,42,15' %}
         {% bs4_thead 'Name,DTXSID,Edit' %}
-        <tbody>
-          {% if object.chemicals.all %}
-            {% for object in object.chemicals.all %}
-              {% include "epiv2/fragments/chemical_row.html" %}
-            {% endfor %}
-            {% include "epiv2/fragments/_create_one.html" with class="chemical-edit-row" text="" %}
-          {% else %}
-            {% include "epiv2/fragments/_create_one.html" with class="chemical-edit-row" text="chemicals" %}
-          {% endif %}
+        <tbody id="chemical-tbody">
+          {% include "common/fragments/_create_one.html" with text='No chemicals to display. Click "Add Row" to create one.' %}
+          {% for object in object.chemicals.all %}
+            {% include "epiv2/fragments/chemical_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -34,19 +30,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'epiv2:exposure-htmx' object.pk 'create' as exposure_create %}
-      {% include "epiv2/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target=".exposure-edit-row" %}
-      <table class="table table-sm table-striped">
+      {% include "common/fragments/_create_card.html" with title="Exposure Measurements" hx_get=exposure_create hx_target="#exposure-tbody" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '29,28,28,15' %}
         {% bs4_thead 'Name,Measurement Type, Measurement Timing,Edit' %}
-        <tbody>
-          {% if object.exposures.all %}
-            {% for object in object.exposures.all %}
-              {% include "epiv2/fragments/exposure_row.html" %}
-            {% endfor %}
-            {% include "epiv2/fragments/_create_one.html" with class="exposure-edit-row" text="" %}
-          {% else %}
-            {% include "epiv2/fragments/_create_one.html" with class="exposure-edit-row" text="exposure measurements" %}
-          {% endif %}
+        <tbody id="exposure-tbody">
+          {% include "common/fragments/_create_one.html" with text='No exposure measurements to display. Click "Add Row" to create one.' %}
+          {% for object in object.exposures.all %}
+            {% include "epiv2/fragments/exposure_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -55,19 +47,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'epiv2:exposurelevel-htmx' object.pk 'create' as exposurelevel_create %}
-      {% include "epiv2/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target=".exposurelevel-edit-row" %}
-      <table class="table table-sm table-striped">
+      {% include "common/fragments/_create_card.html" with title="Exposure Levels" hx_get=exposurelevel_create hx_target="#exposurelevel-tbody" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '17,17,17,17,17,15' %}
         {% bs4_thead 'Name,Chemical,Exposure,Central Tendency,Comments,Edit' %}
-        <tbody>
-          {% if object.exposure_levels.all %}
-            {% for object in object.exposure_levels.all %}
-              {% include "epiv2/fragments/exposurelevel_row.html" %}
-            {% endfor %}
-            {% include "epiv2/fragments/_create_one.html" with class="exposurelevel-edit-row" text="" %}
-          {% else %}
-            {% include "epiv2/fragments/_create_one.html" with class="exposurelevel-edit-row" text="exposure levels" %}
-          {% endif %}
+        <tbody id="exposurelevel-tbody">
+          {% include "common/fragments/_create_one.html" with text='No exposure levels to display. Click "Add Row" to create one.' %}
+          {% for object in object.exposure_levels.all %}
+            {% include "epiv2/fragments/exposurelevel_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -76,19 +64,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'epiv2:outcome-htmx' object.pk 'create' as outcome_create %}
-      {% include "epiv2/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target=".outcome-edit-row" %}
-      <table class="table table-sm table-striped">
+      {% include "common/fragments/_create_card.html" with title="Outcomes" hx_get=outcome_create hx_target="#outcome-tbody" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '22,21,21,21,15' %}
         {% bs4_thead 'System,Effect,Effect Detail,Endpoint/Outcome,Edit' %}
-        <tbody>
-          {% if object.outcomes.all %}
-            {% for object in object.outcomes.all %}
-              {% include "epiv2/fragments/outcome_row.html" %}
-            {% endfor %}
-            {% include "epiv2/fragments/_create_one.html" with class="outcome-edit-row" text="" %}
-          {% else %}
-            {% include "epiv2/fragments/_create_one.html" with class="outcome-edit-row" text="outcomes" %}
-          {% endif %}
+        <tbody id="outcome-tbody">
+          {% include "common/fragments/_create_one.html" with text='No outcomes to display. Click "Add Row" to create one.' %}
+          {% for object in object.outcomes.all %}
+            {% include "epiv2/fragments/outcome_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -97,19 +81,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'epiv2:adjustmentfactor-htmx' object.pk 'create' as adjustmentfactor_create %}
-      {% include "epiv2/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target=".adjustmentfactor-edit-row" %}
-      <table class="table table-sm table-striped">
+      {% include "common/fragments/_create_card.html" with title="Adjustment Factors" hx_get=adjustmentfactor_create hx_target="#adjustmentfactor-tbody" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '20,40,25,15' %}
         {% bs4_thead 'Name,Description,Comments,Edit' %}
-        <tbody>
-          {% if object.adjustment_factors.all %}
-            {% for object in object.adjustment_factors.all %}
-              {% include "epiv2/fragments/adjustment_factor_row.html" %}
-            {% endfor %}
-            {% include "epiv2/fragments/_create_one.html" with class="adjustmentfactor-edit-row" text="" %}
-          {% else %}
-            {% include "epiv2/fragments/_create_one.html" with class="adjustmentfactor-edit-row" text="adjustment factors" %}
-          {% endif %}
+        <tbody id="adjustmentfactor-tbody">
+          {% include "common/fragments/_create_one.html" with text='No adjustment factors to display. Click "Add Row" to create one.' %}
+          {% for object in object.adjustment_factors.all %}
+            {% include "epiv2/fragments/adjustment_factor_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -118,19 +98,15 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'epiv2:dataextraction-htmx' object.pk 'create' as dataextraction_create %}
-      {% include "epiv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target=".dataextraction-edit-row" %}
-      <table class="table table-sm table-striped">
+      {% include "common/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-tbody" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '12,12,12,12,6,6,6,12,12,10' %}
         {% bs4_thead 'Group,Outcome,Exposure<br/>Level,Timing,Estimate<br>Type,N,Value,Confidence,Comments,Edit' %}
-        <tbody>
-          {% if object.data_extractions.all %}
-            {% for object in object.data_extractions.all %}
-              {% include "epiv2/fragments/data_extraction_row.html" %}
-            {% endfor %}
-            {% include "epiv2/fragments/_create_one.html" with class="dataextraction-edit-row" text="" %}
-          {% else %}
-            {% include "epiv2/fragments/_create_one.html" with class="dataextraction-edit-row" text="extractions" %}
-          {% endif %}
+        <tbody id="dataextraction-tbody">
+          {% include "common/fragments/_create_one.html" with text='No extractions to display. Click "Add Row" to create one.' %}
+          {% for object in object.data_extractions.all %}
+            {% include "epiv2/fragments/data_extraction_row.html" %}
+          {% endfor %}
         </tbody>
       </table>
     </div>

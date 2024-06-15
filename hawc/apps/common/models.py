@@ -1,5 +1,6 @@
 import logging
 import math
+import re
 from collections.abc import Iterable, Iterator
 from html import unescape
 
@@ -617,6 +618,18 @@ def pd_strip_tags(df: pd.DataFrame, columns: list[str]):
 class NumericTextField(models.CharField):
     generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
     validators = [validators.NumericTextValidator()]
+
+
+def clone_name(instance: models.Model, field: str) -> str:
+    # Get a valid clone name for an instance of a model, that's under the required char size limit.
+    value = getattr(instance, field)
+    max_length = instance._meta.get_field(field).max_length
+    text = value
+    new_suffix = " (2)"
+    if m := re.search(r" \((\d+)\)$", value):
+        text = value[: -len(m[0])]
+        new_suffix = f" ({int(m[1]) + 1})"
+    return text[: max_length - len(new_suffix)] + new_suffix
 
 
 def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dict]:

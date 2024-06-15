@@ -59,10 +59,14 @@ class UserDefinedFormManager(Manager):
 class UserDefinedFormQuerySet(QuerySet):
     def get_available_udfs(self, user, assessment=None):
         if user.is_staff:
-            return self
-        return self.filter(
-            Q(creator=user)
-            | Q(editors=user)
-            | Q(published=True)
-            | (Q(assessments=assessment) if assessment else Q())
-        ).distinct()
+            return self.filter(deprecated=False)
+        return (
+            self.filter(deprecated=False)
+            .filter(
+                Q(creator=user)
+                | Q(editors=user)
+                | Q(published=True)
+                | (Q(assessments=assessment) if assessment else Q())
+            )
+            .distinct()
+        )
