@@ -395,19 +395,22 @@ class AdminUserForm(PasswordForm):
             "password1",
             "password2",
             "groups",
+            "date_joined",
+            "last_login",
         )
+        widgets = {
+            "date_joined": forms.TextInput(attrs={"size": 40}),
+            "last_login": forms.TextInput(attrs={"size": 40}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        read_only_fields = ("date_joined", "last_login")
         if self.instance.external_id:
-            for field in (
-                "email",
-                "first_name",
-                "last_name",
-                "password1",
-                "password2",
-            ):
-                self.fields[field].disabled = True
+            read_only_fields += ("email", "first_name", "last_name", "password1", "password2")
+        for field in read_only_fields:
+            self.fields[field].disabled = True
 
         for field in ["project_manager", "team_member", "reviewer"]:
             self.fields[field].widget.attrs["data-theme"] = "default"
