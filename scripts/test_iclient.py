@@ -5,6 +5,7 @@ Initial approaches attempted to use this within the CI/CD, but due to issues wit
 server running and then running async methods within the django test suite coupled with playwright,
 it became too problematic.
 """
+
 import asyncio
 from collections.abc import Callable
 from io import BytesIO
