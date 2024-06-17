@@ -21,6 +21,17 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         return False
 
 
+class ReadOnlyTabularInline(admin.TabularInline):
+    def has_add_permission(self, request, obj):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 class YesNoFilter(admin.SimpleListFilter):
     """
     Filter to include/exclude a query.
