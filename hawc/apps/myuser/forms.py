@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (
     PasswordResetForm,
     SetPasswordForm,
 )
-from django.forms import ModelForm
+from django.forms import Form, ModelForm
 from django.urls import reverse
 
 from ...constants import AuthProvider
@@ -390,11 +390,13 @@ class AdminUserForm(PasswordForm):
             "first_name",
             "last_name",
             "external_id",
+            "is_superuser",
             "is_active",
             "is_staff",
             "password1",
             "password2",
             "groups",
+            "email_verified_on",
             "date_joined",
             "last_login",
         )
@@ -405,11 +407,10 @@ class AdminUserForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        read_only_fields = ("date_joined", "last_login")
+        disabled_fields = ("is_superuser", "date_joined", "last_login")
         if self.instance.external_id:
-            read_only_fields += ("email", "first_name", "last_name", "password1", "password2")
-        for field in read_only_fields:
+            disabled_fields += ("email", "first_name", "last_name", "password1", "password2")
+        for field in disabled_fields:
             self.fields[field].disabled = True
 
         for field in ["project_manager", "team_member", "reviewer"]:
@@ -436,3 +437,30 @@ class AdminUserForm(PasswordForm):
             user.assessment_teams.set(self.cleaned_data["team_member"])
             user.assessment_reviewers.set(self.cleaned_data["reviewer"])
         return user
+
+
+class VerifyEmailForm(Form):
+    email = forms.EmailField(disabled=True, widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kw):
+        self.user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["email"].initial = self.user.email
+        self.turnstile = Turnstile()
+
+    @property
+    def helper(self):
+        login_url = reverse("home")
+        helper = BaseFormHelper(
+            self,
+            legend_text=f"Verify <b>{self.user.email}</b>",
+            help_text='Click the "Verify" button to mark your email address as verified; you can then login using the account registered to that email address.',
+            cancel_url=login_url,
+            submit_text="Verify",
+        )
+        helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
+        return helper
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data

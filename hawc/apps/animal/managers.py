@@ -312,11 +312,11 @@ class EndpointManager(BaseManager):
         def get_doses(r, col):
             el = r[col]
             if el == -999:
-                return np.NaN
+                return np.nan
             try:
                 return df3.loc[(r["dose regime id"], r["dose units id"], el), "dose"]
             except KeyError:
-                return np.NaN
+                return np.nan
 
         df3 = df3.reset_index().set_index(["dose regime id", "dose units id", "dose_group_id"])
 

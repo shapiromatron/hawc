@@ -1,4 +1,5 @@
 """Dynamic Django form fields."""
+
 from typing import Annotated, Any, Literal
 
 from django import forms

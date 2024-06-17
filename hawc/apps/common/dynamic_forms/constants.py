@@ -1,4 +1,5 @@
 """Django form enums."""
+
 from enum import Enum
 
 from django import forms

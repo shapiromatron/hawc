@@ -121,9 +121,6 @@ class ModelBinding(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_absolute_url(self):
-        return reverse("udf:model_detail", args=(self.id,))
-
     def get_update_url(self):
         return reverse("udf:binding_htmx", args=("model", self.id, "update"))
 

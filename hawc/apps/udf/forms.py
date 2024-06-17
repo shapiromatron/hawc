@@ -1,6 +1,7 @@
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.db.models import F, Value
 from django.db.models.functions import Concat
 from django.urls import reverse, reverse_lazy
@@ -9,6 +10,8 @@ from ..assessment.models import Assessment
 from ..common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from ..common.dynamic_forms.schemas import Schema
 from ..common.forms import BaseFormHelper, PydanticValidator, form_actions_big
+from ..common.helper import get_current_user
+from ..common.views import create_object_log
 from ..lit.models import ReferenceFilterTag
 from ..myuser.autocomplete import UserAutocomplete
 from . import cache, constants, models
@@ -41,7 +44,7 @@ class UDFForm(forms.ModelForm):
                 "hx-indicator": "#spinner",
                 "id": "schema-preview-btn",
                 "hx-post": reverse_lazy("udf:schema_preview"),
-                "hx-target": "#schema-preview-frame",
+                "hx-target": "#schema-preview-fieldset",
                 "hx-swap": "innerHTML",
                 "class": "ml-2 btn btn-primary",
             },
@@ -51,6 +54,24 @@ class UDFForm(forms.ModelForm):
             models.UserDefinedForm.schema.field.help_text
             + "&nbsp;<a id='load-example' href='#'>Load an example</a>."
         )
+
+    def clean_name(self):
+        # check unique_together ("creator", "name")
+        name = self.cleaned_data.get("name")
+        if (
+            name != self.instance.name
+            and self._meta.model.objects.filter(creator=self.instance.creator, name=name).exists()
+        ):
+            raise forms.ValidationError("The UDF name must be unique for your account.")
+        return name
+
+    @transaction.atomic
+    def save(self, commit=True):
+        verb = "Created" if self.instance.id is None else "Updated"
+        instance = super().save(commit=commit)
+        if commit:
+            create_object_log(verb, instance, None, self.instance.creator_id, "")
+        return instance
 
     class Meta:
         model = models.UserDefinedForm
@@ -99,8 +120,9 @@ class UDFForm(forms.ModelForm):
                     cfl.Column("schema"),
                 ),
                 cfl.Row(
-                    cfl.Div(
-                        css_id="schema-preview-frame",
+                    cfl.Fieldset(
+                        legend="",
+                        css_id="schema-preview-fieldset",
                         css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
                     )
                 ),
@@ -218,13 +240,21 @@ class UDFModelFormMixin:
             udf = self.model_binding.form_field(label="User Defined Fields", initial=initial)
             self.fields["udf"] = udf
 
+    @transaction.atomic
     def save(self, commit=True):
         instance = super().save(commit=commit)
         if commit and "udf" in self.changed_data:
-            models.ModelUDFContent.objects.update_or_create(
+            obj, created = models.ModelUDFContent.objects.update_or_create(
                 defaults=dict(content=self.cleaned_data["udf"]),
                 model_binding=self.model_binding,
                 content_type=self.model_binding.content_type,
                 object_id=instance.id,
+            )
+            create_object_log(
+                "",
+                obj,
+                self.model_binding.assessment_id,
+                get_current_user().id,
+                f"Updated UDF data for model type {self.model_binding.content_type} on instance {instance.id} (binding {self.model_binding.id}).",
             )
         return instance

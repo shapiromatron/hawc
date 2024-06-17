@@ -1,4 +1,5 @@
 """Dynamic Django forms."""
+
 import json
 
 from crispy_forms import layout as cfl
