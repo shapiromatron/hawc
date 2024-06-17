@@ -80,8 +80,8 @@ dev = [
   "pytest-django==4.8.0",
   "vcrpy==6.0.1",
   "pytest-recording==0.13.1",
-  "playwright==1.40.0",
-  "pytest-playwright==0.4.3",
+  "playwright==1.44.0",
+  "pytest-playwright==0.5.0",
 ]
 docs = [
   "mkdocs-material==9.4.6",
