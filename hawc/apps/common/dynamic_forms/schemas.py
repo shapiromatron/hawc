@@ -1,4 +1,5 @@
 """Schemas to build dynamic Django forms."""
+
 from enum import Enum
 from typing import Any
 

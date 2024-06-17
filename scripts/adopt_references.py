@@ -8,6 +8,7 @@ source ../venv/bin/activate
 python ../scripts/adopt_references.py
 ```
 """
+
 import os
 import sys
 from pathlib import Path

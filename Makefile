@@ -66,10 +66,10 @@ lint: lint-py lint-js  ## Check formatting issues
 format: format-py format-js format-html ## Fix formatting issues where possible
 
 lint-py:  ## Check python formatting issues
-	@ruff format . --check && ruff .
+	@ruff format . --check && ruff check .
 
 format-py:  ## Fix python formatting issues where possible
-	@ruff format . && ruff . --fix --show-fixes
+	@ruff format . && ruff check . --fix --show-fixes
 
 lint-js:  ## Check javascript formatting issues
 	@npm --prefix ./frontend run lint
