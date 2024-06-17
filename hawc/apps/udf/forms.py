@@ -44,7 +44,7 @@ class UDFForm(forms.ModelForm):
                 "hx-indicator": "#spinner",
                 "id": "schema-preview-btn",
                 "hx-post": reverse_lazy("udf:schema_preview"),
-                "hx-target": "#schema-preview-frame",
+                "hx-target": "#schema-preview-fieldset",
                 "hx-swap": "innerHTML",
                 "class": "ml-2 btn btn-primary",
             },
@@ -120,8 +120,9 @@ class UDFForm(forms.ModelForm):
                     cfl.Column("schema"),
                 ),
                 cfl.Row(
-                    cfl.Div(
-                        css_id="schema-preview-frame",
+                    cfl.Fieldset(
+                        legend="",
+                        css_id="schema-preview-fieldset",
                         css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
                     )
                 ),
