@@ -4,7 +4,7 @@
 <h2 class="d-inline-block">Update {{object.summary}}</h2>
 <div class="float-right">
     <a id="experiment-update" class="btn btn-sm btn-primary" href="#"
-        hx-get="{% url 'animalv2:experiment-update' object.pk %}" hx-target="#experiment-table" hx-swap="outerHTML">
+        hx-get="{% url 'animalv2:experiment-htmx' object.pk 'update' %}" hx-target="#experiment-table" hx-swap="outerHTML">
         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update experiment</a>
 </div>
 
@@ -12,7 +12,7 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:chemical-create' object.pk as chemical_create %}
+        {% url 'animalv2:chemical-htmx' object.pk 'create' as chemical_create %}
         {% include "animalv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '43,42,15' %}
@@ -29,7 +29,7 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:animalgroup-create' object.pk as animalgroup_create %}
+        {% url 'animalv2:animalgroup-htmx' object.pk 'create' as animalgroup_create %}
         {% include "animalv2/fragments/_create_card.html" with title="Animal Groups" hx_get=animalgroup_create hx_target="#animalgroup-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '35,15,15,15,20' %}
@@ -46,13 +46,13 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:treatment-create' object.pk as treatment_create %}
+        {% url 'animalv2:treatment-htmx' object.pk 'create' as treatment_create %}
         {% include "animalv2/fragments/_create_card.html" with title="Treatments" hx_get=treatment_create hx_target="#treatment-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '45,35,20' %}
             {% bs4_thead 'Name,Chemical,Edit' %}
             <tbody id="treatment-tbody">
-                {% include "animalv2/fragments/_create_one.html" with id="treatment-tbody" text="No treatments. Create one?" %}
+                {% include "animalv2/fragments/_create_one.html" with text="No treatments. Create one?" %}
                 {% for object in object.v2_treatments.all %}
                     {% include "animalv2/fragments/_treatment_row.html" %}
                 {% endfor %}
@@ -63,13 +63,13 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:endpoint-create' object.pk as endpoint_create %}
+        {% url 'animalv2:endpoint-htmx' object.pk 'create' as endpoint_create %}
         {% include "animalv2/fragments/_create_card.html" with title="Endpoints" hx_get=endpoint_create hx_target="#endpoint-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '30,20,20,20,10' %}
             {% bs4_thead 'Name,System,Organ,Effect,Edit' %}
             <tbody id="endpoint-tbody">
-                {% include "animalv2/fragments/_create_one.html" with id="endpoint-tbody" text="No endpoints. Create one?" %}
+                {% include "animalv2/fragments/_create_one.html" with text="No endpoints. Create one?" %}
                 {% for object in object.v2_endpoints.all %}
                     {% include "animalv2/fragments/_endpoint_row.html" %}
                 {% endfor %}
@@ -80,13 +80,13 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:observationtime-create' object.pk as observationtime_create %}
+        {% url 'animalv2:observationtime-htmx' object.pk 'create' as observationtime_create %}
         {% include "animalv2/fragments/_create_card.html" with title="Endpoint Timepoints" hx_get=observationtime_create hx_target="#observationtime-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '30,30,30,10' %}
             {% bs4_thead 'Endpoint,Time,Units,Edit' %}
-            <tbody id="endpoint-tbody">
-                {% include "animalv2/fragments/_create_one.html" with id="observationtime-tbody" text="No endpont timepoints. Create one?" %}
+            <tbody id="observationtime-tbody">
+                {% include "animalv2/fragments/_create_one.html" with text="No endpont timepoints. Create one?" %}
                 {% for object in object.v2_timepoints %}
                     {% include "animalv2/fragments/_observationtime_row.html" %}
                 {% endfor %}
@@ -97,13 +97,13 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:dataextraction-create' object.pk as dataextraction_create %}
+        {% url 'animalv2:dataextraction-htmx' object.pk as dataextraction_create %}
         {% include "animalv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '45,45,10' %}
             {% bs4_thead 'Endpoint,Timepoint,Edit' %}
-            <tbody id="endpoint-tbody">
-                {% include "animalv2/fragments/_create_one.html" with id="dataextraction-tbody" text="No data extractions. Create one?" %}
+            <tbody id="dataextraction-tbody">
+                {% include "animalv2/fragments/_create_one.html" with text="No data extractions. Create one?" %}
                 {% for object in object.v2_data_extractions.all %}
                     {% include "animalv2/fragments/_dataextraction_row.html" %}
                 {% endfor %}
