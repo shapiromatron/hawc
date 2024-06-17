@@ -231,6 +231,7 @@ class ExperimentChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
+        context["app"] = "animalv2"
 
         formset_idx = 0
         formsets = kwargs.get("formsets", [])
