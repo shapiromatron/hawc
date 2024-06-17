@@ -27,7 +27,7 @@ dependencies = [
   "django-autocomplete-light==3.9.7",
   "django-taggit==4.0.0",
   "django-treebeard==4.7",
-  "django-webpack-loader==2.0.1",
+  "django-webpack-loader==3.1.0",
   "djangorestframework==3.14.0",
   "uritemplate==4.1.1",
   "pyyaml==6.0.1",
