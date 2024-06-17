@@ -1,7 +1,7 @@
 <tr hx-target="this" hx-swap="outerHTML" class="dataextraction-{{object.id}}">
     <td>{{object.experiment}}</td>
     <td>{{object.endpoint}}</td>
-    {% include "animalv2/fragments/_object_row.html" with model="dataextraction" %}
+    {% include "common/fragments/_object_row.html" with model="dataextraction" app="animalv2" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
     <tr style="display: none" id="dataextraction-empty-row" hx-target="this"></tr>

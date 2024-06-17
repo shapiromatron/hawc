@@ -91,7 +91,7 @@ class ExperimentChildViewSet(HtmxViewSet):
     parent_model = models.Experiment
     model = None  # required
     form_class = None  # required
-    form_fragment = "animalv2/fragments/_object_edit_row.html"
+    form_fragment = "common/fragments/_object_edit_row.html"
     detail_fragment = None  # required
 
     # inline formsets - all optional
@@ -220,7 +220,7 @@ class ExperimentChildViewSet(HtmxViewSet):
                 "id": request.item.object.id,
             }
             self.perform_delete(request.item)
-            return render(request, "animalv2/fragments/_delete_rows.html", context)
+            return render(request, "common/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)

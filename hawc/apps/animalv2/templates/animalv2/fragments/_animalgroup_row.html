@@ -3,7 +3,7 @@
     <td>{{object.species}}</td>
     <td>{{object.strain}}</td>
     <td>{{object.sex}}</td>
-    {% include "animalv2/fragments/_object_row.html" with model="animalgroup" %}
+    {% include "common/fragments/_object_row.html" with model="animalgroup" app="animalv2"%}
 </tr>
 {% if action == 'create' or action == 'clone' %}
     <tr style="display: none" id="animalgroup-empty-row" hx-target="this"></tr>

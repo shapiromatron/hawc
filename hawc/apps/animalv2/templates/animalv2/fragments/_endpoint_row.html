@@ -3,7 +3,7 @@
     <td>{{object.resolved_system}}</td>
     <td>{{object.resolved_organ}}</td>
     <td>{{object.resolved_effect}}</td>
-    {% include "animalv2/fragments/_object_row.html" with model="endpoint" %}
+    {% include "common/fragments/_object_row.html" with model="endpoint" app="animalv2" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
     <tr style="display: none" id="endpoint-empty-row" hx-target="this"></tr>
