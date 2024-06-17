@@ -7,8 +7,11 @@ import Reference from "./Reference";
 class ReferenceTable extends Component {
     render() {
         const {references, page, fetchPage} = this.props,
-            args = {showActions: this.props.showActions, showHr: true};
-
+            args = {
+                showActions: this.props.showActions,
+                showHr: true,
+                tagUDFContents: this.props.tagUDFContents,
+            };
         if (references.length === 0) {
             return <p>No references found.</p>;
         }
@@ -30,6 +33,7 @@ ReferenceTable.propTypes = {
     showActions: PropTypes.bool.isRequired,
     page: PropTypes.object,
     fetchPage: PropTypes.func,
+    tagUDFContents: PropTypes.object,
 };
 
 export default ReferenceTable;

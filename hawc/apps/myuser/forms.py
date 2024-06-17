@@ -397,20 +397,21 @@ class AdminUserForm(PasswordForm):
             "password2",
             "groups",
             "email_verified_on",
+            "date_joined",
+            "last_login",
         )
+        widgets = {
+            "date_joined": forms.TextInput(attrs={"size": 40}),
+            "last_login": forms.TextInput(attrs={"size": 40}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["is_superuser"].disabled = True
+        disabled_fields = ("is_superuser", "date_joined", "last_login")
         if self.instance.external_id:
-            for field in (
-                "email",
-                "first_name",
-                "last_name",
-                "password1",
-                "password2",
-            ):
-                self.fields[field].disabled = True
+            disabled_fields += ("email", "first_name", "last_name", "password1", "password2")
+        for field in disabled_fields:
+            self.fields[field].disabled = True
 
         for field in ["project_manager", "team_member", "reviewer"]:
             self.fields[field].widget.attrs["data-theme"] = "default"

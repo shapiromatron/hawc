@@ -1,7 +1,8 @@
 import pandas as pd
-from django.db.models import CharField, F, Func, Value
+from django.db.models import CharField, F, Func, QuerySet, Value
 
 from hawc.apps.common.helper import FlatFileExporter
+from hawc.apps.riskofbias.models import RiskOfBiasScore
 
 from ..common.exports import Exporter, ModelExport
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
@@ -235,6 +236,37 @@ class EpiV2Exporter(Exporter):
         ]
 
 
+class EpiV2ExporterWithRob(EpiV2Exporter):
+    def study_evaluation_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        qs = (
+            RiskOfBiasScore.objects.filter(
+                riskofbias__study__in=df["study-id"],
+                metric__required_epi=True,
+                riskofbias__final=True,
+                riskofbias__active=True,
+                is_default=True,
+            )
+            .data_pivot_json()
+            .annotate(metric_column=sql_format("RoB ({})", "metric__name"))
+            .values_list("riskofbias__study_id", "metric_id", "metric_column", "score_json")
+        )
+        if qs.count() == 0:
+            return df
+
+        rob_df = (
+            pd.DataFrame(data=qs, columns=["study-id", "m-id", "metric_name", "rob_score_json"])
+            .pivot(index=["study-id"], columns=["m-id", "metric_name"])["rob_score_json"]
+            .droplevel(0, axis=1)
+            .reset_index()
+        )
+        return df.merge(rob_df, how="left", on="study-id")
+
+    def get_df(self, qs: QuerySet) -> pd.DataFrame:
+        df = super().get_df(qs)
+        df = self.study_evaluation_data(df)
+        return df
+
+
 class EpiFlatComplete(FlatFileExporter):
     """
     Returns a complete export of all data required to rebuild the the
@@ -242,4 +274,4 @@ class EpiFlatComplete(FlatFileExporter):
     """
 
     def build_df(self) -> pd.DataFrame:
-        return EpiV2Exporter().get_df(self.queryset)
+        return EpiV2ExporterWithRob().get_df(self.queryset)

@@ -101,7 +101,7 @@ class Schema(BaseModel):
             field_value = data.get(field.name)
             field_kwargs = field.get_form_field_kwargs()
             value = field_value
-            if "choices" in field_kwargs and field_value is not None:
+            if "choices" in field_kwargs and field_value is not None and field_value != "":
                 choice_map = dict(field_kwargs["choices"])
                 value = (
                     "|".join([choice_map[i] for i in field_value])

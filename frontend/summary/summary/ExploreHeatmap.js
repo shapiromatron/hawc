@@ -133,6 +133,7 @@ class ExploreHeatmap extends BaseVisual {
             y_label: settings.y_label,
             y_tick_rotate: settings.y_tick_rotate,
             x_axis_bottom: settings.x_axis_bottom,
+            count_column: settings.count_column,
         };
     }
 
