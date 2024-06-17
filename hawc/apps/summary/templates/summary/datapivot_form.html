@@ -17,19 +17,19 @@
       {% endif %}
 
       {% if form.fields.preferred_units %}
-      window.app.startup("assessmentStartup", function(app){
-        new app.DoseUnitsWidget($('form'), {
-          choices: JSON.parse('{{form.fields.preferred_units.choices|safe}}'),
-          el: '#id_preferred_units',
+        window.app.startup("assessmentStartup", function(app){
+          new app.DoseUnitsWidget($('form'), {
+            choices: JSON.parse('{{form.fields.preferred_units.choices|safe}}'),
+            el: '#id_preferred_units',
+          });
         });
-      });
       {% endif %}
 
       window.app.startup("smartTagsStartup", function(smartTags){
-          new smartTags.SmartTagEditor(
-            $('#id_caption'),
-            {submitEl: '#dataPivotForm', takeFocusEl: "#id_evidence_type"}
-          );
+        new smartTags.SmartTagEditor(
+          $('#id_caption'),
+          {submitEl: '#dataPivotForm', takeFocusEl: "#id_evidence_type"}
+        );
       })
 
       $('input[data-pf]').each(window.app.HAWCUtils.bindCheckboxToPrefilter)

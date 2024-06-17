@@ -5,7 +5,7 @@ import h from "shared/utils/helpers";
 class CellTooltip extends Component {
     getRows() {
         const {x_filters, y_filters} = this.props.data,
-            count = this.props.data.rows.length;
+            {count} = this.props;
         let rows = [];
         rows.push(
             ...x_filters.map((e, i) => {
@@ -49,6 +49,7 @@ class CellTooltip extends Component {
 }
 CellTooltip.propTypes = {
     data: PropTypes.object,
+    count: PropTypes.number,
 };
 
 class AxisTooltip extends Component {

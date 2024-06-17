@@ -85,6 +85,9 @@ tfoot > tr > td {
 .vw75 {
     max-width: 75vw;
 }
+.m-vh75 {
+    max-height: 75vh;
+}
 .clickable, .clickable .bg-gray {
     transition: background-color 0.25s ease;
 }
@@ -108,8 +111,17 @@ tfoot > tr > td {
 .bg-gray {
     background-color: #e8e8e8;
 }
-.clickable:hover .bg-gray {
-    background-color: #d1d1d1;
+.alert-danger {
+    background-color: #ffd0d0;
+}
+.bg-pink {
+    background-color: #ffd0d0;
+}
+.clickable:hover.bg-gray {
+    background-color: #d1d1d1 !important;
+}
+.clickable:hover.bg-pink {
+    background-color: #ff9595b3 !important;
 }
 .box-shadow {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -464,6 +476,18 @@ div.smart-tag.active {
     border-radius: 7px;
     height: 50rem;
 }
+.alert.slide {
+    border: none;
+    overflow: hidden;
+}
+.alert.slide.gone {
+    height: 0px;
+    padding: 0 1.25rem;
+}
+.alert.slide.showing {
+    height: unset;
+    transition: all 0.5s ease-out;
+}
 .ref_small {
     font-size: 0.8465em;
     display: block;
@@ -564,6 +588,10 @@ div.smart-tag.active {
     overflow-wrap: break-word;
     word-break: break-word;
     word-wrap: break-word;
+}
+
+.border-bottom-light {
+    border-bottom: 2px solid #c7c7c7 !important;
 }
 
 .conflict-reference-li {
@@ -823,13 +851,9 @@ table.bordered td {
     border: 1px solid #dddddd;
 }
 
-/* react-datepicker */
-.react-datepicker-wrapper {
-    display: block !important;
-}
-
-.react-datepicker__input-container {
-    display: block !important;
+/* UDF */
+div.udf-info-row>p, div.udf-info-row>div.card>p {
+    line-height: 1.6rem;
 }
 
 /* base header/footer */
@@ -902,6 +926,15 @@ table.bordered td {
     font-size: .8em;
     font-weight: 400;
 }
+.m-xs {
+    margin: 0.1rem !important;
+}
+.show-only-child {
+    display: none;
+}
+.show-only-child:only-child {
+    display: revert;
+}
 
 /* table column text alignment */
 .col-r-1 td:nth-child(1),
@@ -955,6 +988,20 @@ table.bordered td {
 .col-l-12 td:nth-child(12),
 .col-l-12 th:nth-child(12) {
     text-align: left;
+}
+
+.hide-empty-tbody {
+    display: none;
+}
+.hide-empty-tbody:has(tbody>tr) {
+    display: revert;
+}
+
+.table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(even) {
+    background-color: #ffffff;
+}
+.table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(odd) {
+    background-color: #f0f4f9;
 }
 
 /* anchor links */

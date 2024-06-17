@@ -9,6 +9,7 @@ import {LocalStorageBoolean} from "shared/utils/LocalStorage";
 
 import Reference from "../components/Reference";
 import TagTree from "../components/TagTree";
+import ReferenceUdf from "./ReferenceUdf";
 
 @inject("store")
 @observer
@@ -27,13 +28,13 @@ class ReferenceListItem extends Component {
                 <div className="mr-1 d-flex" style={{flexWrap: "nowrap"}}>
                     {store.config.conflict_resolution && reference.userTags ? (
                         <i
-                            className="fa fa-fw fa-tags small-tag-icon user"
+                            className="fa fa-fw fa-tags small-tag-icon user m-xs"
                             title={"has tags from you"}
                             aria-hidden="true"></i>
                     ) : null}
                     {reference.tags.length > 0 ? (
                         <i
-                            className="fa fa-fw fa-tags small-tag-icon consensus mr-1"
+                            className="fa fa-fw fa-tags small-tag-icon consensus m-xs"
                             title={title}
                             aria-hidden="true"></i>
                     ) : null}
@@ -55,14 +56,16 @@ class TagReferencesMain extends Component {
         super(props);
         this.showFullTag = new LocalStorageBoolean("lit-showFullTag", true);
         this.pinInstructions = new LocalStorageBoolean("lit-pinInstructions", false);
+        this.expandAbstract = new LocalStorageBoolean("lit-expandAbstract", true);
         this.state = {
             showFullTag: this.showFullTag.value,
             pinInstructions: this.pinInstructions.value,
+            expandAbstract: this.expandAbstract.value,
         };
     }
     render() {
         const {store} = this.props,
-            {hasReference, reference, referenceTags, referenceUserTags} = store,
+            {hasReference, reference, referenceTags, referenceUserTags, udfStore} = store,
             selectedReferencePk = hasReference ? reference.data.pk : -1; // -1 will never match
 
         return (
@@ -124,12 +127,18 @@ class TagReferencesMain extends Component {
                                     <i className="fa fa-save"></i>&nbsp;Save and next
                                 </button>
                             </div>
-                            {store.errorOnSave ? (
-                                <Alert
-                                    className="alert-danger mt-2"
-                                    message="An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
-                                />
-                            ) : null}
+                            <Alert
+                                className={
+                                    store.errorOnSave
+                                        ? "alert-danger mt-2 slide showing"
+                                        : "alert-danger mt-2 slide gone"
+                                }
+                                message={
+                                    store.udfStore.errors
+                                        ? "An error was found with tag form data."
+                                        : "An error occurred in saving; please wait a moment and retry. If the error persists please contact HAWC staff."
+                                }
+                            />
                             <div className="well" style={{minHeight: "50px"}}>
                                 {store.successMessage ? (
                                     <Alert
@@ -182,7 +191,7 @@ class TagReferencesMain extends Component {
                                 showTags={false}
                                 showActionsTagless={true}
                                 actionsBtnClassName={"btn-sm btn-secondary"}
-                                expanded={true}
+                                expanded={this.expandAbstract.value}
                                 extraActions={[
                                     <div
                                         className="dropdown-item cursor-pointer"
@@ -198,20 +207,33 @@ class TagReferencesMain extends Component {
                                             this.setState({showFullTag: this.showFullTag.value});
                                         }}>
                                         &nbsp;
-                                        {this.state.showFullTag
-                                            ? "Show collapsed tag"
-                                            : "Show full tag"}
+                                        {this.state.showFullTag ? "Collapse tag" : "Expand tag"}
+                                    </div>,
+                                    <div
+                                        className="dropdown-item cursor-pointer"
+                                        key={6}
+                                        onClick={() => {
+                                            this.expandAbstract.toggle();
+                                            this.setState({
+                                                expandAbstract: this.expandAbstract.value,
+                                            });
+                                        }}>
+                                        &nbsp;
+                                        {this.state.expandAbstract
+                                            ? "Collapse reference"
+                                            : "Expand reference"}
                                     </div>,
                                     store.config.instructions.length > 0 ? (
                                         <div
                                             className="dropdown-item cursor-pointer"
-                                            key={6}
+                                            key={7}
                                             onClick={() => store.setInstructionsModal(true)}>
                                             &nbsp;View instructions
                                         </div>
                                     ) : null,
                                 ]}
                             />
+                            <ReferenceUdf store={udfStore} />
                         </div>
                     ) : (
                         <h4>Select a reference</h4>

@@ -2,25 +2,29 @@
 {% load static %}
 
 {% block extrahead %}
-<meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
+  <meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
 {% endblock %}
 
 {% block content %}
-<div class="visualization">
-  <div class='d-flex'>
-    <h2>{{object.title}}</h2>
-    {% include "common/unpublished_badge.html" %}
-    {% if obj_perms.edit %}
-      {% actions %}
-        <span class="dropdown-header">Visualization editing</span>
-        <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">Update</a>
-        <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">Delete</a>
-      {% endactions %}
-    {% endif %}
+  <div class="visualization">
+    <div class='d-flex'>
+      <h2>{{object.title}}</h2>
+      {% include "common/unpublished_badge.html" %}
+      {% if obj_perms.edit %}
+        {% actions %}
+          <span class="dropdown-header">Visualization editing</span>
+          <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">Update</a>
+          <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">Delete</a>
+        {% endactions %}
+      {% endif %}
+    </div>
+    <div id="visual-image">
+      <img src="{{object.image.url}}"
+           alt="{{object.settings.alt_text}}"
+           class="img-fluid"
+           {% if object.settings.max_width %}style="width: {{object.settings.max_width}}px"{% endif %}
+      />
+    </div>
+    <p>{{object.caption|safe}}</p>
   </div>
-  <div id="visual-image">
-    <img src="{{object.image.url}}" style="max-width: 100%" />
-  </div>
-  <p>{{object.caption|safe}}</p>
-</div>
 {% endblock %}

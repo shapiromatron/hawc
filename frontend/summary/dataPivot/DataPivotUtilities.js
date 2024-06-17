@@ -1,4 +1,5 @@
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
+import Format from "shared/parsers/format";
 
 import $ from "$";
 
@@ -152,8 +153,7 @@ class _DataPivot_settings_label {
 
 class _DataPivot_settings_filters {
     constructor(data_pivot, values) {
-        var self = this,
-            valueTd = $("<td>").data("initialValue", values.value);
+        var valueTd = $("<td>").data("initialValue", values.value);
         this.data_pivot = data_pivot;
         this.values = values;
 
@@ -171,19 +171,15 @@ class _DataPivot_settings_filters {
 
         // create fields
         this.content = {};
-        this.content.field_name = $('<select class="form-control"></select>').html(
-            this.data_pivot._get_header_options(true)
-        );
-        this.content.quantifier = $('<select class="form-control"></select>').html(
-            get_quantifier_options()
-        );
+        this.content.field_name = data_pivot.column_select_manager
+            .createSelect(true)
+            .val(values.field_name);
+        this.content.quantifier = $('<select class="form-control">')
+            .html(get_quantifier_options())
+            .val(values.quantifier);
         this.content.valueTd = valueTd;
 
-        // set default values
-        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
-        this.content.quantifier.find(`option[value="${values.quantifier}"]`).prop("selected", true);
-
-        var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.filters, this, {
+        var movement_td = DataPivot.build_movement_td(data_pivot.settings.filters, this, {
             showSort: true,
         });
 
@@ -285,13 +281,14 @@ class _DataPivot_settings_description {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control"></select>')
-                .html(this.data_pivot._get_header_options(true))
+            field_name: this.data_pivot.column_select_manager
+                .createSelect(true)
                 .val(values.field_name),
             header_name: $('<input class="form-control" type="text">').val(values.header_name),
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
             text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
             max_width: $('<input class="form-control" type="number">').val(values.max_width),
+            to_right: $('<input type="checkbox">').prop("checked", values.to_right),
             dpe: $('<select class="form-control"></select>')
                 .html(this.data_pivot.interactivity_options)
                 .val(values.dpe),
@@ -312,10 +309,9 @@ class _DataPivot_settings_description {
             .append($("<td>").append(this.content.header_style))
             .append($("<td>").append(this.content.text_style))
             .append($("<td>").append(this.content.max_width))
+            .append($("<td>").append(this.content.to_right))
             .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function() {
-                self.data_push();
-            });
+            .on("change", "input,select", () => self.data_push());
 
         var movement_td = DataPivot.build_movement_td(
             self.data_pivot.settings.description_settings,
@@ -336,16 +332,17 @@ class _DataPivot_settings_description {
             text_style: "base",
             dpe: NULL_CASE,
             max_width: undefined,
+            to_right: false,
         };
     }
 
     data_push() {
         this.values.field_name = this.content.field_name.find("option:selected").val();
-        this.values.field_index = this.content.field_name.find("option:selected").val();
+        this.values.header_name = this.content.header_name.val();
         this.values.header_style = this.content.header_style.find("option:selected").val();
         this.values.text_style = this.content.text_style.find("option:selected").val();
-        this.values.header_name = this.content.header_name.val();
         this.values.max_width = parseFloat(this.content.max_width.val(), 10) || undefined;
+        this.values.to_right = this.content.to_right.prop("checked");
         this.values.dpe = NULL_CASE;
         if (this.values.header_name === "") {
             this.values.header_name = this.values.field_name;
@@ -353,6 +350,58 @@ class _DataPivot_settings_description {
         if (this.content.dpe) {
             this.values.dpe = this.content.dpe.find("option:selected").val();
         }
+    }
+}
+
+class _DataPivot_settings_calculated {
+    constructor(data_pivot, values) {
+        var self = this;
+        this.data_pivot = data_pivot;
+        this.values = values;
+
+        const checkFormula = function() {
+            const el = $(this);
+            try {
+                Format.parse(el.val(), {getValue: () => null});
+                el.removeClass("is-invalid");
+            } catch (err) {
+                el.addClass("is-invalid");
+            }
+        };
+
+        // create fields
+        this.content = {
+            name: $('<input class="form-control" type="text">').val(values.name),
+            formula: $('<input class="form-control" type="text">').val(values.formula),
+        };
+
+        this.tr = $("<tr>")
+            .append($("<td>").append(this.content.name))
+            .append($("<td>").append(this.content.formula))
+            .append(
+                DataPivot.build_movement_td(self.data_pivot.settings.calculated_columns, this, {
+                    showSort: false,
+                })
+            )
+            .on("change", "input,select", () => this.data_push())
+            .trigger("change");
+
+        this.content.formula.on("keyup", checkFormula).trigger("keyup");
+
+        return this;
+    }
+
+    static defaults() {
+        return {
+            name: "",
+            formula: "",
+        };
+    }
+
+    data_push() {
+        this.values.name = this.content.name.val();
+        this.values.formula = this.content.formula.val();
+        this.data_pivot.column_select_manager.updateSelects();
     }
 }
 
@@ -371,8 +420,8 @@ class _DataPivot_settings_pointdata {
 
         // create fields
         this.content = {
-            field_name: $('<select class="form-control">')
-                .html(this.data_pivot._get_header_options(true))
+            field_name: this.data_pivot.column_select_manager
+                .createSelect(true)
                 .val(values.field_name),
             header_name: $('<input class="form-control" type="text">').val(values.header_name),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
@@ -464,27 +513,16 @@ class _DataPivot_settings_linedata {
 
         // create fields
         this.content = {
-            low_field_name: $('<select class="form-control"></select>').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            high_field_name: $('<select class="form-control"></select>').html(
-                this.data_pivot._get_header_options(true)
-            ),
-            header_name: $('<input  class="form-control" type="text">'),
+            low_field_name: this.data_pivot.column_select_manager
+                .createSelect(true)
+                .val(values.low_field_name),
+            high_field_name: this.data_pivot.column_select_manager
+                .createSelect(true)
+                .val(values.high_field_name),
+            header_name: $('<input  class="form-control" type="text">').val(values.header_name),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
         };
-
-        // set default values
-        this.content.low_field_name
-            .find(`option[value="${values.low_field_name}"]`)
-            .prop("selected", true);
-
-        this.content.high_field_name
-            .find(`option[value="${values.high_field_name}"]`)
-            .prop("selected", true);
-
-        this.content.header_name.val(values.header_name);
 
         var header_input = this.content.header_name;
         this.content.low_field_name.on("change", function() {
@@ -788,20 +826,22 @@ class _DataPivot_settings_barchart {
             }),
             styleSelectFactory = dp.style_manager.add_select.bind(dp.style_manager),
             content = {
-                field_name: $('<select id="bc_field_name" name="field_name" class="form-control">')
-                    .html(dp._get_header_options(true))
+                field_name: dp.column_select_manager
+                    .createSelect(true, {id: "bc_field_name", name: "field_name"})
                     .val(values.field_name),
-                error_low_field_name: $(
-                    '<select id="bc_error_low_field_name" name="error_low_field_name" class="form-control">'
-                )
-                    .html(dp._get_header_options(true))
-                    .val(values.error_low_field_name),
-                error_high_field_name: $(
-                    '<select id="bc_error_high_field_name" name="error_high_field_name" class="form-control">'
-                )
-                    .html(dp._get_header_options(true))
-                    .val(values.error_high_field_name),
 
+                error_low_field_name: dp.column_select_manager
+                    .createSelect(true, {
+                        id: "bc_error_low_field_name",
+                        name: "error_low_field_name",
+                    })
+                    .val(values.error_low_field_name),
+                error_high_field_name: dp.column_select_manager
+                    .createSelect(true, {
+                        id: "bc_error_high_field_name",
+                        name: "error_high_field_name",
+                    })
+                    .val(values.error_high_field_name),
                 header_name: $(
                     '<input id="bc_header_name" name="header_name" type="text" class="form-control"/>'
                 ).val(values.header_name),
@@ -969,6 +1009,7 @@ export {_DataPivot_settings_label};
 export {_DataPivot_settings_filters};
 export {_DataPivot_settings_spacers};
 export {_DataPivot_settings_description};
+export {_DataPivot_settings_calculated};
 export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
 export {_DataPivot_settings_barchart};

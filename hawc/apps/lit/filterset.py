@@ -1,4 +1,5 @@
 import django_filters as df
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count, F, Q, Value
 from django.forms.widgets import CheckboxInput
 from django_filters import FilterSet
@@ -225,6 +226,7 @@ class ReferenceFilterSet(BaseFilterSet):
         if not value:
             return queryset
         include_descendants = self.data.get("include_additiontag_descendants", False)
+        queryset = queryset.annotate(consensus_tags=ArrayAgg("tags", distinct=True))
         for tag in value:
             queryset = queryset.annotate(addtag_count=Value(0))
             tag_ids = (
@@ -232,17 +234,13 @@ class ReferenceFilterSet(BaseFilterSet):
                 if include_descendants
                 else [tag.id]
             )
-            for tag_id in tag_ids:
-                queryset = queryset.annotate(
-                    addtag_count=F("addtag_count")
-                    + Count(
-                        "user_tags",
-                        filter=Q(user_tags__is_resolved=False)
-                        & Q(user_tags__tags=tag_id)
-                        & ~Q(tags=tag_id),
-                    )
+            queryset = queryset.annotate(
+                added_tags=ArrayAgg(
+                    "user_tags__tags__id",
+                    distinct=True,
+                    filter=Q(user_tags__is_resolved=False) & Q(user_tags__tags__in=tag_ids),
                 )
-            queryset = queryset.filter(addtag_count__gt=0)
+            ).filter(Q(added_tags__isnull=False) & ~Q(consensus_tags__contains=F("added_tags")))
         return queryset.distinct()
 
     def filter_tag_deletions(self, queryset, name, value):

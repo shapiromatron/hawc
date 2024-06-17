@@ -1,11 +1,8 @@
-<tr hx-target="this" hx-swap="outerHTML" class="exposurelevel-{{object.pk}} chemical-{{object.chemical_id}} exposure-{{object.exposure_measurement_id}}">
-    <td>{{object.name}}</td>
-    <td>{{object.chemical}}</td>
-    <td>{{object.exposure_measurement}}</td>
-    <td>{{object.exposure_html}}</td>
-    <td>{{object.comments|default:"-"}}</td>
-    {% include "epiv2/fragments/_object_row.html" with model="exposurelevel" %}
+<tr hx-target="this" hx-swap="outerHTML" class="epiv2-obj-row {{action}} exposurelevel-{{object.pk}} chemical-{{object.chemical_id}} exposure-{{object.exposure_measurement_id}}">
+  <td>{{object.name}}</td>
+  <td>{{object.chemical}}</td>
+  <td>{{object.exposure_measurement}}</td>
+  <td>{{object.exposure_html}}</td>
+  <td>{{object.comments|default:"-"}}</td>
+  {% include "common/fragments/_object_row.html" with app="epiv2" model="exposurelevel" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-<tr style="display: none" id="exposurelevel-empty-row" hx-target="this"></tr>
-{% endif %}

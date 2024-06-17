@@ -5,6 +5,7 @@ from hawc.apps.common.serializers import (
     FlexibleChoiceArrayField,
     FlexibleChoiceField,
     FlexibleDBLinkedChoiceField,
+    check_ids,
     get_matching_instance,
     get_matching_instances,
 )
@@ -194,3 +195,19 @@ class TestFlexibleChoiceArrayField:
         # Should throw KeyError if given a bad value to convert
         with pytest.raises(KeyError):
             numeric_choice.to_representation([2])
+
+
+def test_check_ids():
+    assert check_ids([]) == []
+    assert check_ids([{"id": 1}, {"id": 2}]) == [1, 2]
+
+    for case in [
+        "string",
+        ["string"],
+        {"id": 1},
+        [{"name": "bob"}],
+        [{"id": "bob"}],
+        [{"id": None}],
+    ]:
+        with pytest.raises(ValidationError):
+            check_ids(case)

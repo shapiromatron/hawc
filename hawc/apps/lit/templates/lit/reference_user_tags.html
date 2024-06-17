@@ -1,24 +1,24 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2>Reference User Tags</h2>
-{% include 'common/inline_filter_form.html' %}
-<ul class="list-group list-group-flush my-3">
+  <h2>Reference User Tags</h2>
+  {% include 'common/inline_filter_form.html' %}
+  <ul class="list-group list-group-flush my-3">
     {% for ref in object_list %}
-    <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
+      <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
         {% include 'lit/_reference_with_tags.html' with conflict_resolution=False show_actions=False show_user_tags=True %}
-    </li>
+      </li>
     {% empty %}
-    <li class="list-group-item">
+      <li class="list-group-item">
         <div class="alert alert-success">
-            <i class='fa fa-fw fa-check mr-1'></i>&nbsp;No reference user tags found.
+          <i class='fa fa-fw fa-check mr-1'></i>&nbsp;No reference user tags found.
         </div>
-    </li>
+      </li>
     {% endfor %}
-</ul>
-{% include "includes/paginator.html" with plural_object_name="references" %}
+  </ul>
+  {% include "includes/paginator.html" with plural_object_name="references" %}
 {% endblock content %}
 
 {% block extrajs %}
-{% include "common/helptext_popup_js.html" %}
+  {% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

@@ -34,13 +34,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     {% if flavor == "EPA" %}
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
-    <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
+      <link rel="stylesheet" type="text/css" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
+      <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
     {% else %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/prime-hawc.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'css/prime-hawc.css' %}" />
     {% endif %}
     {% block extrastyle %}{% endblock %}
   </head>
@@ -49,7 +49,7 @@
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
       <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GTM_ID}}" height="0" width="0"
-          style="display:none;visibility:hidden"></iframe></noscript>
+                        style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager -->
     {% endif %}
 
@@ -58,9 +58,9 @@
     {% endif %}
 
     {% cache 3600 header %}
-    {% if flavor == "EPA" %}
-      {% include 'includes/epa/header.html' %}
-    {% endif %}
+      {% if flavor == "EPA" %}
+        {% include 'includes/epa/header.html' %}
+      {% endif %}
     {% endcache %}
 
     {% block content_row_outer %}
@@ -73,15 +73,16 @@
               {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
               {% include "includes/messages.html" %}
+              {% include "includes/htmx_alert.html" %}
               {% if UA_SUPPORTED is False %}
                 {% include "includes/unsupported_browser.html" %}
               {% endif %}
 
               {% block content_header %}{% endblock content_header %}
               {% block content_outer %}
-                <div class="row  overflow-auto mb-4"  style="min-height: 95vh;">
+                <div class="row overflow-auto mb-4" style="min-height: 48rem;">
                   <div class="col overflow-auto">
-                  {% block content %}{% endblock content %}
+                    {% block content %}{% endblock content %}
                   </div>
                 </div>
               {% endblock content_outer %}
@@ -92,14 +93,14 @@
     {% endblock content_row_outer %}
 
     {% cache 3600 footer %}
-    {% if flavor == "EPA" %}
-      {% include "./includes/epa/footer.html" %}
-    {% else %}
-      {% include "./includes/base/footer.html" %}
-    {% endif %}
+      {% if flavor == "EPA" %}
+        {% include "./includes/epa/footer.html" %}
+      {% else %}
+        {% include "./includes/base/footer.html" %}
+      {% endif %}
     {% endcache %}
     {% if flavor == "EPA" %}
-    <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
     {% endif %}
     <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>

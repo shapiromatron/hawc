@@ -8,12 +8,13 @@ from pathlib import Path
 
 import pandas as pd
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import models
 from django.http import HttpResponse
 from django.test.client import Client
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from hawc.apps.assessment.models import Log
+from hawc.apps.assessment.models import Log, TimeSpentEditing
 
 DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
@@ -135,3 +136,16 @@ def generic_get_first(model_class):
     if first_obj is None:
         raise Exception(f"generic_get_first failed; no instances of '{model_class}' found")
     return first_obj
+
+
+def get_timespent() -> TimeSpentEditing:
+    """Get latest timespent"""
+    return TimeSpentEditing.objects.all().order_by("-id")[0]
+
+
+def check_timespent(obj: models.Model) -> TimeSpentEditing:
+    """Check latest timespent object is the same content object; return timespent object"""
+    timespent = get_timespent()
+    assert isinstance(timespent.content_object, type(obj))
+    assert timespent.content_object.pk == obj.pk
+    return timespent

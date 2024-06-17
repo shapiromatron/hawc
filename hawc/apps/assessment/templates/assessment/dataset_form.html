@@ -1,31 +1,31 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-{% crispy form %}
+  {% crispy form %}
 {% endblock content %}
 
 
 {% block extrajs %}
-<script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function () {
-        $('#id_name').focus();
+      $('#id_name').focus();
 
         // show/hide excel worksheet name depending on what was file was selected
-        const reExcelFile = RegExp("\.xlsx$"),
+      const reExcelFile = RegExp("\.xlsx$"),
             excelNameDiv = $("#div_id_revision_excel_worksheet_name"),
             excelNameInput = $("#id_revision_excel_worksheet_name"),
             versionNotes = $("#div_id_revision_notes"),
             handleExcelNameChange = function () {
-                if(reExcelFile.test(this.value)){
-                    excelNameDiv.removeClass('hidden');
-                } else {
-                    excelNameDiv.addClass('hidden');
-                    excelNameInput.val("");
-                }
-                versionNotes.removeClass('hidden');
-            };
+        if(reExcelFile.test(this.value)){
+          excelNameDiv.removeClass('hidden');
+        } else {
+          excelNameDiv.addClass('hidden');
+          excelNameInput.val("");
+        }
+        versionNotes.removeClass('hidden');
+      };
 
-        $('#id_revision_data').change(handleExcelNameChange);
+      $('#id_revision_data').change(handleExcelNameChange);
     });
-</script>
+  </script>
 {% endblock extrajs %}

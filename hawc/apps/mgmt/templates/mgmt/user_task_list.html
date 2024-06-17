@@ -1,39 +1,33 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<h2>My assigned tasks</h2>
-
-{% include 'common/inline_filter_form.html' %}
-
-{% if object_list %}
-<table class="table table-sm table-striped">
-    {% bs4_colgroup "30,30,40" %}
-    {% bs4_thead "Assessment,Study,Task" %}
+  <h2>My assigned tasks</h2>
+  <table class="table table-sm table-striped">
+    {% bs4_colgroup "40,30,30" %}
+    {% bs4_thead "Assessment,# Tasks,# Study Evaluations" %}
     <tbody>
-        {% for task in object_list %}
+      {% for assess in assessments %}
         <tr>
-            <td><a href="{{ task.study.assessment.get_absolute_url }}">{{ task.study.assessment }}</a></td>
-            <td>
-                <a href="{{ task.study.get_absolute_url }}">{{ task.study.short_citation }}</a><br/>
-                {% if task.type == TaskType.ROB %}
-                {% with study=studies|get:task.study_id %}{% for review in study.own_reviews %}
-                    <a class="btn btn-light" href="{{review.get_edit_url}}"><i class="fa fa-edit"></i>&nbsp;Update  {% if review.final %}final {% endif %}review</a>
-                    {% endfor %}{% endwith %}
-                {% endif %}
+          <td>
+            <a href="{{ assess.assessment.get_absolute_url }}">{{assess.assessment}}
+              {% debug_badge assess.assessment.id %}
             </td>
-            {% include "mgmt/fragments/task_cell.html" with object=task %}
+            <td>
+              {% if assess.num_tasks %}
+                <a href="{% url 'mgmt:task-list' assess.assessment.id %}?owner={{user.id}}&status=990">{{assess.num_tasks}} task{{ assess.num_tasks|pluralize }}</a>
+              {% else %}---{% endif %}
+            </td>
+            <td>
+              {% if assess.num_robs %}
+                <a href="{% url 'riskofbias:rob_assignments' assess.assessment.id %}?assigned_user={{user.id}}">{{assess.num_robs}} evaluation{{ assess.num_robs|pluralize }}</a>
+              {% else %}---{% endif %}
+            </td>
+            <tr>
+      {% empty %}
+        <tr>
+          <td colspan="4"><i>No assigned tasks!</i></td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
-{% include "includes/paginator.html" with plural_object_name="tasks" %}
-{% else %}
-<p><i>There are no tasks available</i></p>
-{% endif %}
-
-{% with rob_name=assessment.get_rob_name_display %}
-<h3 class="mb-0">Assigned Study Evaluation/Risk of Bias Reviews</h3>
-{% include "mgmt/fragments/rob_reviews.html" with show_assessment=True %}
-{% endwith %}
-
+  </table>
 {% endblock %}

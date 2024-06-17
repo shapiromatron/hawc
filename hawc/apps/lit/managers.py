@@ -262,7 +262,8 @@ class IdentifiersManager(BaseManager):
             content = json.dumps(ref)
             ident = self.filter(database=constants.ReferenceDatabase.RIS, unique_id=id_).first()
             if ident:
-                ident.update(content=content)
+                ident.content = content
+                ident.save()
             else:
                 ident = self.create(
                     database=constants.ReferenceDatabase.RIS, unique_id=id_, content=content
@@ -355,21 +356,24 @@ class IdentifiersManager(BaseManager):
             failed_join = ", ".join(str(el) for el in fetched_content["failure"])
             raise ValidationError(f"The following HERO ID(s) could not be imported: {failed_join}")
         if len(fetched_content["success"]) > 0:
-            df = pd.DataFrame(
-                [
+            df = []
+            for ref in fetched_content["success"]:
+                if doi := constants.DOI_EXTRACT.search(ref["json"].get("doi", "")):
+                    doi = doi.group(0)
+                df.append(
                     {
                         "HEROID": ref["json"]["HEROID"],
                         "PMID": ref["json"].get("PMID", ""),
-                        "doi": ref["json"].get("doi", ""),
+                        "doi": doi or "",
                         "wosid": ref["json"].get("wosid", ""),
                     }
-                    for ref in fetched_content["success"]
-                ]
-            ).replace("", np.nan)
+                )
+            df = pd.DataFrame(df).replace("", np.nan)
             hero_dupes = df[df.HEROID.notna() & df.HEROID.duplicated(keep=False)]
             pubmed_dupes = df[df.PMID.notna() & df.PMID.duplicated(keep=False)]
             doi_dupes = df[df.doi.notna() & df.doi.duplicated(keep=False)]
             wos_dupes = df[df.wosid.notna() & df.wosid.duplicated(keep=False)]
+            error_msg = []
             for dupes, id_type in [
                 (hero_dupes, "HERO IDs"),
                 (pubmed_dupes, "PubMed IDs"),
@@ -377,9 +381,11 @@ class IdentifiersManager(BaseManager):
                 (wos_dupes, "WoS IDs"),
             ]:
                 if dupes.shape[0] > 0:
-                    raise ValidationError(
-                        f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}"
+                    error_msg.append(
+                        f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}. "
                     )
+            if len(error_msg) > 0:
+                raise ValidationError("".join(error_msg))
         return fetched_content
 
     def bulk_create_hero_ids(self, content):
@@ -888,11 +894,11 @@ class ReferenceManager(BaseManager):
             UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
             user_refs = UserReferenceTag.objects.filter(reference__in=refs)
             refs = refs.annotate(
+                tags_count=Count("tags"),
                 user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
-                n_unapplied_reviews=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
             )
             needs_tagging = refs.filter(user_tag_count__lt=2)
-            conflicts = refs.filter(n_unapplied_reviews__gt=1)
+            conflicts = refs.filter(user_tag_count__gt=1)
             for workflow in workflows:
                 workflow_refs = refs.in_workflow(workflow)
                 workflow.needs_tagging = (
@@ -905,8 +911,9 @@ class ReferenceManager(BaseManager):
                     if workflow.link_conflict_resolution
                     else None
                 )
+            # needs_tagging = 0 consensus tags and < 2 unresolved user reviews
             overview.update(
-                needs_tagging=needs_tagging.count(),
+                needs_tagging=needs_tagging.filter(tags_count=0).count(),
                 conflicts=conflicts.count(),
                 total_reviews=user_refs.count(),
                 total_users=user_refs.distinct("user_id").count(),
