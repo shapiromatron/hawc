@@ -13,9 +13,10 @@ class TestExperimentChildren:
         initial_count = clazz.objects.count()
         name_val = input_payload["name"]
         expected_template = f"animalv2/fragments/_{short_name}_row.html"
+        viewname = f"animalv2:{short_name}-htmx"
 
         # create
-        url = reverse(f"animalv2:{short_name}-create", args=[experiment.id])
+        url = reverse(viewname, args=(experiment.id, "create"))
         resp = client.post(url, data=input_payload)
         assertTemplateUsed(resp, expected_template)
         assert resp.status_code == 200
@@ -25,7 +26,7 @@ class TestExperimentChildren:
         assert clazz.objects.count() == initial_count + 1
 
         # clone
-        url = reverse(f"animalv2:{short_name}-clone", args=[created_obj.id])
+        url = reverse(viewname, args=(created_obj.id, "clone"))
         resp = client.post(url)
         assertTemplateUsed(resp, expected_template)
         assert resp.status_code == 200
@@ -33,7 +34,7 @@ class TestExperimentChildren:
         assert clazz.objects.count() == initial_count + 2
 
         # read
-        url = reverse(f"animalv2:{short_name}-detail", args=[created_obj.id])
+        url = reverse(viewname, args=(created_obj.id, "read"))
         resp = client.get(url)
         assertTemplateUsed(resp, expected_template)
         assert resp.status_code == 200
@@ -41,7 +42,7 @@ class TestExperimentChildren:
         assert clazz.objects.count() == initial_count + 2
 
         # update
-        url = reverse(f"animalv2:{short_name}-update", args=[created_obj.id])
+        url = reverse(viewname, args=(created_obj.id, "update"))
         input_payload["name"] = f"{name_val} update"
         resp = client.post(url, data=input_payload)
         assertTemplateUsed(resp, expected_template)
