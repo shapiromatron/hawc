@@ -97,7 +97,7 @@
 
 <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:dataextraction-htmx' object.pk as dataextraction_create %}
+        {% url 'animalv2:dataextraction-htmx' object.pk 'create' as dataextraction_create %}
         {% include "common/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-tbody" btn_text="Create" %}
         <table class="table table-sm table-striped-invert">
             {% bs4_colgroup '45,45,10' %}
