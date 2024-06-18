@@ -23,8 +23,12 @@
           {% if object.bioassay %}
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Animal bioassay editing</span>
-            <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
-            <a class="dropdown-item" href="{% url 'animal:experiment_copy' object.pk %}">Copy from existing</a>
+            {% if assessment.animal_version == 1 %}
+              <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
+              <a class="dropdown-item" href="{% url 'animal:experiment_copy' object.pk %}">Copy from existing</a>
+            {% elif assessment.animal_version == 2 %}
+              <a class="dropdown-item" href="{% url 'animalv2:experiment_create' object.pk %}">Create new experiment</a>
+            {% endif %}
           {% endif %}
 
           {% if object.in_vitro %}
@@ -52,132 +56,87 @@
             <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
           {% endif %}
 
-          {% if object.editable %}
-            <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
-            <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
-
-            {% if object.bioassay %}
-              <div class="dropdown-divider"></div>
-              <span class="dropdown-header">Animal bioassay editing</span>
-              {% if assessment.animal_version == 1 %}
-                <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
-                <a class="dropdown-item" href="{% url 'animal:experiment_copy' object.pk %}">Copy from existing</a>
-              {% elif assessment.animal_version == 2 %}
-                <a class="dropdown-item" href="{% url 'animalv2:experiment_create' object.pk %}">Create new experiment</a>
-              {% endif %}
-            {% endif %}
-
-            {% if object.in_vitro %}
-              <div class="dropdown-divider"></div>
-              <span class="dropdown-header">In-vitro analysis editing</span>
-              <a class="dropdown-item" href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a>
-              <a class="dropdown-item" href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a>
-              <a class="dropdown-item" href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a>
-            {% endif %}
-
-            {% if object.epi %}
-              <div class="dropdown-divider"></div>
-              <span class="dropdown-header">Epidemiology editing</span>
-              {% if assessment.epi_version == 1 %}
-                <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
-                <a class="dropdown-item" href="{% url 'epi:sp_copy' object.pk %}">Copy from existing</a>
-              {% elif assessment.epi_version == 2 %}
-                <a class="dropdown-item" href="{% url 'epiv2:design_create' object.pk %}">Create new study population</a>
-              {% endif %}
-            {% endif %}
-
-            {% if object.epi_meta %}
-              <div class="dropdown-divider"></div>
-              <span class="dropdown-header">Epidemiology meta-analysis editing</span>
-              <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
-            {% endif %}
-
-            {% if object.eco %}
-              <div class="dropdown-divider"></div>
-              <span class="dropdown-header">Ecology editing</span>
-              <a class="dropdown-item" href="{% url 'eco:design_create' object.pk %}">Create new study design</a>
-            {% endif %}
+          {% if object.eco %}
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">Ecology editing</span>
+            <a class="dropdown-item" href="{% url 'eco:design_create' object.pk %}">Create new study design</a>
           {% endif %}
-        {% endactions %}
-      {% endif %}
+        {% endif %}
+      {% endactions %}
+    {% endif %}
+  </div>
+
+  {% if not object.get_study_types and obj_perms.edit %}
+    {% alert warning %}
+      This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
+    {% endalert %}
+  {% endif %}
+  <div id="study_details"></div>
+  {% if obj_perms.edit and internal_communications|hastext %}
+    <table class="table table-sm table-striped">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 70%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th>Internal communications*</th>
+          <td>{{ internal_communications|safe }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" class="text-muted">
+            * These fields are only shown to assessment team members, even if the assessment is made public.
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  {% endif %}
+  {% if crud == "Read" %}
+    {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
+      <div class="d-flex">
+        <h3>{{assessment.get_rob_name_display}}</h3>
+        <div class="dropdown btn-group ml-auto align-self-start">
+          <a class="btn btn-primary" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
+        </div>
       </div>
+      <div id="rob_plot" class="mb-3"></div>
+    {% endif %}
 
-      {% if not object.get_study_types and obj_perms.edit %}
-        {% alert warning %}
-          This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
-        {% endalert %}
-      {% endif %}
-
-      <div id="study_details"></div>
-
-      {% include "udf/fragments/table.html" with object=udf_content %}
-
-      {% if obj_perms.edit and internal_communications|hastext %}
-        <table class="table table-sm table-striped">
-          <colgroup>
-            <col style="width: 30%;">
-            <col style="width: 70%;">
-          </colgroup>
-          <tbody>
-            <tr>
-              <th>Internal communications*</th>
-              <td>{{ internal_communications|safe }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="2" class="text-muted">
-                * These fields are only shown to assessment team members, even if the assessment is made public.
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      {% endif %}
-
-      {% if crud == "Read" %}
-
-        {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-          <div class="d-flex">
-            <h3>{{assessment.get_rob_name_display}}</h3>
-            <div class="dropdown btn-group ml-auto align-self-start">
-              <a class="btn btn-primary" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
-            </div>
-          </div>
-          <div id="rob_plot" class="mb-3"></div>
-        {% endif %}
-
-        {% if study.bioassay %}
-          {% if assessment.animal_version == 1 %}
-            {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
-          {% elif assessment.animal_version == 2 %}
-            {% include "animalv2/fragments/_experiment_list_tbl.html" with object_list=object.v2_experiments.all %}
-          {% endif %}
-        {% endif %}
-
-        {% if study.epi %}
-          {% if assessment.epi_version == 1 %}
-            {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
-          {% elif assessment.epi_version == 2 %}
-            {% include "epi/_studypopulation_list.html" with object_list=object.designs.all %}
-          {% endif %}
-        {% endif %}
-
-        {% if study.epi_meta %}
-          {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
-        {% endif %}
-
-        {% if study.in_vitro %}
-          {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
-          {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
-          {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
-        {% endif %}
-
-        {% if study.eco %}
-          {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
-        {% endif %}
-
+    {% if study.bioassay %}
+      {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
+      {% if assessment.animal_version == 1 %}
+        {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
+      {% elif assessment.animal_version == 2 %}
+        {% include "animalv2/fragments/_experiment_list_tbl.html" with object_list=object.v2_experiments.all %}
       {% endif %}
     {% endif %}
+
+    {% if study.epi %}
+      {% if assessment.epi_version == 1 %}
+        {% include "epi/_studypopulation_list.html" with object_list=object.study_populations.all %}
+      {% elif assessment.epi_version == 2 %}
+        {% include "epi/_studypopulation_list.html" with object_list=object.designs.all %}
+      {% endif %}
+    {% endif %}
+
+    {% if study.epi_meta %}
+      {% include "epimeta/_metaprotocol_list.html" with object_list=object.meta_protocols.all %}
+    {% endif %}
+
+    {% if study.in_vitro %}
+      {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
+      {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
+      {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
+    {% endif %}
+
+    {% if study.eco %}
+      {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
+    {% endif %}
+
+  {% endif %}
+{% endif %}
 
 {% endblock %}
 

@@ -16,10 +16,7 @@ from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.auth.turnstile import Turnstile
-from ..common.autocomplete import (
-    AutocompleteSelectMultipleWidget,
-    AutocompleteTextWidget,
-)
+from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
