@@ -1,9 +1,9 @@
 <tr hx-target="this" hx-swap="outerHTML" class="chemical-{{object.id}}">
-    <td>{{object.name}}</td>
-    <td>{{object.cas}}</td>
-    <td>{{object.dtxsid.verbose_link|safe|default:"-"   }}</td>
-    {% include "common/fragments/_object_row.html" with model="chemical" app="animalv2" %}
+  <td>{{object.name}}</td>
+  <td>{{object.cas}}</td>
+  <td>{{object.dtxsid.verbose_link|safe|default:"-"   }}</td>
+  {% include "common/fragments/_object_row.html" with model="chemical" app="animalv2" %}
 </tr>
 {% if action == 'create' or action == 'clone' %}
-    <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
+  <tr style="display: none" id="chemical-empty-row" hx-target="this"></tr>
 {% endif %}
