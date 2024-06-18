@@ -96,10 +96,10 @@
         </tr>
       </tfoot>
     </table>
-
   {% endif %}
 
   {% if crud == "Read" %}
+
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
       <div class="d-flex">
         <h3>{{assessment.get_rob_name_display}}</h3>
