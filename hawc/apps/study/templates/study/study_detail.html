@@ -71,7 +71,11 @@
       This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
     {% endalert %}
   {% endif %}
+
   <div id="study_details"></div>
+
+  {% include "udf/fragments/table.html" with object=udf_content %}
+
   {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
       <colgroup>
@@ -92,7 +96,9 @@
         </tr>
       </tfoot>
     </table>
+
   {% endif %}
+
   {% if crud == "Read" %}
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
       <div class="d-flex">
@@ -105,7 +111,6 @@
     {% endif %}
 
     {% if study.bioassay %}
-      {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
       {% if assessment.animal_version == 1 %}
         {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
       {% elif assessment.animal_version == 2 %}
@@ -136,7 +141,6 @@
     {% endif %}
 
   {% endif %}
-{% endif %}
 
 {% endblock %}
 
