@@ -1,28 +1,28 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-      <h2>{{object.name}}</h2>
-      {% if obj_perms.edit and crud == "Read" %}
-        {% actions %}
-          <span class="dropdown-header">Outcome editing</span>
-          <a class="dropdown-item" href="{% url 'epi:outcome_update' object.pk %}">Update</a>
-          <a class="dropdown-item" href="{% url 'epi:outcome_delete' pk=object.pk %}">Delete</a>
+  <div class="d-flex">
+    <h2>{{object.name}}</h2>
+    {% if obj_perms.edit and crud == "Read" %}
+      {% actions %}
+        <span class="dropdown-header">Outcome editing</span>
+        <a class="dropdown-item" href="{% url 'epi:outcome_update' object.pk %}">Update</a>
+        <a class="dropdown-item" href="{% url 'epi:outcome_delete' pk=object.pk %}">Delete</a>
 
+        <div class="dropdown-divider"></div>
+        <span class="dropdown-header">Results</span>
+        <a class="dropdown-item" href="{% url 'epi:result_create' object.pk %}">Create</a>
+        <a class="dropdown-item" href="{% url 'epi:result_copy' object.pk %}">Copy as new</a>
+        {% if object.can_create_sets %}
           <div class="dropdown-divider"></div>
-          <span class="dropdown-header">Results</span>
-          <a class="dropdown-item" href="{% url 'epi:result_create' object.pk %}">Create</a>
-          <a class="dropdown-item" href="{% url 'epi:result_copy' object.pk %}">Copy as new</a>
-          {% if object.can_create_sets %}
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-header">Comparison sets</span>
-            <a class="dropdown-item" href="{% url 'epi:cs_outcome_create' object.pk %}">Create</a>
-            <a class="dropdown-item" href="{% url 'epi:cs_outcome_copy' object.pk %}">Copy from existing</a>
-          {% endif %}
-        {% endactions %}
-      {% endif %}
-    </div>
-    <div id="objContainer"></div>
+          <span class="dropdown-header">Comparison sets</span>
+          <a class="dropdown-item" href="{% url 'epi:cs_outcome_create' object.pk %}">Create</a>
+          <a class="dropdown-item" href="{% url 'epi:cs_outcome_copy' object.pk %}">Copy from existing</a>
+        {% endif %}
+      {% endactions %}
+    {% endif %}
+  </div>
+  <div id="objContainer"></div>
 {% endblock %}
 
 

@@ -3,46 +3,16 @@ from collections.abc import Callable, Sequence
 from functools import partial
 from urllib import parse
 
-import bleach
-from bleach.css_sanitizer import CSSSanitizer
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, URLValidator
 from django.utils.encoding import force_str
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
 
+from .clean.sanitize_html import valid_html_tags
+
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
 hyperlink_regex = re.compile(r"href\s*=\s*['\"](.*?)['\"]")
-
-valid_html_tags = {
-    "a",
-    "blockquote",
-    "br",
-    "div",
-    "em",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "li",
-    "ol",
-    "p",
-    "span",
-    "strong",
-    "sub",
-    "sup",
-    "s",
-    "ul",
-    "u",
-}
-valid_html_attrs = {
-    "*": ["style"],
-    "a": ["href", "rel", "target"],
-    "span": ["class", "data-pk", "data-type"],
-    "div": ["class", "data-pk", "data-type"],
-}
-valid_css_properties = {"color", "background-color"}
 valid_scheme = {"", "http", "https"}
 valid_netloc_endings = {
     "canada.ca",
@@ -57,28 +27,6 @@ valid_netloc_endings = {
     "hawcproject.org",
     "zenodo.org",
 }
-
-
-def clean_html(html: str) -> str:
-    """
-    Cleans given HTML by removing invalid HTML tags, HTML properties, and CSS properties.
-
-    Note: inner text within invalid HTML tags will still be included.
-
-    Args:
-        html (str): HTML to clean
-
-    Returns:
-        str: cleaned HTML
-    """
-    css_sanitizer = CSSSanitizer(allowed_css_properties=valid_css_properties)
-    return bleach.clean(
-        html,
-        tags=valid_html_tags,
-        attributes=valid_html_attrs,
-        css_sanitizer=css_sanitizer,
-        strip=True,
-    )
 
 
 def validate_html_tags(html: str, field: str | None = None) -> str:

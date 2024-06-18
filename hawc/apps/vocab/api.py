@@ -2,18 +2,20 @@ from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ..common.helper import FlatExport, tryParseInt
+from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
+from ..common.serializers import check_ids
 from . import constants, models, serializers
 
 
 class EhvTermViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
+    lookup_value_regex = re_digits
 
     def get_queryset(self) -> QuerySet:
         return models.Term.objects.filter(
@@ -31,7 +33,7 @@ class EhvTermViewSet(viewsets.GenericViewSet):
             qs = qs.filter(parent=parent)
         return qs[:limit]
 
-    @action(detail=False, renderer_classes=PandasRenderers)
+    @action(detail=False, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
     def nested(self, request: Request):
         df = models.Term.ehv_dataframe()
         return FlatExport.api_response(df=df, filename="ehv")
@@ -109,7 +111,7 @@ class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         detail=False, methods=("patch",), permission_classes=(IsAdminUser,), url_path="bulk-update"
     )
     def bulk_update(self, request: Request) -> Response:
-        qs = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
+        qs = self.get_queryset().filter(id__in=check_ids(request.data))
         serializer = self.get_serializer(instance=qs, data=request.data, many=True, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

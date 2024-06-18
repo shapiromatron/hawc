@@ -42,10 +42,10 @@ class Migration(migrations.Migration):
                     "status",
                     models.PositiveSmallIntegerField(
                         choices=[
-                            (10, "not started"),
-                            (20, "started"),
-                            (30, "completed"),
-                            (40, "abandoned"),
+                            (10, "Not Started"),
+                            (20, "Started"),
+                            (30, "Completed"),
+                            (40, "Abandoned"),
                         ],
                         default=10,
                     ),

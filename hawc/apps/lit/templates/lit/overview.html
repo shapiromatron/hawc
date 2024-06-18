@@ -9,8 +9,8 @@
         {% if obj_perms.edit_assessment %}
           <a class="dropdown-item" href="{{assessment.literature_settings.get_update_url}}">Update settings</a>
           <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update tags</a>
-          <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         {% endif %}
+        <a class="dropdown-item" href="{% url 'lit:workflows' assessment.pk %}">View Workflows</a>
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Searches and Imports</span>
         <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
@@ -32,7 +32,7 @@
         <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.pk %}?format=xlsx">Download all references</a>
       {% endactions %}
     {% endif %}
-</div>
+  </div>
 
   <div class="row no-gutter">
     <div class="col-md-8">
@@ -72,9 +72,9 @@
         <div class="lit-review-box box-shadow w-30 justify-content-between align-items-center p-4" style="height: 235px">
           {% if obj_perms.edit %}
             {% if assessment.literature_settings.conflict_resolution %}
-            <a class="btn btn-primary" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&my_tags=untagged">Tag</a>
+              <a class="btn btn-primary" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&my_tags=untagged">Tag</a>
             {% else %}
-            <a class="btn btn-primary" href="{% url 'lit:tag' assessment.pk %}?tags=untagged">Tag</a>
+              <a class="btn btn-primary" href="{% url 'lit:tag' assessment.pk %}?tags=untagged">Tag</a>
             {% endif %}
           {% endif %}
           <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">Browse</a>
@@ -82,53 +82,53 @@
           <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
         </div>
         {% if overview.total_references > 10 %}
-        <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">
-          <p>References by year:</p>
-          <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
+          <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">
+            <p>References by year:</p>
+            <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
+            </div>
           </div>
-        </div>
         {% endif %}
         {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
-        <div class="w-30">
-          <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag-conflicts' assessment.pk %}">
-            <div>
-              <p class="h3 m-0 mt-1">{{overview.conflicts}}</p>
-              <p class="small">with tag conflicts</p>
-            </div>
-            <div class="lit-icon">
-              <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
-            </div>
-          </a>
-          <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on">
-            <div>
-              <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
-              <p class="small">need{{ overview.needs_tagging|pluralize:"s," }} further tagging</p>
-            </div>
-            <div class="lit-icon">
-              <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
-            </div>
-          </a>
-        </div>
+          <div class="w-30">
+            <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag-conflicts' assessment.pk %}">
+              <div>
+                <p class="h3 m-0 mt-1">{{overview.conflicts}}</p>
+                <p class="small">with tag conflicts</p>
+              </div>
+              <div class="lit-icon">
+                <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
+              </div>
+            </a>
+            <a class="lit-review-box box-shadow with-icon clickable w-100" href="{% url 'lit:tag' assessment.pk %}?needs_tagging=on&tags=untagged">
+              <div title='Has no consensus tags and < 2 user reviews'>
+                <p class="h3 m-0 mt-1">{{overview.needs_tagging}}</p>
+                <p class="small m-0">untagged and need{{ overview.needs_tagging|pluralize:"s," }} further tagging</p>
+              </div>
+              <div class="lit-icon">
+                <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
+              </div>
+            </a>
+          </div>
         {% comment %} row #3 {% endcomment %}
-        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:user-tag-list' assessment.pk %}">
-          <div>
-            <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> user{{ overview.total_users|pluralize }}</p>
-          </div>
-          <div class="lit-icon">
-            <i class="fa fa-users icon-bg"></i>
-          </div>
-        </a>
-        {% if overview.my_reviews > 0 %}
-          <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
+          <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:user-tag-list' assessment.pk %}">
             <div>
-              <p class="h3 m-0 mt-1">{{overview.my_reviews}}</p>
-              <p class="small">reviews done by you</p>
+              <p><b>{{overview.total_reviews}}</b> reviews done by <b>{{overview.total_users}}</b> user{{ overview.total_users|pluralize }}</p>
             </div>
             <div class="lit-icon">
-              <i class="fa fa-user icon-bg"></i>
+              <i class="fa fa-users icon-bg"></i>
             </div>
           </a>
-        {% endif %}
+          {% if overview.my_reviews > 0 %}
+            <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:tag' assessment.pk %}?anything_tagged_me=on">
+              <div>
+                <p class="h3 m-0 mt-1">{{overview.my_reviews}}</p>
+                <p class="small">reviews done by you</p>
+              </div>
+              <div class="lit-icon">
+                <i class="fa fa-user icon-bg"></i>
+              </div>
+            </a>
+          {% endif %}
         {% endif %}
         {% if obj_perms.edit %}
           {% for workflow in workflows %}
@@ -136,14 +136,14 @@
               {% if show_conflicts and show_tags %}
                 <div class="lit-review-box box-shadow w-30 d-flex flex-column justify-content-between py-0" style="padding-bottom: 8px">
                   <div class="d-flex row justify-content-between flex-grow-1">
-                      <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom" style="padding-top: 12px;"
-                        href="{{workflow.tag_url}}{% if assessment.literature_settings.conflict_resolution %}&needs_tagging=on&my_tags=untagged{% endif %}">
-                        <div class="d-flex pl-0">
-                          <p class="h3 m-0 text-black">{{workflow.needs_tagging}}</p>
-                          <div class="lit-icon px-2 text-black"><i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: .9em; border-radius: 5px;"></i></div>
-                        </div>
-                        <p class="m-0 small text-black">need{{ workflow.needs_tagging|pluralize:"s," }} tagging&nbsp;</p>
-                      </a>
+                    <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom" style="padding-top: 12px;"
+                       href="{{workflow.tag_url}}{% if assessment.literature_settings.conflict_resolution %}&needs_tagging=on&my_tags=untagged{% endif %}">
+                      <div class="d-flex pl-0">
+                        <p class="h3 m-0 text-black">{{workflow.needs_tagging}}</p>
+                        <div class="lit-icon px-2 text-black"><i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: .9em; border-radius: 5px;"></i></div>
+                      </div>
+                      <p class="m-0 small text-black">need{{ workflow.needs_tagging|pluralize:"s," }} tagging&nbsp;</p>
+                    </a>
                     <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-minor border-left border-bottom" href="{{workflow.tag_conflicts_url}}" style="padding-top: 12px;">
                       <div class="d-flex flex-row-reverse pl-0">
                         <p class="h3 m-0 text-black">{{workflow.conflicts}}</p>
@@ -152,18 +152,18 @@
                       <p class="m-0 small text-black">with conflicts</p>
                     </a>
                   </div>
-                    <div class="text-center small" style="overflow: hidden; padding: 6px;">
-                      <div class="d-flex flex-row justify-content-center">
-                        <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
-                        <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
-                          {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
-                        </i>
-                      </div>
+                  <div class="text-center small" style="overflow: hidden; padding: 6px;">
+                    <div class="d-flex flex-row justify-content-center">
+                      <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i class="text-truncate" title="{{workflow}}">{{workflow}}</i></p>
+                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                        {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
+                      </i>
+                    </div>
                   </div>
                 </div>
               {% elif show_tags %}
                 <a class="lit-review-box box-shadow with-icon clickable w-30"
-                  href="{{workflow.tag_url}}{% if assessment.literature_settings.conflict_resolution %}&needs_tagging=on&my_tags=untagged{% endif %}">
+                   href="{{workflow.tag_url}}{% if assessment.literature_settings.conflict_resolution %}&needs_tagging=on&my_tags=untagged{% endif %}">
                   <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{workflow.needs_tagging}}</p>
                     <div class="d-flex flex-row">
@@ -221,7 +221,7 @@
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>New references marked for inclusion.</b><br>
       <p class="m-0">{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
-  </div>
+    </div>
   {% endif %}
 
   <h3>Literature searches & imports</h3>
@@ -233,23 +233,23 @@
 {% endblock %}
 
 {% block extrajs %}
-{{ config|json_script:"config" }}
-<script type="text/javascript">
-  const config = window.app.getConfig();
+  {{ config|json_script:"config" }}
+  <script type="text/javascript">
+    const config = window.app.getConfig();
 
-  window.app.startup("litStartup", function(lit){
-    let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
-    tagtree.add_references(config.references);
-    tagtree.render(
-      document.getElementById('tags'),
-      {handleTagClick: (x) => {window.location.href = x.get_list_link()}, showReferenceCount: true, style: {height: "25rem"}}
-    )
-  });
+    window.app.startup("litStartup", function(lit){
+      let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
+      tagtree.add_references(config.references);
+      tagtree.render(
+        document.getElementById('tags'),
+        {handleTagClick: (x) => {window.location.href = x.get_list_link()}, showReferenceCount: true, style: {height: "25rem"}}
+      )
+    });
 
-  const histo = document.getElementById("referenceYearHistogram");
-  if (histo){
-    window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
-  }
-</script>
-{% include "common/helptext_popup_js.html" %}
+    const histo = document.getElementById("referenceYearHistogram");
+    if (histo){
+      window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
+    }
+  </script>
+  {% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

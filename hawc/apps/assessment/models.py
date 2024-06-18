@@ -1,8 +1,10 @@
 import json
 import logging
 import uuid
+from collections import namedtuple
 from typing import Any, NamedTuple
 
+import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
@@ -10,13 +12,13 @@ from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.http import HttpRequest
 from django.template import RequestContext, Template
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
@@ -342,11 +344,13 @@ class Assessment(models.Model):
         return perms.to_dict(user)
 
     def user_can_view_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
+        # reviewer or higher OR assessment is public
         if perms is None:
             perms = self.get_permissions()
         return perms.can_view_object(user)
 
     def user_can_edit_object(self, user, perms: AssessmentPermissions | None = None) -> bool:
+        # team member or higher AND assessment is editable
         if perms is None:
             perms = self.get_permissions()
         return perms.can_edit_object(user)
@@ -532,7 +536,7 @@ class AssessmentDetail(models.Model):
         default=constants.PeerReviewType.NONE,
     )
     qa_id = models.CharField(
-        max_length=16,
+        max_length=32,
         blank=True,
         verbose_name="Quality Assurance (QA) tracking identifier",
         help_text="Quality Assurance (QA) tracking identifier, if one exists.",
@@ -575,6 +579,12 @@ class AssessmentDetail(models.Model):
 
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.assessment_id,))
+
+    def get_peer_review_status_display(self) -> str:
+        value = constants.PeerReviewType(self.peer_review_status)
+        if value.display():
+            return value.label
+        return ""
 
 
 class AssessmentValue(models.Model):
@@ -713,6 +723,16 @@ class AssessmentValue(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:values-detail", args=[self.pk])
 
+    @cached_property
+    def check_calculated_value(self, rtol: float = 0.01) -> NamedTuple:
+        # check if calculated value is different than reported value
+        check = namedtuple("check", ["show_warning", "calculated_value", "tolerance"])
+        if self.value and self.pod_value and self.uncertainty and self.uncertainty > 0:
+            calculated = self.pod_value / self.uncertainty
+            if not np.isclose(self.value, calculated, rtol=rtol):
+                return check(True, calculated, rtol)
+        return check(False, 0, rtol)
+
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
@@ -731,13 +751,13 @@ class Attachment(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("assessment:attachment-detail", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk, "read"])
 
     def get_edit_url(self):
-        return reverse("assessment:attachment-update", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk, "update"])
 
     def get_delete_url(self):
-        return reverse("assessment:attachment-delete", args=[self.pk])
+        return reverse("assessment:attachment-htmx", args=[self.pk, "delete"])
 
     def get_dict(self):
         return {
@@ -893,7 +913,7 @@ class BaseEndpoint(models.Model):
 class TimeSpentEditing(models.Model):
     objects = managers.TimeSpentEditingManager()
 
-    seconds = models.FloatField(validators=(MinValueValidator,))
+    seconds = models.FloatField()
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -904,25 +924,30 @@ class TimeSpentEditing(models.Model):
         verbose_name_plural = "Time spent editing models"
 
     def __str__(self):
-        return f"{self.content_type.model} {self.object_id}: {self.seconds}"
+        return f"{self.content_type.model} {self.object_id}: {self.seconds/60:.1f} min"
 
     @classmethod
     def get_cache_name(cls, url, session_key):
-        return hash(f"{url}-{session_key}")
+        return str(hash(f"{url}-{session_key}"))
 
     @classmethod
-    def set_start_time(cls, url, session_key):
-        cache_name = cls.get_cache_name(url, session_key)
+    def set_start_time(cls, request: HttpRequest):
+        cache_name = cls.get_cache_name(request.path, request.session.session_key)
         now = timezone.now()
         # Set max time of one hour on a page; otherwise assume the page is
         # open but user is doing other things.
         cache.set(cache_name, now, 60 * 60 * 1)
 
     @classmethod
-    def add_time_spent_job(cls, url, session_key, obj, assessment_id):
-        cache_name = cls.get_cache_name(url, session_key)
+    def add_time_spent_job(
+        cls, request: HttpRequest, obj, assessment_id: int, url: str | None = None
+    ):
+        cache_name = cls.get_cache_name(url or request.path, request.session.session_key)
         content_type_id = ContentType.objects.get_for_model(obj).id
-        add_time_spent.delay(cache_name, obj.id, assessment_id, content_type_id)
+        # wait 10 seconds to make sure database is populated
+        add_time_spent.s(cache_name, obj.id, assessment_id, content_type_id).apply_async(
+            countdown=10
+        )
 
     @classmethod
     def add_time_spent(cls, cache_name, object_id, assessment_id, content_type_id):

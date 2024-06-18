@@ -8,12 +8,12 @@ from django.contrib.auth.forms import (
     PasswordResetForm,
     SetPasswordForm,
 )
-from django.forms import ModelForm
+from django.forms import Form, ModelForm
 from django.urls import reverse
 
 from ...constants import AuthProvider
 from ..assessment.autocomplete import AssessmentAutocomplete
-from ..common.auth.turnstyle import validate
+from ..common.auth.turnstile import Turnstile
 from ..common.autocomplete import AutocompleteMultipleChoiceField
 from ..common.forms import BaseFormHelper
 from ..common.helper import url_query
@@ -142,6 +142,7 @@ class RegisterForm(PasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.turnstile = Turnstile()
         if settings.ACCEPT_LICENSE_REQUIRED:
             self.fields["license_v2_accepted"].help_text = _accept_license_help_text
         else:
@@ -159,6 +160,7 @@ class RegisterForm(PasswordForm):
         helper.add_row("first_name", 2, "col-6")
         helper.add_row("password1", 2, "col-6")
         add_disclaimer(helper)
+        helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
         return helper
 
     def clean_license_v2_accepted(self):
@@ -172,6 +174,10 @@ class RegisterForm(PasswordForm):
         if models.HAWCUser.objects.filter(email__iexact=email).count() > 0:
             raise forms.ValidationError("HAWC user with this email already exists.")
         return email
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -276,16 +282,11 @@ class HAWCAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         self.next_url = kwargs.pop("next_url")
         super().__init__(*args, **kwargs)
-        self.enable_turnstyle = len(settings.TURNSTYLE_SITE) > 0
+        self.turnstile = Turnstile()
 
     def get_extra_text(self) -> str:
-        challenge = (
-            f'<div class="cf-turnstile mb-3" data-sitekey="{settings.TURNSTYLE_SITE}"></div>'
-            if self.enable_turnstyle
-            else ""
-        )
         text = f"""<a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
-        <br/><br/>{challenge}
+        <br/><br/>
         <a href="{reverse("user:reset_password")}">Forgot your password?</a>"""
         if AuthProvider.external in settings.AUTH_PROVIDERS:
             url = reverse("user:external_auth")
@@ -310,6 +311,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
             ],
         )
         add_disclaimer(helper)
+        helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
         return helper
 
     def clean(self):
@@ -323,14 +325,17 @@ class HAWCAuthenticationForm(AuthenticationForm):
                     self.error_messages["invalid_login"]
                     % {"username": self.username_field.verbose_name}
                 )
-            elif not self.user_cache.is_active:
+
+            if not self.user_cache.is_active:
                 raise forms.ValidationError(self.error_messages["inactive"])
 
-        if settings.TURNSTYLE_SITE:
-            token = self.data.get("cf-turnstile-response", "")
-            response = validate(token)
-            if not response.success:
-                raise forms.ValidationError("Failed bot challenge - are you human?")
+            if settings.EMAIL_VERIFICATION_REQUIRED and self.user_cache.email_verified_on is None:
+                self.user_cache.maybe_send_email_verification(self.request)
+                raise forms.ValidationError(
+                    "Email verification required - please check your email."
+                )
+
+        self.turnstile.validate(self.data)
 
         return self.cleaned_data
 
@@ -339,16 +344,19 @@ class HAWCPasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].help_text = "Email-addresses are case-sensitive."
+        self.turnstile = Turnstile()
 
     @property
     def helper(self):
-        return BaseFormHelper(
+        helper = BaseFormHelper(
             self,
             legend_text="Password reset",
             help_text="Enter your email address below, and we'll email instructions for setting a new password.",
             cancel_url=reverse("user:login"),
             submit_text="Send email confirmation",
         )
+        helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
+        return helper
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -358,6 +366,10 @@ class HAWCPasswordResetForm(PasswordResetForm):
             raise forms.ValidationError("Email address not found")
 
         return email
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data
 
 
 class AdminUserForm(PasswordForm):
@@ -378,24 +390,28 @@ class AdminUserForm(PasswordForm):
             "first_name",
             "last_name",
             "external_id",
+            "is_superuser",
             "is_active",
             "is_staff",
             "password1",
             "password2",
             "groups",
+            "email_verified_on",
+            "date_joined",
+            "last_login",
         )
+        widgets = {
+            "date_joined": forms.TextInput(attrs={"size": 40}),
+            "last_login": forms.TextInput(attrs={"size": 40}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        disabled_fields = ("is_superuser", "date_joined", "last_login")
         if self.instance.external_id:
-            for field in (
-                "email",
-                "first_name",
-                "last_name",
-                "password1",
-                "password2",
-            ):
-                self.fields[field].disabled = True
+            disabled_fields += ("email", "first_name", "last_name", "password1", "password2")
+        for field in disabled_fields:
+            self.fields[field].disabled = True
 
         for field in ["project_manager", "team_member", "reviewer"]:
             self.fields[field].widget.attrs["data-theme"] = "default"
@@ -421,3 +437,30 @@ class AdminUserForm(PasswordForm):
             user.assessment_teams.set(self.cleaned_data["team_member"])
             user.assessment_reviewers.set(self.cleaned_data["reviewer"])
         return user
+
+
+class VerifyEmailForm(Form):
+    email = forms.EmailField(disabled=True, widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kw):
+        self.user = kw.pop("user")
+        super().__init__(*args, **kw)
+        self.fields["email"].initial = self.user.email
+        self.turnstile = Turnstile()
+
+    @property
+    def helper(self):
+        login_url = reverse("home")
+        helper = BaseFormHelper(
+            self,
+            legend_text=f"Verify <b>{self.user.email}</b>",
+            help_text='Click the "Verify" button to mark your email address as verified; you can then login using the account registered to that email address.',
+            cancel_url=login_url,
+            submit_text="Verify",
+        )
+        helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
+        return helper
+
+    def clean(self):
+        self.turnstile.validate(self.data)
+        return self.cleaned_data

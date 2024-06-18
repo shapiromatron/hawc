@@ -1,6 +1,7 @@
 """
 No operation migration. Stubbed in to replace obsolete load migration.
 """
+
 from django.db import migrations
 
 

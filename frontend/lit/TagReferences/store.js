@@ -4,6 +4,7 @@ import h from "shared/utils/helpers";
 
 import Reference from "../Reference";
 import TagTree from "../TagTree";
+import UdfStore from "./ReferenceUdfStore";
 
 class Store {
     config = null;
@@ -21,6 +22,7 @@ class Store {
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
         this.references = Reference.array(config.refs, this.tagtree, false);
+        this.udfStore = new UdfStore(this);
         // set first reference
         if (this.references.length > 0) {
             this.setReference(this.references[0]);
@@ -29,7 +31,12 @@ class Store {
     @computed get hasReference() {
         return this.reference !== null;
     }
+    @action.bound resetReferenceErrors() {
+        this.errorOnSave = false;
+        this.udfStore.errors = null;
+    }
     @action.bound setReference(reference) {
+        this.resetReferenceErrors();
         this.reference = reference;
         this.referenceTags = reference.tags.slice(0); // shallow copy
         this.referenceUserTags = reference.userTags
@@ -40,6 +47,7 @@ class Store {
         return !!_.find(tags, e => e.data.pk == tag.data.pk);
     }
     @action.bound addTag(tag) {
+        this.udfStore.updateValues();
         if (
             this.hasReference &&
             !_.find(this.referenceUserTags, el => el.data.pk === tag.data.pk)
@@ -48,6 +56,7 @@ class Store {
         }
     }
     @action.bound removeTag(tag) {
+        this.udfStore.updateValues();
         _.remove(this.referenceUserTags, el => el.data.pk === tag.data.pk);
     }
     @action.bound toggleTag(tag) {
@@ -55,8 +64,9 @@ class Store {
     }
     @action.bound handleSaveSuccess(response) {
         const {resolved} = response;
-        this.errorOnSave = false;
+        this.resetReferenceErrors();
         this.reference.userTags = resolved ? null : toJS(this.referenceUserTags);
+        this.reference.data.tag_udf_contents = toJS(this.udfStore.values);
         if (!this.config.conflict_resolution || resolved) {
             this.reference.tags = toJS(this.referenceUserTags);
         }
@@ -75,15 +85,17 @@ class Store {
         );
         this.successMessage = resolved ? "Saved! Tags added with no conflict." : "Saved!";
     }
-    @action.bound handleSaveFailure() {
+    @action.bound handleSaveFailure(response) {
+        this.udfStore.errors = response["UDF-form"] || null;
         this.errorOnSave = true;
     }
     @action.bound saveAndNext() {
         this.successMessage = "";
-        this.errorOnSave = false;
+        this.resetReferenceErrors();
         const payload = {
                 pk: this.reference.data.pk,
                 tags: this.referenceUserTags.map(tag => tag.data.pk),
+                udf_data: this.udfStore.getSubmissionValues(),
             },
             url = `/lit/api/reference/${this.reference.data.pk}/tag/`;
         h.handleSubmit(
@@ -98,6 +110,7 @@ class Store {
     }
     @action.bound removeAllTags() {
         this.referenceUserTags = [];
+        this.udfStore.updateValues();
     }
     @action.bound toggleSlideAway() {
         this.filterClass = this.filterClass == "" ? "slideAway" : "";

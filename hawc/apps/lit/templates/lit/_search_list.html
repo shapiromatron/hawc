@@ -25,12 +25,12 @@
           </td>
           <td>{{object.get_search_type_display}}: {{object.get_source_display}}</td>
           <td>{{object.references.count}}<br/>
-          {% with object.fraction_tagged|default:0 as tagged %}
-          <span class='form-text text-muted'>{{tagged|percentage}} tagged</span></td>
-          {% endwith %}
-          <td>{{object.created}}</td>
-          <td>{{object.date_last_run}}</td>
-        </tr>
+            {% with object.fraction_tagged|default:0 as tagged %}
+              <span class='form-text text-muted'>{{tagged|percentage}} tagged</span></td>
+            {% endwith %}
+            <td>{{object.created}}</td>
+            <td>{{object.date_last_run}}</td>
+          </tr>
       {% endfor %}
     </tbody>
   </table>

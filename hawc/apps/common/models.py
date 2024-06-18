@@ -1,5 +1,7 @@
 import logging
 import math
+import re
+from collections.abc import Iterable, Iterator
 from html import unescape
 
 import pandas as pd
@@ -157,7 +159,7 @@ class AssessmentRootMixin:
         return root.get_descendants()
 
     @classmethod
-    def annotate_nested_names(cls, qs: QuerySet):
+    def annotate_nested_names(cls, qs: QuerySet) -> QuerySet:
         """
         Include the nested name for each item in the queryset. Assumes the queryset is correctly
         ordered; uses the `name` field and saves to `nested_name` field.
@@ -182,6 +184,7 @@ class AssessmentRootMixin:
                 node.nested_name = "|".join(names)
 
             last_depth = node.depth
+        return qs
 
     @classmethod
     def as_dataframe(cls, assessment_id: int, include_root=False) -> pd.DataFrame:
@@ -615,3 +618,33 @@ def pd_strip_tags(df: pd.DataFrame, columns: list[str]):
 class NumericTextField(models.CharField):
     generic_help_text = "Non-numeric values can be used if necessary, but should be limited to <, ≤, ≥, >, LOD, LOQ."
     validators = [validators.NumericTextValidator()]
+
+
+def clone_name(instance: models.Model, field: str) -> str:
+    # Get a valid clone name for an instance of a model, that's under the required char size limit.
+    value = getattr(instance, field)
+    max_length = instance._meta.get_field(field).max_length
+    text = value
+    new_suffix = " (2)"
+    if m := re.search(r" \((\d+)\)$", value):
+        text = value[: -len(m[0])]
+        new_suffix = f" ({int(m[1]) + 1})"
+    return text[: max_length - len(new_suffix)] + new_suffix
+
+
+def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dict]:
+    """Return a list of dictionaries from a SQL SELECT statement.
+
+    Args:
+        sql (str): A SQL query; must start with SELECT
+        params (Iterable | None, optional): Parameters for the query; defaults to None.
+
+    Yields:
+        Iterator[dict]: an iterator of dictionaries
+    """
+    if sql.upper().startswith("SELECT") is False:
+        raise ValueError("Query must start with SELECT")
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        columns = [col[0] for col in cursor.description]
+        yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())

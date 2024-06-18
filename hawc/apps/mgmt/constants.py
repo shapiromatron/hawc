@@ -9,7 +9,20 @@ class TaskType(models.IntegerChoices):
 
 
 class TaskStatus(models.IntegerChoices):
-    NOT_STARTED = 10, "not started"
-    STARTED = 20, "started"
-    COMPLETED = 30, "completed"
-    ABANDONED = 40, "abandoned"
+    NOT_STARTED = 10, "Not Started"
+    STARTED = 20, "Started"
+    COMPLETED = 30, "Completed"
+    ABANDONED = 40, "Abandoned"
+
+    @classmethod
+    def extra_choices(cls):
+        return [(990, "Active"), (995, "Inactive"), *cls.choices]
+
+    @classmethod
+    def filter_extra(cls, value: int) -> models.Q:
+        if value == 990:
+            return models.Q(status__in=[10, 20])
+        elif value == 995:
+            return models.Q(status__in=[30, 40])
+        else:
+            return models.Q(status=value)

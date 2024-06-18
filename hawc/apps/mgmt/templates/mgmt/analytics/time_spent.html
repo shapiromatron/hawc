@@ -1,14 +1,21 @@
 {% block content %}
-    <div class="card-columns">
-        {% analytics_card value=total_time_spent label='spent on assessment' %}
+  <div class="d-flex">
+    {% actions %}
+      <span class="dropdown-header">Time spent data</span>
+      <a class="dropdown-item" href="{% url 'mgmt:api:assessment-time-spent' assessment_pk %}?format=xlsx">Download (xlsx)</a>
+    {% endactions %}
+  </div>
+  <div class="card-columns">
+    {% analytics_card value=total_time_spent label='spent on assessment' %}
+  </div>
+  {% include 'common/analytics_plot.html' with title='Time spent per content type' plot=time_spent_per_model_plot caption="Total time spent by content type for content objects within this assessment. This metric is imperfect; it is calculated by the total time the create and update forms are open for each content object.  This may overestimate time if a form is open but a user is not actively using it; or underestimate time where users are reviewing data in the read-only form. If content is missing or data appears inaccurate, please let us know, we'd like to improve this metric!" %}
+  <div class="card box-shadow">
+    <div class="card-body">
+      <h3 class="text-center">Total time and time per item summary</h3>
+      {{time_spent_tbl|safe}}
+      <p class=text-muted>
+        Total time spent for each content type used in an assessment. This includes summary statistics for the amount of time individual extractions take (in seconds), as well as the total time (in hours) that has been spent for all extractions of this type for the current assessment.
+      </p>
     </div>
-    {% include 'common/analytics_plot.html' with title='Time spent per content type' plot=time_spent_per_model_plot caption="Total time spent by content type for content objects within this assessment. This metric is imperfect; it is calculated by the total time the create and update forms are open for each content object.  This may overestimate time if a form is open but a user is not actively using it; or underestimate time where users are reviewing data in the read-only form. If content is missing or data appears inaccurate, please let us know, we'd like to improve this metric!" %}
-
-    <div class="card box-shadow">
-        <div class="card-body">
-            <h3 class="text-center">Total time per content type</h3>
-            {{time_spent_tbl|safe}}
-        </div>
-    </div>
-
+  </div>
 {% endblock %}

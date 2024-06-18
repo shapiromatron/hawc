@@ -25,31 +25,24 @@ class DataTable extends React.Component {
             }, 1000);
         }
     }
-    renderTable() {
-        const rows = this.props.dataset,
-            {tableId} = this.state,
-            columns = _.map(rows[0], (val, key) => key),
-            renderers = this.props.renderers || {};
+    renderTable(data, columns) {
+        const {tableId} = this.state;
 
         return (
             <table id={tableId} className="table table-striped table-sm">
                 <thead>
                     <tr>
                         {columns.map((col, i) => {
-                            return <th key={i}>{h.titleCase(col)}</th>;
+                            return <th key={i}>{col.title}</th>;
                         })}
                     </tr>
                 </thead>
                 <tbody>
-                    {rows.map((row, i) => {
+                    {data.map((row, i) => {
                         return (
                             <tr key={i}>
                                 {columns.map((col, j) => {
-                                    return (
-                                        <td key={j}>
-                                            {renderers[col] ? renderers[col](row) : row[col]}
-                                        </td>
-                                    );
+                                    return <td key={j}>{row[col.data]}</td>;
                                 })}
                             </tr>
                         );
@@ -59,11 +52,21 @@ class DataTable extends React.Component {
         );
     }
     render() {
-        const {datatables} = this.props;
+        const {dataset, renderers, datatables} = this.props,
+            // apply renderers to dataset
+            data = dataset.map(row =>
+                _.mapValues(row, (val, key, obj) => (renderers[key] ? renderers[key](obj) : val))
+            ),
+            // setup columns for use in datatables
+            columns = _.map(data[0], (val, key) => ({data: key, title: h.titleCase(key)}));
         return datatables ? (
-            <DataTableWrapper>{this.renderTable()}</DataTableWrapper>
+            <DataTableWrapper
+                className="table table-striped table-sm"
+                data={data}
+                columns={columns}
+            />
         ) : (
-            this.renderTable()
+            this.renderTable(data, columns)
         );
     }
 }
@@ -74,6 +77,7 @@ DataTable.propTypes = {
     datatables: PropTypes.bool,
 };
 DataTable.defaultProps = {
+    renderers: {},
     tablesort: true,
     datatables: false,
 };

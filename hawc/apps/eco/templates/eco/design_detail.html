@@ -1,68 +1,68 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex">
+  <div class="d-flex">
     <h2>{{object.name}}</h2>
     {% if obj_perms.edit and crud == "Read" %}
-        {% actions %}
-            <span class="dropdown-header">Study design editing</span>
-            <a class="dropdown-item" href="{{object.get_update_url}}">Update</a>
-            <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
-        {% endactions %}
+      {% actions %}
+        <span class="dropdown-header">Study design editing</span>
+        <a class="dropdown-item" href="{{object.get_update_url}}">Update</a>
+        <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
+      {% endactions %}
     {% endif %}
-</div>
+  </div>
 
-{% include "eco/fragments/_design_table.html" %}
+  {% include "eco/fragments/_design_table.html" %}
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Causes</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '15,20,15,15,15,20' %}
-            {% bs4_thead 'Name,Term,Species,Level,Level Units,Comment' %}
-            <tbody id="cause-tbody">
-                {% for object in causes %}
-                {% include "eco/fragments/cause_row.html" %}
-                {% empty %}
-                {% bs4_fullrow 'No causes available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+      <h3 class="card-title">Causes</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '15,20,15,15,15,20' %}
+        {% bs4_thead 'Name,Term,Species,Level,Level Units,Comment' %}
+        <tbody id="cause-tbody">
+          {% for object in causes %}
+            {% include "eco/fragments/cause_row.html" %}
+          {% empty %}
+            {% bs4_fullrow 'No causes available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Effects</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '15,20,15,15,15,20' %}
-            {% bs4_thead 'Name,Term,Species,Units,As Reported,Comment' %}
-            <tbody id="effect-tbody">
-                {% for object in effects %}
-                {% include "eco/fragments/effect_row.html" %}
-                {% empty %}
-                {% bs4_fullrow 'No effects available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+      <h3 class="card-title">Effects</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '15,20,15,15,15,20' %}
+        {% bs4_thead 'Name,Term,Species,Units,As Reported,Comment' %}
+        <tbody id="effect-tbody">
+          {% for object in effects %}
+            {% include "eco/fragments/effect_row.html" %}
+          {% empty %}
+            {% bs4_fullrow 'No effects available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        <h3 class="card-title">Results</h3>
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,20,15,15,15,15' %}
-            {% bs4_thead 'Name,Cause,Effect,Relationship Direction,Modifying Factors,Value' %}
-            <tbody id="result-tbody">
-                {% for object in results %}
-                    {% include "eco/fragments/result_row.html" %}
-                {% empty %}
-                    {% bs4_fullrow 'No results available.' %}
-                {% endfor %}
-            </tbody>
-        </table>
+      <h3 class="card-title">Results</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '20,20,15,15,15,15' %}
+        {% bs4_thead 'Name,Cause,Effect,Relationship Direction,Modifying Factors,Value' %}
+        <tbody id="result-tbody">
+          {% for object in results %}
+            {% include "eco/fragments/result_row.html" %}
+          {% empty %}
+            {% bs4_fullrow 'No results available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
 {% endblock %}

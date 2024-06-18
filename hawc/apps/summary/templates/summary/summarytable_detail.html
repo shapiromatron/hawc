@@ -11,14 +11,14 @@
           <i class="fa fa-fw fa-file-word-o"></i>&nbsp;Download report
         </a>
         {% if obj_perms.edit %}
-        <div class="dropdown-divider"></div>
-        <span class="dropdown-header">Edit settings</span>
-        <a class="dropdown-item" href="{{object.get_update_url}}">
-          <i class="fa fa-fw fa-edit"></i>&nbsp;Update
-        </a>
-        <a class="dropdown-item" href="{{object.get_delete_url}}">
-          <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
-        </a>
+          <div class="dropdown-divider"></div>
+          <span class="dropdown-header">Edit settings</span>
+          <a class="dropdown-item" href="{{object.get_update_url}}">
+            <i class="fa fa-fw fa-edit"></i>&nbsp;Update
+          </a>
+          <a class="dropdown-item" href="{{object.get_delete_url}}">
+            <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
+          </a>
         {% endif %}
       {% endactions %}
     {% endif %}
