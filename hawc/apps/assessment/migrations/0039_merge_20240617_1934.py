@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('assessment', '0038_alter_assessmentdetail_qa_id'),
-        ('assessment', '0038_assessment_animal_version'),
+        ("assessment", "0038_alter_assessmentdetail_qa_id"),
+        ("assessment", "0038_assessment_animal_version"),
     ]
 
-    operations = [
-    ]
+    operations = []

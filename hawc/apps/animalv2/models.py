@@ -471,7 +471,7 @@ class DataExtraction(models.Model):
     response_units = models.CharField(
         max_length=32,
         blank=True,
-        help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)",
+        help_text="Units the response was measured in (i.e., \u03bcg/dL, % control, etc.)",
     )
     dose_response_observations = models.TextField(help_text="TODO")
     result_details = models.TextField(help_text="TODO")
