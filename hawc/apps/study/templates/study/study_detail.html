@@ -179,31 +179,31 @@
       {% endif %}
     {% endif %}
 
-    {% endblock %}
+{% endblock %}
 
-    {% block extrajs %}
-      {{ config|json_script:"config" }}
-      <script type="text/javascript">
-        window.app.startup("studyStartup", function(app){
-          const data = window.app.getConfig(),
-                thisStudy = new app.Study(data.studyContent),
-                detail_div = $('#study_details');
+{% block extrajs %}
+  {{ config|json_script:"config" }}
+  <script type="text/javascript">
+    window.app.startup("studyStartup", function(app){
+      const data = window.app.getConfig(),
+            thisStudy = new app.Study(data.studyContent),
+            detail_div = $('#study_details');
 
-          thisStudy.build_details_table(detail_div);
+      thisStudy.build_details_table(detail_div);
 
-          if(data.attachments_viewable){
-            thisStudy.add_attachments_row(detail_div, data.attachments);
-          }
+      if(data.attachments_viewable){
+        thisStudy.add_attachments_row(detail_div, data.attachments);
+      }
 
-          if (thisStudy.has_riskofbias()){
-            window.app.startup("riskofbiasStartup", function (riskofbias) {
-              riskofbias.robDonutStartup({
-                studyId: data.studyContent.id,
-                assessmentId: data.studyContent.assessment.id,
-                el: document.getElementById('rob_plot')
-              });
-            });
-          }
+      if (thisStudy.has_riskofbias()){
+        window.app.startup("riskofbiasStartup", function (riskofbias) {
+          riskofbias.robDonutStartup({
+            studyId: data.studyContent.id,
+            assessmentId: data.studyContent.assessment.id,
+            el: document.getElementById('rob_plot')
+          });
         });
-      </script>
-    {% endblock extrajs %}
+      }
+    });
+  </script>
+{% endblock extrajs %}
