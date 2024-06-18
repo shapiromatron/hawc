@@ -1,22 +1,22 @@
 <script type="text/javascript">
-    $(document).ready(function () {
+  $(document).ready(function () {
 
-        $('#id_public').on('change', function () {
-            var isPublic = $(this).prop('checked'),
-                hideFromPublic = $("#div_id_hide_from_public_page");
+    $('#id_public').on('change', function () {
+      var isPublic = $(this).prop('checked'),
+          hideFromPublic = $("#div_id_hide_from_public_page");
 
-            (isPublic) ? hideFromPublic.show() : hideFromPublic.hide();
-        }).trigger('change');
+      (isPublic) ? hideFromPublic.show() : hideFromPublic.hide();
+    }).trigger('change');
 
-        const toggleCuration = function () {
-            var vocab = $('#id_vocabulary').val(),
-                hideFromPublic = $("#div_id_modify_uncontrolled_vocabulary");
+    const toggleCuration = function () {
+      var vocab = $('#id_vocabulary').val(),
+          hideFromPublic = $("#div_id_modify_uncontrolled_vocabulary");
 
-            (vocab) ? hideFromPublic.show() : hideFromPublic.hide();
-        }
-        $('#id_vocabulary').on('change', toggleCuration)
-        toggleCuration();
+      (vocab) ? hideFromPublic.show() : hideFromPublic.hide();
+    }
+    $('#id_vocabulary').on('change', toggleCuration)
+    toggleCuration();
 
-        $('#id_name').focus();
-    });
+    $('#id_name').focus();
+  });
 </script>

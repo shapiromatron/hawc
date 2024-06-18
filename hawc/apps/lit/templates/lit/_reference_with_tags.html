@@ -1,116 +1,116 @@
 <div id="tagged-ref-{{ref.pk}}" class="vw75">
-    {% if show_actions %}
+  {% if show_actions %}
     <div class="dropdown btn-group float-right">
-        <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference tags</a>
-            <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference</a>
-            <a href="{% url 'lit:tag-status' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag status</a>
-        </div>
+      <a class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a href="{% url 'lit:tag' assessment.pk%}?id={{ref.pk}}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference tags</a>
+        <a href="{% url 'lit:ref_edit' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Edit reference</a>
+        <a href="{% url 'lit:tag-status' ref.pk%}" class="dropdown-item" target="_blank" rel="noreferrer">Tag status</a>
+      </div>
     </div>
+  {% endif %}
+  <div>
+    <div class="ref_authors ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
+    <div class="ref_title mb-1">{{ref.title}}</div>
+    <p class="ref_small">{{ref.journal}}</p>
+    <div class="d-flex my-1">
+      {% for id in ref.identifiers.all %}
+        {% if id.get_url %}
+          <div class="btn-group mr-1 mb-1 flex-shrink-0">
+            <a class="btn btn-tny outline-btn rounded-left" href="{{id.get_url}}" rel="noopener noreferrer" target="_blank" >{{id.get_database_display}}</a>
+            <span class="outline-btn btn-tny rounded-right font-weight-normal border-left-0">{{id.unique_id}}</span>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="btn-group mr-1 mb-1 flex-shrink-0">
+        <a class="btn btn-tny outline-btn rounded-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
+        <span class="outline-btn btn-tny {% if ref.has_study %} border-right-0 {% else %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
+        {% if ref.has_study %}
+          <a class="btn btn-tny outline-btn rounded-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
+        {% endif %}
+      </div>
+    </div>
+    {% if ref.abstract and not hide_abstract %}
+      <p class="abstracts abstract-collapsed  mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
     {% endif %}
-    <div>
-        <div class="ref_authors ref_small mb-1">{{ref.authors}} {{ref.year}}</div>
-        <div class="ref_title mb-1">{{ref.title}}</div>
-        <p class="ref_small">{{ref.journal}}</p>
-        <div class="d-flex my-1">
-            {% for id in ref.identifiers.all %}
-            {% if id.get_url %}
-            <div class="btn-group mr-1 mb-1 flex-shrink-0">
-                <a class="btn btn-tny outline-btn rounded-left" href="{{id.get_url}}" rel="noopener noreferrer" target="_blank" >{{id.get_database_display}}</a>
-                <span class="outline-btn btn-tny rounded-right font-weight-normal border-left-0">{{id.unique_id}}</span>
-            </div>
-            {% endif %}
-            {% endfor %}
-            <div class="btn-group mr-1 mb-1 flex-shrink-0">
-                <a class="btn btn-tny outline-btn rounded-left" href="{{ref.get_absolute_url}}"> <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp;HAWC</a>
-                <span class="outline-btn btn-tny {% if ref.has_study %} border-right-0 {% else %} rounded-right {% endif %} font-weight-normal border-left-0">{{ref.id}}</span>
-                {% if ref.has_study %}
-                <a class="btn btn-tny outline-btn rounded-right" href="{{ref.study.get_absolute_url}}"> <i class="fa fa-book" aria-hidden="true"></i>&nbsp;Study</a>
-                {% endif %}
-            </div>
+  </div>
+  <div>
+    <div class="d-flex">
+      {% with ref.tags.all as tags %}{% if tags or show_consensus_tag_after %}
+        <div class="consensus-tag {% if show_consensus_tag_after %} col-md-6 {% endif %}">
+          {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
+          {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
         </div>
-        {% if ref.abstract and not hide_abstract %}
-        <p class="abstracts abstract-collapsed  mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
+      {% endif %}
+        {% if show_consensus_tag_after %}
+          <div class="consensus-tag col-md-6 border-left">
+            <p class="my-2"><b>Consensus tags after merge:</b></p>
+            {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
+            {% for tag in ref.bulk_merge_tag_names %}{% if tag not in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endif %}{% endfor %}
+          </div>
         {% endif %}
+      {% endwith %}
     </div>
-    <div>
-        <div class="d-flex">
-            {% with ref.tags.all as tags %}{% if tags or show_consensus_tag_after %}
-            <div class="consensus-tag {% if show_consensus_tag_after %} col-md-6 {% endif %}">
-                {% if show_user_tags %}<p class="my-2"><b>Consensus tags:</b></p>{% endif %}
-                {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
-            </div>
-            {% endif %}
-            {% if show_consensus_tag_after %}
-            <div class="consensus-tag col-md-6 border-left">
-                <p class="my-2"><b>Consensus tags after merge:</b></p>
-                {% for tag in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endfor %}
-                {% for tag in ref.bulk_merge_tag_names %}{% if tag not in tags %}{% include 'lit/_nested_tag.html' with tag=tag extra_classes=extra_tag_classes %}{% endif %}{% endfor %}
-            </div>
-            {% endif %}
-            {% endwith %}
-        </div>
-        {% if conflict_resolution %}
-        <div class="d-flex align-flex-end">
-            <form class="ml-auto"
-                hx-post="{% url 'lit:api:reference-merge-tags' ref.pk %}">
+    {% if conflict_resolution %}
+      <div class="d-flex align-flex-end">
+        <form class="ml-auto"
+              hx-post="{% url 'lit:api:reference-merge-tags' ref.pk %}">
+          <button class="approve btn btn-sm btn-success mr-2 align-center">
+            <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve All
+            <i class="fa fa-fw fa-question-circle px-1" data-toggle="popover" data-content="Accept and merge all tag additions and removals from individual user reviews. Tags are only removed if removed by all users."></i>
+          </button>
+        </form>
+      </div>
+    {% endif %}
+    {% if show_user_tags %}{% for user_tag in ref.user_tags.all %}
+      <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
+        <div class="d-flex justify-content-between my-2">
+          <div>
+            {% if conflict_resolution %}
+              <form class="d-inline-block"
+                    hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
                 <button class="approve btn btn-sm btn-success mr-2 align-center">
-                    <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve All
-                    <i class="fa fa-fw fa-question-circle px-1" data-toggle="popover" data-content="Accept and merge all tag additions and removals from individual user reviews. Tags are only removed if removed by all users."></i>
+                  <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve
                 </button>
-            </form>
+                <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
+              </form>
+            {% endif %}
+            <b>{{user_tag.user.get_full_name}}</b>{% debug_badge user_tag.id %} <i class="small">{{user_tag.last_updated}} </i>
+          </div>
+          {% if show_resolved_badge %}
+            <span class="badge badge-secondary align-self-start">{{user_tag.is_resolved|yesno:"Resolved,Unresolved"}}</span>
+          {% endif %}
         </div>
-        {% endif %}
-        {% if show_user_tags %}{% for user_tag in ref.user_tags.all %}
-        <div class="user-tag box-shadow bg-white px-3 my-3 pb-2 pt-1">
-            <div class="d-flex justify-content-between my-2">
-                <div>
-                    {% if conflict_resolution %}
-                        <form class="d-inline-block"
-                            hx-post="{% url 'lit:api:reference-resolve-conflict' ref.pk %}">
-                            <button class="approve btn btn-sm btn-success mr-2 align-center">
-                                <i class="fa fa-fw fa-check" aria-hidden="true"></i>&nbsp;Approve
-                            </button>
-                            <input name="user_tag_id" value={{user_tag.pk}} class="hidden">
-                        </form>
-                    {% endif %}
-                    <b>{{user_tag.user.get_full_name}}</b>{% debug_badge user_tag.id %} <i class="small">{{user_tag.last_updated}} </i>
-                </div>
-                {% if show_resolved_badge %}
-                <span class="badge badge-secondary align-self-start">{{user_tag.is_resolved|yesno:"Resolved,Unresolved"}}</span>
-                {% endif %}
-            </div>
-            {% with user_tag.consensus_diff as diff %}
-                {% for tag in ref.tags.all %}
-                    {% if tag in diff.intersection %}
-                        {% if conflict_resolution %}
-                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
-                        {% else %}
-                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
-                        {% endif %}
-                    {% else %}
-                        {% if tag.id in user_tag.deleted_tags %}
-                            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% for tag in diff.difference %}
-                    {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
-                {% endfor %}
-                {% if diff.intersection|length == 0 and diff.difference|length == 0 and user_tag.deleted_tags|length == 0 %}
-                    <p>No tags selected</p>
-                {% endif %}
-            {% endwith %}
-        </div>
-        {% endfor %}{% endif %}
-    </div>
+        {% with user_tag.consensus_diff as diff %}
+          {% for tag in ref.tags.all %}
+            {% if tag in diff.intersection %}
+              {% if conflict_resolution %}
+                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='' %}
+              {% else %}
+                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
+              {% endif %}
+            {% else %}
+              {% if tag.id in user_tag.deleted_tags %}
+                {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTagRemove' %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% for tag in diff.difference %}
+            {% include 'lit/_nested_tag.html' with tag=tag extra_classes='refUserTag' %}
+          {% endfor %}
+          {% if diff.intersection|length == 0 and diff.difference|length == 0 and user_tag.deleted_tags|length == 0 %}
+            <p>No tags selected</p>
+          {% endif %}
+        {% endwith %}
+      </div>
+    {% endfor %}{% endif %}
+  </div>
 </div>
 <script type="text/javascript">
 {% comment %}jQuery not available when script is inserted, but available when events are triggered{% endcomment %}
-document.querySelectorAll(
+  document.querySelectorAll(
     ".abstracts"
-).forEach(
+  ).forEach(
     el => el.addEventListener('click', e => $(e.target).closest('#tagged-ref-{{ref.pk}}').find('.abstracts').toggleClass("abstract-collapsed"))
-);
+  );
 </script>

@@ -24,6 +24,7 @@ from ..common.views import (
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
+from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
 
 
@@ -313,7 +314,7 @@ class DosingRegimeUpdate(BaseUpdate):
         return context
 
     def get_success_url(self):
-        super().get_success_url()
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.dosed_animals.get_absolute_url()
 
 
@@ -438,7 +439,8 @@ class EndpointListV2(BaseList):
         )
 
 
-class EndpointDetail(BaseDetail):
+class EndpointDetail(UDFDetailMixin, BaseDetail):
+    model = models.Endpoint
     queryset = models.Endpoint.objects.select_related(
         "animal_group",
         "animal_group__dosing_regime",

@@ -388,6 +388,8 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             return "summary/visual_detail_plotly.html"
         elif self.object.visual_type == constants.VisualType.IMAGE:
             return "summary/visual_detail_image.html"
+        elif self.object.visual_type == constants.VisualType.PRISMA:
+            return "summary/visual_detail_prisma.html"
         else:
             return super().get_template_names()
 
@@ -454,6 +456,11 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
+        if (
+            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
+        ):
+            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
@@ -461,14 +468,8 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
         }:
-            if (
-                visual_type == constants.VisualType.PLOTLY
-                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
-            ):
-                raise PermissionDenied()
             return "summary/visual_form_django.html"
-        else:
-            return super().get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -508,7 +509,7 @@ class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
         kwargs.update(
@@ -557,6 +558,11 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
+        if (
+            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
+        ):
+            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
@@ -564,14 +570,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
         }:
-            if (
-                visual_type == constants.VisualType.PLOTLY
-                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
-            ):
-                raise PermissionDenied()
             return "summary/visual_form_django.html"
-        else:
-            return super().get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -634,7 +634,7 @@ class DataPivotNew(BaseCreate):
     template_name = "summary/datapivot_form.html"
 
     def get_success_url(self):
-        super().get_success_url()
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.get_visualization_update_url()
 
     def get_form_kwargs(self):

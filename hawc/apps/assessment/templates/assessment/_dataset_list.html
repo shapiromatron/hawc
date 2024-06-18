@@ -1,36 +1,36 @@
 {% if object_list.count > 0 %}
-<h2>Datasets</h2>
-<table class="table table-sm table-striped">
+  <h2>Datasets</h2>
+  <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 60%;">
-        <col style="width: 10%;">
+      <col style="width: 30%;">
+      <col style="width: 60%;">
+      <col style="width: 10%;">
     </colgroup>
     <thead>
-        <tr>
-            <th>Dataset</th>
-            <th>Description</th>
-            <th>Download</th>
-        </tr>
+      <tr>
+        <th>Dataset</th>
+        <th>Description</th>
+        <th>Download</th>
+      </tr>
     </thead>
     <tbody>
-        {% for object in object_list %}
+      {% for object in object_list %}
         <tr>
-            <td><a href="{{object.get_absolute_url}}">{{object.name}}</a>
-                {% if obj_perms.edit and not object.published %}
-                <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
-                {% endif %}
-            </td>
-            <td>{{object.description|safe}}</td>
-            <td>
-                <i class="fas fa-file-csv"></i>
-                <a class="btn btn-primary" href="{{object.get_api_data_url}}?format=csv" title="Download CSV">
-                    <i class="fa fa-file-text-o"></i></a>
-                <a class="btn btn-primary" href="{{object.get_api_data_url}}?format=xlsx" title="Download Excel">
-                    <i class="fa fa-file-excel-o"></i></a>
-            </td>
+          <td><a href="{{object.get_absolute_url}}">{{object.name}}</a>
+            {% if obj_perms.edit and not object.published %}
+              <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+            {% endif %}
+          </td>
+          <td>{{object.description|safe}}</td>
+          <td>
+            <i class="fas fa-file-csv"></i>
+            <a class="btn btn-primary" href="{{object.get_api_data_url}}?format=csv" title="Download CSV">
+              <i class="fa fa-file-text-o"></i></a>
+            <a class="btn btn-primary" href="{{object.get_api_data_url}}?format=xlsx" title="Download Excel">
+              <i class="fa fa-file-excel-o"></i></a>
+          </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 {% endif %}

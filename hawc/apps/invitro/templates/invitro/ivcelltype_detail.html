@@ -1,16 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="ivCellType"></div>
+  <div id="ivCellType"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
-const canEdit = {{obj_perms.edit|lower}},
-    id = {{object.id}};
-window.app.startup("invitroStartup", function(app){
-    window.canEdit = canEdit;
-    app.IVCellType.displayAsPage(id, $("#ivCellType"));
-});
-</script>
+  <script type="text/javascript">
+    const canEdit = {{obj_perms.edit|lower}},
+          id = {{object.id}};
+    window.app.startup("invitroStartup", function(app){
+      window.canEdit = canEdit;
+      app.IVCellType.displayAsPage(id, $("#ivCellType"));
+    });
+  </script>
 {% endblock %}

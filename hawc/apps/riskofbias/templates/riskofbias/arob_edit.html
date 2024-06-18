@@ -1,29 +1,29 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>Update {{assessment.get_rob_name_display|lower}} requirements</h2>
-        {% actions %}
-            <span class="dropdown-header">{{assessment.get_rob_name_display}} changes</span>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.rob_settings.id %}">Update instructions</a>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
-            <a class="dropdown-item" href="{% url 'riskofbias:arob_load_approach' assessment.pk %}">Load approach</a>
-            <div class="dropdown-divider"></div>
-            <span class="dropdown-header">Domain changes</span>
-            <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
-        {% endactions %}
-    </div>
-    {{assessment.rob_settings.help_text|safe}}
+  <div class="d-flex">
+    <h2>Update {{assessment.get_rob_name_display|lower}} requirements</h2>
+    {% actions %}
+      <span class="dropdown-header">{{assessment.get_rob_name_display}} changes</span>
+      <a class="dropdown-item" href="{% url 'riskofbias:arob_text_update' assessment.rob_settings.id %}">Update instructions</a>
+      <a class="dropdown-item" href="{% url 'riskofbias:arob_copy' assessment.pk %}">Copy from existing</a>
+      <a class="dropdown-item" href="{% url 'riskofbias:arob_load_approach' assessment.pk %}">Load approach</a>
+      <div class="dropdown-divider"></div>
+      <span class="dropdown-header">Domain changes</span>
+      <a class="dropdown-item" href="{% url 'riskofbias:robd_create' assessment.pk %}">New domain</a>
+    {% endactions %}
+  </div>
+  {{assessment.rob_settings.help_text|safe}}
 
-    {% if no_data %}
+  {% if no_data %}
     {% include 'riskofbias/_arob_none_alert.html' %}
-    {% else %}
+  {% else %}
     <div id="main"></div>
-    {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-    {% if not no_data %}
-        {{ config|json_script:"config" }}
-    {% endif %}
+  {% if not no_data %}
+    {{ config|json_script:"config" }}
+  {% endif %}
 {% endblock extrajs %}

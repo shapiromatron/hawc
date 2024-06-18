@@ -50,17 +50,20 @@ class AnimalClient(BaseClient):
         url = f"{self.session.root_url}/ani/api/endpoint/"
         return self.session.post(url, data).json()
 
-    def data(self, assessment_id: int) -> pd.DataFrame:
+    def data(self, assessment_id: int, include_unpublished: bool = False) -> pd.DataFrame:
         """
         Retrieves a complete export of animal bioassay data for a given assessment.
 
         Args:
             assessment_id (int): Assessment ID
+            include_unpublished (bool, optional): If True, includes data from unpublished studies. Defaults to False.
 
         Returns:
             pd.DataFrame: Complete bioassay export
         """
         url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/full-export/"
+        if include_unpublished:
+            url += "?unpublished=true"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 

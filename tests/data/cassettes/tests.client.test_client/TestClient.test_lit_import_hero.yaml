@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/5353200,2199697,5920377,5176411,595055/recordsperpage/100.json
   response:
     body:
       string: "{\"results\":[{\"REFERENCE_ID\":5176411,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5176411\",\"hasPDF\":true,\"YEAR\":2018,\"allAuthors\":[\"Akin
-        Gump Strauss Hauer & Feld LLP\"],\"HEROID\":5176411,\"id\":5176411,\"referencetype\":[\"technical
+        Gump Strauss Hauer & Feld LLP\"],\"HEROID\":5176411,\"id\":\"5176411\",\"referencetype\":[\"technical
         report\"],\"type\":\"reference\",\"pdfURL\":\"https://www.regulations.gov/document?d=epa-hq-oppt-2016-0743-0102\",\"sortYear\":2018,\"PROJECTS\":[],\"firstAuthor\":\"Akin
         Gump Strauss Hauer & Feld LLP\",\"AUTHORS\":\"Akin Gump Strauss Hauer & Feld
         LLP\",\"noPDFAvailable\":false,\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(EPA-HQ-OPPT-2016-0743-0102).\",\"TITLE\":\"Re:
         EPA docket EPA-HQ-OPPT-2016-0743: N-Methyl-2-pyrrolidone (\\\"NMP\\\"), CAS#
-        872-50-4 comments regarding the NMP problem formulation document\",\"modified\":\"2019-11-29T16:11:18Z\",\"PMID\":\"\",\"_version_\":1651553210695942144},{\"bookTitle\":\"The
-        Merck Index: An Encyclopedia of Chemicals, Drugs, and Biologicals\",\"REFERENCE_ID\":595055,\"usage_path_key\":[4235,\"4234|1939|514\",\"1941|1956\",\"1958|1676|1720|1576|428|33427|33434\",\"20077|20079|20080|25679|25688|25689|2165\",\"2169|2181|2182\",\"7090|13943|10013|13944|10025|13945|10036|13886|13888|13893|13987|10259|10260|10261\",\"13987|10259|11245\",\"10081|10084|14043|10425|14044|10900|14048|10661|14028|10134|168\",\"178|24893|8211\"],\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/595055\",\"hasPDF\":true,\"isbn\":\"0911910131\",\"YEAR\":2001,\"allAuthors\":[\"Merck
+        872-50-4 comments regarding the NMP problem formulation document\",\"modified\":\"2022-06-07T04:07:11Z\",\"PMID\":\"\",\"_version_\":1734947458623995904},{\"bookTitle\":\"The
+        Merck Index: An Encyclopedia of Chemicals, Drugs, and Biologicals\",\"REFERENCE_ID\":595055,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/595055\",\"hasPDF\":true,\"isbn\":\"0911910131\",\"YEAR\":2001,\"allAuthors\":[\"Merck
         & Co., Inc.\",\"O'Neil, MJ; Smith, A; Heckelman, PE; Obenchain, JR, Jr; Gallipeau,
-        JAR; D'Arecca, MA; Budavari, S\"],\"HEROID\":595055,\"id\":595055,\"project_key\":[61,1836,299,413,1535,1871,1647,1826,1651,438,2357,2952,1677,2203,1435,2542,2543,2545,2546,2556,2558,2566,2567,2559,1835,2946,2497,1503,2329,1909],\"referencetype\":[\"book/book
+        JAR; D'Arecca, MA; Budavari, S\"],\"HEROID\":595055,\"id\":\"595055\",\"project_key\":[61,299,413,438,1435,1503,1535,1647,1651,1677,1826,1835,1836,1871,1909,2203,2329,2357,2497,2542,2543,2545,2546,2556,2558,2559,2566,2567,2946,2952],\"referencetype\":[\"book/book
         chapter\"],\"type\":\"reference\",\"sortYear\":2001,\"tag_path_text\":[\"IRIS|1,4-Dioxane
         - with inhalation update|Final (2013)\",\"IRIS|1,4-Dioxane - with inhalation
         update|External Review Draft (2011)\",\"IRIS|Benzo(a)pyrene (BaP)|Considered|2011
@@ -56,77 +56,92 @@ interactions:
         REs|OPPT_Methylene Chloride_F. Human Health|Total \u2013 title/abstract screening|Off
         topic\",\"Other|Assessments|1,4 Dioxane ERD\",\"Other|Assessments|1,4 Dioxane
         Final\",\"Other|Exposure White Paper References|Publications\",\"PPRTV|Toxaphene|Previous
-        HERO references\",\"PPRTV|Toxaphene (bio-weathered)\",\"PPRTV|Zirconium\",\"PPRTV|p-Aminophenol\"],\"category_key\":[2,32,18,21],\"PROJECTS\":[{\"PROJECT\":\"Chromium
-        VI - Archive\",\"PROJECT_ID\":1535,\"USAGES\":[{\"USAGE_ID\":1676,\"USAGE\":\"Considered
-        References - Box 5\",\"USAGES\":[{\"USAGE_ID\":1720,\"USAGE\":\"Supporting
-        Studies\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_F. Human Health\",\"PROJECT_ID\":2546,\"USAGES\":[{\"USAGE_ID\":13886,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":13888,\"USAGE\":\"Off
-        topic\",\"USAGES\":[{\"USAGE_ID\":13893,\"USAGE\":\"Citied in IRIS document
-        or IRIS HERO page\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Zirconium\",\"PROJECT_ID\":1435,\"USAGES\":[]},{\"PROJECT\":\"Biphenyl\",\"PROJECT_ID\":299,\"USAGES\":[{\"USAGE_ID\":1958,\"USAGE\":\"Excluded
-        References\",\"USAGES\":[]},{\"USAGE_ID\":1956,\"USAGE\":\"Considered \",\"USAGES\":[]}]},{\"PROJECT\":\"Vanadium
-        Pentoxide\",\"PROJECT_ID\":1677,\"USAGES\":[{\"USAGE_ID\":2169,\"USAGE\":\"Cited
-        References \",\"USAGES\":[{\"USAGE_ID\":2181,\"USAGE\":\"Other studies \",\"USAGES\":[{\"USAGE_ID\":2182,\"USAGE\":\"Physical
-        and chemical properties \",\"USAGES\":[]}]}]},{\"USAGE_ID\":7090,\"USAGE\":\"Cited
-        2015\",\"USAGES\":[]},{\"USAGE_ID\":2165,\"USAGE\":\"Previous HERO references\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_Methylene
-        Chloride_E. Fate\",\"PROJECT_ID\":2567,\"USAGES\":[{\"USAGE_ID\":14048,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10661,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_E. Fate\",\"PROJECT_ID\":2545,\"USAGES\":[{\"USAGE_ID\":13945,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10036,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_Methylene Chloride_D. Exposure\",\"PROJECT_ID\":2566,\"USAGES\":[{\"USAGE_ID\":14044,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10900,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Vanadium Pentoxide (Draft, 2011)\",\"PROJECT_ID\":2203,\"USAGES\":[]},{\"PROJECT\":\"OPPT_1,4-Dioxane_D.
-        Exposure\",\"PROJECT_ID\":2543,\"USAGES\":[{\"USAGE_ID\":13944,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10025,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Cyanobacterial Toxins\",\"PROJECT_ID\":1871,\"USAGES\":[{\"USAGE_ID\":1576,\"USAGE\":\"Cylindrospermopsin\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_C.
-        Engineering\",\"PROJECT_ID\":2542,\"USAGES\":[{\"USAGE_ID\":13943,\"USAGE\":\"Data
-        screening total\",\"USAGES\":[{\"USAGE_ID\":10013,\"USAGE\":\"Screening: Excluded\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Bromobenzene\",\"PROJECT_ID\":413,\"USAGES\":[]},{\"PROJECT\":\"TCA
-        - Cited\",\"PROJECT_ID\":1651,\"USAGES\":[]},{\"PROJECT\":\"Trichloroacetic
-        acid (TCA) (Final, 2011)\",\"PROJECT_ID\":438,\"USAGES\":[]},{\"PROJECT\":\"Benzo(a)pyrene
-        (BaP)\",\"PROJECT_ID\":1836,\"USAGES\":[{\"USAGE_ID\":1941,\"USAGE\":\"Cited\",\"USAGES\":[]},{\"USAGE_ID\":1939,\"USAGE\":\"Considered\",\"USAGES\":[{\"USAGE_ID\":514,\"USAGE\":\"2011
-        IASC draft cited references\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Assessments\",\"PROJECT_ID\":1835,\"USAGES\":[{\"USAGE_ID\":178,\"USAGE\":\"1,4
-        Dioxane Final\",\"USAGES\":[]},{\"USAGE_ID\":168,\"USAGE\":\"1,4 Dioxane ERD\",\"USAGES\":[]}]},{\"PROJECT\":\"Exposure
-        White Paper References\",\"PROJECT_ID\":2946,\"USAGES\":[{\"USAGE_ID\":24893,\"USAGE\":\"Publications\",\"USAGES\":[]}]},{\"PROJECT\":\"Zirconium\",\"PROJECT_ID\":2329,\"USAGES\":[]},{\"PROJECT\":\"p-Aminophenol\",\"PROJECT_ID\":1909,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Methylene
-        Chloride_F. Human Health\",\"PROJECT_ID\":2559,\"USAGES\":[{\"USAGE_ID\":14028,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10134,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Toxaphene (bio-weathered)\",\"PROJECT_ID\":1503,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Methylene
-        Chloride_C. Engineering\",\"PROJECT_ID\":2558,\"USAGES\":[{\"USAGE_ID\":14043,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10425,\"USAGE\":\"Off
-        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_Carbon Tetrachloride_F. Human
-        Health\",\"PROJECT_ID\":2556,\"USAGES\":[{\"USAGE_ID\":10081,\"USAGE\":\"On
-        topic - additional tags for titles/abstracts\",\"USAGES\":[{\"USAGE_ID\":10084,\"USAGE\":\"ADME\",\"USAGES\":[]}]},{\"USAGE_ID\":13987,\"USAGE\":\"Total
-        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10259,\"USAGE\":\"On
-        topic\",\"USAGES\":[{\"USAGE_ID\":10260,\"USAGE\":\"Peer review\",\"USAGES\":[{\"USAGE_ID\":10261,\"USAGE\":\"Primary
-        source\",\"USAGES\":[]}]},{\"USAGE_ID\":11245,\"USAGE\":\"Cited in IRIS document
-        or IRIS HERO page\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Vanadium Inhalation\",\"PROJECT_ID\":2952,\"USAGES\":[{\"USAGE_ID\":25679,\"USAGE\":\"Combined
-        Dataset\",\"USAGES\":[{\"USAGE_ID\":25688,\"USAGE\":\"Dataset for title/abstract
-        screening\",\"USAGES\":[{\"USAGE_ID\":25689,\"USAGE\":\"Excluded- PECO criteria
-        not met (TIAB)\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Vanadium Compounds -
-        Problem Formulation\",\"PROJECT_ID\":2357,\"USAGES\":[{\"USAGE_ID\":20077,\"USAGE\":\"Combined
-        data set\",\"USAGES\":[{\"USAGE_ID\":20079,\"USAGE\":\"Dataset for title/abstract
-        screening\",\"USAGES\":[{\"USAGE_ID\":20080,\"USAGE\":\"Excluded- PECO criteria
-        not met (TIAB)\",\"USAGES\":[]}]}]},{\"USAGE_ID\":33427,\"USAGE\":\"Manual
-        review of existing IRIS and PPRTV assessments\",\"USAGES\":[{\"USAGE_ID\":33434,\"USAGE\":\"IRIS
-        2011/2014\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Toxaphene\",\"PROJECT_ID\":2497,\"USAGES\":[{\"USAGE_ID\":8211,\"USAGE\":\"Previous
+        HERO references\",\"PPRTV|Toxaphene (bio-weathered)\",\"PPRTV|Zirconium\",\"PPRTV|p-Aminophenol\"],\"category_key\":[2,18,21,32],\"PROJECTS\":[{\"PROJECT\":\"Chromium
+        VI - Archive\",\"PROJECT_ID\":1535,\"USAGES\":[{\"USAGE_ID\":\"1676\",\"USAGE\":\"Considered
+        References - Box 5\",\"USAGES\":[{\"USAGE_ID\":\"1720\",\"USAGE\":\"Supporting
+        Studies\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Vanadium Pentoxide\",\"PROJECT_ID\":1677,\"USAGES\":[{\"USAGE_ID\":\"2169\",\"USAGE\":\"Cited
+        References \",\"USAGES\":[{\"USAGE_ID\":\"2181\",\"USAGE\":\"Other studies
+        \",\"USAGES\":[{\"USAGE_ID\":\"2182\",\"USAGE\":\"Physical and chemical properties
+        \",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"2165\",\"USAGE\":\"Previous HERO references\",\"USAGES\":[]},{\"USAGE_ID\":\"7090\",\"USAGE\":\"Cited
+        2015\",\"USAGES\":[]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_F. Human Health\",\"PROJECT_ID\":2546,\"USAGES\":[{\"USAGE_ID\":\"13886\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"13888\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[{\"USAGE_ID\":\"13893\",\"USAGE\":\"Citied in IRIS document
+        or IRIS HERO page\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Biphenyl\",\"PROJECT_ID\":299,\"USAGES\":[{\"USAGE_ID\":\"1958\",\"USAGE\":\"Excluded
+        References\",\"USAGES\":[]},{\"USAGE_ID\":\"1956\",\"USAGE\":\"Considered
+        \",\"USAGES\":[]}]},{\"PROJECT\":\"Zirconium\",\"PROJECT_ID\":1435,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Methylene
+        Chloride_E. Fate\",\"PROJECT_ID\":2567,\"USAGES\":[{\"USAGE_ID\":\"14048\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10661\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_E. Fate\",\"PROJECT_ID\":2545,\"USAGES\":[{\"USAGE_ID\":\"13945\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10036\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Vanadium Pentoxide (Draft, 2011)\",\"PROJECT_ID\":2203,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Methylene
+        Chloride_D. Exposure\",\"PROJECT_ID\":2566,\"USAGES\":[{\"USAGE_ID\":\"14044\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10900\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_1,4-Dioxane_D. Exposure\",\"PROJECT_ID\":2543,\"USAGES\":[{\"USAGE_ID\":\"13944\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10025\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"TCA - Cited\",\"PROJECT_ID\":1651,\"USAGES\":[]},{\"PROJECT\":\"Cyanobacterial
+        Toxins\",\"PROJECT_ID\":1871,\"USAGES\":[{\"USAGE_ID\":\"1576\",\"USAGE\":\"Cylindrospermopsin\",\"USAGES\":[]}]},{\"PROJECT\":\"Bromobenzene\",\"PROJECT_ID\":413,\"USAGES\":[]},{\"PROJECT\":\"OPPT_1,4-Dioxane_C.
+        Engineering\",\"PROJECT_ID\":2542,\"USAGES\":[{\"USAGE_ID\":\"13943\",\"USAGE\":\"Data
+        screening total\",\"USAGES\":[{\"USAGE_ID\":\"10013\",\"USAGE\":\"Screening:
+        Excluded\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Trichloroacetic acid (TCA) (Final,
+        2011)\",\"PROJECT_ID\":438,\"USAGES\":[]},{\"PROJECT\":\"Benzo(a)pyrene (BaP)\",\"PROJECT_ID\":1836,\"USAGES\":[{\"USAGE_ID\":\"1941\",\"USAGE\":\"Cited\",\"USAGES\":[]},{\"USAGE_ID\":\"1939\",\"USAGE\":\"Considered\",\"USAGES\":[{\"USAGE_ID\":\"514\",\"USAGE\":\"2011
+        IASC draft cited references\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Assessments\",\"PROJECT_ID\":1835,\"USAGES\":[{\"USAGE_ID\":\"178\",\"USAGE\":\"1,4
+        Dioxane Final\",\"USAGES\":[]},{\"USAGE_ID\":\"168\",\"USAGE\":\"1,4 Dioxane
+        ERD\",\"USAGES\":[]}]},{\"PROJECT\":\"Exposure White Paper References\",\"PROJECT_ID\":2946,\"USAGES\":[{\"USAGE_ID\":\"24893\",\"USAGE\":\"Publications\",\"USAGES\":[]}]},{\"PROJECT\":\"Zirconium\",\"PROJECT_ID\":2329,\"USAGES\":[]},{\"PROJECT\":\"p-Aminophenol\",\"PROJECT_ID\":1909,\"USAGES\":[]},{\"PROJECT\":\"Toxaphene
+        (bio-weathered)\",\"PROJECT_ID\":1503,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Methylene
+        Chloride_F. Human Health\",\"PROJECT_ID\":2559,\"USAGES\":[{\"USAGE_ID\":\"14028\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10134\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_Methylene Chloride_C. Engineering\",\"PROJECT_ID\":2558,\"USAGES\":[{\"USAGE_ID\":\"14043\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10425\",\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Vanadium Inhalation\",\"PROJECT_ID\":2952,\"USAGES\":[{\"USAGE_ID\":\"25679\",\"USAGE\":\"Combined
+        Dataset\",\"USAGES\":[{\"USAGE_ID\":\"25688\",\"USAGE\":\"Dataset for title/abstract
+        screening\",\"USAGES\":[{\"USAGE_ID\":\"25689\",\"USAGE\":\"Excluded- PECO
+        criteria not met (TIAB)\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"OPPT_Carbon
+        Tetrachloride_F. Human Health\",\"PROJECT_ID\":2556,\"USAGES\":[{\"USAGE_ID\":\"10081\",\"USAGE\":\"On
+        topic - additional tags for titles/abstracts\",\"USAGES\":[{\"USAGE_ID\":\"10084\",\"USAGE\":\"ADME\",\"USAGES\":[]}]},{\"USAGE_ID\":\"13987\",\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":\"10259\",\"USAGE\":\"On
+        topic\",\"USAGES\":[{\"USAGE_ID\":\"10260\",\"USAGE\":\"Peer review\",\"USAGES\":[{\"USAGE_ID\":\"10261\",\"USAGE\":\"Primary
+        source\",\"USAGES\":[]}]},{\"USAGE_ID\":\"11245\",\"USAGE\":\"Cited in IRIS
+        document or IRIS HERO page\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Vanadium
+        Compounds - Problem Formulation\",\"PROJECT_ID\":2357,\"USAGES\":[{\"USAGE_ID\":\"20077\",\"USAGE\":\"Combined
+        data set\",\"USAGES\":[{\"USAGE_ID\":\"20079\",\"USAGE\":\"Dataset for title/abstract
+        screening\",\"USAGES\":[{\"USAGE_ID\":\"20080\",\"USAGE\":\"Excluded- PECO
+        criteria not met (TIAB)\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"33427\",\"USAGE\":\"Manual
+        review of existing IRIS and PPRTV assessments\",\"USAGES\":[{\"USAGE_ID\":\"33434\",\"USAGE\":\"IRIS
+        2011/2014\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Toxaphene\",\"PROJECT_ID\":2497,\"USAGES\":[{\"USAGE_ID\":\"8211\",\"USAGE\":\"Previous
         HERO references\",\"USAGES\":[]}]},{\"PROJECT\":\"1,4-Dioxane - with inhalation
-        update\",\"PROJECT_ID\":61,\"USAGES\":[{\"USAGE_ID\":4234,\"USAGE\":\"External
-        Review Draft (2011)\",\"USAGES\":[]},{\"USAGE_ID\":4235,\"USAGE\":\"Final
-        (2013)\",\"USAGES\":[]}]},{\"PROJECT\":\"Phthalates\",\"PROJECT_ID\":1826,\"USAGES\":[{\"USAGE_ID\":428,\"USAGE\":\"Mixtures\",\"USAGES\":[]}]},{\"PROJECT\":\"DCM
+        update\",\"PROJECT_ID\":61,\"USAGES\":[{\"USAGE_ID\":\"4234\",\"USAGE\":\"External
+        Review Draft (2011)\",\"USAGES\":[]},{\"USAGE_ID\":\"4235\",\"USAGE\":\"Final
+        (2013)\",\"USAGES\":[]}]},{\"PROJECT\":\"Phthalates\",\"PROJECT_ID\":1826,\"USAGES\":[{\"USAGE_ID\":\"428\",\"USAGE\":\"Mixtures\",\"USAGES\":[]}]},{\"PROJECT\":\"DCM
         (Dichloromethane) (Final, 2011)\",\"PROJECT_ID\":1647,\"USAGES\":[]}],\"tag_path_key\":[\"2|61|4235\",\"2|61|4234\",\"2|1836|1939|514\",\"2|1836|1941\",\"2|299|1956\",\"2|299|1958\",\"2|413\",\"2|1535|1676|1720\",\"2|1871|1576\",\"2|1647\",\"2|1826|428\",\"2|1651\",\"2|438\",\"2|2357|33427|33434\",\"2|2357|20077|20079|20080\",\"2|2952|25679|25688|25689\",\"2|1677|2165\",\"2|1677|2169|2181|2182\",\"2|1677|7090\",\"2|2203\",\"2|1435\",\"32|2542|13943|10013\",\"32|2543|13944|10025\",\"32|2545|13945|10036\",\"32|2546|13886|13888|13893\",\"32|2556|13987|10259|10260|10261\",\"32|2556|13987|10259|11245\",\"32|2556|10081|10084\",\"32|2558|14043|10425\",\"32|2566|14044|10900\",\"32|2567|14048|10661\",\"32|2559|14028|10134\",\"18|1835|168\",\"18|1835|178\",\"18|2946|24893\",\"21|2497|8211\",\"21|1503\",\"21|2329\",\"21|1909\"],\"firstAuthor\":\"Merck
         & Co.\",\"AUTHORS\":\"Merck & Co., Inc.\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project\",\"category|project|usage\",\"category|project\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project\",\"category|project\",\"category|project\"],\"isPeerReviewed\":false,\"code\":\"bk\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"In
         O'Neil, MJ; Smith, A; Heckelman, PE; Obenchain, JR, Jr; Gallipeau, JAR; D'Arecca,
         MA; Budavari, S (Eds.), The Merck Index: An Encyclopedia of Chemicals, Drugs,
         and Biologicals (13th). Whitehouse Station, NJ: Merck & Co., Inc..\",\"TITLE\":\"The
-        Merck index: An encyclopedia of chemicals, drugs, and biologicals\",\"modified\":\"2021-10-25T17:44:02Z\",\"PMID\":\"\",\"_version_\":1714614535574257664},{\"REFERENCE_ID\":5920377,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5920377\",\"hasPDF\":false,\"YEAR\":1981,\"allAuthors\":[\"International
-        Research & Development Corporation (IRDC)\"],\"HEROID\":5920377,\"id\":5920377,\"referencetype\":[\"technical
+        Merck index: An encyclopedia of chemicals, drugs, and biologicals\",\"modified\":\"2023-12-21T16:37:10Z\",\"PMID\":\"\",\"_version_\":1785910147037528067},{\"REFERENCE_ID\":5920377,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5920377\",\"hasPDF\":false,\"YEAR\":1981,\"allAuthors\":[\"International
+        Research & Development Corporation (IRDC)\"],\"HEROID\":5920377,\"id\":\"5920377\",\"referencetype\":[\"technical
         report\"],\"type\":\"reference\",\"sortYear\":1981,\"PROJECTS\":[],\"firstAuthor\":\"International
         Research & Development Corporation (IRDC)\",\"AUTHORS\":\"International Research
         & Development Corporation (IRDC)\",\"noPDFAvailable\":false,\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"Acute
-        inhalation toxicity test with dimethyloldihydroxyethylene urea in rats\",\"modified\":\"2019-12-02T20:17:20Z\",\"PMID\":\"\",\"_version_\":1651840483768401920},{\"REFERENCE_ID\":5353200,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5353200\",\"hasPDF\":false,\"YEAR\":1979,\"allAuthors\":[\"EG
-        & G Bionomics\"],\"HEROID\":5353200,\"id\":5353200,\"referencetype\":[\"technical
-        report\"],\"type\":\"reference\",\"sortYear\":1979,\"PROJECTS\":[],\"firstAuthor\":\"EG
-        & G Bionomics\",\"AUTHORS\":\"EG & G Bionomics\",\"noPDFAvailable\":false,\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(BW-79-2-404).\",\"TITLE\":\"The
-        chronic toxicity of santicizer 160 (BN-78-1384327-1) to the water flea (Daphnia
-        magna)\",\"modified\":\"2019-07-24T15:23:49Z\",\"PMID\":\"\",\"_version_\":1639953810368495616},{\"REFERENCE_ID\":2199697,\"usage_path_key\":[\"7109|7127\",\"7109|7110|7113\",\"4737|29718|29950|29952\"],\"ABSTRACT\":\"HAPAB
+        inhalation toxicity test with dimethyloldihydroxyethylene urea in rats\",\"modified\":\"2022-06-07T04:27:11Z\",\"PMID\":\"\",\"_version_\":1734948717537001473},{\"REFERENCE_ID\":5353200,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5353200\",\"hasPDF\":true,\"YEAR\":1979,\"allAuthors\":[\"EG&G
+        Bionomics\",\"EG&G Bionomics\",\"EG&G Bionomics\"],\"HEROID\":5353200,\"id\":\"5353200\",\"project_key\":[2842],\"referencetype\":[\"technical
+        report\"],\"type\":\"reference\",\"sortYear\":1979,\"tag_path_text\":[\"OPPT
+        REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|TSCA Literature|TSCA Submissions
+        Search\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|TSCA Literature|TSCA
+        Section 8d - Dermal\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate
+        (BBP)|Systematic Review|Hazard|Full Text Review|Meets PECO Criteria\",\"OPPT
+        REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|Systematic Review|Hazard|Data
+        Evaluation|Ecotoxicology\"],\"category_key\":[32],\"PROJECTS\":[{\"PROJECT\":\"OPPT
+        Evidence Map: Butyl benzyl phthalate (BBP)\",\"PROJECT_ID\":2842,\"USAGES\":[{\"USAGE_ID\":\"33501\",\"USAGE\":\"TSCA
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"22152\",\"USAGE\":\"TSCA Submissions
+        Search\",\"USAGES\":[]},{\"USAGE_ID\":\"30935\",\"USAGE\":\"TSCA Section 8d
+        - Dermal\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30944\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"30948\",\"USAGE\":\"Hazard\",\"USAGES\":[{\"USAGE_ID\":\"30988\",\"USAGE\":\"Full
+        Text Review\",\"USAGES\":[{\"USAGE_ID\":\"30993\",\"USAGE\":\"Meets PECO Criteria\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30930\",\"USAGE\":\"Data
+        Evaluation\",\"USAGES\":[{\"USAGE_ID\":\"30976\",\"USAGE\":\"Ecotoxicology\",\"USAGES\":[]}]}]}]}]}],\"tag_path_key\":[\"32|2842|33501|22152\",\"32|2842|33501|30935\",\"32|2842|30944|30948|30988|30993\",\"32|2842|30944|30948|30930|30976\"],\"AUTHORS\":\"EG&G
+        Bionomics\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(BW-79-2-404).
+        Wareham, MA: EG & G Bionomics, Aquatic Toxicology Laboratory.\",\"TITLE\":\"[Sanitized]
+        The chronic toxicity of Santicizer 160 (BN-78-1384327-1) to the water flea
+        (Daphnia magna)\",\"modified\":\"2023-09-07T15:57:29Z\",\"PMID\":\"\",\"_version_\":1776394961205329923},{\"REFERENCE_ID\":2199697,\"ABSTRACT\":\"HAPAB
         \ Zooplankton lipid samples from various stations in the Atlantic Ocean consistently
         contained polychlorinated biphenyls in greater amounts than total DDT.  PCB
         ratios ranged from 4.8 to GT 45,000.  Concentrations of PCBs in zooplankton
@@ -137,39 +152,41 @@ interactions:
         there was a pronounced west-east gradient.  The chlorine content of the PCBs
         detected was about 54%, an unexplained finding since the majority of the PCBs
         produced in the U.S.  contains less chlorine.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/2199697\",\"hasPDF\":false,\"YEAR\":1972,\"allAuthors\":[\"Carmignani
-        GM $; Harvey, GR; Miklas, H; Risebrough, RW; Vreeland\"],\"HEROID\":2199697,\"id\":2199697,\"project_key\":[384,2932],\"referencetype\":[\"technical
-        report\"],\"type\":\"reference\",\"sortYear\":1972,\"tag_path_text\":[\"IRIS|PCBs|Litsearches|Remaining\",\"IRIS|PCBs|Litsearches|LitSearch
+        GM $; Harvey, GR; Miklas, H; Risebrough, RW; Vreeland\"],\"HEROID\":2199697,\"id\":\"2199697\",\"project_key\":[384,2932],\"referencetype\":[\"technical
+        report\"],\"type\":\"reference\",\"sortYear\":1972,\"tag_path_text\":[\"IRIS|PCBs|Excluded\",\"IRIS|PCBs|Litsearches|Remaining\",\"IRIS|PCBs|Litsearches|LitSearch
         August 2015|Toxline\",\"IRIS|PCBs|Considered\",\"Other|PCB Support Projects|PCB
         Commercial Mixture Congener Profiles|Screened (TIAB in SWIFT)|Excluded studies
         (TIAB)\"],\"category_key\":[2,18],\"PROJECTS\":[{\"PROJECT\":\"PCB Support
-        Projects\",\"PROJECT_ID\":2932,\"USAGES\":[{\"USAGE_ID\":29718,\"USAGE\":\"PCB
-        Commercial Mixture Congener Profiles\",\"USAGES\":[{\"USAGE_ID\":29950,\"USAGE\":\"Screened
-        (TIAB in SWIFT)\",\"USAGES\":[{\"USAGE_ID\":29952,\"USAGE\":\"Excluded studies
-        (TIAB)\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"PCBs\",\"PROJECT_ID\":384,\"USAGES\":[{\"USAGE_ID\":7109,\"USAGE\":\"Litsearches\",\"USAGES\":[{\"USAGE_ID\":7110,\"USAGE\":\"LitSearch
-        August 2015\",\"USAGES\":[{\"USAGE_ID\":7113,\"USAGE\":\"Toxline\",\"USAGES\":[]}]},{\"USAGE_ID\":7127,\"USAGE\":\"Remaining\",\"USAGES\":[]}]},{\"USAGE_ID\":4737,\"USAGE\":\"Considered\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|384|7109|7127\",\"2|384|7109|7110|7113\",\"2|384|4737\",\"18|2932|29718|29950|29952\"],\"firstAuthor\":\"Carmignani
+        Projects\",\"PROJECT_ID\":2932,\"USAGES\":[{\"USAGE_ID\":\"29718\",\"USAGE\":\"PCB
+        Commercial Mixture Congener Profiles\",\"USAGES\":[{\"USAGE_ID\":\"29950\",\"USAGE\":\"Screened
+        (TIAB in SWIFT)\",\"USAGES\":[{\"USAGE_ID\":\"29952\",\"USAGE\":\"Excluded
+        studies (TIAB)\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"PCBs\",\"PROJECT_ID\":384,\"USAGES\":[{\"USAGE_ID\":\"14699\",\"USAGE\":\"Excluded\",\"USAGES\":[]},{\"USAGE_ID\":\"7109\",\"USAGE\":\"Litsearches\",\"USAGES\":[{\"USAGE_ID\":\"7110\",\"USAGE\":\"LitSearch
+        August 2015\",\"USAGES\":[{\"USAGE_ID\":\"7113\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7127\",\"USAGE\":\"Remaining\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4737\",\"USAGE\":\"Considered\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|384|14699\",\"2|384|7109|7127\",\"2|384|7109|7110|7113\",\"2|384|4737\",\"18|2932|29718|29950|29952\"],\"firstAuthor\":\"Carmignani
         GM $\",\"AUTHORS\":\"Carmignani GM $; Harvey, GR; Miklas, H; Risebrough, RW;
-        Vreeland\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage|usage\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(HAPAB/73/01317).\",\"TITLE\":\"PCB
-        residues in Atlantic zooplankton\",\"modified\":\"2021-03-22T15:32:39Z\",\"PMID\":\"\",\"_version_\":1694946726301925376}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        Vreeland\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage|usage\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(HAPAB/73/01317).\",\"TITLE\":\"PCB
+        residues in Atlantic zooplankton\",\"modified\":\"2022-08-10T20:53:52Z\",\"PMID\":\"\",\"_version_\":1740808999740112896}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 26 Jan 2022 16:23:39 GMT
+      - Tue, 20 Feb 2024 16:40:52 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.52 (Win64) OpenSSL/1.1.1m mod_jk/1.2.46
+      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=9523758; Expires=Thu, 27-Jan-2022 16:23:39 GMT; Path=/; HttpOnly
-      - CFTOKEN=32088089; Expires=Thu, 27-Jan-2022 16:23:39 GMT; Path=/; HttpOnly
-      - JSESSIONID=17E289E45D6E21168C6A3C69D1858CBB.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2022%2F01%2F26%2011%3A23%3A39; Path=/
+      - CFID=14825933; Expires=Wed, 21 Feb 2024 16:40:52 GMT; Path=/; HttpOnly
+      - CFTOKEN=67088465; Expires=Wed, 21 Feb 2024 16:40:52 GMT; Path=/; HttpOnly
+      - JSESSIONID=05803AA58195520BD800C2961CFC62E6.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F02%2F20%2011%3A40%3A52; Path=/
       Strict-Transport-Security:
-      - max-age=63072000; includeSubdomains; preload
+      - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
     status:
       code: 200
       message: OK

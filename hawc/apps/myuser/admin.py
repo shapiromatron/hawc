@@ -30,6 +30,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
         "is_staff",
         "last_login",
         "date_joined",
+        "email_verified_on",
     )
     list_filter = (
         "is_superuser",
@@ -37,6 +38,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
         "is_active",
         "date_joined",
         "last_login",
+        "email_verified_on",
         "groups",
     )
     search_fields = ("last_name", "first_name", "email", "external_id")
@@ -53,6 +55,12 @@ class HAWCUserAdmin(admin.ModelAdmin):
             user.send_welcome_email()
 
         modeladmin.message_user(request, "Welcome email(s) sent!")
+
+    @admin.action(description="Send email verification email")
+    def send_email_verification_email(modeladmin, request, queryset):
+        for user in queryset:
+            user.send_email_verification(request)
+        modeladmin.message_user(request, "Email verification email(s) sent!")
 
     @admin.action(description="Set user-password")
     def set_password(modeladmin, request, queryset):
@@ -74,6 +82,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
 
     actions = (
         send_welcome_emails,
+        send_email_verification_email,
         set_password,
         clear_cache,
         diagnostic_500,

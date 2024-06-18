@@ -20,6 +20,7 @@
       "field_name": "---",
       "header_name": ""
     },
+    "calculated_columns": [],
     "dataline_settings": [
       {
         "conditional_formatting": [],
@@ -41,55 +42,55 @@
     "description_settings": [
       {
         "dpe": "---",
-        "field_index": "study name",
         "field_name": "study name",
         "header_name": "study name",
         "header_style": "header",
         "max_width": 150,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
-        "field_index": "study population name",
         "field_name": "study population name",
         "header_name": "study population name",
         "header_style": "header",
         "max_width": 100,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
-        "field_index": "outcome name",
         "field_name": "outcome name",
         "header_name": "outcome name",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
-        "field_index": "comparison set name",
         "field_name": "comparison set name",
         "header_name": "comparison set name",
         "header_style": "header",
         "max_width": 100,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
-        "field_index": "exposure group name",
         "field_name": "exposure group name",
         "header_name": "exposure group name",
         "header_style": "header",
         "max_width": 100,
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       },
       {
         "dpe": "---",
-        "field_index": "N",
         "field_name": "N",
         "header_name": "N",
         "header_style": "header",
-        "text_style": "base"
+        "text_style": "base",
+        "to_right": false
       }
     ],
     "filters": [

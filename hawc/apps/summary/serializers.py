@@ -3,6 +3,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common import validators
+from ..common.clean import sanitize_html
 from ..common.helper import SerializerHelper
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
@@ -14,7 +15,17 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DataPivot
-        fields = ("id", "title", "url", "visual_type")
+        fields = (
+            "id",
+            "slug",
+            "title",
+            "url",
+            "visual_type",
+            "caption",
+            "published",
+            "created",
+            "last_updated",
+        )
 
 
 class DataPivotSerializer(serializers.ModelSerializer):
@@ -114,7 +125,7 @@ class SummaryTextSerializer(serializers.ModelSerializer):
 
     def validate_text(self, value):
         validators.validate_hyperlinks(value)
-        return validators.clean_html(value)
+        return sanitize_html.clean_html(value)
 
     def validate(self, data):
         assessment = data["assessment"]

@@ -1,0 +1,31 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block extrahead %}
+  <meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
+{% endblock %}
+
+{% block content %}
+  <div class='d-flex'>
+    <h2>{{object.title}}</h2>
+    {% include "common/unpublished_badge.html" %}
+    {% if obj_perms.edit %}
+      {% actions %}
+        <span class="dropdown-header">Visualization editing</span>
+        <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">Update</a>
+        <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">Delete</a>
+      {% endactions %}
+    {% endif %}
+  </div>
+  <div class='visualization'></div>
+  <p>{{object.caption|safe}}</p>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    window.app.startup("summaryStartup", function(summary){
+      window.isEditable = {{obj_perms.edit|lower}};
+      summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
+    });
+  </script>
+{% endblock %}
+

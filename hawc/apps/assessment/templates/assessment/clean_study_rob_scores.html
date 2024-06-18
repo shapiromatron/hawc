@@ -1,11 +1,11 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h2>Clean {{assessment}} metrics</h2>
-    <p class='form-text text-muted'>Clean and standardize the {{assessment.get_rob_name_display|lower}} metric reviews across studies assessment-wide. Both <b>judgment</b> and <b>text</b> are editable.</p>
-    <div id="main"></div>
+  <h2>Clean {{assessment}} metrics</h2>
+  <p class='form-text text-muted'>Clean and standardize the {{assessment.get_rob_name_display|lower}} metric reviews across studies assessment-wide. Both <b>judgment</b> and <b>text</b> are editable.</p>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
-    {{ config|json_script:"config" }}
+  {{ config|json_script:"config" }}
 {% endblock extrajs %}
