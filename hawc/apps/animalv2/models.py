@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 from ..assessment.models import DSSTox, EffectTag
+from ..common.models import clone_name
 from ..vocab.models import Term
 from . import constants, managers
 
@@ -129,7 +130,7 @@ class Chemical(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -196,7 +197,7 @@ class AnimalGroup(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -256,7 +257,7 @@ class Treatment(models.Model):
         )
 
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         for dose_group in associated_dose_groups:
             dose_group.id = None
@@ -385,7 +386,7 @@ class Endpoint(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
