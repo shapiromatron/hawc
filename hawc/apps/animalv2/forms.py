@@ -8,15 +8,20 @@ from ..common.autocomplete import (
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..common.forms import BaseFormHelper, QuillField
+from ..common.forms import BaseFormHelper
 from . import autocomplete, constants, models
+
+
+def set_textarea_height(fields: dict, n_rows: int = 3):
+    for field in fields.values():
+        if isinstance(field.widget, forms.Textarea):
+            field.widget.attrs["rows"] = n_rows
 
 
 class ExperimentForm(ModelForm):
     class Meta:
         model = models.Experiment
         exclude = ("study",)
-        field_classes = {"comments": QuillField}
 
     def __init__(self, *args, **kwargs):
         parent = kwargs.pop("parent", None)
@@ -57,6 +62,7 @@ class ExperimentForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
+        set_textarea_height(self.fields)
 
         helper.add_row("name", 3, "col-md-4")
         helper.form_id = "experiment-v2-form"
@@ -85,7 +91,9 @@ class ChemicalForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("name", 3, "col-md-4")
+        helper.add_row("source", 3, "col-md-4")
         helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
+        set_textarea_height(self.fields)
         return helper
 
 
@@ -107,6 +115,8 @@ class AnimalGroupForm(forms.ModelForm):
         helper.add_row("species", 3, "col-md-4")
         helper.add_row("lifestage_at_exposure", 2, "col-md-6")
         helper.add_row("generation", 2, "col-md-6")
+        helper.add_row("husbandry_and_diet", 2, "col-md-6")
+        set_textarea_height(self.fields)
 
         assessment_id = self.instance.experiment.study.assessment.pk
         helper.add_create_btn(
@@ -149,7 +159,9 @@ class TreatmentForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.add_row("name", 3, "col-md-4")
         helper.add_row("exposure_duration", 3, "col-md-4")
+        set_textarea_height(self.fields)
 
         return helper
 
@@ -207,6 +219,8 @@ class EndpointForm(forms.ModelForm):
         helper.form_tag = False
         helper.add_row("system", 4, "col-md-3")
         helper.add_row("effect_modifier_timing", 4, "col-md-3")
+        helper.add_row("additional_tags", 2, "col-md-6")
+        set_textarea_height(self.fields)
 
         return helper
 
@@ -240,6 +254,8 @@ class ObservationTimeForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.add_row("observation_time", 3, "col-md-4")
+        set_textarea_height(self.fields)
 
         return helper
 
@@ -264,19 +280,18 @@ class DataExtractionForm(forms.ModelForm):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.add_row("endpoint", 3, "col-md-4")
         helper.add_row("data_location", 3, "col-md-4")
         helper.add_row("statistical_method", 2, "col-md-6")
         helper.add_row("method_to_control_for_litter_effects", 3, "col-md-4")
+        set_textarea_height(self.fields)
 
         return helper
 
     def is_valid(self):
         if "is_qualitative_only" in self.data and self.data["is_qualitative_only"] == "on":
             # if "is qualitative only" is checked, we are hiding other fields...so relax the required'ness of some...
-            for usually_required_field in [
-                "dose_response_observations",
-                "result_details",
-            ]:
+            for usually_required_field in ["dose_response_observations", "result_details"]:
                 self.fields[usually_required_field].required = False
 
             # ...and set sensible values on the hidden ones as well.
