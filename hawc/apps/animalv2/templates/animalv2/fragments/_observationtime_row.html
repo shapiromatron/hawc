@@ -4,6 +4,3 @@
   <td>{{object.get_observation_time_units_display}}</td>
   {% include "common/fragments/_object_row.html" with model="observationtime" app="animalv2" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr style="display: none" id="observationtime-empty-row" hx-target="this"></tr>
-{% endif %}

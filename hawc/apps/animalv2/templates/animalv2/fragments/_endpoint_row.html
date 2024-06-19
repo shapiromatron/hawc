@@ -5,6 +5,3 @@
   <td>{{object.resolved_effect}}</td>
   {% include "common/fragments/_object_row.html" with model="endpoint" app="animalv2" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr style="display: none" id="endpoint-empty-row" hx-target="this"></tr>
-{% endif %}
