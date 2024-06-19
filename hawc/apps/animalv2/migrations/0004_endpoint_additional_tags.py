@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("animalv2", "0003_endpoint_name"),
-        ("assessment", "0038_assessment_animal_version"),
+        ("assessment", "0037_delete_blog"),
     ]
 
     operations = [
