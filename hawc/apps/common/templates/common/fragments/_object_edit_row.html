@@ -6,8 +6,8 @@
           {% include "common/scientific_pulldown.html" %}
         </div>
         {% crispy form %}
-        {% for fsc in formset_contexts %}
-          {% include fsc.fragment with formset_instance=fsc.instance formset_helper=fsc.helper %}
+        {% for fs in formsets %}
+          {% include fs.fragment with formset_instance=fs.instance formset_helper=fs.helper %}
         {% endfor %}
         <div class="form-row justify-content-center my-2">
           {% if form.instance.id %}

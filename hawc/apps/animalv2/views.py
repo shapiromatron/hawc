@@ -230,10 +230,9 @@ class ExperimentChildViewSet(HtmxViewSet):
         context["model"] = self.model.__name__.lower()
         context["app"] = "animalv2"
 
-        formset_idx = 0
         formsets = kwargs.get("formsets", [])
-        formset_contexts = []
-        for formset_config in self.formset_configurations:
+        formsets = []
+        for formset_idx, formset_config in enumerate(self.formset_configurations):
             formset = formsets[formset_idx] if formset_idx < len(formsets) else None
 
             if formset is None:
@@ -267,16 +266,15 @@ class ExperimentChildViewSet(HtmxViewSet):
                     prefix=formset_config.form_prefix,
                 )
 
-            formset_contexts.append(
+            formsets.append(
                 {
                     "fragment": formset_config.fragment,
                     "instance": formset,
                     "helper": formset_config.helper_class(),
                 }
             )
-            formset_idx += 1
 
-        context["formset_contexts"] = formset_contexts
+        context["formsets"] = formsets
 
         return context
 
