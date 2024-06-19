@@ -45,9 +45,9 @@ class ExperimentForm(ModelForm):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing experiment.",
-                "cancel_url": self.instance.get_absolute_url(),
             }
+            helper = BaseFormHelper(self, **inputs)
+            helper.form_tag = False
         else:
             inputs = {
                 "legend_text": "Create new experiment",
@@ -60,12 +60,12 @@ class ExperimentForm(ModelForm):
                     with different study-designs, durations, or test-species.""",
                 "cancel_url": self.instance.study.get_absolute_url(),
             }
+            helper = BaseFormHelper(self, **inputs)
 
-        helper = BaseFormHelper(self, **inputs)
+        helper.form_id = "experiment-v2-form"
+        helper.add_row("name", 3, "col-md-4")
         set_textarea_height(self.fields)
 
-        helper.add_row("name", 3, "col-md-4")
-        helper.form_id = "experiment-v2-form"
         return helper
 
 
