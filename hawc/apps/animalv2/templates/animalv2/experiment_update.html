@@ -1,152 +1,128 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<h2 class="d-inline-block">Update {{object.summary}}</h2>
-<div class="float-right">
+  <h2 class="d-inline-block">Update {{object.summary}}</h2>
+  <div class="float-right">
     <a id="experiment-update" class="btn btn-sm btn-primary" href="#"
-        hx-get="{% url 'animalv2:experiment-update' object.pk %}" hx-target="#experiment-table" hx-swap="outerHTML">
-        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update experiment</a>
-</div>
+       hx-get="{% url 'animalv2:experiment-htmx' object.pk 'update' %}" hx-target="#experiment-table" hx-swap="outerHTML">
+      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update experiment</a>
+  </div>
 
-{% include "animalv2/fragments/_experiment_table.html" %}
+  {% include "animalv2/fragments/_experiment_table.html" %}
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:chemical-create' object.pk as chemical_create %}
-        {% include "animalv2/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '43,42,15' %}
-            {% bs4_thead 'Name,CAS,DTXSID,Edit' %}
-            <tbody>
-                {% if object.v2_chemicals.all %}
-                    {% for object in object.v2_chemicals.all %}
-                        {% include "animalv2/fragments/_chemical_row.html" %}
-                    {% endfor %}
-                    {% include "animalv2/fragments/_create_one.html" with id="chemical-empty-row" text="" %}
-                {% else %}
-                    {% include "animalv2/fragments/_create_one.html" with id="chemical-empty-row" text="chemicals" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'animalv2:chemical-htmx' object.pk 'create' as chemical_create %}
+      {% include "common/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target="#chemical-tbody" btn_text="Create" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '30,28,30,12' %}
+        {% bs4_thead 'Name,CAS,DTXSID,Edit' %}
+        <tbody id="chemical-tbody">
+          {% include "common/fragments/_create_one.html" with text="No chemicals. Create one?" %}
+          {% for object in object.v2_chemicals.all %}
+            {% include "animalv2/fragments/_chemical_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:animalgroup-create' object.pk as animalgroup_create %}
-        {% include "animalv2/fragments/_create_card.html" with title="Animal Groups" hx_get=animalgroup_create hx_target="#animalgroup-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '35,15,15,15,20' %}
-            {% bs4_thead 'Name,Species,Strain,Sex,Edit' %}
-            <tbody>
-                {% if object.v2_animal_groups.all %}
-                    {% for object in object.v2_animal_groups.all %}
-                        {% include "animalv2/fragments/_animalgroup_row.html" %}
-                    {% endfor %}
-                    {% include "animalv2/fragments/_create_one.html" with id="animalgroup-empty-row" text="" %}
-                {% else %}
-                    {% include "animalv2/fragments/_create_one.html" with id="animalgroup-empty-row" text="animal groups" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'animalv2:animalgroup-htmx' object.pk 'create' as animalgroup_create %}
+      {% include "common/fragments/_create_card.html" with title="Animal Groups" hx_get=animalgroup_create hx_target="#animalgroup-tbody" btn_text="Create" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '34,18,18,18,12' %}
+        {% bs4_thead 'Name,Species,Strain,Sex,Edit' %}
+        <tbody id="animalgroup-tbody">
+          {% include "common/fragments/_create_one.html" with text="No animal groups. Create one?" %}
+          {% for object in object.v2_animal_groups.all %}
+            {% include "animalv2/fragments/_animalgroup_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:treatment-create' object.pk as treatment_create %}
-        {% include "animalv2/fragments/_create_card.html" with title="Treatments" hx_get=treatment_create hx_target="#treatment-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '45,35,20' %}
-            {% bs4_thead 'Name,Chemical,Edit' %}
-            <tbody>
-                {% if object.v2_treatments.all %}
-                    {% for object in object.v2_treatments.all %}
-                        {% include "animalv2/fragments/_treatment_row.html" %}
-                    {% endfor %}
-                    {% include "animalv2/fragments/_create_one.html" with id="treatment-empty-row" text="" %}
-                {% else %}
-                    {% include "animalv2/fragments/_create_one.html" with id="treatment-empty-row" text="treatments" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'animalv2:treatment-htmx' object.pk 'create' as treatment_create %}
+      {% include "common/fragments/_create_card.html" with title="Treatments" hx_get=treatment_create hx_target="#treatment-tbody" btn_text="Create" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '44,44,12' %}
+        {% bs4_thead 'Name,Chemical,Edit' %}
+        <tbody id="treatment-tbody">
+          {% include "common/fragments/_create_one.html" with text="No treatments. Create one?" %}
+          {% for object in object.v2_treatments.all %}
+            {% include "animalv2/fragments/_treatment_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:endpoint-create' object.pk as endpoint_create %}
-        {% include "animalv2/fragments/_create_card.html" with title="Endpoints" hx_get=endpoint_create hx_target="#endpoint-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '30,20,20,20,10' %}
-            {% bs4_thead 'Name,System,Organ,Effect,Edit' %}
-            <tbody>
-                {% if object.v2_endpoints.all %}
-                    {% for object in object.v2_endpoints.all %}
-                        {% include "animalv2/fragments/_endpoint_row.html" %}
-                    {% endfor %}
-                    {% include "animalv2/fragments/_create_one.html" with id="endpoint-empty-row" text="" %}
-                {% else %}
-                    {% include "animalv2/fragments/_create_one.html" with id="endpoint-empty-row" text="endpoints" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'animalv2:endpoint-htmx' object.pk 'create' as endpoint_create %}
+      {% include "common/fragments/_create_card.html" with title="Endpoints" hx_get=endpoint_create hx_target="#endpoint-tbody" btn_text="Create" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '30,20,20,18,12' %}
+        {% bs4_thead 'Name,System,Organ,Effect,Edit' %}
+        <tbody id="endpoint-tbody">
+          {% include "common/fragments/_create_one.html" with text="No endpoints. Create one?" %}
+          {% for object in object.v2_endpoints.all %}
+            {% include "animalv2/fragments/_endpoint_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:observationtime-create' object.pk as observationtime_create %}
-        {% include "animalv2/fragments/_create_card.html" with title="Endpoint Timepoints" hx_get=observationtime_create hx_target="#observationtime-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '30,30,30,10' %}
-            {% bs4_thead 'Endpoint,Time,Units,Edit' %}
-            <tbody>
-                {% if object.v2_timepoints %}
-                    {% for object in object.v2_timepoints %}
-                        {% include "animalv2/fragments/_observationtime_row.html" %}
-                    {% endfor %}
-                    {% include "animalv2/fragments/_create_one.html" with id="observationtime-empty-row" text="" %}
-                {% else %}
-                    {% include "animalv2/fragments/_create_one.html" with id="observationtime-empty-row" text="endpoint timepoints" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'animalv2:observationtime-htmx' object.pk 'create' as observationtime_create %}
+      {% include "common/fragments/_create_card.html" with title="Endpoint Timepoints" hx_get=observationtime_create hx_target="#observationtime-tbody" btn_text="Create" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '30,30,28,12' %}
+        {% bs4_thead 'Endpoint,Time,Units,Edit' %}
+        <tbody id="observationtime-tbody">
+          {% include "common/fragments/_create_one.html" with text="No endpont timepoints. Create one?" %}
+          {% for object in object.v2_timepoints %}
+            {% include "animalv2/fragments/_observationtime_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="card my-4 mx-2">
+  <div class="card my-4 mx-2">
     <div class="card-body">
-        {% url 'animalv2:dataextraction-create' object.pk as dataextraction_create %}
-        {% include "animalv2/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-empty-row" %}
-        <table class="table table-sm table-striped">
-            {% bs4_colgroup '45,45,10' %}
-            {% bs4_thead 'Endpoint,Timepoint,Edit' %}
-            <tbody>
-                {% if object.v2_data_extractions.all %}
-                    {% for object in object.v2_data_extractions.all %}
-                        {% include "animalv2/fragments/_dataextraction_row.html" %}
-                    {% endfor %}
-                    {% include "animalv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="" %}
-                {% else %}
-                    {% include "animalv2/fragments/_create_one.html" with id="dataextraction-empty-row" text="data extractions" %}
-                {% endif %}
-            </tbody>
-        </table>
+      {% url 'animalv2:dataextraction-htmx' object.pk 'create' as dataextraction_create %}
+      {% include "common/fragments/_create_card.html" with title="Data Extractions" hx_get=dataextraction_create hx_target="#dataextraction-tbody" btn_text="Create" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '45,43,12' %}
+        {% bs4_thead 'Endpoint,Timepoint,Edit' %}
+        <tbody id="dataextraction-tbody">
+          {% include "common/fragments/_create_one.html" with text="No data extractions. Create one?" %}
+          {% for object in object.v2_data_extractions.all %}
+            {% include "animalv2/fragments/_dataextraction_row.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="well text-center">
+  <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="animalv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
-</div>
+  </div>
 
 {% endblock %}
 
 {% block extrajs %}
-{% include "common/htmx_autocomplete.html" %}
-<script type="text/javascript">
-window.app.startup("animalv2Startup", function(app){
-  app.formStartup(document);
-});
-</script>
+  {% include "common/htmx_autocomplete.html" %}
+  <script type="text/javascript">
+    window.app.startup("animalv2Startup", function(app){
+      app.formStartup(document);
+    });
+  </script>
 {% endblock %}

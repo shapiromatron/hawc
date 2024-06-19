@@ -62,7 +62,6 @@ class ExperimentDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
-# Experiment viewset
 class ExperimentViewSet(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
@@ -90,11 +89,9 @@ class ExperimentChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Experiment
     model = None  # required
-    form_class = None  # required
-    form_fragment = "animalv2/fragments/_object_edit_row.html"
-    detail_fragment = None  # required
-
-    # inline formsets - all optional
+    form_class: str  # required
+    form_fragment = "common/fragments/_object_edit_row.html"
+    detail_fragment: str  # required
     formset_configurations = []
 
     @action(permission=can_view)
@@ -220,7 +217,7 @@ class ExperimentChildViewSet(HtmxViewSet):
                 "id": request.item.object.id,
             }
             self.perform_delete(request.item)
-            return render(request, "animalv2/fragments/_delete_rows.html", context)
+            return render(request, "common/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -231,11 +228,11 @@ class ExperimentChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
+        context["app"] = "animalv2"
 
-        formset_idx = 0
         formsets = kwargs.get("formsets", [])
-        formset_contexts = []
-        for formset_config in self.formset_configurations:
+        formsets = []
+        for formset_idx, formset_config in enumerate(self.formset_configurations):
             formset = formsets[formset_idx] if formset_idx < len(formsets) else None
 
             if formset is None:
@@ -269,35 +266,31 @@ class ExperimentChildViewSet(HtmxViewSet):
                     prefix=formset_config.form_prefix,
                 )
 
-            formset_contexts.append(
+            formsets.append(
                 {
                     "fragment": formset_config.fragment,
                     "instance": formset,
                     "helper": formset_config.helper_class(),
                 }
             )
-            formset_idx += 1
 
-        context["formset_contexts"] = formset_contexts
+        context["formsets"] = formsets
 
         return context
 
 
-# Chemical viewset
 class ChemicalViewSet(ExperimentChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm
     detail_fragment = "animalv2/fragments/_chemical_row.html"
 
 
-# AnimalGroup viewset
 class AnimalGroupViewSet(ExperimentChildViewSet):
     model = models.AnimalGroup
     form_class = forms.AnimalGroupForm
     detail_fragment = "animalv2/fragments/_animalgroup_row.html"
 
 
-# Treatment viewset
 class TreatmentViewSet(ExperimentChildViewSet):
     model = models.Treatment
     form_class = forms.TreatmentForm
@@ -314,21 +307,18 @@ class TreatmentViewSet(ExperimentChildViewSet):
     ]
 
 
-# Endpoint viewset
 class EndpointViewSet(ExperimentChildViewSet):
     model = models.Endpoint
     form_class = forms.EndpointForm
     detail_fragment = "animalv2/fragments/_endpoint_row.html"
 
 
-# ObservationTime viewset
 class ObservationTimeViewSet(ExperimentChildViewSet):
     model = models.ObservationTime
     form_class = forms.ObservationTimeForm
     detail_fragment = "animalv2/fragments/_observationtime_row.html"
 
 
-# DataExtraction viewset
 class DataExtractionViewSet(ExperimentChildViewSet):
     model = models.DataExtraction
     form_class = forms.DataExtractionForm
