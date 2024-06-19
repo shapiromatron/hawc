@@ -2,7 +2,7 @@ import _ from "lodash";
 
 import $ from "$";
 
-// general approach lifted from https://stackoverflow.com/questions/501719/dynamically-adding-a-form-to-a-django-formset
+// general approach from https://stackoverflow.com/questions/501719/dynamically-adding-a-form-to-a-django-formset
 const cloneSubformRow = function(lastRow, totalFormField) {
     var newElement = lastRow.clone(true);
     var total = totalFormField.val();
@@ -26,8 +26,7 @@ const cloneSubformRow = function(lastRow, totalFormField) {
     totalFormField.val(total);
     lastRow.after(newElement);
 
-    // some of the DOM elements (the outer td and some of the help labeling)
-    // are wrong; correct them
+    // TODO - some DOM elements (the outer td and some of the help labeling) are wrong; fix
     newElement.find("td, small").each(function() {
         let loopEl = $(this);
         let incorrectId = loopEl.attr("id");

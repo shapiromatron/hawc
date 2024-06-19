@@ -62,7 +62,6 @@ class ExperimentDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
-# Experiment viewset
 class ExperimentViewSet(HtmxViewSet):
     actions = {"read", "update"}
     parent_model = Study
@@ -90,11 +89,9 @@ class ExperimentChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Experiment
     model = None  # required
-    form_class = None  # required
+    form_class: str  # required
     form_fragment = "common/fragments/_object_edit_row.html"
-    detail_fragment = None  # required
-
-    # inline formsets - all optional
+    detail_fragment: str  # required
     formset_configurations = []
 
     @action(permission=can_view)
@@ -284,21 +281,18 @@ class ExperimentChildViewSet(HtmxViewSet):
         return context
 
 
-# Chemical viewset
 class ChemicalViewSet(ExperimentChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm
     detail_fragment = "animalv2/fragments/_chemical_row.html"
 
 
-# AnimalGroup viewset
 class AnimalGroupViewSet(ExperimentChildViewSet):
     model = models.AnimalGroup
     form_class = forms.AnimalGroupForm
     detail_fragment = "animalv2/fragments/_animalgroup_row.html"
 
 
-# Treatment viewset
 class TreatmentViewSet(ExperimentChildViewSet):
     model = models.Treatment
     form_class = forms.TreatmentForm
@@ -315,21 +309,18 @@ class TreatmentViewSet(ExperimentChildViewSet):
     ]
 
 
-# Endpoint viewset
 class EndpointViewSet(ExperimentChildViewSet):
     model = models.Endpoint
     form_class = forms.EndpointForm
     detail_fragment = "animalv2/fragments/_endpoint_row.html"
 
 
-# ObservationTime viewset
 class ObservationTimeViewSet(ExperimentChildViewSet):
     model = models.ObservationTime
     form_class = forms.ObservationTimeForm
     detail_fragment = "animalv2/fragments/_observationtime_row.html"
 
 
-# DataExtraction viewset
 class DataExtractionViewSet(ExperimentChildViewSet):
     model = models.DataExtraction
     form_class = forms.DataExtractionForm
