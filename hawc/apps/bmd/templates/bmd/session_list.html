@@ -17,15 +17,7 @@
     </div>
   {% endif %}
   <table class='table table-sm table-striped'>
-    <thead>
-      <tr>
-        <th>Session</th>
-        <th>BMDS version</th>
-        <th>Dose units</th>
-        <th>Created</th>
-        <th>Last updated</th>
-      </tr>
-    </thead>
+    {% bs4_thead 'Session,BMDS version,Dose units,Created,Last updated' %}
     <tbody>
       {% for o in object_list %}
         <tr>

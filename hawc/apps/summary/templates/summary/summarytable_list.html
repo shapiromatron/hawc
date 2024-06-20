@@ -19,21 +19,12 @@
 
   {% if object_list.exists %}
     <table class="table table-sm table-striped">
-      <colgroup>
-        <col style="width: 40%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Table type</th>
-          {% if show_published %}<th>Published</th>{% endif %}
-          <th>Created</th>
-          <th>Modified</th>
-        </tr>
-      </thead>
+      {% bs4_colgroup '40,20,20,20' %}
+      {% if show_published %}
+        {% bs4_thead 'Title,Table type,Published,Created,Modified' %}
+      {% else %}
+        {% bs4_thead 'Title,Table type,Created,Modified' %}
+      {% endif %}
       <tbody>
         {% for object in object_list %}
           <tr>

@@ -1,17 +1,10 @@
 {% if object_list %}
   <table id="ag-table" class="table table-sm table-striped">
-    <thead>
-      <tr>
-        {%if with_experiment %}
-          <th>Experiment</th>
-        {% endif %}
-        <th>Name</th>
-        <th>Species</th>
-        <th>Strain</th>
-        <th>Sex</th>
-        <th>Siblings</th>
-      </tr>
-    </thead>
+    {% if with_experiment %}
+      {% bs4_thead 'Experiment,Name,Species,Strain,Sex,Siblings' %}
+    {% else %}
+      {% bs4_thead 'Name,Species,Strain,Sex,Siblings' %}
+    {% endif %}
     <tbody>
       {% for object in object_list %}
         <tr>

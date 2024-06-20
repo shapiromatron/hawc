@@ -1,21 +1,7 @@
 {% if object_list %}
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 50%;">
-      <col style="width: 16%;">
-      <col style="width: 10%;">
-      <col style="width: 12%;">
-      <col style="width: 12%;">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Title and description</th>
-        <th>Source</th>
-        <th>References</th>
-        <th>Created</th>
-        <th>Last Updated</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '50,16,10,12,12' %}
+    {% bs4_thead 'Title and description,Source,References,Created,Last Updated' %}
     <tbody>
       {% for object in object_list %}
         <tr>
