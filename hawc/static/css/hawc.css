@@ -1,14 +1,3 @@
-/* environment banner */
-.env-banner {
-    color: white;
-    display: inline;
-    font-weight: bold;
-    text-align: center;
-    text-transform: uppercase;
-    opacity: 80%;
-    margin: 0 40%;
-}
-
 /* main  */
 #main-container {
     padding-left: 1em;
