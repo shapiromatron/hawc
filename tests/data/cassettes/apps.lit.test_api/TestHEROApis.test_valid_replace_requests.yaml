@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1/recordsperpage/100.json
   response:
@@ -72,29 +72,29 @@ interactions:
         Import 14-Feb-2022 11:39:22\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|1436\",\"2|993\",\"2|42\",\"1|3019|33041|35093|35094|35099\",\"1|3019|33041|35093|35094|35100\",\"1|3019|33041|35093|35094|35106\",\"30|2810\",\"32|3048|32084|32085|32089\",\"32|3048|32084|32085|32090\",\"32|3048|32084|32085|32093\",\"32|3048|32084|32085|32094\",\"32|3048|32132|32142|32143|32146\",\"32|3048|32132|32142|32147\",\"32|2533|13964|10250|10251|10253\",\"32|2979|25858|25865\",\"32|2979|25858|25861\",\"32|2979|25858|25867\",\"32|2979|25858|25866\",\"32|2979|28726|27685\",\"18|2488|7593|7596\",\"18|2488|7593|7594\",\"18|2220|2472\",\"18|2220|2474\",\"18|1713|6884|8213\",\"18|1713|33273\",\"18|1713|35286\"],\"firstAuthor\":\"Becklake\",\"AUTHORS\":\"Becklake,
         MR\",\"noPDFAvailable\":true,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
         Review of Respiratory Disease 126:187-194. [Review]\",\"wosid\":\"WOS:A1982PC43700001\",\"TITLE\":\"Asbestos-related
-        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-02-12T14:25:43Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
+        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-06-18T15:25:08Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
         Asbestos; 1332-21-4; Abridged Index Medicus; Index Medicus; Mesothelioma --
         etiology; Lung -- analysis; Dust -- analysis; Pulmonary Fibrosis -- etiology;
         Environmental Exposure; Bronchitis -- etiology; Lung Neoplasms -- etiology;
         Asbestosis -- etiology; Asbestos -- adverse effects; Lung Diseases -- etiology;
         Pleural Diseases -- etiology\"],\"journalTitle\":\"American Review of Respiratory
-        Disease\",\"_version_\":1790703509466775553}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        Disease\",\"_version_\":1802213074160058368}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:38:04 GMT
+      - Thu, 20 Jun 2024 19:49:43 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.59 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825858; Expires=Wed, 21 Feb 2024 16:38:04 GMT; Path=/; HttpOnly
-      - CFTOKEN=21884536; Expires=Wed, 21 Feb 2024 16:38:04 GMT; Path=/; HttpOnly
-      - JSESSIONID=C4AC49935132AAB271775C3141587D7D.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A04; Path=/
+      - CFID=27205676; Expires=Fri, 21 Jun 2024 19:49:43 GMT; Path=/; HttpOnly
+      - CFTOKEN=41927967; Expires=Fri, 21 Jun 2024 19:49:43 GMT; Path=/; HttpOnly
+      - JSESSIONID=3CFAF63183D18C114B62F22B3ADBF08B.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F06%2F20%2015%3A49%3A43; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -114,7 +114,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1/recordsperpage/100.json
   response:
@@ -177,29 +177,29 @@ interactions:
         Import 14-Feb-2022 11:39:22\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|1436\",\"2|993\",\"2|42\",\"1|3019|33041|35093|35094|35099\",\"1|3019|33041|35093|35094|35100\",\"1|3019|33041|35093|35094|35106\",\"30|2810\",\"32|3048|32084|32085|32089\",\"32|3048|32084|32085|32090\",\"32|3048|32084|32085|32093\",\"32|3048|32084|32085|32094\",\"32|3048|32132|32142|32143|32146\",\"32|3048|32132|32142|32147\",\"32|2533|13964|10250|10251|10253\",\"32|2979|25858|25865\",\"32|2979|25858|25861\",\"32|2979|25858|25867\",\"32|2979|25858|25866\",\"32|2979|28726|27685\",\"18|2488|7593|7596\",\"18|2488|7593|7594\",\"18|2220|2472\",\"18|2220|2474\",\"18|1713|6884|8213\",\"18|1713|33273\",\"18|1713|35286\"],\"firstAuthor\":\"Becklake\",\"AUTHORS\":\"Becklake,
         MR\",\"noPDFAvailable\":true,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
         Review of Respiratory Disease 126:187-194. [Review]\",\"wosid\":\"WOS:A1982PC43700001\",\"TITLE\":\"Asbestos-related
-        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-02-12T14:25:43Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
+        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-06-18T15:25:08Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
         Asbestos; 1332-21-4; Abridged Index Medicus; Index Medicus; Mesothelioma --
         etiology; Lung -- analysis; Dust -- analysis; Pulmonary Fibrosis -- etiology;
         Environmental Exposure; Bronchitis -- etiology; Lung Neoplasms -- etiology;
         Asbestosis -- etiology; Asbestos -- adverse effects; Lung Diseases -- etiology;
         Pleural Diseases -- etiology\"],\"journalTitle\":\"American Review of Respiratory
-        Disease\",\"_version_\":1790703509466775553}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        Disease\",\"_version_\":1802213074160058368}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:38:05 GMT
+      - Thu, 20 Jun 2024 19:49:44 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.59 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825859; Expires=Wed, 21 Feb 2024 16:38:05 GMT; Path=/; HttpOnly
-      - CFTOKEN=83408631; Expires=Wed, 21 Feb 2024 16:38:05 GMT; Path=/; HttpOnly
-      - JSESSIONID=03B4A2B119C5F68D372492428B710434.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A05; Path=/
+      - CFID=27205678; Expires=Fri, 21 Jun 2024 19:49:44 GMT; Path=/; HttpOnly
+      - CFTOKEN=11442423; Expires=Fri, 21 Jun 2024 19:49:44 GMT; Path=/; HttpOnly
+      - JSESSIONID=3F6E1D20F8AF350A403625963D29A548.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F06%2F20%2015%3A49%3A44; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -210,7 +210,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7049025
+    body: retmax=1000&db=pubmed&retmode=xml&id=7049025
     headers:
       Accept:
       - '*/*'
@@ -219,62 +219,42 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '89'
+      - '44'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: '<?xml version="1.0" ?>
-
-        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
-        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
-
-        <PubmedArticleSet>
-
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">7049025</PMID><DateCompleted><Year>1982</Year><Month>09</Month><Day>17</Day></DateCompleted><DateRevised><Year>2006</Year><Month>11</Month><Day>15</Day></DateRevised><Article
-        PubModel="Print"><Journal><ISSN IssnType="Print">0003-0805</ISSN><JournalIssue
-        CitedMedium="Print"><Volume>126</Volume><Issue>2</Issue><PubDate><Year>1982</Year><Month>Aug</Month></PubDate></JournalIssue><Title>The
-        American review of respiratory disease</Title><ISOAbbreviation>Am Rev Respir
-        Dis</ISOAbbreviation></Journal><ArticleTitle>Asbestos-related diseases of
-        the lungs and pleura: current clinical issues.</ArticleTitle><Pagination><StartPage>187</StartPage><EndPage>194</EndPage><MedlinePgn>187-94</MedlinePgn></Pagination><AuthorList
-        CompleteYN="Y"><Author ValidYN="Y"><LastName>Becklake</LastName><ForeName>M
-        R</ForeName><Initials>MR</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
-        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
-        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D016454">Review</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
-        States</Country><MedlineTA>Am Rev Respir Dis</MedlineTA><NlmUniqueID>0370523</NlmUniqueID><ISSNLinking>0003-0805</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
-        UI="D004391">Dust</NameOfSubstance></Chemical><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
-        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
-        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
-        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D001195" MajorTopicYN="N">Asbestosis</DescriptorName><QualifierName UI="Q000209"
-        MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D001991" MajorTopicYN="N">Bronchitis</DescriptorName><QualifierName UI="Q000209"
-        MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D004391" MajorTopicYN="N">Dust</DescriptorName><QualifierName UI="Q000032"
-        MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D004781" MajorTopicYN="N">Environmental Exposure</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000032"
-        MajorTopicYN="N">analysis</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008171" MajorTopicYN="N">Lung Diseases</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="Y">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008175" MajorTopicYN="N">Lung Neoplasms</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008654" MajorTopicYN="N">Mesothelioma</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D010995" MajorTopicYN="N">Pleural Diseases</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="Y">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D011658" MajorTopicYN="N">Pulmonary Fibrosis</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012306" MajorTopicYN="N">Risk</DescriptorName></MeshHeading></MeshHeadingList><NumberOfReferences>100</NumberOfReferences></MedlineCitation><PubmedData><History><PubMedPubDate
-        PubStatus="pubmed"><Year>1982</Year><Month>8</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>1982</Year><Month>8</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1982</Year><Month>8</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">7049025</ArticleId><ArticleId IdType="doi">10.1164/arrd.1982.126.2.187</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
+      string: !!binary |
+        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
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -289,28 +269,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:05 GMT
+      - Thu, 20 Jun 2024 19:49:44 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B45000055DB41B42C2E.1.1.m_3
+      - D0BD1110A7D530C5000053A66C811B94.1.1.m_3
       NCBI-SID:
-      - E4FA42114E293A21_D952SID
+      - 00E2B439D8B364F2_822ESID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=E4FA42114E293A21_D952SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:06 GMT
+      - ncbi_sid=00E2B439D8B364F2_822ESID; domain=.nih.gov; path=/; expires=Fri, 20
+        Jun 2025 19:49:45 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '10'
+      - '3'
       X-RateLimit-Remaining:
-      - '9'
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

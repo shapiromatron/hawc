@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1010101,1010102/recordsperpage/100.json
   response:
@@ -108,16 +108,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:39:11 GMT
+      - Thu, 20 Jun 2024 19:50:22 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.59 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825896; Expires=Wed, 21 Feb 2024 16:39:11 GMT; Path=/; HttpOnly
-      - CFTOKEN=65791540; Expires=Wed, 21 Feb 2024 16:39:11 GMT; Path=/; HttpOnly
-      - JSESSIONID=9F15D96AA3660AA9D061CB719C400FF6.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A11; Path=/
+      - CFID=27205767; Expires=Fri, 21 Jun 2024 19:50:22 GMT; Path=/; HttpOnly
+      - CFTOKEN=95067937; Expires=Fri, 21 Jun 2024 19:50:22 GMT; Path=/; HttpOnly
+      - JSESSIONID=10FEECC7B568A8203531984E73ABA126.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F06%2F20%2015%3A50%3A22; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -137,7 +137,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1010101,1010102/recordsperpage/100.json
   response:
@@ -236,16 +236,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:39:15 GMT
+      - Thu, 20 Jun 2024 19:50:23 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.59 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825899; Expires=Wed, 21 Feb 2024 16:39:15 GMT; Path=/; HttpOnly
-      - CFTOKEN=65581844; Expires=Wed, 21 Feb 2024 16:39:15 GMT; Path=/; HttpOnly
-      - JSESSIONID=C98174F21F8FEDB54936BF207E3C0A30.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A39%3A15; Path=/
+      - CFID=27205769; Expires=Fri, 21 Jun 2024 19:50:23 GMT; Path=/; HttpOnly
+      - CFTOKEN=66335465; Expires=Fri, 21 Jun 2024 19:50:23 GMT; Path=/; HttpOnly
+      - JSESSIONID=8DD88471C112A106CBA484BF99463735.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F06%2F20%2015%3A50%3A23; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -256,7 +256,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=23899359
+    body: retmax=1000&db=pubmed&retmode=xml&id=23899359
     headers:
       Accept:
       - '*/*'
@@ -265,56 +265,49 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '90'
+      - '45'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: '<?xml version="1.0" ?>
-
-        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
-        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
-
-        <PubmedArticleSet>
-
-        <PubmedArticle><MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM"><PMID
-        Version="1">23899359</PMID><DateCompleted><Year>2013</Year><Month>08</Month><Day>01</Day></DateCompleted><DateRevised><Year>2013</Year><Month>07</Month><Day>31</Day></DateRevised><Article
-        PubModel="Print"><Journal><ISSN IssnType="Print">1354-750X</ISSN><JournalIssue
-        CitedMedium="Print"><Volume>3</Volume><Issue>4-5</Issue><PubDate><Year>1998</Year></PubDate></JournalIssue><Title>Biomarkers
-        : biochemical indicators of exposure, response, and susceptibility to chemicals</Title><ISOAbbreviation>Biomarkers</ISOAbbreviation></Journal><ArticleTitle>Immunoassay
-        of haemoglobin-acrylonitrile adduct in rat as a biomarker of exposure.</ArticleTitle><Pagination><StartPage>317</StartPage><EndPage>326</EndPage><MedlinePgn>317-26</MedlinePgn></Pagination><ELocationID
-        EIdType="doi" ValidYN="Y">10.1080/135475098231129</ELocationID><Abstract><AbstractText>Acrylonitrile
-        (AN) is a rat carcinogen. Human exposure may come from chemical industries
-        and smoking. A haemoglobin adduct of acrylonitrile (Hb-AN) has been used as
-        a biomarker of exposure by means of gas chromatography-mass spectrometry (GC-MS)
-        analysis. We have developed specific monoclonal antibodies (Mab) to human
-        Hb-AN and wish to report evaluation of an immunoassay in rats using an Mab
-        that cross-reacts with rat Hb-AN. A dose response study of LD 0, 10, 50, and
-        90 in Sprague-Dawley rats was undertaken, with each rat receiving \[2,3-14C]AN
-        at 50 Ci kg-1 sc, and Hb from an aliquot of blood was taken for covalent binding
-        analysis by liquid scintillation spectrometry and fluorescence ELISA. The
-        dose responses of rats at 0.25, 0.5, 1.0, and 2.0 h after AN doses of 20,
-        50, 80, 115 mg kg-1 were compared by both methods with Hb and globin samples.
-        Regression analysis showed a linear relationship between immunoassay and 14C-AN
-        binding. This indicates that an antigenic form of Hb-AN may be used as a surrogate
-        of Hb-AN adduct. The sensitivity of ELISA was tested in rats exposed for 1
-        h to sub-toxic doses of AN (10-1.1 mg kg-1). Quantification of Hb-AN by immunoassay
-        was achieved by calibration with a synthetic adduct HbAN4h, a reference adduct
-        prepared by treating rat Hb with excess AN for 4 h. ELISA and GC-MS analysis
-        of N-terminal valine-AN in the Hb-AN adduct were compared and similar detection
-        levels were found. This rat study appears to have validated the new immunoassay
-        method for biomonitoring of AN exposure.</AbstractText></Abstract><AuthorList
-        CompleteYN="Y"><Author ValidYN="Y"><LastName>L Wong Yu Ting Zheng Junyu Li
-        Carlo H Tamburro Frederick W Benz</LastName><ForeName>J</ForeName><Initials>J</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
-        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Biomarkers</MedlineTA><NlmUniqueID>9606000</NlmUniqueID><ISSNLinking>1354-750X</ISSNLinking></MedlineJournalInfo></MedlineCitation><PubmedData><History><PubMedPubDate
-        PubStatus="entrez"><Year>2013</Year><Month>8</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="pubmed"><Year>1998</Year><Month>1</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>1998</Year><Month>1</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">23899359</ArticleId><ArticleId IdType="doi">10.1080/135475098231129</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
+      string: !!binary |
+        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
+        8EPxFwAA//9C44P6kgAAAAD//wMA1KMP+wYPAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -329,28 +322,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:17 GMT
+      - Thu, 20 Jun 2024 19:50:23 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000048A4B25DA987.1.1.m_3
+      - D0BD1110A7D530C5000042A6C390A1AF.1.1.m_3
       NCBI-SID:
-      - A0065852E04999D8_DA52SID
+      - 20CD7CCEACE7F5AB_C0FCSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=A0065852E04999D8_DA52SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:17 GMT
+      - ncbi_sid=20CD7CCEACE7F5AB_C0FCSID; domain=.nih.gov; path=/; expires=Fri, 20
+        Jun 2025 19:50:23 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '10'
+      - '3'
       X-RateLimit-Remaining:
-      - '9'
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

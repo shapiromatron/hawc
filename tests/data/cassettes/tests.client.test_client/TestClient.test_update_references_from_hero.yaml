@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1037739,3/recordsperpage/100.json
   response:
@@ -86,16 +86,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:42:01 GMT
+      - Thu, 20 Jun 2024 19:52:56 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.59 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825964; Expires=Wed, 21 Feb 2024 16:42:01 GMT; Path=/; HttpOnly
-      - CFTOKEN=78911868; Expires=Wed, 21 Feb 2024 16:42:01 GMT; Path=/; HttpOnly
-      - JSESSIONID=84946CD8DDBEE2E496BDC0D5E0565AA1.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A42%3A01; Path=/
+      - CFID=27206004; Expires=Fri, 21 Jun 2024 19:52:56 GMT; Path=/; HttpOnly
+      - CFTOKEN=39209553; Expires=Fri, 21 Jun 2024 19:52:56 GMT; Path=/; HttpOnly
+      - JSESSIONID=8CF0EADC3815E00A280496018857892C.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F06%2F20%2015%3A52%3A56; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -106,7 +106,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=6682033
+    body: retmax=1000&db=pubmed&retmode=xml&id=6682033
     headers:
       Accept:
       - '*/*'
@@ -115,81 +115,57 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '89'
+      - '44'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: '<?xml version="1.0" ?>
-
-        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
-        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
-
-        <PubmedArticleSet>
-
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">6682033</PMID><DateCompleted><Year>1983</Year><Month>05</Month><Day>05</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
-        PubModel="Print"><Journal><ISSN IssnType="Print">0013-9351</ISSN><JournalIssue
-        CitedMedium="Print"><Volume>30</Volume><Issue>1</Issue><PubDate><Year>1983</Year><Month>Feb</Month></PubDate></JournalIssue><Title>Environmental
-        research</Title><ISOAbbreviation>Environ Res</ISOAbbreviation></Journal><ArticleTitle>Asbestos-induced
-        lung injury in the sheep model: the initial alveolitis.</ArticleTitle><Pagination><StartPage>195</StartPage><EndPage>210</EndPage><MedlinePgn>195-210</MedlinePgn></Pagination><Abstract><AbstractText>In
-        order to study the cellular and biochemical changes in early asbestosis, three
-        groups of sheep were repeatedly exposed to intratracheal instillations of
-        either saline (controls), low doses of UICC chrysotile asbestos (LD), or high
-        doses of the fibers (HD) until an alveolitis was observed in all HD sheep
-        during the twelfth month of exposure. All sheep were studied bimonthly by
-        transbronchial lung biopsy (LB), bronchoalveolar lavage (BAL), pulmonary function
-        tests (PFT), and chest roentgenograms (CXR). While LBs of the HD sheep demonstrated
-        large accumulations of monocyte-macrophages in the alveolar and interstitial
-        spaces, those of controls and LD sheep did not. In BAL, there was no difference
-        in total and differential cell counts between groups, but the BAL lymphocyte
-        proliferative capacity was clearly depressed in all asbestos-exposed sheep.
-        In the BAL supernatant, total proteins (mainly albumin, beta + gamma globulins)
-        and lactate dehydrogenase were significantly elevated in the HD group only.
-        This alveolitis was associated with a fall in vital capacity, lung compliance,
-        diffusing capacity, and arterial PO2. Abnormalities on CXR appeared 3 months
-        later. Thus, the cellular and biochemical features of early asbestosis are
-        clearly distinct from those reported in idiopathic pulmonary fibrosis.</AbstractText></Abstract><AuthorList
-        CompleteYN="Y"><Author ValidYN="Y"><LastName>B&#xe9;gin</LastName><ForeName>R</ForeName><Initials>R</Initials></Author><Author
-        ValidYN="Y"><LastName>Rola-Pleszczynski</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
-        ValidYN="Y"><LastName>Mass&#xe9;</LastName><ForeName>S</ForeName><Initials>S</Initials></Author><Author
-        ValidYN="Y"><LastName>Lemaire</LastName><ForeName>I</ForeName><Initials>I</Initials></Author><Author
-        ValidYN="Y"><LastName>Sirois</LastName><ForeName>P</ForeName><Initials>P</Initials></Author><Author
-        ValidYN="Y"><LastName>Boctor</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
-        ValidYN="Y"><LastName>Nadeau</LastName><ForeName>D</ForeName><Initials>D</Initials></Author><Author
-        ValidYN="Y"><LastName>Drapeau</LastName><ForeName>G</ForeName><Initials>G</Initials></Author><Author
-        ValidYN="Y"><LastName>Bureau</LastName><ForeName>M A</ForeName><Initials>MA</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
-        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
-        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Environ
-        Res</MedlineTA><NlmUniqueID>0147621</NlmUniqueID><ISSNLinking>0013-9351</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
-        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
-        UI="D000542" MajorTopicYN="N">Alveolitis, Extrinsic Allergic</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
-        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D001195" MajorTopicYN="N">Asbestosis</DescriptorName><QualifierName UI="Q000209"
-        MajorTopicYN="N">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D001706" MajorTopicYN="N">Biopsy</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D004195" MajorTopicYN="Y">Disease Models, Animal</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000000981"
-        MajorTopicYN="N">diagnostic imaging</QualifierName><QualifierName UI="Q000473"
-        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008171" MajorTopicYN="N">Lung Diseases</DescriptorName><QualifierName
-        UI="Q000209" MajorTopicYN="Y">etiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D011859" MajorTopicYN="N">Radiography</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012129" MajorTopicYN="N">Respiratory Function Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012756" MajorTopicYN="N">Sheep</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012757" MajorTopicYN="Y">Sheep Diseases</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D007507" MajorTopicYN="N">Therapeutic Irrigation</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
-        PubStatus="pubmed"><Year>1983</Year><Month>2</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>1983</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1983</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">6682033</ArticleId><ArticleId IdType="doi">10.1016/0013-9351(83)90180-9</ArticleId><ArticleId
-        IdType="pii">0013-9351(83)90180-9</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
+      string: !!binary |
+        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
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -204,28 +180,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:01 GMT
+      - Thu, 20 Jun 2024 19:52:57 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500003CDBA1EEF218.1.1.m_3
+      - D0BD1110A7D530C500003CA9170B5C6D.1.1.m_3
       NCBI-SID:
-      - B79213A46C2586C2_D90FSID
+      - 36A0C8BB8616C793_A848SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=B79213A46C2586C2_D90FSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:02 GMT
+      - ncbi_sid=36A0C8BB8616C793_A848SID; domain=.nih.gov; path=/; expires=Fri, 20
+        Jun 2025 19:52:57 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '10'
+      - '3'
       X-RateLimit-Remaining:
-      - '9'
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
