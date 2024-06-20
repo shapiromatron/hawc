@@ -19,7 +19,7 @@
         </span>
 
         {% if dose_groups_errors %}
-          <div class="alert alert-danger">{{dose_groups_errors|safe}}</div>
+          {% alert danger %}{{dose_groups_errors|safe}}{% endalert %}
         {% endif %}
         <table id="dose_table" class="table table-sm table-striped"></table>
         <input id="dose_groups_json" name="dose_groups_json" type="hidden" />

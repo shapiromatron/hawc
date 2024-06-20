@@ -12,7 +12,7 @@
       <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
     </span>
 
-    {% if dose_groups_errors %}<div class="alert alert-danger">{{dose_groups_errors|safe}}</div>{% endif %}
+    {% if dose_groups_errors %}{% alert danger %}{{dose_groups_errors|safe}}</div>{% endalert %}
     <table id="dose_table" class="table table-sm table-striped"></table>
     <input id="dose_groups_json" name="dose_groups_json" type="hidden" />
   </div>
