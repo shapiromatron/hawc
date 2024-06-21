@@ -145,17 +145,6 @@ class VisualForm(forms.ModelForm):
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
-        if self.instance.visual_type not in [
-            constants.VisualType.BIOASSAY_AGGREGATION,
-            constants.VisualType.ROB_HEATMAP,
-            constants.VisualType.LITERATURE_TAGTREE,
-            constants.VisualType.EXTERNAL_SITE,
-            constants.VisualType.EXPLORE_HEATMAP,
-            constants.VisualType.PLOTLY,
-            constants.VisualType.IMAGE,
-            constants.VisualType.PRISMA,
-        ]:
-            self.fields["sort_order"].widget = forms.HiddenInput()
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
 
@@ -263,7 +252,6 @@ class EndpointAggregationForm(VisualForm):
             "settings",
             "prefilters",
             "studies",
-            "sort_order",
             "image",
         )
 
