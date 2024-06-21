@@ -108,7 +108,7 @@ _.extend(RoBHeatmapForm, {
                 ["short_citation", "Short Citation"],
                 ["overall_confidence", "Final Study Confidence"],
             ],
-            def: "study",
+            def: "short_citation",
             tab: "overall",
         },
         {

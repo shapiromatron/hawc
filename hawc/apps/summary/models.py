@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from operator import methodcaller
 
 import pandas as pd
 from django.contrib.postgres.fields import ArrayField
@@ -497,14 +496,7 @@ class Visual(models.Model):
             fs.form.is_valid()
             qs = fs.qs
 
-        # TODO - move to JS
-        sort_order = self.settings.get("sort_order", constants.SortOrder.SC.value)
-        if sort_order == constants.SortOrder.OC.value:
-            return sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
-        elif sort_order == constants.SortOrder.SC.value:
-            return list(qs.order_by(sort_order))
-        else:
-            raise ValueError(f'Unknown "sort_order": {sort_order}')
+        return qs
 
     def get_editing_dataset(self, request):
         # Generate a pseudo-return when editing or creating a dataset.
