@@ -498,7 +498,7 @@ class Visual(models.Model):
             qs = fs.qs
 
         # TODO - move to JS
-        sort_order = self.settings["sort_order"]
+        sort_order = self.settings.get("sort_order", constants.SortOrder.SC.value)
         if sort_order == constants.SortOrder.OC.value:
             return sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
         elif sort_order == constants.SortOrder.SC.value:

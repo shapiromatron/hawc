@@ -102,6 +102,17 @@ _.extend(RoBHeatmapForm, {
         },
         {
             type: SelectField,
+            name: "sort_order",
+            label: "Sort Order",
+            opts: [
+                ["short_citation", "Short Citation"],
+                ["overall_confidence", "Final Study Confidence"],
+            ],
+            def: "study",
+            tab: "overall",
+        },
+        {
+            type: SelectField,
             name: "x_field",
             label: "X-axis field",
             opts: [
