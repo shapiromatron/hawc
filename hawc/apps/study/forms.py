@@ -58,8 +58,6 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
     def setHelper(self, inputs: dict | None = None):
         if inputs is None:
             inputs = {}
-        for fld in ("full_citation", "coi_details", "funding_source", "ask_author"):
-            self.fields[fld].widget.attrs["rows"] = 3
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -68,7 +66,7 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
                 widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("full_citation", "coi_details", "funding_source", "ask_author"))
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
@@ -157,13 +155,14 @@ class ReferenceStudyForm(BaseStudyForm):
         self.fields["title"].widget = TextInput()
         self.fields["authors"].widget = TextInput()
         self.fields["journal"].widget = TextInput()
-        self.fields["abstract"].widget.attrs["rows"] = 3
         inputs = {
             "legend_text": "Create a new study",
             "help_text": "",
             "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
-        return super().setHelper(inputs)
+        helper = super().setHelper(inputs)
+        helper.set_textarea_height(("abstract",))
+        return helper
 
 
 class IdentifierStudyForm(forms.Form):

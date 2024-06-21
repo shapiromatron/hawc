@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any
 
 from crispy_forms import bootstrap as cfb
@@ -155,6 +156,15 @@ class BaseFormHelper(cf.FormHelper):
         for field_name, field in self.form.fields.items():
             if hasattr(field, "crispy_field_class"):
                 self[field_name].wrap(field.crispy_field_class)
+
+    def set_textarea_height(self, fields: Sequence[str] | None = None, n_rows: int = 3):
+        fields = (
+            [self.form.fields[key] for key in fields]
+            if fields
+            else [f for f in self.form.fields.values() if isinstance(f.widget, forms.Textarea)]
+        )
+        for field in fields:
+            field.widget.attrs["rows"] = n_rows
 
 
 class CopyForm(forms.Form):
