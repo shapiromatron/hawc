@@ -158,11 +158,6 @@ class VisualForm(forms.ModelForm):
             self.instance.evidence_type = evidence_type
 
     def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -678,11 +673,6 @@ class DataPivotForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",

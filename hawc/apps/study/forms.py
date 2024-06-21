@@ -58,12 +58,6 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
     def setHelper(self, inputs: dict | None = None):
         if inputs is None:
             inputs = {}
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-            else:
-                widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
         helper.set_textarea_height(("full_citation", "coi_details", "funding_source", "ask_author"))
