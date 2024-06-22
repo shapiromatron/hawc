@@ -41,6 +41,7 @@ def test_api_visual_heatmap(db_keys):
         "show_nr_legend": True,
         "legend_x": 239,
         "legend_y": 17,
+        "sort_order": "short_citation",
     }
 
 
