@@ -165,15 +165,15 @@ class RiskOfBiasScoreQuerySet(QuerySet):
             score_json=Cast("score_json_tmp", output_field=CharField()),
         )
 
+    def published_only(self, published_only: bool):
+        return self.filter(riskofbias__study__published=True) if published_only else self
+
 
 class RiskOfBiasScoreManager(BaseManager):
     assessment_relation = "riskofbias__study__assessment"
 
     def get_queryset(self):
         return RiskOfBiasScoreQuerySet(self.model, using=self._db)
-
-    def published_only(self, published_only: bool):
-        return self.filter(riskofbias__study__published=True) if published_only else self
 
 
 class RiskOfBiasScoreOverrideObjectManager(BaseManager):
