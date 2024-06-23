@@ -172,6 +172,9 @@ class RiskOfBiasScoreManager(BaseManager):
     def get_queryset(self):
         return RiskOfBiasScoreQuerySet(self.model, using=self._db)
 
+    def published_only(self, published_only: bool):
+        return self.filter(riskofbias__study__published=True) if published_only else self
+
 
 class RiskOfBiasScoreOverrideObjectManager(BaseManager):
     def get_queryset(self):

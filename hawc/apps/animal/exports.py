@@ -676,9 +676,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             species = group_df["animal_group-species_name"].iloc[0]
             strain = group_df["animal_group-strain_name"].iloc[0]
             group_df["animal description"] = f"{gen}{species}, {strain} ({sex_symbol})"
-            group_df[
-                "animal description (with N)"
-            ] = f"{gen}{species}, {strain} ({sex_symbol}{ns_txt})"
+            group_df["animal description (with N)"] = (
+                f"{gen}{species}, {strain} ({sex_symbol}{ns_txt})"
+            )
 
             return group_df
 
@@ -1082,9 +1082,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                     ["?"] * num_doses
                 )
 
-            group_df[
-                [f"Treatment Related Effect {i}" for i in range(1, num_doses + 1)]
-            ] = unique_df["endpoint_group-treatment_effect_display"].reset_index(drop=True)
+            group_df[[f"Treatment Related Effect {i}" for i in range(1, num_doses + 1)]] = (
+                unique_df["endpoint_group-treatment_effect_display"].reset_index(drop=True)
+            )
 
             return group_df.drop_duplicates(
                 subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(
