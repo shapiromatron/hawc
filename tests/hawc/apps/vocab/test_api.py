@@ -138,9 +138,14 @@ class TestTermViewSet:
             # not array
             ({}, {"non_field_errors": ['Expected a list of items but got type "dict".']}),
             # id missing
-            ([{"name": "name"}], {"non_field_errors": ["'id' is required to map to instance."]}),
+            ([{"name": "name"}], [{"id": ["This field is required."]}]),
             # invalid id
             ([{"id": 9999, "name": "name"}], {"non_field_errors": ["Invalid 'id's: 9999."]}),
+            (
+                ["not-a-dict"],
+                [{"non_field_errors": ["Invalid data. Expected a dictionary, but got str."]}],
+            ),
+            ([{"id": "str"}], [{"id": ["A valid integer is required."]}]),
             # wrong attr type
             ([{"id": 1, "type": "one"}], [{"type": ['"one" is not a valid choice.']}]),
         ]

@@ -386,6 +386,10 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
     def get_template_names(self):
         if self.object.visual_type == constants.VisualType.PLOTLY:
             return "summary/visual_detail_plotly.html"
+        elif self.object.visual_type == constants.VisualType.IMAGE:
+            return "summary/visual_detail_image.html"
+        elif self.object.visual_type == constants.VisualType.PRISMA:
+            return "summary/visual_detail_prisma.html"
         else:
             return super().get_template_names()
 
@@ -416,42 +420,63 @@ class VisualizationCreate(BaseCreate):
 
     def get_form_class(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        try:
-            return forms.get_visual_form(visual_type)
-        except ValueError:
-            raise Http404
+        return forms.get_visual_form(visual_type)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["visual_type"] = int(self.kwargs.get("visual_type"))
+
+        kwargs["visual_type"] = self.kwargs.get("visual_type")
+        try:
+            constants.VisualType(kwargs["visual_type"])
+        except ValueError:
+            raise Http404
+
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
             kwargs["instance"].pk = None
             self.instance = kwargs["instance"]
+            kwargs["evidence_type"] = kwargs["instance"].evidence_type
+
+        else:
+            kwargs["evidence_type"] = self.kwargs.get("study_type")
+            if kwargs["evidence_type"] is None:
+                try:
+                    kwargs["evidence_type"] = constants.get_default_evidence_type(
+                        kwargs["visual_type"]
+                    )
+                except ValueError:
+                    raise Http404
+            if (
+                kwargs["evidence_type"]
+                not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
+            ):
+                raise Http404
+        self.evidence_type = kwargs["evidence_type"]
         return kwargs
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
+        if (
+            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
+        ):
+            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
+            constants.VisualType.IMAGE,
         }:
-            if (
-                visual_type == constants.VisualType.PLOTLY
-                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
-            ):
-                raise PermissionDenied()
             return "summary/visual_form_django.html"
-        else:
-            return super().get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["dose_units"] = models.Visual.get_dose_units()
         context["instance"] = {}
         context["visual_type"] = int(self.kwargs.get("visual_type"))
+        context["evidence_type"] = self.evidence_type
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
@@ -484,7 +509,7 @@ class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
         kwargs.update(
@@ -533,26 +558,27 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
+        if (
+            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
+            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
+        ):
+            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
+            constants.VisualType.IMAGE,
         }:
-            if (
-                visual_type == constants.VisualType.PLOTLY
-                and not settings.HAWC_FEATURES.ENABLE_PLOTLY_VISUAL
-            ):
-                raise PermissionDenied()
             return "summary/visual_form_django.html"
-        else:
-            return super().get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["dose_units"] = models.Visual.get_dose_units()
         context["instance"] = self.object.get_json()
         context["visual_type"] = self.object.visual_type
+        context["evidence_type"] = self.object.evidence_type
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
@@ -608,7 +634,7 @@ class DataPivotNew(BaseCreate):
     template_name = "summary/datapivot_form.html"
 
     def get_success_url(self):
-        super().get_success_url()
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.get_visualization_update_url()
 
     def get_form_kwargs(self):
@@ -625,10 +651,10 @@ class DataPivotQueryNew(DataPivotNew):
     form_class = forms.DataPivotQueryForm
     template_name = "summary/datapivot_form.html"
 
-    def get_evidence_type(self) -> prefilters.StudyType:
+    def get_evidence_type(self) -> constants.StudyType:
         try:
             evidence_type = constants.StudyType(self.kwargs["study_type"])
-            _ = prefilters.StudyTypePrefilter.from_study_type(evidence_type, self.assessment).value
+            _ = prefilters.get_prefilter_cls(None, evidence_type, self.assessment)
         except (KeyError, ValueError):
             raise Http404
         return evidence_type

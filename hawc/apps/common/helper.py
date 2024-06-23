@@ -2,10 +2,11 @@ import decimal
 import logging
 import re
 from collections import defaultdict
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import timedelta
+from itertools import chain
 from math import inf
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, TypeVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,7 +16,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
-from django.http import QueryDict
+from django.http import HttpRequest, QueryDict
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import lazy
@@ -29,6 +30,8 @@ from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
+
+from .middleware import _local_thread
 
 logger = logging.getLogger(__name__)
 
@@ -542,9 +545,12 @@ class PydanticToDjangoError:
             raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
 
 
+T = TypeVar("T")
+
+
 def cacheable(
-    callable: Callable, cache_key: str, flush: bool = False, cache_duration: int = -1, **kw
-) -> Any:
+    callable: Callable[..., T], cache_key: str, flush: bool = False, cache_duration: int = -1, **kw
+) -> T:
     """Get the result from cache or call method to recreate and cache.
 
     Args:
@@ -552,6 +558,7 @@ def cacheable(
         cache_key (str): the cache key to get/set
         flush (bool, default False): Force flush the cache and re-evaluate.
         cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR.
+        **kw: keyword arguments passed to callable
 
     Returns:
         The result from the callable, either from cache or regenerated.
@@ -565,3 +572,18 @@ def cacheable(
             cache_duration = settings.CACHE_1_HR
         cache.set(cache_key, result, cache_duration)
     return result
+
+
+def flatten(lst: Iterable[Iterable]) -> Iterable:
+    # given a list of lists (or other iterables), flatten the top-level iterable
+    return chain(*(item for item in lst))
+
+
+def get_current_request() -> HttpRequest:
+    """Returns the current request object"""
+    return _local_thread.request
+
+
+def get_current_user():
+    """Returns the current request user"""
+    return get_current_request().user

@@ -18,11 +18,11 @@ class MetaProtocol(models.Model):
     )
     name = models.CharField(verbose_name="Protocol name", max_length=128)
     protocol_type = models.PositiveSmallIntegerField(
-        choices=constants.MetaProtocol.choices, default=constants.MetaProtocol.META
+        choices=constants.MetaProtocol, default=constants.MetaProtocol.META
     )
     lit_search_strategy = models.PositiveSmallIntegerField(
         verbose_name="Literature search strategy",
-        choices=constants.MetaLitSearch.choices,
+        choices=constants.MetaLitSearch,
         default=constants.MetaLitSearch.SYSTEMATIC,
     )
     lit_search_notes = models.TextField(verbose_name="Literature search notes", blank=True)

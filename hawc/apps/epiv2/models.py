@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..common.helper import SerializerHelper
-from ..common.models import NumericTextField
+from ..common.models import NumericTextField, clone_name
 from ..epi.models import Country
 from ..study.models import Study
 from . import constants, managers
@@ -28,12 +28,12 @@ class Design(models.Model):
     )
     study_design = models.CharField(
         max_length=2,
-        choices=constants.StudyDesign.choices,
+        choices=constants.StudyDesign,
         help_text='Select the most appropriate design from the list. If more than one study design applies (e.g., a cohort with cross-sectional analyses of baseline measures), can either a) select one design ("cohort") and clarify different timing in remaining extraction or b) select "other" and provide details in comments.',
     )
-    source = models.CharField(max_length=2, choices=constants.Source.choices)
+    source = models.CharField(max_length=2, choices=constants.Source)
     age_profile = ArrayField(
-        models.CharField(max_length=2, choices=constants.AgeProfile.choices),
+        models.CharField(max_length=2, choices=constants.AgeProfile),
         help_text='Select all that apply. Note: do not select "Pregnant women" if pregnant women are only included as part of a general population sample',
         verbose_name="Population age category",
     )
@@ -42,7 +42,7 @@ class Design(models.Model):
         blank=True,
         verbose_name="Population age details",
     )
-    sex = models.CharField(default=constants.Sex.BOTH, max_length=1, choices=constants.Sex.choices)
+    sex = models.CharField(default=constants.Sex.BOTH, max_length=1, choices=constants.Sex)
     race = models.CharField(max_length=128, blank=True, verbose_name="Population race/ethnicity")
     participant_n = models.PositiveIntegerField(
         verbose_name="Overall study population N",
@@ -146,7 +146,7 @@ class Chemical(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -165,10 +165,10 @@ class Exposure(models.Model):
         verbose_name="Exposure measurement types",
     )
     biomonitoring_matrix = models.CharField(
-        max_length=3, choices=constants.BiomonitoringMatrix.choices, blank=True
+        max_length=3, choices=constants.BiomonitoringMatrix, blank=True
     )
     biomonitoring_source = models.CharField(
-        max_length=2, choices=constants.BiomonitoringSource.choices, blank=True
+        max_length=2, choices=constants.BiomonitoringSource, blank=True
     )
     measurement_timing = models.CharField(
         max_length=256,
@@ -178,7 +178,7 @@ class Exposure(models.Model):
     )
     exposure_route = models.CharField(
         max_length=2,
-        choices=constants.ExposureRoute.choices,
+        choices=constants.ExposureRoute,
         default=constants.ExposureRoute.UNKNOWN,
         help_text='Select the most appropriate route. In most cases, biomarkers will be "Unknown/Total" unless a clear exposure source is known.',
     )
@@ -210,7 +210,7 @@ class Exposure(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -241,7 +241,7 @@ class ExposureLevel(models.Model):
     mean = models.FloatField(blank=True, null=True)
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices,
+        choices=constants.VarianceType,
         default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
@@ -273,7 +273,7 @@ class ExposureLevel(models.Model):
     )
     ci_type = models.CharField(
         max_length=3,
-        choices=constants.ConfidenceIntervalType.choices,
+        choices=constants.ConfidenceIntervalType,
         default=constants.ConfidenceIntervalType.NA,
         verbose_name="Lower/upper interval type",
     )
@@ -320,7 +320,7 @@ class ExposureLevel(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -331,7 +331,7 @@ class Outcome(models.Model):
     design = models.ForeignKey(Design, on_delete=models.CASCADE, related_name="outcomes")
     system = models.CharField(
         max_length=2,
-        choices=constants.HealthOutcomeSystem.choices,
+        choices=constants.HealthOutcomeSystem,
         help_text="Select the most relevant system from the drop down menu. If more than one system is applicable refer to assessment team instructions.",
     )
     effect = models.CharField(
@@ -372,7 +372,7 @@ class Outcome(models.Model):
 
     def clone(self):
         self.id = None
-        self.endpoint = f"{self.endpoint} (2)"
+        self.endpoint = clone_name(self, "endpoint")
         self.save()
         return self
 
@@ -412,7 +412,7 @@ class AdjustmentFactor(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -452,13 +452,13 @@ class DataExtraction(models.Model):
     ci_ucl = models.FloatField(verbose_name="Upper bound", blank=True, null=True)
     ci_type = models.CharField(
         max_length=3,
-        choices=constants.ConfidenceIntervalType.choices,
+        choices=constants.ConfidenceIntervalType,
         default=constants.ConfidenceIntervalType.P95,
         verbose_name="Lower/upper bound type",
     )
     units = models.CharField(max_length=128, blank=True)
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices,
+        choices=constants.VarianceType,
         default=constants.VarianceType.NA,
         verbose_name="Type of variance estimate",
         help_text="Specify which measure of variation was reported from list",
@@ -468,7 +468,7 @@ class DataExtraction(models.Model):
     p_value = models.CharField(verbose_name="p-value", max_length=8, blank=True)
     significant = models.PositiveSmallIntegerField(
         verbose_name="Statistically Significant",
-        choices=constants.Significant.choices,
+        choices=constants.Significant,
         default=constants.Significant.NR,
     )
     group = models.CharField(
@@ -509,7 +509,7 @@ class DataExtraction(models.Model):
     )
     adverse_direction = models.CharField(
         max_length=12,
-        choices=constants.AdverseDirection.choices,
+        choices=constants.AdverseDirection,
         default=constants.AdverseDirection.UNSPECIFIED,
         verbose_name="Adverse direction",
         help_text=" Select the direction of effect that would be adverse if observed. This does not mean that the actual results were adverse or were in that direction; this is a guide for interpretation of the results. For example, for a given neuropsychological score, is an increase interpreted as a better or worse score? For some outcomes (e.g., thyroid hormones), an association in either direction could conceivably be adverse.",
@@ -553,6 +553,7 @@ class DataExtraction(models.Model):
 
     def clone(self):
         self.id = None
+        self.exposure_rank += 1
         self.save()
         return self
 

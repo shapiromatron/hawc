@@ -1,72 +1,80 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-{% if crud == "Read" %}
-<div class="d-flex">
-    <h3>Assessment Value for {{object.assessment}}</h3>
-    {% if obj_perms.edit %}
-    {% actions %}
-        <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update</a>
-        <a class="dropdown-item" href="{% url 'assessment:values-delete' object.pk %}">Delete</a>
-    {% endactions %}
-    {% endif %}
-</div>
-{% endif %}
-<table class="table table-sm table-striped">
+  {% if crud == "Read" %}
+    <div class="d-flex">
+      <h3>Assessment Value for {{object.assessment}}</h3>
+      {% if obj_perms.edit %}
+        {% actions %}
+          <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update</a>
+          <a class="dropdown-item" href="{% url 'assessment:values-delete' object.pk %}">Delete</a>
+        {% endactions %}
+      {% endif %}
+    </div>
+  {% endif %}
+  <table class="table table-sm table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
+      <col style="width: 30%;">
+      <col style="width: 70%;">
     </colgroup>
     <tbody>
-        {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
-        {% optional_table_row "System or health effect basis" object.system %}
-        {% optional_table_row "Value type" object.get_value_type_display %}
+      {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
+      {% optional_table_row "System or health effect basis" object.system %}
+      {% optional_table_row "Value type" object.get_value_type_display %}
+      <tr>
+        <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
+        <td>{{object.value}} {{object.value_unit|default:""}}</td>
+      </tr>
+      {% if object.confidence %}
         <tr>
-            <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
-            <td>{{object.value}} {{object.value_unit|default:""}}</td>
+          <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value." %}</th>
+          <td>{{object.confidence}}</td>
         </tr>
-        {% if object.confidence %}
+      {% endif %}
+      {% optional_table_row "Value duration" object.duration %}
+      {% optional_table_row "Basis" object.basis %}
+      {% optional_table_row "POD type" object.pod_type %}
+      {% if object.pod_value %}
         <tr>
-            <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value." %}</th>
-            <td>{{object.confidence}}</td>
+          <th>POD Value</th>
+          <td>{{object.pod_value|default:""}} {{object.pod_unit|default:""}}</td>
         </tr>
-        {% endif %}
-        {% optional_table_row "Value duration" object.duration %}
-        {% optional_table_row "Basis" object.basis %}
-        {% optional_table_row "POD type" object.pod_type %}
-        {% if object.pod_value %}
-        <tr>
-            <th>POD Value</th>
-            <td>{{object.pod_value|default:""}} {{object.pod_unit|default:""}}</td>
-        </tr>
-        {% endif %}
-        {% if object.show_noncancer_fields %}
+      {% endif %}
+      {% if object.show_noncancer_fields %}
         {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
-        {% endif %}
-        {% optional_table_row "Species and strain" object.species_studied|default:"" %}
-        {% if object.study %}
+      {% endif %}
+      {% optional_table_row "Species and strain" object.species_studied|default:"" %}
+      {% if object.study %}
         <tr>
-            <th>Key Study</th>
-            <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
+          <th>Key Study</th>
+          <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
         </tr>
-        {% endif %}
-        {% if object.show_cancer_fields %}
+      {% endif %}
+      {% if object.show_cancer_fields %}
         {% optional_table_row "Tumor type" object.tumor_type %}
         {% optional_table_row "Extrapolation method" object.extrapolation_method %}
-        {% endif %}
-        {% optional_table_row "Evidence characterization" object.evidence %}
-        {% optional_table_row "Comments" object.comments %}
-        {% for key, value in object.extra.items %}
+      {% endif %}
+      {% optional_table_row "Evidence characterization" object.evidence %}
+      {% optional_table_row "Comments" object.comments %}
+      {% for key, value in object.extra.items %}
         <tr>
-            <th>{{key}}</th>
-            <td>{{value}}</td>
+          <th>{{key}}</th>
+          <td>{{value}}</td>
         </tr>
-        {% empty %}
-        {% endfor %}
+      {% empty %}
+      {% endfor %}
     </tbody>
-</table>
+  </table>
+  {% if obj_perms.edit and object.check_calculated_value.show_warning %}
+    {% alert warning %}
+      <p><b>Note: this message only appears to team members and higher.</b></p>
+      <p>
+        The calculated {{object.get_value_type_display}} ({{object.check_calculated_value.calculated_value|stringformat:'.3g'}} {{object.value_unit|default:""}}), is > {{object.check_calculated_value.tolerance|percentage}} different than the reported value ({{object.value}} {{object.value_unit|default:""}}). The calculated value was generated using the formula POD / UF, or {{object.pod_value}} / {{object.uncertainty}} = {{object.check_calculated_value.calculated_value|stringformat:'.3g'}}. This difference may be due to the level of precision the {{object.get_value_type_display}} is reported, but please review in case of an error.
+      </p>
+    {% endalert %}
+  {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-{% if object.adaf %}{% include "common/helptext_popup_js.html" %}{% endif %}
+  {% if object.adaf %}{% include "common/helptext_popup_js.html" %}{% endif %}
 {% endblock %}

@@ -1,15 +1,25 @@
 <script type="text/javascript">
-$(document).ready(function(){
-  $('{{name_list}}').on('change', function () {
-    var format = $(this).val(),
-        url = $(`#${this.id}-url`).attr("href");
-    if (format && url) {
-      var format_idx = url.indexOf("format="),
-          help_text = format === "xlsx" ? "Excel Spreadsheet" : `${format.toUpperCase()} file`;
-      $(`#${this.id}-url`).attr("href", url.replace(/format=(\w+)/, `format=${format}`));
-      $(`#${this.id}-fmt-text`).text(help_text)
-    }
-    return false;
+  $(document).ready(function () {
+    $('{{name_list}}').on('change', function () {
+      var format = $(this).val(),
+          url = $(`#${this.id}-url`).attr("href");
+      if (format && url) {
+        var format_idx = url.indexOf("format="),
+            help_text = format === "xlsx" ? "Excel Spreadsheet" : `${format.toUpperCase()} file`;
+        $(`#${this.id}-url`).attr("href", url.replace(/format=(\w+)/, `format=${format}`));
+        $(`#${this.id}-fmt-text`).text(help_text)
+      }
+      return false;
+    });
+    $(`.unpublished-checkbox`).on('change', function () {
+      var unpublished = $(this).prop('checked'),
+          url = $(`#${this.dataset.url}`).attr("href");
+      if (url) {
+        $(`#${this.dataset.url}`).attr(
+          "href", url.replace(/unpublished=(\w+)/, `unpublished=${unpublished}`
+          ));
+      }
+      return false;
+    });
   });
-});
 </script>

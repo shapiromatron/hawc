@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any
+from typing import Any, TypeVar
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,13 +17,15 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
 
+T = TypeVar("T", bound=BaseModel)
 
-def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) -> BaseModel:
+
+def validate_pydantic(pydantic_class: type[T], field: str | None, data: Any) -> T:
     """Validation helper to validate a field to a pydantic model.
 
     Args:
         pydantic_class (BaseModel): A Pydantic base class
-        field (str): the field to raise the error on
+        field (str|None): the field to raise the error on, or None
         data (Any): the data to be validated
 
     Raises:
@@ -35,7 +37,8 @@ def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) ->
     try:
         return pydantic_class.model_validate(data)
     except PydanticError as err:
-        raise DrfValidationError({field: err.json()})
+        message = {field: err.json()} if field else err.json()
+        raise DrfValidationError(message)
 
 
 def validate_jsonschema(data: Any, schema: dict) -> Any:
@@ -67,7 +70,11 @@ class UnusedSerializer(serializers.Serializer):
     pass
 
 
-class HeatmapQuerySerializer(serializers.Serializer):
+class ExportQuerySerializer(serializers.Serializer):
+    """
+    Serializer for exports that may or may not include unpublished data.
+    """
+
     unpublished = serializers.BooleanField(default=False)
 
 
@@ -588,3 +595,21 @@ class PydanticDrfSerializer(BaseModel):
                     error_key = key if key != "__root__" else "non_field_errors"
                     errors[error_key].append(e["msg"])
             raise DrfValidationError(errors)
+
+
+class RequiredIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+
+
+def check_ids(data: list[dict]) -> list[int]:
+    """Ensure data passed via a request contains a list of integers; else raise ValidationError
+
+    Args:
+        data (list): a DRF Request data object
+
+    Returns:
+        list[int]: a list of integers from the request data
+    """
+    ser = RequiredIdSerializer(data=data, many=True)
+    ser.is_valid(raise_exception=True)
+    return [int(el["id"]) for el in ser.validated_data]

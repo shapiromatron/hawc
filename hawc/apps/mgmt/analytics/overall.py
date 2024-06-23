@@ -4,15 +4,9 @@ from django.apps import apps
 from django.db.models import Count
 from django.utils import timezone
 
+from .common import percentage
+
 logger = logging.getLogger(__name__)
-
-
-def percentage(numerator, denominator) -> float:
-    """Calculate a percentage; handles division by zero in denominator."""
-    try:
-        return numerator / float(denominator)
-    except ZeroDivisionError:
-        return 0
 
 
 def compute_object_counts() -> dict:

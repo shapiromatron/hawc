@@ -13,56 +13,94 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAAHxRy27CMBC89ytcn0sc8yhN5Ri1JIcgAqhQJE5VSFbFkmMjx6Hl72sDoqKHXryT
-        ZGYys2aj71qiA5hGaBVjGoQYjfgdu0/m49VmkaJFu62hejFWlBKWYNHi/XWajRHuEDKb5oQkq8ST
-        8ivpAdHGokmh2sIcUTekESHpDCO8s3bfPBNS2SpQsg6U2AWf+kBUuRVkf/oP0a29wA8ahTSkgWNj
-        F+hvDn77hjMXQAoFY2EL67qgpZttE+M8TabZLMVo/qXAxNiFxk6cZwlaX2tjTqN+d9Dt9RjxnzhL
-        CgtjXe8lWKg420BheDcMI0ZOkOVa2R0Ph4yckRMcOX1kxE9/3sj94xscRPOf1+DGy1v/el3Fl76n
-        lesKZIwXRijrKk10a1QhOcuWyxnKmkatjnuIcSqhtEYrUbqWT8Ne57E3oIx41lXk2C0gtzuo3B5F
-        W8c4UxaMAu+81rKtgfddogtkJwF3dc/AX4aPeVPuBwAA//+kV11T2zoQ/Ss7ebntDHESCB+9k2Ym
-        ISmFoZSB9DJ9VGzFVrElX0kOuL++R5adD+pOy70vEMvS7tmzZ1fr3eCuCrmJrrfZ3Nt1Px4thEUm
-        PygVEZMRhQnPRMhSsupZhCpVcUl/4w2JClqVZrz95m0QZJMKk/CIVkqTTThNtbBYoUsZFcZqgU1T
-        4exUVu+4AcAwoYkxKhSVuVHPYwCHnyfLpQbr1boHdQ5AtPBgHIH7WzbRbJLkbc2ZTktiKTBXGw3w
-        U66V5fjv4oy55MSfc82Nk6N7jZ30KCLJSwSTpupJyJiWWmWgzW1VptA8GPX2HI1uWSxkDaYuh9tY
-        jgeD42H3pA/+t2tIws7m+bUKq58oivll5HUTKdGhf1gqoq837ztfIZ5+gII86X0LVqENXI6D/mHQ
-        76Nmdgwg+iXIZqHd/lrwZzueevgHxChUWYZAI2GEXEGdTFpaluAkKkJLakURNP3oYn7CCU3qu/JQ
-        DyhhhpacS0Ikj8i1VZQUGfNMMikyZFZz2ahG2PIAhIZpETlz/k3IU/xB7oUEpCofWZFagWptTJic
-        h4KbgD5yDchPYH3N0sLRHyZMxvy3WbSJVkWckH1S3UhkXBov10isVrApQ44jKXFfnXmicFAYenM4
-        684uL+ZvK6OT1arMOKT7TExrVhoXr4i4tGJVUg7v+AWjGVqBccSBbC+htUrXoMeBVJYBUpFtBFSH
-        DsQVQQF9YogcmjMIVNcC89z+fBgWX2QHWg0V4pG2ETiA9HENHKD7V2EM+33K88wX5pOCF/4Ibmc1
-        FVUIO9TheJyWKLIS6m5INjtp5FKlzHAa0Ju5VIO3BwSKABksmjypUBqVod78nkUuBp5PZxbLacST
-        MuLdo+72RLWkHSnu1JsLlkfJWzJFjFyDGItNGw4aacENsbp7gK8nYZNdeUARGj0L5Jgiy6vEOBCF
-        Fan4zmxT6xtNmjpvLsQi72oeF6nf9hMjIajiNaqMlSiJquOBQQi5EoLrN8CUCavCRMmoan+rQlYC
-        Ceierx0RL/tS7cUp0UHdP11JHEmWJtQib9TCUqNILQ3Xa68ZYHEhC+PU6UmxCQw6kW41GtAiQQcm
-        Y5FThIKg1lA2QBgRJ9Y1eUW86p2AKq3Z54ryBCj9pdDEuixbe+RuE9o+ojsVFlV3DZzUXNV1p6tf
-        7XW/0TUz9obh8psk6VJp3BWbldEHVG/168JRdDXqbRZGl1I4fZvxBZY3DyNUNlTge6Zcqb2F8Rfp
-        buJqhAEzc7kWuL/RQiyCv3Xl4Kt8goSE6G83zVX4kYOKpMrc/qH5yrVZs73zrhlCYFZpHN/fer5p
-        DlU/mgkMHlXnnQ6GR93+Ceq6/44WwUNAk5Q/wxdawEyLNdrkxvwCepGxG1OYfgTAczo8PR2gIexF
-        5pKzE/Xekyel5xPxm4TMePrIdWs+Zo6m1nTMJrvp+DNHd0rlrW6mTC+ZZnTe6mp6/npXF1DjL0Ji
-        qBO6aw/q7vWeJmnK28V8hT+GHlo9XT283tOMT9AaU9XqbILZUMmSpq3uJtPXu3sQUorHVmcP6Gtp
-        RJ9afT18avXV2/YL50TGBYv5mMvYeaif3BycCj8KuSnKb36xSF8u33dmmKSGh2edcT00Uj3KVdPx
-        7u5fHj8anh13xpuSuy/yXGmLYlOy+yW4D+hCrf+yLfZerniQvZdfUs1sXhXiuSpwvZfjOaoaJT/q
-        NQvN7sWkbUbevhzdpBmK/9+CY0Q8O+yfDs8wN+4uVt8t136yGPcPT8+6J+8Gx/5DpVneWNwHV38o
-        +ECap/HojsdY0eVNkS25HmMCfrEycpn/vLovcCcwN5F5avHJevyu0wysBjD3twHG1sn/d4f5vH/S
-        Gd/Wc85/dDc/p6NgGBwOguEfOx4e/QAAAP//zFnbbtswDP0Vw08rkMF3SQaCAEXTSzC4Q5cAQx/T
-        1us8xHEQOw/d14+ULV/Z1K1dLE+tHYmkSEk+h8fj+my1f9kBED/u12gluaDZOBjI+AKOTOsVbIz0
-        N3yQELDlc2ovgOKGOYhI9uhVJd4UltABjv5J9qtkFz3imb7V4W5AUA6Zac6S26Fms4cDWdmug6rU
-        bQ93B7hbfkVhZeUOwmSO07YCV4+ChVOjMesDYdouM4kwLxD4wFkIR8iEa5udNYCLueJkkg0P9WJ5
-        lqAWctlkPRPtOtxMtBVQpXlFlcZYJHdcyn0OzIMwAxi0idK4b90twQlzT/sDcJIcYg2uveUJTqVM
-        IsvLkiQNiPh+5IhNBseKirjkEieUXpMzRl0x32S3pXegjBE2Hl8ySUg6QY5WGtqQwzsrAkNxbXcP
-        TZqwfaoy2DcY4ZQKj1GnNAjjByCbQCJUn+OkNpLwbWojBTXK/Inh9t4Jt6PuBM9yHGrrB41Ggarc
-        KdXLNl3LIpx830TPyfYAyDfJsP9wjn02bRkCKEWkdA4fIvoKe/fFLmFeN4AK9/XL1aefdqixoDL1
-        Y52NkgbfotKA1ifaYvuAnZwrx3WHu/IcTn6YVti0iOF9mmrLnUQi2GQlbv93L04iasKjgtj9Sswd
-        yojUQ1IZ51CM4Qqywj9lPxeZ5ObNZNSfCgbZkuCURDdfZ+vZ9AbGJEgYc7Gw0IBQx1JKHTaQw7/6
-        qxpSUx/zC3nsBpggPsi/0yDaHrIQuVfxn2S7lb8j7nPZ8b+5j/Pkve6/JTXyDwZg1Auh2gB5ELNd
-        oaE1WgTFb0rUWjzl1S4fNSUYqQRWUmo5hhweRfpsWRL9L6Z/hszK/8remIjC1DExqjbZaAVt1Hek
-        0VSQ/wEAAP//QuOD5pgBAAAA//8DANWA3KkeHwAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">19425233</PMID><DateCompleted><Year>2009</Year><Month>07</Month><Day>16</Day></DateCompleted><DateRevised><Year>2009</Year><Month>05</Month><Day>07</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1873-6351</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>47</Volume><Issue>6</Issue><PubDate><Year>2009</Year><Month>Jun</Month></PubDate></JournalIssue><Title>Food
+        and chemical toxicology : an international journal published for the British
+        Industrial Biological Research Association</Title><ISOAbbreviation>Food Chem
+        Toxicol</ISOAbbreviation></Journal><ArticleTitle>Early alterations in protein
+        and gene expression in rat kidney following bromate exposure.</ArticleTitle><Pagination><StartPage>1154</StartPage><EndPage>1160</EndPage><MedlinePgn>1154-60</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1016/j.fct.2009.02.003</ELocationID><Abstract><AbstractText>Bromate,
+        a common disinfectant byproduct of drinking water ozonation, has been linked
+        to human and animal renal toxicity, including renal cell carcinomas in multiple
+        animal species. Here, we evaluate changes in protein and gene expression through
+        two-dimensional difference gel electrophoresis (2D-DIGE) and Affymetrix arrays
+        to identify potential modes of action involved in potassium bromate carcinogenicity.
+        Male rats were exposed to potassium bromate in drinking water at concentrations
+        of 0, 1, 20 and 400 ppm for two weeks. Differential expression of glycolytic
+        proteins including enolase 1 (Eno1), triosephosphate isomerase 1 (Tpi1) and
+        glyceraldehyde-3-phosphate dehydrogenase (Gapdh) suggests that bromate toxicity
+        is associated with changes in energy consumption and utilization in renal
+        cells involving up-regulation of glycolytic processes that may be the result
+        of altered mitochondrial function. Several alterations in glycolysis and mitochondrial
+        gene transcripts were also observed to be consistent with this mode of action.
+        These studies provide insight into early events in renal cell physiology altered
+        by bromate exposure.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Ahlborn</LastName><ForeName>Gene J</ForeName><Initials>GJ</Initials><AffiliationInfo><Affiliation>United
+        States Environmental Protection Agency, National Health and Environmental
+        Effects Research Laboratory, Environmental Carcinogenesis Division, B143-06,
+        109 T.W. Alexander Drive, Research Triangle Park, NC 27711, United States.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Delker</LastName><ForeName>Don A</ForeName><Initials>DA</Initials></Author><Author
+        ValidYN="Y"><LastName>Roop</LastName><ForeName>Barbara C</ForeName><Initials>BC</Initials></Author><Author
+        ValidYN="Y"><LastName>Geter</LastName><ForeName>David R</ForeName><Initials>DR</Initials></Author><Author
+        ValidYN="Y"><LastName>Allen</LastName><ForeName>James W</ForeName><Initials>JW</Initials></Author><Author
+        ValidYN="Y"><LastName>DeAngelo</LastName><ForeName>Anthony B</ForeName><Initials>AB</Initials></Author><Author
+        ValidYN="Y"><LastName>Winnik</LastName><ForeName>Witold M</ForeName><Initials>WM</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Food
+        Chem Toxicol</MedlineTA><NlmUniqueID>8207483</NlmUniqueID><ISSNLinking>0278-6915</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D001959">Bromates</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D011506">Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        3.4.21.4</RegistryNumber><NameOfSubstance UI="D014357">Trypsin</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001959" MajorTopicYN="N">Bromates</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="Y">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002460" MajorTopicYN="N">Cell Line</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004203" MajorTopicYN="N">Disinfection</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015180" MajorTopicYN="N">Electrophoresis, Gel, Two-Dimensional</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004734" MajorTopicYN="N">Energy Metabolism</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015870" MajorTopicYN="N">Gene Expression</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006019" MajorTopicYN="N">Glycolysis</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007668" MajorTopicYN="N">Kidney</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName><QualifierName UI="Q000187" MajorTopicYN="Y">drug
+        effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008564" MajorTopicYN="N">Membrane Potentials</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008928" MajorTopicYN="N">Mitochondria</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051336" MajorTopicYN="N">Mitochondrial Membranes</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020411" MajorTopicYN="N">Oligonucleotide Array Sequence Analysis</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011506" MajorTopicYN="N">Proteins</DescriptorName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011916" MajorTopicYN="N">Rats, Inbred F344</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D053719" MajorTopicYN="N">Tandem Mass Spectrometry</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014357" MajorTopicYN="N">Trypsin</DescriptorName><QualifierName UI="Q000737"
+        MajorTopicYN="N">chemistry</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014881" MajorTopicYN="N">Water Supply</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2009</Year><Month>5</Month><Day>9</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2009</Year><Month>5</Month><Day>9</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2009</Year><Month>7</Month><Day>17</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">19425233</ArticleId><ArticleId IdType="doi">10.1016/j.fct.2009.02.003</ArticleId><ArticleId
+        IdType="pii">S0278-6915(09)00069-6</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -77,20 +115,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:22:49 GMT
+      - Tue, 20 Feb 2024 16:38:54 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B44F6B46659C50000304E7C0475B9.1.1.m_3
+      - 322C45D975EA9B4500002CDC8A3F53C0.1.1.m_3
       NCBI-SID:
-      - DC8B5A14651FE75A_8E90SID
+      - E39BF6FB99E8389C_914CSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=DC8B5A14651FE75A_8E90SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:22:50 GMT
+      - ncbi_sid=E39BF6FB99E8389C_914CSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:38:55 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -98,9 +136,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

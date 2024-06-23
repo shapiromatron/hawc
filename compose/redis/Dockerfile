@@ -1,1 +1,5 @@
-FROM redis:6-alpine
+FROM redis:7-alpine
+
+RUN apk update && \
+    apk upgrade --available && \
+    rm -rf /var/cache/apk/*

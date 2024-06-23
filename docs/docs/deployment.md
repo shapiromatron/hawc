@@ -79,7 +79,7 @@ For configurable parameters, we use environment variables which are loaded in th
     - The "django" authentication provider means accounts can be created in hawc and passwords are managed in hawc
     - The "external" authentication provider assumes an upstream server handles authentication and returns appropriate user metadata for integration via `/user/login/wam/`.  If used, `hawc.apps.myuser.views.ExternalAuth.get_user_metadata` requires a custom implementation.
 - `HAWC_LOGOUT_REDIRECT` [str, optional]. URL to redirect to after logout. Defaults to the homepage of hawc; this may need to be modified with some authentication providers.
-- `HAWC_LOAD_TEST_DB` [0/1/2; default 0]. Load a test database with pre-populated fake data: always (2), if empty (1), or never (0; default). This setting is only used in staging and production django settings.
+- `HAWC_LOAD_TEST_DB` [0/1; default 0]. Load a test database with pre-populated fake data (1), or never ( default). This setting is only used in staging and production django settings.
 
 ### Feature flags
 
@@ -108,9 +108,9 @@ By default, sentry integration is disabled.
 
 ### Human verification
 
-To prevent bots from attempting to login to the server, you can optionally enable [Turnstyle](https://www.cloudflare.com/products/turnstile/). To enable, set these two additional environment variables:
+To prevent bots from attempting to login to the server, you can optionally enable [Turnstile](https://www.cloudflare.com/products/turnstile/). To enable, set these two additional environment variables:
 
-- `TURNSTYLE_SITE`: site key, this is used by the client to interact (public)
-- `TURNSTYLE_KEY`: secret key, used by the server to verify the response (private)
+- `TURNSTILE_SITE`: site key, this is used by the client to interact (public)
+- `TURNSTILE_KEY`: secret key, used by the server to verify the response (private)
 
-By default. human verification is disabled.
+By default. human verification is disabled, but is enabled when these values are set.

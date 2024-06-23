@@ -2,8 +2,15 @@ import pytest
 
 # use concrete implementations to test
 from hawc.apps.animal.models import DoseGroup, Experiment
-from hawc.apps.common.models import sql_format
+from hawc.apps.common.models import (
+    apply_flavored_help_text,
+    clone_name,
+    sql_format,
+    sql_query_to_dicts,
+)
+from hawc.apps.epiv2.models import ExposureLevel
 from hawc.apps.lit.models import ReferenceFilterTag
+from hawc.apps.riskofbias import models
 
 _nested_names = [
     "Inclusion",
@@ -58,3 +65,31 @@ def test_sql_format():
     for case in ["/too-few/", "{}", "/too-many/{}/{}/"]:
         with pytest.raises(ValueError):
             sql_format(case, "foo")
+
+
+def test_apply_flavored_help_text(settings):
+    settings.MODIFY_HELP_TEXT = True
+    settings.HAWC_FLAVOR = "EPA"
+    initial = models.RiskOfBiasAssessment._meta.get_field("help_text").help_text
+    apply_flavored_help_text("riskofbias")
+    changed = models.RiskOfBiasAssessment._meta.get_field("help_text").help_text
+    assert initial != changed
+
+
+def test_clone_name():
+    m = ExposureLevel(name="a")
+    assert clone_name(m, "name") == "a (2)"
+    m.name = "b (2)"
+    assert clone_name(m, "name") == "b (3)"
+    m.name = "c" * 64
+    assert clone_name(m, "name") == ("c" * 60) + " (2)"
+    m.name = "c" * 60 + " (9)"
+    assert len(m.name) == 64
+    assert clone_name(m, "name") == ("c" * 59) + " (10)"
+
+
+@pytest.mark.django_db
+def test_sql_query_to_dicts():
+    query = "SELECT id, name FROM assessment_assessment ORDER BY id LIMIT %s "
+    results = sql_query_to_dicts(query, (2,))
+    assert list(results) == [{"id": 1, "name": "Chemical Z"}, {"id": 2, "name": "Chemical X"}]

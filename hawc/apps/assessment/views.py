@@ -12,7 +12,6 @@ from django.db import transaction
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponseNotAllowed,
     HttpResponseRedirect,
     JsonResponse,
 )
@@ -116,7 +115,7 @@ class Resources(TemplateView):
         return context
 
 
-class Contact(LoginRequiredMixin, MessageMixin, FormView):
+class Contact(MessageMixin, FormView):
     template_name = "hawc/contact.html"
     form_class = forms.ContactForm
     success_url = reverse_lazy("home")
@@ -125,6 +124,8 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         if settings.EXTERNAL_CONTACT_US:
             return HttpResponseRedirect(settings.EXTERNAL_CONTACT_US)
+        elif self.request.user.is_anonymous and not settings.TURNSTILE_SITE:
+            return HttpResponseRedirect(settings.LOGIN_URL)
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
@@ -306,6 +307,7 @@ class AssessmentDetail(BaseDetail):
         )
         context["values"] = self.object.values.order_by("value_type")
         context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        context["is_team_member"] = self.object.user_is_team_member_or_higher(self.request.user)
         return context
 
 
@@ -320,7 +322,7 @@ class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = "Assessment modules updated."
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
 
 class AssessmentDelete(BaseDelete):
@@ -360,6 +362,9 @@ class AssessmentDownloads(BaseDetail):
     def get_context_data(self, **kwargs):
         kwargs.update(
             EpiVersion=constants.EpiVersion,
+        )
+        kwargs["allow_unpublished"] = self.assessment.user_is_team_member_or_higher(
+            self.request.user
         )
         return super().get_context_data(**kwargs)
 
@@ -432,7 +437,6 @@ class AttachmentViewSet(HtmxViewSet):
     model = models.Attachment
     form_fragment = "assessment/fragments/attachment_edit_row.html"
     detail_fragment = "assessment/fragments/attachment_row.html"
-    list_fragment = "assessment/fragments/attachment_list.html"
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -453,11 +457,7 @@ class AttachmentViewSet(HtmxViewSet):
                 template = self.detail_fragment
         else:
             form = forms.AttachmentForm()
-            template = self.list_fragment
         context = self.get_context_data(form=form)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            request.item.assessment, False
-        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -602,7 +602,7 @@ class CleanExtractedData(BaseEndpointList):
 
     breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
-    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -623,29 +623,20 @@ class CloseWindow(TemplateView):
 
 
 class UpdateSession(View):
-    http_method_names = ("post",)
-
-    def isTruthy(self, request, field):
-        return request.POST.get(field, "true") == "true"
+    http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
-        if request.method != "POST":
-            return HttpResponseNotAllowed(["POST"])
         response = {}
         if request.POST.get("refresh"):
-            if request.user.is_authenticated:
-                old_time = request.session.get_expiry_date().isoformat()
-                request.session.set_expiry(None)  # use the global session expiry policy
-                new_time = request.session.get_expiry_date().isoformat()
-                response = {
-                    "message": f"Session extended from {old_time} to {new_time}.",
-                    "new_expiry_time": new_time,
-                }
-            else:
-                response = {
-                    "message": "Session not renewed.",
-                    "new_expiry_time": None,
-                }
+            if not request.user.is_authenticated:
+                raise Http404()
+            old_time = request.session.get_expiry_date().isoformat()
+            request.session.set_expiry(None)  # use the global session expiry policy
+            new_time = request.session.get_expiry_date().isoformat()
+            response = {
+                "message": f"Session extended from {old_time} to {new_time}.",
+                "new_expiry_time": new_time,
+            }
         return JsonResponse(response)
 
 
@@ -659,7 +650,7 @@ class CleanStudyRoB(BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
     breadcrumb_active_name = "Clean reviews"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(

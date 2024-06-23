@@ -7,11 +7,12 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
+from hawc.apps.assessment.forms import ContactForm
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
-from ..test_utils import check_200, get_client
+from ..test_utils import check_200, check_302, get_client
 
 
 def has_redis():
@@ -200,7 +201,7 @@ class TestContactUsPage:
         # login required
         resp = client.get(contact_url)
         assert resp.status_code == 302
-        assert urlparse(resp.url).path == reverse("user:login")
+        assert urlparse(resp.url).path == settings.LOGIN_URL
 
         # valid
         client.login(username="pm@hawcproject.org", password="pw")
@@ -241,6 +242,45 @@ class TestContactUsPage:
         # invalid referrer; use default
         resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
         assert resp.context["form"].fields["previous_page"].initial == portal_url
+
+    def test_turnstile(self, settings):
+        anon = get_client()
+        team = get_client("team")
+        url = reverse("contact")
+
+        # turnstile disabled
+        settings.TURNSTILE_SITE = ""
+        settings.TURNSTILE_KEY = ""
+
+        # anon - redirect to login
+        resp = anon.get(url, follow=True)
+        check_302(anon, url, str(settings.LOGIN_URL))
+
+        # auth - form displayed; no challenge
+        resp = team.get(url, follow=True)
+        form = resp.context["form"]
+        assert isinstance(form, ContactForm)
+        assert form.enable_turnstile is False
+
+        # turnstile enabled
+        settings.TURNSTILE_SITE = "https://test-me.org"
+        settings.TURNSTILE_KEY = "secret"
+
+        # anon - form displayed; has challenge
+        resp = anon.get(url)
+        form = resp.context["form"]
+        assert isinstance(form, ContactForm)
+        assert form.enable_turnstile is True
+
+        # auth - form displayed; no challenge
+        resp = team.get(url, follow=True)
+        form = resp.context["form"]
+        assert isinstance(form, ContactForm)
+        assert form.enable_turnstile is False
+
+        # turnstile disabled
+        settings.TURNSTILE_SITE = ""
+        settings.TURNSTILE_KEY = ""
 
 
 @pytest.mark.django_db
@@ -298,6 +338,26 @@ class TestBulkPublishItems:
         assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
         study.refresh_from_db()
         assert study.published is False
+
+
+@pytest.mark.django_db
+class TestUpdateSession:
+    def test_refresh(self):
+        anon = get_client()
+        pm = get_client("reviewer")
+
+        url = reverse("update_session")
+
+        resp = anon.post(url, data={})
+        assert resp.status_code == 200
+        assert resp.json() == {}
+
+        resp = anon.post(url, data={"refresh": 1})
+        assert resp.status_code == 404
+
+        resp = pm.post(url, data={"refresh": 1})
+        assert resp.status_code == 200
+        assert "new_expiry_time" in resp.json()
 
 
 class TestRasterizeCss:

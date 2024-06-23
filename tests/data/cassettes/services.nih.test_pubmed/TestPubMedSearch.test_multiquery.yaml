@@ -13,16 +13,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//skGx246L08Y5vzSvxM7MRh/C4LLRR1MCAAAA//8DACRpkk/gAAAA
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>6</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -37,20 +34,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:29 GMT
+      - Tue, 20 Feb 2024 16:42:26 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD70A4A27193A50000535045E5DC3F.1.1.m_1
+      - 322C45D975EA9B4500003AE168CFEB62.1.1.m_1
       NCBI-SID:
-      - 2C284824FBEB41F9_8240SID
+      - 474B7DE2803148B6_950ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=2C284824FBEB41F9_8240SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:30 GMT
+      - ncbi_sid=474B7DE2803148B6_950ASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:27 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -58,9 +55,7 @@ interactions:
       X-RateLimit-Limit:
       - '3'
       X-RateLimit-Remaining:
-      - '1'
-      X-Test-Test:
-      - test42
+      - '2'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -84,25 +79,34 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//dFBPC8IgFP8q4qlOzorc4CFEERX9gbbb6GDNw8LNUIM+fjaNFpGn935/5cFXN4e5vreOT4GE
-        AY7S7cSDj4HE6YXkThjHkw4LM6yrbW2dz1tXnGZJkk6oD/FLQNJsxMZT2kdYyihLIkKiHwojWquE
-        86fL5ffO0evB0uiG20vtTyrLq76bVqgTkA4OikJznAcBLjdRgQ5H9EbRgGYsG35IIN7TeUm/8F/7
-        2UhhHboIn2V+qiPbSn1TwjYWlzuZr1AhTWO7bwyiBJczpdCylqryxGy/QLhn+nBPAAAA///clrEO
-        gjAQhnefwhEmSovQJoTNuAmSOBjjYIRJE4nRRN/e0oKAPZDCoHGC9g/td/dfe+xMAa+uW/+8e12J
-        2r4ooLflxOqwiBfD4RiIRPBoc3VaDgBL+FK5IPOabxoUCk+pGApFFqJNkeOQsiyFML9np3OSBkvf
-        Kl8lbbV1BwZUA/1pkDZJGAVh7Fv8UYwWcbiOXhMAaGcdqbSVCAATm2FGQeiNXvqAElNZKhFgmbkO
-        9mAWTSvho6CJgxnyMHaHGMqPVrujTcN7+Ts8CO4vY3hkUf642/AdpWW1axPksK9ZPT4CgphL9a/B
-        D5fPW3xqAPzngW6zZH8FePNpgJQSD3mDSCuUZq8RvcVf3dLLo96QDM1eb4qOaPxLm5bh1A1SMuRb
-        zZ+8yRMAAP//AwB/EoMWogoAAA==
+      string: '<?xml version="1.0" encoding="UTF-8" ?>
+
+        <!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+
+        <eSearchResult><Count>6</Count><RetMax>3</RetMax><RetStart>0</RetStart><IdList>
+
+        <Id>19008416</Id>
+
+        <Id>18927361</Id>
+
+        <Id>18787170</Id>
+
+        </IdList><TranslationSet><Translation>     <From>science[journal]</From>     <To>"Science"[Journal:__jid0404511]
+        OR "Science (1979)"[Journal:__jid8000640]</To>    </Translation><Translation>     <From>breast
+        cancer</From>     <To>"breast neoplasms"[MeSH Terms] OR ("breast"[All Fields]
+        AND "neoplasms"[All Fields]) OR "breast neoplasms"[All Fields] OR ("breast"[All
+        Fields] AND "cancer"[All Fields]) OR "breast cancer"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>("science"[Journal]
+        OR "science 1979"[Journal]) AND ("breast neoplasms"[MeSH Terms] OR ("breast"[All
+        Fields] AND "neoplasms"[All Fields]) OR "breast neoplasms"[All Fields] OR
+        ("breast"[All Fields] AND "cancer"[All Fields]) OR "breast cancer"[All Fields])
+        AND 2008/01/01:2008/12/31[Date - Publication]</QueryTranslation></eSearchResult>
+
+        '
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -117,20 +121,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:30 GMT
+      - Tue, 20 Feb 2024 16:42:27 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD70A4A27193A500004B50464B1F74.1.1.m_1
+      - 322C45D975EA9B4500005AE16EDD74E0.1.1.m_1
       NCBI-SID:
-      - B507E4A7F1A7E21E_A11ASID
+      - DAA65AF454EDDA51_AC6ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=B507E4A7F1A7E21E_A11ASID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:31 GMT
+      - ncbi_sid=DAA65AF454EDDA51_AC6ASID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:28 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -138,9 +142,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
-      X-Test-Test:
-      - test42
+      - '9'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -164,25 +166,34 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAALKxr8jNUShLLSrOzM+zVTLUM1BSSM1Lzk/JzEu3VQoNcdO1UFKwt+MCAAAA//+y
-        UXTxdw6JDHBVSA1OTSxKzghKLS7NKVEICHXy8XRWUNLV1/fz8dXXdwlxUUgtBqtQMDIwMDMwM7LQ
-        13f1U1JQyigpKSi20tdPLS3JzCnWy0tOytTLy8nVy8vM0EvPL4OK66eUpOjDdUKN0gMKKtlxAQAA
-        AP//dFBbC4IwFP4rY0/1NOymwmEghWR0AfVNeli5B2O62Bb085u6UIn2dM53HQcm3RS28tUYugHS
-        D5Byc2JvugTiphbJDFPGYf0MSXmstLF5SUm9YBX4XmBD7OKQxTL0Fr/I2iHE+SFXrNGCGXu6jE93
-        itoHsZI11ffKnpQXD/lSDRNXIB3cK3JJcdYLcHFwCnRJ0RdFMy/0w/lAArGezkvGhf/ab4ozbdCd
-        2Sz1U+3YhsunYLrWuDjxbI9yrmrdfWPmJLiIhEBxxUVpiei8Q3hkGrgPAAAA///clrEOgjAQhnef
-        whEmSovQJoTNuAmSOBjjYIRJE4nRRN/e0oKAPZDCoHGC9g/td/dfe+xMAa+uW/+8e12J2r4ooLfl
-        xOqwiBfD4RiIRPBoc3VaDgBL+FK5IPOabxoUCk+pGApFFqJNkeOQsiyFML9np3OSBkvfKl8lbbV1
-        BwZUA/1pkDZJGAVh7Fv8UYwWcbiOXhMAaGcdqbSVCAATm2FGQeiNXvqAElNZKhFgmbkO9mAWTSvh
-        o6CJgxnyMHaHGMqPVrujTcN7+Ts8CO4vY3hkUf642/AdpWW1axPksK9ZPT4CgphL9a/BD5fPW3xq
-        APzngW6zZH8FePNpgJQSD3mDSCuUZq8RvcVf3dLLo96QDM1eb4qOaPxLm5bh1A1SMuRbzZ+8yRMA
-        AP//AwD3ulHKogoAAA==
+      string: '<?xml version="1.0" encoding="UTF-8" ?>
+
+        <!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
+
+        <eSearchResult><Count>6</Count><RetMax>3</RetMax><RetStart>3</RetStart><IdList>
+
+        <Id>18487186</Id>
+
+        <Id>18239126</Id>
+
+        <Id>18239125</Id>
+
+        </IdList><TranslationSet><Translation>     <From>science[journal]</From>     <To>"Science"[Journal:__jid0404511]
+        OR "Science (1979)"[Journal:__jid8000640]</To>    </Translation><Translation>     <From>breast
+        cancer</From>     <To>"breast neoplasms"[MeSH Terms] OR ("breast"[All Fields]
+        AND "neoplasms"[All Fields]) OR "breast neoplasms"[All Fields] OR ("breast"[All
+        Fields] AND "cancer"[All Fields]) OR "breast cancer"[All Fields]</To>    </Translation></TranslationSet><QueryTranslation>("science"[Journal]
+        OR "science 1979"[Journal]) AND ("breast neoplasms"[MeSH Terms] OR ("breast"[All
+        Fields] AND "neoplasms"[All Fields]) OR "breast neoplasms"[All Fields] OR
+        ("breast"[All Fields] AND "cancer"[All Fields]) OR "breast cancer"[All Fields])
+        AND 2008/01/01:2008/12/31[Date - Publication]</QueryTranslation></eSearchResult>
+
+        '
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -197,20 +208,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:30 GMT
+      - Tue, 20 Feb 2024 16:42:28 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C87C9180FAEF500004F377894DE2E.1.1.m_1
+      - D0BD9F070703C0B500005BDBEA2F66E4.1.1.m_1
       NCBI-SID:
-      - 3AE3345422AF3450_B2A0SID
+      - 399ADD438DF83B3C_8D25SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3AE3345422AF3450_B2A0SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:31 GMT
+      - ncbi_sid=399ADD438DF83B3C_8D25SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:29 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -219,8 +230,6 @@ interactions:
       - '10'
       X-RateLimit-Remaining:
       - '8'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

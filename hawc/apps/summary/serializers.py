@@ -3,6 +3,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common import validators
+from ..common.clean import sanitize_html
 from ..common.helper import SerializerHelper
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
@@ -14,7 +15,17 @@ class CollectionDataPivotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DataPivot
-        fields = ("id", "title", "url", "visual_type")
+        fields = (
+            "id",
+            "slug",
+            "title",
+            "url",
+            "visual_type",
+            "caption",
+            "published",
+            "created",
+            "last_updated",
+        )
 
 
 class DataPivotSerializer(serializers.ModelSerializer):
@@ -83,6 +94,17 @@ class VisualSerializer(serializers.ModelSerializer):
 
         return ret
 
+    def validate(self, data):
+        visual_type = data["visual_type"]
+        evidence_type = data["evidence_type"]
+        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
+            raise serializers.ValidationError(
+                {
+                    "evidence_type": f"Invalid evidence type {evidence_type} for visual {visual_type}."
+                }
+            )
+        return data
+
     class Meta:
         model = models.Visual
         exclude = ("endpoints",)
@@ -103,7 +125,7 @@ class SummaryTextSerializer(serializers.ModelSerializer):
 
     def validate_text(self, value):
         validators.validate_hyperlinks(value)
-        return validators.clean_html(value)
+        return sanitize_html.clean_html(value)
 
     def validate(self, data):
         assessment = data["assessment"]

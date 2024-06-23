@@ -3245,7 +3245,9 @@
       "variance_type": 0
     }
   ],
+  "evidence_type": 0,
   "id": 4,
+  "image": null,
   "last_updated": "2020-05-08T15:37:19.255730-04:00",
   "prefilters": {
     "published_only": true

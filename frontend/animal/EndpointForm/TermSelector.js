@@ -52,7 +52,8 @@ class TermSelector extends Component {
                                     this.setState({
                                         idLookupValue: parseInt(event.target.value),
                                     })
-                                }></input>
+                                }
+                            />
                             <div className="input-group-append">
                                 <button
                                     className="btn btn-light"

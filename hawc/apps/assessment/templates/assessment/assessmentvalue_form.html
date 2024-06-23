@@ -1,38 +1,38 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="float-right">
+  <div class="float-right">
     {% include "common/scientific_pulldown.html" %}
-</div>
-{% crispy form %}
+  </div>
+  {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+  <script type="text/javascript">
     $(document).ready(function () {
-        const eval_type = $('#id_evaluation_type'),
+      const eval_type = $('#id_evaluation_type'),
             showRelevantFields = function(){
-                selected_eval_type = eval_type.find(':selected').text();
-                if (selected_eval_type == "Cancer") {
-                    $('#div_id_uncertainty').hide();
-                    $('#div_id_tumor_type').show();
-                    $('#div_id_extrapolation_method').show();
-                    $('#div_id_adaf').show();
-                }
-                if (selected_eval_type == "Noncancer") {
-                    $('#div_id_uncertainty').show();
-                    $('#div_id_tumor_type').hide();
-                    $('#div_id_extrapolation_method').hide();
-                    $('#div_id_adaf').hide();
-                }
-                if (selected_eval_type == "Cancer and Noncancer") {
-                    $('#div_id_uncertainty').show();
-                    $('#div_id_tumor_type').show();
-                    $('#div_id_extrapolation_method').show();
-                    $('#div_id_adaf').show();
-                }
-            };
-        eval_type.on('change', showRelevantFields).trigger('change');
+        selected_eval_type = eval_type.find(':selected').text();
+        if (selected_eval_type == "Cancer") {
+          $('#div_id_uncertainty').hide();
+          $('#div_id_tumor_type').show();
+          $('#div_id_extrapolation_method').show();
+          $('#div_id_adaf').show();
+        }
+        if (selected_eval_type == "Noncancer") {
+          $('#div_id_uncertainty').show();
+          $('#div_id_tumor_type').hide();
+          $('#div_id_extrapolation_method').hide();
+          $('#div_id_adaf').hide();
+        }
+        if (selected_eval_type == "Cancer and Noncancer") {
+          $('#div_id_uncertainty').show();
+          $('#div_id_tumor_type').show();
+          $('#div_id_extrapolation_method').show();
+          $('#div_id_adaf').show();
+        }
+      };
+      eval_type.on('change', showRelevantFields).trigger('change');
     });
-</script>
+  </script>
 {% endblock extrajs %}

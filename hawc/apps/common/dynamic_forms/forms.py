@@ -1,4 +1,5 @@
 """Dynamic Django forms."""
+
 import json
 
 from crispy_forms import layout as cfl
@@ -71,6 +72,9 @@ class DynamicForm(forms.Form):
         # restore fields
         if self.is_bound:
             self.fields = fields
+
+    class Media:
+        js = ["js/udf.js"]
 
 
 class DynamicFormHelper(BaseFormHelper):

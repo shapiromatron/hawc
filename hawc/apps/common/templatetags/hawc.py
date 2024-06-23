@@ -1,13 +1,14 @@
 """
 HAWC helper methods
 """
+
 from typing import Any
 
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.urls import reverse
-from django.utils.html import strip_tags
+from django.utils.html import format_html, strip_tags
 from django.utils.safestring import mark_safe
 
 from ..helper import new_window_a
@@ -59,7 +60,7 @@ def crud_url(app, model, action, id):
     Creates a url via reverse using the appropriate app, model, action, and id
 
     """
-    return reverse(f"{app}:{model}-{action}", args=[id])
+    return reverse(f"{app}:{model}-htmx", args=[id, action])
 
 
 @register.filter
@@ -106,3 +107,11 @@ def url_replace(context, *args, **kwargs):
         handle_replace(dict_, key, value)
 
     return dict_.urlencode()
+
+
+@register.simple_tag
+def debug_badge(text: str):
+    return format_html(
+        '<span title="Click to copy text to clipboard" class="badge badge-dark px-1 mx-1 cursor-pointer debug-badge hidden">{}</span>',
+        text,
+    )

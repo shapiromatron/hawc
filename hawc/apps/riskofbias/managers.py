@@ -1,7 +1,8 @@
 import pandas as pd
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Count, IntegerField, QuerySet, Sum, Value, When
+from django.db.models import Case, CharField, Count, F, IntegerField, QuerySet, Sum, Value, When
+from django.db.models.functions import Cast, JSONObject
 
 from ..common.models import BaseManager, pd_strip_tags, sql_display
 from ..study.managers import study_df_annotations, study_df_mapping
@@ -45,6 +46,9 @@ class RiskOfBiasQuerySet(models.QuerySet):
                 ),
             )
         )
+
+    def published_only(self, published_only: bool):
+        return self.filter(study__published=True) if published_only else self
 
 
 class RiskOfBiasScoreOverrideObjectQuerySet(models.QuerySet):
@@ -144,6 +148,22 @@ class RiskOfBiasScoreQuerySet(QuerySet):
             ],
         )
         return df
+
+    def data_pivot_json(self):
+        """Returns a new annotation as the attribute `score_json`"""
+        return self.annotate(
+            score_json_tmp=JSONObject(
+                sortValue=F("score"),
+                display=Case(
+                    *[
+                        When(score=key, then=Value(value))
+                        for key, value in constants.SCORE_CHOICES_MAP.items()
+                    ],
+                    default=Value("unknown"),
+                ),
+            ),
+            score_json=Cast("score_json_tmp", output_field=CharField()),
+        )
 
 
 class RiskOfBiasScoreManager(BaseManager):

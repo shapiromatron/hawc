@@ -4,15 +4,18 @@ import logging
 import re
 from copy import copy
 from math import ceil
+from typing import Self
 from urllib import parse
 
 from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
+from django.forms import MultipleChoiceField
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
@@ -20,12 +23,14 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from hawc.apps.udf.models import TagBinding, TagUDFContent
+
 from ...constants import ColorblindColors
 from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..assessment.models import Log
-from ..common.helper import SerializerHelper
+from ..common.helper import SerializerHelper, tryParseInt
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -193,9 +198,9 @@ class Search(models.Model):
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
     )
-    search_type = models.CharField(max_length=1, choices=constants.SearchType.choices)
+    search_type = models.CharField(max_length=1, choices=constants.SearchType)
     source = models.PositiveSmallIntegerField(
-        choices=constants.ReferenceDatabase.choices,
+        choices=constants.ReferenceDatabase,
         help_text="Database used to identify literature.",
     )
     title = models.CharField(
@@ -608,7 +613,7 @@ class Identifiers(models.Model):
     unique_id = models.CharField(
         max_length=256, db_index=True
     )  # DOI has no limit; we make this relatively large
-    database = models.IntegerField(choices=constants.ReferenceDatabase.choices)
+    database = models.IntegerField(choices=constants.ReferenceDatabase)
     content = models.TextField()
     url = models.URLField(blank=True)
 
@@ -726,6 +731,23 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         return tags
 
     @classmethod
+    def get_nested_tag_names(cls, assessment_pk: int) -> dict[int, str]:
+        """Return a dictionary of tag ID to fully nested name
+
+        Args:
+            assessment_pk (int): assessment id
+        Returns:
+            tag_names (dict): Keys are tag IDs, values are tag nested names
+        """
+        tag_names = {
+            tag.id: tag.nested_name.replace("|", " ➤ ")
+            for tag in ReferenceFilterTag.annotate_nested_names(
+                ReferenceFilterTag.get_assessment_qs(assessment_pk)
+            )
+        }
+        return tag_names
+
+    @classmethod
     def build_default(cls, assessment):
         """
         Constructor to define default literature-tags.
@@ -791,6 +813,15 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 
         return descendants
 
+    def _set_tag_parents(self, tag_map: dict[str, Self]):
+        self.parents = []
+        current_path = self.path
+        while True:
+            current_path = self._get_parent_path_from_path(current_path)
+            if len(current_path) == 4:
+                break
+            self.parents.append(tag_map[current_path])
+
 
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
@@ -799,6 +830,11 @@ class ReferenceTags(ItemBase):
         ReferenceFilterTag, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items"
     )
     content_object = models.ForeignKey("Reference", on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["content_object", "tag"], name="reference_tag"),
+        ]
 
 
 class Reference(models.Model):
@@ -878,16 +914,20 @@ class Reference(models.Model):
         self.last_updated = timezone.now()
         self.save()
 
-    def update_tags(self, user, tag_pks: list[int]) -> bool:
+    @transaction.atomic
+    def update_tags(self, user, tag_pks: list[int], udf_data: dict | None = None) -> bool:
         """Update tags for user who requested this tags, and also potentially this reference.
 
         This method was reviewed to try to reduce the number of db hits required, assuming that
         the reference model has the required select and prefetch related, the tag comparisons
-        should not require any additional queries (but it may cause up to 5 db writes).
+        should not require any additional queries.
+
+        Also writes tag-level UDF data as needed.
 
         Args:
             user: The user requesting the tag changes
             tag_pks (list[int]): A list of tag IDs
+            udf_data (dict[int,dict]): UDF data
 
         Returns:
             bool: If tags were also saved as consensus for Reference
@@ -896,7 +936,61 @@ class Reference(models.Model):
         user_tag, _ = self.user_tags.get_or_create(reference=self, user=user)
         user_tag.is_resolved = False
         user_tag.tags.set(tag_pks)
+        self_tags = set(self.tags.all().values_list("pk", flat=True))
+        deleted_tags = self_tags.difference(set(tag_pks))
+        added_tags = set(tag_pks).difference(self_tags)
+        user_tag.deleted_tags = list(deleted_tags) if deleted_tags else []
+        if not (deleted_tags or added_tags):
+            user_tag.is_resolved = True
         user_tag.save()
+
+        if udf_data:
+            tags = ReferenceFilterTag.get_all_tags(self.assessment_id)
+            descendant_tags = ReferenceFilterTag.get_tree_descendants(tags)
+            udf_validation_errors = {}
+            for udf_tag, udf in udf_data.items():
+                udf_tag_id = tryParseInt(udf_tag)
+                if not udf_tag_id:
+                    raise ValidationError({udf_tag: "UDF tag must be an integer"})
+
+                if not set(descendant_tags.get(udf_tag_id, [])).intersection(tag_pks):
+                    raise ValidationError("UDF binding not found for selected tags")
+
+                try:
+                    binding = TagBinding.objects.get(assessment=self.assessment_id, tag=udf_tag_id)
+                except TagBinding.DoesNotExist:
+                    raise ValidationError("UDF binding not found")
+
+                # handle edge-case where a select multiple only has one selected
+                # TODO - can this code + JS be removed to fix this issue?
+                empty_form = binding.form_instance()
+                for field, data in udf.items():
+                    if isinstance(
+                        empty_form.fields[field.removeprefix(f"{udf_tag}-")],
+                        MultipleChoiceField,
+                    ) and not isinstance(udf[field], list):
+                        udf[field] = [data]
+
+                form = binding.form_instance(prefix=udf_tag_id, data=udf)
+                if form.is_valid():
+                    obj, created = TagUDFContent.objects.update_or_create(
+                        reference_id=self.id,
+                        tag_binding_id=binding.id,
+                        defaults={"content": form.cleaned_data},
+                    )
+                    Log.objects.create(
+                        assessment_id=self.assessment_id,
+                        user_id=user.id,
+                        message=f"Updated UDF data for tag {udf_tag_id} on reference {self.id} (binding {binding.id}).",
+                        content_object=obj,
+                    )
+                else:
+                    udf_validation_errors.update(
+                        {f"{udf_tag_id}-{field}": errors for (field, errors) in form.errors.items()}
+                    )
+
+            if udf_validation_errors:
+                raise ValidationError(udf_validation_errors)
 
         # determine if we should save the reference-level tags
         update_reference_tags = False
@@ -947,6 +1041,9 @@ class Reference(models.Model):
     def __str__(self):
         return self.ref_short_citation
 
+    def get_tag_udf_contents(self):
+        return {t.tag_binding.tag_id: t.content for t in self.saved_tag_contents.all()}
+
     def to_dict(self):
         d = {}
         fields = (
@@ -972,6 +1069,7 @@ class Reference(models.Model):
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
         d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
+        d["tag_udf_contents"] = self.get_tag_udf_contents()
 
         d["tags"] = [tag.id for tag in self.tags.all()]
         return d
@@ -1163,7 +1261,13 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def annotate_tag_parents(cls, references: list, tags: models.QuerySet, user_tags: bool = True):
+    def annotate_tag_parents(
+        cls,
+        references: list,
+        tags: models.QuerySet,
+        user_tags: bool = True,
+        check_bulk: bool = False,
+    ):
         """Annotate tag parents for all tags and user tags.
 
         Sets a new attribute (parents: list[Tag]) for each tag.
@@ -1172,25 +1276,24 @@ class Reference(models.Model):
             references (list): a list of references
             tags (models.QuerySet): the full tag list for an assessment
             user_tags (bool): set parents for user tags as well as consensus tags
+            check_bulk (bool): add tag to bulk_merge_tag_names list if in bulk_merge_tags
         """
         tag_map = {tag.path: tag for tag in tags}
 
-        def _set_parents(tag):
-            tag.parents = []
-            current_path = tag.path
-            while True:
-                current_path = tag._get_parent_path_from_path(current_path)
-                if len(current_path) == 4:
-                    break
-                tag.parents.append(tag_map[current_path])
-
         for reference in references:
+            reference.bulk_merge_tag_names = []
             for tag in reference.tags.all():
-                _set_parents(tag)
+                tag._set_tag_parents(tag_map)
             if user_tags:
                 for user_tag in reference.user_tags.all():
                     for tag in user_tag.tags.all():
-                        _set_parents(tag)
+                        tag._set_tag_parents(tag_map)
+                        if (
+                            check_bulk
+                            and tag.id in reference.bulk_merge_tags
+                            and tag not in reference.bulk_merge_tag_names
+                        ):
+                            reference.bulk_merge_tag_names.append(tag)
 
 
 class UserReferenceTags(ItemBase):
@@ -1201,11 +1304,17 @@ class UserReferenceTags(ItemBase):
     )
     content_object = models.ForeignKey("UserReferenceTag", on_delete=models.CASCADE)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=("tag", "content_object"), name="user_reference_tags"),
+        ]
+
 
 class UserReferenceTag(models.Model):
     user = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="reference_tags")
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, related_name="user_tags")
     tags = managers.ReferenceFilterTagManager(through=UserReferenceTags, blank=True)
+    deleted_tags = ArrayField(models.IntegerField(), default=list)
     is_resolved = models.BooleanField(
         default=False, help_text="User specific tag differences are resolved for this reference"
     )
@@ -1232,8 +1341,146 @@ class UserReferenceTag(models.Model):
         )
 
 
+class WorkflowAdmissionTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="workflow_admissions"
+    )
+    content_object = models.ForeignKey("Workflow", on_delete=models.CASCADE)
+
+
+class WorkflowRemovalTags(ItemBase):
+    objects = managers.UserReferenceTagsManager()
+
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="workflow_removals"
+    )
+    content_object = models.ForeignKey("Workflow", on_delete=models.CASCADE)
+
+
+class Workflow(models.Model):
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="workflows"
+    )
+    title = models.CharField(max_length=32, help_text="Descriptive name for this workflow.")
+    description = models.TextField(
+        blank=True,
+        help_text="A description or set of notes for for this workflow.",
+    )
+    link_tagging = models.BooleanField(
+        default=False,
+        help_text="Add a panel on the Literature Review page for tagging references in this workflow.",
+    )
+    link_conflict_resolution = models.BooleanField(
+        default=False,
+        help_text="Add a panel on the Literature Review page for resolving conflicts on references in this workflow.",
+    )
+    admission_tags = managers.ReferenceFilterTagManager(
+        through=WorkflowAdmissionTags, blank=True, related_name="admission_workflows"
+    )
+    admission_tags_descendants = models.BooleanField(
+        default=False,
+        help_text="""Applies to tags selected above. By default, only references with the exact
+          selected tag(s) are admitted to the workflow; checking this box includes references that
+            are tagged with any descendant of the selected tag(s).""",
+    )
+    admission_source = models.ManyToManyField(
+        Search, blank=True, related_name="workflow_admissions"
+    )
+    removal_tags = managers.ReferenceFilterTagManager(
+        through=WorkflowRemovalTags, blank=True, related_name="removal_workflows"
+    )
+    removal_tags_descendants = models.BooleanField(
+        default=False,
+        help_text="""Applies to tags selected above. By default, only references with the exact
+          selected tag(s) are admitted to the workflow; checking this box includes references that
+            are tagged with any descendant of the selected tag(s).""",
+    )
+    removal_source = models.ManyToManyField(Search, blank=True, related_name="workflow_removals")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} Workflow"
+
+    def get_absolute_url(self):
+        return reverse("lit:workflow-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("lit:workflow-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("lit:workflow-htmx", args=[self.pk, "delete"])
+
+    def get_assessment(self):
+        return self.assessment
+
+    def reference_filter(self) -> models.Q:
+        filters = models.Q()
+
+        removal_tags = []
+        if self.removal_tags_descendants:
+            for tag in self.removal_tags.all():
+                removal_tags.extend(tag.get_tree(parent=tag).values_list("id", flat=True))
+            removal_tags = list(set(removal_tags))
+        else:
+            removal_tags = self.removal_tags.all().values_list("id", flat=True)
+        if removal_tags:
+            filters &= ~models.Q(tags__in=removal_tags)
+
+        admission_tags = []
+        if self.admission_tags_descendants:
+            for tag in self.admission_tags.all():
+                admission_tags.extend(tag.get_tree(parent=tag).values_list("id", flat=True))
+            admission_tags = list(set(admission_tags))
+        else:
+            admission_tags = self.admission_tags.all().values_list("id", flat=True)
+        if admission_tags:
+            filters &= models.Q(tags__in=admission_tags)
+
+        if self.admission_source.exists():
+            filters &= models.Q(searches__in=self.admission_source.all())
+
+        if self.removal_source.exists():
+            filters &= ~models.Q(searches__in=self.removal_source.all())
+
+        return filters
+
+    @classmethod
+    def annotate_tag_parents(cls, workflows: list, tags: models.QuerySet):
+        """Annotate tag parents for all tags.
+
+        Sets a new attribute (parents: list[Tag]) for each tag.
+
+        Args:
+            workflows (list): a list of workflows
+            tags (models.QuerySet): the full tag list for an assessment
+        """
+        tag_map = {tag.path: tag for tag in tags}
+
+        for workflow in workflows:
+            for tag in workflow.admission_tags.all():
+                tag._set_tag_parents(tag_map)
+            for tag in workflow.removal_tags.all():
+                tag._set_tag_parents(tag_map)
+
+    def tag_url(self) -> str:
+        return reverse("lit:tag", args=(self.assessment_id,)) + f"?workflow={self.id}"
+
+    def tag_conflicts_url(self) -> str:
+        return reverse("lit:tag-conflicts", args=(self.assessment_id,)) + f"?workflow={self.id}"
+
+    def get_description(self) -> str:
+        return (
+            self.description
+            or "Go to 'View Workflows' under the actions button for more information."
+        )
+
+
 reversion.register(LiteratureAssessment)
 reversion.register(Search)
 reversion.register(ReferenceFilterTag)
 reversion.register(Reference, follow=["tags"])
 reversion.register(UserReferenceTag, follow=["tags"])
+reversion.register(Workflow)

@@ -1,8 +1,9 @@
 """A content management system for human health assessments."""
+
 import os
 import sys
 
-__version__ = "2023.3"
+__version__ = "2024.1"
 
 
 def manage():

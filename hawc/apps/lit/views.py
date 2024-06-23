@@ -1,19 +1,22 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, prefetch_related_objects
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, tryParseInt
+from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -23,7 +26,9 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     create_object_log,
+    htmx_required,
 )
+from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
 
 
@@ -50,7 +55,9 @@ class LitOverview(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
+        context["overview"], context["workflows"] = models.Reference.objects.get_overview_details(
+            self.assessment
+        )
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
             .filter(user_tags__user=self.request.user)
@@ -244,7 +251,7 @@ class TagReferences(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
     paginate_by = 100
 
     def get_queryset(self):
@@ -252,7 +259,7 @@ class TagReferences(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents__tag_binding")
         )
 
     def get_context_data(self, **kwargs):
@@ -267,7 +274,7 @@ class TagReferences(BaseFilterList):
         if conflict_resolution:
             return dict(
                 main_field="ref_search",
-                appended_fields=["partially_tagged", "needs_tagging", "order_by"],
+                appended_fields=["partially_tagged", "needs_tagging", "workflow", "order_by"],
                 dynamic_fields=[
                     "ref_search",
                     "needs_tagging",
@@ -283,6 +290,7 @@ class TagReferences(BaseFilterList):
                     "my_tags",
                     "include_mytag_descendants",
                     "anything_tagged_me",
+                    "workflow",
                 ],
                 grid_layout={
                     "rows": [
@@ -333,6 +341,7 @@ class TagReferences(BaseFilterList):
                     "search",
                     "id",
                     "order_by",
+                    "workflow",
                     "authors",
                     "year",
                     "tags",
@@ -340,7 +349,7 @@ class TagReferences(BaseFilterList):
                     "anything_tagged",
                 ],
                 main_field="ref_search",
-                appended_fields=["order_by"],
+                appended_fields=["workflow", "order_by"],
                 grid_layout={
                     "rows": [
                         {"columns": [{"width": 12}]},
@@ -380,8 +389,22 @@ class TagReferences(BaseFilterList):
     def get_app_config(self, context) -> WebappConfig:
         references = [ref.to_dict() for ref in context["object_list"]]
         ref_tags = context["object_list"].unresolved_user_tags(user_id=self.request.user.id)
+        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        tag_names = models.ReferenceFilterTag.get_nested_tag_names(self.assessment.id)
+        descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+        # dict[int,set] -> dict[int,list] so we can JSON-encode
+        descendant_tags = {key: list(val) for key, val in descendant_tags.items()}
         for reference in references:
             reference["user_tags"] = ref_tags.get(reference["pk"])
+            flattened_contents = {}
+            # prepend UDF tag ID to name to prevent UDF name namespace conflicts
+            # TODO - can this code + JS be removed the always list? it's needed for yes/no radio
+            for tag_id, field in reference["tag_udf_contents"].items():
+                for name, value in field.items():
+                    flattened_contents[f"{tag_id}-{name}"] = (
+                        value if isinstance(value, list) else [value]
+                    )
+            reference["tag_udf_contents"] = flattened_contents
         return WebappConfig(
             app="litStartup",
             page="startupTagReferences",
@@ -389,11 +412,101 @@ class TagReferences(BaseFilterList):
                 conflict_resolution=self.assessment.literature_settings.conflict_resolution,
                 keywords=self.assessment.literature_settings.get_keyword_data(),
                 instructions=self.assessment.literature_settings.screening_instructions,
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                tags=tags,
+                tag_names=tag_names,
+                descendant_tags=descendant_tags,
                 refs=references,
                 csrf=get_token(self.request),
+                udfs=TagCache.get_forms(self.assessment),
             ),
         )
+
+
+@method_decorator(htmx_required, name="dispatch")
+class BulkMerge(HtmxView):
+    actions = {"preview", "merge"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def index(self, request: HttpRequest, *args, **kwargs):
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment)
+        context = dict(
+            form=form, assessment=self.assessment, action="index", modal_id="bulk-merge-modal"
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+    def preview(self, request: HttpRequest, *args, **kwargs):
+        queryset = (
+            models.Reference.objects.filter(assessment=self.assessment)
+            .order_by("-last_updated")
+            .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
+        )
+        key = (
+            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
+        )
+        form = forms.BulkMergeConflictsForm(
+            assessment=self.assessment, initial={**request.POST, "cache_key": key}
+        )
+        for field in "tags", "include_without_conflict":
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            request.POST.getlist("tags"),
+            request.user.id,
+            request.POST.get("include_without_conflict", False),
+            preview=True,
+        )
+        if merge_result["queryset"]:
+            tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+            models.Reference.annotate_tag_parents(
+                merge_result["queryset"], tags, user_tags=True, check_bulk=True
+            )
+            cache.set(key, (merge_result["queryset"], request.POST), 60 * 30)  # 30 min
+
+        context = dict(
+            object_list=merge_result["queryset"],
+            assessment=self.assessment,
+            action="preview",
+            message=merge_result["message"],
+            form=form,
+            cache_key=key,
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
+
+    def merge(self, request: HttpRequest, *args, **kwargs):
+        cache_key = request.POST.get("cache_key", "")
+        queryset, data = cache.get(cache_key)
+        assessment_ids = queryset.values_list("assessment_id", flat=True).distinct().order_by()
+        reference_ids = list(queryset.values_list("id", flat=True))
+        if not (self.assessment.id in assessment_ids and assessment_ids.count() == 1):
+            raise PermissionDenied()
+        form = forms.BulkMergeConflictsForm(assessment=self.assessment, initial=data)
+        for field in "tags", "include_without_conflict":
+            form.fields[field].disabled = True
+        merge_result = queryset.merge_tag_conflicts(
+            data.getlist("tags"),
+            request.user.id,
+            data.get("include_without_conflict", False),
+            preview=False,
+            cached=True,
+        )
+        final_qs = models.Reference.objects.filter(id__in=reference_ids).prefetch_related(
+            "identifiers", "tags", "user_tags__user", "user_tags__tags"
+        )
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Reference.annotate_tag_parents(final_qs, tags, user_tags=True, check_bulk=False)
+        context = dict(
+            object_list=final_qs,
+            assessment=self.assessment,
+            action="merge",
+            message=merge_result["message"],
+            merged=merge_result["merged"],
+            form=form,
+        )
+        return render(request, "lit/components/bulk_merge_modal_content.html", context=context)
 
 
 class ConflictResolution(BaseFilterList):
@@ -401,11 +514,12 @@ class ConflictResolution(BaseFilterList):
     parent_model = Assessment
     model = models.Reference
     filterset_class = filterset.ReferenceFilterSet
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_filterset_form_kwargs(self):
         return dict(
             main_field="ref_search",
+            appended_fields=["workflow"],
             dynamic_fields=[
                 "id",
                 "ref_search",
@@ -417,6 +531,11 @@ class ConflictResolution(BaseFilterList):
                 "my_tags",
                 "include_mytag_descendants",
                 "anything_tagged_me",
+                "workflow",
+                "addition_tags",
+                "include_additiontag_descendants",
+                "deletion_tags",
+                "include_deletiontag_descendants",
             ],
             grid_layout={
                 "rows": [
@@ -435,25 +554,47 @@ class ConflictResolution(BaseFilterList):
                     {
                         "columns": [
                             {
-                                "width": 6,
+                                "width": 3,
                                 "rows": [
                                     {
                                         "columns": [
                                             {"width": 12},
-                                            {"width": 6},
-                                            {"width": 6},
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
                             },
                             {
-                                "width": 6,
+                                "width": 3,
                                 "rows": [
                                     {
                                         "columns": [
                                             {"width": 12},
-                                            {"width": 6},
-                                            {"width": 6},
+                                            {"width": 12},
+                                            {"width": 12},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 3,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12},
+                                            {"width": 12},
+                                        ]
+                                    }
+                                ],
+                            },
+                            {
+                                "width": 3,
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {"width": 12},
+                                            {"width": 12},
                                         ]
                                     }
                                 ],
@@ -471,7 +612,9 @@ class ConflictResolution(BaseFilterList):
             super()
             .get_queryset()
             .annotate(
-                n_unapplied_reviews=Count("user_tags__user", filter=Q(user_tags__is_resolved=False))
+                n_unapplied_reviews=Count(
+                    "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
+                )
             )
             .filter(n_unapplied_reviews__gt=1)
             .order_by("-last_updated")
@@ -582,6 +725,32 @@ class RefList(BaseList):
         return _get_reference_list(self.assessment, context["obj_perms"])
 
 
+def _get_tag_binding_contents(assessment, reference_list):
+    # Get assessment tags and UDF data for all consensus tags in a reference list
+    tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
+    tag_names = models.ReferenceFilterTag.get_nested_tag_names(assessment.id)
+    descendant_tags = models.ReferenceFilterTag.get_tree_descendants(tags)
+    descendant_tags = {key: list(val) for key, val in descendant_tags.items()}
+    tag_binding_contents = {}
+    for reference in reference_list:
+        tag_binding_contents[reference.pk] = [
+            {
+                "tag_name": tag_names[tag_content.tag_binding.tag.pk],
+                "tag_pk": tag_content.tag_binding.tag.pk,
+                "udf_content": tag_content.get_content_as_list(),
+                "udf_name": tag_content.tag_binding.form.name,
+            }
+            for tag_content in reference.saved_tag_contents.all()
+            if set(descendant_tags.get(tag_content.tag_binding.tag.pk, [])).intersection(
+                set(reference.tags.values_list("pk", flat=True))
+            )
+        ]
+    return {
+        "tags": tags,
+        "tag_binding_contents": tag_binding_contents,
+    }
+
+
 class RefFilterList(BaseFilterList):
     template_name = "lit/reference_search.html"
     breadcrumb_active_name = "Reference search"
@@ -650,7 +819,7 @@ class RefFilterList(BaseFilterList):
             super()
             .get_queryset()
             .select_related("study")
-            .prefetch_related("searches", "identifiers", "tags")
+            .prefetch_related("searches", "identifiers", "tags", "saved_tag_contents")
         )
 
     def get_context_data(self, **kwargs):
@@ -663,7 +832,7 @@ class RefFilterList(BaseFilterList):
             app="litStartup",
             page="startupReferenceTable",
             data=dict(
-                tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id),
+                **_get_tag_binding_contents(self.assessment, context["object_list"]),
                 references=[ref.to_dict() for ref in context["object_list"]],
             ),
         )
@@ -677,7 +846,7 @@ class RefUploadExcel(BaseUpdate):
     model = Assessment
     template_name = "lit/reference_upload_excel.html"
     form_class = forms.ReferenceExcelUploadForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
     success_message = "Reference full text URLs updated."
 
     def get_form_kwargs(self):
@@ -707,7 +876,7 @@ class RefListExtract(BaseUpdate):
     model = Assessment
     form_class = forms.BulkReferenceStudyExtractForm
     success_message = "Selected references were successfully converted to studies."
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -746,7 +915,7 @@ def _get_ref_app_startup(view, context) -> WebappConfig:
         app="litStartup",
         page="startupReferenceDetail",
         data={
-            "tags": models.ReferenceFilterTag.get_all_tags(view.assessment.id),
+            **_get_tag_binding_contents(view.assessment, [view.object]),
             "reference": view.object.to_dict(),
             "canEdit": context["obj_perms"]["edit"],
         },
@@ -862,7 +1031,7 @@ class TagsUpdate(BaseDetail):
 
     model = Assessment
     template_name = "lit/tags_update.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -898,7 +1067,7 @@ class LiteratureAssessmentUpdate(BaseUpdate):
     success_message = "Literature assessment settings updated."
     model = models.LiteratureAssessment
     form_class = forms.LiteratureAssessmentForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -918,7 +1087,7 @@ class TagsCopy(BaseUpdate):
     template_name = "lit/tags_copy.html"
     form_class = forms.TagsCopyForm
     success_message = "Literature tags for this assessment have been updated"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -944,7 +1113,7 @@ class TagsCopy(BaseUpdate):
 class BulkTagReferences(BaseDetail):
     model = Assessment
     template_name = "lit/bulk_tag_references.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -959,3 +1128,83 @@ class BulkTagReferences(BaseDetail):
             page="startupBulkTagReferences",
             data={"assessment_id": self.assessment.id, "csrf": get_token(self.request)},
         )
+
+
+class Workflows(BaseList):
+    parent_model = Assessment
+    model = models.Workflow
+    breadcrumb_active_name = "Workflows"
+    template_name = "lit/workflows.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Workflows"
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .prefetch_related("admission_tags", "removal_tags")
+            .order_by("-created")
+        )
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        models.Workflow.annotate_tag_parents(queryset, tags)
+        return queryset
+
+
+class WorkflowViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = Assessment
+    model = models.Workflow
+
+    form_fragment = "lit/fragments/workflow_edit_row.html"
+    detail_fragment = "lit/fragments/workflow_row.html"
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+        prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+        models.Workflow.annotate_tag_parents([request.item.object], tags)
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        form_data = request.POST if request.method == "POST" else None
+        form = forms.WorkflowForm(data=form_data, parent=request.item.parent)
+        context = self.get_context_data(form=form)
+        if request.method == "POST" and form.is_valid():
+            self.perform_create(request.item, form)
+            template = self.detail_fragment
+            context.update(object=request.item.object)
+            tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+            prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+            models.Workflow.annotate_tag_parents([request.item.object], tags)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        form_data = request.POST if request.method == "POST" else None
+        form = forms.WorkflowForm(data=form_data, instance=request.item.object)
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+            tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
+            prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
+            models.Workflow.annotate_tag_parents([request.item.object], tags)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        form = forms.WorkflowForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, self.form_fragment, context)

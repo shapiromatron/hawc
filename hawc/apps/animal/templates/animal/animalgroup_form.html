@@ -14,16 +14,15 @@
 
         <legend class='d-inline-block'>Dose-groups</legend>
         <span class='float-right'>
-            <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
-            <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
+          <a class="btn btn-primary" id="new_dose_column" href="#">Add new representation</a>
+          <a class='btn btn-primary' href="{% url 'assessment:dose_units_create' assessment.pk %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);" title="Add new dose-units">+</a>
         </span>
 
         {% if dose_groups_errors %}
           <div class="alert alert-danger">{{dose_groups_errors|safe}}</div>
         {% endif %}
         <table id="dose_table" class="table table-sm table-striped"></table>
-        <input id="dose_groups_json" name="dose_groups_json" type="hidden"></input>
-
+        <input id="dose_groups_json" name="dose_groups_json" type="hidden" />
       </div>
     </div>
   {% endif %}
@@ -32,114 +31,114 @@
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
-$(document).ready(function() {
-    var printf = window.app.HAWCUtils.printf,
-        animalGroupSetup = function(){
-            var onSpeciesChange = function(e, onStrainUpdateComplete){
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var printf = window.app.HAWCUtils.printf,
+          animalGroupSetup = function(){
+        var onSpeciesChange = function(e, onStrainUpdateComplete){
                 // only show proper strains for a given species
-                var selected = $('#id_strain option:selected').val(),
-                    update_strain_opts = function(d){
-                        var opts = _.map(d, function(v, i){
-                            return printf('<option value="{0}">{1}</option>', v.id, v.name);
-                        }).join('');
+          var selected = $('#id_strain option:selected').val(),
+              update_strain_opts = function(d){
+            var opts = _.map(d, function(v, i){
+              return printf('<option value="{0}">{1}</option>', v.id, v.name);
+            }).join('');
 
-                        $('#id_strain').html(opts);
-                        $(printf('#id_strain option[value="{0}"]', selected))
-                            .prop('selected', true);
+            $('#id_strain').html(opts);
+            $(printf('#id_strain option[value="{0}"]', selected))
+              .prop('selected', true);
 
-                        if (onStrainUpdateComplete !== undefined) {
-                            onStrainUpdateComplete();
-                        }
-                    }
-                $.get(
-                    '{% url "assessment:api:strain-list" %}',
-                    {species: $('#id_species').val()},
-                    update_strain_opts
-                );
-            };
+            if (onStrainUpdateComplete !== undefined) {
+              onStrainUpdateComplete();
+            }
+          }
+          $.get(
+            '{% url "assessment:api:strain-list" %}',
+            {species: $('#id_species').val()},
+            update_strain_opts
+          );
+        };
 
-            $('#id_species')
-                .change(onSpeciesChange)
-                .trigger('change');
+        $('#id_species')
+          .change(onSpeciesChange)
+          .trigger('change');
 
             // refresh species after "Add new strain" popup closes. Wait half a second
             // to give the addition, if any, time to register.
-            $("a[title='Add new strain']").on(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, function(e) {
-                setTimeout(function() {
-                    var numStrainsBefore = $("#id_strain option").length;
+        $("a[title='Add new strain']").on(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, function(e) {
+          setTimeout(function() {
+            var numStrainsBefore = $("#id_strain option").length;
 
                     // reload the species
-                    onSpeciesChange(null, function() {
-                        var strains = $("#id_strain option");
+            onSpeciesChange(null, function() {
+              var strains = $("#id_strain option");
 
-                        if (strains.length > numStrainsBefore) {
+              if (strains.length > numStrainsBefore) {
                             // a new one was added; let's select it.
-                            var highestId = -1;
-                            strains.each(function() {
-                                highestId = Math.max(Number($(this).val()), highestId);
-                            });
+                var highestId = -1;
+                strains.each(function() {
+                  highestId = Math.max(Number($(this).val()), highestId);
+                });
 
-                            $("#id_strain").val(highestId);
-                        }
-                    });
-                }, 500);
+                $("#id_strain").val(highestId);
+              }
             });
+          }, 500);
+        });
+      },
+          dosingRegimeSetup = function(){
+        var drc = $('#dosingRegimeContainer'),
+            drf = $('#dosing_regime'),
+            drInput = $('#id_dosing_regime'),
+            genInput = $('#id_generation'),
+            drcInsertLocation = $('.form-actions'),
+            dose_values = undefined,
+            dose_types = {{dose_types|safe}},
+            onDosingRegimeChange = function(){
+          var show = isNaN(parseInt(drInput.val()));
+          return (show) ?
+          drc.insertBefore(drcInsertLocation) :
+            drc.detach();
         },
-        dosingRegimeSetup = function(){
-            var drc = $('#dosingRegimeContainer'),
-                drf = $('#dosing_regime'),
-                drInput = $('#id_dosing_regime'),
-                genInput = $('#id_generation'),
-                drcInsertLocation = $('.form-actions'),
-                dose_values = undefined,
-                dose_types = {{dose_types|safe}},
-                onDosingRegimeChange = function(){
-                    var show = isNaN(parseInt(drInput.val()));
-                    return (show) ?
-                        drc.insertBefore(drcInsertLocation) :
-                        drc.detach();
-                },
-                onGenerationChange = function(){
-                    var drSelectorDiv = drInput.parent().parent(),
-                        val = genInput.val();
+            onGenerationChange = function(){
+          var drSelectorDiv = drInput.parent().parent(),
+              val = genInput.val();
 
-                    if (val !== 'P0'){
-                        drSelectorDiv.show();
-                    } else {
-                        drSelectorDiv.hide();
-                        onDosingRegimeChange();
-                    }
-                };
+          if (val !== 'P0'){
+            drSelectorDiv.show();
+          } else {
+            drSelectorDiv.hide();
+            onDosingRegimeChange();
+          }
+        };
 
             // reorganize forms
-            drc.prepend(drf.children());
-            drc.insertBefore(drcInsertLocation);
-            drf.remove();
+        drc.prepend(drf.children());
+        drc.insertBefore(drcInsertLocation);
+        drf.remove();
 
-            {% if dose_groups_json %}
-                dose_values = {{dose_groups_json|safe}};
-            {% endif %}
+        {% if dose_groups_json %}
+          dose_values = {{dose_groups_json|safe}};
+        {% endif %}
 
-            genInput
-                .change(onGenerationChange)
-                .trigger('change');
+        genInput
+          .change(onGenerationChange)
+          .trigger('change');
 
-            drInput
-                .change(onDosingRegimeChange)
-                .trigger('change');
+        drInput
+          .change(onDosingRegimeChange)
+          .trigger('change');
 
-            window.app.startup("animalStartup", function(animal){
-                new animal.DosingRegimeForm(
-                    $("#animal_group"), dose_types, dose_values);
-            })
-        }
+        window.app.startup("animalStartup", function(animal){
+          new animal.DosingRegimeForm(
+            $("#animal_group"), dose_types, dose_values);
+        })
+      }
 
-    animalGroupSetup();
-    {% if crud == "Create" %}
-    dosingRegimeSetup();
-    {% endif %}
-    $('#id_name').focus();
-});
-</script>
+      animalGroupSetup();
+      {% if crud == "Create" %}
+        dosingRegimeSetup();
+      {% endif %}
+      $('#id_name').focus();
+    });
+  </script>
 {% endblock extrajs %}

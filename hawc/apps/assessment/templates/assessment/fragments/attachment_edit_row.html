@@ -1,36 +1,36 @@
 
-<tr hx-target="this" hx-swap="outerHTML">
-    {% if form %}
-    <td colspan="3">
-        <form class="attachment-form" method=post enctype="multipart/form-data">
-            {% crispy form %}
-            <div class="form-row d-flex flex-row-reverse px-3 pb-3">
-                {% if form.instance.id %}
-                <button class="btn btn-primary ml-2"
-                    hx-post="{% url 'assessment:attachment-update' object.pk %}"
+<tr hx-target="this" hx-swap="outerHTML" class="attachment-edit-row">
+  {% if form %}
+    <td colspan="3" class="bg-lightblue">
+      <form class="attachment-form pad-form p-3" method="post" enctype="multipart/form-data">
+        {% crispy form %}
+        <div class="form-row d-flex flex-row-reverse px-3 pb-3">
+          {% if form.instance.id %}
+            <button class="btn btn-primary ml-2"
+                    hx-post="{% url 'assessment:attachment-htmx' object.pk 'update' %}"
                     hx-encoding="multipart/form-data">
-                    <i class="fa fa-fw fa-save"></i>&nbsp;
-                    Update
-                </button>
-                <button class="btn btn-light"
-                    hx-get="{% url 'assessment:attachment-detail' object.pk %}">
-                    Cancel
-                </button>
-                {% else %}
-                <button class="btn btn-primary ml-2"
-                    hx-post="{% url 'assessment:attachment-create' assessment.pk %}"
+              <i class="fa fa-fw fa-save"></i>&nbsp;
+              Update
+            </button>
+            <button class="btn btn-light"
+                    hx-get="{% url 'assessment:attachment-htmx' object.pk 'read' %}">
+              Cancel
+            </button>
+          {% else %}
+            <button class="btn btn-primary ml-2"
+                    hx-post="{% url 'assessment:attachment-htmx' assessment.pk 'create' %}"
                     hx-encoding="multipart/form-data">
-                    <i class="fa fa-fw fa-save"></i>&nbsp;Create
-                </button>
-                <button class="btn btn-light"
+              <i class="fa fa-fw fa-save"></i>&nbsp;Create
+            </button>
+            <button class="btn btn-light"
                     type='button'
-                    onclick="$(this).closest('tr').remove()">
-                    Cancel
-                </button>
-                {% endif %}
-            </div>
-        </form>
+                    onclick="window.app.HAWCUtils.hideElement($(this).closest('.attachment-edit-row'), true)">
+              Cancel
+            </button>
+          {% endif %}
+        </div>
+      </form>
     </td>
     {{ form.media }}
-    {% endif %}
+  {% endif %}
 </tr>

@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.shortcuts import render
 
-from ..assessment.models import Assessment
+from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
@@ -11,6 +11,7 @@ from ..common.views import (
     BaseUpdate,
     HeatmapBase,
 )
+from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from . import filterset, forms, models
 
@@ -34,7 +35,7 @@ class OutcomeView(BaseFilterList):
 
 
 # Design (Study Population)
-class DesignCreate(BaseCreate):
+class DesignCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Study-population created."
     parent_model = Study
     parent_template_name = "study"
@@ -42,6 +43,7 @@ class DesignCreate(BaseCreate):
     form_class = forms.DesignForm
 
     def get_success_url(self):
+        super().get_success_url()  # trigger EnsureExtractionStarted + TimeSpentOnPageMixin
         return self.object.get_update_url()
 
 
@@ -92,7 +94,12 @@ class DesignViewSet(HtmxViewSet):
         template = self.form_fragment
         data = request.POST if request.method == "POST" else None
         form = forms.DesignForm(data=data, instance=request.item.object)
-        if request.method == "POST" and form.is_valid():
+        if request.method == "GET":
+            TimeSpentEditing.set_start_time(request)
+        elif request.method == "POST" and form.is_valid():
+            TimeSpentEditing.add_time_spent_job(
+                request, request.item.object, request.item.assessment.id
+            )
             self.perform_update(request.item, form)
             template = self.detail_fragment
         context = self.get_context_data(form=form)
@@ -104,7 +111,7 @@ class DesignChildViewSet(HtmxViewSet):
     parent_model = models.Design
     model = None  # required
     form_class = None  # required
-    form_fragment = "epiv2/fragments/_object_edit_row.html"
+    form_fragment = "common/fragments/_object_edit_row.html"
     detail_fragment = None  # required
 
     @action(permission=can_view)
@@ -114,13 +121,17 @@ class DesignChildViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
-        if request.method == "POST":
+        if request.method == "GET":
+            form = self.form_class(parent=request.item.parent)
+            TimeSpentEditing.set_start_time(request)
+        else:
             form = self.form_class(request.POST, parent=request.item.parent)
             if form.is_valid():
                 self.perform_create(request.item, form)
                 template = self.detail_fragment
-        else:
-            form = self.form_class(parent=request.item.parent)
+                TimeSpentEditing.add_time_spent_job(
+                    request, request.item.object, request.item.assessment.id
+                )
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
@@ -129,9 +140,14 @@ class DesignChildViewSet(HtmxViewSet):
         template = self.form_fragment
         data = request.POST if request.method == "POST" else None
         form = self.form_class(data=data, instance=request.item.object)
-        if request.method == "POST" and form.is_valid():
+        if request.method == "GET":
+            TimeSpentEditing.set_start_time(request)
+        elif request.method == "POST" and form.is_valid():
             self.perform_update(request.item, form)
             template = self.detail_fragment
+            TimeSpentEditing.add_time_spent_job(
+                request, request.item.object, request.item.assessment.id
+            )
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
@@ -140,7 +156,7 @@ class DesignChildViewSet(HtmxViewSet):
         if request.method == "POST":
             context = {"attribute": self.model.__name__.lower(), "id": request.item.object.id}
             self.perform_delete(request.item)
-            return render(request, "epiv2/fragments/_delete_rows.html", context)
+            return render(request, "common/fragments/_delete_rows.html", context)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("post",), permission=can_edit)
@@ -151,6 +167,7 @@ class DesignChildViewSet(HtmxViewSet):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
+        context["app"] = "epiv2"
         return context
 
 

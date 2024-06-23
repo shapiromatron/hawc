@@ -1,12 +1,14 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+
 import re
 from textwrap import dedent
 from uuid import uuid4
 
 from django import template
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from django.utils.safestring import SafeString, mark_safe
 from plotly.graph_objs._figure import Figure
 
 register = template.Library()
@@ -45,6 +47,11 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     return mark_safe(
         f'<tr {tr_attrs}><td colspan="100%"><p class="text-center mb-0">{text}</p></td></tr>'
     )
+
+
+@register.simple_tag()
+def icon(name: str):
+    return format_html('<span class="fa fa-fw {} mr-1" aria-hidden="true"></span>', name)
 
 
 @register.tag(name="alert")
@@ -99,7 +106,7 @@ def plotly(fig: Figure | None, **kw) -> str:
     return mark_safe(
         dedent(
             f"""
-    <div id="{id}"><span class="text-muted">Loading...</span></div>
+    <div id="{id}"><span class="is-loading text-muted">Loading, please wait...</span></div>
     <script>document.addEventListener("{event}", {func}, false);</script>"""
         )
     )
@@ -124,3 +131,29 @@ def add_class(value, css_class):
     else:
         return mark_safe(string.replace(">", f' class="{css_class}">'))
     return value
+
+
+@register.simple_tag
+def analytics_card(value, label):
+    return mark_safe(
+        f"""
+        <div class="card box-shadow">
+            <div class="card-body">
+                <h2 class="m-0 mt-1">{ value }</h2>
+                <p class="small">{ label }</p>
+            </div>
+        </div>
+        """
+    )
+
+
+@register.simple_tag
+def list_punctuation(loop, conjunction: str = "or") -> SafeString:
+    # return commas between items if > 2, and the appropriate conjunction
+    num_items = loop["counter"] + loop["revcounter"] - 1
+    if loop["revcounter0"] > 1:
+        # if >2 remaining, add commas
+        return mark_safe(", ")
+    elif loop["revcounter0"] == 1:
+        return mark_safe(f"{',' if num_items >= 3 else ''} {conjunction} ")
+    return mark_safe("")

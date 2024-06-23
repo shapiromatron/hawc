@@ -148,3 +148,15 @@ class TestPydanticToDjangoError:
             with helper.PydanticToDjangoError(field="field"):
                 Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"field": self.err_messages}
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ([[1, 2], [3, 4]], [1, 2, 3, 4]),  # list
+        ([(1, 2), (3, 4)], [1, 2, 3, 4]),  # tuple
+        ([(1, [2]), (3, 4)], [1, [2], 3, 4]),  # nested
+    ],
+)
+def test_flatten(input, expected):
+    assert list(helper.flatten(input)) == expected

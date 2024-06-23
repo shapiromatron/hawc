@@ -1,5 +1,7 @@
 import json
+from pathlib import Path
 from urllib.parse import urlparse, urlunparse
+from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.io as pio
@@ -14,6 +16,8 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
+from ..common.clean import sanitize_html
+from ..common.dynamic_forms import Schema
 from ..common.forms import (
     BaseFormHelper,
     CopyForm,
@@ -128,11 +132,12 @@ class SummaryTableCopySelectorForm(CopyForm):
 class VisualForm(forms.ModelForm):
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "prefilters")
+        exclude = ("assessment", "visual_type", "evidence_type", "prefilters")
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
+        evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
         if "settings" in self.fields:
             self.fields["settings"].widget.attrs["rows"] = 2
@@ -147,8 +152,12 @@ class VisualForm(forms.ModelForm):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.EXPLORE_HEATMAP,
             constants.VisualType.PLOTLY,
+            constants.VisualType.IMAGE,
+            constants.VisualType.PRISMA,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
+        if self.instance.id is None:
+            self.instance.evidence_type = evidence_type
 
     def setHelper(self):
         for fld in list(self.fields.keys()):
@@ -189,7 +198,15 @@ class VisualForm(forms.ModelForm):
     def clean_caption(self):
         caption = self.cleaned_data["caption"]
         validators.validate_hyperlinks(caption)
-        return validators.clean_html(caption)
+        return sanitize_html.clean_html(caption)
+
+    def clean_evidence_type(self):
+        visual_type = self.cleaned_data["visual_type"]
+        evidence_type = self.cleaned_data["evidence_type"]
+        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
+            raise forms.ValidationError(
+                f"Invalid evidence type {evidence_type} for visual {visual_type}."
+            )
 
 
 class VisualModelChoiceField(forms.ModelChoiceField):
@@ -239,7 +256,16 @@ class EndpointAggregationForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "settings", "prefilters", "studies", "sort_order")
+        exclude = (
+            "assessment",
+            "visual_type",
+            "evidence_type",
+            "settings",
+            "prefilters",
+            "studies",
+            "sort_order",
+            "image",
+        )
 
 
 class CrossviewForm(VisualForm):
@@ -257,9 +283,9 @@ class CrossviewForm(VisualForm):
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
-        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
-            constants.VisualType.BIOASSAY_CROSSVIEW
-        ).value
+        self.prefilter_cls = prefilters.get_prefilter_cls(
+            self.instance.visual_type, self.instance.evidence_type, self.instance.assessment
+        )
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
@@ -267,7 +293,7 @@ class CrossviewForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "endpoints", "studies")
+        exclude = ("assessment", "visual_type", "evidence_type", "endpoints", "studies", "image")
 
 
 class RoBForm(VisualForm):
@@ -282,9 +308,9 @@ class RoBForm(VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.prefilter_cls = prefilters.VisualTypePrefilter.from_visual_type(
-            constants.VisualType.ROB_BARCHART
-        ).value
+        self.prefilter_cls = prefilters.get_prefilter_cls(
+            self.instance.visual_type, self.instance.evidence_type, self.instance.assessment
+        )
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
@@ -292,7 +318,7 @@ class RoBForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "dose_units", "endpoints")
+        exclude = ("assessment", "visual_type", "evidence_type", "dose_units", "endpoints", "image")
 
 
 class TagtreeForm(VisualForm):
@@ -568,6 +594,64 @@ class PlotlyVisualForm(VisualForm):
         return json.loads(settings)
 
 
+class PrismaVisualForm(VisualForm):
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "settings", "caption", "published")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+
+class ImageVisualForm(VisualForm):
+    settings_schema = {
+        "fields": [
+            {
+                "name": "alt_text",
+                "type": "char",
+                "label": "Image alt-text",
+                "help_text": "Alternative text if an image fails to display and for accessibility support.",
+                "widget": "textarea",
+                "css_class": "col-4",
+            },
+            {
+                "name": "max_width",
+                "type": "integer",
+                "label": "Image maximum width",
+                "help_text": "Max width of the image (in pixels). The image will always shrink to be visible in your browser, but if unset, image will grow to be the full size of your browser, which can be huge for high resolution uploads.",
+                "initial": 1000,
+                "css_class": "col-4",
+                "required": False,
+            },
+        ]
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["image"].required = True
+        self.fields["settings"] = DynamicFormField(
+            "settings", Schema.model_validate(self.settings_schema).to_form, label=""
+        )
+        self.helper = self.setHelper()
+
+    def clean_image(self):
+        image = self.cleaned_data["image"]
+        suffix = Path(image.name).suffix.lower()
+        suffixes = (".jpeg", ".jpg", ".png")
+        if suffix not in suffixes:
+            raise forms.ValidationError(f"File extension must be one of {', '.join(suffixes)}.")
+        size_mb = image.size / 1024 / 1024
+        if size_mb < 0.01 or size_mb > 3:
+            raise forms.ValidationError("Image must be >10KB and <3 MB in size.")
+        return image
+
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "image", "settings", "caption", "published")
+        widgets = {"image": forms.FileInput}
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -579,6 +663,8 @@ def get_visual_form(visual_type):
             constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
             constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
             constants.VisualType.PLOTLY: PlotlyVisualForm,
+            constants.VisualType.IMAGE: ImageVisualForm,
+            constants.VisualType.PRISMA: PrismaVisualForm,
         }[visual_type]
     except Exception:
         raise ValueError()
@@ -632,7 +718,7 @@ class DataPivotForm(forms.ModelForm):
     def clean_caption(self):
         caption = self.cleaned_data["caption"]
         validators.validate_hyperlinks(caption)
-        return validators.clean_html(caption)
+        return sanitize_html.clean_html(caption)
 
 
 class DataPivotUploadForm(DataPivotForm):
@@ -646,14 +732,18 @@ class DataPivotUploadForm(DataPivotForm):
         worksheet_name = cleaned_data.get("worksheet_name", "")
 
         if excel_file:
+            cannot_read = "Unable to read Excel file. Please upload an Excel file in XLSX format."
+
+            # ensure it has correct extension
+            if not excel_file.name.endswith(".xlsx"):
+                self.add_error("excel_file", cannot_read)
+                return
+
             # see if it loads
             try:
                 wb = load_workbook(excel_file, read_only=True)
-            except InvalidFileException:
-                self.add_error(
-                    "excel_file",
-                    "Unable to read Excel file. Please upload an Excel file in XLSX format.",
-                )
+            except (BadZipFile, InvalidFileException):
+                self.add_error("excel_file", cannot_read)
                 return
 
             # check worksheet name
@@ -703,9 +793,9 @@ class DataPivotQueryForm(DataPivotForm):
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
 
-        self.prefilter_cls = prefilters.StudyTypePrefilter.from_study_type(
-            self.instance.evidence_type, self.instance.assessment
-        ).value
+        self.prefilter_cls = prefilters.get_prefilter_cls(
+            None, self.instance.evidence_type, self.instance.assessment
+        )
         self.fields["prefilters"] = DynamicFormField(
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )

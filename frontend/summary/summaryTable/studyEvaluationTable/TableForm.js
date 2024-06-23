@@ -22,19 +22,23 @@ class TableForm extends Component {
 
         return (
             <>
-                <legend>Edit table</legend>
-                <div className="float-right">
-                    <button className="btn btn-light mx-1" onClick={store.createSubheader}>
-                        <i className="fa fa-plus mr-1"></i>Add subheader
-                    </button>
-                    <button className="btn btn-light mx-1" onClick={store.createColumn}>
-                        <i className="fa fa-plus mr-1"></i>Add column
-                    </button>
-                    <button className="btn btn-light mx-1" onClick={store.createRow}>
-                        <i className="fa fa-plus mr-1"></i>Add row
-                    </button>
+                <div className="d-flex flex-row border-bottom">
+                    <legend>Edit table</legend>
+                    <div className="ml-auto col-auto">
+                        <button className="btn btn-light mx-1" onClick={store.createSubheader}>
+                            <i className="fa fa-plus mr-1"></i>Add subheader
+                        </button>
+                        <button className="btn btn-light mx-1" onClick={store.createColumn}>
+                            <i className="fa fa-plus mr-1"></i>Add column
+                        </button>
+                        <button className="btn btn-light mx-1" onClick={store.createRow}>
+                            <i className="fa fa-plus mr-1"></i>Add row
+                        </button>
+                    </div>
                 </div>
-                <Table store={store} />
+                <div className="overflow-auto m-vh75">
+                    <Table store={store} />
+                </div>
             </>
         );
     }

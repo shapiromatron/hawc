@@ -60,9 +60,9 @@ class SameDesignSerializerMixin:
                     candidate_obj = model_klass.objects.get(id=candidate_id)
 
                     if candidate_obj.design.id != design.id:
-                        invalid_fields[
-                            param_name
-                        ] = f"object with id={candidate_id} does not belong to the correct design."
+                        invalid_fields[param_name] = (
+                            f"object with id={candidate_id} does not belong to the correct design."
+                        )
             if invalid_fields:
                 raise serializers.ValidationError(invalid_fields)
 
