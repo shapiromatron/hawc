@@ -28,6 +28,7 @@ class NestedTerm(MP_Node):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
+    deprecated_on = models.DateTimeField(blank=True, default=None, null=True)
 
     node_order_by = ["name"]
 
@@ -76,6 +77,7 @@ class Vocab(models.Model):
         related_name="children",
         related_query_name="children",
     )
+    deprecated_on = models.DateTimeField(blank=True, default=None, null=True)
 
     class Meta:
         verbose_name = "Controlled vocabulary"
@@ -95,14 +97,14 @@ class Design(models.Model):
     name = models.CharField(max_length=128, help_text="Name to refer to this study design")
     design = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": VocabCategories.TYPE},
+        limit_choices_to={"category": VocabCategories.TYPE, "deprecated_on": None},
         on_delete=models.CASCADE,
         help_text="Select study design",
         related_name="designs_by_type",
     )
     study_setting = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": VocabCategories.SETTING},
+        limit_choices_to={"category": VocabCategories.SETTING, "deprecated_on": None},
         on_delete=models.CASCADE,
         help_text="Select the setting in which evidence was generated",
         related_name="designs_by_setting",
@@ -118,14 +120,14 @@ class Design(models.Model):
     ecoregions = models.ManyToManyField(
         Vocab,
         blank=True,
-        limit_choices_to={"category": VocabCategories.ECOREGION},
+        limit_choices_to={"category": VocabCategories.ECOREGION, "deprecated_on": None},
         help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')}, if known",
         related_name="designs_by_ecoregion",
     )
     habitats = models.ManyToManyField(
         Vocab,
-        limit_choices_to={"category": VocabCategories.HABITAT},
-        help_text="Select one or more habitats to which the evidence applies.",
+        limit_choices_to={"category": VocabCategories.HABITAT, "deprecated_on": None},
+        help_text="Select one or more IUCN Global Ecosystems to which the evidence applies.",
         related_name="designs_by_habitat",
     )
     habitats_as_reported = models.TextField(
@@ -135,7 +137,7 @@ class Design(models.Model):
     )
     climates = models.ManyToManyField(
         Vocab,
-        limit_choices_to={"category": VocabCategories.CLIMATE},
+        limit_choices_to={"category": VocabCategories.CLIMATE, "deprecated_on": None},
         help_text=f"Select one or more {new_window_a('http://koeppen-geiger.vu-wien.ac.at/present.htm', 'Koppen climate classifications')} to which the evidence applies",
         related_name="designs_by_climate",
     )
