@@ -63,6 +63,21 @@ class TestLiteratureAssessmentViewSet:
         assert rev_client.post(url).status_code == 403
         assert pm_client.post(url, None).status_code == 400  # validation; not permission error
 
+    def test_references(self, db_keys):
+        c = APIClient()
+        assert c.login(username="reviewer@hawcproject.org", password="pw") is True
+        url = reverse("lit:api:assessment-references", args=(db_keys.assessment_final,))
+        response = c.get(url)
+        assert response.status_code == 200 and len(response.json()["results"]) == 5
+        # tag filtering
+        response = c.get(
+            url, {"tag_id": 11, "required_tags": [12], "pruned_tags": [13]}, format="json"
+        )
+        assert response.status_code == 200 and len(response.json()["results"]) == 2
+        # untagged references
+        response = c.get(url, {"untagged": ""}, format="json")
+        assert response.status_code == 200 and len(response.json()["results"]) == 1
+
     def test_export(self, rewrite_data_files: bool, db_keys):
         url = reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_final,))
         fn = "api-lit-assessment-reference-export.json"
