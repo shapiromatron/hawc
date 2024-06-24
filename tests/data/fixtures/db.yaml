@@ -3192,6 +3192,61 @@
     is_resolved: false
     created: 2022-10-27 21:37:16.158160+00:00
     last_updated: 2022-10-27 21:40:28.356071+00:00
+- model: lit.workflowadmissiontags
+  pk: 2
+  fields:
+    tag: 32
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 4
+  fields:
+    tag: 33
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 5
+  fields:
+    tag: 34
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 6
+  fields:
+    tag: 35
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 7
+  fields:
+    tag: 36
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 8
+  fields:
+    tag: 37
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 9
+  fields:
+    tag: 38
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 10
+  fields:
+    tag: 39
+    content_object: 1
+- model: lit.workflow
+  pk: 1
+  fields:
+    assessment: 4
+    title: Test Workflow
+    description: References that have been tagged for inclusion and are ready for
+      more specific tagging.
+    link_tagging: true
+    link_conflict_resolution: true
+    admission_tags_descendants: false
+    removal_tags_descendants: false
+    created: 2024-06-24 20:30:11.688206+00:00
+    last_updated: 2024-06-24 20:30:32.920691+00:00
+    admission_source: []
+    removal_source: []
 - model: study.study
   pk: 1
   fields:
