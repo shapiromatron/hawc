@@ -755,6 +755,15 @@ class TestReferenceViewSet:
         assert list(ref.tags.values_list("id", flat=True)) == tags
         assert ref.has_user_tag_conflicts() is False
 
+        # test tagging with UDF data
+        ref_udf = models.Reference.objects.filter(
+            study__assessment=db_keys.assessment_conflict_resolution
+        ).first()
+        update_udf_tags_url = reverse("lit:api:reference-tag", args=(ref_udf.pk,))
+        payload = {"tags": [33], "udf_data": {32: {"32-field1": "testing", "32-field2": "321"}}}
+        response = client.post(update_udf_tags_url, payload, format="json")
+        assert response.status_code == 200
+
     def test_tagging_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -771,6 +780,16 @@ class TestReferenceViewSet:
         response = client.post(url, data, format="json")
         assert response.status_code == 400
         assert response.json() == {"tags": "Array of tags must be valid primary keys"}
+
+        # test invalid UDF
+        ref_udf = models.Reference.objects.filter(
+            study__assessment=db_keys.assessment_conflict_resolution
+        ).first()
+        update_udf_tags_url = reverse("lit:api:reference-tag", args=(ref_udf.pk,))
+        payload = {"tags": [33], "udf_data": {32: {"32-field1": "", "32-field2": "321"}}}
+        response = client.post(update_udf_tags_url, payload, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"UDF-form": [["32-field1", ["This field is required."]]]}
 
     def test_merge_tag_permissions(self):
         team = get_client("team", api=True)
