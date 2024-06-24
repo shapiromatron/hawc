@@ -13,8 +13,8 @@
 {"pk": 214, "model": "eco.Vocab", "fields": {"category": 2, "parent": 213, "value": "Shorelines biome"}},
 {"pk": 215, "model": "eco.Vocab", "fields": {"category": 2, "parent": 213, "value": "Supralittoral coastal biome"}},
 {"pk": 216, "model": "eco.Vocab", "fields": {"category": 2, "parent": 213, "value": "Anthropogenic shorelines biome"}},
-{"pk": 217, "model": "eco.Vocab", "fields": {"category": 2, "parent": 213, "value": "Marine/Freshwater/Terrestrial"}},
-{"pk": 218, "model": "eco.Vocab", "fields": {"category": 2, "parent": 217, "value": "Marine/Freshwater/Terrestrial- Brackish tidal biome"}},
+{"pk": 217, "model": "eco.Vocab", "fields": {"category": 2, "value": "Marine/Freshwater/Terrestrial"}},
+{"pk": 218, "model": "eco.Vocab", "fields": {"category": 2, "parent": 217, "value": "Brackish tidal biome"}},
 {"pk": 219, "model": "eco.Vocab", "fields": {"category": 2, "value": "Terrestrial"}},
 {"pk": 220, "model": "eco.Vocab", "fields": {"category": 2, "parent": 219, "value": "Tropical-subtropical forests biome"}},
 {"pk": 221, "model": "eco.Vocab", "fields": {"category": 2, "parent": 219, "value": "Temperate-boreal forests and woodlands biome"}},
@@ -30,7 +30,7 @@
 {"pk": 231, "model": "eco.Vocab", "fields": {"category": 2, "parent": 230, "value": "Lithic biome"}},
 {"pk": 232, "model": "eco.Vocab", "fields": {"category": 2, "parent": 230, "value": "Anthropogenic voids biome"}},
 {"pk": 233, "model": "eco.Vocab", "fields": {"category": 2, "value": "Subterranean/Freshwater"}},
-{"pk": 234, "model": "eco.Vocab", "fields": {"category": 2, "parent": 233, "value": "Subterranean/Freshwater- Anthropogenic"}},
+{"pk": 234, "model": "eco.Vocab", "fields": {"category": 2, "parent": 233, "value": "Anthropogenic"}},
 {"pk": 235, "model": "eco.Vocab", "fields": {"category": 2, "value": "Subterranean/Marine"}},
-{"pk": 236, "model": "eco.Vocab", "fields": {"category": 2, "value": "Subterranean/Marine- Tidal biome"}}
+{"pk": 236, "model": "eco.Vocab", "fields": {"category": 2, "parent": 235, "value": "Tidal biome"}}
 ]

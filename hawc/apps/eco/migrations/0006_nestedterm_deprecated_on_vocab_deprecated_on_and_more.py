@@ -22,8 +22,6 @@ def load_fixture(apps, schema_editor):
         461,
         537,
         593,
-        595,
-        433,
         434,
         435,
         436,
