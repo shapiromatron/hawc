@@ -3195,47 +3195,47 @@
 - model: lit.workflowadmissiontags
   pk: 2
   fields:
-    tag: 32
+    tag: 23
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 4
   fields:
-    tag: 33
+    tag: 24
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 5
   fields:
-    tag: 34
+    tag: 25
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 6
   fields:
-    tag: 35
+    tag: 26
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 7
   fields:
-    tag: 36
+    tag: 27
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 8
   fields:
-    tag: 37
+    tag: 28
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 9
   fields:
-    tag: 38
+    tag: 29
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 10
   fields:
-    tag: 39
+    tag: 30
     content_object: 1
 - model: lit.workflow
   pk: 1
   fields:
-    assessment: 4
+    assessment: 2
     title: Test Workflow
     description: References that have been tagged for inclusion and are ready for
       more specific tagging.

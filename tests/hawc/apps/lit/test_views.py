@@ -37,7 +37,7 @@ class TestViewPermissions:
             (reverse("lit:tag-status", args=(3,)), 403),
             (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
             (reverse("lit:workflows", args=(db_keys.assessment_working,)), 403),
-            (reverse("lit:overview", args=(db_keys.assessment_conflict_resolution,)), 403),
+            (reverse("lit:overview", args=(db_keys.assessment_working,)), 403),
         ]
         for url, status in views:
             response = c.get(url)
