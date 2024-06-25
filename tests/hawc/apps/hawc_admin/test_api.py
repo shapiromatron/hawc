@@ -105,3 +105,17 @@ class TestAdminActions:
         assert log.assessment_id == db_keys.assessment_final
         # no orphans, so nothing is deleted
         assert json.loads(log.message) == {"count": 0, "data": []}
+
+    def test_migrate_terms(self, db_keys):
+        # test successfully returns a spreadsheet
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        url = reverse("admin:assessment_assessment_changelist")  # url used for assessment actions
+
+        response = client.post(
+            url, {"action": "migrate_terms", "_selected_action": db_keys.assessment_final}
+        )
+        assert (
+            response.headers["Content-Type"]
+            == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
