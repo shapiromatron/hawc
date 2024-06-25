@@ -578,10 +578,6 @@ class OutcomeDataPivot(FlatFileExporter):
                 "outcome-diagnostic": "diagnostic",
                 "outcome-age_of_measurement": "age of outcome measurement",
                 "outcome-effects": "tags",
-            }
-        )
-        df = df.rename(
-            columns={
                 "cs-id": "comparison set id",
                 "cs-name": "comparison set name",
                 "exposure-id": "exposure id",
