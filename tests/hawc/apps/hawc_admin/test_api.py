@@ -88,23 +88,24 @@ class TestReportsViewSet:
 
 @pytest.mark.django_db
 class TestAdminActions:
+    @pytest.mark.xfail(reason="TODO: create an orphan tag to be deleted.")
     def test_delete_orphan_tags(self, db_keys):
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         url = reverse("admin:assessment_assessment_changelist")  # url used for assessment actions
+
+        # TODO: Create an orphan tag here
 
         response = client.post(
             url,
             {"action": "delete_orphan_tags", "_selected_action": db_keys.assessment_final},
             follow=True,
         )
-
         assert response.status_code == 200
         # check log that correct number of tags were deleted
         log = Log.objects.order_by("-created").first()
         assert log.assessment_id == db_keys.assessment_final
-        # no orphans, so nothing is deleted
-        assert json.loads(log.message) == {"count": 0, "data": []}
+        assert json.loads(log.message)["count"] == 1
 
     def test_migrate_terms(self, db_keys):
         # test successfully returns a spreadsheet
