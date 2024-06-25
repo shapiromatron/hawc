@@ -1,3 +1,4 @@
+import json
 from io import StringIO
 from pathlib import Path
 
@@ -6,6 +7,8 @@ import pytest
 from django.conf import settings
 from django.urls import reverse
 from rest_framework.test import APIClient
+
+from hawc.apps.assessment.models import Log
 
 
 @pytest.fixture(scope="module")
@@ -81,3 +84,24 @@ class TestReportsViewSet:
         assert resp.status_code == 200
         df = pd.read_json(StringIO(resp.content.decode()))
         assert df.shape == (3, 33)
+
+
+@pytest.mark.django_db
+class TestAdminActions:
+    def test_delete_orphan_tags(self, db_keys):
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        url = reverse("admin:assessment_assessment_changelist")  # url used for assessment actions
+
+        response = client.post(
+            url,
+            {"action": "delete_orphan_tags", "_selected_action": db_keys.assessment_final},
+            follow=True,
+        )
+
+        assert response.status_code == 200
+        # check log that correct number of tags were deleted
+        log = Log.objects.order_by("-created").first()
+        assert log.assessment_id == db_keys.assessment_final
+        # no orphans, so nothing is deleted
+        assert json.loads(log.message) == {"count": 0, "data": []}
