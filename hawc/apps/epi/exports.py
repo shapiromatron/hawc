@@ -2,6 +2,7 @@ import math
 
 import pandas as pd
 from django.db.models import Case, Q, When
+from scipy.stats import t
 
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
@@ -460,6 +461,37 @@ class EpiDataPivotExporter(Exporter):
 
 
 class OutcomeDataPivot(FlatFileExporter):
+    def _add_ci(self, df: pd.DataFrame) -> pd.DataFrame:
+        # TODO - write test for this
+        # if CI are not reported, calculate from mean/variance estimates. This code is identical
+        # to `GroupResult.getConfidenceIntervals`, but applied to this data frame
+        def _calc_cis(row):
+            if (row["result_group-lower_ci"] or row["result_group-upper_ci"]) or (
+                row["result_group-n"] > 0
+                and row["result_group-estimate"]
+                and row["result_group-variance"]
+            ):
+                n = row["result_group-n"]
+                est = row["result_group-estimate"]
+                var = row["result_group-variance"]
+                z = t.ppf(0.975, max(n - 1, 1))
+                change = None
+
+                if row["result-variance_type"] == "SD":
+                    change = z * var / math.sqrt(n)
+                elif row["result-variance_type"] in ("SE", "SEM"):
+                    change = z * var
+
+                if change is not None:
+                    return est - change, est + change
+
+            return row["result_group-lower_ci"], row["result_group-upper_ci"]
+
+        df[["result_group-lower_ci", "result_group-upper_ci"]] = df.apply(
+            _calc_cis, axis=1, result_type="expand"
+        )
+        return df
+
     def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
         def _get_stdev(x: pd.Series):
             return models.GroupResult.stdev(
@@ -557,6 +589,7 @@ class OutcomeDataPivot(FlatFileExporter):
         )
         df = df.drop(columns="result_group-p_value_qualifier")
 
+        df = self._add_ci(df)
         df = self._add_percent_control(df)
 
         df = df.rename(
