@@ -692,8 +692,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         # TODO - write test for this
         def _calc(row):
             txt = row["experiment-type_display"].lower()
-            if txt.find(" (") >= 0:
-                txt = txt[: txt.find(" (")]
+            if txt.find("(") >= 0:  # TODO - remove extra space after confirming changes
+                txt = txt[: txt.find("(")]
 
             if row["dosing_regime-duration_exposure_text"]:
                 txt = f"{txt} ({row['dosing_regime-duration_exposure_text']})"
