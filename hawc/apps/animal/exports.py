@@ -689,20 +689,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         )
 
     def handle_treatment_period(self, df: pd.DataFrame):
-        txt = df["experiment-type_display"].str.lower()
-        txt_index = txt.str.find("(")
-        txt_updated = (
-            txt.to_frame(name="txt")
-            .join(txt_index.to_frame(name="txt_index"))
-            .apply(
-                lambda x: x["txt"] if x["txt_index"] < 0 else x["txt"][: x["txt_index"]],
-                axis="columns",
-                result_type="reduce",
-            )
-        ).astype(str)
-        df["treatment period"] = (
-            txt_updated + " (" + df["dosing_regime-duration_exposure_text"]
-        ).where(df["dosing_regime-duration_exposure_text"].str.len() > 0) + ")"
+        # TODO - write test for this
+        def _calc(row):
+            txt = row["experiment-type_display"].lower()
+            if txt.find(" (") >= 0:
+                txt = txt[: txt.find(" (")]
+
+            if row["dosing_regime-duration_exposure_text"]:
+                txt = f"{txt} ({row['dosing_regime-duration_exposure_text']})"
+
+            return txt
+
+        df["treatment period"] = df.apply(_calc, axis=1, result_type="expand")
         return df
 
     def handle_dose_groups(self, df: pd.DataFrame) -> pd.DataFrame:
