@@ -2729,6 +2729,14 @@
     numchild: 0
     name: Tier III Demo
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 40
+  fields:
+    path: '99990001'
+    depth: 2
+    numchild: 0
+    name: Orphan
+    slug: orphan
 - model: lit.referencetags
   pk: 2
   fields:
