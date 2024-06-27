@@ -14,7 +14,7 @@
     </fieldset>
 
     <div id="tag-copy-content" class="hidden my-3" >
-      <div class="alert alert-warning">
+      {% alert warning %}
         <a class="close" href="#" data-dismiss="alert">×</a>
         <h4>Warning!</h4>
         <p>Copying tags from another assessment will remove ALL existing tags, and will
@@ -22,7 +22,7 @@
           are identical between an existing tag and a new tag copied from another assessment.<br><br>
           It is therefore recommended to only complete this procedure if literature have not yet been
           tagged for the current assessment.</p>
-      </div>
+      {% endalert %}
 
       <b>Tags for selected assessment:</b>
       <div id="tags">
