@@ -594,6 +594,14 @@
   fields:
     app_label: docs
     model: documentationpagetag
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: workflow
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: tagudfcontent
 - model: auth.permission
   fields:
     name: Can access Wagtail admin
@@ -1025,7 +1033,6 @@
     - wagtailcore
     - page
     object_id: '3'
-    submitted_for_moderation: false
     created_at: 2023-11-22 14:56:19.464008+00:00
     user:
     - admin@hawcproject.org
@@ -1075,7 +1082,6 @@
     - wagtailcore
     - page
     object_id: '4'
-    submitted_for_moderation: false
     created_at: 2023-11-22 14:57:48.850356+00:00
     user:
     - admin@hawcproject.org
@@ -1124,7 +1130,6 @@
     - wagtailcore
     - page
     object_id: '5'
-    submitted_for_moderation: false
     created_at: 2023-11-22 14:58:09.626465+00:00
     user:
     - admin@hawcproject.org
@@ -1173,7 +1178,6 @@
     - add_page
     - wagtailcore
     - page
-    permission_type: add
 - model: wagtailcore.grouppagepermission
   pk: 2
   fields:
@@ -1184,7 +1188,6 @@
     - change_page
     - wagtailcore
     - page
-    permission_type: change
 - model: wagtailcore.grouppagepermission
   pk: 3
   fields:
@@ -1195,7 +1198,6 @@
     - publish_page
     - wagtailcore
     - page
-    permission_type: publish
 - model: wagtailcore.grouppagepermission
   pk: 4
   fields:
@@ -1206,7 +1208,6 @@
     - add_page
     - wagtailcore
     - page
-    permission_type: add
 - model: wagtailcore.grouppagepermission
   pk: 5
   fields:
@@ -1217,7 +1218,6 @@
     - change_page
     - wagtailcore
     - page
-    permission_type: change
 - model: wagtailcore.grouppagepermission
   pk: 6
   fields:
@@ -1228,7 +1228,6 @@
     - lock_page
     - wagtailcore
     - page
-    permission_type: lock
 - model: wagtailcore.grouppagepermission
   pk: 7
   fields:
@@ -1239,7 +1238,6 @@
     - unlock_page
     - wagtailcore
     - page
-    permission_type: unlock
 - model: wagtailcore.pageviewrestriction
   pk: 1
   fields:
@@ -2731,6 +2729,14 @@
     numchild: 0
     name: Tier III Demo
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 40
+  fields:
+    path: '99990001'
+    depth: 2
+    numchild: 0
+    name: Orphan
+    slug: orphan
 - model: lit.referencetags
   pk: 2
   fields:
@@ -2756,6 +2762,11 @@
   fields:
     tag: 33
     content_object: 11
+- model: lit.referencetags
+  pk: 7
+  fields:
+    tag: 33
+    content_object: 13
 - model: lit.reference
   pk: 1
   fields:
@@ -3132,11 +3143,20 @@
     - 2
     identifiers:
     - 9
-- model: lit.userreferencetags
-  pk: 1
+- model: lit.reference
+  pk: 13
   fields:
-    tag: 33
-    content_object: 1
+    assessment: 4
+    title: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
+    year: 2024
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2024-06-14 14:23:16.370427+00:00
+    last_updated: 2024-06-14 20:14:41.479008+00:00
+    block_id: null
 - model: lit.userreferencetags
   pk: 2
   fields:
@@ -3188,6 +3208,61 @@
     is_resolved: false
     created: 2022-10-27 21:37:16.158160+00:00
     last_updated: 2022-10-27 21:40:28.356071+00:00
+- model: lit.workflowadmissiontags
+  pk: 2
+  fields:
+    tag: 23
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 4
+  fields:
+    tag: 24
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 5
+  fields:
+    tag: 25
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 6
+  fields:
+    tag: 26
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 7
+  fields:
+    tag: 27
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 8
+  fields:
+    tag: 28
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 9
+  fields:
+    tag: 29
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 10
+  fields:
+    tag: 30
+    content_object: 1
+- model: lit.workflow
+  pk: 1
+  fields:
+    assessment: 2
+    title: Test Workflow
+    description: References that have been tagged for inclusion and are ready for
+      more specific tagging.
+    link_tagging: true
+    link_conflict_resolution: true
+    admission_tags_descendants: false
+    removal_tags_descendants: false
+    created: 2024-06-24 20:30:11.688206+00:00
+    last_updated: 2024-06-24 20:30:32.920691+00:00
+    admission_source: []
+    removal_source: []
 - model: study.study
   pk: 1
   fields:
@@ -11139,14 +11214,14 @@
 - model: udf.TagBinding
   pk: 1
   fields:
-    assessment: 1
-    tag: 2
+    assessment: 4
+    tag: 32
     form: 1
     creator:
     - pm@hawcproject.org
     created: 2023-09-17 04:10:29.880052+00:00
     last_updated: 2023-09-17 04:15:33.309627+00:00
-- model: udf.modeludfcontent
+- model: udf.ModelUDFContent
   pk: 1
   fields:
     model_binding: 1
@@ -11159,6 +11234,16 @@
       field2: 123
     created: 2024-03-12 15:19:07.533314+00:00
     last_updated: 2024-03-12 15:19:07.533329+00:00
+- model: udf.TagUDFContent
+  pk: 1
+  fields:
+    reference: 13
+    tag_binding: 1
+    content:
+      field1: testing
+      field2: 321
+    created: 2024-05-08 12:21:07.533314+00:00
+    last_updated:  2024-05-08 12:21:07.533314+00:00
 - model: reversion.revision
   pk: 1
   fields:

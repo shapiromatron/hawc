@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any
+from typing import Any, TypeVar
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,13 +17,15 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
 
+T = TypeVar("T", bound=BaseModel)
 
-def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) -> BaseModel:
+
+def validate_pydantic(pydantic_class: type[T], field: str | None, data: Any) -> T:
     """Validation helper to validate a field to a pydantic model.
 
     Args:
         pydantic_class (BaseModel): A Pydantic base class
-        field (str): the field to raise the error on
+        field (str|None): the field to raise the error on, or None
         data (Any): the data to be validated
 
     Raises:
@@ -35,7 +37,8 @@ def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) ->
     try:
         return pydantic_class.model_validate(data)
     except PydanticError as err:
-        raise DrfValidationError({field: err.json()})
+        message = {field: err.json()} if field else err.json()
+        raise DrfValidationError(message)
 
 
 def validate_jsonschema(data: Any, schema: dict) -> Any:

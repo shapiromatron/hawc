@@ -87,6 +87,7 @@ MIDDLEWARE = (
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
+    "hawc.apps.common.middleware.ThreadLocalMiddleware",
 )
 
 # Install applications

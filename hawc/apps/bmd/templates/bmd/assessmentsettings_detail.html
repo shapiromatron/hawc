@@ -13,10 +13,7 @@
   <p>BMD assessment-settings can only be modified by project managers.</p>
 
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 70%;">
-    </colgroup>
+    {% bs4_colgroup '30,70' %}
     <tbody>
       <tr><th>Benchmark dose modeling<br/>software (<a href="https://www.epa.gov/bmds">BMDS</a>) version</th><td>{{object.get_version_display}}</td></tr>
       <tr><th>Last updated</th><td>{{object.last_updated}}</td></tr>

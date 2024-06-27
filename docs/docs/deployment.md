@@ -113,4 +113,4 @@ To prevent bots from attempting to login to the server, you can optionally enabl
 - `TURNSTILE_SITE`: site key, this is used by the client to interact (public)
 - `TURNSTILE_KEY`: secret key, used by the server to verify the response (private)
 
-By default. human verification is disabled.
+By default. human verification is disabled, but is enabled when these values are set.

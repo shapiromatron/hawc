@@ -669,7 +669,7 @@ class Endpoint(BaseEndpoint):
         max_length=32,
         blank=True,
         verbose_name="Response units",
-        help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)",
+        help_text="Units the response was measured in (i.e., \u03bcg/dL, % control, etc.)",
     )
     data_type = models.CharField(
         max_length=2,

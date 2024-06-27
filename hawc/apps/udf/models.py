@@ -76,8 +76,17 @@ class UserDefinedForm(models.Model):
         schema = dynamic_forms.Schema.model_validate(self.schema)
         return schema.to_list(data)
 
+    def validate_data(self, data: dict):
+        # Validate arbitrary data as dictionary or raise ValueError
+        schema = dynamic_forms.Schema.model_validate(self.schema)
+        form = dynamic_forms.DynamicForm(schema, data=data)
+        if not form.is_valid():
+            raise ValueError(form.errors.as_data())
+
 
 class ModelBinding(models.Model):
+    objects = managers.ModelBindingManager()
+
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_bindings"
     )
@@ -112,9 +121,6 @@ class ModelBinding(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_absolute_url(self):
-        return reverse("udf:model_detail", args=(self.id,))
-
     def get_update_url(self):
         return reverse("udf:binding_htmx", args=("model", self.id, "update"))
 
@@ -128,6 +134,8 @@ class ModelBinding(models.Model):
 
 
 class TagBinding(models.Model):
+    objects = managers.TagBindingManager()
+
     assessment = models.ForeignKey(
         Assessment, on_delete=models.CASCADE, related_name="udf_tag_bindings"
     )
@@ -178,6 +186,8 @@ class TagBinding(models.Model):
 
 
 class ModelUDFContent(models.Model):
+    objects = managers.ModelUDFContentManager()
+
     model_binding = models.ForeignKey(
         ModelBinding, on_delete=models.CASCADE, related_name="saved_contents"
     )
@@ -210,6 +220,8 @@ class ModelUDFContent(models.Model):
 
 
 class TagUDFContent(models.Model):
+    objects = managers.TagUDFContentManager()
+
     reference = models.ForeignKey(
         "lit.Reference", on_delete=models.CASCADE, related_name="saved_tag_contents"
     )

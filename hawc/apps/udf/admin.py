@@ -4,7 +4,7 @@ from . import models
 
 
 @admin.register(models.UserDefinedForm)
-class UserDefinedFormInline(admin.ModelAdmin):
+class UserDefinedFormAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
@@ -21,7 +21,7 @@ class UserDefinedFormInline(admin.ModelAdmin):
 
 
 @admin.register(models.ModelBinding)
-class ModelBindingInline(admin.ModelAdmin):
+class ModelBindingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "assessment_id",
@@ -33,7 +33,7 @@ class ModelBindingInline(admin.ModelAdmin):
 
 
 @admin.register(models.TagBinding)
-class TagBindingInline(admin.ModelAdmin):
+class TagBindingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "assessment_id",
@@ -43,3 +43,35 @@ class TagBindingInline(admin.ModelAdmin):
     )
     list_filter = ("created",)
     raw_id_fields = ("tag",)
+
+
+@admin.register(models.TagUDFContent)
+class TagUDFContentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "tag_binding_id",
+        "tag_binding",
+        "reference_id",
+        "reference",
+        "created",
+        "last_updated",
+    )
+    list_filter = ("last_updated",)
+    raw_id_fields = ("reference",)
+    readonly_fields = ("reference", "tag_binding", "created", "last_updated")
+
+
+@admin.register(models.ModelUDFContent)
+class ModelUDFContentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "model_binding_id",
+        "model_binding",
+        "content_type",
+        "object_id",
+        "content_object",
+        "created",
+        "last_updated",
+    )
+    list_filter = ("last_updated",)
+    readonly_fields = ("content_type", "object_id", "model_binding", "created", "last_updated")

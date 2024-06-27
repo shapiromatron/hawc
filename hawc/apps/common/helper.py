@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
-from django.http import QueryDict
+from django.http import HttpRequest, QueryDict
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import lazy
@@ -30,6 +30,8 @@ from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
+
+from .middleware import _local_thread
 
 logger = logging.getLogger(__name__)
 
@@ -536,3 +538,13 @@ def cacheable(
 def flatten(lst: Iterable[Iterable]) -> Iterable:
     # given a list of lists (or other iterables), flatten the top-level iterable
     return chain(*(item for item in lst))
+
+
+def get_current_request() -> HttpRequest:
+    """Returns the current request object"""
+    return _local_thread.request
+
+
+def get_current_user():
+    """Returns the current request user"""
+    return get_current_request().user

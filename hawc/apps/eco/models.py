@@ -7,7 +7,7 @@ from django.utils.text import format_lazy
 from treebeard.mp_tree import MP_Node
 
 from ..common.helper import new_window_a
-from ..common.models import NumericTextField
+from ..common.models import NumericTextField, clone_name
 from ..epi.models import Country
 from ..study.models import Study
 from . import managers
@@ -170,7 +170,7 @@ class Design(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -312,7 +312,7 @@ class Cause(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -389,7 +389,7 @@ class Effect(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -523,7 +523,7 @@ class Result(models.Model):
 
     def clone(self):
         self.id = None
-        self.sort_order = self.sort_order + 1
+        self.sort_order += 1
         self.save()
         return self
 
