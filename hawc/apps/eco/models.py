@@ -127,7 +127,7 @@ class Design(models.Model):
     habitats = models.ManyToManyField(
         Vocab,
         limit_choices_to={"category": VocabCategories.HABITAT, "deprecated_on": None},
-        help_text="Select one or more IUCN Global Ecosystems to which the evidence applies.",
+        help_text=f"Select one or more {new_window_a('https://global-ecosystems.org/', 'IUCN Global Ecosystems')} to which the evidence applies.",
         related_name="designs_by_habitat",
     )
     habitats_as_reported = models.TextField(

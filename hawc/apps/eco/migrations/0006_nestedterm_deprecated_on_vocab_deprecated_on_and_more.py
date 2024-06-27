@@ -61,8 +61,8 @@ class Migration(migrations.Migration):
             model_name="design",
             name="habitats",
             field=models.ManyToManyField(
-                help_text="Select one or more IUCN Global Ecosystems to which the evidence applies.",
-                limit_choices_to={"category": 2},
+                help_text='Select one or more <a rel="noopener noreferrer" target="_blank" href="https://global-ecosystems.org/">IUCN Global Ecosystems</a> to which the evidence applies.',
+                limit_choices_to={"category": 2, "deprecated_on": None},
                 related_name="designs_by_habitat",
                 to="eco.vocab",
             ),
