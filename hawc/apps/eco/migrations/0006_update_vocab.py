@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import django.db.models.deletion
@@ -18,6 +19,40 @@ def load_vocab(apps, schema_editor):
 
     # load new values
     call_command("loaddata", str(fixtures / "vocab_2.jsonl"), app_label="eco")
+
+
+def load_nested_terms(apps, schema_editor):
+    now = timezone.now()
+
+    # load the "real model" since we to use Treebeard manager methods
+    from hawc.apps.eco.models import NestedTerm
+
+    # rename
+    NestedTerm.objects.filter(id=457).update(name="fire and fire suppression")
+    NestedTerm.objects.filter(id=60).update(name="Water withdrawal/abstraction")
+
+    # fmt: off
+    # mark as deprecated
+    NestedTerm.objects.filter(
+        id__in=[
+            37, 38, 39, 434, 435, 436, 437, 438, 439, 440, 456, 461, 468, 537, 538, 539, 593, 595
+        ]
+    ).update(deprecated_on=now)
+    # fmt: on
+
+    # load new terms. We can't use a django fixture because Treebeard reorders nodes and
+    # may change the `path` of nodes based on name (for this model)
+    additions = json.loads((fixtures / "nestedterms_2.json").read_text())
+    for addition in additions:
+        for i, parent_name in enumerate(addition["parents"]):
+            if i == 0:
+                parent = NestedTerm.objects.get(depth=1, name=parent_name)
+            else:
+                for child in parent.get_children():
+                    if child.name == parent_name:
+                        parent = child
+                        break
+        parent.add_child(**addition["fields"])
 
 
 class Migration(migrations.Migration):
@@ -90,4 +125,5 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunPython(load_vocab, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(load_nested_terms, reverse_code=migrations.RunPython.noop),
     ]
