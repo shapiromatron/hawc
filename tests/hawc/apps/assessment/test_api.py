@@ -285,6 +285,13 @@ class TestAssessmentViewSet:
         assert response.status_code == 200
         assert len(response.json()) == 1
 
+    def test_endpoints(self, db_keys):
+        url = reverse("assessment:api:assessment-endpoints", args=(db_keys.assessment_final,))
+        client = get_client("pm", True)
+        response = client.get(url)
+        assert response.status_code == 200
+        assert len(response.json()["items"]) == 21
+
 
 @pytest.mark.django_db
 class TestEffectTagViewSet:
