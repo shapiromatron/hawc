@@ -287,8 +287,7 @@ class TestAssessmentViewSet:
 
     def test_endpoints(self, db_keys):
         url = reverse("assessment:api:assessment-endpoints", args=(db_keys.assessment_final,))
-        client = APIClient()
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        client = get_client("pm", True)
         response = client.get(url)
         assert response.status_code == 200
         assert len(response.json()["items"]) == 21
