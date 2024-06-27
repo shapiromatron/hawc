@@ -121,7 +121,7 @@ class Design(models.Model):
         Vocab,
         blank=True,
         limit_choices_to={"category": VocabCategories.ECOREGION, "deprecated_on": None},
-        help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')}, if known",
+        help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')} from the continental US, if known",  # noqa: S608
         related_name="designs_by_ecoregion",
     )
     habitats = models.ManyToManyField(
