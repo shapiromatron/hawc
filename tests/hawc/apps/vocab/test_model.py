@@ -10,6 +10,10 @@ class TestTerm:
         assert str(term) == "EHV::system::Cardiovascular"
         assert term.get_admin_edit_url() == "/admin/vocab/term/1/change/"
 
+        term = Term.objects.get(id=7002)
+        assert str(term) == "ToxRef::effect_subtype::eye"
+        assert term.get_admin_edit_url() == "/admin/vocab/term/7002/change/"
+
 
 @pytest.mark.django_db
 class TestEntity:

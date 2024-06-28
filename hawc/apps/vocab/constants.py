@@ -9,10 +9,11 @@ class VocabularyNamespace(IntegerChoices):
     """
 
     EHV = 1, "EHV"
+    ToxRef = 2, "ToxRef"
 
     @classproperty
     def display_dict(cls) -> dict:
-        return {1: "EPA Environmental health vocabulary"}
+        return {1: "EPA Environmental health vocabulary", 2: "ToxRef vocabulary"}
 
     @classmethod
     def display_choices(cls) -> list:

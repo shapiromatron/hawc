@@ -3,6 +3,7 @@ import startupAnimalGroupTable from "./AnimalGroupTable";
 import DosingRegimeForm from "./DosingRegimeForm";
 import EditEndpoint from "./EditEndpoint";
 import ehvBrowserStartup from "./EhvBrowser";
+import toxRefBrowserStartup from "./ToxrefBrowser";
 import Endpoint from "./Endpoint";
 import startupEndpointForm from "./EndpointForm";
 import startupEndpointListApp from "./EndpointListApp";
@@ -18,4 +19,5 @@ export default {
     startupEndpointListApp,
     Experiment,
     ehvBrowserStartup,
+    toxRefBrowserStartup
 };
