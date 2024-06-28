@@ -35,14 +35,7 @@ class ExperimentUpdate(BaseUpdate):
     form_class = forms.ExperimentForm
     template_name = "animalv2/experiment_update.html"
 
-    # currently just using default behavior; once I am making sub-objects (animalgroups, treatments,
-    # etc.) then revisit ExperimentManager to do some smart prefetching. See
-    # epiv2/managers.py::DesignManager for an example of this in use.
-    # ExperimentDelete has a similarly commented-out overridden get_queryset...
-    """
-    def get_queryset(self):
-        return super().get_queryset().complete()
-    """
+    # TODO - both here and ExperimentDelete, instead of using default behavior, could implement smart prefetching by overriding get_queryset. See epiv2/managers::DesignManager.
 
 
 class ExperimentDetail(BaseDetail):
@@ -52,11 +45,6 @@ class ExperimentDetail(BaseDetail):
 class ExperimentDelete(BaseDelete):
     success_message = "Experiment deleted."
     model = models.Experiment
-
-    """
-    def get_queryset(self):
-        return super().get_queryset().complete()
-    """
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()
@@ -128,7 +116,6 @@ class ExperimentChildViewSet(HtmxViewSet):
         context = self.get_context_data(form=form, formsets=formsets)
         return render(request, template, context)
 
-    # TODO - update the update method
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment

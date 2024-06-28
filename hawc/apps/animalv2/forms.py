@@ -3,10 +3,7 @@ from django.forms import ModelForm
 from django.urls import reverse
 
 from ..assessment.autocomplete import DSSToxAutocomplete
-from ..common.autocomplete import (
-    AutocompleteSelectWidget,
-    AutocompleteTextWidget,
-)
+from ..common.autocomplete import AutocompleteSelectWidget, AutocompleteTextWidget
 from ..common.forms import BaseFormHelper
 from . import autocomplete, constants, models
 

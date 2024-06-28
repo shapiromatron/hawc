@@ -5,9 +5,7 @@ import pytest
 from hawc.apps.animalv2 import forms, models
 from hawc.apps.assessment import models as assessment_models
 
-# TODO - worth adding more tests here? We could test trying to pass in e.g. a string where the form expects an integer...but the form
-# widgets themselves prevent this making it pretty unlikely to encounter in the wild (whereas it's worth testing for in the eventual API).
-# for now I've done a few samples and stubbed out the rest, and we can add more if EPA would find it useful.
+# TODO - add more tests
 
 
 @pytest.mark.django_db
