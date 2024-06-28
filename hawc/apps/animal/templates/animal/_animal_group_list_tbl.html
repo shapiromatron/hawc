@@ -1,23 +1,9 @@
 {% if object_list %}
   <table id="ag-table" class="table table-sm table-striped">
-    <thead>
-      <tr>
-        {%if with_experiment %}
-          <th>Experiment</th>
-        {% endif %}
-        <th>Name</th>
-        <th>Species</th>
-        <th>Strain</th>
-        <th>Sex</th>
-        <th>Siblings</th>
-      </tr>
-    </thead>
+    {% bs4_thead 'Name,Species,Strain,Sex,Siblings' %}
     <tbody>
       {% for object in object_list %}
         <tr>
-          {%if with_experiment %}
-            <td><a href="{% url 'animal:animal_group_detail' object.experiment.pk %}">{{object.experiment}}</a></td>
-          {% endif %}
           <td><a href="{% url 'animal:animal_group_detail' object.pk %}">{{object}}</a></td>
           <td>{{object.species}}</td>
           <td>{{object.strain}}</td>

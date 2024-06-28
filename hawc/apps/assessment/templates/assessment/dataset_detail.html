@@ -13,10 +13,7 @@
   </div>
 
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 20%;">
-      <col style="width: 80%;">
-    </colgroup>
+    {% bs4_colgroup '20,80' %}
     <tbody>
       <tr>
         <th>Description</th>
@@ -63,20 +60,8 @@
   {% if crud == "Read" and obj_perms.edit and object.revisions.count > 0 %}
     <h3>Dataset revisions</h3>
     <table class="table table-sm table-striped">
-      <colgroup>
-        <col style="width: 10%;">
-        <col style="width: 50%;">
-        <col style="width: 15%;">
-        <col style="width: 25%;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Version</th>
-          <th>Metadata</th>
-          <th>Download</th>
-          <th>Created/Last updated</th>
-        </tr>
-      </thead>
+      {% bs4_colgroup '10,50,15,25' %}
+      {% bs4_thead 'Version,Metadata,Download,Created/Last updated' %}
       <tbody>
         {% for revision in object.revisions.all %}
           <tr>

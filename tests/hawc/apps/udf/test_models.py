@@ -1,6 +1,15 @@
 import pytest
 
-from hawc.apps.udf.models import ModelUDFContent
+from hawc.apps.udf.models import ModelUDFContent, UserDefinedForm
+
+
+class TestUserDefinedForm:
+    def test_validate_data(self):
+        udf = UserDefinedForm(schema={"fields": [{"name": "field", "type": "integer"}]})
+        for data in [{}, {"field": "test"}]:
+            with pytest.raises(ValueError):
+                udf.validate_data(data)
+        assert udf.validate_data({"field": 123}) is None
 
 
 @pytest.mark.django_db

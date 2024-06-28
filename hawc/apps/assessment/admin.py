@@ -1,6 +1,5 @@
 from io import BytesIO
 
-from django.apps import apps
 from django.contrib import admin, messages
 from django.contrib.admin.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
@@ -49,32 +48,13 @@ class AssessmentAdmin(admin.ModelAdmin):
         "reviewers__last_name",
         "creator__last_name",
     )
-    actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
+    actions = (bust_cache, "migrate_terms")
     form = forms.AssessmentAdminForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related("creator").prefetch_related(
             "project_manager", "team_members", "reviewers"
-        )
-
-    @admin.action(description="Delete orphaned tags")
-    def delete_orphan_tags(self, request, queryset):
-        # Action can only be run on one assessment at a time
-        if queryset.count() != 1:
-            self.message_user(
-                request, "Select only one item to perform the action on.", level=messages.WARNING
-            )
-            return
-        assessment = queryset.first()
-        # delete tags that are not in the assessment tag tree
-        ReferenceTags = apps.get_model("lit", "ReferenceTags")
-        deleted, log_id = ReferenceTags.objects.delete_orphan_tags(assessment.id)
-        # send a message with number deleted & log id
-        tags = ReferenceTags.objects.get_assessment_qs(assessment.id)
-        self.message_user(
-            request,
-            f"Deleted {deleted} of {deleted+tags.count()} reference tags. Details can be found at Log {log_id}.",
         )
 
     def get_staff_ul(self, mgr):

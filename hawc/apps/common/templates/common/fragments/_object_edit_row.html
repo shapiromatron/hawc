@@ -6,6 +6,9 @@
           {% include "common/scientific_pulldown.html" %}
         </div>
         {% crispy form %}
+        {% for fs in formsets %}
+          {% include fs.fragment with formset_instance=fs.instance formset_helper=fs.helper %}
+        {% endfor %}
         <div class="form-row justify-content-center my-2">
           {% if form.instance.id %}
             <button id="{{model}}-save" class="btn btn-sm btn-primary mx-2 py-2" style="width: 15rem; padding: 0.7rem;" hx-post="{% crud_url app model 'update' object.pk %}">

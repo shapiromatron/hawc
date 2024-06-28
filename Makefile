@@ -103,5 +103,5 @@ test-js:  ## Run javascript tests
 
 coverage:  ## Run coverage and create html report
 	coverage run -m pytest
-	coverage html -d coverage_html
+	coverage html -d coverage_html -i
 	@echo "Report ready: ./coverage_html/index.html"

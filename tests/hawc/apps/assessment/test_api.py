@@ -235,6 +235,7 @@ class TestAssessmentViewSet:
             "team_members": [1, 2],
             "reviewers": [1],
             "epi_version": 1,
+            "animal_version": 1,
             "dtxsids_ids": ["DTXSID7020970"],
         }
 
@@ -284,6 +285,13 @@ class TestAssessmentViewSet:
         response = client.get(url + "?query=58-08-2")
         assert response.status_code == 200
         assert len(response.json()) == 1
+
+    def test_endpoints(self, db_keys):
+        url = reverse("assessment:api:assessment-endpoints", args=(db_keys.assessment_final,))
+        client = get_client("pm", True)
+        response = client.get(url)
+        assert response.status_code == 200
+        assert len(response.json()["items"]) == 21
 
 
 @pytest.mark.django_db

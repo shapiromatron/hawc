@@ -11,10 +11,7 @@
     {% endactions %}
   </div>
   <table class="table table-sm table-striped table-hover table-bordered">
-    <colgroup>
-      <col width="34%" />
-      <col width="66%" />
-    </colgroup>
+    {% bs4_colgroup '34,66' %}
     <tbody>
       {% optional_table_row "Name" user.get_full_name %}
       {% optional_table_row "Email" user.email %}

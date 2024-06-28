@@ -130,6 +130,14 @@ def df_to_form_data(key: str, df: pd.DataFrame) -> dict:
     return {key: SimpleUploadedFile("test.xlsx", f.getvalue())}
 
 
+def generic_get_first(model_class):
+    """Return any random instance of a specified model class"""
+    first_obj = model_class.objects.all().first()
+    if first_obj is None:
+        raise Exception(f"generic_get_first failed; no instances of '{model_class}' found")
+    return first_obj
+
+
 def get_timespent() -> TimeSpentEditing:
     """Get latest timespent"""
     return TimeSpentEditing.objects.all().order_by("-id")[0]

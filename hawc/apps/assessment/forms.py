@@ -305,6 +305,7 @@ class AssessmentModulesForm(forms.ModelForm):
             "rob_name",
             "vocabulary",
             "epi_version",
+            "animal_version",
         )
         model = models.Assessment
 
@@ -333,7 +334,7 @@ class AssessmentModulesForm(forms.ModelForm):
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
         helper.add_row("enable_visuals", 3, "col-lg-4")
         helper.add_row("noel_name", 3, "col-lg-4")
-        helper.add_row("epi_version", 1, "col-lg-4")
+        helper.add_row("epi_version", 2, "col-lg-4")
         return helper
 
 
