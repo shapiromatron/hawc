@@ -13,10 +13,7 @@
     </div>
   {% endif %}
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 70%;">
-    </colgroup>
+    {% bs4_colgroup '30,70' %}
     <tbody>
       {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
       {% optional_table_row "System or health effect basis" object.system %}
