@@ -2,7 +2,6 @@ from django import forms
 from django.forms import ModelForm
 from django.urls import reverse
 
-from ..assessment import models as assessment_models
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import (
     AutocompleteSelectWidget,
@@ -131,16 +130,16 @@ class AnimalGroupForm(forms.ModelForm):
         )
         return helper
 
-    def is_valid(self):
-        if "species" in self.data and "strain" in self.data:
-            species_obj = assessment_models.Species.objects.get(pk=self.data["species"])
-            strain_obj = assessment_models.Strain.objects.get(pk=self.data["strain"])
+    def clean(self):
+        cleaned_data = super().clean()
+        if "species" in cleaned_data and "strain" in cleaned_data:
+            species_obj = cleaned_data["species"]
+            strain_obj = cleaned_data["strain"]
             if species_obj.id != strain_obj.species.id:
-                self.add_error(
-                    "strain",
-                    "Strain must be of the same species as the selected species",
+                raise forms.ValidationError(
+                    {"strain": "Strain must be of the same species as the selected species"}
                 )
-        return super().is_valid()
+        return cleaned_data
 
 
 class TreatmentForm(forms.ModelForm):
@@ -290,11 +289,19 @@ class DataExtractionForm(forms.ModelForm):
 
     def is_valid(self):
         if "is_qualitative_only" in self.data and self.data["is_qualitative_only"] == "on":
-            # if "is qualitative only" is checked, we are hiding other fields...so relax the required'ness of some...
+            # if "is qualitative only" is checked, we are hiding other fields...
+            # so relax the required'ness of some...
             for usually_required_field in ["dose_response_observations", "result_details"]:
                 self.fields[usually_required_field].required = False
 
-            # ...and set sensible values on the hidden ones as well.
+            # and in clean we'll set some defaults on those hidden fields.
+
+        return super().is_valid()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("is_qualitative_only") is True:
+            # set sensible values on the hidden fields
             hidden_defaults = {
                 "data_location": "",
                 "dataset_type": "",
@@ -309,9 +316,9 @@ class DataExtractionForm(forms.ModelForm):
             }
 
             for field_name in hidden_defaults:
-                self.data[field_name] = hidden_defaults[field_name]
+                cleaned_data[field_name] = hidden_defaults[field_name]
 
-        return super().is_valid()
+        return cleaned_data
 
 
 class DoseResponseGroupLevelDataForm(forms.ModelForm):
