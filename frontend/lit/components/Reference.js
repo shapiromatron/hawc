@@ -147,7 +147,7 @@ class Reference extends Component {
                 </div>
             );
         }
-        return <div className={expanded ? "d-flex my-1" : "d-flex my-1 flex-wrap"}>{nodes}</div>;
+        return <div className="d-flex my-1 flex-wrap">{nodes}</div>;
     }
 
     render() {
