@@ -70,8 +70,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
-            self.fields[fld].widget.attrs["rows"] = 3
+        helper.set_textarea_height(("keyword_list_1", "keyword_list_2", "keyword_list_3"))
         helper.add_row("conflict_resolution", 2, "col-md-6")
         helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
@@ -462,11 +461,6 @@ class ReferenceForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if fld in ["title", "authors_short", "authors", "journal"]:
-                widget.attrs["rows"] = 3
-
         inputs = {
             "legend_text": "Update reference details",
             "help_text": "Update reference information which was fetched from database or reference upload.",
@@ -474,7 +468,7 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("title", "authors_short", "authors", "journal"))
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
         helper.add_row("doi_id", 3, "col-md-4")
@@ -548,8 +542,6 @@ class WorkflowForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
 
-        self.fields["description"].widget.attrs["rows"] = 2
-
         tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment.id)
         for field in ["admission_tags", "removal_tags"]:
             self.fields[field].queryset = tags
@@ -570,6 +562,7 @@ class WorkflowForm(forms.ModelForm):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
+        helper.set_textarea_height(("description",), 2)
         helper.form_tag = False
         helper.layout = cfl.Layout(
             cfl.Row(

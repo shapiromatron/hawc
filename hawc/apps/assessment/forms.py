@@ -155,7 +155,6 @@ class AssessmentDetailForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["extra"].widget.attrs["rows"] = 3
         cancel_url = (
             self.instance.get_absolute_url()
             if self.instance.id
@@ -164,6 +163,7 @@ class AssessmentDetailForm(forms.ModelForm):
         helper = BaseFormHelper(
             self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
         )
+        helper.set_textarea_height(("extra",), 3)
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
         helper.add_row("report_id", 3, "col-md-4")
@@ -240,9 +240,6 @@ class AssessmentValueForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["comments", "basis", "extra"]:
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(
                 self,
@@ -258,6 +255,8 @@ class AssessmentValueForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
+
+        helper.set_textarea_height(("comments", "basis", "extra"), 3)
         helper.add_row("evaluation_type", 2, "col-md-6")
         helper.add_row("value_type", 4, "col-md-3")
         helper.add_row("confidence", 3, "col-md-4")
