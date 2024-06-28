@@ -52,13 +52,18 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
         ser.is_valid(raise_exception=True)
         published_only = get_published_only(self.assessment, request)
         rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasFlat(
-            self.get_queryset().none(),
-            filename=f"{self.assessment}-{rob_name}",
-            assessment_id=self.assessment.id,
-            published_only=published_only,
+        qs = (
+            models.RiskOfBiasScore.objects.filter(
+                riskofbias__active=True,
+                riskofbias__final=True,
+                riskofbias__study__assessment=self.assessment,
+            )
+            .published_only(published_only)
+            .order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
         )
-        return Response(exporter.build_export())
+        filename = f"{self.assessment}-{rob_name}"
+        exporter = exports.RiskOfBiasExporter.flat_export(qs, filename)
+        return Response(exporter)
 
     @action(
         detail=True,
@@ -75,14 +80,17 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
         ser.is_valid(raise_exception=True)
         published_only = get_published_only(self.assessment, request)
         rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset().none(),
-            filename=f"{self.assessment}-{rob_name}-complete",
-            assessment_id=self.assessment.id,
-            published_only=published_only,
+        qs = (
+            models.RiskOfBiasScore.objects.filter(
+                riskofbias__active=True,
+                riskofbias__study__assessment=self.assessment,
+            )
+            .published_only(published_only)
+            .order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
         )
-
-        return Response(exporter.build_export())
+        filename = f"{self.assessment}-{rob_name}-complete"
+        exporter = exports.RiskOfBiasCompleteExporter.flat_export(qs, filename)
+        return Response(exporter)
 
     @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))
     def bulk_rob_copy(self, request):

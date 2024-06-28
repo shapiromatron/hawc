@@ -3,7 +3,7 @@ import pytest
 
 from hawc.apps.common.helper import FlatExport
 from hawc.apps.riskofbias import exports
-from hawc.apps.riskofbias.models import RiskOfBias
+from hawc.apps.riskofbias.models import RiskOfBiasScore
 
 
 def check_metadata_accuracy(export: FlatExport):
@@ -16,16 +16,14 @@ def check_metadata_accuracy(export: FlatExport):
 @pytest.mark.django_db
 class TestRiskOfBiasFlat:
     def test_metadata(self):
-        qs = RiskOfBias.objects.none()
-        exporter = exports.RiskOfBiasFlat(qs, filename="test", assessment_id=1)
-        export = exporter.build_export()
+        qs = RiskOfBiasScore.objects.none()
+        export = exports.RiskOfBiasExporter.flat_export(qs, filename="test")
         check_metadata_accuracy(export)
 
 
 @pytest.mark.django_db
 class TestRiskOfBiasCompleteFlat:
     def test_metadata(self):
-        qs = RiskOfBias.objects.none()
-        exporter = exports.RiskOfBiasCompleteFlat(qs, filename="test", assessment_id=1)
-        export = exporter.build_export()
+        qs = RiskOfBiasScore.objects.none()
+        export = exports.RiskOfBiasCompleteExporter.flat_export(qs, filename="test")
         check_metadata_accuracy(export)
