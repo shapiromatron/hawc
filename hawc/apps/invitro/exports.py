@@ -312,12 +312,13 @@ class DataPivotEndpoint(FlatFileExporter):
 
     def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
         category_df = assessment_categories(self.kwargs["assessment"].id)
+        df["iv_endpoint-category_id"] = df["iv_endpoint-category_id"].astype("Int64")
         df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
         if "Category 1" in df2.columns:
             df2 = df_move_column(
                 df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
             )
-        return df2
+        return df2.drop(columns=["iv_endpoint-category_id"])
 
     def build_df(self) -> pd.DataFrame:
         df = InvitroExporter().get_df(
