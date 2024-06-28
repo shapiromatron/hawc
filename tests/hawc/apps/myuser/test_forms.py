@@ -1,6 +1,16 @@
 import pytest
+from crispy_forms.utils import render_crispy_form
+from pytest_django.asserts import assertInHTML
 
-from hawc.apps.myuser.forms import RegisterForm, _accept_license_error
+from hawc.apps.myuser.forms import (
+    AcceptNewLicenseForm,
+    AdminUserForm,
+    HAWCPasswordResetForm,
+    HAWCSetPasswordForm,
+    RegisterForm,
+    UserProfileForm,
+    _accept_license_error,
+)
 
 
 @pytest.mark.django_db
@@ -115,3 +125,80 @@ class TestRegisterForm:
         )
         assert form.is_valid() is False
         assert form.errors["license_v2_accepted"][0] == _accept_license_error
+
+
+@pytest.mark.django_db
+class TestUserProfileForm:
+    def test_success(self, pm_user):
+        form = UserProfileForm(
+            instance=pm_user.profile,
+            data={"first_name": pm_user.first_name, "last_name": pm_user.last_name},
+        )
+        assert form.is_valid()
+        form.save()
+
+
+@pytest.mark.django_db
+class TestAcceptNewLicenseForm:
+    def test_render(self, pm_user):
+        form = AcceptNewLicenseForm(instance=pm_user)
+        html = render_crispy_form(form)
+        assertInHTML("<legend>Please accept the terms of use</legend>", html)
+
+    def test_failed(self, pm_user):
+        form = AcceptNewLicenseForm(instance=pm_user, data=dict())
+        assert not form.is_valid()
+        assert "License must be accepted to continue." in form.errors["license_v2_accepted"][0]
+
+    def test_success(self, pm_user):
+        form = AcceptNewLicenseForm(instance=pm_user, data=dict(license_v2_accepted="on"))
+        assert form.is_valid()
+
+
+@pytest.mark.django_db
+class TestHAWCSetPasswordForm:
+    def test_render(self, pm_user):
+        form = HAWCSetPasswordForm(user=pm_user)
+        html = render_crispy_form(form)
+        assertInHTML("Password reset", html)
+
+    def test_success(self, pm_user):
+        form = HAWCSetPasswordForm(
+            user=pm_user, data=dict(new_password1="asdf@asdf123!", new_password2="asdf@asdf123!")
+        )
+        assert form.is_valid()
+
+    def test_clean(self, pm_user):
+        form = HAWCSetPasswordForm(
+            user=pm_user, data=dict(new_password1="abc", new_password2="def")
+        )
+        assert not form.is_valid()
+        assert (
+            "Password must be at least eight characters in length"
+            in form.errors["new_password1"][0]
+        )
+
+
+@pytest.mark.django_db
+class TestHAWCPasswordResetForm:
+    def test_success(self):
+        form = HAWCPasswordResetForm(data=dict(email="pm@hawcproject.org"))
+        assert form.is_valid()
+
+    def test_failure(self):
+        form = HAWCPasswordResetForm(data=dict(email="zzz@hawcproject.org"))
+        assert not form.is_valid()
+        assert "Email address not found" in str(form.errors)
+
+
+@pytest.mark.django_db
+class TestAdminUserForm:
+    def test_render(self, pm_user):
+        form = AdminUserForm()
+        html = render_crispy_form(form)
+        assertInHTML("First name", html)
+
+    def test_success(self, pm_user):
+        form = AdminUserForm(instance=pm_user, data={"email": pm_user.email})
+        assert form.is_valid()
+        form.save()
