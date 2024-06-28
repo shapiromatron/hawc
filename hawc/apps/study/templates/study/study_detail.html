@@ -74,10 +74,7 @@
 
   {% if obj_perms.edit and internal_communications|hastext %}
     <table class="table table-sm table-striped">
-      <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
-      </colgroup>
+      {% bs4_colgroup '30,70' %}
       <tbody>
         <tr>
           <th>Internal communications*</th>
