@@ -466,10 +466,13 @@ class OutcomeDataPivot(FlatFileExporter):
         # if CI are not reported, calculate from mean/variance estimates. This code is identical
         # to `GroupResult.getConfidenceIntervals`, but applied to this data frame
         def _calc_cis(row):
-            if (row["result_group-lower_ci"] or row["result_group-upper_ci"]) or (
-                row["result_group-n"] > 0
-                and row["result_group-estimate"]
-                and row["result_group-variance"]
+            if (
+                row["result_group-lower_ci"] is None
+                and row["result_group-upper_ci"] is None
+                and row["result_group-n"] is not None
+                and row["result_group-estimate"] is not None
+                and row["result_group-variance"] is not None
+                and row["result_group-n"] > 0
             ):
                 n = row["result_group-n"]
                 est = row["result_group-estimate"]
