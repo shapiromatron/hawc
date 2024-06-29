@@ -36,6 +36,17 @@ def assessment_categories(assessment_id: int) -> pd.DataFrame:
     return df2
 
 
+def handle_categories(df: pd.DataFrame, assessment_id: int) -> pd.DataFrame:
+    category_df = assessment_categories(assessment_id)
+    df["iv_endpoint-category_id"] = df["iv_endpoint-category_id"].astype("Int64")
+    df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
+    if "Category 1" in df2.columns:
+        df2 = df_move_column(
+            df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
+        )
+    return df2.drop(columns=["iv_endpoint-category_id"])
+
+
 class IVChemicalExport(ModelExport):
     def get_value_map(self):
         return {
@@ -310,16 +321,6 @@ class DataPivotEndpoint(FlatFileExporter):
             .reset_index(drop=True)
         )
 
-    def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
-        category_df = assessment_categories(self.kwargs["assessment"].id)
-        df["iv_endpoint-category_id"] = df["iv_endpoint-category_id"].astype("Int64")
-        df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
-        if "Category 1" in df2.columns:
-            df2 = df_move_column(
-                df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
-            )
-        return df2.drop(columns=["iv_endpoint-category_id"])
-
     def build_df(self) -> pd.DataFrame:
         df = InvitroExporter().get_df(
             self.queryset.select_related(
@@ -349,7 +350,7 @@ class DataPivotEndpoint(FlatFileExporter):
 
         df = self.handle_dose_groups(df)
         df = self.handle_benchmarks(df)
-        df = self.handle_categories(df)
+        df = handle_categories(df, self.kwargs["assessment"].id)
 
         df = df.rename(
             columns={
@@ -490,15 +491,6 @@ class DataPivotEndpointGroup(FlatFileExporter):
             .reset_index(drop=True)
         )
 
-    def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
-        category_df = assessment_categories(self.kwargs["assessment"].id)
-        df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
-        if "Category 1" in df2.columns:
-            df2 = df_move_column(
-                df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
-            )
-        return df2
-
     def build_df(self) -> pd.DataFrame:
         df = InvitroGroupExporter().get_df(
             self.queryset.select_related(
@@ -530,7 +522,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
 
         df = self.handle_stdev(df)
         df = self.handle_dose_groups(df)
-        df = self.handle_categories(df)
+        df = handle_categories(df, self.kwargs["assessment"].id)
 
         df["iv_endpoint_group-difference_control"] = df["iv_endpoint_group-difference_control"].map(
             models.IVEndpointGroup.DIFFERENCE_CONTROL_SYMBOLS
