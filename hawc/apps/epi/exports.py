@@ -7,7 +7,7 @@ from scipy.stats import t
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m
-from ..materialized.models import FinalRiskOfBiasScore
+from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
 from . import constants, models
 
@@ -550,19 +550,7 @@ class OutcomeDataPivot(FlatFileExporter):
         df = EpiDataPivotExporter().get_df(self.queryset.order_by("id", "results__results"))
         if obj := self.queryset.first():
             outcome_ids = list(df["outcome-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                outcome_ids,
-                "epi",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(outcome_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for outcome_id in outcome_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=outcome_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, outcome_ids, "epi")
             df = df.join(rob_df, on="outcome-id")
 
         df["Reference/Exposure group"] = (

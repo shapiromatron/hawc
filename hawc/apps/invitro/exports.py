@@ -6,7 +6,7 @@ from django.db.models import Exists, OuterRef
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter, df_move_column
 from ..common.models import sql_display, str_m2m
-from ..materialized.models import FinalRiskOfBiasScore
+from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
 from . import constants, models
 
@@ -331,19 +331,7 @@ class DataPivotEndpoint(FlatFileExporter):
         )
         if obj := self.queryset.first():
             study_ids = list(df["study-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                study_ids,
-                "invitro",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for study_id in study_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=study_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, study_ids, "invitro")
             df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint-id"]
@@ -502,19 +490,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
         )
         if obj := self.queryset.first():
             study_ids = list(df["study-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                study_ids,
-                "invitro",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for study_id in study_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=study_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, study_ids, "invitro")
             df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint_group-id"]

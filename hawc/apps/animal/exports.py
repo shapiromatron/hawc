@@ -11,9 +11,9 @@ from scipy import stats
 from ..assessment.models import DoseUnits
 from ..bmd.models import Session
 from ..common.exports import Exporter, ModelExport
-from ..common.helper import FlatFileExporter, cleanHTML, unique_text_list
+from ..common.helper import FlatFileExporter, cleanHTML
 from ..common.models import sql_display, sql_format, str_m2m
-from ..materialized.models import FinalRiskOfBiasScore
+from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
 from . import constants, models
 
@@ -808,19 +808,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             return df
         if obj := self.queryset.first():
             endpoint_ids = list(df["endpoint-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                endpoint_ids,
-                "animal",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(endpoint_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for endpoint_id in endpoint_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=endpoint_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, endpoint_ids, "animal")
             df = df.join(rob_df, on="endpoint-id")
 
         df["route"] = df["dosing_regime-route_of_exposure_display"].str.lower()
@@ -1114,19 +1102,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             return df
         if obj := self.queryset.first():
             endpoint_ids = list(df["endpoint-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                endpoint_ids,
-                "animal",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(endpoint_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for endpoint_id in endpoint_ids
-                ],
-                columns=unique_text_list(list(rob_headers.values())),
-                index=endpoint_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, endpoint_ids, "animal")
             df = df.join(rob_df, on="endpoint-id")
 
         df["route"] = df["dosing_regime-route_of_exposure_display"].str.lower()
