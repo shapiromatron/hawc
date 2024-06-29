@@ -587,3 +587,16 @@ def get_current_request() -> HttpRequest:
 def get_current_user():
     """Returns the current request user"""
     return get_current_request().user
+
+
+def unique_text_list(items: list[str]) -> list[str]:
+    """Return a list of unique items in a text list"""
+    items = items.copy()
+    duplicates = {}
+    for i, item in enumerate(items):
+        if item in duplicates:
+            duplicates[item] += 1
+            items[i] = f"{item} ({duplicates[item]})"
+        else:
+            duplicates[item] = 1
+    return items

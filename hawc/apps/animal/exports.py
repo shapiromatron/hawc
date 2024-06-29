@@ -11,7 +11,7 @@ from scipy import stats
 from ..assessment.models import DoseUnits
 from ..bmd.models import Session
 from ..common.exports import Exporter, ModelExport
-from ..common.helper import FlatFileExporter, cleanHTML
+from ..common.helper import FlatFileExporter, cleanHTML, unique_text_list
 from ..common.models import sql_display, sql_format, str_m2m
 from ..materialized.models import FinalRiskOfBiasScore
 from ..study.exports import StudyExport
@@ -1124,7 +1124,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                     [rob_data[(endpoint_id, metric_id)] for metric_id in rob_headers.keys()]
                     for endpoint_id in endpoint_ids
                 ],
-                columns=list(rob_headers.values()),
+                columns=unique_text_list(list(rob_headers.values())),
                 index=endpoint_ids,
             )
             df = df.join(rob_df, on="endpoint-id")
