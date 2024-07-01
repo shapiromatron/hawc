@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 import pytest
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
@@ -170,6 +171,73 @@ class TestResourcesPage:
         assert resp.status_code == 302
         assert urlparse(resp.url).path == "."
         settings.EXTERNAL_RESOURCES = ""
+
+
+@pytest.mark.django_db
+class TestAttachmentViewSet:
+    def test_crud(self):
+        client = get_client("pm", htmx=True)
+
+        # create
+        url = reverse("assessment:attachment-htmx", args=[1, "create"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_edit_row.html")
+
+        resp = client.post(
+            url,
+            {
+                "title": "test",
+                "description": "test",
+                "attachment": SimpleUploadedFile("zzzz.txt", b"test"),
+            },
+            follow=True,
+        )
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+
+        instance_id = resp.context["object"].id
+
+        # get (htmx)
+        url = reverse("assessment:attachment-htmx", args=[instance_id, "read"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+
+        # get (download)
+        client_no_htmx = get_client("admin")
+        resp = client_no_htmx.get(url)
+        assert resp.status_code == 302
+        assert resp.url.startswith(settings.MEDIA_URL) and "zzzz" in resp.url and ".txt" in resp.url
+
+        # update
+        url = reverse("assessment:attachment-htmx", args=[instance_id, "update"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_edit_row.html")
+
+        resp = client.post(
+            url,
+            {
+                "title": "test2",
+                "description": "test2",
+                "attachment": SimpleUploadedFile("test2.txt", b"test2"),
+            },
+            follow=True,
+        )
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+
+        # delete
+        url = reverse("assessment:attachment-htmx", args=[instance_id, "delete"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+        assert resp.context["action"] == "delete"
+
+        resp = client.post(url)
+        assert resp.status_code == 200
+        assert resp.content == b""
 
 
 @pytest.mark.django_db
