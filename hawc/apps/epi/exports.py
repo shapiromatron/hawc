@@ -462,7 +462,6 @@ class EpiDataPivotExporter(Exporter):
 
 class OutcomeDataPivot(FlatFileExporter):
     def _add_ci(self, df: pd.DataFrame) -> pd.DataFrame:
-        # TODO - write test for this
         # if CI are not reported, calculate from mean/variance estimates. This code is identical
         # to `GroupResult.getConfidenceIntervals`, but applied to this data frame
         def _calc_cis(row):
