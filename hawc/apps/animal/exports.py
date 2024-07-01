@@ -82,21 +82,6 @@ def maximum_percent_control_change(changes: list):
     return val
 
 
-def handle_treatment_period(df: pd.DataFrame) -> pd.DataFrame:
-    def _calc(row):
-        txt = row["experiment-type_display"].lower()
-        if txt.find("(") >= 0:  # TODO - remove extra space after confirming changes
-            txt = txt[: txt.find("(")]
-
-        if row["dosing_regime-duration_exposure_text"]:
-            txt = f"{txt} ({row['dosing_regime-duration_exposure_text']})"
-
-        return txt
-
-    df["treatment period"] = df.apply(_calc, axis=1, result_type="expand")
-    return df
-
-
 class ExperimentExport(ModelExport):
     def get_value_map(self):
         return {
@@ -703,6 +688,20 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             .reset_index(drop=True)
         )
 
+    def handle_treatment_period(self, df: pd.DataFrame) -> pd.DataFrame:
+        def _calc(row):
+            txt = row["experiment-type_display"].lower()
+            if txt.find("(") >= 0:  # TODO - remove extra space after confirming changes
+                txt = txt[: txt.find("(")]
+
+            if row["dosing_regime-duration_exposure_text"]:
+                txt = f"{txt} ({row['dosing_regime-duration_exposure_text']})"
+
+            return txt
+
+        df["treatment period"] = df.apply(_calc, axis=1, result_type="expand")
+        return df
+
     def handle_dose_groups(self, df: pd.DataFrame) -> pd.DataFrame:
         noel_names = self.kwargs["assessment"].get_noel_names()
 
@@ -826,7 +825,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         df = self.handle_ci(df)
         df = self.handle_dose_groups(df)
         df = self.handle_animal_description(df)
-        df = handle_treatment_period(df)
+        df = self.handle_treatment_period(df)
         df = self.handle_percent_control(df)
         df = self.handle_incidence_summary(df)
 
@@ -1122,7 +1121,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         df = self.handle_dose_groups(df)
         df = self.handle_flat_doses(df)
         df = self.handle_animal_description(df)
-        df = handle_treatment_period(df)
+        df = self.handle_treatment_period(df)
         df = self.handle_bmd(df)
 
         df = df.drop_duplicates(subset="endpoint-id")
