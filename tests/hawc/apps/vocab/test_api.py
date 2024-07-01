@@ -88,12 +88,12 @@ class TestToxrefTermViewSet:
         test_cases = [
             # test urls resolve
             (reverse("vocab:api:toxref-system"), [{"id": 7000, "name": "systemic"}]),
-            (reverse("vocab:api:toxref-effect"), [{"id": 7003, "name": "dysplasia"}]),
+            (reverse("vocab:api:toxref-effect"), [{"id": 7001, "name": "pathology microscopic"}]),
             (
                 reverse("vocab:api:toxref-effect-subtype"),
-                [{"id": 7004, "name": "pale ocular fundi"}],
+                [{"id": 7002, "name": "eye"}],
             ),
-            (reverse("vocab:api:toxref-endpoint-name"), [{"id": 7005, "name": "corneal pannus"}]),
+            (reverse("vocab:api:toxref-endpoint-name"), [{"id": 7003, "name": "dysplasia"}]),
         ]
 
         for url, resp in test_cases:
@@ -119,19 +119,19 @@ class TestToxrefTermViewSet:
         test_cases = [
             # test term lookup
             (
-                reverse("vocab:api:toxref-endpoint-name") + "?term=systemic",
-                [{"id": 7000, "name": "systemic"}],
+                reverse("vocab:api:toxref-endpoint-name") + "?term=dysplasia",
+                [{"id": 7003, "name": "dysplasia"}],
             ),
             (reverse("vocab:api:toxref-endpoint-name") + "?term=NONE", []),
             # test parent lookup
             (
-                reverse("vocab:api:toxref-endpoint-name") + "?parent=7000",
-                [{"id": 7001, "name": "eye"}],
+                reverse("vocab:api:toxref-endpoint-name") + "?parent=7002",
+                [{"id": 7003, "name": "dysplasia"}],
             ),
-            (reverse("vocab:api:toxref-endpoint-name") + "?parent=7003", []),
+            (reverse("vocab:api:toxref-endpoint-name") + "?parent=7001", []),
             (
                 reverse("vocab:api:toxref-endpoint-name") + "?parent=text",
-                [{"id": 7001, "name": "eye"}],
+                [{"id": 7003, "name": "dysplasia"}],
             ),
         ]
 
