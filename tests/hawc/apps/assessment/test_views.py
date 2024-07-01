@@ -116,25 +116,6 @@ class TestAboutPage:
 
 
 @pytest.mark.django_db
-def test_unsupported_browser():
-    """
-    Ensure our unsupported browser warning will appear with some user agents
-    """
-    WARNING = "Your current browser has not been tested extensively"
-
-    uas = [
-        ("ie11", False),
-        ("firefox", True),
-    ]
-
-    for ua, valid in uas:
-        c = Client(HTTP_USER_AGENT=ua)
-        response = c.get("/")
-        assert response.context["UA_SUPPORTED"] is valid
-        assert (WARNING in response.content.decode("utf8")) is (not valid)
-
-
-@pytest.mark.django_db
 class TestAssessmentCreate:
     def test_permissions(self, settings):
         url = reverse("assessment:new")
