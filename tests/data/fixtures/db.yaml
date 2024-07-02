@@ -10175,10 +10175,9 @@
     prefilters:
       studies:
       - 1
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17,"sort_order":"short_citation"}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:32:30.901597+00:00
     last_updated: 2020-02-27 20:33:06.585979+00:00
     endpoints: []
@@ -10197,7 +10196,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:34:17.606164+00:00
     last_updated: 2020-02-27 20:34:17.606186+00:00
     endpoints: []
@@ -10213,10 +10211,9 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30,"sort_order":"short_citation"}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:35:41.634588+00:00
     last_updated: 2020-05-08 19:36:41.324440+00:00
     endpoints: []
@@ -10236,7 +10233,6 @@
       filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}
     caption: <p>example</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:19.255703+00:00
     last_updated: 2020-05-08 19:37:19.255730+00:00
     endpoints: []
@@ -10255,7 +10251,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:44.283008+00:00
     last_updated: 2020-05-08 19:38:48.445082+00:00
     endpoints: []
@@ -10272,7 +10267,6 @@
     settings: {"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:43:09.448597+00:00
     last_updated: 2020-05-08 19:43:09.448621+00:00
     endpoints: []
@@ -10292,7 +10286,6 @@
       ":embed=y"], "filters": []}
     caption: <p>iris (flowers)</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:45:29.985823+00:00
     last_updated: 2020-05-08 19:45:29.985848+00:00
     endpoints: []
@@ -10309,7 +10302,6 @@
     settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":"and"}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 14:25:27.528283+00:00
     last_updated: 2020-11-25 14:29:33.991892+00:00
     endpoints: []
@@ -10326,7 +10318,6 @@
     settings: {"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2023-05-19 14:25:27.528283+00:00
     last_updated: 2023-05-19 14:25:27.528283+00:00
     endpoints: []
@@ -10343,7 +10334,6 @@
     settings: {}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 18:32:07.260499+00:00
     last_updated: 2020-11-25 18:35:00.094667+00:00
     endpoints:
@@ -10360,7 +10350,7 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16,"sort_order":"short_citation"}
     caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
       an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
       a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
@@ -10372,7 +10362,6 @@
       class="smart-tag active" data-pk="2" data-type="data_pivot">This is an inline
       data pivot.</div>
     published: true
-    sort_order: short_citation
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
     endpoints: []
@@ -10392,7 +10381,6 @@
     caption: Hello caption.
     image: "summary/visual/images/iris.png"
     published: true
-    sort_order: short_citation
     created: 2023-11-15 14:25:27.528283+00:00
     last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
