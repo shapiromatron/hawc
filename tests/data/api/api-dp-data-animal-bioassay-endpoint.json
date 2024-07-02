@@ -58,7 +58,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "developmental",
-    "tags": "|tag1|",
+    "tags": "tag1",
     "treatment period": "developmental (3 days)",
     "trend test result": "significant",
     "trend test value": 0.04
@@ -122,7 +122,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
@@ -186,7 +186,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "Cardiovascular",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
@@ -250,7 +250,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
@@ -314,7 +314,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
