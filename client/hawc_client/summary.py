@@ -22,7 +22,6 @@ class SummaryClient(BaseClient):
                 - assessment (int): assessment ID
                 - prefilters (dict): object prefilters (must be valid JSON)
                 - caption (str): Visual caption
-                - sort_order (str): how results are sorted
 
         Returns:
             dict: The resulting object, if create was successful
@@ -45,7 +44,6 @@ class SummaryClient(BaseClient):
                 - assessment (int): assessment ID
                 - prefilters (dict): object prefilters (must be valid JSON)
                 - caption (str): Visual caption
-                - sort_order (str): how results are sorted
 
         Returns:
             dict: The resulting object, if create was successful
