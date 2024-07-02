@@ -39,7 +39,6 @@
     "chemical purity": ">98%",
     "endpoint description": "VTG",
     "endpoint response units": "% induction by E2",
-    "iv_endpoint-category_id": null,
     "key": 5,
     "maximum dose": 100.0,
     "minimum dose": 1.0,

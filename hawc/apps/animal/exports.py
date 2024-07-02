@@ -13,7 +13,7 @@ from ..bmd.models import Session
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter, cleanHTML
 from ..common.models import sql_display, sql_format, str_m2m
-from ..materialized.models import FinalRiskOfBiasScore
+from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
 from . import constants, models
 
@@ -688,21 +688,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             .reset_index(drop=True)
         )
 
-    def handle_treatment_period(self, df: pd.DataFrame):
-        txt = df["experiment-type_display"].str.lower()
-        txt_index = txt.str.find("(")
-        txt_updated = (
-            txt.to_frame(name="txt")
-            .join(txt_index.to_frame(name="txt_index"))
-            .apply(
-                lambda x: x["txt"] if x["txt_index"] < 0 else x["txt"][: x["txt_index"]],
-                axis="columns",
-                result_type="reduce",
-            )
-        ).astype(str)
-        df["treatment period"] = (
-            txt_updated + " (" + df["dosing_regime-duration_exposure_text"]
-        ).where(df["dosing_regime-duration_exposure_text"].str.len() > 0) + ")"
+    def handle_treatment_period(self, df: pd.DataFrame) -> pd.DataFrame:
+        def _calc(row):
+            txt = row["experiment-type_display"].lower()
+            if txt.find("(") >= 0:
+                txt = txt[: txt.find("(")].strip()
+
+            if row["dosing_regime-duration_exposure_text"]:
+                txt = f"{txt} ({row['dosing_regime-duration_exposure_text']})"
+
+            return txt
+
+        df["treatment period"] = df.apply(_calc, axis=1, result_type="expand")
         return df
 
     def handle_dose_groups(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -810,19 +807,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             return df
         if obj := self.queryset.first():
             endpoint_ids = list(df["endpoint-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                endpoint_ids,
-                "animal",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(endpoint_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for endpoint_id in endpoint_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=endpoint_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, endpoint_ids, "animal")
             df = df.join(rob_df, on="endpoint-id")
 
         df["route"] = df["dosing_regime-route_of_exposure_display"].str.lower()
@@ -1116,19 +1101,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             return df
         if obj := self.queryset.first():
             endpoint_ids = list(df["endpoint-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                endpoint_ids,
-                "animal",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(endpoint_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for endpoint_id in endpoint_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=endpoint_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, endpoint_ids, "animal")
             df = df.join(rob_df, on="endpoint-id")
 
         df["route"] = df["dosing_regime-route_of_exposure_display"].str.lower()
