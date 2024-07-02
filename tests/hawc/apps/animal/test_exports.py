@@ -14,8 +14,8 @@ class TestEndpointFlatDataPivot:
         # expected outputs: treatment period
         expected = [
             (("1-generation reproductive", ""), "1-generation reproductive"),
-            (("Short-term (1-30 days)", ""), "short-term "),
-            (("Short-term (1-30 days)", "30 days"), "short-term  (30 days)"),
+            (("Short-term (1-30 days)", ""), "short-term"),
+            (("Short-term (1-30 days)", "30 days"), "short-term (30 days)"),
         ]
         df = pd.DataFrame(
             data=[el[0] for el in expected],
