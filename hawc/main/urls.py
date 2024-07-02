@@ -74,6 +74,7 @@ open_api_patterns = [
     path("epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
     path("epidemiology/api/", include(hawc.apps.epiv2.urls.router.urls)),
     path("in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
+    path("udf/api/", include(hawc.apps.udf.urls.router.urls)),
     path("lit/api/", include(hawc.apps.lit.urls.router.urls)),
     path("mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
     path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
