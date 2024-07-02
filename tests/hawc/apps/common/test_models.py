@@ -28,17 +28,23 @@ _nested_names = [
 
 
 @pytest.mark.django_db
-def test_AssessmentRootMixin_annotate_nested_names(db_keys):
-    qs = ReferenceFilterTag.get_assessment_qs(db_keys.assessment_working)
-    ReferenceFilterTag.annotate_nested_names(qs)
-    names = [el.nested_name for el in qs]
-    assert names == _nested_names
+class TestAssessmentRootMixin:
+    def test__annotate_nested_names(self, db_keys):
+        qs = ReferenceFilterTag.get_assessment_qs(db_keys.assessment_working)
+        ReferenceFilterTag.annotate_nested_names(qs)
+        names = [el.nested_name for el in qs]
+        assert names == _nested_names
 
+    def test_as_dataframe(self, db_keys):
+        df = ReferenceFilterTag.as_dataframe(db_keys.assessment_working)
+        assert df.nested_name.values.tolist() == _nested_names
 
-@pytest.mark.django_db
-def test_AssessmentRootMixin_as_dataframe(db_keys):
-    df = ReferenceFilterTag.as_dataframe(db_keys.assessment_working)
-    assert df.nested_name.values.tolist() == _nested_names
+    def test_clean_orphans(self, db_keys):
+        n = ReferenceFilterTag.objects.all().count()
+        assert ReferenceFilterTag.objects.filter(id=40, name="Orphan").exists()
+        ReferenceFilterTag.clean_orphans()
+        assert not ReferenceFilterTag.objects.filter(id=40, name="Orphan").exists()
+        assert ReferenceFilterTag.objects.all().count() == n - 1
 
 
 @pytest.mark.django_db

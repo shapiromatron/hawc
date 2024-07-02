@@ -52,11 +52,6 @@ def get_default_evidence_type(visual_type: VisualType) -> StudyType:
     return next(iter(choices))
 
 
-class SortOrder(models.TextChoices):
-    SC = "short_citation", "Short Citation"
-    OC = "overall_confidence", "Final Study Confidence"
-
-
 class ExportStyle(models.IntegerChoices):
     EXPORT_GROUP = 0, "One row per Endpoint-group/Result-group"
     EXPORT_ENDPOINT = 1, "One row per Endpoint/Result"

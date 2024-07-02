@@ -400,10 +400,6 @@ class AdminUserForm(PasswordForm):
             "date_joined",
             "last_login",
         )
-        widgets = {
-            "date_joined": forms.TextInput(attrs={"size": 40}),
-            "last_login": forms.TextInput(attrs={"size": 40}),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

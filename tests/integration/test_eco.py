@@ -34,7 +34,7 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/cause/\d+/create/")) as resp:
             page.locator("#cause-create").click()
         assert resp.value.ok is True
-        page.locator('input[name="name"]').fill("new cause")
+        page.locator('.form-cause input[name="name"]').fill("new cause")
         page.locator('select[name="term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
         page.locator('li[role="option"]:has-text("term")').click()
@@ -57,7 +57,7 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/effect/\d+/create/")) as resp:
             page.locator("#effect-create").click()
         assert resp.value.ok is True
-        page.locator('input[name="name"]').fill("new effect")
+        page.locator('.form-effect input[name="name"]').fill("new effect")
         page.locator('select[name="term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
         page.locator('li[role="option"]:has-text("term")').click()
@@ -76,7 +76,7 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/result/\d+/create/")) as resp:
             page.locator("#result-create").click()
         assert resp.value.ok is True
-        page.locator('input[name="name"]').fill("name!")
+        page.locator('.form-result input[name="name"]').fill("name!")
         page.locator('select[name="cause"]').select_option(index=2)
         page.locator('select[name="effect"]').select_option(index=2)
         page.locator('select[name="relationship_direction"]').select_option("0")

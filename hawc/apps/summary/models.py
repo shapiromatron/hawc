@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from operator import methodcaller
 
 import pandas as pd
 from django.contrib.postgres.fields import ArrayField
@@ -275,11 +274,6 @@ class Visual(models.Model):
         verbose_name="Publish visual for public viewing",
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
-    sort_order = models.CharField(
-        max_length=40,
-        choices=constants.SortOrder,
-        default=constants.SortOrder.SC,
-    )
     prefilters = models.JSONField(default=dict)
     image = models.ImageField(
         upload_to="summary/visual/images",
@@ -483,7 +477,7 @@ class Visual(models.Model):
 
         return Endpoint.objects.none()
 
-    def get_studies(self, request=None) -> models.QuerySet[Study] | list[Study]:
+    def get_studies(self, request=None) -> list[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
@@ -500,15 +494,7 @@ class Visual(models.Model):
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
-
             qs = fs.qs
-
-        # TODO - remove? handle sort order in visualization?
-        if self.sort_order:
-            if self.sort_order == constants.SortOrder.OC.value:
-                qs = sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
-            else:
-                qs = qs.order_by(self.sort_order)
 
         return qs
 

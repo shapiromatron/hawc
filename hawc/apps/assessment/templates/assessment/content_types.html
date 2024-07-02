@@ -10,18 +10,8 @@
   </p>
   <p><b>Selected values for key data in HAWC are shown below:</b></p>
   <table class="table table-sm">
-    <colgroup>
-      <col width="40%"/>
-      <col width="40%"/>
-      <col width="20%"/>
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Domain</th>
-        <th>Dataset</th>
-        <th>ID</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '40,40,20' %}
+    {% bs4_thead 'Domain,Dataset,ID' %}
     <tbody>
       {% for ct in content_types %}
         <tr>
