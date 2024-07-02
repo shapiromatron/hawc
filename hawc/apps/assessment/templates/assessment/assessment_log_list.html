@@ -17,22 +17,8 @@
   {% url_replace page=None as params%}
 
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col width="5%" />
-      <col width="25%" />
-      <col width="40%" />
-      <col width="15%" />
-      <col width="15%" />
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Log</th>
-        <th>Item</th>
-        <th>Message</th>
-        <th>User</th>
-        <th>Timestamp</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '5,25,40,15,15' %}
+    {% bs4_thead 'Log,Item,Message,User,Timestamp' %}
     <tbody>
       {% for log in object_list %}
         <tr>

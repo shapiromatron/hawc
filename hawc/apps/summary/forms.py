@@ -139,8 +139,6 @@ class VisualForm(forms.ModelForm):
         visual_type = kwargs.pop("visual_type", None)
         evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
-        if "settings" in self.fields:
-            self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
@@ -149,11 +147,6 @@ class VisualForm(forms.ModelForm):
             self.instance.evidence_type = evidence_type
 
     def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -174,7 +167,8 @@ class VisualForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        if "settings" in self.fields:
+            helper.set_textarea_height(("settings",), n_rows=2)
         helper.form_id = "visualForm"
         return helper
 
@@ -665,14 +659,8 @@ class DataPivotForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
         self.helper = self.setHelper()
-        self.fields["settings"].widget.attrs["rows"] = 2
 
     def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -693,7 +681,7 @@ class DataPivotForm(forms.ModelForm):
                 inputs["legend_text"] += f" ({self.instance.get_evidence_type_display()})"
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("settings",), n_rows=2)
         helper.form_id = "dataPivotForm"
         return helper
 
