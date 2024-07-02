@@ -2,11 +2,12 @@ import math
 
 import pandas as pd
 from django.db.models import Case, Q, When
+from scipy.stats import t
 
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m
-from ..materialized.models import FinalRiskOfBiasScore
+from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
 from . import constants, models
 
@@ -460,6 +461,39 @@ class EpiDataPivotExporter(Exporter):
 
 
 class OutcomeDataPivot(FlatFileExporter):
+    def _add_ci(self, df: pd.DataFrame) -> pd.DataFrame:
+        # if CI are not reported, calculate from mean/variance estimates. This code is identical
+        # to `GroupResult.getConfidenceIntervals`, but applied to this data frame
+        def _calc_cis(row):
+            if (
+                row["result_group-lower_ci"] is None
+                and row["result_group-upper_ci"] is None
+                and row["result_group-n"] is not None
+                and row["result_group-estimate"] is not None
+                and row["result_group-variance"] is not None
+                and row["result_group-n"] > 0
+            ):
+                n = row["result_group-n"]
+                est = row["result_group-estimate"]
+                var = row["result_group-variance"]
+                z = t.ppf(0.975, max(n - 1, 1))
+                change = None
+
+                if row["result-variance_type"] == "SD":
+                    change = z * var / math.sqrt(n)
+                elif row["result-variance_type"] in ("SE", "SEM"):
+                    change = z * var
+
+                if change is not None:
+                    return est - change, est + change
+
+            return row["result_group-lower_ci"], row["result_group-upper_ci"]
+
+        df[["result_group-lower_ci", "result_group-upper_ci"]] = df.apply(
+            _calc_cis, axis=1, result_type="expand"
+        )
+        return df
+
     def _add_percent_control(self, df: pd.DataFrame) -> pd.DataFrame:
         def _get_stdev(x: pd.Series):
             return models.GroupResult.stdev(
@@ -515,19 +549,7 @@ class OutcomeDataPivot(FlatFileExporter):
         df = EpiDataPivotExporter().get_df(self.queryset.order_by("id", "results__results"))
         if obj := self.queryset.first():
             outcome_ids = list(df["outcome-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                outcome_ids,
-                "epi",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(outcome_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for outcome_id in outcome_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=outcome_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, outcome_ids, "epi")
             df = df.join(rob_df, on="outcome-id")
 
         df["Reference/Exposure group"] = (
@@ -557,6 +579,7 @@ class OutcomeDataPivot(FlatFileExporter):
         )
         df = df.drop(columns="result_group-p_value_qualifier")
 
+        df = self._add_ci(df)
         df = self._add_percent_control(df)
 
         df = df.rename(
@@ -578,10 +601,6 @@ class OutcomeDataPivot(FlatFileExporter):
                 "outcome-diagnostic": "diagnostic",
                 "outcome-age_of_measurement": "age of outcome measurement",
                 "outcome-effects": "tags",
-            }
-        )
-        df = df.rename(
-            columns={
                 "cs-id": "comparison set id",
                 "cs-name": "comparison set name",
                 "exposure-id": "exposure id",

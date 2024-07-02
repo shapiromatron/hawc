@@ -6,7 +6,7 @@ from django.db.models import Exists, OuterRef
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter, df_move_column
 from ..common.models import sql_display, str_m2m
-from ..materialized.models import FinalRiskOfBiasScore
+from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
 from . import constants, models
 
@@ -34,6 +34,17 @@ def assessment_categories(assessment_id: int) -> pd.DataFrame:
     df2 = pd.DataFrame(df.nested_name.str.split("|").tolist(), index=df.index).fillna("-")
     df2.columns = [f"Category {i}" for i in range(1, len(df2.columns) + 1)]
     return df2
+
+
+def handle_categories(df: pd.DataFrame, assessment_id: int) -> pd.DataFrame:
+    category_df = assessment_categories(assessment_id)
+    df["iv_endpoint-category_id"] = df["iv_endpoint-category_id"].astype("Int64")
+    df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
+    if "Category 1" in df2.columns:
+        df2 = df_move_column(
+            df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
+        )
+    return df2.drop(columns=["iv_endpoint-category_id"])
 
 
 class IVChemicalExport(ModelExport):
@@ -310,15 +321,6 @@ class DataPivotEndpoint(FlatFileExporter):
             .reset_index(drop=True)
         )
 
-    def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
-        category_df = assessment_categories(self.kwargs["assessment"].id)
-        df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
-        if "Category 1" in df2.columns:
-            df2 = df_move_column(
-                df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
-            )
-        return df2
-
     def build_df(self) -> pd.DataFrame:
         df = InvitroExporter().get_df(
             self.queryset.select_related(
@@ -329,26 +331,14 @@ class DataPivotEndpoint(FlatFileExporter):
         )
         if obj := self.queryset.first():
             study_ids = list(df["study-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                study_ids,
-                "invitro",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for study_id in study_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=study_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, study_ids, "invitro")
             df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint-id"]
 
         df = self.handle_dose_groups(df)
         df = self.handle_benchmarks(df)
-        df = self.handle_categories(df)
+        df = handle_categories(df, self.kwargs["assessment"].id)
 
         df = df.rename(
             columns={
@@ -489,15 +479,6 @@ class DataPivotEndpointGroup(FlatFileExporter):
             .reset_index(drop=True)
         )
 
-    def handle_categories(self, df: pd.DataFrame) -> pd.DataFrame:
-        category_df = assessment_categories(self.kwargs["assessment"].id)
-        df2 = df.merge(category_df, left_on="iv_endpoint-category_id", right_index=True, how="left")
-        if "Category 1" in df2.columns:
-            df2 = df_move_column(
-                df2, "Category 1", "iv_endpoint-category_id", n_cols=category_df.shape[1]
-            )
-        return df2
-
     def build_df(self) -> pd.DataFrame:
         df = InvitroGroupExporter().get_df(
             self.queryset.select_related(
@@ -509,19 +490,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
         )
         if obj := self.queryset.first():
             study_ids = list(df["study-id"].unique())
-            rob_headers, rob_data = FinalRiskOfBiasScore.get_dp_export(
-                obj.assessment_id,
-                study_ids,
-                "invitro",
-            )
-            rob_df = pd.DataFrame(
-                data=[
-                    [rob_data[(study_id, metric_id)] for metric_id in rob_headers.keys()]
-                    for study_id in study_ids
-                ],
-                columns=list(rob_headers.values()),
-                index=study_ids,
-            )
+            rob_df = get_final_score_df(obj.assessment_id, study_ids, "invitro")
             df = df.join(rob_df, on="study-id")
 
         df["key"] = df["iv_endpoint_group-id"]
@@ -529,7 +498,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
 
         df = self.handle_stdev(df)
         df = self.handle_dose_groups(df)
-        df = self.handle_categories(df)
+        df = handle_categories(df, self.kwargs["assessment"].id)
 
         df["iv_endpoint_group-difference_control"] = df["iv_endpoint_group-difference_control"].map(
             models.IVEndpointGroup.DIFFERENCE_CONTROL_SYMBOLS

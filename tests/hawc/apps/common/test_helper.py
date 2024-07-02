@@ -160,3 +160,16 @@ class TestPydanticToDjangoError:
 )
 def test_flatten(input, expected):
     assert list(helper.flatten(input)) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ([], []),
+        (["a"], ["a"]),
+        (["a", "a", "a"], ["a", "a (2)", "a (3)"]),
+        (["a", "b", "a"], ["a", "b", "a (2)"]),
+    ],
+)
+def test_unique_text_list(input, expected):
+    assert list(helper.unique_text_list(input)) == expected
