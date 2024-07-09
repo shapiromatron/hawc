@@ -37,10 +37,37 @@ class Term(models.Model):
 
     @classmethod
     def ehv_dataframe(cls) -> pd.DataFrame:
+        vocab_data = cls.vocab_data(constants.VocabularyNamespace.EHV)
+        term_data = [
+            {"df": vocab_data["organ"], "left_on": "system_term_id"},
+            {"df": vocab_data["effect"], "left_on": "organ_term_id"},
+            {"df": vocab_data["effect_subtype"], "left_on": "effect_term_id"},
+            {"df": vocab_data["endpoint_name"], "left_on": "effect_subtype_term_id"},
+        ]
+
+        df = cls.merge_data(vocab_data["system"], term_data)
+        return df
+
+    @classmethod
+    def toxref_dataframe(cls) -> pd.DataFrame:
+        vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRef)
+
+        term_data = [
+            {"df": vocab_data["effect"], "left_on": "system_term_id"},
+            {"df": vocab_data["effect_subtype"], "left_on": "effect_term_id"},
+            {"df": vocab_data["endpoint_name"], "left_on": "effect_subtype_term_id"},
+        ]
+
+        df = cls.merge_data(vocab_data["system"], term_data)
+        return df
+
+    def vocab_data(namespace) -> dict:
         cols = ("id", "type", "parent_id", "name")
         all_df = pd.DataFrame(
             data=list(
-                Term.objects.filter(namespace=1, deprecated_on__isnull=True).values_list(*cols)
+                Term.objects.filter(namespace=namespace, deprecated_on__isnull=True).values_list(
+                    *cols
+                )
             ),
             columns=cols,
         )
@@ -72,30 +99,27 @@ class Term(models.Model):
             .rename(columns=dict(id="name_term_id", name="name"))
         )
 
-        df = (
-            system_df.merge(organ_df, left_on="system_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .merge(effect_df, left_on="organ_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .merge(effect_subtype_df, left_on="effect_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .merge(endpoint_name_df, left_on="effect_subtype_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .sort_values(
-                by=[
-                    "system_term_id",
-                    "organ_term_id",
-                    "effect_term_id",
-                    "effect_subtype_term_id",
-                    "name_term_id",
-                ]
-            )
-            .reset_index(drop=True)
-        )
+        data = {
+            "system": system_df,
+            "organ": organ_df,
+            "effect": effect_df,
+            "effect_subtype": effect_subtype_df,
+            "endpoint_name": endpoint_name_df,
+        }
 
+        return data
+
+    def merge_data(df, data):
+        # merge df queries based on relevant hierarchy
+        for term in data:
+            df = df.merge(term["df"], left_on=term["left_on"], right_on="parent_id").drop(
+                columns=["parent_id"]
+            )
+
+        df = df.sort_values(by=[term["left_on"] for term in data]).reset_index(drop=True)
         return df
 
-    def ehv_endpoint_name(self) -> dict:
+    def vocab_endpoint_name(self) -> dict:
         return {
             "system": self.parent.parent.parent.parent.name,
             "organ": self.parent.parent.parent.name,
@@ -104,70 +128,6 @@ class Term(models.Model):
             "name": self.name,
             "system_term_id": self.parent.parent.parent.parent.id,
             "organ_term_id": self.parent.parent.parent.id,
-            "effect_term_id": self.parent.parent.id,
-            "effect_subtype_term_id": self.parent.id,
-            "name_term_id": self.id,
-        }
-
-    @classmethod
-    def toxref_dataframe(cls) -> pd.DataFrame:
-        cols = ("id", "type", "parent_id", "name")
-        all_df = pd.DataFrame(
-            data=list(
-                Term.objects.filter(namespace=2, deprecated_on__isnull=True).values_list(*cols)
-            ),
-            columns=cols,
-        )
-        names = dict(constants.VocabularyTermType.choices)
-        all_df.loc[:, "type"] = all_df["type"].map(names)
-        system_df = (
-            all_df.query('type=="system"')
-            .drop(columns=["type", "parent_id"])
-            .rename(columns=dict(id="system_term_id", name="system"))
-        )
-        effect_df = (
-            all_df.query('type=="effect"')
-            .drop(columns=["type"])
-            .rename(columns=dict(id="effect_term_id", name="effect"))
-        )
-        effect_subtype_df = (
-            all_df.query('type=="effect_subtype"')
-            .drop(columns=["type"])
-            .rename(columns=dict(id="effect_subtype_term_id", name="effect_subtype"))
-        )
-        endpoint_name_df = (
-            all_df.query('type=="endpoint_name"')
-            .drop(columns=["type"])
-            .rename(columns=dict(id="name_term_id", name="name"))
-        )
-
-        df = (
-            system_df.merge(effect_df, left_on="system_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .merge(effect_subtype_df, left_on="effect_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .merge(endpoint_name_df, left_on="effect_subtype_term_id", right_on="parent_id")
-            .drop(columns=["parent_id"])
-            .sort_values(
-                by=[
-                    "system_term_id",
-                    "effect_term_id",
-                    "effect_subtype_term_id",
-                    "name_term_id",
-                ]
-            )
-            .reset_index(drop=True)
-        )
-
-        return df
-
-    def toxref_endpoint_name(self) -> dict:
-        return {
-            "system": self.parent.parent.parent.name,
-            "effect": self.parent.parent.name,
-            "effect_subtype": self.parent.name,
-            "name": self.name,
-            "system_term_id": self.parent.parent.parent.id,
             "effect_term_id": self.parent.parent.id,
             "effect_subtype_term_id": self.parent.id,
             "name_term_id": self.id,

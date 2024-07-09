@@ -49,7 +49,10 @@ class Table extends Component {
                                 </th>
                                 <th>
                                     Organ
-                                    <HelpTextPopup title="Organ" content={helpText.organ_popup} />
+                                    <HelpTextPopup
+                                        title="Organ"
+                                        content={helpText.organ_popup}
+                                    />
                                 </th>
                                 <th>
                                     Effect
@@ -82,7 +85,9 @@ class Table extends Component {
                                         {highlightedSpan(d.system)}
                                     </td>
                                     <td>
-                                        <span className="badge badge-light">{d.organ_term_id}</span>
+                                        <span className="badge badge-light">
+                                            {d.organ_term_id}
+                                        </span>
                                         &nbsp;
                                         {highlightedSpan(d.organ)}
                                     </td>

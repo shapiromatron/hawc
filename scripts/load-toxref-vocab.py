@@ -1,7 +1,4 @@
 import json
-
-# import os
-# import sys
 from pathlib import Path
 
 import django
@@ -12,12 +9,6 @@ from django.db import connection
 from hawc.apps.vocab.constants import VocabularyNamespace, VocabularyTermType
 from hawc.apps.vocab.models import Term
 
-# import os
-# import sys
-
-# # default settings
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.main.settings.local")
-# sys.path.append("C:/Users/63080/projects/hawc/dev/hawc/")
 django.setup()
 
 # ToxRef relevant columns
@@ -112,19 +103,14 @@ Term.objects.count()
 for term in Term.objects.all():
     term.uid = term.id
 
-# for name, item in VocabularyTermType.__members__.items():
-#     term_count = Term.objects.filter(namespace=VocabularyNamespace.ToxRef, type=item).count()
-#     print(f"{name:15} {term_count:10}")
-
-
-# Generate the data fixture in JSONL instead of CSV
-file = settings.PROJECT_PATH / "apps/vocab/fixtures/new2.jsonl"
-
 
 def _get_headers(cursor) -> list[str]:
     cursor.execute("Select * FROM vocab_term LIMIT 0")
     return [desc[0] for desc in cursor.description]
 
+
+# Generate the data fixture in JSONL instead of CSV
+file = settings.PROJECT_PATH / "apps/vocab/fixtures/nested_toxref.jsonl"
 
 with connection.client.connection.cursor() as cursor:
     headers = _get_headers(cursor)

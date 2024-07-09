@@ -3,7 +3,9 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import Table from "./Table";
+import EhvTable from "./EhvBrowser/Table";
+import ToxrefTable from "./ToxrefBrowser/Table";
+
 
 @inject("store")
 @observer
@@ -16,7 +18,13 @@ class App extends Component {
             query: "",
         };
         this.updateQuery = _.debounce(() => props.store.updateQuery(this.state.query), 100);
+
+        this.tables = {
+            "ehv": <EhvTable/>,
+            "toxref": <ToxrefTable/>
+        }
     }
+
     render() {
         return (
             <>
@@ -32,7 +40,7 @@ class App extends Component {
                         }}
                     />
                 </div>
-                <Table />
+                {this.tables[this.props.store.config.vocab]}
             </>
         );
     }
