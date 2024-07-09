@@ -6,7 +6,6 @@ import React, {Component} from "react";
 import EhvTable from "./EhvBrowser/Table";
 import ToxrefTable from "./ToxrefBrowser/Table";
 
-
 @inject("store")
 @observer
 class App extends Component {
@@ -20,9 +19,9 @@ class App extends Component {
         this.updateQuery = _.debounce(() => props.store.updateQuery(this.state.query), 100);
 
         this.tables = {
-            "ehv": <EhvTable/>,
-            "toxref": <ToxrefTable/>
-        }
+            ehv: <EhvTable />,
+            toxref: <ToxrefTable />,
+        };
     }
 
     render() {

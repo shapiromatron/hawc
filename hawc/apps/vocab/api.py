@@ -16,6 +16,7 @@ class VocabTermViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
     lookup_value_regex = re_digits
+    name = None
     namespace = None
     dataframe = None
 
@@ -35,8 +36,8 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
     def nested(self, request: Request):
-        df = models.Term.vocab_dataframe(self.dataframe)
-        return FlatExport.api_response(df=df, filename=self.dataframe)
+        df = self.dataframe
+        return FlatExport.api_response(df=df, filename=self.name)
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
@@ -93,13 +94,15 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 
 
 class EhvTermViewSet(VocabTermViewSet):
+    name = "ehv"
     namespace = constants.VocabularyNamespace.EHV
-    dataframe = "ehv"
+    dataframe = models.Term.ehv_dataframe()
 
 
 class ToxrefTermViewSet(VocabTermViewSet):
+    name = "toxref"
     namespace = constants.VocabularyNamespace.ToxRef
-    dataframe = "toxref"
+    dataframe = models.Term.toxref_dataframe()
 
 
 class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
