@@ -176,14 +176,6 @@ class DoseGroupForm(forms.ModelForm):
             self.instance.treatment = treatment
 
 
-# thx https://stackoverflow.com/questions/21754918/rendering-tabular-rows-with-formset-in-django-crispy-forms and https://stackoverflow.com/questions/42615357/cannot-pass-helper-to-django-crispy-formset-in-template
-class DoseGroupFormHelper(BaseFormHelper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_tag = False
-        self.template = "bootstrap4/table_inline_formset.html"
-
-
 class EndpointForm(forms.ModelForm):
     class Meta:
         model = models.Endpoint
@@ -332,13 +324,6 @@ class DoseResponseGroupLevelDataForm(forms.ModelForm):
             self.instance.data_extraction = data_extraction
 
 
-class DoseResponseGroupLevelDataFormHelper(BaseFormHelper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_tag = False
-        self.template = "bootstrap4/table_inline_formset.html"
-
-
 class DoseResponseAnimalLevelDataForm(forms.ModelForm):
     formset_parent_key = "data_extraction_id"
 
@@ -351,10 +336,3 @@ class DoseResponseAnimalLevelDataForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if data_extraction:
             self.instance.data_extraction = data_extraction
-
-
-class DoseResponseAnimalLevelDataFormHelper(BaseFormHelper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_tag = False
-        self.template = "bootstrap4/table_inline_formset.html"

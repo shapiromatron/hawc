@@ -4,6 +4,7 @@ from django.forms import modelformset_factory
 from django.http import HttpRequest
 from django.shortcuts import render
 
+from ..common.forms import FormsetGenericFormHelper
 from ..common.htmx import HtmxViewSet, Item, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
@@ -287,7 +288,7 @@ class TreatmentViewSet(ExperimentChildViewSet):
             "animalv2/fragments/_treatment_formset.html",
             forms.DoseGroupForm,
             models.DoseGroup,
-            forms.DoseGroupFormHelper,
+            FormsetGenericFormHelper,
             "dose_group_id",
             "dosegroupform",
         )
@@ -315,7 +316,7 @@ class DataExtractionViewSet(ExperimentChildViewSet):
             "animalv2/fragments/_dataextraction_formset_groupleveldata.html",
             forms.DoseResponseGroupLevelDataForm,
             models.DoseResponseGroupLevelData,
-            forms.DoseResponseGroupLevelDataFormHelper,
+            FormsetGenericFormHelper,
             "id",
             "groupleveldataform",
         ),
@@ -323,7 +324,7 @@ class DataExtractionViewSet(ExperimentChildViewSet):
             "animalv2/fragments/_dataextraction_formset_animalleveldata.html",
             forms.DoseResponseAnimalLevelDataForm,
             models.DoseResponseAnimalLevelData,
-            forms.DoseResponseAnimalLevelDataFormHelper,
+            FormsetGenericFormHelper,
             "id",
             "animalleveldataform",
         ),

@@ -468,3 +468,11 @@ class PydanticValidator:
         """Validate the field with the pydantic model."""
         with PydanticToDjangoError(include_field=False):
             self.schema.model_validate(value)
+
+
+# thx https://stackoverflow.com/questions/21754918/rendering-tabular-rows-with-formset-in-django-crispy-forms and https://stackoverflow.com/questions/42615357/cannot-pass-helper-to-django-crispy-formset-in-template
+class FormsetGenericFormHelper(BaseFormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_tag = False
+        self.template = "bootstrap4/table_inline_formset.html"
