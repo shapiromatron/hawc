@@ -17,14 +17,12 @@ class App extends Component {
             query: "",
         };
         this.updateQuery = _.debounce(() => props.store.updateQuery(this.state.query), 100);
-
-        this.tables = {
-            ehv: <EhvTable />,
-            toxref: <ToxrefTable />,
-        };
     }
 
     render() {
+        const tables = {ehv: EhvTable, toxref: ToxrefTable},
+            Table = tables[this.props.store.config.vocab];
+
         return (
             <>
                 <div className="input-group">
@@ -39,7 +37,7 @@ class App extends Component {
                         }}
                     />
                 </div>
-                {this.tables[this.props.store.config.vocab]}
+                {_.isUndefined(Table) ? <p>ERROR - unknown vocabulary</p> : <Table />}
             </>
         );
     }

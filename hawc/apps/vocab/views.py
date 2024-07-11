@@ -19,7 +19,7 @@ class VocabBrowse(TemplateView):
                 app="animalStartup",
                 page="vocabBrowserStartup",
                 data={
-                    "vocab": {self.vocab_name},
+                    "vocab": self.vocab_name,
                     "data": self.data,
                 },
             ).model_dump_json()
