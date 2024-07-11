@@ -88,7 +88,7 @@
         {% bs4_colgroup '40,30,30' %}
         {% bs4_thead 'Endpoint,Time,Units' %}
         <tbody>
-          {% for object in object.v2_timepoints %}
+          {% for object in object.get_v2_timepoints %}
             {% include "animalv2/fragments/_observationtime_row.html" %}
           {% empty %}
             {% bs4_fullrow 'No timepoints available.' %}

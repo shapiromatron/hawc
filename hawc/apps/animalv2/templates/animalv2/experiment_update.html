@@ -87,7 +87,7 @@
         {% bs4_thead 'Endpoint,Time,Units,Edit' %}
         <tbody id="observationtime-tbody">
           {% include "common/fragments/_create_one.html" with text="No endpont timepoints. Create one?" %}
-          {% for object in object.v2_timepoints %}
+          {% for object in object.get_v2_timepoints %}
             {% include "animalv2/fragments/_observationtime_row.html" %}
           {% endfor %}
         </tbody>

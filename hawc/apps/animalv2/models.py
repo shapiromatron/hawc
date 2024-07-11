@@ -61,21 +61,8 @@ class Experiment(models.Model):
     def get_has_multiple_generations_display(self) -> str:
         return "Yes" if self.has_multiple_generations else "No"
 
-    @property
-    def v2_timepoints(self):
-        timepoints = []
-        for endpoint in self.v2_endpoints.all():
-            timepoints.extend(endpoint.v2_timepoints.all())
-        return timepoints
-        """
-        foo = ObservationTime.objects.filter(endpoint__in=self.v2_endpoints.all()).as_manager()
-        # foo = models.Manager.from_queryset(
-        # ObservationTime.objects.filter(endpoint__in=self.v2_endpoints.all())
-        # )
-        # print(f"foo is {type(foo)}; bar is {type(self.v2_endpoints)}")
-        print(f"v2_timepoints is {type(foo)}: {foo}")
-        return foo
-        """
+    def get_v2_timepoints(self):
+        return ObservationTime.objects.filter(endpoint__experiment=self).order_by("endpoint__name")
 
 
 class Chemical(models.Model):
