@@ -105,6 +105,17 @@ class HEROFetch:
             self.failures = []
             return dict(success=self.content, failure=self.failures)
 
+        if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+            # ensure valid api key
+            r = requests.get(
+                "https://heronetnext.epa.gov/api/user/check",
+                timeout=10.0,
+                headers={"Authorization": f"Bearer {settings.HERO_API_TOKEN}"},
+            )
+            if r.status_code != 200:
+                logger.info("Valid HERO API key required.")
+                return dict(success=[], failure=self.ids)
+
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
             request_ids = self.ids[recstart : recstart + self.settings["recordsperpage"]]
