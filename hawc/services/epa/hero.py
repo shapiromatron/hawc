@@ -112,7 +112,7 @@ class HEROFetch:
             r = requests.get(
                 "https://heronetnext.epa.gov/api/user/check",
                 timeout=10.0,
-                headers={"Authorization": f"Bearer {settings.HERO_API_TOKEN}"},
+                headers={"Authorization": f"Bearer {settings.HERO_API_KEY}"},
             )
             if r.status_code != 200:
                 logger.info("Valid HERO API key required.")
