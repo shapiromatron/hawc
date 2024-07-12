@@ -29,20 +29,34 @@ def _force_int(val, default=None) -> int | None:
 
 
 def parse_article(content: dict) -> dict:
-    authors = normalize_authors(content.get("AUTHORS", "").split("; "))
-    authors_short = get_author_short_text(authors)
-    return dict(
-        json=content,
-        HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
-        PMID=_force_int(_parse_pseudo_json(content, "PMID")),
-        doi=try_get_doi(_parse_pseudo_json(content, "doi")),
-        title=_parse_pseudo_json(content, "TITLE"),
-        abstract=_parse_pseudo_json(content, "ABSTRACT"),
-        source=_parse_pseudo_json(content, "SOURCE"),
-        year=_force_int(_parse_pseudo_json(content, "YEAR")),
-        authors=authors,
-        authors_short=authors_short,
-    )
+    if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+        return dict(
+            json=content,
+            HEROID=_force_int(content.get("id")),
+            PMID=_force_int(content.get("accession_number")),
+            doi=try_get_doi(content.get("doi", "")),
+            tilte=content.get("title"),
+            abstract=content.get("abstract"),
+            source=content.get("source"),
+            year=content.get("year"),
+            authors=normalize_authors(content.get("authors", [])),
+            authors_short=normalize_authors(content.get("authors", [])),
+        )
+    else:
+        authors = normalize_authors(content.get("AUTHORS", "").split("; "))
+        authors_short = get_author_short_text(authors)
+        return dict(
+            json=content,
+            HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
+            PMID=_force_int(_parse_pseudo_json(content, "PMID")),
+            doi=try_get_doi(_parse_pseudo_json(content, "doi")),
+            title=_parse_pseudo_json(content, "TITLE"),
+            abstract=_parse_pseudo_json(content, "ABSTRACT"),
+            source=_parse_pseudo_json(content, "SOURCE"),
+            year=_force_int(_parse_pseudo_json(content, "YEAR")),
+            authors=authors,
+            authors_short=authors_short,
+        )
 
 
 class HEROFetch:
