@@ -30,6 +30,7 @@ def _force_int(val, default=None) -> int | None:
 
 def parse_article(content: dict) -> dict:
     if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+        authors = normalize_authors(content.get("authors", []))
         return dict(
             json=content,
             HEROID=_force_int(content.get("id")),
@@ -39,8 +40,8 @@ def parse_article(content: dict) -> dict:
             abstract=content.get("abstract"),
             source=content.get("type_of_reference"),
             year=content.get("year"),
-            authors=normalize_authors(content.get("authors", [])),
-            authors_short=normalize_authors(content.get("authors", [])),
+            authors=authors,
+            authors_short=get_author_short_text(authors),
         )
     else:
         authors = normalize_authors(content.get("AUTHORS", "").split("; "))
