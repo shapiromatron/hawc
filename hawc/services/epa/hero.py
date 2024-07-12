@@ -38,7 +38,9 @@ def parse_article(content: dict) -> dict:
             doi=try_get_doi(content.get("doi", "")),
             tilte=content.get("title"),
             abstract=content.get("abstract"),
-            source=content.get("type_of_reference"),
+            source=content.get(
+                "type_of_reference"
+            ),  # TODO: need to construct source from journal/issue/pages/etc.
             year=content.get("year"),
             authors=authors,
             authors_short=get_author_short_text(authors),
