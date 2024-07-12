@@ -37,7 +37,7 @@ def parse_article(content: dict) -> dict:
             doi=try_get_doi(content.get("doi", "")),
             tilte=content.get("title"),
             abstract=content.get("abstract"),
-            source=content.get("source"),
+            source=content.get("type_of_reference"),
             year=content.get("year"),
             authors=normalize_authors(content.get("authors", [])),
             authors_short=normalize_authors(content.get("authors", [])),
