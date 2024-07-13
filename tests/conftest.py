@@ -57,6 +57,8 @@ class Keys:
 
         self.epiv2_design = 1
 
+        self.animalv2_experiment = 1
+
 
 _keys = Keys()
 
@@ -98,7 +100,6 @@ def vcr_cassette_dir(request):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def pm_user():
     return get_user_model().objects.get(email="pm@hawcproject.org")
 

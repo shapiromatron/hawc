@@ -19,21 +19,8 @@
 
   {% if object_list.exists %}
     <table class="table table-sm table-striped">
-      <colgroup>
-        <col style="width: 40%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-        <col style="width: 20%;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Table type</th>
-          {% if show_published %}<th>Published</th>{% endif %}
-          <th>Created</th>
-          <th>Modified</th>
-        </tr>
-      </thead>
+      {% bs4_colgroup '40,20,20,20' %}
+      {% bs4_thead 'Title,Table Type,Created,Modified' %}
       <tbody>
         {% for object in object_list %}
           <tr>
@@ -44,7 +31,6 @@
               {% debug_badge object.id %}
             </td>
             <td>{{object.get_table_type_display}}</td>
-            {% if show_published %}<td>{{object.published}}</td>{% endif %}
             <td>{{object.created|date:"Y-m-d" }}</td>
             <td>{{object.last_updated|date:"Y-m-d" }}</td>
           </tr>

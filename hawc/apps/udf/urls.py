@@ -1,11 +1,16 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
 
-from . import views
+from . import api, views
+
+router = SimpleRouter()
+router.register("assessment", api.UdfAssessmentViewSet, basename="assessment")
 
 app_name = "udf"
 urlpatterns = (
     [
+        path("api/", include((router.urls, "api"))),
         # UDF views
         path("", views.UDFListView.as_view(), name="udf_list"),
         path("create/", views.CreateUDFView.as_view(), name="udf_create"),

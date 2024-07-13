@@ -1,0 +1,23 @@
+[
+  {
+    "tag_binding-assessment": 4,
+    "tag_binding-created": 1694923829880,
+    "tag_binding-creator": 2,
+    "tag_binding-form_id": 1,
+    "tag_binding-form_schema": {
+      "fields": [
+        {
+          "name": "field1",
+          "type": "char"
+        },
+        {
+          "name": "field2",
+          "type": "integer"
+        }
+      ]
+    },
+    "tag_binding-last_updated": 1694924133309,
+    "tag_binding-pk": 1,
+    "tag_binding-tag": 32
+  }
+]

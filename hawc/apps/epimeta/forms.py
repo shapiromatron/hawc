@@ -51,11 +51,6 @@ class MetaProtocolForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -70,7 +65,7 @@ class MetaProtocolForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("lit_search_strategy", 2, "col-md-6")
         helper.add_row("lit_search_start_date", 3, "col-md-4")
@@ -127,11 +122,6 @@ class MetaResultForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -146,7 +136,7 @@ class MetaResultForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("label", 2, "col-md-6")
         helper.add_row("health_outcome", 2, "col-md-6")
         helper.add_row("exposure_name", 2, "col-md-6")

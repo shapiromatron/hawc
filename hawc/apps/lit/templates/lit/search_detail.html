@@ -16,10 +16,7 @@
     {% endif %}
   </div>
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 70%;">
-    </colgroup>
+    {% bs4_colgroup '20,80' %}
     <tbody>
       {% if object.description %}
         <tr><th>Description</th><td>{{object.description|safe}}</td></tr>

@@ -43,7 +43,7 @@ class IVAssessmentViewSet(BaseAssessmentViewSet):
         ser.is_valid(raise_exception=True)
         self.object_list = self.get_endpoint_queryset(request)
         exporter = exports.DataPivotEndpoint(
-            self.object_list, filename=f"{self.assessment}-invitro"
+            self.object_list, filename=f"{self.assessment}-invitro", assessment=self.assessment
         )
         return Response(exporter.build_export())
 

@@ -4,14 +4,7 @@
   <h3>Results from queries</h3>
   {% if queries %}
     <table class="table table-sm table-striped">
-      <thead>
-        <tr>
-          <th>Date last executed</th>
-          <th>Total references found</th>
-          <th>References added</th>
-          <th>References removed</th>
-        </tr>
-      </thead>
+      {% bs4_thead 'Date last executed,Total references found,References added,References removed' %}
       <tbody>
         {% for query in queries %}
           <tr>

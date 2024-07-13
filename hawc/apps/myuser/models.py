@@ -38,7 +38,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     license_v1_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     license_v2_accepted = models.BooleanField(default=False, verbose_name="Accept license")
     date_joined = models.DateTimeField("date joined", default=timezone.now)
-    email_verified_on = models.DateTimeField("Email Verified", null=True)
+    email_verified_on = models.DateTimeField("Email Verified", blank=True, null=True)
 
     USERNAME_FIELD = "email"
     CAN_CREATE_ASSESSMENTS = "can-create-assessments"

@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Callable, Iterable
+from dataclasses import dataclass
 from functools import wraps
 from typing import Any
 from urllib.parse import urlparse
@@ -791,3 +792,19 @@ def htmx_required(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+
+@dataclass
+class FormsetConfiguration:
+    """
+    dataclass containing all the information needed to render one or more child formsets as part of another form.
+
+    No functionality; just a convenient grouping of fields.
+    """
+
+    fragment: str  # path to the template fragment for this formset
+    form_class: type  # class/type; subclass of django.forms.ModelForm
+    model_class: type  # class/type; subclass of django.db.models.Model
+    helper_class: type  # class/type; a django form helper
+    sort_field: str  # field used to sort when retrieving items being displayed in the subformset
+    form_prefix: str  # prefix passed to modelformset_factory during formset construction

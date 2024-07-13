@@ -3,7 +3,7 @@
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
     </div>
-    <div class="col-md p-0">
+    <div class="col-md-auto p-0">
       {% if form.instance.id %}
         <div class="d-flex row justify-content-end m-0 flex-shrink-0">
           {% if action == 'delete' %}

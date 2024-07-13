@@ -1146,35 +1146,6 @@ class ReferenceTagsManager(BaseManager):
     def get_assessment_qs(self, assessment_id: int):
         return self.get_queryset().filter(content_object__assessment_id=assessment_id)
 
-    def delete_orphan_tags(self, assessment_id) -> tuple[int, int]:
-        """
-        Deletes all unreachable tags in an assessment's tag tree.
-        An assessment log is created detailing these deleted tags.
-
-        Args:
-            assessment_id (int): Assessment id
-
-        Returns:
-            tuple[int, int]: Number of tags deleted, followed by log ID.
-        """
-        from .models import ReferenceFilterTag
-
-        # queryset of tag tree associated with assessment
-        filter_tags = ReferenceFilterTag.get_assessment_qs(assessment_id)
-        # queryset of tags associated with assessment
-        tags = self.get_assessment_qs(assessment_id)
-        # delete tags that are not in the assessment tag tree
-        deleted_tags = tags.exclude(tag__in=filter_tags)
-        deleted_data = list(deleted_tags.values("content_object_id", "tag_id"))
-        number_deleted, _ = deleted_tags.delete()
-        # log the deleted tags
-        Log = apps.get_model("assessment", "Log")
-        log = Log.objects.create(
-            assessment_id=assessment_id,
-            message=json.dumps({"count": number_deleted, "data": deleted_data}),
-        )
-        return number_deleted, log.id
-
 
 class UserReferenceTagsManager(BaseManager):
     assessment_relation = "content_object__reference__assessment"

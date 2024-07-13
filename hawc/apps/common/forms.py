@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any
 
 from crispy_forms import bootstrap as cfb
@@ -155,6 +156,15 @@ class BaseFormHelper(cf.FormHelper):
         for field_name, field in self.form.fields.items():
             if hasattr(field, "crispy_field_class"):
                 self[field_name].wrap(field.crispy_field_class)
+
+    def set_textarea_height(self, fields: Sequence[str] | None = None, n_rows: int = 3):
+        fields = (
+            [self.form.fields[key] for key in fields]
+            if fields
+            else [f for f in self.form.fields.values() if isinstance(f.widget, forms.Textarea)]
+        )
+        for field in fields:
+            field.widget.attrs["rows"] = n_rows
 
 
 class CopyForm(forms.Form):
@@ -468,3 +478,11 @@ class PydanticValidator:
         """Validate the field with the pydantic model."""
         with PydanticToDjangoError(include_field=False):
             self.schema.model_validate(value)
+
+
+# thx https://stackoverflow.com/questions/21754918/rendering-tabular-rows-with-formset-in-django-crispy-forms and https://stackoverflow.com/questions/42615357/cannot-pass-helper-to-django-crispy-formset-in-template
+class FormsetGenericFormHelper(BaseFormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_tag = False
+        self.template = "bootstrap4/table_inline_formset.html"

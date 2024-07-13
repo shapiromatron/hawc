@@ -27,5 +27,8 @@
     $(document).ready(function(){
       window.app.HAWCUtils.dynamicFormListeners();
     });
+    $("#binding-list").on("htmx:afterOnLoad", function() {
+      window.app.HAWCUtils.dynamicFormListeners();
+    });
   </script>
 {% endblock %}

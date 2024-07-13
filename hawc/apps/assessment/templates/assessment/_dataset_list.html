@@ -1,18 +1,8 @@
 {% if object_list.count > 0 %}
   <h2>Datasets</h2>
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 60%;">
-      <col style="width: 10%;">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Dataset</th>
-        <th>Description</th>
-        <th>Download</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '30,60,10' %}
+    {% bs4_thead 'Dataset,Description,Download' %}
     <tbody>
       {% for object in object_list %}
         <tr>

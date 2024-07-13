@@ -3,6 +3,7 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 import hawc.apps.animal.urls
+import hawc.apps.animalv2.urls
 import hawc.apps.assessment.urls
 import hawc.apps.bmd.urls
 import hawc.apps.common.urls
@@ -39,6 +40,7 @@ urlpatterns = [
     path("common/", include("hawc.apps.common.urls")),
     path("study/", include("hawc.apps.study.urls")),
     path("ani/", include("hawc.apps.animal.urls")),
+    path("animal-bioassay/", include("hawc.apps.animalv2.urls")),
     path("eco/", include("hawc.apps.eco.urls")),
     path("epi/", include("hawc.apps.epi.urls")),
     path("epidemiology/", include("hawc.apps.epiv2.urls")),
@@ -74,6 +76,7 @@ open_api_patterns = [
     path("epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
     path("epidemiology/api/", include(hawc.apps.epiv2.urls.router.urls)),
     path("in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
+    path("udf/api/", include(hawc.apps.udf.urls.router.urls)),
     path("lit/api/", include(hawc.apps.lit.urls.router.urls)),
     path("mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
     path("rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),

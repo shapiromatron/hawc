@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="hawcuser",
             name="email_verified_on",
-            field=models.DateTimeField(null=True, verbose_name="Email Verified"),
+            field=models.DateTimeField(blank=True, null=True, verbose_name="Email Verified"),
         ),
     ]

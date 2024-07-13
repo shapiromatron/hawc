@@ -8,8 +8,8 @@ def load_fixture(apps, schema_editor):
     here = Path(__file__).parent
     fixtures = (here / "../fixtures").resolve()
     call_command("loaddata", str(fixtures / "states.json"), app_label="eco")
-    call_command("loaddata", str(fixtures / "vocab.json"), app_label="eco")
-    call_command("loaddata", str(fixtures / "nestedterms.jsonl"), app_label="eco")
+    call_command("loaddata", str(fixtures / "vocab_1.json"), app_label="eco")
+    call_command("loaddata", str(fixtures / "nestedterms_1.jsonl"), app_label="eco")
 
 
 def unload_fixture(apps, schema_editor):

@@ -19,6 +19,10 @@ class NestedTermFilterSet(BaseFilterSet):
         }
         main_field = "name__contains"
 
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.filter(deprecated_on__isnull=True)
+
     @property
     def has_query(self) -> bool:
         return self.data.get("name__contains", "") != ""

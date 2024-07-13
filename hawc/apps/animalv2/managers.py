@@ -1,4 +1,17 @@
+from django.db.models import Prefetch, QuerySet
+
 from ..common.models import BaseManager
+from . import models
+
+
+class ExperimentQuerySet(QuerySet):
+    def complete(self):
+        return self.select_related("study").prefetch_related(
+            Prefetch(
+                "chemicals",
+                queryset=models.Chemical.objects.select_related("dsstox"),
+            ),
+        )
 
 
 class ExperimentManager(BaseManager):

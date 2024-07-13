@@ -712,25 +712,6 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
             return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     @classmethod
-    def get_tags_in_assessment(cls, assessment_pk: int, tag_ids: list[int]):
-        """Returns a queryset of matching tags which are in the assessment
-
-        Args:
-            assessment_pk (int): assessment id
-            tag_ids (list[int]): list of tag ids expected to be in assessment
-
-        Raises:
-            ValueError: if any tags are missing or are not in the assessment
-        """
-        tags = cls.objects.filter(id__in=tag_ids)
-        assessment_root = ReferenceFilterTag.get_assessment_root(assessment_pk)
-        if len(set(tag_ids)) != tags.count():
-            raise ValueError("Tags not found")
-        if any(not tag.is_descendant_of(assessment_root) for tag in tags):
-            raise ValueError("Tags are not descendants of root")
-        return tags
-
-    @classmethod
     def get_nested_tag_names(cls, assessment_pk: int) -> dict[int, str]:
         """Return a dictionary of tag ID to fully nested name
 

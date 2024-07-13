@@ -594,6 +594,62 @@
   fields:
     app_label: docs
     model: documentationpagetag
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: workflow
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: tagudfcontent
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: experiment
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: dosegroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalendpointtimepoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: doseresponseanimalleveldata
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: doseresponsegroupleveldata
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalgroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: dataextraction
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: treatment
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: endpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: observationtime
 - model: auth.permission
   fields:
     name: Can access Wagtail admin
@@ -1516,6 +1572,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 2
+    animal_version: 1
 - model: assessment.assessment
   pk: 2
   fields:
@@ -1559,6 +1616,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+    animal_version: 1
 - model: assessment.assessment
   pk: 3
   fields:
@@ -1598,6 +1656,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+    animal_version: 1
 - model: assessment.assessment
   pk: 4
   fields:
@@ -1629,6 +1688,7 @@
     vocabulary: 1
     modify_uncontrolled_vocabulary: true
     epi_version: 2
+    animal_version: 2
     created: 2022-10-27 21:02:28.805681+00:00
     last_updated: 2022-10-27 21:02:28.805695+00:00
     dtxsids: []
@@ -2721,6 +2781,14 @@
     numchild: 0
     name: Tier III Demo
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 40
+  fields:
+    path: '99990001'
+    depth: 2
+    numchild: 0
+    name: Orphan
+    slug: orphan
 - model: lit.referencetags
   pk: 2
   fields:
@@ -2746,6 +2814,11 @@
   fields:
     tag: 33
     content_object: 11
+- model: lit.referencetags
+  pk: 7
+  fields:
+    tag: 33
+    content_object: 13
 - model: lit.reference
   pk: 1
   fields:
@@ -3122,11 +3195,20 @@
     - 2
     identifiers:
     - 9
-- model: lit.userreferencetags
-  pk: 1
+- model: lit.reference
+  pk: 13
   fields:
-    tag: 33
-    content_object: 1
+    assessment: 4
+    title: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
+    year: 2024
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2024-06-14 14:23:16.370427+00:00
+    last_updated: 2024-06-14 20:14:41.479008+00:00
+    block_id: null
 - model: lit.userreferencetags
   pk: 2
   fields:
@@ -3178,6 +3260,61 @@
     is_resolved: false
     created: 2022-10-27 21:37:16.158160+00:00
     last_updated: 2022-10-27 21:40:28.356071+00:00
+- model: lit.workflowadmissiontags
+  pk: 2
+  fields:
+    tag: 23
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 4
+  fields:
+    tag: 24
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 5
+  fields:
+    tag: 25
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 6
+  fields:
+    tag: 26
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 7
+  fields:
+    tag: 27
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 8
+  fields:
+    tag: 28
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 9
+  fields:
+    tag: 29
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 10
+  fields:
+    tag: 30
+    content_object: 1
+- model: lit.workflow
+  pk: 1
+  fields:
+    assessment: 2
+    title: Test Workflow
+    description: References that have been tagged for inclusion and are ready for
+      more specific tagging.
+    link_tagging: true
+    link_conflict_resolution: true
+    admission_tags_descendants: false
+    removal_tags_descendants: false
+    created: 2024-06-24 20:30:11.688206+00:00
+    last_updated: 2024-06-24 20:30:32.920691+00:00
+    admission_source: []
+    removal_source: []
 - model: study.study
   pk: 1
   fields:
@@ -10090,10 +10227,9 @@
     prefilters:
       studies:
       - 1
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17,"sort_order":"short_citation"}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:32:30.901597+00:00
     last_updated: 2020-02-27 20:33:06.585979+00:00
     endpoints: []
@@ -10112,7 +10248,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:34:17.606164+00:00
     last_updated: 2020-02-27 20:34:17.606186+00:00
     endpoints: []
@@ -10128,10 +10263,9 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30,"sort_order":"short_citation"}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:35:41.634588+00:00
     last_updated: 2020-05-08 19:36:41.324440+00:00
     endpoints: []
@@ -10151,7 +10285,6 @@
       filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}
     caption: <p>example</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:19.255703+00:00
     last_updated: 2020-05-08 19:37:19.255730+00:00
     endpoints: []
@@ -10170,7 +10303,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:44.283008+00:00
     last_updated: 2020-05-08 19:38:48.445082+00:00
     endpoints: []
@@ -10187,7 +10319,6 @@
     settings: {"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:43:09.448597+00:00
     last_updated: 2020-05-08 19:43:09.448621+00:00
     endpoints: []
@@ -10207,7 +10338,6 @@
       ":embed=y"], "filters": []}
     caption: <p>iris (flowers)</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:45:29.985823+00:00
     last_updated: 2020-05-08 19:45:29.985848+00:00
     endpoints: []
@@ -10224,7 +10354,6 @@
     settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":"and"}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 14:25:27.528283+00:00
     last_updated: 2020-11-25 14:29:33.991892+00:00
     endpoints: []
@@ -10241,7 +10370,6 @@
     settings: {"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2023-05-19 14:25:27.528283+00:00
     last_updated: 2023-05-19 14:25:27.528283+00:00
     endpoints: []
@@ -10258,7 +10386,6 @@
     settings: {}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 18:32:07.260499+00:00
     last_updated: 2020-11-25 18:35:00.094667+00:00
     endpoints:
@@ -10275,7 +10402,7 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16,"sort_order":"short_citation"}
     caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
       an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
       a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
@@ -10287,7 +10414,6 @@
       class="smart-tag active" data-pk="2" data-type="data_pivot">This is an inline
       data pivot.</div>
     published: true
-    sort_order: short_citation
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
     endpoints: []
@@ -10307,7 +10433,6 @@
     caption: Hello caption.
     image: "summary/visual/images/iris.png"
     published: true
-    sort_order: short_citation
     created: 2023-11-15 14:25:27.528283+00:00
     last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
@@ -11129,14 +11254,14 @@
 - model: udf.TagBinding
   pk: 1
   fields:
-    assessment: 1
-    tag: 2
+    assessment: 4
+    tag: 32
     form: 1
     creator:
     - pm@hawcproject.org
     created: 2023-09-17 04:10:29.880052+00:00
     last_updated: 2023-09-17 04:15:33.309627+00:00
-- model: udf.modeludfcontent
+- model: udf.ModelUDFContent
   pk: 1
   fields:
     model_binding: 1
@@ -11149,8 +11274,156 @@
       field2: 123
     created: 2024-03-12 15:19:07.533314+00:00
     last_updated: 2024-03-12 15:19:07.533329+00:00
+- model: udf.TagUDFContent
+  pk: 1
+  fields:
+    reference: 13
+    tag_binding: 1
+    content:
+      field1: testing
+      field2: 321
+    created: 2024-05-08 12:21:07.533314+00:00
+    last_updated:  2024-05-08 12:21:07.533314+00:00
 - model: reversion.revision
   pk: 1
   fields:
     date_created: 2099-08-01 00:00:00.000000+00:00
     user_id: 1
+- model: animalv2.experiment
+  pk: 1
+  fields:
+    study: 1
+    name: Test Experiment
+    design: AA
+    has_multiple_generations: false
+    guideline_compliance: test compliance
+    comments: <p>test comments</p>
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.chemical
+  pk: 1
+  fields:
+    experiment: 1
+    name: Test Chemical
+    cas: sample CAS
+    dtxsid: DTXSID6026296
+    source: test source
+    purity: test purity
+    vehicle: test vehicle
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.animalgroup
+  pk: 1
+  fields:
+    experiment: 1
+    name: Test Animal Group
+    species: 1
+    strain: 1
+    sex: M
+    animal_source: test animal source
+    lifestage_at_exposure: DEV
+    lifestage_at_assessment: DEV
+    generation: ''
+    husbandry_and_diet: test husbandry and diet
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.treatment
+  pk: 1
+  fields:
+    experiment: 1
+    name: Test Treatment
+    chemical: 1
+    route_of_exposure: OR
+    exposure_duration: 1.1
+    exposure_duration_description: test duration description
+    exposure_outcome_duration: 1
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.dosegroup
+  pk: 1
+  fields:
+    treatment: 1
+    dose_group_id: 1
+    dose: 1.1
+    dose_units: 1
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.endpoint
+  pk: 1
+  fields:
+    experiment: 1
+    name: test endpoint name
+    name_term: null
+    system: Cardiovascular
+    system_term: null
+    organ: Eyes
+    organ_term: null
+    effect: test effect
+    effect_term: null
+    effect_subtype: test subtype
+    effect_subtype_term: null
+    effect_modifier_reference: test reference
+    effect_modifier_anatomical: test anatomical
+    effect_modifier_location: test location
+    comments: test comments
+- model: animalv2.observationtime
+  pk: 1
+  fields:
+    endpoint: 1
+    observation_time: 1.1
+    observation_time_units: 0
+    observation_time_text: test time text
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.dataextraction
+  pk: 1
+  fields:
+    experiment: 1
+    endpoint: 1
+    observation_timepoint: 1
+    treatment: 1
+    is_qualitative_only: false
+    data_location: test location
+    variance_type: 0
+    statistical_method: test stat method
+    method_to_control_for_litter_effects: 2
+    values_estimated: false
+    dataset_type: C
+    statistical_power: test stat power
+    response_units: ''
+    dose_response_observations: test response observations
+    result_details: test details
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+
+- model: animalv2.doseresponsegroupleveldata
+  pk: 1
+  fields:
+    data_extraction: 1
+    treatment_name: test treatment name
+    dose: test dose
+    n: 99
+    response: 1.1
+    variance: 2.2
+    treatment_related_effect: 3
+    statistically_significant: 2
+    p_value: test pval
+    NOEL: 2
+    LOEL: 2
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+
+- model: animalv2.doseresponseanimalleveldata
+  pk: 1
+  fields:
+    data_extraction: 1
+    cage_id: test cage id
+    animal_id: test animal id
+    dose: test dose
+    response: 1.1
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00

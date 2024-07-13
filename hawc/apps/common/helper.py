@@ -142,22 +142,61 @@ def map_enum(df: pd.DataFrame, field: str, choices: Choices, replace: bool = Fal
         df.rename(columns={key: field}, inplace=True)
 
 
-def df_move_column(df: pd.DataFrame, target: str, after: str | None = None) -> pd.DataFrame:
+def reorder_list(items: list, target: Any, after: Any | None = None, n_cols: int = 1) -> list:
+    """Returns a copy of a list with elements reordered.
+
+    Args:
+        items (list): a list of items
+        target (Any): the key to move
+        after (Any | None, default None): the key to move target after.
+        n_cols (int, default 1): the number of sequential targets to move.
+
+    Raises:
+        NotImplementedError: _description_
+
+    Returns:
+        list: _description_
+    """
+    target_index = items.index(target)
+    target_index_max = target_index + n_cols
+    insert_index = (-1 if after is None else items.index(after)) + 1
+
+    if target_index == insert_index:
+        return items
+    elif target_index > (insert_index):
+        return (
+            items[:insert_index]
+            + items[target_index:target_index_max]
+            + items[insert_index:target_index]
+            + items[target_index_max:]
+        )
+    elif target_index_max < insert_index:
+        return (
+            items[:target_index]
+            + items[target_index_max:insert_index]
+            + items[target_index:target_index_max]
+            + items[insert_index:]
+        )
+    else:
+        raise NotImplementedError("Unreachable code")
+
+
+def df_move_column(
+    df: pd.DataFrame, target: str, after: str | None = None, n_cols: int = 1
+) -> pd.DataFrame:
     """Move target column after another column.
 
     Args:
         df (pd.DataFrame): The dataframe to modify.
         target (str): Name of the column to move
-        after (Optional[str], optional): Name of column to move after; if None, puts first.
+        after (Optional[str], optional): Name of column to move after; if None, puts first
+        n_cols (int): Number of target columns to move; defaults to 1
 
     Returns:
         pd.DataFrame: The mutated dataframe.
     """
-    cols = df.columns.tolist()
-    target_name = cols.pop(cols.index(target))
-    insert_index = cols.index(after) + 1 if after else 0
-    cols.insert(insert_index, target_name)
-    return df[cols]
+    new_cols = reorder_list(df.columns.tolist(), target, after, n_cols)
+    return df[new_cols]
 
 
 def url_query(path: str, query: dict) -> str:
@@ -548,3 +587,16 @@ def get_current_request() -> HttpRequest:
 def get_current_user():
     """Returns the current request user"""
     return get_current_request().user
+
+
+def unique_text_list(items: list[str]) -> list[str]:
+    """Return a list of unique items in a text list"""
+    items = items.copy()
+    duplicates = {}
+    for i, item in enumerate(items):
+        if item in duplicates:
+            duplicates[item] += 1
+            items[i] = f"{item} ({duplicates[item]})"
+        else:
+            duplicates[item] = 1
+    return items

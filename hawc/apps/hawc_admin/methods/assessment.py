@@ -18,10 +18,10 @@ from ...summary.models import DataPivot, Visual
 from .constants import PandasDurationGrouper
 
 
-def _get_data(Model, order_by="assessment_id"):
+def _get_data(Model, order_by="assessment_id", days: int = 180):
     qs = (
         Model.objects.all()
-        .filter(created__gt=timezone.now() - timedelta(days=180))
+        .filter(created__gt=timezone.now() - timedelta(days=days))
         .order_by(order_by)
         .values(assess_id=F(order_by))
         .annotate(n=Count("id"))
@@ -32,15 +32,15 @@ def _get_data(Model, order_by="assessment_id"):
     return df
 
 
-def growth_matrix():
+def growth_matrix(days: int = 180):
     df = pd.concat(
         [
-            _get_data(Reference),
-            _get_data(Study),
-            _get_data(RiskOfBias, "study__assessment_id"),
-            _get_data(Endpoint),
-            _get_data(Visual),
-            _get_data(DataPivot),
+            _get_data(Reference, days=days),
+            _get_data(Study, days=days),
+            _get_data(RiskOfBias, "study__assessment_id", days=days),
+            _get_data(Endpoint, days=days),
+            _get_data(Visual, days=days),
+            _get_data(DataPivot, days=days),
         ]
     )
 
