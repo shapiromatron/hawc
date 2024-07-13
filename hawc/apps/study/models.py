@@ -10,7 +10,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..assessment.models import Communication
-from ..common.helper import SerializerHelper, cleanHTML
+from ..common.helper import SerializerHelper
 from ..lit.models import Reference
 from . import constants, managers
 
@@ -196,65 +196,6 @@ class Study(Reference):
             if getattr(self, field):
                 types.append(field)
         return types
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "study-id",
-            "study-hero_id",
-            "study-pubmed_id",
-            "study-doi",
-            "study-url",
-            "study-short_citation",
-            "study-full_citation",
-            "study-coi_reported",
-            "study-coi_details",
-            "study-funding_source",
-            "study-bioassay",
-            "study-epi",
-            "study-epi_meta",
-            "study-in_vitro",
-            "study-eco",
-            "study-study_identifier",
-            "study-contact_author",
-            "study-ask_author",
-            "study-summary",
-            "study-editable",
-            "study-published",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser, identifiers_df: pd.DataFrame | None = None) -> tuple:
-        try:
-            ident_row = (
-                identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
-            )
-        except KeyError:
-            ident_row = None
-        return (
-            ser["id"],
-            # IDs can come from identifiers data frame if exists, else check study serializer
-            ident_row.hero_id if ident_row is not None else ser.get("hero_id", None),
-            ident_row.pubmed_id if ident_row is not None else ser.get("pubmed_id", None),
-            ident_row.doi if ident_row is not None else ser.get("doi", None),
-            ser["url"],
-            ser["short_citation"],
-            ser["full_citation"],
-            ser["coi_reported"],
-            ser["coi_details"],
-            ser["funding_source"],
-            ser["bioassay"],
-            ser["epi"],
-            ser["epi_meta"],
-            ser["in_vitro"],
-            ser["eco"],
-            ser["study_identifier"],
-            ser["contact_author"],
-            ser["ask_author"],
-            cleanHTML(ser["summary"]),
-            ser["editable"],
-            ser["published"],
-        )
 
     @classmethod
     def identifiers_df(cls, qs: models.QuerySet, relation: str) -> pd.DataFrame:

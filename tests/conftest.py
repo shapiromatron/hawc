@@ -100,7 +100,6 @@ def vcr_cassette_dir(request):
 
 
 @pytest.fixture
-@pytest.mark.django_db
 def pm_user():
     return get_user_model().objects.get(email="pm@hawcproject.org")
 

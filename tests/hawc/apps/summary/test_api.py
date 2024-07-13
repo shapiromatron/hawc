@@ -41,6 +41,7 @@ def test_api_visual_heatmap(db_keys):
         "show_nr_legend": True,
         "legend_x": 239,
         "legend_y": 17,
+        "sort_order": "short_citation",
     }
 
 
@@ -139,7 +140,6 @@ class TestVisual:
             "prefilters": {},
             "caption": "<p>caption</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }
@@ -152,13 +152,12 @@ class TestVisual:
             "visual_type": 2,
             "evidence_type": 0,
             "settings": json.loads(
-                '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
+                '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30,"sort_order":"short_citation"}'
             ),
             "assessment": db_keys.assessment_working,
             "prefilters": {},
             "caption": "<p>caption</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }
@@ -177,7 +176,6 @@ class TestVisual:
             "prefilters": {"animal_group__experiment__study__published": True},
             "caption": "<p>example</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }
@@ -190,13 +188,12 @@ class TestVisual:
             "visual_type": 3,
             "evidence_type": 0,
             "settings": json.loads(
-                '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}'
+                '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10,"sort_order":"short_citation"}'
             ),
             "assessment": db_keys.assessment_working,
             "prefilters": {},
             "caption": "<p>caption</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }
@@ -215,7 +212,6 @@ class TestVisual:
             "prefilters": {},
             "caption": "<p>caption</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }
@@ -234,7 +230,6 @@ class TestVisual:
             "prefilters": {},
             "caption": "<p>iris (flowers)</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }
@@ -253,7 +248,6 @@ class TestVisual:
             "prefilters": {},
             "caption": "<p>caption</p>",
             "published": True,
-            "sort_order": "short_citation",
             "endpoints": [],
             "studies": [],
         }

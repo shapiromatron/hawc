@@ -34,17 +34,21 @@ def check_api_json_data(data: dict, key: str, rewrite_data_files: bool):
     assert json.loads(fn.read_text()) == data
 
 
-def get_client(role: str = "", api: bool = False) -> Client | APIClient:
+def get_client(role: str = "", api: bool = False, htmx: bool = False) -> Client | APIClient:
     """Return a client with specified user role
 
     Args:
         role (str): One of the following: {'', 'pm', 'team', 'reviewer', 'admin'}. If empty, anonymous.
         api (bool): Returns rest_framework.test.APIClient if True, else django.test.Client
+        htmx (bool): Returns proper headers for HTMX requests
 
     Returns:
         Client | APIClient
     """
-    client = APIClient() if api else Client()
+    kw = {}
+    if htmx:
+        kw["headers"] = {"hx-request": "true"}
+    client = APIClient() if api else Client(**kw)
     if role:
         assert client.login(username=f"{role}@hawcproject.org", password="pw") is True
     return client
