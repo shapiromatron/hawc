@@ -35,7 +35,8 @@ class TestHEROFetch:
         }
 
     @pytest.mark.vcr
-    def test_new_hero_success(self, use_new_hero):
+    def test_new_hero_success(self, settings):
+        settings.HAWC_FEATURES.ENABLE_NEW_HERO = True
         hero_getter = HEROFetch(id_list=[1201])
         hero_getter.get_content()
 
@@ -62,6 +63,7 @@ class TestHEROFetch:
             ],
             "authors_short": "Farman CA et al.",
         }
+        settings.HAWC_FEATURES.ENABLE_NEW_HERO = False
 
     @pytest.mark.vcr
     def test_hero_bigger_query(self):
