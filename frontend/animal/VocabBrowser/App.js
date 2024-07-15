@@ -3,7 +3,8 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import Table from "./Table";
+import EhvTable from "./EhvBrowser/Table";
+import ToxrefTable from "./ToxrefBrowser/Table";
 
 @inject("store")
 @observer
@@ -17,7 +18,11 @@ class App extends Component {
         };
         this.updateQuery = _.debounce(() => props.store.updateQuery(this.state.query), 100);
     }
+
     render() {
+        const tables = {ehv: EhvTable, toxref: ToxrefTable},
+            Table = tables[this.props.store.config.vocab];
+
         return (
             <>
                 <div className="input-group">
@@ -32,7 +37,7 @@ class App extends Component {
                         }}
                     />
                 </div>
-                <Table />
+                {_.isUndefined(Table) ? <p>ERROR - unknown vocabulary</p> : <Table />}
             </>
         );
     }
