@@ -113,3 +113,8 @@ def rewrite_data_files():
     A test exists in CI to ensure that this flag is set to False on commit.
     """
     return False
+
+
+@pytest.fixture
+def use_new_hero(settings):
+    settings.HAWC_FEATURES.ENABLE_NEW_HERO = True

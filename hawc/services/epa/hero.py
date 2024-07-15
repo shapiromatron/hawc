@@ -36,12 +36,12 @@ def parse_article(content: dict) -> dict:
             HEROID=_force_int(content.get("id")),
             PMID=_force_int(content.get("accession_number")),
             doi=try_get_doi(content.get("doi", "")),
-            tilte=content.get("title"),
+            title=content.get("title"),
             abstract=content.get("abstract"),
             source=content.get(
                 "type_of_reference"
             ),  # TODO: need to construct source from journal/issue/pages/etc.
-            year=content.get("year"),
+            year=_force_int(content.get("year")),
             authors=authors,
             authors_short=get_author_short_text(authors),
         )
@@ -109,10 +109,11 @@ class HEROFetch:
 
         if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
             # ensure valid api key
+            headers = {"Authorization": f"Bearer {settings.HERO_API_KEY}"}
             r = requests.get(
                 "https://heronetnext.epa.gov/api/user/check",
+                headers=headers,
                 timeout=10.0,
-                headers={"Authorization": f"Bearer {settings.HERO_API_KEY}"},
             )
             if r.status_code != 200:
                 logger.info("Valid HERO API key required.")
@@ -128,7 +129,7 @@ class HEROFetch:
                 url = "https://heronetnext.epa.gov/api/reference/export/json"
                 params = {"id": request_ids, "type": "hero"}
                 try:
-                    r = requests.get(url, params, timeout=30.0)
+                    r = requests.get(url, params, headers=headers, timeout=30.0)
                     if r.status_code == 200:
                         results = r.json()
                     else:
