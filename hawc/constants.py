@@ -21,6 +21,7 @@ class FeatureFlags(BaseModel):
     ENABLE_FILTER_DOWNLOADS: bool = False
     ENABLE_UDF: bool = False
     ENABLE_DOCS_LINK: bool = False
+    ENABLE_NEW_HERO: bool = False
 
     @classmethod
     def from_env(cls, variable) -> "FeatureFlags":

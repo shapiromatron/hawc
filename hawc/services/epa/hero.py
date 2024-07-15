@@ -29,20 +29,37 @@ def _force_int(val, default=None) -> int | None:
 
 
 def parse_article(content: dict) -> dict:
-    authors = normalize_authors(content.get("AUTHORS", "").split("; "))
-    authors_short = get_author_short_text(authors)
-    return dict(
-        json=content,
-        HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
-        PMID=_force_int(_parse_pseudo_json(content, "PMID")),
-        doi=try_get_doi(_parse_pseudo_json(content, "doi")),
-        title=_parse_pseudo_json(content, "TITLE"),
-        abstract=_parse_pseudo_json(content, "ABSTRACT"),
-        source=_parse_pseudo_json(content, "SOURCE"),
-        year=_force_int(_parse_pseudo_json(content, "YEAR")),
-        authors=authors,
-        authors_short=authors_short,
-    )
+    if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+        authors = normalize_authors(content.get("authors", []))
+        return dict(
+            json=content,
+            HEROID=_force_int(content.get("id")),
+            PMID=_force_int(content.get("accession_number")),
+            doi=try_get_doi(content.get("doi", "")),
+            title=content.get("title"),
+            abstract=content.get("abstract"),
+            source=content.get(
+                "type_of_reference"
+            ),  # TODO: need to construct source from journal/issue/pages/etc.
+            year=_force_int(content.get("year")),
+            authors=authors,
+            authors_short=get_author_short_text(authors),
+        )
+    else:
+        authors = normalize_authors(content.get("AUTHORS", "").split("; "))
+        authors_short = get_author_short_text(authors)
+        return dict(
+            json=content,
+            HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
+            PMID=_force_int(_parse_pseudo_json(content, "PMID")),
+            doi=try_get_doi(_parse_pseudo_json(content, "doi")),
+            title=_parse_pseudo_json(content, "TITLE"),
+            abstract=_parse_pseudo_json(content, "ABSTRACT"),
+            source=_parse_pseudo_json(content, "SOURCE"),
+            year=_force_int(_parse_pseudo_json(content, "YEAR")),
+            authors=authors,
+            authors_short=authors_short,
+        )
 
 
 class HEROFetch:
@@ -90,24 +107,53 @@ class HEROFetch:
             self.failures = []
             return dict(success=self.content, failure=self.failures)
 
+        if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+            # ensure valid api key
+            headers = {"Authorization": f"Bearer {settings.HERO_API_KEY}"}
+            r = requests.get(
+                "https://heronetnext.epa.gov/api/user/check",
+                headers=headers,
+                timeout=10.0,
+            )
+            if r.status_code != 200:
+                logger.info("Valid HERO API key required.")
+                return dict(success=[], failure=self.ids)
+
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
             request_ids = self.ids[recstart : recstart + self.settings["recordsperpage"]]
             ids = ",".join([str(id_) for id_ in request_ids])
             rpp = self.settings["recordsperpage"]
-            url = f"https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/{ids}/recordsperpage/{rpp}.json"
-            try:
-                r = requests.get(url, timeout=30.0)
-                if r.status_code == 200:
-                    data = json.loads(r.text)
-                    for ref in data["results"]:
-                        self.content.append(parse_article(ref))
-                else:
+            results = []
+            if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+                url = "https://heronetnext.epa.gov/api/reference/export/json"
+                params = {"id": request_ids, "type": "hero"}
+                try:
+                    r = requests.get(url, params, headers=headers, timeout=30.0)
+                    if r.status_code == 200:
+                        results = r.json()
+                    else:
+                        logger.info(f"HERO request failure: {url}")
+                except requests.exceptions.Timeout:
+                    logger.info(f"HERO request timeout: {url}")
+                except json.JSONDecodeError:
                     logger.info(f"HERO request failure: {url}")
-            except requests.exceptions.Timeout:
-                logger.info(f"HERO request timeout: {url}")
-            except json.JSONDecodeError:
-                logger.info(f"HERO request failure: {url}")
+            else:
+                url = f"https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/{ids}/recordsperpage/{rpp}.json"
+                try:
+                    r = requests.get(url, timeout=30.0)
+                    if r.status_code == 200:
+                        data = json.loads(r.text)
+                        results = data["results"]
+                    else:
+                        logger.info(f"HERO request failure: {url}")
+                except requests.exceptions.Timeout:
+                    logger.info(f"HERO request timeout: {url}")
+                except json.JSONDecodeError:
+                    logger.info(f"HERO request failure: {url}")
+
+            for ref in results:
+                self.content.append(parse_article(ref))
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 
