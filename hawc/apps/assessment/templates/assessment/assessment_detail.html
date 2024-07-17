@@ -137,9 +137,9 @@
   </table>
 
   {% if is_team_member %}
-    <div class="bg-primary-lighter rounded p-3 mb-3">
+    <div class="bg-lightblue rounded p-3 mb-3">
       <h3>Assessment details for team members*</h3>
-      <table id="assessment_table" class="table table-sm table-striped my-0">
+      <table id="assessment_table" class="table table-sm table-striped bg-white my-0">
         {% bs4_colgroup '25,25,25,25' %}
         <tbody>
           <tr>
@@ -222,14 +222,10 @@
             </tr>
           {% endif %}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="5" class="text-muted">
-              * These fields are only shown to assessment team members, even if the assessment is made public.
-            </td>
-          </tr>
-        </tfoot>
       </table>
+      <span class="text-muted">
+        * These fields are only shown to assessment team members, even if the assessment is made public.
+      </span>
     </div>
   {% endif %}
 
