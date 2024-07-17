@@ -387,7 +387,7 @@ class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         assessment = self.instance.study.assessment if self.instance else data["study"].assessment
-        if not assessment.user_can_edit_assessment(self.context["request"].user):
+        if not assessment.user_is_project_manager_or_higher(self.context["request"].user):
             raise PermissionDenied()
         if "author" in data and not assessment.user_can_edit_object(data["author"]):
             raise serializers.ValidationError({"author": "Author cannot be assigned"})
