@@ -11,7 +11,7 @@
     <div {% if not assessment.has_lit_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">Literature Review</h6>
       {% if not assessment.has_lit_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'lit:api:assessment-reference-export' assessment.pk as the_url %}
@@ -27,7 +27,8 @@
     <div {% if not assessment.has_rob_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">{{assessment.get_rob_name_display|title}}</h6>
       {% if not assessment.has_rob_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
+
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'riskofbias:api:assessment-export' assessment.pk as the_url %}
@@ -44,7 +45,8 @@
     <div {% if not assessment.has_animal_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">Animal Bioassay</h6>
       {% if not assessment.has_animal_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
+
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'animal:api:assessment-full-export' assessment.pk as the_url %}
@@ -59,7 +61,8 @@
     <div {% if not assessment.has_epi_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">Epidemiology</h6>
       {% if not assessment.has_epi_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
+
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% if assessment.epi_version == EpiVersion.V1 %}
@@ -81,7 +84,8 @@
     <div {% if not assessment.has_epi_meta_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">Epidemiology Meta-Analysis</h6>
       {% if not assessment.has_epi_meta_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
+
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'meta:api:assessment-export' assessment.pk as the_url %}
@@ -94,7 +98,8 @@
     <div {% if not assessment.has_invitro_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">In-vitro</h6>
       {% if not assessment.has_invitro_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
+
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'invitro:api:assessment-full-export' assessment.pk as the_url %}
@@ -107,7 +112,8 @@
     <div {% if not assessment.has_ecology_data %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">Ecology</h6>
       {% if not assessment.has_ecology_data %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
+
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'eco:api:assessment-export' assessment.pk as the_url %}
@@ -122,7 +128,7 @@
     <div {% if not assessment.udf_bindings.exists and not assessment.udf_tag_bindings.exists %} class="order-12" {% endif %}>
       <h6 class="mb-2 font-size-regular">User Defined Fields (UDF) Data</h6>
       {% if not assessment.udf_bindings.exists and not assessment.udf_tag_bindings.exists %}
-        {% include "common/usa_alert.html" with type="warning" slim=True body_text="No data available" %}
+        {% alert warning %} No data available {% endalert %}
       {% else %}
         <div class="list-group mb-3 mt-2">
           {% url 'udf:api:assessment-export-model-udfs' assessment.pk as the_url %}
