@@ -17,7 +17,7 @@
       </li>
     {% empty %}
       <li class="list-group-item">
-        {% alert warning %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
+        {% alert "type=warning" %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
       </li>
     {% endfor %}
   </ul>
