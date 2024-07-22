@@ -8,27 +8,64 @@ let buildHeaderTr = function (lst) {
         return $("<colgroup>").html(widths.map(width => `<col width=${width}></col>`).join(""));
     };
 
-let buildBoxesTable = function (tab, prisma) {
+class _Prisma_sections_row {
+
+    constructor(prisma, values) {
+        this.prisma = prisma;
+        this.values = values;
+
+        // TODO create html row
+
+        this.data_push();
+        return this;
+    }
+
+    static defaults = function() {
+        return {
+            name: "",
+            width: 10,
+            height: 6,
+            border_width: 2,
+            rx: 0,
+            ry: 0,
+            bg_color: "White",
+            border_color: "Black",
+            font_color: "Black",
+            text_style: "Left justified"
+        }
+    }
+
+    data_push() {
+        // TODO
+    }
+
+}
+
+let buildSectionsTable = function (tab, prisma) {
     let thead = $("<thead>").html(
         buildHeaderTr([
-            "Column header",
-            "Legend name",
-            "Marker style",
-            "Conditional formatting",
-            "On-click",
-            "Ordering",
+            "Name",
+            "Width",
+            "Height",
+            "Border Width",
+            "rx",
+            "ry",
+            "Background color",
+            "Border color",
+            "Font color",
+            "Text Formatting Style"
         ])
     ),
         tbody = $("<tbody>"),
-        colgroup = buildColGroup(["", "", "", "150px", "", "120px"]),
-        tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
-        settings = prisma.settings.datapoint_settings,
+        colgroup = buildColGroup(["", "", "", "150px", "", "120px"]), // TODO: define colgroup properly
+        tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+        settings = prisma.sections,
         addDataRow = function (i) {
             let obj;
             if (!settings[i]) {
-                settings.push(_DataPivot_settings_pointdata.defaults());
+                settings.push(_Prisma_sections_row.defaults());
             }
-            obj = new _DataPivot_settings_pointdata(prisma, settings[i]);
+            obj = new _Prisma_sections_row(prisma, settings[i]);
             tbody.append(obj.tr);
         },
         newDataRow = function () {
@@ -48,8 +85,8 @@ let buildBoxesTable = function (tab, prisma) {
     tab.append(tbl);
 },
 buildTab = function(prisma) {
-    let tab = $('<div class="tab-pane" id="data_pivot_settings_data">')
-    buildBoxesTable(tab, prisma)
+    let tab = $('<div class="tab-pane" id="prisma_settings_data">')
+    buildSectionsTable(tab, prisma)
 };
 
 export default buildTab;

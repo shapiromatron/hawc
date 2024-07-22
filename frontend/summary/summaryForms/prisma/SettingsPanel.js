@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import { Tab, TabList, TabPanel } from "react-tabs";
 import TextInput from "shared/components/TextInput";
+import PrismaDataTab from "./PrismaDataTab"
 
 @inject("store")
 @observer
