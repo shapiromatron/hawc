@@ -11,9 +11,9 @@ const key = "filter_widgets";
 
 @inject("store")
 @observer
-class PrismaSectionsTable extends Component {
+class PrismaBoxesTable extends Component {
     render() {
-        const items = this.props.store.subclass.settings["sections"]
+        const items = this.props.store.subclass.settings["boxes"]
 
         return (
             <table className="table table-sm table-striped">
@@ -109,12 +109,20 @@ class PrismaSectionsTable extends Component {
                         onChange={e => changeArraySettings(key, index, "text_style", e.target.value)}
                     />
                 </td>
+                <td>
+                    <TextInput // TODO: select widget instead
+                        name={`${key}-section-${index}`}
+                        className="col-md-12"
+                        value={row.text_style}
+                        onChange={e => changeArraySettings(key, index, "section", e.target.value)}
+                    />
+                </td>
             </tr>
         );
     }
 }
-PrismaSectionsTable.propTypes = {
+PrismaBoxesTable.propTypes = {
     store: PropTypes.object,
 };
 
-export default PrismaSectionsTable;
+export default PrismaBoxesTable;
