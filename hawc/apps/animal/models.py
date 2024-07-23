@@ -938,6 +938,7 @@ class Endpoint(BaseEndpoint):
             {
                 "debug": False,
                 "vocabulary": assessment.vocabulary,
+                "vocabulary_url": assessment.get_vocabulary_url(),
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
                     "system": form["system"].value() or "",

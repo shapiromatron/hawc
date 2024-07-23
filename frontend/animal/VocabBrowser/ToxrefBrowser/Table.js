@@ -1,4 +1,4 @@
-import {helpText} from "animal/EndpointForm/constants";
+import {ehvFields} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -13,6 +13,7 @@ class Table extends Component {
     render() {
         const {filteredDataset, query} = this.props.store,
             regex = query.length > 0 ? new RegExp(h.escapeRegexString(query), "gi") : null,
+            helpText = ehvFields.helpText,
             highlightedSpan = text => {
                 return regex ? (
                     <span
@@ -43,22 +44,22 @@ class Table extends Component {
                         <thead>
                             <tr>
                                 <th>
-                                    System
+                                    Endpoint Category
                                     <HelpTextPopup title="System" content={helpText.system_popup} />
                                 </th>
                                 <th>
-                                    Effect
+                                    Endpoint Type
                                     <HelpTextPopup title="Effect" content={helpText.effect_popup} />
                                 </th>
                                 <th>
-                                    Effect subtype
+                                    Endpoint Target
                                     <HelpTextPopup
                                         title="Effect subtype"
                                         content={helpText.effect_subtype_popup}
                                     />
                                 </th>
                                 <th>
-                                    Endpoint/Outcome
+                                    Effect Description
                                     <HelpTextPopup
                                         title="Endpoint/Outcome"
                                         content={helpText.endpoint_name_popup}

@@ -379,6 +379,12 @@ class Assessment(models.Model):
         else:
             return ""
 
+    def get_vocabulary_url(self) -> str:
+        if self.vocabulary:
+            return VocabularyNamespace(self.vocabulary).display_url
+        else:
+            return ""
+
     def get_noel_names(self) -> NoelNames:
         if self.noel_name == constants.NoelName.NEL:
             return NoelNames(
