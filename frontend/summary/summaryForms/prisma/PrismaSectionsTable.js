@@ -14,8 +14,7 @@ const key = "filter_widgets";
 @observer
 class PrismaSectionsTable extends Component {
     render() {
-        const items = this.props.store.subclass.settings[key],
-            { createNewFilterWidget } = this.props.store.subclass;
+        const items = this.props.store.subclass.settings["sections"]
 
         return (
             <table className="table table-sm table-striped">
@@ -59,43 +58,56 @@ class PrismaSectionsTable extends Component {
                 <td>
                     <TextInput
                         name={`${key}-name-${index}`}
-                        value={row.header}
+                        value={row.name}
                         onChange={e => changeArraySettings(key, index, "name", e.target.value)}
                     />
                 </td>
                 <td>
                     <SelectInput
-                        name={`${key}-column-${index}`}
+                        name={`${key}-width-${index}`}
                         choices={getColumnsOptionsWithNull}
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
-                        value={row.column}
+                        value={row.width}
                     />
                 </td>
                 <td>
                     <TextInput
-                        name={`${key}-header-${index}`}
-                        value={row.header}
+                        name={`${key}-height-${index}`}
+                        value={row.height}
                         onChange={e => changeArraySettings(key, index, "header", e.target.value)}
                     />
                 </td>
                 <td>
                     <TextInput
-                        name={`${key}-delimiter-${index}`}
+                        name={`${key}-border-width-${index}`}
                         className="col-md-12"
-                        value={row.delimiter}
-                        onChange={e => changeArraySettings(key, index, "delimiter", e.target.value)}
+                        value={row.border_width}
+                        onChange={e => changeArraySettings(key, index, "border_width", e.target.value)}
                     />
                 </td>
                 <td>
-                    <SelectInput
-                        name={`${key}-on_click_event-${index}`}
-                        choices={getInteractivityOptions}
-                        multiple={false}
-                        handleSelect={value =>
-                            changeArraySettings(key, index, "on_click_event", value)
-                        }
-                        value={row.on_click_event}
+                    <TextInput
+                        name={`${key}-border-color-${index}`}
+                        className="col-md-12"
+                        value={row.border_color}
+                        onChange={e => changeArraySettings(key, index, "border_color", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-font-color-${index}`}
+                        className="col-md-12"
+                        value={row.font_color}
+                        onChange={e => changeArraySettings(key, index, "font_color", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-text-style-${index}`}
+                        className="col-md-12"
+                        value={row.text_style}
+                        onChange={e => changeArraySettings(key, index, "text_style", e.target.value)}
                     />
                 </td>
             </tr>
