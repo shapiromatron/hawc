@@ -9,14 +9,23 @@ class VocabularyNamespace(IntegerChoices):
     """
 
     EHV = 1, "EHV"
+    ToxRef = 2, "ToxRef"
 
     @classproperty
     def display_dict(cls) -> dict:
-        return {1: "EPA Environmental health vocabulary"}
+        return {1: "EPA Environmental health vocabulary", 2: "EPA ToxRef vocabulary"}
+
+    @classproperty
+    def display_urls(cls) -> dict:
+        return {1: "EHV", 2: "ToxRef"}
 
     @classmethod
     def display_choices(cls) -> list:
         return [(key, value) for key, value in cls.display_dict.items()]
+
+    @property
+    def display_url(self) -> str:
+        return self.display_urls[self.value].lower()
 
     @property
     def display_name(self) -> str:

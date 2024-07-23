@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import {action, computed, observable, toJS} from "mobx";
 
-class EhvBrowseStore {
+class VocabBrowseStore {
     @observable query = "";
 
     constructor(config) {
@@ -31,4 +31,4 @@ class EhvBrowseStore {
     }
 }
 
-export default EhvBrowseStore;
+export default VocabBrowseStore;
