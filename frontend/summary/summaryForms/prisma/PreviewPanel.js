@@ -6,11 +6,12 @@ import React, {Component} from "react";
 @observer
 class PreviewPanel extends Component {
     render() {
+        const settings = this.props.store.subclass.settings
         return (
             <div>
                 <legend>Preview</legend>
                 <p className="form-text text-muted">Preview the settings for this visualization.</p>
-                TODO - PRISMA DIAGRAM
+                <p>{JSON.stringify(settings)}</p>
             </div>
         );
     }

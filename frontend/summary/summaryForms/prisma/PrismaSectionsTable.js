@@ -2,11 +2,8 @@ import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { ActionsTh, MoveRowTd } from "shared/components/EditableRowData";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import IntegerInput from "shared/components/IntegerInput";
-import ConfirmDeleteButton from "shared/components/ConfirmDeleteButton";
 
 
 const key = "sections";
@@ -15,7 +12,7 @@ const key = "sections";
 @observer
 class PrismaSectionsTable extends Component {
     render() {
-        const items = this.props.store.subclass.settings["sections"],
+        const items = this.props.store.subclass.settings[key],
         {createNewSection} = this.props.store.subclass;
 
         return (
