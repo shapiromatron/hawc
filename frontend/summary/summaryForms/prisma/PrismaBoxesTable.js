@@ -14,7 +14,7 @@ const key = "boxes";
 class PrismaBoxesTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            { createNewSection } = this.props.store.subclass;
+            { createNewBox } = this.props.store.subclass;
 
         return (
             <div>

@@ -4,18 +4,32 @@ import PrismaDefaultSettings from "../prisma/PrismaDefaultSettings";
 import { deleteArrayElement } from "shared/components/EditableRowData";
 import { NULL_VALUE } from "summary/summary/constants";
 
-let createSectionRow = function() { // TODO: make empty
+let createSectionRow = function () {
     return {
-        name: "Records",
-        width: 10,
-        height: 6,
-        border_width: 2,
-        rx: 50,
-        ry: 5,
-        bg_color: "White",
-        border_color: "Black",
-        font_color: "Black",
-        text_style: "Left justified"
+        name: "",
+        width: 0,
+        height: 0,
+        border_width: 0,
+        rx: 0,
+        ry: 0,
+        bg_color: "",
+        border_color: "",
+        font_color: "",
+        text_style: "",
+    }
+}, createBoxRow = function () {
+    return {
+        name: "",
+        width: 0,
+        height: 0,
+        border_width: 0,
+        rx: 0,
+        ry: 0,
+        bg_color: "",
+        border_color: "",
+        font_color: "",
+        text_style: "",
+        section: ""
     }
 }
 
@@ -50,6 +64,11 @@ class PrismaStore {
     @action.bound createNewSection() {
         this.settings.sections.push(createSectionRow());
     }
+
+    @action.bound createNewbOX() {
+        this.settings.sections.push(createBoxRow());
+    }
+
 
     @action.bound getLinkingOptions(key) {
         // TODO: enforce unique names for sections/boxes etc.
