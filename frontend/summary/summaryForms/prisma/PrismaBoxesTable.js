@@ -1,11 +1,10 @@
-import { inject, observer } from "mobx-react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { ActionsTh, MoveRowTd } from "shared/components/EditableRowData";
-import TextInput from "shared/components/TextInput";
+import React, {Component} from "react";
+import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
-
+import TextInput from "shared/components/TextInput";
 
 const key = "boxes";
 
@@ -14,7 +13,7 @@ const key = "boxes";
 class PrismaBoxesTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            { createNewBox } = this.props.store.subclass;
+            {createNewBox} = this.props.store.subclass;
 
         return (
             <div>
@@ -40,7 +39,7 @@ class PrismaBoxesTable extends Component {
                             <th>Font Color</th>
                             <th>Text Formatting Style</th>
                             <th>Section</th>
-                            <ActionsTh onClickNew={createNewSection} />
+                            <ActionsTh onClickNew={createNewBox} />
                         </tr>
                     </thead>
                     <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
@@ -82,7 +81,9 @@ class PrismaBoxesTable extends Component {
                     <IntegerInput
                         name={`${key}-border-width-${index}`}
                         value={row.border_width}
-                        onChange={e => changeArraySettings(key, index, "border_width", e.target.value)}
+                        onChange={e =>
+                            changeArraySettings(key, index, "border_width", e.target.value)
+                        }
                     />
                 </td>
                 <td>
@@ -112,7 +113,9 @@ class PrismaBoxesTable extends Component {
                         name={`${key}-border-color-${index}`}
                         className="col-md-12"
                         value={row.border_color}
-                        onChange={e => changeArraySettings(key, index, "border_color", e.target.value)}
+                        onChange={e =>
+                            changeArraySettings(key, index, "border_color", e.target.value)
+                        }
                     />
                 </td>
                 <td>
@@ -120,7 +123,9 @@ class PrismaBoxesTable extends Component {
                         name={`${key}-font-color-${index}`}
                         className="col-md-12"
                         value={row.font_color}
-                        onChange={e => changeArraySettings(key, index, "font_color", e.target.value)}
+                        onChange={e =>
+                            changeArraySettings(key, index, "font_color", e.target.value)
+                        }
                     />
                 </td>
                 <td>
@@ -128,7 +133,9 @@ class PrismaBoxesTable extends Component {
                         name={`${key}-text-style-${index}`}
                         className="col-md-12"
                         value={row.text_style}
-                        onChange={e => changeArraySettings(key, index, "text_style", e.target.value)}
+                        onChange={e =>
+                            changeArraySettings(key, index, "text_style", e.target.value)
+                        }
                     />
                 </td>
                 <td>
@@ -142,9 +149,7 @@ class PrismaBoxesTable extends Component {
                         choices={getLinkingOptions("sections")}
                     />
                 </td>
-                <MoveRowTd
-                    onDelete={() => deleteArrayElement(key, index)}
-                />
+                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} />
             </tr>
         );
     }

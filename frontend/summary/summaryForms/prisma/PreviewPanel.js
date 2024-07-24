@@ -6,7 +6,7 @@ import React, {Component} from "react";
 @observer
 class PreviewPanel extends Component {
     render() {
-        const settings = this.props.store.subclass.settings
+        const settings = this.props.store.subclass.settings;
         return (
             <div>
                 <legend>Preview</legend>
