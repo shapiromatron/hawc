@@ -1,6 +1,6 @@
 <div id="htmx-error-banner" hidden class="row px-3">
-  <div class="col-12 alert alert-danger" role="alert">
+  {% alert "classes=col-12" %}
     <h4 id="htmx-alert" class="alert-heading"></h4>
     <span>Please check your network connection and refresh this page. Please <a href="{% url 'contact' %}">contact us</a> if the issue contiues to occur.</span>
-  </div>
+  {% endalert %}
 </div>

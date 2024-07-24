@@ -11,7 +11,7 @@
     {% endif %}
   </div>
   {% if not assessment.bmd_settings.can_create_sessions %}
-    {% alert warning %}
+    {% alert "type=warning" %}
       <p>{{assessment.bmd_settings.get_version_display}} is no longer supported by HAWC. Change the assessment benchmark dose settings to the
         newest BMDS version to create new sessions.</p>
     {% endalert %}

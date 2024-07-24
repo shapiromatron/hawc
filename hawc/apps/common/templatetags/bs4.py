@@ -54,22 +54,43 @@ def icon(name: str):
     return format_html('<span class="fa fa-fw {} mr-1" aria-hidden="true"></span>', name)
 
 
+def parse_tag_args(token):
+    variables = token.split_contents()[1:]
+    kwargs = {}
+    args = []
+    for variable in variables:
+        try:
+            (key, val) = variable[1:-1].split("=")
+            kwargs[key] = val
+        except ValueError:
+            args.append(variable[1:-1])
+    return args, kwargs
+
+
 @register.tag(name="alert")
 def bs4_alert(parser, token):
-    args = token.contents.split()
-    alert_type = args[1] if len(args) > 1 else "danger"
+    args, kwargs = parse_tag_args(token)
+    alert_type = kwargs.get("type", "danger")
+    dismiss = kwargs.get("dismiss", False)
+    classes = kwargs.get("classes", "")
     nodelist = parser.parse(("endalert",))
     parser.delete_first_token()
-    return AlertWrapperNode(nodelist, alert_type)
+    return AlertWrapperNode(nodelist, alert_type, dismiss, classes)
 
 
 class AlertWrapperNode(template.Node):
-    def __init__(self, nodelist, alert_type: str):
+    dismiss_html = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+
+    def __init__(self, nodelist, alert_type: str, dismiss: bool, classes: str):
         self.nodelist = nodelist
         self.alert_type = alert_type
+        self.dismiss = dismiss
+        self.classes = classes
 
     def render(self, context):
-        return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
+        return format_html(
+            f'<div class="alert alert-{self.alert_type} {self.classes}">{self.dismiss_html if self.dismiss else ""}{self.nodelist.render(context)}</div>'
+        )
 
 
 @register.simple_tag(name="actions")

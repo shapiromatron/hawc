@@ -6,7 +6,7 @@
           <h3 class="py-2">Update Workflow</h3>
           {% if action == 'delete' %}
             {% csrf_token %}
-            <div class="d-flex ml-auto align-self-start align-items-center alert alert-danger mb-0 flex-shrink-0">
+            {% alert "type=danger" "classes=d-flex ml-auto align-self-start align-items-center mb-0 flex-shrink-0" %}
               <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
               <div class="d-flex pl-2">
                 <button class="btn btn-sm btn-danger"
@@ -16,7 +16,7 @@
                 <button class="btn btn-sm btn-light ml-2"
                         hx-get="{{ object.get_edit_url }}">Cancel</button>
               </div>
-            </div>
+            {% endalert %}
           {% else %}
             <button
               class="btn btn-sm btn-danger ml-auto flex-shrink-0 align-self-start"
