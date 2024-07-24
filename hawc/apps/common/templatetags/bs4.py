@@ -54,21 +54,25 @@ def icon(name: str):
     return format_html('<span class="fa fa-fw {} mr-1" aria-hidden="true"></span>', name)
 
 
-@register.tag(name="alert")
-def bs4_alert(parser, token):
+def parse_tag_args(token):
     variables = token.split_contents()[1:]
-    args = {}
+    kwargs = {}
+    args = []
     for variable in variables:
         try:
             (key, val) = variable[1:-1].split("=")
+            kwargs[key] = val
         except ValueError:
-            raise template.TemplateSyntaxError(
-                f'{token.contents.split()[0]} tag requires arguments in a "key=value" format'
-            )
-        args[key] = val
-    alert_type = args.get("type", "danger")
-    dismiss = args.get("dismiss", False)
-    classes = args.get("classes", "")
+            args.append(variable[1:-1])
+    return args, kwargs
+
+
+@register.tag(name="alert")
+def bs4_alert(parser, token):
+    args, kwargs = parse_tag_args(token)
+    alert_type = kwargs.get("type", "danger")
+    dismiss = kwargs.get("dismiss", False)
+    classes = kwargs.get("classes", "")
     nodelist = parser.parse(("endalert",))
     parser.delete_first_token()
     return AlertWrapperNode(nodelist, alert_type, dismiss, classes)
@@ -84,7 +88,9 @@ class AlertWrapperNode(template.Node):
         self.classes = classes
 
     def render(self, context):
-        return format_html(f'<div class="alert alert-{self.alert_type} {self.classes}">{self.dismiss_html if self.dismiss else ""}{self.nodelist.render(context)}</div>')
+        return format_html(
+            f'<div class="alert alert-{self.alert_type} {self.classes}">{self.dismiss_html if self.dismiss else ""}{self.nodelist.render(context)}</div>'
+        )
 
 
 @register.simple_tag(name="actions")
