@@ -2,54 +2,57 @@ import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { ActionsTh, MoveRowTd } from "shared/components/EditableRowData";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import IntegerInput from "shared/components/IntegerInput";
+import SelectInput from "shared/components/SelectInput";
 
 
-const key = "filter_widgets";
+const key = "boxes";
 
 @inject("store")
 @observer
 class PrismaBoxesTable extends Component {
     render() {
-        const items = this.props.store.subclass.settings["boxes"]
+        const items = this.props.store.subclass.settings[key],
+            { createNewSection } = this.props.store.subclass;
 
         return (
-            <table className="table table-sm table-striped">
-                {/* <colgroup>
+            <div>
+                <h3>Boxes</h3>
+                <table className="table table-sm table-striped">
+                    {/* <colgroup>
                     <col width="25%" />
                     <col width="25%" />
                     <col width="20%" />
                     <col width="20%" />
                     <col width="10%" />
                 </colgroup> */}
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Width</th>
-                        <th>Height</th>
-                        <th>Border Width</th>
-                        <th>rx</th>
-                        <th>ry</th>
-                        <th>Background Color</th>
-                        <th>Border Color</th>
-                        <th>Font Color</th>
-                        <th>Text Formatting Style</th>
-                    </tr>
-                </thead>
-                <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
-            </table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Width</th>
+                            <th>Height</th>
+                            <th>Border Width</th>
+                            <th>rx</th>
+                            <th>ry</th>
+                            <th>Background Color</th>
+                            <th>Border Color</th>
+                            <th>Font Color</th>
+                            <th>Text Formatting Style</th>
+                            <th>Section</th>
+                            <ActionsTh onClickNew={createNewSection} />
+                        </tr>
+                    </thead>
+                    <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
+                </table>
+            </div>
         );
     }
     renderRow(row, index) {
         const {
-            getColumnsOptionsWithNull,
             changeArraySettings,
-            moveArrayElementUp,
-            moveArrayElementDown,
             deleteArrayElement,
-            getInteractivityOptions,
+            getLinkingOptions,
         } = this.props.store.subclass;
 
         return (
@@ -62,27 +65,46 @@ class PrismaBoxesTable extends Component {
                     />
                 </td>
                 <td>
-                    <SelectInput
+                    <IntegerInput
                         name={`${key}-width-${index}`}
-                        choices={getColumnsOptionsWithNull}
-                        multiple={false}
-                        handleSelect={value => changeArraySettings(key, index, "column", value)}
+                        onChange={e => changeArraySettings(key, index, "column", e.target.value)}
                         value={row.width}
                     />
                 </td>
                 <td>
-                    <TextInput
+                    <IntegerInput
                         name={`${key}-height-${index}`}
                         value={row.height}
                         onChange={e => changeArraySettings(key, index, "header", e.target.value)}
                     />
                 </td>
                 <td>
-                    <TextInput
+                    <IntegerInput
                         name={`${key}-border-width-${index}`}
-                        className="col-md-12"
                         value={row.border_width}
                         onChange={e => changeArraySettings(key, index, "border_width", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-rx-${index}`}
+                        value={row.rx}
+                        onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-ry-${index}`}
+                        value={row.ry}
+                        onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-bg-color-${index}`}
+                        className="col-md-12"
+                        value={row.bg_color}
+                        onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
                     />
                 </td>
                 <td>
@@ -110,13 +132,19 @@ class PrismaBoxesTable extends Component {
                     />
                 </td>
                 <td>
-                    <TextInput // TODO: select widget instead
+                    <SelectInput
                         name={`${key}-section-${index}`}
-                        className="col-md-12"
-                        value={row.text_style}
-                        onChange={e => changeArraySettings(key, index, "section", e.target.value)}
+                        value={row.section}
+                        handleSelect={value =>
+                            changeArraySettings(key, index, "on_click_event", value)
+                        }
+                        multiple={false}
+                        choices={getLinkingOptions("sections")}
                     />
                 </td>
+                <MoveRowTd
+                    onDelete={() => deleteArrayElement(key, index)}
+                />
             </tr>
         );
     }

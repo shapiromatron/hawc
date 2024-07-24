@@ -2,6 +2,7 @@ import _ from "lodash";
 import {action, observable} from "mobx";
 import PrismaDefaultSettings from "../prisma/PrismaDefaultSettings";
 import { deleteArrayElement } from "shared/components/EditableRowData";
+import { NULL_VALUE } from "summary/summary/constants";
 
 let createSectionRow = function() { // TODO: make empty
     return {
@@ -47,7 +48,17 @@ class PrismaStore {
     }
 
     @action.bound createNewSection() {
-        this.settings.sections.push(createSectionRow())
+        this.settings.sections.push(createSectionRow());
+    }
+
+    @action.bound getLinkingOptions(key) {
+        // TODO: enforce unique names for sections/boxes etc.
+        const options = []
+        this.settings[key].forEach(value => {
+            options.push({id: value.name, label: value.name})
+        });
+        options.unshift({ id: NULL_VALUE, label: NULL_VALUE });
+        return options;
     }
 }
 

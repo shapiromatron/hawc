@@ -17,6 +17,7 @@ class PrismaSectionsTable extends Component {
 
         return (
             <div>
+            <h3>Sections</h3>
             <table className="table table-sm table-striped">
                 {/* <colgroup>
                     <col width="25%" />
