@@ -6,17 +6,20 @@ import HelpTextPopup from "shared/components/HelpTextPopup";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import IntegerInput from "shared/components/IntegerInput";
+import ConfirmDeleteButton from "shared/components/ConfirmDeleteButton";
 
 
-const key = "filter_widgets";
+const key = "sections";
 
 @inject("store")
 @observer
 class PrismaSectionsTable extends Component {
     render() {
-        const items = this.props.store.subclass.settings["sections"]
+        const items = this.props.store.subclass.settings["sections"],
+        {createNewSection} = this.props.store.subclass;
 
         return (
+            <div>
             <table className="table table-sm table-striped">
                 {/* <colgroup>
                     <col width="25%" />
@@ -37,20 +40,18 @@ class PrismaSectionsTable extends Component {
                         <th>Border Color</th>
                         <th>Font Color</th>
                         <th>Text Formatting Style</th>
+                        <ActionsTh onClickNew={createNewSection} />
                     </tr>
                 </thead>
                 <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
             </table>
+            </div>
         );
     }
     renderRow(row, index) {
         const {
-            getColumnsOptionsWithNull,
             changeArraySettings,
-            moveArrayElementUp,
-            moveArrayElementDown,
             deleteArrayElement,
-            getInteractivityOptions,
         } = this.props.store.subclass;
 
         return (
@@ -129,6 +130,9 @@ class PrismaSectionsTable extends Component {
                         onChange={e => changeArraySettings(key, index, "text_style", e.target.value)}
                     />
                 </td>
+                <MoveRowTd
+                    onDelete={() => deleteArrayElement(key, index)}
+                />
             </tr>
         );
     }
