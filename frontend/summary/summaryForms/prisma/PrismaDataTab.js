@@ -8,10 +8,12 @@ import PrismaSectionsTable from "./PrismaSectionsTable";
 @observer
 class PrismaDataTab extends Component {
     render() {
+        return (
         <div>
             <PrismaSectionsTable/>
-            <PrismaBoxesTable/>
+            {/* <PrismaBoxesTable/> */}
         </div>
+        )
     }
 }
 ;

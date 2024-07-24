@@ -1,5 +1,6 @@
 import _ from "lodash";
 import {action, observable} from "mobx";
+import PrismaDefaultSettings from "../prisma/PrismaDefaultSettings";
 
 class PrismaStore {
     constructor(rootStore) {
@@ -8,9 +9,7 @@ class PrismaStore {
     @observable settings = null;
 
     getDefaultSettings() {
-        return {
-            title: "hello prisma",
-        };
+        return PrismaDefaultSettings
     }
 
     @action.bound changeSettings(path, value) {

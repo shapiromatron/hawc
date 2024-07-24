@@ -5,6 +5,7 @@ import { ActionsTh, MoveRowTd } from "shared/components/EditableRowData";
 import HelpTextPopup from "shared/components/HelpTextPopup";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import IntegerInput from "shared/components/IntegerInput";
 
 
 const key = "filter_widgets";
@@ -62,27 +63,46 @@ class PrismaSectionsTable extends Component {
                     />
                 </td>
                 <td>
-                    <SelectInput
+                    <IntegerInput
                         name={`${key}-width-${index}`}
-                        choices={getColumnsOptionsWithNull}
-                        multiple={false}
-                        handleSelect={value => changeArraySettings(key, index, "column", value)}
+                        onChange={e => changeArraySettings(key, index, "column", e.target.value)}
                         value={row.width}
                     />
                 </td>
                 <td>
-                    <TextInput
+                    <IntegerInput
                         name={`${key}-height-${index}`}
                         value={row.height}
                         onChange={e => changeArraySettings(key, index, "header", e.target.value)}
                     />
                 </td>
                 <td>
-                    <TextInput
+                    <IntegerInput
                         name={`${key}-border-width-${index}`}
-                        className="col-md-12"
                         value={row.border_width}
                         onChange={e => changeArraySettings(key, index, "border_width", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-rx-${index}`}
+                        value={row.rx}
+                        onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-ry-${index}`}
+                        value={row.ry}
+                        onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-bg-color-${index}`}
+                        className="col-md-12"
+                        value={row.bg_color}
+                        onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
                     />
                 </td>
                 <td>

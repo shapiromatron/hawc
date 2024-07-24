@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import { Tab, TabList, TabPanel } from "react-tabs";
+import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import TextInput from "shared/components/TextInput";
 import PrismaDataTab from "./PrismaDataTab"
 
@@ -11,7 +11,7 @@ class SettingsPanel extends Component {
     render() {
         const {settings, changeSettings} = this.props.store.subclass;
         return (
-            <div>
+            <Tabs>
             <TabList>
                 <Tab>Data</Tab>
                 <Tab>Other Settings</Tab>
@@ -30,7 +30,7 @@ class SettingsPanel extends Component {
                         onChange={e => changeSettings(e.target.name, e.target.value)} />
                 </div>
             </TabPanel>
-            </div>
+            </Tabs>
         );
     }
 }
