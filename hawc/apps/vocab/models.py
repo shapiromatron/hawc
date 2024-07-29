@@ -36,6 +36,11 @@ class Term(models.Model):
         return reverse("admin:vocab_term_change", args=(self.id,))
 
     @classmethod
+    def vocab_dataframe(cls, namespace) -> pd.DataFrame:
+        dataframes = {1: cls.ehv_dataframe(), 2: cls.toxref_dataframe()}
+        return dataframes[namespace]
+
+    @classmethod
     def ehv_dataframe(cls) -> pd.DataFrame:
         vocab_data = cls.vocab_data(constants.VocabularyNamespace.EHV)
         term_data = [
@@ -106,7 +111,6 @@ class Term(models.Model):
             "effect_subtype": effect_subtype_df,
             "endpoint_name": endpoint_name_df,
         }
-
         return data
 
     def merge_data(df, data):
@@ -119,7 +123,7 @@ class Term(models.Model):
         df = df.sort_values(by=[term["left_on"] for term in data]).reset_index(drop=True)
         return df
 
-    def vocab_endpoint_name(self) -> dict:
+    def ehv_endpoint_name(self) -> dict:
         return {
             "system": self.parent.parent.parent.parent.name,
             "organ": self.parent.parent.parent.name,
@@ -128,6 +132,18 @@ class Term(models.Model):
             "name": self.name,
             "system_term_id": self.parent.parent.parent.parent.id,
             "organ_term_id": self.parent.parent.parent.id,
+            "effect_term_id": self.parent.parent.id,
+            "effect_subtype_term_id": self.parent.id,
+            "name_term_id": self.id,
+        }
+
+    def toxref_endpoint_name(self) -> dict:
+        return {
+            "system": self.parent.parent.parent.name,
+            "effect": self.parent.parent.name,
+            "effect_subtype": self.parent.name,
+            "name": self.name,
+            "system_term_id": self.parent.parent.parent.id,
             "effect_term_id": self.parent.parent.id,
             "effect_subtype_term_id": self.parent.id,
             "name_term_id": self.id,

@@ -464,8 +464,8 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
                 controlled terms, and whenever possible please use these terms."""
         else:
             vocab = f"""&nbsp;A controlled vocabulary is not enabled for this assessment.
-                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}"></a>
-                  to see if this vocabulary would be a good fit for your
+                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">EHV</a>
+                  and  <a href="{reverse('vocab:ehv-browse')}">ToxRef Database</a> to see if these vocabularies would be a good fit for your
                 assessment. If it is, consider updating the assessment to use this vocabulary."""
 
         if self.instance.id:

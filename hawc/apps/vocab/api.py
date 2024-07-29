@@ -18,7 +18,6 @@ class VocabTermViewSet(viewsets.GenericViewSet):
     lookup_value_regex = re_digits
     name = None
     namespace = None
-    dataframe = None
 
     def get_queryset(self) -> QuerySet:
         return models.Term.objects.filter(namespace=self.namespace, deprecated_on__isnull=True)
@@ -36,7 +35,7 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
     def nested(self, request: Request):
-        df = self.dataframe
+        df = models.Term.vocab_dataframe(self.namespace)
         return FlatExport.api_response(df=df, filename=self.name)
 
     @action(detail=False)
@@ -80,7 +79,7 @@ class VocabTermViewSet(viewsets.GenericViewSet):
             )
         except models.Term.DoesNotExist:
             raise exceptions.NotFound()
-        return Response(term.vocab_endpoint_name())
+        return term
 
     @action(detail=True, methods=("post",), url_path="related-entity")
     def related_entity(self, request: Request, pk: int | None = None) -> Response:
@@ -96,13 +95,19 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 class EhvTermViewSet(VocabTermViewSet):
     name = "ehv"
     namespace = constants.VocabularyNamespace.EHV
-    dataframe = models.Term.ehv_dataframe()
+
+    @action(detail=True, url_path="endpoint-name-lookup")
+    def endpoint_name_lookup(self, request: Request, pk: int) -> Response:
+        return Response(super().endpoint_name_lookup(request, pk).ehv_endpoint_name())
 
 
 class ToxrefTermViewSet(VocabTermViewSet):
     name = "toxref"
     namespace = constants.VocabularyNamespace.ToxRef
-    dataframe = models.Term.toxref_dataframe()
+
+    @action(detail=True, url_path="endpoint-name-lookup")
+    def endpoint_name_lookup(self, request: Request, pk: int) -> Response:
+        return Response(super().endpoint_name_lookup(request, pk).toxref_endpoint_name())
 
 
 class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

@@ -14,6 +14,18 @@ class TestTerm:
         assert str(term) == "ToxRef::effect_subtype::eye"
         assert term.get_admin_edit_url() == "/admin/vocab/term/7002/change/"
 
+    def test_ehv_endpoint(self):
+        term = Term.objects.get(id=5)
+        endpoint = term.ehv_endpoint_name()
+        assert endpoint["name"] == "Fatty Acid Balance"
+        assert endpoint["system"] == "Cardiovascular"
+
+    def test_toxref_endpoint(self):
+        term = Term.objects.get(id=7003)
+        endpoint = term.toxref_endpoint_name()
+        assert endpoint["name"] == "dysplasia"
+        assert endpoint["system"] == "systemic"
+
 
 @pytest.mark.django_db
 class TestEntity:

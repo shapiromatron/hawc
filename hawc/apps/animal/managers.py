@@ -500,7 +500,7 @@ class EndpointManager(BaseManager):
         endpoint_id_to_term_id = {obj["id"]: obj["name_term_id"] for obj in objs}
 
         # set endpoint terms
-        terms_df = Term.ehv_dataframe()
+        terms_df = Term.vocab_dataframe(assessment.vocabulary)
         endpoint_ids = [obj["id"] for obj in objs]
         endpoints = self.get_queryset().filter(pk__in=endpoint_ids)
         type_to_text_field = VocabularyTermType.value_to_text_field()
