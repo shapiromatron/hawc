@@ -34,7 +34,7 @@ class EndpointFormStore {
 
     @action.bound
     endpointNameLookup(val) {
-        const url = `/vocab/api/ehv/${val}/endpoint-name-lookup/`;
+        const url = `/vocab/api/${this.config.vocabulary_url}/${val}/endpoint-name-lookup/`;
 
         if (!val) {
             return;

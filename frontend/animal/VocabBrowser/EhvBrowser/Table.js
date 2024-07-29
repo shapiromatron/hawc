@@ -1,4 +1,4 @@
-import {helpText} from "animal/EndpointForm/constants";
+import {toxrefFields} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -13,6 +13,7 @@ class Table extends Component {
     render() {
         const {filteredDataset, query} = this.props.store,
             regex = query.length > 0 ? new RegExp(h.escapeRegexString(query), "gi") : null,
+            helpText = toxrefFields.helpText,
             highlightedSpan = text => {
                 return regex ? (
                     <span
