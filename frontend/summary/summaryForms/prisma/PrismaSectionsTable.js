@@ -1,7 +1,7 @@
-import {inject, observer} from "mobx-react";
+import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-import React, {Component} from "react";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import React, { Component } from "react";
+import { ActionsTh, MoveRowTd } from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
 
@@ -12,7 +12,7 @@ const key = "sections";
 class PrismaSectionsTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            {createNewSection} = this.props.store.subclass;
+            { createNewSection } = this.props.store.subclass;
         return (
             <div>
                 <h3>Sections</h3>
@@ -40,7 +40,7 @@ class PrismaSectionsTable extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {items.map((row, index) => {return (<SectionsRow row={row} index={index} />)})}
+                        {items.map((row, index) => { return (<SectionsRow row={row} index={index} />) })}
                     </tbody>
                 </table>
             </div>
@@ -63,7 +63,7 @@ class SectionsRow extends Component {
         }
     }
     renderViewRow(row, index) {
-        const {deleteArrayElement} = this.props.store.subclass;
+        const { deleteArrayElement } = this.props.store.subclass;
 
         return (
             <tr key={index}>
@@ -77,94 +77,104 @@ class SectionsRow extends Component {
                 <td>{row.border_color}</td>
                 <td>{row.font_color}</td>
                 <td>{row.text_style}</td>
-                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} onMoveUp={() => this.setState({edit: true})} />
+                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} onMoveUp={() => this.setState({ edit: true })} />
             </tr>
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings} = this.props.store.subclass;
+        const { changeArraySettings } = this.props.store.subclass;
         return (
-            <div key={index}>
-                <TextInput
-                    name={`${key}-name-${index}`}
-                    value={row.name}
-                    label="Name"
-                    onChange={e => changeArraySettings(key, index, "name", e.target.value)}
-                />
-                <IntegerInput
-                    name={`${key}-width-${index}`}
-                    onChange={e => changeArraySettings(key, index, "column", e.target.value)}
-                    label="Width"
-                    value={row.width}
-                />
-                <IntegerInput
-                    name={`${key}-height-${index}`}
-                    value={row.height}
-                    label="Height"
-                    onChange={e => changeArraySettings(key, index, "header", e.target.value)}
-                />
-                <IntegerInput
-                    name={`${key}-border-width-${index}`}
-                    value={row.border_width}
-                    label="Border Width"
-                    onChange={e =>
-                        changeArraySettings(key, index, "border_width", e.target.value)
-                    }
-                />
-                <IntegerInput
-                    name={`${key}-rx-${index}`}
-                    value={row.rx}
-                    label="rx"
-                    onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
-                />
-                <IntegerInput
-                    name={`${key}-ry-${index}`}
-                    value={row.ry}
-                    label="ry"
-                    onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
-                />
-                <TextInput
-                    name={`${key}-bg-color-${index}`}
-                    className="col-md-12"
-                    value={row.bg_color}
-                    label="Background Color"
-                    onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
-                />
-                <TextInput
-                    name={`${key}-border-color-${index}`}
-                    className="col-md-12"
-                    value={row.border_color}
-                    label="Border Color"
-                    onChange={e =>
-                        changeArraySettings(key, index, "border_color", e.target.value)
-                    }
-                />
-                <TextInput
-                    name={`${key}-font-color-${index}`}
-                    className="col-md-12"
-                    value={row.font_color}
-                    label="Font Color"
-                    onChange={e =>
-                        changeArraySettings(key, index, "font_color", e.target.value)
-                    }
-                />
-                <TextInput
-                    name={`${key}-text-style-${index}`}
-                    className="col-md-12"
-                    value={row.text_style}
-                    label="Text Formatting Style"
-                    onChange={e =>
-                        changeArraySettings(key, index, "text_style", e.target.value)
-                    }
-                />
-                <button
-                    className="btn btn-primary"
-                    type="button"
-                    onClick={() => this.setState({ edit: false })}>
-                    Close
-                </button>
-            </div>
-    );
+            <tr key={index}>
+                <td colSpan="100%">
+                    <div className="border my-2 p-2 pb-5 edit-form-background form-row">
+                        <TextInput
+                            name={`${key}-name-${index}`}
+                            className="col-md-4"
+                            value={row.name}
+                            label="Name"
+                            onChange={e => changeArraySettings(key, index, "name", e.target.value)}
+                        />
+                        <IntegerInput
+                            name={`${key}-width-${index}`}
+                            className="col-md-4"
+                            onChange={e => changeArraySettings(key, index, "column", e.target.value)}
+                            label="Width"
+                            value={row.width}
+                        />
+                        <IntegerInput
+                            name={`${key}-height-${index}`}
+                            className="col-md-4"
+                            value={row.height}
+                            label="Height"
+                            onChange={e => changeArraySettings(key, index, "header", e.target.value)}
+                        />
+                        <IntegerInput
+                            name={`${key}-border-width-${index}`}
+                            className="col-md-4"
+                            value={row.border_width}
+                            label="Border Width"
+                            onChange={e =>
+                                changeArraySettings(key, index, "border_width", e.target.value)
+                            }
+                        />
+                        <IntegerInput
+                            name={`${key}-rx-${index}`}
+                            className="col-md-4"
+                            value={row.rx}
+                            label="rx"
+                            onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
+                        />
+                        <IntegerInput
+                            name={`${key}-ry-${index}`}
+                            className="col-md-4"
+                            value={row.ry}
+                            label="ry"
+                            onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
+                        />
+                        <TextInput
+                            name={`${key}-bg-color-${index}`}
+                            className="col-md-4"
+                            value={row.bg_color}
+                            label="Background Color"
+                            onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
+                        />
+                        <TextInput
+                            name={`${key}-border-color-${index}`}
+                            className="col-md-4"
+                            value={row.border_color}
+                            label="Border Color"
+                            onChange={e =>
+                                changeArraySettings(key, index, "border_color", e.target.value)
+                            }
+                        />
+                        <TextInput
+                            name={`${key}-font-color-${index}`}
+                            className="col-md-4"
+                            value={row.font_color}
+                            label="Font Color"
+                            onChange={e =>
+                                changeArraySettings(key, index, "font_color", e.target.value)
+                            }
+                        />
+                        <TextInput
+                            name={`${key}-text-style-${index}`}
+                            className="col-md-4"
+                            value={row.text_style}
+                            label="Text Formatting Style"
+                            onChange={e =>
+                                changeArraySettings(key, index, "text_style", e.target.value)
+                            }
+                        />
+                        <button
+                            className="btn btn-primary"
+                            type="button"
+                            onClick={() => this.setState({ edit: false })}>
+                            Close
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        );
     }
 }
 PrismaSectionsTable.propTypes = {
