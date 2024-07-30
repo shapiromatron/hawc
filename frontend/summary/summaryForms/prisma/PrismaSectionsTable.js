@@ -41,16 +41,19 @@ class PrismaSectionsTable extends Component {
                             <ActionsTh onClickNew={createNewSection} />
                         </tr>
                     </thead>
-                    <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
+                    <tbody>
+                        {items.map((row, index) => this.renderRow(row, index))}
+                        {items.map((row, index) => this.renderEditRow(row, index))}
+                    </tbody>
                 </table>
             </div>
         );
     }
     renderRow(row, index) {
-        const {expandRow} = this.props.store.subclass;
+        const {isExpanded, toggleRow} = this.props.store.subclass;
 
         return (
-            <tr key={index}>
+            <tr key={index} className={isExpanded(key, index) ? "hidden":""}>
                 <td>{row.name}</td>
                 <td>{row.width}</td>
                 <td>{row.height}</td>
@@ -61,60 +64,98 @@ class PrismaSectionsTable extends Component {
                 <td>{row.border_color}</td>
                 <td>{row.font_color}</td>
                 <td>{row.text_style}</td>
-                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} onEdit={() => expandRow(index)} />
+                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} onEdit={() => toggleRow(key, index)} />
             </tr>
         );
     }
     renderEditRow(row, index) {
-        const { collapseRow, handleRowSubmit} = this.props.store.subclass;
+        const { toggleRow, handleRowSubmit} = this.props.store.subclass;
         return (
-        <tr key={index}>
+            <tr key={index} className={isExpanded(key, index) ? "" : "hidden"}>
             <form>
-                <TextInput
-                    name={`${key}-name-${index}`}
-                    value={row.name}
-                />
-                <IntegerInput
-                    name={`${key}-width-${index}`}
-                    value={row.width}
-                />
-                <IntegerInput
-                    name={`${key}-height-${index}`}
-                    value={row.height}
-                />
-                <IntegerInput
-                    name={`${key}-border-width-${index}`}
-                    value={row.border_width}
-                />
-                <IntegerInput
-                    name={`${key}-rx-${index}`}
-                    value={row.rx}
-                />
-                <IntegerInput
-                    name={`${key}-ry-${index}`}
-                    value={row.ry}
-                />
-                <TextInput
-                    name={`${key}-bg-color-${index}`}
-                    className="col-md-12"
-                    value={row.bg_color}
-                />
-                <TextInput
-                    name={`${key}-border-color-${index}`}
-                    className="col-md-12"
-                    value={row.border_color}
-                />
-                <TextInput
-                    name={`${key}-font-color-${index}`}
-                    className="col-md-12"
-                    value={row.font_color}
-                />
-                <TextInput
-                    name={`${key}-text-style-${index}`}
-                    className="col-md-12"
-                    value={row.text_style}
-                />
-                <FormActions handleSubmit={e => handleRowSubmit(e.target)} cancel={e => collapseRow(e.target)} />
+                <td>
+                    <TextInput
+                        name={`${key}-name-${index}`}
+                        value={row.name}
+                        onChange={e => changeArraySettings(key, index, "name", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-width-${index}`}
+                        onChange={e => changeArraySettings(key, index, "column", e.target.value)}
+                        value={row.width}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-height-${index}`}
+                        value={row.height}
+                        onChange={e => changeArraySettings(key, index, "header", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-border-width-${index}`}
+                        value={row.border_width}
+                        onChange={e =>
+                            changeArraySettings(key, index, "border_width", e.target.value)
+                        }
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-rx-${index}`}
+                        value={row.rx}
+                        onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-ry-${index}`}
+                        value={row.ry}
+                        onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-bg-color-${index}`}
+                        className="col-md-12"
+                        value={row.bg_color}
+                        onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-border-color-${index}`}
+                        className="col-md-12"
+                        value={row.border_color}
+                        onChange={e =>
+                            changeArraySettings(key, index, "border_color", e.target.value)
+                        }
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-font-color-${index}`}
+                        className="col-md-12"
+                        value={row.font_color}
+                        onChange={e =>
+                            changeArraySettings(key, index, "font_color", e.target.value)
+                        }
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-text-style-${index}`}
+                        className="col-md-12"
+                        value={row.text_style}
+                        onChange={e =>
+                            changeArraySettings(key, index, "text_style", e.target.value)
+                        }
+                    />
+                </td>
+                <FormActions handleSubmit={() => toggleRow(key, index)} />
             </form>
         </tr>
     );

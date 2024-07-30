@@ -32,4 +32,11 @@ export default {
     bulleted_list: [],
     cards: [],
     arrows: [],
+    expanded_rows: {
+        sections: [false],
+        boxes: [false],
+        bulleted_list: [],
+        cards: [],
+        arrows: [],
+    }
 };
