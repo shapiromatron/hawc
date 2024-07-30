@@ -4,7 +4,6 @@ import React, {Component} from "react";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
-import FormActions from "shared/components/FormActions";
 
 const key = "sections";
 
@@ -14,7 +13,6 @@ class PrismaSectionsTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
             {createNewSection} = this.props.store.subclass;
-
         return (
             <div>
                 <h3>Sections</h3>
@@ -42,18 +40,26 @@ class PrismaSectionsTable extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {items.map((row, index) => this.renderRow(row, index))}
+                        {items.map((row, index) => {return (<SectionsRow row={row} index={index} />)})}
                     </tbody>
                 </table>
             </div>
         );
     }
-    renderRow(row, index) {
-        const expandedRow = this.props.store.subclass.settings.expanded_row;
-        if (expandedRow.key == key && expandedRow.index == index) {
-            return this.renderEditRow(row, index)
+}
+
+@inject("store")
+@observer
+class SectionsRow extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { edit: false };
+    }
+    render() {
+        if (this.state.edit) {
+            return this.renderEditRow(this.props.row, this.props.index)
         } else {
-            return this.renderViewRow(row, index)
+            return this.renderViewRow(this.props.row, this.props.index)
         }
     }
     renderViewRow(row, index) {
@@ -71,7 +77,7 @@ class PrismaSectionsTable extends Component {
                 <td>{row.border_color}</td>
                 <td>{row.font_color}</td>
                 <td>{row.text_style}</td>
-                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} onMoveUp={() => expandRow(key, index)} />
+                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} onMoveUp={() => this.setState({edit: true})} />
             </tr>
         );
     }
@@ -82,21 +88,25 @@ class PrismaSectionsTable extends Component {
                 <TextInput
                     name={`${key}-name-${index}`}
                     value={row.name}
+                    label="Name"
                     onChange={e => changeArraySettings(key, index, "name", e.target.value)}
                 />
                 <IntegerInput
                     name={`${key}-width-${index}`}
                     onChange={e => changeArraySettings(key, index, "column", e.target.value)}
+                    label="Width"
                     value={row.width}
                 />
                 <IntegerInput
                     name={`${key}-height-${index}`}
                     value={row.height}
+                    label="Height"
                     onChange={e => changeArraySettings(key, index, "header", e.target.value)}
                 />
                 <IntegerInput
                     name={`${key}-border-width-${index}`}
                     value={row.border_width}
+                    label="Border Width"
                     onChange={e =>
                         changeArraySettings(key, index, "border_width", e.target.value)
                     }
@@ -104,23 +114,27 @@ class PrismaSectionsTable extends Component {
                 <IntegerInput
                     name={`${key}-rx-${index}`}
                     value={row.rx}
+                    label="rx"
                     onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
                 />
                 <IntegerInput
                     name={`${key}-ry-${index}`}
                     value={row.ry}
+                    label="ry"
                     onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
                 />
                 <TextInput
                     name={`${key}-bg-color-${index}`}
                     className="col-md-12"
                     value={row.bg_color}
+                    label="Background Color"
                     onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
                 />
                 <TextInput
                     name={`${key}-border-color-${index}`}
                     className="col-md-12"
                     value={row.border_color}
+                    label="Border Color"
                     onChange={e =>
                         changeArraySettings(key, index, "border_color", e.target.value)
                     }
@@ -129,6 +143,7 @@ class PrismaSectionsTable extends Component {
                     name={`${key}-font-color-${index}`}
                     className="col-md-12"
                     value={row.font_color}
+                    label="Font Color"
                     onChange={e =>
                         changeArraySettings(key, index, "font_color", e.target.value)
                     }
@@ -137,6 +152,7 @@ class PrismaSectionsTable extends Component {
                     name={`${key}-text-style-${index}`}
                     className="col-md-12"
                     value={row.text_style}
+                    label="Text Formatting Style"
                     onChange={e =>
                         changeArraySettings(key, index, "text_style", e.target.value)
                     }
@@ -144,7 +160,7 @@ class PrismaSectionsTable extends Component {
                 <button
                     className="btn btn-primary"
                     type="button"
-                    onClick={collapseRow}>
+                    onClick={() => this.setState({ edit: false })}>
                     Close
                 </button>
             </div>
