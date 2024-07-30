@@ -65,12 +65,10 @@ class PrismaStore {
 
     @action.bound createNewSection() {
         this.settings.sections.push(createSectionRow());
-        this.settings.expanded_rows.sections.push(false)
     }
 
     @action.bound createNewBox() {
         this.settings.boxes.push(createBoxRow());
-        this.settings.expanded_rows.sections.push(false)
     }
 
     @action.bound getLinkingOptions(key) {
@@ -84,13 +82,18 @@ class PrismaStore {
         return options;
     }
 
-    @action.bound toggleRow(key, index) {
-        let value = this.settings.expanded_rows[key][index]
-        this.settings.expanded_rows[key][index] = !value
+    @action.bound expandRow(key, index) {
+        _.set(this.settings.expanded_row, "key", key)
+        _.set(this.settings.expanded_row, "index", index)
+    }
+
+    @action.bound collapseRow() {
+        _.set(this.settings.expanded_row, "key", "")
+        _.set(this.settings.expanded_row, "index", 0)
     }
 
     @action.bound isExpanded(key, index) {
-        return this.settings.expanded_rows[key][index]
+        return this.settings.expanded_row.key == key && this.settings.expanded_row.index == index;
     }
 }
 
