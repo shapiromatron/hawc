@@ -43,18 +43,24 @@ class PrismaSectionsTable extends Component {
                     </thead>
                     <tbody>
                         {items.map((row, index) => this.renderRow(row, index))}
-                        {items.map((row, index) => this.renderEditRow(row, index))}
                     </tbody>
                 </table>
             </div>
         );
     }
     renderRow(row, index) {
-        const {isExpanded, expandRow, deleteArrayElement} = this.props.store.subclass,
-            expandedRow = this.props.store.subclass.settings.expanded_row;
+        const expandedRow = this.props.store.subclass.settings.expanded_row;
+        if (expandedRow.key == key && expandedRow.index == index) {
+            return this.renderEditRow(row, index)
+        } else {
+            return this.renderViewRow(row, index)
+        }
+    }
+    renderViewRow(row, index) {
+        const {expandRow, deleteArrayElement} = this.props.store.subclass;
 
         return (
-            <tr key={index} className={(expandedRow.key == key && expandedRow.index == index) ? "hidden":""}>
+            <tr key={index}>
                 <td>{row.name}</td>
                 <td>{row.width}</td>
                 <td>{row.height}</td>
@@ -70,11 +76,9 @@ class PrismaSectionsTable extends Component {
         );
     }
     renderEditRow(row, index) {
-        const { collapseRow, isExpanded, changeArraySettings} = this.props.store.subclass,
-            expandedRow = this.props.store.subclass.settings.expanded_row;
+        const { collapseRow, changeArraySettings} = this.props.store.subclass;
         return (
-            <tr key={index} className={(expandedRow.key == key && expandedRow.index == index) ? "" : "hidden"}>
-                <td>
+            <div key={index}>
                 <TextInput
                     name={`${key}-name-${index}`}
                     value={row.name}
@@ -143,8 +147,7 @@ class PrismaSectionsTable extends Component {
                     onClick={collapseRow}>
                     Close
                 </button>
-                </td>
-            </tr>
+            </div>
     );
     }
 }
