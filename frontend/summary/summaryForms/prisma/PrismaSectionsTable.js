@@ -63,7 +63,7 @@ class SectionsRow extends Component {
         }
     }
     renderViewRow(row, index) {
-        const {expandRow, deleteArrayElement} = this.props.store.subclass;
+        const {deleteArrayElement} = this.props.store.subclass;
 
         return (
             <tr key={index}>
@@ -82,7 +82,7 @@ class SectionsRow extends Component {
         );
     }
     renderEditRow(row, index) {
-        const { collapseRow, changeArraySettings} = this.props.store.subclass;
+        const {changeArraySettings} = this.props.store.subclass;
         return (
             <div key={index}>
                 <TextInput

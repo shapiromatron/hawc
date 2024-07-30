@@ -81,20 +81,6 @@ class PrismaStore {
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
     }
-
-    @action.bound expandRow(key, index) {
-        _.set(this.settings.expanded_row, "key", key)
-        _.set(this.settings.expanded_row, "index", index)
-    }
-
-    @action.bound collapseRow() {
-        _.set(this.settings.expanded_row, "key", "")
-        _.set(this.settings.expanded_row, "index", 0)
-    }
-
-    @action.bound isExpanded(key, index) {
-        return this.settings.expanded_row.key == key && this.settings.expanded_row.index == index;
-    }
 }
 
 export default PrismaStore;
