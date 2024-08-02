@@ -1,16 +1,16 @@
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, {Component} from "react";
 
-const moveArrayElementUp = function (arr, index) {
-    if (index === 0) {
-        return;
-    }
-    let b = arr[index];
-    arr[index] = arr[index - 1];
-    arr[index - 1] = b;
-    return arr;
-},
-    moveArrayElementDown = function (arr, index) {
+const moveArrayElementUp = function(arr, index) {
+        if (index === 0) {
+            return;
+        }
+        let b = arr[index];
+        arr[index] = arr[index - 1];
+        arr[index - 1] = b;
+        return arr;
+    },
+    moveArrayElementDown = function(arr, index) {
         if (index + 1 >= arr.length) {
             return;
         }
@@ -19,11 +19,11 @@ const moveArrayElementUp = function (arr, index) {
         arr[index + 1] = b;
         return arr;
     },
-    deleteArrayElement = function (arr, index) {
+    deleteArrayElement = function(arr, index) {
         arr.splice(index, 1);
         return arr;
     },
-    ActionsTh = function (props) {
+    ActionsTh = function(props) {
         return (
             <th>
                 Actions
@@ -38,7 +38,7 @@ const moveArrayElementUp = function (arr, index) {
             </th>
         );
     },
-    MoveRowTd = function (props) {
+    MoveRowTd = function(props) {
         return (
             <td>
                 {props.onEdit ? (
@@ -83,7 +83,7 @@ class EditableTr extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { edit: this.startEditable() };
+        this.state = {edit: this.startEditable()};
     }
 
     startEditable() {
@@ -106,9 +106,6 @@ class EditableTr extends Component {
     renderEditRow(row, index) {
         return null;
     }
-
-
-
 }
 
 ActionsTh.propTypes = {
@@ -125,4 +122,11 @@ EditableTr.propTypes = {
     index: PropTypes.number,
 };
 
-export { ActionsTh, deleteArrayElement, moveArrayElementDown, moveArrayElementUp, MoveRowTd, EditableTr };
+export {
+    ActionsTh,
+    deleteArrayElement,
+    EditableTr,
+    moveArrayElementDown,
+    moveArrayElementUp,
+    MoveRowTd,
+};
