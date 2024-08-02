@@ -80,7 +80,8 @@ class SectionsRow extends EditableTr {
         return (
             <tr>
                 <td colSpan="100%">
-                    <div className="border my-2 p-2 pb-5 edit-form-background form-row">
+                    <div className="border my-2 p-2 pb-3 edit-form-background ">
+                    <div className="form-row my-2 mx-2">
                         <TextInput
                             name={`${key}-name-${index}`}
                             value={row.name}
@@ -155,12 +156,16 @@ class SectionsRow extends EditableTr {
                                 changeArraySettings(key, index, "text_style", e.target.value)
                             }
                         />
+                    </div>
+                    <div className="form-row justify-content-center">
                         <button
-                            className="btn btn-primary"
+                            className="btn btn-primary mx-2 py-2"
                             type="button"
+                            style={{ width: '15rem', padding: '0.7rem' }}
                             onClick={() => this.setState({ edit: false })}>
                             Close
                         </button>
+                    </div>
                     </div>
                 </td>
             </tr>
