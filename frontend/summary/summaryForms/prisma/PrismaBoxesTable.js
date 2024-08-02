@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import {ActionsTh, EditableTr, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -42,114 +42,137 @@ class PrismaBoxesTable extends Component {
                             <ActionsTh onClickNew={createNewBox} />
                         </tr>
                     </thead>
-                    <tbody>{items.map((row, index) => this.renderRow(row, index))}</tbody>
+                    <tbody>{items.map((row, index) => { return <BoxesRow row={row} index={index} key={index}/>;})}</tbody>
                 </table>
             </div>
         );
     }
-    renderRow(row, index) {
-        const {
-            changeArraySettings,
-            deleteArrayElement,
-            getLinkingOptions,
-        } = this.props.store.subclass;
+}
+
+@inject("store")
+@observer
+class BoxesRow extends EditableTr {
+    renderViewRow(row, index) {
+        const { deleteArrayElement } = this.props.store.subclass;
 
         return (
-            <tr key={index}>
-                <td>
-                    <TextInput
-                        name={`${key}-name-${index}`}
-                        value={row.name}
-                        onChange={e => changeArraySettings(key, index, "name", e.target.value)}
-                    />
+            <tr>
+                <td>{row.name}</td>
+                <td>{row.width}</td>
+                <td>{row.height}</td>
+                <td>{row.border_width}</td>
+                <td>{row.rx}</td>
+                <td>{row.ry}</td>
+                <td>{row.bg_color}</td>
+                <td>{row.border_color}</td>
+                <td>{row.font_color}</td>
+                <td>{row.text_style}</td>
+                <td>{row.section}</td>
+                <MoveRowTd
+                    onDelete={() => deleteArrayElement(key, index)}
+                    onEdit={() => this.setState({ edit: true })}
+                />
+            </tr>
+        );
+    }
+    renderEditRow(row, index) {
+        const { changeArraySettings, getLinkingOptions } = this.props.store.subclass;
+        return (
+            <tr>
+                <td colSpan="100%">
+                    <div className="border my-2 p-2 pb-5 edit-form-background form-row">
+                        <TextInput
+                            name={`${key}-name-${index}`}
+                            value={row.name}
+                            label="Name"
+                            onChange={e => changeArraySettings(key, index, "name", e.target.value)}
+                        />
+                        <IntegerInput
+                            name={`${key}-width-${index}`}
+                            onChange={e =>
+                                changeArraySettings(key, index, "column", e.target.value)
+                            }
+                            label="Width"
+                            value={row.width}
+                        />
+                        <IntegerInput
+                            name={`${key}-height-${index}`}
+                            value={row.height}
+                            label="Height"
+                            onChange={e =>
+                                changeArraySettings(key, index, "header", e.target.value)
+                            }
+                        />
+                        <IntegerInput
+                            name={`${key}-border-width-${index}`}
+                            value={row.border_width}
+                            label="Border Width"
+                            onChange={e =>
+                                changeArraySettings(key, index, "border_width", e.target.value)
+                            }
+                        />
+                        <IntegerInput
+                            name={`${key}-rx-${index}`}
+                            value={row.rx}
+                            label="rx"
+                            onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
+                        />
+                        <IntegerInput
+                            name={`${key}-ry-${index}`}
+                            value={row.ry}
+                            label="ry"
+                            onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
+                        />
+                        <TextInput
+                            name={`${key}-bg-color-${index}`}
+                            value={row.bg_color}
+                            label="Background Color"
+                            onChange={e =>
+                                changeArraySettings(key, index, "bg_color", e.target.value)
+                            }
+                        />
+                        <TextInput
+                            name={`${key}-border-color-${index}`}
+                            value={row.border_color}
+                            label="Border Color"
+                            onChange={e =>
+                                changeArraySettings(key, index, "border_color", e.target.value)
+                            }
+                        />
+                        <TextInput
+                            name={`${key}-font-color-${index}`}
+                            value={row.font_color}
+                            label="Font Color"
+                            onChange={e =>
+                                changeArraySettings(key, index, "font_color", e.target.value)
+                            }
+                        />
+                        <TextInput
+                            name={`${key}-text-style-${index}`}
+                            value={row.text_style}
+                            label="Text Formatting Style"
+                            onChange={e =>
+                                changeArraySettings(key, index, "text_style", e.target.value)
+                            }
+                        />
+                        <SelectInput
+                            name={`${key}-section-${index}`}
+                            value={row.section}
+                            label="Section"
+                            handleSelect={value =>
+                                changeArraySettings(key, index, "on_click_event", value)
+                            }
+                            multiple={false}
+                            choices={getLinkingOptions("sections")}
+                        />
+                        <button
+                            className="btn btn-primary"
+                            type="button"
+                            onClick={() => this.setState({ edit: false })}>
+                            Close
+                        </button>
+                    </div>
                 </td>
-                <td>
-                    <IntegerInput
-                        name={`${key}-width-${index}`}
-                        onChange={e => changeArraySettings(key, index, "column", e.target.value)}
-                        value={row.width}
-                    />
-                </td>
-                <td>
-                    <IntegerInput
-                        name={`${key}-height-${index}`}
-                        value={row.height}
-                        onChange={e => changeArraySettings(key, index, "header", e.target.value)}
-                    />
-                </td>
-                <td>
-                    <IntegerInput
-                        name={`${key}-border-width-${index}`}
-                        value={row.border_width}
-                        onChange={e =>
-                            changeArraySettings(key, index, "border_width", e.target.value)
-                        }
-                    />
-                </td>
-                <td>
-                    <IntegerInput
-                        name={`${key}-rx-${index}`}
-                        value={row.rx}
-                        onChange={e => changeArraySettings(key, index, "rx", e.target.value)}
-                    />
-                </td>
-                <td>
-                    <IntegerInput
-                        name={`${key}-ry-${index}`}
-                        value={row.ry}
-                        onChange={e => changeArraySettings(key, index, "ry", e.target.value)}
-                    />
-                </td>
-                <td>
-                    <TextInput
-                        name={`${key}-bg-color-${index}`}
-                        className="col-md-12"
-                        value={row.bg_color}
-                        onChange={e => changeArraySettings(key, index, "bg_color", e.target.value)}
-                    />
-                </td>
-                <td>
-                    <TextInput
-                        name={`${key}-border-color-${index}`}
-                        className="col-md-12"
-                        value={row.border_color}
-                        onChange={e =>
-                            changeArraySettings(key, index, "border_color", e.target.value)
-                        }
-                    />
-                </td>
-                <td>
-                    <TextInput
-                        name={`${key}-font-color-${index}`}
-                        className="col-md-12"
-                        value={row.font_color}
-                        onChange={e =>
-                            changeArraySettings(key, index, "font_color", e.target.value)
-                        }
-                    />
-                </td>
-                <td>
-                    <TextInput
-                        name={`${key}-text-style-${index}`}
-                        className="col-md-12"
-                        value={row.text_style}
-                        onChange={e =>
-                            changeArraySettings(key, index, "text_style", e.target.value)
-                        }
-                    />
-                </td>
-                <td>
-                    <SelectInput
-                        name={`${key}-section-${index}`}
-                        value={row.section}
-                        handleSelect={value =>
-                            changeArraySettings(key, index, "on_click_event", value)
-                        }
-                        multiple={false}
-                        choices={getLinkingOptions("sections")}
-                    />
-                </td>
-                <MoveRowTd onDelete={() => deleteArrayElement(key, index)} />
             </tr>
         );
     }

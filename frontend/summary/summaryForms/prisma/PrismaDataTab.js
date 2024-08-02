@@ -11,7 +11,7 @@ class PrismaDataTab extends Component {
         return (
             <div>
                 <PrismaSectionsTable />
-                {/* <PrismaBoxesTable /> */}
+                <PrismaBoxesTable />
             </div>
         );
     }
