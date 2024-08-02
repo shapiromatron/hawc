@@ -79,7 +79,7 @@ const moveArrayElementUp = function(arr, index) {
         );
     };
 
-class EditableTr extends Component {
+class BaseEditableRow extends Component {
     constructor(props) {
         super(props);
 
@@ -117,7 +117,7 @@ MoveRowTd.propTypes = {
     onMoveDown: PropTypes.func,
     onDelete: PropTypes.func,
 };
-EditableTr.propTypes = {
+BaseEditableRow.propTypes = {
     row: PropTypes.object,
     index: PropTypes.number,
 };
@@ -125,7 +125,7 @@ EditableTr.propTypes = {
 export {
     ActionsTh,
     deleteArrayElement,
-    EditableTr,
+    BaseEditableRow,
     moveArrayElementDown,
     moveArrayElementUp,
     MoveRowTd,
