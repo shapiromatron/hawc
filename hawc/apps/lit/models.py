@@ -402,31 +402,61 @@ class Search(models.Model):
         3. do not have any tags applied
         4. do not have any studies
         """
-        if results["removed"]:
-            ids = [str(id) for id in results["removed"]]
-            # filter removed references with no tags
-            no_tags = list(
-                self.references.filter(identifiers__unique_id__in=ids)
-                .annotate(ntags=models.Count("tags"))
-                .filter(ntags=0)
-                .values_list("id", flat=True)
-            )
-            # filter untagged references with only one search (this one)
-            no_searches = (
-                Reference.objects.filter(id__in=no_tags)
-                .annotate(nsearches=models.Count("searches"))
-                .filter(nsearches=1)
-            )
-            # filter references where studies exist
-            _ids = no_searches.values_list("id", flat=True)
-            Study = apps.get_model("study", "Study")
-            no_studies = no_searches.exclude(id__in=Study.objects.filter(id__in=_ids))
+        if #(date of the last search query [is before] date of applying the seach algorithm fix):
+            #(apply a different search query filter to fix the old search query, my suggestion is to make it as if we are starting a brand new search here, using the seach algorithm fix.)
 
-            # remove candidate deletions
-            n = no_studies.count()
-            if n > 0:
-                logger.info(f"Removing {n} references from search {self.id}")
-                no_studies.delete()
+            if results["removed"]:
+                ids = [str(id) for id in results["removed"]]
+                # filter removed references with no tags
+                no_tags = list(
+                    self.references.filter(identifiers__unique_id__in=ids)
+                    .annotate(ntags=models.Count("tags"))
+                    .filter(ntags=0)
+                    .values_list("id", flat=True)
+                )
+                # filter untagged references with only one search (this one)
+                no_searches = (
+                    Reference.objects.filter(id__in=no_tags)
+                    .annotate(nsearches=models.Count("searches"))
+                    .filter(nsearches=1)
+                )
+                # filter references where studies exist
+                _ids = no_searches.values_list("id", flat=True)
+                Study = apps.get_model("study", "Study")
+                no_studies = no_searches.exclude(id__in=Study.objects.filter(id__in=_ids))
+
+                # remove candidate deletions
+                n = no_studies.count()
+                if n > 0:
+                    logger.info(f"Removing {n} references from search {self.id}")
+                    no_studies.delete()
+        else:
+            #(use the seach algorithm fix which consist of using a rolling filter)
+            if results["removed"]:
+                ids = [str(id) for id in results["removed"]]
+                # filter removed references with no tags
+                no_tags = list(
+                    self.references.filter(identifiers__unique_id__in=ids)
+                    .annotate(ntags=models.Count("tags"))
+                    .filter(ntags=0)
+                    .values_list("id", flat=True)
+                )
+                # filter untagged references with only one search (this one)
+                no_searches = (
+                    Reference.objects.filter(id__in=no_tags)
+                    .annotate(nsearches=models.Count("searches"))
+                    .filter(nsearches=models.Count("searches"))
+                )
+                # filter references where studies exist
+                _ids = no_searches.values_list("id", flat=True)
+                Study = apps.get_model("study", "Study")
+                no_studies = no_searches.exclude(id__in=Study.objects.filter(id__in=_ids))
+
+                # remove candidate deletions
+                n = no_studies.count()
+                if n > 0:
+                    logger.info(f"Removing {n} references from search {self.id}")
+                    no_studies.delete()
 
     def studies(self) -> models.QuerySet:
         Study = apps.get_model("study", "study")
