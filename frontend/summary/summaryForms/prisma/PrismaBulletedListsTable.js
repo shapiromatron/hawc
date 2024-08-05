@@ -13,7 +13,7 @@ const key = "bulleted_lists";
 class PrismaBulletedListsTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            { createNewBox } = this.props.store.subclass;
+            { createNewBulletedList } = this.props.store.subclass;
 
         return (
             <div>
@@ -37,8 +37,8 @@ class PrismaBulletedListsTable extends Component {
                             <th>Background Color</th>
                             <th>Border Color</th>
                             <th>Font Color</th>
-                            <th>Text Formatting Style</th>
-                            <th>Section</th>
+                            <th>Box</th>
+                            <th>Tag</th>
                             <ActionsTh onClickNew={createNewBulletedList} />
                         </tr>
                     </thead>
@@ -70,8 +70,8 @@ class BulletedListsRow extends BaseEditableRow {
                 <td>{row.bg_color}</td>
                 <td>{row.border_color}</td>
                 <td>{row.font_color}</td>
-                <td>{row.text_style}</td>
-                <td>{row.section}</td>
+                <td>{row.box}</td>
+                <td>{row.tag}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({ edit: true })}
@@ -97,7 +97,7 @@ class BulletedListsRow extends BaseEditableRow {
                             <IntegerInput
                                 name={`${key}-width-${index}`}
                                 onChange={e =>
-                                    changeArraySettings(key, index, "column", e.target.value)
+                                    changeArraySettings(key, index, "width", e.target.value)
                                 }
                                 label="Width"
                                 value={row.width}
@@ -107,7 +107,7 @@ class BulletedListsRow extends BaseEditableRow {
                                 value={row.height}
                                 label="Height"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "header", e.target.value)
+                                    changeArraySettings(key, index, "height", e.target.value)
                                 }
                             />
                             <IntegerInput
@@ -158,30 +158,22 @@ class BulletedListsRow extends BaseEditableRow {
                                     changeArraySettings(key, index, "font_color", e.target.value)
                                 }
                             />
-                            <TextInput
-                                name={`${key}-text-style-${index}`}
-                                value={row.text_style}
-                                label="Text Formatting Style"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "text_style", e.target.value)
-                                }
-                            />
                             <SelectInput
-                                name={`${key}-section-${index}`}
-                                value={row.section}
+                                name={`${key}-box-${index}`}
+                                value={row.box}
                                 label="Box"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "on_click_event", value)
+                                    changeArraySettings(key, index, "box", value)
                                 }
                                 multiple={false}
                                 choices={getLinkingOptions("boxes")}
                             />
                             <SelectInput
-                                name={`${key}-section-${index}`}
-                                value={row.section}
+                                name={`${key}-tag-${index}`}
+                                value={row.tag}
                                 label="Tag related to data in this list"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "on_click_event", value)
+                                    changeArraySettings(key, index, "tag", value)
                                 }
                                 multiple={false}
                                 choices={getTagOptions()}

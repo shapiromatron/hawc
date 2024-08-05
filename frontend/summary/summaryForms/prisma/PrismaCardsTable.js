@@ -1,21 +1,23 @@
-import {inject, observer} from "mobx-react";
+import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-import React, {Component} from "react";
-import {ActionsTh, BaseEditableRow, MoveRowTd} from "shared/components/EditableRowData";
+import React, { Component } from "react";
+import { ActionsTh, BaseEditableRow, MoveRowTd } from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
+import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
-const key = "sections";
+const key = "cards";
 
 @inject("store")
 @observer
-class PrismaSectionsTable extends Component {
+class PrismaCardsTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            {createNewSection} = this.props.store.subclass;
+            { createNewCard } = this.props.store.subclass;
+
         return (
             <div>
-                <h3>Sections</h3>
+                <h3>Bulleted Lists</h3>
                 <table className="table table-sm table-striped">
                     {/* <colgroup>
                     <col width="25%" />
@@ -35,13 +37,14 @@ class PrismaSectionsTable extends Component {
                             <th>Background Color</th>
                             <th>Border Color</th>
                             <th>Font Color</th>
-                            <th>Text Formatting Style</th>
-                            <ActionsTh onClickNew={createNewSection} />
+                            <th>Box</th>
+                            <th>Tag</th>
+                            <ActionsTh onClickNew={createNewCard} />
                         </tr>
                     </thead>
                     <tbody>
                         {items.map((row, index) => {
-                            return <SectionsRow row={row} index={index} key={index} />;
+                            return <CardsRow row={row} index={index} key={index} />;
                         })}
                     </tbody>
                 </table>
@@ -52,9 +55,9 @@ class PrismaSectionsTable extends Component {
 
 @inject("store")
 @observer
-class SectionsRow extends BaseEditableRow {
+class CardsRow extends BaseEditableRow {
     renderViewRow(row, index) {
-        const {deleteArrayElement} = this.props.store.subclass;
+        const { deleteArrayElement } = this.props.store.subclass;
 
         return (
             <tr>
@@ -67,16 +70,17 @@ class SectionsRow extends BaseEditableRow {
                 <td>{row.bg_color}</td>
                 <td>{row.border_color}</td>
                 <td>{row.font_color}</td>
-                <td>{row.text_style}</td>
+                <td>{row.box}</td>
+                <td>{row.tag}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
-                    onEdit={() => this.setState({edit: true})}
+                    onEdit={() => this.setState({ edit: true })}
                 />
             </tr>
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings} = this.props.store.subclass;
+        const { changeArraySettings, getLinkingOptions, getTagOptions } = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -154,21 +158,33 @@ class SectionsRow extends BaseEditableRow {
                                     changeArraySettings(key, index, "font_color", e.target.value)
                                 }
                             />
-                            <TextInput
-                                name={`${key}-text-style-${index}`}
-                                value={row.text_style}
-                                label="Text Formatting Style"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "text_style", e.target.value)
+                            <SelectInput
+                                name={`${key}-box-${index}`}
+                                value={row.section}
+                                label="Box"
+                                handleSelect={value =>
+                                    changeArraySettings(key, index, "box", value)
                                 }
+                                multiple={false}
+                                choices={getLinkingOptions("boxes")}
+                            />
+                            <SelectInput
+                                name={`${key}-tag-${index}`}
+                                value={row.tag}
+                                label="Tag related to data in this list"
+                                handleSelect={value =>
+                                    changeArraySettings(key, index, "tag", value)
+                                }
+                                multiple={false}
+                                choices={getTagOptions()}
                             />
                         </div>
                         <div className="form-row justify-content-center">
                             <button
                                 className="btn btn-primary mx-2 py-2"
                                 type="button"
-                                style={{width: "15rem", padding: "0.7rem"}}
-                                onClick={() => this.setState({edit: false})}>
+                                style={{ width: "15rem", padding: "0.7rem" }}
+                                onClick={() => this.setState({ edit: false })}>
                                 Close
                             </button>
                         </div>
@@ -178,8 +194,8 @@ class SectionsRow extends BaseEditableRow {
         );
     }
 }
-PrismaSectionsTable.propTypes = {
+PrismaCardsTable.propTypes = {
     store: PropTypes.object,
 };
 
-export default PrismaSectionsTable;
+export default PrismaCardsTable;

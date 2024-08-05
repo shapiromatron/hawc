@@ -33,6 +33,45 @@ let createSectionRow = function() {
             text_style: "",
             section: "",
         };
+    },
+    createBulletedListRow = function () {
+        return {
+            name: "",
+            width: 0,
+            height: 0,
+            border_width: 0,
+            rx: 0,
+            ry: 0,
+            bg_color: "",
+            border_color: "",
+            font_color: "",
+            text_style: "",
+            box: "",
+        };
+    },
+    createCardRow = function () {
+        return {
+            name: "",
+            width: 0,
+            height: 0,
+            border_width: 0,
+            rx: 0,
+            ry: 0,
+            bg_color: "",
+            border_color: "",
+            font_color: "",
+            text_style: "",
+            box: "",
+        };
+    },
+    createArrowRow = function () {
+        return {
+            source: "",
+            dest: "",
+            width: 0,
+            type: 0,
+            color: ""
+        };
     };
 
 class PrismaStore {
@@ -69,6 +108,28 @@ class PrismaStore {
 
     @action.bound createNewBox() {
         this.settings.boxes.push(createBoxRow());
+    }
+
+    @action.bound createNewBulletedList() {
+        this.settings.bulleted_lists.push(createBulletedListRow());
+    }
+
+    @action.bound createNewCard() {
+        this.settings.cards.push(createCardRow());
+    }
+
+    @action.bound createNewArrow() {
+        this.settings.arrows.push(createArrowRow());
+    }
+
+    @action.bound getTagOptions() {
+        // TODO: get tag options from assessment
+        return [{id:1, label: "test"}];
+    }
+
+    @action.bound getArrowOptions() {
+        // TODO: gather all options for arrow start/end
+        return [{ id: 1, label: "test" }];
     }
 
     @action.bound getLinkingOptions(key) {

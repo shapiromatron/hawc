@@ -97,7 +97,7 @@ class BoxesRow extends BaseEditableRow {
                             <IntegerInput
                                 name={`${key}-width-${index}`}
                                 onChange={e =>
-                                    changeArraySettings(key, index, "column", e.target.value)
+                                    changeArraySettings(key, index, "width", e.target.value)
                                 }
                                 label="Width"
                                 value={row.width}
@@ -107,7 +107,7 @@ class BoxesRow extends BaseEditableRow {
                                 value={row.height}
                                 label="Height"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "header", e.target.value)
+                                    changeArraySettings(key, index, "height", e.target.value)
                                 }
                             />
                             <IntegerInput
@@ -171,7 +171,7 @@ class BoxesRow extends BaseEditableRow {
                                 value={row.section}
                                 label="Section"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "on_click_event", value)
+                                    changeArraySettings(key, index, "section", value)
                                 }
                                 multiple={false}
                                 choices={getLinkingOptions("sections")}
