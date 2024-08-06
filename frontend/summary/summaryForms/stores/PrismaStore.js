@@ -34,7 +34,7 @@ let createSectionRow = function() {
             section: "",
         };
     },
-    createBulletedListRow = function () {
+    createBulletedListRow = function() {
         return {
             name: "",
             width: 0,
@@ -49,7 +49,7 @@ let createSectionRow = function() {
             box: "",
         };
     },
-    createCardRow = function () {
+    createCardRow = function() {
         return {
             name: "",
             width: 0,
@@ -64,13 +64,13 @@ let createSectionRow = function() {
             box: "",
         };
     },
-    createArrowRow = function () {
+    createArrowRow = function() {
         return {
             source: "",
             dest: "",
             width: 0,
             type: 0,
-            color: ""
+            color: "",
         };
     };
 
@@ -124,12 +124,12 @@ class PrismaStore {
 
     @action.bound getTagOptions() {
         // TODO: get tag options from assessment
-        return [{id:1, label: "test"}];
+        return [{id: 1, label: "test"}];
     }
 
     @action.bound getArrowOptions() {
         // TODO: gather all options for arrow start/end
-        return [{ id: 1, label: "test" }];
+        return [{id: 1, label: "test"}];
     }
 
     @action.bound getLinkingOptions(key) {

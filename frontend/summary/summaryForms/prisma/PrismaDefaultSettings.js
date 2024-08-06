@@ -65,7 +65,7 @@ export default {
             dest: "No Data Provided",
             width: 3,
             type: 2,
-            color: "Black"
-        }
+            color: "Black",
+        },
     ],
 };

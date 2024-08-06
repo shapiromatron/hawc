@@ -124,8 +124,8 @@ BaseEditableRow.propTypes = {
 
 export {
     ActionsTh,
-    deleteArrayElement,
     BaseEditableRow,
+    deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
     MoveRowTd,

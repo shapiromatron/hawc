@@ -1,7 +1,7 @@
-import { inject, observer } from "mobx-react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { ActionsTh, BaseEditableRow, MoveRowTd } from "shared/components/EditableRowData";
+import React, {Component} from "react";
+import {ActionsTh, BaseEditableRow, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -13,7 +13,7 @@ const key = "arrows";
 class PrismaArrowsTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            { createNewArrow } = this.props.store.subclass;
+            {createNewArrow} = this.props.store.subclass;
 
         return (
             <div>
@@ -51,7 +51,7 @@ class PrismaArrowsTable extends Component {
 @observer
 class ArrowsRow extends BaseEditableRow {
     renderViewRow(row, index) {
-        const { deleteArrayElement } = this.props.store.subclass;
+        const {deleteArrayElement} = this.props.store.subclass;
 
         return (
             <tr>
@@ -62,13 +62,13 @@ class ArrowsRow extends BaseEditableRow {
                 <td>{row.color}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
-                    onEdit={() => this.setState({ edit: true })}
+                    onEdit={() => this.setState({edit: true})}
                 />
             </tr>
         );
     }
     renderEditRow(row, index) {
-        const { changeArraySettings, getArrowOptions } = this.props.store.subclass;
+        const {changeArraySettings, getArrowOptions} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -110,7 +110,7 @@ class ArrowsRow extends BaseEditableRow {
                                     changeArraySettings(key, index, "type", value)
                                 }
                                 multiple={false}
-                                choices={[{ id: 1, label: "test" }]} // TODO: define choices for arrow types
+                                choices={[{id: 1, label: "test"}]} // TODO: define choices for arrow types
                             />
                             <TextInput
                                 name={`${key}-color-${index}`}
@@ -125,8 +125,8 @@ class ArrowsRow extends BaseEditableRow {
                             <button
                                 className="btn btn-primary mx-2 py-2"
                                 type="button"
-                                style={{ width: "15rem", padding: "0.7rem" }}
-                                onClick={() => this.setState({ edit: false })}>
+                                style={{width: "15rem", padding: "0.7rem"}}
+                                onClick={() => this.setState({edit: false})}>
                                 Close
                             </button>
                         </div>

@@ -1,7 +1,7 @@
-import { inject, observer } from "mobx-react";
+import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
-import { ActionsTh, BaseEditableRow, MoveRowTd } from "shared/components/EditableRowData";
+import React, {Component} from "react";
+import {ActionsTh, BaseEditableRow, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -13,7 +13,7 @@ const key = "bulleted_lists";
 class PrismaBulletedListsTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            { createNewBulletedList } = this.props.store.subclass;
+            {createNewBulletedList} = this.props.store.subclass;
 
         return (
             <div>
@@ -57,7 +57,7 @@ class PrismaBulletedListsTable extends Component {
 @observer
 class BulletedListsRow extends BaseEditableRow {
     renderViewRow(row, index) {
-        const { deleteArrayElement } = this.props.store.subclass;
+        const {deleteArrayElement} = this.props.store.subclass;
 
         return (
             <tr>
@@ -74,13 +74,13 @@ class BulletedListsRow extends BaseEditableRow {
                 <td>{row.tag}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
-                    onEdit={() => this.setState({ edit: true })}
+                    onEdit={() => this.setState({edit: true})}
                 />
             </tr>
         );
     }
     renderEditRow(row, index) {
-        const { changeArraySettings, getLinkingOptions, getTagOptions } = this.props.store.subclass;
+        const {changeArraySettings, getLinkingOptions, getTagOptions} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -183,8 +183,8 @@ class BulletedListsRow extends BaseEditableRow {
                             <button
                                 className="btn btn-primary mx-2 py-2"
                                 type="button"
-                                style={{ width: "15rem", padding: "0.7rem" }}
-                                onClick={() => this.setState({ edit: false })}>
+                                style={{width: "15rem", padding: "0.7rem"}}
+                                onClick={() => this.setState({edit: false})}>
                                 Close
                             </button>
                         </div>
