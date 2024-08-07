@@ -17,7 +17,7 @@ class PrismaArrowsTable extends Component {
 
         return (
             <div>
-                <h3>Bulleted Lists</h3>
+                <h3>Arrows</h3>
                 <table className="table table-sm table-striped">
                     {/* <colgroup>
                     <col width="25%" />
