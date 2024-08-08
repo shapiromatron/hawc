@@ -23,9 +23,9 @@
           <td>{{object.system}}</td>
           <td>{{object.get_value_type_display}}</td>
           <td>{{object.duration}}</td>
-          <td>{{object.value}} {{object.value_unit|default:""}}{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</td>
+          <td>{% if object.value < 0.001 %}{{object.value|default:"-"|stringformat:"E"}}{% else %}{{object.value|default:"-"}}{% endif %} {{object.value_unit|default:""}}{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</td>
           <td>{{object.pod_type|default:"-"}}</td>
-          <td>{{object.pod_value|default:"-"}} {{object.pod_unit|default:""}}</td>
+          <td>{% if object.pod_value < 0.001 %}{{object.pod_value|default:"-"|stringformat:"E"}}{% else %}{{object.pod_value|default:"-"}}{% endif %} {{object.pod_unit|default:""}}</td>
           <td>{{object.uncertainty|default:"-"}}</td>
           <td>{{object.confidence}}</td>
         </tr>
