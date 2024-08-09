@@ -51,7 +51,7 @@ class PrismaArrowsTable extends Component {
 @observer
 class ArrowsRow extends BaseEditableRow {
     startEditable() {
-        return this.props.row.source == ""
+        return this.props.row.source == "";
     }
     renderViewRow(row, index) {
         const {deleteArrayElement} = this.props.store.subclass;
