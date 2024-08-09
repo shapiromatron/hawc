@@ -23,7 +23,7 @@ class App extends Component {
                 <Tabs onSelect={handleTabSelection}>
                     <TabList>
                         <Tab>Overall</Tab>
-                        <Tab>Setting</Tab>
+                        <Tab>Settings</Tab>
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>

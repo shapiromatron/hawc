@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, {Component} from "react";
 
 const moveArrayElementUp = function(arr, index) {
         if (index === 0) {
@@ -41,6 +41,14 @@ const moveArrayElementUp = function(arr, index) {
     MoveRowTd = function(props) {
         return (
             <td>
+                {props.onEdit ? (
+                    <button
+                        className="btn btn-sm btn-primary px-1"
+                        title="Edit row"
+                        onClick={props.onEdit}>
+                        <i className="fa fa-fw fa-pencil-square-o"></i>
+                    </button>
+                ) : null}
                 {props.onMoveUp ? (
                     <button
                         className="btn btn-sm btn-secondary px-1"
@@ -71,13 +79,54 @@ const moveArrayElementUp = function(arr, index) {
         );
     };
 
+class BaseEditableRow extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {edit: this.startEditable()};
+    }
+
+    startEditable() {
+        // if name is empty, default to edit row
+        return this.props.row.name == "";
+    }
+
+    render() {
+        if (this.state.edit) {
+            return this.renderEditRow(this.props.row, this.props.index);
+        } else {
+            return this.renderViewRow(this.props.row, this.props.index);
+        }
+    }
+
+    renderViewRow(row, index) {
+        return null;
+    }
+
+    renderEditRow(row, index) {
+        return null;
+    }
+}
+
 ActionsTh.propTypes = {
     onClickNew: PropTypes.func,
 };
 MoveRowTd.propTypes = {
+    onEdit: PropTypes.func,
     onMoveUp: PropTypes.func,
     onMoveDown: PropTypes.func,
     onDelete: PropTypes.func,
 };
+BaseEditableRow.propTypes = {
+    row: PropTypes.object,
+    index: PropTypes.number,
+};
 
-export {ActionsTh, deleteArrayElement, moveArrayElementDown, moveArrayElementUp, MoveRowTd};
+export {
+    ActionsTh,
+    BaseEditableRow,
+    deleteArrayElement,
+    moveArrayElementDown,
+    moveArrayElementUp,
+    MoveRowTd,
+};
