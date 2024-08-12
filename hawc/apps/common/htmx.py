@@ -238,7 +238,7 @@ class HtmxGetMixin:
         return getattr(self, request.action, self.http_method_not_allowed)
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
+        self.object = super().get_object()
+        context = super().get_context_data(object=self.object)
         handler = self.get_handler(request)
         return handler(request, context)

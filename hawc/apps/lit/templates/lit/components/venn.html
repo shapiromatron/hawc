@@ -1,0 +1,56 @@
+
+{% if n == 2 %}
+  <svg viewBox="0,0,600,400" width="600" height="400" style="border: 1px solid #efefef;">
+    <text class="lbl" x="120" y="70" style="text-anchor: end; font-weight: bold;">Group A</text>
+    <text class="lbl" x="470" y="70" style="text-anchor: start; font-weight: bold;">Group B</text>
+    <circle cx="200" cy="220" r="150" fill="red" stroke="red" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></circle>
+    <circle cx="400" cy="220" r="150" fill="blue" stroke="blue" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></circle>
+    <text class="intersection" x="180" y="220" style="text-anchor: middle;">A</text>
+    <text class="intersection" x="300" y="220" style="text-anchor: middle;">AB</text>
+    <text class="intersection" x="420" y="220" style="text-anchor: middle;">B</text>
+  </svg>
+{% endif %}
+
+{% if n == 3 %}
+  <svg viewBox="0,0,600,400" width="600" height="400" style="border: 1px solid #efefef;">
+    <text class="lbl" x="410" y="70" style="text-anchor: start; font-weight: bold;">Group A</text>
+    <text class="lbl" x="130" y="350" style="text-anchor: end; font-weight: bold;">Group B</text>
+    <text class="lbl" x="470" y="350" style="text-anchor: start; font-weight: bold;">Group C</text>
+    <circle cx="230" cy="265" r="120" fill="red" stroke="red" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></circle>
+    <circle cx="370" cy="265" r="120" fill="green" stroke="green" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></circle>
+    <circle cx="300" cy="135" r="120" fill="blue" stroke="blue" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></circle>
+    <text class="intersection" x="300" y="95" style="text-anchor: middle;">A</text>
+    <text class="intersection" x="185" y="310" style="text-anchor: middle;">B</text>
+    <text class="intersection" x="415" y="310" style="text-anchor: middle;">C</text>
+    <text class="intersection" x="300" y="225" style="text-anchor: middle;">ABC</text>
+    <text class="intersection" x="245" y="190" style="text-anchor: middle;">AB</text>
+    <text class="intersection" x="355" y="190" style="text-anchor: middle;">AC</text>
+    <text class="intersection" x="300" y="300" style="text-anchor: middle;">BC</text>
+  </svg>
+{% endif %}
+
+{% if n == 4 %}
+  <svg viewBox="0,0,600,400" width="600" height="400" style="border: 1px solid #efefef;">
+    <text class="lbl" x="140" y="30" style="text-anchor: middle; font-weight: bold;">Group A</text>
+    <text class="lbl" x="440" y="30" style="text-anchor: middle; font-weight: bold;">Group B</text>
+    <text class="lbl" x="135" y="340" style="text-anchor: end; font-weight: bold;">Group C</text>
+    <text class="lbl" x="460" y="340" style="text-anchor: start; font-weight: bold;">Group D</text>
+    <ellipse cx="300" cy="240" rx="100" ry="170" transform="rotate(-60, 300, 310)" fill="red" stroke="red" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></ellipse>
+    <ellipse cx="300" cy="190" rx="100" ry="170" transform="rotate(-45, 250, 270)" fill="orange" stroke="orange" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></ellipse>
+    <ellipse cx="300" cy="190" rx="100" ry="170" transform="rotate( 45, 350, 270)" fill="green" stroke="green" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></ellipse>
+    <ellipse cx="300" cy="240" rx="100" ry="170" transform="rotate( 60, 300, 310)" fill="blue" stroke="blue" stroke-width="3" style="fill-opacity: 0.3; stroke-opacity: 0.5;"></ellipse>
+    <text class="intersection" x="140" y="290" style="text-anchor: middle;">C</text>
+    <text class="intersection" x="440" y="290" style="text-anchor: middle;">D</text>
+    <text class="intersection" x="140" y="115" style="text-anchor: middle;">A</text>
+    <text class="intersection" x="440" y="115" style="text-anchor: middle;">B</text>
+    <text class="intersection" x="300" y="360" style="text-anchor: middle;">CD</text>
+    <text class="intersection" x="180" y="210" style="text-anchor: middle;">AC</text>
+    <text class="intersection" x="410" y="210" style="text-anchor: middle;">BD</text>
+    <text class="intersection" x="300" y="160" style="text-anchor: middle;">AB</text>
+    <text class="intersection" x="300" y="270" style="text-anchor: middle;">ABCD</text>
+    <text class="intersection" x="230" y="290" style="text-anchor: middle;">ACD</text>
+    <text class="intersection" x="370" y="290" style="text-anchor: middle;">BCD</text>
+    <text class="intersection" x="335" y="205" style="text-anchor: middle;">ABD</text>
+    <text class="intersection" x="265" y="205" style="text-anchor: middle;">ABC</text>
+  </svg>
+{% endif %}

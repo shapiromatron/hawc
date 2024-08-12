@@ -1208,3 +1208,16 @@ class WorkflowViewSet(HtmxViewSet):
         form = forms.WorkflowForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, self.form_fragment, context)
+
+
+class VennView(BaseDetail):
+    model = Assessment
+    template_name = "venn.html"
+
+    def get_context_data(self, **kw):
+        context = super().get_context_data(**kw)
+        form = forms.VennForm(assessment=self.assessment, data=self.request.GET)
+        if form.is_valid():
+            context["n"] = form.get_venn()
+        context["form"] = form
+        return context

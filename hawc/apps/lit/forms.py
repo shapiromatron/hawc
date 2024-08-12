@@ -769,3 +769,47 @@ class BulkMergeConflictsForm(forms.Form):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         return helper
+
+
+class VennForm(forms.Form):
+    tag1 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=True
+    )
+    tag2 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=True
+    )
+    tag3 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=False
+    )
+    tag4 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        self.fields["tag1"].empty_label = None
+        self.fields["tag2"].empty_label = None
+        for field in ("tag1", "tag2", "tag3", "tag4"):
+            self.fields[field].queryset = tags
+            self.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
+
+    @property
+    def helper(self):
+        inputs = {
+            "legend_text": "Update reference details",
+            "help_text": "Update reference information which was fetched from database or reference upload.",
+            "cancel_url": reverse_lazy("lit:overview", args=(self.assessment.id,)),
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.add_row("tag1", 4, "col-md-3")
+        helper.form_method = "GET"
+        return helper
+
+    def get_venn(self):
+        n = 0
+        for field in ("tag1", "tag2", "tag3", "tag4"):
+            if self.cleaned_data[field] is not None:
+                n += 1
+        return n
