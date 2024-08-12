@@ -115,3 +115,15 @@ def debug_badge(text: str):
         '<span title="Click to copy text to clipboard" class="badge badge-dark px-1 mx-1 cursor-pointer debug-badge hidden">{}</span>',
         text,
     )
+
+
+@register.filter
+def e_notation(value):
+    """Format a floating point number using scientific notation if it is less than 0.001."""
+    try:
+        if float(value) < 0.001:
+            return f"{value: .2e}"
+    except ValueError:
+        pass
+
+    return value

@@ -20,7 +20,7 @@
       {% optional_table_row "Value type" object.get_value_type_display %}
       <tr>
         <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
-        <td>{% if object.value < 0.001 %}{{object.value|default:""|stringformat:"E"}}{% else %}{{object.value|default:""}}{% endif %} {{object.value_unit|default:""}}</td>
+        <td>{{object.value|default:""|e_notation}} {{object.value_unit|default:""}}</td>
       </tr>
       {% if object.confidence %}
         <tr>
@@ -34,7 +34,7 @@
       {% if object.pod_value %}
         <tr>
           <th>POD Value</th>
-          <td>{% if object.pod_value < 0.001 %}{{object.pod_value|default:""|stringformat:"E"}}{% else %}{{object.pod_value|default:""}}{% endif %}{{object.pod_unit|default:""}}</td>
+          <td>{{object.pod_value|default:""|e_notation}} {{object.pod_unit|default:""}}</td>
         </tr>
       {% endif %}
       {% if object.show_noncancer_fields %}
