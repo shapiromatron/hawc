@@ -120,11 +120,10 @@ def debug_badge(text: str):
 @register.filter
 def e_notation(value):
     """Format a floating point number using scientific notation if it is less than 0.001."""
-    try:
-        # use regular scientific notation if outside the range 'g' applies
-        if float(value) < 0.001 and float(value) >= 0.0001:
-            return f"{value: .2e}"
-    except ValueError:
-        pass
+    if not isinstance(value, float):
+        return value
+    # use regular scientific notation if outside the range 'g' applies
+    if value < 0.001 and value >= 0.0001:
+        return f"{value: .2e}"
     # otherwise use g, which removes trailing zeroes
     return f"{value: .3g}"
