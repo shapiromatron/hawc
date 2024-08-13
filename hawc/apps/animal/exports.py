@@ -3,8 +3,8 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
-from django.db.models import CharField, F
-from django.db.models.functions import Cast
+from django.db.models import Case, CharField, F, FloatField, When
+from django.db.models.functions import Cast, Sqrt
 from django.db.models.lookups import Exact
 from scipy import stats
 
@@ -266,6 +266,174 @@ class EndpointExport(ModelExport):
             df.loc[:, endpoint_notes] = df[endpoint_notes].apply(cleanHTML)
 
         return df
+
+
+class EndpointBMDSExport(FlatFileExporter):
+    def __init__(self, assessment_id: int, **kwargs):
+        self.assessment_id = assessment_id
+        self.filename = f"HAWC-{assessment_id}_bmds_export"
+        self.kwargs = kwargs
+
+    def get_dose_groups(self, assessment_id: int) -> pd.DataFrame:
+        qs = (
+            models.DoseGroup.objects.filter(
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
+            )
+            .values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
+            .order_by("dose_regime_id", "dose_units_id", "dose_group_id")
+        )
+        return pd.DataFrame(data=qs)
+
+    def get_dichotomous_response(self, assessment_id: int) -> pd.DataFrame:
+        qs = (
+            models.EndpointGroup.objects.filter(
+                endpoint__assessment_id=assessment_id,
+                endpoint__data_type__in=[
+                    constants.DataType.DICHOTOMOUS,
+                    constants.DataType.DICHOTOMOUS_CANCER,
+                ],
+                n__gt=0,
+                incidence__isnull=False,
+            )
+            .values(
+                "endpoint_id",
+                "dose_group_id",
+                "n",
+                "incidence",
+                dose_regime_id=F("endpoint__animal_group__dosing_regime_id"),
+            )
+            .order_by("endpoint_id", "endpoint__animal_group__dosing_regime_id", "dose_group_id")
+        )
+        return pd.DataFrame(data=qs)
+
+    def get_continuous_response(self, assessment_id: int) -> pd.DataFrame:
+        qs = (
+            models.EndpointGroup.objects.filter(
+                endpoint__assessment_id=assessment_id,
+                endpoint__data_type=constants.DataType.CONTINUOUS,
+                n__gt=0,
+                response__isnull=False,
+                variance__isnull=False,
+            )
+            .annotate(
+                stdev=Case(
+                    When(endpoint__variance_type=constants.VarianceType.SD, then=F("variance")),
+                    When(
+                        endpoint__variance_type=constants.VarianceType.SE,
+                        then=F("variance") * Sqrt(F("n")),
+                    ),
+                    default=None,
+                    output_field=FloatField(),
+                )
+            )
+            .filter(
+                stdev__isnull=False,
+            )
+            .values(
+                "endpoint_id",
+                "dose_group_id",
+                "n",
+                "response",
+                "stdev",
+                dose_regime_id=F("endpoint__animal_group__dosing_regime_id"),
+            )
+            .order_by("endpoint_id", "dose_regime_id", "dose_group_id")
+        )
+        return pd.DataFrame(data=qs)
+
+    def get_dichotomous_datasets(self, doses: pd.DataFrame, responses: pd.DataFrame) -> list[dict]:
+        if responses.empty or doses.empty:
+            return []
+
+        df1 = (
+            responses[["endpoint_id", "dose_regime_id", "dose_group_id"]]
+            .drop_duplicates()
+            .set_index(["dose_regime_id", "dose_group_id"])
+        )
+
+        df2 = doses.set_index(["dose_regime_id", "dose_group_id"])
+
+        df3 = (
+            df1.merge(df2, how="inner", left_index=True, right_index=True)
+            .reset_index()
+            .sort_values(["endpoint_id", "dose_units__name", "dose_group_id"])
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id", "dose_units__name"])
+            .agg(list)
+            .reset_index()
+            .set_index("endpoint_id")
+            .rename(columns={"dose_units__name": "units", "dose": "doses"})
+        )
+
+        df4 = (
+            responses.set_index("endpoint_id")
+            .loc[df3.index.values]
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id"])
+            .agg(list)
+            .assign(dtype="D")
+            .reset_index()
+        )
+        results = df4.to_dict(orient="records")
+        for result in results:
+            d = df3.loc[result["endpoint_id"]]
+            if isinstance(d, pd.Series):
+                d = d.to_frame().T
+            result["doses"] = {d["units"]: d["doses"] for d in d.to_dict(orient="records")}
+
+        return results
+
+    def get_continuous_datasets(self, doses, responses) -> list[dict]:
+        if responses.empty or doses.empty:
+            return []
+
+        df1 = (
+            responses[["endpoint_id", "dose_regime_id", "dose_group_id"]]
+            .drop_duplicates()
+            .set_index(["dose_regime_id", "dose_group_id"])
+        )
+
+        df2 = doses.set_index(["dose_regime_id", "dose_group_id"])
+
+        df3 = (
+            df1.merge(df2, how="inner", left_index=True, right_index=True)
+            .reset_index()
+            .sort_values(["endpoint_id", "dose_units__name", "dose_group_id"])
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id", "dose_units__name"])
+            .agg(list)
+            .reset_index()
+            .set_index("endpoint_id")
+            .rename(columns={"dose_units__name": "units", "dose": "doses"})
+        )
+
+        df4 = (
+            responses.set_index("endpoint_id")
+            .loc[df3.index.values]
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id"])
+            .agg(list)
+            .assign(dtype="C")
+            .reset_index()
+        )
+
+        results = df4.to_dict(orient="records")
+
+        for result in results:
+            d = df3.loc[result["endpoint_id"]]
+            if isinstance(d, pd.Series):
+                d = d.to_frame().T
+            result["doses"] = {d["units"]: d["doses"] for d in d.to_dict(orient="records")}
+
+        return results
+
+    def build_df(self):
+        doses = self.get_dose_groups(self.assessment_id)
+        responses_c = self.get_continuous_response(self.assessment_id)
+        responses_d = self.get_dichotomous_response(self.assessment_id)
+        c_datasets = self.get_continuous_datasets(doses, responses_c)
+        d_datasets = self.get_dichotomous_datasets(doses, responses_d)
+        return pd.DataFrame.from_records(c_datasets + d_datasets)
 
 
 class EndpointGroupExport(ModelExport):
