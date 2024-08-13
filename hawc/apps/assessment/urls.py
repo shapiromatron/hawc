@@ -139,6 +139,17 @@ urlpatterns = [
         {"action": "update_item"},
         name="publish-update",
     ),
+    # assessment tags
+    path(
+        "<int:pk>/tags/",
+        views.TagList.as_view(),
+        name="manage-tags",
+    ),
+    path(
+        "tag/<int:pk>/<slug:action>/",
+        views.TagViewSet.as_view(),
+        name="tag-htmx",
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]

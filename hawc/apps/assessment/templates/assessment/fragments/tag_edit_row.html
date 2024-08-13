@@ -1,0 +1,37 @@
+
+<tr hx-target="this" hx-swap="outerHTML" class="tag-edit-row">
+    {% if form %}
+      <td colspan="3" class="bg-lightblue">
+        <form method="post" enctype="multipart/form-data">
+          {% crispy form %}
+          <div class="form-row d-flex flex-row-reverse px-3 pb-3">
+            {% if form.instance.id %}
+              <button class="btn btn-primary ml-2"
+                      hx-post="{% url 'assessment:tag-htmx' object.pk 'update' %}"
+                      hx-encoding="multipart/form-data">
+                <i class="fa fa-fw fa-save"></i>&nbsp;
+                Update
+              </button>
+              <button class="btn btn-light"
+                      hx-get="{% url 'assessment:tag-htmx' object.pk 'read' %}">
+                Cancel
+              </button>
+            {% else %}
+              <button class="btn btn-primary ml-2"
+                      hx-post="{% url 'assessment:tag-htmx' assessment.pk 'create' %}"
+                      hx-encoding="multipart/form-data">
+                <i class="fa fa-fw fa-save"></i>&nbsp;Create
+              </button>
+              <button class="btn btn-light"
+                      type='button'
+                      onclick="window.app.HAWCUtils.hideElement($(this).closest('.tag-edit-row'), true)">
+                Cancel
+              </button>
+            {% endif %}
+          </div>
+        </form>
+      </td>
+      {{ form.media }}
+    {% endif %}
+  </tr>
+  

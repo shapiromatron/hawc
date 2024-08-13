@@ -650,3 +650,15 @@ def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dic
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())
+
+class ColorField(models.CharField):
+
+    default_validators = [validators.ColorValidator()]
+
+    def formfield(self, **kwargs):
+        return super().formfield(
+            **{
+                "form_class": forms.ColorField,
+                **kwargs,
+            }
+        )

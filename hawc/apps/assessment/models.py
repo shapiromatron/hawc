@@ -21,12 +21,13 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
+from treebeard.mp_tree import MP_Node
 
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
-from ..common.models import get_private_data_storage
+from ..common.models import get_private_data_storage, ColorField, AssessmentRootMixin
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
@@ -1335,6 +1336,35 @@ class Content(models.Model):
         html = Template(content.template).render(context)
         cache_html = cacheable(lambda: html, key, cache_duration=settings.CACHE_10_MIN)
         return cache_html
+
+class Tag(AssessmentRootMixin,MP_Node):
+    name = models.CharField(max_length=20, unique=True)
+    description = models.TextField(blank=True)
+    color = ColorField(default="#ffffff")
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="tags")
+    published = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    cache_template_taglist = "assessment.tag.taglist.assessment-{0}"
+    cache_template_tagtree = "assessment.tag.tagtree.assessment-{0}"
+
+    def get_absolute_url(self):
+        return reverse("assessment:tag-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("assessment:tag-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("assessment:tag-htmx", args=[self.pk, "delete"])
+
+class TaggedItem(models.Model):
+    tag = models.ForeignKey(Tag, models.CASCADE, related_name="items")
+    content_type = models.ForeignKey(ContentType, models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
 
 reversion.register(DSSTox)

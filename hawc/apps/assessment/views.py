@@ -911,3 +911,56 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
     """
     if not published and not assessment.user_is_team_member_or_higher(user):
         raise PermissionDenied()
+
+class TagList(BaseList):
+    parent_model = models.Assessment
+    model = models.Tag
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = forms.TagForm(assessment=self.assessment)
+        return context
+    
+class TagViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = models.Assessment
+    model = models.Tag
+    form_fragment = "assessment/fragments/tag_edit_row.html"
+    detail_fragment = "assessment/fragments/tag_row.html"
+
+    @action(permission=can_view, htmx_only=False)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.TagForm(request.POST, assessment=request.item.assessment)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.TagForm(assessment=request.item.assessment)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.TagForm(request.POST, instance=request.item.object)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.AttachmentForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        return render(request, self.detail_fragment, self.get_context_data())

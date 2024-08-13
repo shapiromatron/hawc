@@ -667,3 +667,38 @@ class DatasetForm(forms.ModelForm):
         model = models.Dataset
         fields = ("name", "description", "published")
         field_classes = {"description": QuillField}
+
+class TagForm(forms.ModelForm):
+    parent = forms.ModelChoiceField(queryset=models.Tag.objects.all(),required=False)
+    class Meta:
+        model = models.Tag
+        fields = ["name","description","parent","color","published"]
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment", None)
+        super().__init__(*args, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+        parent_queryset = self.fields["parent"].queryset.filter(
+            assessment=self.instance.assessment
+        )
+        if self.instance.pk is not None:
+            parent_queryset = parent_queryset.exclude(pk=self.instance.pk)
+        self.fields["parent"].queryset = parent_queryset
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+    
+    def save(self, commit = True):
+        instance = super().save(commit)
+        if commit:
+            #previous_parent = instance.get_parent().pk
+            # only move this tag if parent changed
+            #if parent != previous_parent:
+                #instance.move(parent, pos="last-child")
+            pass
+        return instance
+            
