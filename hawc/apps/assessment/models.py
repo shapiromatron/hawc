@@ -27,7 +27,7 @@ from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
-from ..common.models import get_private_data_storage, ColorField, AssessmentRootMixin
+from ..common.models import AssessmentRootMixin, ColorField, get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
@@ -1337,7 +1337,8 @@ class Content(models.Model):
         cache_html = cacheable(lambda: html, key, cache_duration=settings.CACHE_10_MIN)
         return cache_html
 
-class Tag(AssessmentRootMixin,MP_Node):
+
+class Tag(AssessmentRootMixin, MP_Node):
     name = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True)
     color = ColorField(default="#ffffff")
@@ -1349,6 +1350,15 @@ class Tag(AssessmentRootMixin,MP_Node):
     cache_template_taglist = "assessment.tag.taglist.assessment-{0}"
     cache_template_tagtree = "assessment.tag.tagtree.assessment-{0}"
 
+    @classmethod
+    def create_root(cls, assessment_id, **kwargs):
+        """
+        Constructor to define root with assessment-creation
+        """
+        kwargs["name"] = cls.get_assessment_root_name(assessment_id)
+        kwargs["assessment_id"] = assessment_id
+        return cls.add_root(**kwargs)
+
     def get_absolute_url(self):
         return reverse("assessment:tag-htmx", args=[self.pk, "read"])
 
@@ -1357,6 +1367,7 @@ class Tag(AssessmentRootMixin,MP_Node):
 
     def get_delete_url(self):
         return reverse("assessment:tag-htmx", args=[self.pk, "delete"])
+
 
 class TaggedItem(models.Model):
     tag = models.ForeignKey(Tag, models.CASCADE, related_name="items")

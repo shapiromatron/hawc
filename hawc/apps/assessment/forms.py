@@ -668,37 +668,65 @@ class DatasetForm(forms.ModelForm):
         fields = ("name", "description", "published")
         field_classes = {"description": QuillField}
 
+
+class AssessmentRootModelChoiceField(forms.ModelChoiceField):
+    def __init__(self, model, *args, **kwargs):
+        self.model = model
+        super().__init__(None, *args, **kwargs)
+
+    def set_choices(self, node, assessment):
+        root = self.model.get_assessment_root(assessment.pk)
+        queryset = self.model.get_tree(root)
+        if node.pk is not None:
+            queryset = queryset.exclude(path__startswith=node.path, depth__gte=node.depth)
+        self._queryset = self.model.annotate_nested_names(queryset)
+        if not self._queryset:
+            self.choices = []
+        else:
+            default_choice = (self._queryset[0].pk, "-----")
+            self.choices = [
+                default_choice,
+                *[(obj.pk, obj.nested_name) for obj in self._queryset[1:]],
+            ]
+
+
 class TagForm(forms.ModelForm):
-    parent = forms.ModelChoiceField(queryset=models.Tag.objects.all(),required=False)
+    # TODO make htmx not allow multiple open updates,
+    # or make sure changing parent fails upstream under right conditions
+    parent = AssessmentRootModelChoiceField(model=models.Tag)
+
     class Meta:
         model = models.Tag
-        fields = ["name","description","parent","color","published"]
+        fields = ["name", "description", "parent", "color", "published"]
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        parent_queryset = self.fields["parent"].queryset.filter(
-            assessment=self.instance.assessment
-        )
         if self.instance.pk is not None:
-            parent_queryset = parent_queryset.exclude(pk=self.instance.pk)
-        self.fields["parent"].queryset = parent_queryset
+            self.fields["parent"].initial = self.instance.get_parent()
+        self.fields["parent"].set_choices(self.instance, self.instance.assessment)
 
     @property
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         return helper
-    
-    def save(self, commit = True):
-        instance = super().save(commit)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
         if commit:
-            #previous_parent = instance.get_parent().pk
-            # only move this tag if parent changed
-            #if parent != previous_parent:
-                #instance.move(parent, pos="last-child")
-            pass
+            parent = self.cleaned_data["parent"]
+            # handle new instance
+            if instance.pk is None:
+                instance = models.Tag.create_tag(
+                    assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
+                )
+            # handle existing instance
+            else:
+                instance.save()
+                if "parent" in self.changed_data:
+                    instance.move(parent, pos="last-child")
+            self.save_m2m()
         return instance
-            

@@ -912,6 +912,7 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
     if not published and not assessment.user_is_team_member_or_higher(user):
         raise PermissionDenied()
 
+
 class TagList(BaseList):
     parent_model = models.Assessment
     model = models.Tag
@@ -920,7 +921,8 @@ class TagList(BaseList):
         context = super().get_context_data(**kwargs)
         context["form"] = forms.TagForm(assessment=self.assessment)
         return context
-    
+
+
 class TagViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
@@ -954,7 +956,7 @@ class TagViewSet(HtmxViewSet):
                 self.perform_update(request.item, form)
                 template = self.detail_fragment
         else:
-            form = forms.AttachmentForm(data=None, instance=request.item.object)
+            form = forms.TagForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 

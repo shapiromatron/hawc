@@ -1,11 +1,11 @@
 <h2>Tags</h2>
 <table class="table table-sm table-striped">
     {% if canEdit %}
-    {% bs4_colgroup '25,50,25' %}
-    {% bs4_thead 'Tag,Description,Editing' %}
+    {% bs4_colgroup '20,50,10,20' %}
+    {% bs4_thead 'Tag,Description,Color,Editing' %}
     {% else %}
-    {% bs4_colgroup '30,70' %}
-    {% bs4_thead 'Tag,Description' %}
+    {% bs4_colgroup '30,60,10' %}
+    {% bs4_thead 'Tag,Description,Color' %}
     {% endif %}
     <tbody id="tag-tbody">
     {% for object in object_list %}

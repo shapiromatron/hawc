@@ -277,8 +277,11 @@ class AssessmentRootMixin:
         else:
             parent = cls.get_assessment_root(assessment_id)
 
+        # TODO make this a regex check to prevent adding a name that blocks another assessment
         # make sure name is valid and not root-like
-        if kwargs.get("name") == cls.get_assessment_root_name(assessment_id):
+        if kwargs.get(
+            "name", getattr(kwargs.get("instance"), "name", None)
+        ) == cls.get_assessment_root_name(assessment_id):
             raise SuspiciousOperation("attempting to create new root")
 
         # clear cache and create!
@@ -651,8 +654,8 @@ def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dic
         columns = [col[0] for col in cursor.description]
         yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())
 
-class ColorField(models.CharField):
 
+class ColorField(models.CharField):
     default_validators = [validators.ColorValidator()]
 
     def formfield(self, **kwargs):

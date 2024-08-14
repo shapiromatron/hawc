@@ -1,6 +1,6 @@
 <tr hx-target="this" hx-swap="outerHTML" class="tag-detail-row">
     <td>
-      <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
+      {{object.name}}
       {% if canEdit or permissions.edit %}
         {% if not object.publicly_available %}
           <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
@@ -8,6 +8,7 @@
       {% endif %}
     </td>
     <td>{{object.description|safe}}</td>
+    <td><i class="fa fa-square" style="color: {{object.color}};"></i></td>
     {% if action == 'delete' %}
       <td>
         <form class="alert alert-danger">
