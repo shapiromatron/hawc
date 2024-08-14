@@ -142,6 +142,7 @@ class NumericTextValidator(RegexValidator):
     regex = r"^[<,≤,≥,>]? ?(?:LOD|LOQ|[+-]?\d+\.?\d*(?:[eE][+-]?\d+)?)$"
     message = "Must be number-like, including {<,≤,≥,>,LOD,LOQ} (ex: 3.4, 1.2E-5, < LOD)"
 
+
 class ColorValidator(RegexValidator):
     regex = r"^#[a-f0-9]{6}$"
     flags = re.IGNORECASE
