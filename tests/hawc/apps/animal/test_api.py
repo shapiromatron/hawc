@@ -154,6 +154,13 @@ class TestAssessmentViewSet:
             == "assessment_id,endpoint_id,endpoint_url,term_type,endpoint_term_free_text,vocabulary_term_text,vocabulary_term_id,issue_class,issue_description"
         )
 
+    def test_bmds_export(self, rewrite_data_files: bool, db_keys):
+        fn = "api-animal-assessment-bmds-export"
+        url = (
+            reverse("animal:api:assessment-bmds-export", args=(db_keys.assessment_working,))
+        )
+        self._test_flat_export(rewrite_data_files, fn, url)
+
 
 @pytest.mark.django_db
 class TestExperimentCreateApi:
