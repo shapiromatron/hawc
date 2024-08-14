@@ -156,9 +156,7 @@ class TestAssessmentViewSet:
 
     def test_bmds_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-animal-assessment-bmds-export"
-        url = (
-            reverse("animal:api:assessment-bmds-export", args=(db_keys.assessment_working,))
-        )
+        url = reverse("animal:api:assessment-bmds-export", args=(db_keys.assessment_working,))
         self._test_flat_export(rewrite_data_files, fn, url)
 
 
