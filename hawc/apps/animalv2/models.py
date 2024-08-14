@@ -1,6 +1,7 @@
 import reversion
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..vocab.models import Term
@@ -460,6 +461,18 @@ class StudyLevelValue(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def get_assessment(self):
+        return self.study.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "delete"])
 
 
 reversion.register(Experiment)

@@ -1,0 +1,30 @@
+<div
+  {% if obj_perms.edit or permissions.edit %}
+    hx-get="{{ object.get_edit_url }}"
+    class="box-shadow p-3 rounded mb-4 clickable studylevelvalue-row"
+    title="Click to update" hx-swap="outerHTML"
+  {% else %}
+    class="box-shadow p-3 rounded mb-4"
+  {% endif %}
+  style="width: auto;">
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>System</th>
+        <th>Value type</th>
+        <th>Value</th>
+        <th>Units</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{object.system}}</td>
+        <td>{{object.value_type}}</td>
+        <td>{{object.value}}</td>
+        <td>{{object.units}}</td>
+        <td>{{object.comments}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

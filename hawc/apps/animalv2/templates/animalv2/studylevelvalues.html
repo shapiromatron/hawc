@@ -1,0 +1,29 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex">
+    <h2 class="mb-2">Study Level Values</h2>
+    {% if obj_perms.edit %}
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target="#studylevelvalue-list" hx-swap="afterbegin" href="/">Create new study level value</a>
+    {% endif %}
+  </div>
+  <p class="text-muted vw75 mt-0 mb-2">
+    Set study level values.
+  </p>
+  <div id="studylevelvalue-list">
+    {% for object in object_list %}
+      {% include "animalv2/fragments/studylevelvalue_row.html" %}
+    {% endfor %}
+    <div class="alert alert-info text-center show-only-child">No study level values created (yet).</div>
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  {% include "common/htmx_autocomplete.html" %}
+  {% include "common/helptext_popup_js.html" %}
+  <script type="text/javascript">
+    $(window).ready(function() {
+      window.app.HAWCUtils.addScrollHtmx("studylevelvalue-edit-row", "studylevelvalue-row", "studylevelvalue-conf-delete");
+    });
+  </script>
+{% endblock %}

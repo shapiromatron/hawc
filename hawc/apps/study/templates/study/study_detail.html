@@ -25,6 +25,7 @@
             <span class="dropdown-header">Animal bioassay editing</span>
             <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
             <a class="dropdown-item" href="{% url 'animal:experiment_copy' object.pk %}">Copy from existing</a>
+            <a class="dropdown-item" href="{% url 'animalv2:studylevelvalues' object.pk %}">View study level values</a>
           {% endif %}
 
           {% if object.in_vitro %}
@@ -57,6 +58,14 @@
             <span class="dropdown-header">Ecology editing</span>
             <a class="dropdown-item" href="{% url 'eco:design_create' object.pk %}">Create new study design</a>
           {% endif %}
+        {% endif %}
+      {% endactions %}
+
+    {% else %}
+      {% actions %}
+        {% if object.bioassay %}
+          <span class="dropdown-header">Animal bioassay</span>
+          <a class="dropdown-item" href="{% url 'animalv2:studylevelvalues' object.pk %}">View study level values</a>
         {% endif %}
       {% endactions %}
     {% endif %}
