@@ -1,14 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<button class="btn btn-primary ml-2"
-hx-get="{% url 'assessment:tag-htmx' assessment.pk 'create' %}"
-hx-target="#tag-tbody"
-hx-swap="beforeend"
->
-<i class="fa fa-fw fa-save"></i>&nbsp;
-Add tag
-</button>
+  <button class="btn btn-primary ml-2"
+          hx-get="{% url 'assessment:tag-htmx' assessment.pk 'create' %}"
+          hx-target="#tag-tbody"
+          hx-swap="beforeend"
+  >
+    <i class="fa fa-fw fa-save"></i>&nbsp;
+    Add tag
+  </button>
 
-{% include "assessment/fragments/tag_list.html" with object_list=assessment.tags.all canEdit=True %}
+  {% include "assessment/fragments/tag_list.html" with object_list=assessment.tags.all canEdit=True %}
 {% endblock content %}

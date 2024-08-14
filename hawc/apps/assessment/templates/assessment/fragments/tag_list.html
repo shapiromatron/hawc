@@ -1,16 +1,15 @@
 <h2>Tags</h2>
 <table class="table table-sm table-striped">
-    {% if canEdit %}
+  {% if canEdit %}
     {% bs4_colgroup '20,50,10,20' %}
     {% bs4_thead 'Tag,Description,Color,Editing' %}
-    {% else %}
+  {% else %}
     {% bs4_colgroup '30,60,10' %}
     {% bs4_thead 'Tag,Description,Color' %}
-    {% endif %}
-    <tbody id="tag-tbody">
+  {% endif %}
+  <tbody id="tag-tbody">
     {% for object in object_list %}
-        {% include "assessment/fragments/tag_row.html" %}
+      {% include "assessment/fragments/tag_row.html" %}
     {% endfor %}
-    </tbody>
+  </tbody>
 </table>
-  
