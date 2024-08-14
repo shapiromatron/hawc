@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -29,17 +30,20 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
-    def export(self, request, pk):
+    def export(self, request: Request, pk):
         """
         Retrieve epidemiology complete export.
         """
         assessment: Assessment = self.get_object()
         published_only = get_published_only(assessment, request)
+        study_ids = [int(study_id) for study_id in self.request.query_params.get("study_ids", [])]
         qs = (
             models.DataExtraction.objects.get_qs(assessment)
             .published_only(published_only)
             .complete()
         )
+        if study_ids:
+            qs.filter(design__study__in=study_ids)
         exporter = exports.EpiV2Exporter.flat_export(qs, filename=f"{assessment}-epi")
         return Response(exporter)
 

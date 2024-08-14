@@ -29,7 +29,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
 
     def get_endpoint_queryset(self, request):
         published_only = get_published_only(self.assessment, request)
-        return models.Endpoint.objects.get_qs(self.assessment).published_only(published_only)
+        study_ids = [int(study_id) for study_id in self.request.query_params.get("study_id", [])]
+        qs = models.Endpoint.objects.get_qs(self.assessment).published_only(published_only)
+        if study_ids:
+            qs.filter(animal_group__experiment__study__in=study_ids)
+        return qs
 
     @action(
         detail=True,
