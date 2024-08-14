@@ -9,7 +9,7 @@
 
   <div class="d-flex flex-column">
     <div {% if not assessment.has_lit_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">Literature Review</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">Literature Review</h6>
       {% if not assessment.has_lit_data %}
         {% alert warning %} No data available {% endalert %}
       {% else %}
@@ -25,7 +25,7 @@
     </div>
 
     <div {% if not assessment.has_rob_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">{{assessment.get_rob_name_display|title}}</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">{{assessment.get_rob_name_display|title}}</h6>
       {% if not assessment.has_rob_data %}
         {% alert warning %} No data available {% endalert %}
 
@@ -43,7 +43,7 @@
     </div>
 
     <div {% if not assessment.has_animal_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">Animal Bioassay</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">Animal Bioassay</h6>
       {% if not assessment.has_animal_data %}
         {% alert warning %} No data available {% endalert %}
 
@@ -59,7 +59,7 @@
     </div>
 
     <div {% if not assessment.has_epi_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">Epidemiology</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">Epidemiology</h6>
       {% if not assessment.has_epi_data %}
         {% alert warning %} No data available {% endalert %}
 
@@ -82,7 +82,7 @@
 
 
     <div {% if not assessment.has_epi_meta_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">Epidemiology Meta-Analysis</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">Epidemiology Meta-Analysis</h6>
       {% if not assessment.has_epi_meta_data %}
         {% alert warning %} No data available {% endalert %}
 
@@ -96,7 +96,7 @@
 
 
     <div {% if not assessment.has_invitro_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">In-vitro</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">In-vitro</h6>
       {% if not assessment.has_invitro_data %}
         {% alert warning %} No data available {% endalert %}
 
@@ -110,7 +110,7 @@
 
 
     <div {% if not assessment.has_ecology_data %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">Ecology</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">Ecology</h6>
       {% if not assessment.has_ecology_data %}
         {% alert warning %} No data available {% endalert %}
 
@@ -126,7 +126,7 @@
 
 
     <div {% if not assessment.udf_bindings.exists and not assessment.udf_tag_bindings.exists %} class="order-12" {% endif %}>
-      <h6 class="mb-2 font-size-regular">User Defined Fields (UDF) Data</h6>
+      <h6 class="mb-2 font-size-regular font-weight-bold">User Defined Fields (UDF) Data</h6>
       {% if not assessment.udf_bindings.exists and not assessment.udf_tag_bindings.exists %}
         {% alert warning %} No data available {% endalert %}
       {% else %}
