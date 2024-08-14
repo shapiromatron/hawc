@@ -43,7 +43,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
             .complete()
         )
         if study_ids:
-            qs.filter(design__study__in=study_ids)
+            qs = qs.filter(design__study__in=study_ids)
         exporter = exports.EpiV2Exporter.flat_export(qs, filename=f"{assessment}-epi")
         return Response(exporter)
 
