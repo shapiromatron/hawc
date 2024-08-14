@@ -137,7 +137,7 @@ exclude = [
 line-length = 100
 target-version = "py311"
 lint.select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "RUF"]
-lint.ignore = ["E501", "B904", "B007", "S308", "S113", "S314", "S603", "S607", "RUF012", "RUF015"]
+lint.ignore = ["E501", "B007", "S308", "S113", "S314", "S603", "S607", "RUF012", "RUF015"]
 lint.unfixable = ["F401", "F841"]
 
 [tool.ruff.lint.isort]

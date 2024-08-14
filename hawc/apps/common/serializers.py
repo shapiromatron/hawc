@@ -38,7 +38,7 @@ def validate_pydantic(pydantic_class: type[T], field: str | None, data: Any) -> 
         return pydantic_class.model_validate(data)
     except PydanticError as err:
         message = {field: err.json()} if field else err.json()
-        raise DrfValidationError(message)
+        raise DrfValidationError(message) from err
 
 
 def validate_jsonschema(data: Any, schema: dict) -> Any:
@@ -57,7 +57,7 @@ def validate_jsonschema(data: Any, schema: dict) -> Any:
     try:
         jsonschema.validate(data, schema)
     except jsonschema.ValidationError as err:
-        raise serializers.ValidationError(err.message)
+        raise serializers.ValidationError(err.message) from err
     return data
 
 
@@ -101,10 +101,10 @@ def get_matching_instance(Model: models.Model, data: dict, field_name: str) -> m
         return Model.objects.get(id=id_)
     except ValueError:
         err[field_name] = f"`{field_name} must be a number; got {id_}."
-        raise serializers.ValidationError(err)
+        raise serializers.ValidationError(err) from err
     except models.ObjectDoesNotExist:
         err[field_name] = f"{Model.__name__} {id_} does not exist."
-        raise serializers.ValidationError(err)
+        raise serializers.ValidationError(err) from err
 
 
 def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> list[models.Model]:
@@ -132,10 +132,10 @@ def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> 
             instances.append(Model.objects.get(id=id_))
         except ValueError:
             err[field_name] = f"`{field_name} must be a number; got {id_}."
-            raise serializers.ValidationError(err)
+            raise serializers.ValidationError(err) from err
         except models.ObjectDoesNotExist:
             err[field_name] = f"{Model.__name__} {id_} does not exist."
-            raise serializers.ValidationError(err)
+            raise serializers.ValidationError(err) from err
 
     return instances
 
@@ -308,9 +308,9 @@ class IdLookupMixin:
             try:
                 obj = self.Meta.model.objects.get(id=data)
                 return obj
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist as err:
                 err_msg = f"Invalid id supplied for {self.Meta.model.__name__} lookup"
-                raise serializers.ValidationError(err_msg)
+                raise serializers.ValidationError(err_msg) from err
 
         return super().to_internal_value(data)
 
@@ -594,7 +594,7 @@ class PydanticDrfSerializer(BaseModel):
                 for key in e["loc"]:
                     error_key = key if key != "__root__" else "non_field_errors"
                     errors[error_key].append(e["msg"])
-            raise DrfValidationError(errors)
+            raise DrfValidationError(errors) from err
 
 
 class RequiredIdSerializer(serializers.Serializer):
