@@ -177,7 +177,7 @@ class AssessmentRootMixin:
                 if node.depth > last_depth:
                     pass
                 else:
-                    for i in range(last_depth - node.depth + 1):
+                    for _i in range(last_depth - node.depth + 1):
                         names.pop()
 
                 names.append(node.name)
