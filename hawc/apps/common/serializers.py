@@ -99,12 +99,12 @@ def get_matching_instance(Model: models.Model, data: dict, field_name: str) -> m
 
     try:
         return Model.objects.get(id=id_)
-    except ValueError:
+    except ValueError as error:
         err[field_name] = f"`{field_name} must be a number; got {id_}."
-        raise serializers.ValidationError(err) from err
-    except models.ObjectDoesNotExist:
+        raise serializers.ValidationError(err) from error
+    except models.ObjectDoesNotExist as error:
         err[field_name] = f"{Model.__name__} {id_} does not exist."
-        raise serializers.ValidationError(err) from err
+        raise serializers.ValidationError(err) from error
 
 
 def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> list[models.Model]:
@@ -130,12 +130,12 @@ def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> 
     for id_ in ids:
         try:
             instances.append(Model.objects.get(id=id_))
-        except ValueError:
+        except ValueError as error:
             err[field_name] = f"`{field_name} must be a number; got {id_}."
-            raise serializers.ValidationError(err) from err
-        except models.ObjectDoesNotExist:
+            raise serializers.ValidationError(err) from error
+        except models.ObjectDoesNotExist as error:
             err[field_name] = f"{Model.__name__} {id_} does not exist."
-            raise serializers.ValidationError(err) from err
+            raise serializers.ValidationError(err) from error
 
     return instances
 
