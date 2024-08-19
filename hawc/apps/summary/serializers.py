@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from rest_framework import serializers
 from django.urls import reverse
+from rest_framework import serializers
 
 from ..common import validators
 from ..common.clean import sanitize_html
@@ -74,7 +74,13 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["url_delete"] = instance.get_delete_url()
             ret["data_url"] = instance.get_data_url()
             content_type, object_id = object_to_content_object(instance)
-            ret["tag_htmx"] = reverse("assessment:tag-item", kwargs={"content_type":content_type.pk,"object_id":object_id}) + "?action=tag"
+            ret["tag_htmx"] = (
+                reverse(
+                    "assessment:tag-item",
+                    kwargs={"content_type": content_type.pk, "object_id": object_id},
+                )
+                + "?action=tag"
+            )
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,

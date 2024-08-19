@@ -9,7 +9,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
 from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
@@ -147,7 +147,7 @@ class AssessmentRootMixin:
     @classmethod
     def get_assessment_root(cls, assessment_id):
         try:
-            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id),depth=1)
+            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id), depth=1)
         except ObjectDoesNotExist:
             return cls.create_root(assessment_id)
 

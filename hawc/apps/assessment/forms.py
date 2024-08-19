@@ -669,11 +669,10 @@ class DatasetForm(forms.ModelForm):
         field_classes = {"description": QuillField}
 
 
-
 class TagForm(forms.ModelForm):
     # TODO make htmx not allow multiple open updates,
     # or make sure changing parent fails upstream under right conditions
-    parent = forms.ModelChoiceField(None,empty_label=None)
+    parent = forms.ModelChoiceField(None, empty_label=None)
 
     class Meta:
         model = models.Tag
@@ -699,7 +698,9 @@ class TagForm(forms.ModelForm):
         root = models.Tag.get_assessment_root(self.instance.assessment.pk)
         queryset = models.Tag.get_tree(root)
         if self.instance.pk is not None:
-            queryset = queryset.exclude(path__startswith=self.instance.path, depth__gte=self.instance.depth)
+            queryset = queryset.exclude(
+                path__startswith=self.instance.path, depth__gte=self.instance.depth
+            )
         return queryset
 
     def save(self, commit=True):
@@ -745,12 +746,15 @@ class TagItemForm(forms.Form):
     @transaction.atomic
     def save(self):
         # delete old tags
-        models.TaggedItem.objects.filter(content_type_id=self.content_type,object_id=self.object_id).delete()
+        models.TaggedItem.objects.filter(
+            content_type_id=self.content_type, object_id=self.object_id
+        ).delete()
         # apply new tags
         tags = []
         for tag in self.cleaned_data["tags"]:
-            tags.append(models.TaggedItem(tag=tag,content_type_id=self.content_type,object_id=self.object_id))
+            tags.append(
+                models.TaggedItem(
+                    tag=tag, content_type_id=self.content_type, object_id=self.object_id
+                )
+            )
         models.TaggedItem.objects.bulk_create(tags)
-
-
-

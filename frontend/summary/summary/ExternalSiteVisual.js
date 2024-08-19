@@ -48,7 +48,13 @@ class ExternalWebsite extends BaseVisual {
                 "Visualization editing",
                 {href: this.data.url_update, text: "Update"},
                 {href: this.data.url_delete, text: "Delete"},
-                {"hx-get": this.data.tag_htmx,"hx-target":"#tag-modal-content", text: "Apply tags", "data-toggle":"modal", "data-target":"#tag-modal"}
+                {
+                    "hx-get": this.data.tag_htmx,
+                    "hx-target": "#tag-modal-content",
+                    text: "Apply tags",
+                    "data-toggle": "modal",
+                    "data-target": "#tag-modal",
+                }
             );
         }
         return HAWCUtils.pageActionsButton(actions);

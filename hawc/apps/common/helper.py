@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -601,6 +602,6 @@ def unique_text_list(items: list[str]) -> list[str]:
             duplicates[item] = 1
     return items
 
-from django.contrib.contenttypes.models import ContentType
-def object_to_content_object(_object)->tuple[ContentType,int]:
-    return ContentType.objects.get_for_model(_object),_object.pk
+
+def object_to_content_object(_object) -> tuple[ContentType, int]:
+    return ContentType.objects.get_for_model(_object), _object.pk

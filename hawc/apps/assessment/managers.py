@@ -2,12 +2,12 @@ import json
 from datetime import datetime, timedelta
 from typing import Any, NamedTuple
 
-from treebeard.mp_tree import MP_NodeManager
 import pandas as pd
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When, Manager
+from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When
 from reversion.models import Version
+from treebeard.mp_tree import MP_NodeManager
 
 from ..common.helper import HAWCDjangoJSONEncoder, map_enum, object_to_content_object
 from ..common.models import BaseManager, replace_null, str_m2m
@@ -363,9 +363,7 @@ class LogManager(BaseManager):
         return aggregations
 
 
-
 class TagManager(MP_NodeManager):
-    def get_applied(self,_object):
+    def get_applied(self, _object):
         content_type, object_id = object_to_content_object(_object)
-        return self.filter(items__content_type=content_type,items__object_id=object_id)
-
+        return self.filter(items__content_type=content_type, items__object_id=object_id)

@@ -170,11 +170,19 @@ class ExploreHeatmap extends BaseVisual {
                     "Visualization editing",
                     {href: this.data.url_update, text: '<i class="fa fa-edit"></i>&nbsp;Update'},
                     {href: this.data.url_delete, text: '<i class="fa fa-trash"></i>&nbsp;Delete'},
-                    {"hx-get": this.data.tag_htmx,"hx-target":"#tag-modal-content", text: "Apply tags", "data-toggle":"modal", "data-target":"#tag-modal"}
+                    {
+                        "hx-get": this.data.tag_htmx,
+                        "hx-target": "#tag-modal-content",
+                        text: "Apply tags",
+                        "data-toggle": "modal",
+                        "data-target": "#tag-modal",
+                    },
                 ]
             );
         }
-        opts.push(...["Dataset", {href: csv_url, text: csv_text}, {href: xlsx_url, text: xlsx_text}]);
+        opts.push(
+            ...["Dataset", {href: csv_url, text: csv_text}, {href: xlsx_url, text: xlsx_text}]
+        );
         return HAWCUtils.pageActionsButton(opts);
     }
 

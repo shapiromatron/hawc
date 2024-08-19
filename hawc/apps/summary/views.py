@@ -14,7 +14,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, object_to_content_object
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -727,14 +727,14 @@ class DataPivotByIdDetail(RedirectView):
     def get_redirect_url(*args, **kwargs):
         return get_object_or_404(models.DataPivot, id=kwargs.get("pk")).get_absolute_url()
 
-from django.contrib.contenttypes.models import ContentType
+
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content_type"] = ContentType.objects.get_for_model(self.get_object()).pk
+        context["content_object"] = object_to_content_object(self.get_object())
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
