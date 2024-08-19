@@ -125,6 +125,7 @@ class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["content_object"] = object_to_content_object(self.get_object())
         if context["object"].published is False and context["obj_perms"]["edit"] is False:
             raise PermissionDenied()
         context["breadcrumbs"].insert(
