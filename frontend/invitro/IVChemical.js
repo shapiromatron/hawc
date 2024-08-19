@@ -33,8 +33,8 @@ class IVChemical {
         if (window.canEdit) {
             var urls = [
                 "Chemical editing",
-                {url: this.data.url_update, text: "Update"},
-                {url: this.data.url_delete, text: "Delete"},
+                {href: this.data.url_update, text: "Update"},
+                {href: this.data.url_delete, text: "Delete"},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
