@@ -147,7 +147,7 @@ class AssessmentRootMixin:
     @classmethod
     def get_assessment_root(cls, assessment_id):
         try:
-            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id))
+            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id),depth=1)
         except ObjectDoesNotExist:
             return cls.create_root(assessment_id)
 
@@ -269,20 +269,14 @@ class AssessmentRootMixin:
     @classmethod
     def create_tag(cls, assessment_id, parent_id=None, **kwargs):
         # get parent
-        if parent_id:
+        root = cls.get_assessment_root(assessment_id)
+        if parent_id is None or parent_id == root.pk:
+            parent = root
+        else:
             descendants = cls.get_descendants_pks(assessment_id=assessment_id)
             if parent_id not in descendants:
                 raise ObjectDoesNotExist("parent_id is not a descendant of assessment_id")
             parent = cls.objects.get(pk=parent_id)
-        else:
-            parent = cls.get_assessment_root(assessment_id)
-
-        # TODO make this a regex check to prevent adding a name that blocks another assessment
-        # make sure name is valid and not root-like
-        if kwargs.get(
-            "name", getattr(kwargs.get("instance"), "name", None)
-        ) == cls.get_assessment_root_name(assessment_id):
-            raise SuspiciousOperation("attempting to create new root")
 
         # clear cache and create!
         cls.clear_cache(assessment_id)

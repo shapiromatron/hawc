@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Any, NamedTuple
 
+from treebeard.mp_tree import MP_NodeManager
 import pandas as pd
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -363,7 +364,7 @@ class LogManager(BaseManager):
 
 
 
-class TagManager(Manager):
+class TagManager(MP_NodeManager):
     def get_applied(self,_object):
         content_type, object_id = object_to_content_object(_object)
         return self.filter(items__content_type=content_type,items__object_id=object_id)

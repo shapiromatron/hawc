@@ -920,7 +920,7 @@ class TagList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = forms.TagForm(assessment=self.assessment)
+        context["tags"] = models.Tag.get_assessment_qs(self.assessment.pk,include_root=False)
         return context
 
 

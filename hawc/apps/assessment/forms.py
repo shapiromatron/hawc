@@ -669,31 +669,11 @@ class DatasetForm(forms.ModelForm):
         field_classes = {"description": QuillField}
 
 
-class AssessmentRootModelChoiceField(forms.ModelChoiceField):
-    def __init__(self, model, *args, **kwargs):
-        self.model = model
-        super().__init__(None, *args, **kwargs)
-
-    def set_choices(self, node, assessment):
-        root = self.model.get_assessment_root(assessment.pk)
-        queryset = self.model.get_tree(root)
-        if node.pk is not None:
-            queryset = queryset.exclude(path__startswith=node.path, depth__gte=node.depth)
-        self._queryset = self.model.annotate_nested_names(queryset)
-        if not self._queryset:
-            self.choices = []
-        else:
-            default_choice = (self._queryset[0].pk, "-----")
-            self.choices = [
-                default_choice,
-                *[(obj.pk, obj.nested_name) for obj in self._queryset[1:]],
-            ]
-
 
 class TagForm(forms.ModelForm):
     # TODO make htmx not allow multiple open updates,
     # or make sure changing parent fails upstream under right conditions
-    parent = AssessmentRootModelChoiceField(model=models.Tag)
+    parent = forms.ModelChoiceField(None,empty_label=None)
 
     class Meta:
         model = models.Tag
@@ -706,8 +686,8 @@ class TagForm(forms.ModelForm):
             self.instance.assessment = assessment
         if self.instance.pk is not None:
             self.fields["parent"].initial = self.instance.get_parent()
-        self.fields["tags"].queryset = self.get_parent_queryset()
-        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+        self.fields["parent"].queryset = self.get_parent_queryset()
+        self.fields["parent"].label_from_instance = lambda tag: tag.get_nested_name()
 
     @property
     def helper(self):
@@ -716,8 +696,8 @@ class TagForm(forms.ModelForm):
         return helper
 
     def get_parent_queryset(self):
-        root = self.model.get_assessment_root(self.instance.assessment.pk)
-        queryset = self.model.get_tree(root)
+        root = models.Tag.get_assessment_root(self.instance.assessment.pk)
+        queryset = models.Tag.get_tree(root)
         if self.instance.pk is not None:
             queryset = queryset.exclude(path__startswith=self.instance.path, depth__gte=self.instance.depth)
         return queryset
