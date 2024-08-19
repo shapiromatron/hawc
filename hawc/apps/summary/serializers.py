@@ -81,6 +81,13 @@ class VisualSerializer(serializers.ModelSerializer):
                 )
                 + "?action=tag"
             )
+            ret["tag_indicators_htmx"] = (
+                reverse(
+                    "assessment:tag-item",
+                    kwargs={"content_type": content_type.pk, "object_id": object_id},
+                )
+                + "?action=tag_indicators"
+            )
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,
