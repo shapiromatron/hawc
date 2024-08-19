@@ -1,0 +1,17 @@
+{% if oob %}
+<div 
+    id="tag-indicators"
+    hx-swap-oob="outerHTML"
+>
+    {% for tag in tags %}
+    {{tag}}
+    {% endfor %}
+</div>
+{% else %}
+<div
+    id="tag-indicators"
+    hx-get="{% url 'assessment:tag-item' content_type object_id %}?action=tag_indicators"
+    hx-trigger="load"
+    hx-swap="none"
+></div>
+{% endif %}

@@ -10,6 +10,9 @@
   <div class="pt-2">
     {% crispy form %}
   </div>
+  {% if saved %}
+    <div class="alert alert-success mt-4">Tags applied.</div>
+  {% endif %}
 </div>
 <div class="modal-footer">
   <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner" aria-hidden="true"></i>
@@ -23,3 +26,6 @@
     Cancel
   </button>
 </div>
+{% if saved %}
+{% include "assessment/fragments/tag_indicators.html" with oob=True %}
+{% endif %}

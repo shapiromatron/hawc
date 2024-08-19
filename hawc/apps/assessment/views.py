@@ -12,7 +12,6 @@ from django.db import transaction
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponse,
     HttpResponseRedirect,
     JsonResponse,
 )
@@ -970,7 +969,7 @@ class TagViewSet(HtmxViewSet):
 
 
 class TagItem(HtmxView):
-    actions = {"tag"}
+    actions = {"tag", "tag_indicators"}
 
     def tag(self, request: HttpRequest, *args, **kwargs):
         content_type = self.kwargs.get("content_type")
@@ -980,6 +979,8 @@ class TagItem(HtmxView):
         )
         if not content_object.get_assessment().user_can_edit_object(request.user):
             raise PermissionDenied()
+
+        context = dict(content_type=content_type, object_id=object_id)
         if request.method == "GET":
             form = forms.TagItemForm(
                 data=dict(
@@ -1000,6 +1001,22 @@ class TagItem(HtmxView):
             )
             if form.is_valid():
                 form.save()
-                return HttpResponse(status=204, headers={"HX-Refresh": "true"})
-        context = dict(form=form, content_type=content_type, object_id=object_id)
+                context["saved"] = True
+                context["tags"] = models.Tag.objects.get_applied(content_object)
+        context["form"] = form
         return render(request, "assessment/components/tag_modal_content.html", context)
+
+    def tag_indicators(self, request: HttpRequest, *args, **kwargs):
+        content_type = self.kwargs.get("content_type")
+        object_id = self.kwargs.get("object_id")
+        content_object = ContentType.objects.get_for_id(content_type).get_object_for_this_type(
+            pk=object_id
+        )
+
+        context = dict(
+            content_type=content_type,
+            object_id=object_id,
+            tags=models.Tag.objects.get_applied(content_object),
+            oob=True,
+        )
+        return render(request, "assessment/fragments/tag_indicators.html", context)
