@@ -150,6 +150,11 @@ urlpatterns = [
         views.TagViewSet.as_view(),
         name="tag-htmx",
     ),
+    path(
+        "tag-item/<int:content_type>/<int:object_id>/",
+        views.TagItem.as_view(),
+        name="tag-item",
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]

@@ -600,3 +600,7 @@ def unique_text_list(items: list[str]) -> list[str]:
         else:
             duplicates[item] = 1
     return items
+
+from django.contrib.contenttypes.models import ContentType
+def object_to_content_object(_object)->tuple[ContentType,int]:
+    return ContentType.objects.get_for_model(_object),_object.pk

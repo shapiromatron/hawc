@@ -35,8 +35,9 @@ class BaseVisual {
     addActionsMenu() {
         return HAWCUtils.pageActionsButton([
             "Visualization editing",
-            {url: this.data.url_update, text: "Update"},
-            {url: this.data.url_delete, text: "Delete"},
+            {href: this.data.url_update, text: "Update"},
+            {href: this.data.url_delete, text: "Delete"},
+            {"hx-get": this.data.tag_htmx,"hx-target":"#tag-modal-content", text: "Apply tags", "data-toggle":"modal", "data-target":"#tag-modal"}
         ]);
     }
 

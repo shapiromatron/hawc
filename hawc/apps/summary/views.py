@@ -727,13 +727,14 @@ class DataPivotByIdDetail(RedirectView):
     def get_redirect_url(*args, **kwargs):
         return get_object_or_404(models.DataPivot, id=kwargs.get("pk")).get_absolute_url()
 
-
+from django.contrib.contenttypes.models import ContentType
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["content_type"] = ContentType.objects.get_for_model(self.get_object()).pk
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )

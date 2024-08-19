@@ -61,7 +61,8 @@ class HAWCUtils {
         );
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
+                let attrs = _.join(_.map(_.filter(_.toPairs(d),arr=>arr[0]!="text"), arr=>`${arr[0]}="${arr[1]}"`)," ")
+                $menu.append(`<a class="dropdown-item" ${attrs}>${d.text}</a>`);
             } else if (typeof d === "string") {
                 $menu.append(`<span class="dropdown-header">${d}</span>`);
             } else {

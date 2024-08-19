@@ -13,6 +13,7 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponseRedirect,
+    HttpResponse,
     JsonResponse,
 )
 from django.middleware.csrf import get_token
@@ -27,7 +28,7 @@ from django.views.generic.edit import CreateView
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, cacheable
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..common.htmx import HtmxViewSet, action, can_edit, can_view, HtmxView
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -966,3 +967,23 @@ class TagViewSet(HtmxViewSet):
             self.perform_delete(request.item)
             return self.str_response()
         return render(request, self.detail_fragment, self.get_context_data())
+
+
+class TagItem(HtmxView):
+    actions = {"tag"}
+
+    def tag(self, request: HttpRequest, *args, **kwargs):
+        content_type = self.kwargs.get("content_type")
+        object_id = self.kwargs.get("object_id")
+        content_object = ContentType.objects.get_for_id(content_type).get_object_for_this_type(pk=object_id)
+        if not content_object.get_assessment().user_can_edit_object(request.user):
+            raise PermissionDenied()
+        if request.method == "GET":
+            form = forms.TagItemForm(data=dict(tags=models.Tag.objects.filter(items__content_type=content_type,items__object_id=object_id)), content_object=content_object,content_type=content_type, object_id=object_id)
+        else:
+            form = forms.TagItemForm(data=request.POST, content_object=content_object,content_type=content_type, object_id=object_id)
+            if form.is_valid():
+                form.save()
+                return HttpResponse(status=204,headers={"HX-Refresh":"true"})
+        context = dict(form=form,content_type=content_type,object_id=object_id)
+        return render(request, "assessment/components/tag_modal_content.html", context)

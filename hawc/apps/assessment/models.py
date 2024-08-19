@@ -1339,6 +1339,8 @@ class Content(models.Model):
 
 
 class Tag(AssessmentRootMixin, MP_Node):
+    objects = managers.TagManager()
+
     name = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True)
     color = ColorField(default="#ffffff")
@@ -1358,6 +1360,12 @@ class Tag(AssessmentRootMixin, MP_Node):
         kwargs["name"] = cls.get_assessment_root_name(assessment_id)
         kwargs["assessment_id"] = assessment_id
         return cls.add_root(**kwargs)
+
+    def get_nested_name(self) -> str:
+        if self.is_root():
+            return "<root-node>"
+        else:
+            return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     def get_absolute_url(self):
         return reverse("assessment:tag-htmx", args=[self.pk, "read"])

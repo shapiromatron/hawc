@@ -5,10 +5,10 @@ from typing import Any, NamedTuple
 import pandas as pd
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When
+from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When, Manager
 from reversion.models import Version
 
-from ..common.helper import HAWCDjangoJSONEncoder, map_enum
+from ..common.helper import HAWCDjangoJSONEncoder, map_enum, object_to_content_object
 from ..common.models import BaseManager, replace_null, str_m2m
 from . import constants
 
@@ -360,3 +360,11 @@ class LogManager(BaseManager):
                 aggregations.append(EventPair(this_event).output())
 
         return aggregations
+
+
+
+class TagManager(Manager):
+    def get_applied(self,_object):
+        content_type, object_id = object_to_content_object(_object)
+        return self.filter(items__content_type=content_type,items__object_id=object_id)
+

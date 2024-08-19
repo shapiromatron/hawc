@@ -706,13 +706,21 @@ class TagForm(forms.ModelForm):
             self.instance.assessment = assessment
         if self.instance.pk is not None:
             self.fields["parent"].initial = self.instance.get_parent()
-        self.fields["parent"].set_choices(self.instance, self.instance.assessment)
+        self.fields["tags"].queryset = self.get_parent_queryset()
+        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
 
     @property
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         return helper
+
+    def get_parent_queryset(self):
+        root = self.model.get_assessment_root(self.instance.assessment.pk)
+        queryset = self.model.get_tree(root)
+        if self.instance.pk is not None:
+            queryset = queryset.exclude(path__startswith=self.instance.path, depth__gte=self.instance.depth)
+        return queryset
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -730,3 +738,39 @@ class TagForm(forms.ModelForm):
                     instance.move(parent, pos="last-child")
             self.save_m2m()
         return instance
+
+
+class TagItemForm(forms.Form):
+    tags = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=models.Tag.objects.all(),
+        help_text="Select tag(s) to apply.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        content_object = kwargs.pop("content_object", None)
+        self.content_type = kwargs.pop("content_type")
+        self.object_id = kwargs.pop("object_id")
+        super().__init__(*args, **kwargs)
+        tags = models.Tag.get_assessment_qs(content_object.get_assessment().pk)
+        self.fields["tags"].queryset = tags
+        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+    @transaction.atomic
+    def save(self):
+        # delete old tags
+        models.TaggedItem.objects.filter(content_type_id=self.content_type,object_id=self.object_id).delete()
+        # apply new tags
+        tags = []
+        for tag in self.cleaned_data["tags"]:
+            tags.append(models.TaggedItem(tag=tag,content_type_id=self.content_type,object_id=self.object_id))
+        models.TaggedItem.objects.bulk_create(tags)
+
+
+
