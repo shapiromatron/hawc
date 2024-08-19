@@ -32,9 +32,6 @@ class StudyLevelValueViewSet(HtmxViewSet):
 
     @action(permission=can_view)
     def read(self, request: HttpRequest, *args, **kwargs):
-        # tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
-        # prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
-        # models.Workflow.annotate_tag_parents([request.item.object], tags)
         return render(request, self.detail_fragment, self.get_context_data())
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -47,9 +44,6 @@ class StudyLevelValueViewSet(HtmxViewSet):
             self.perform_create(request.item, form)
             template = self.detail_fragment
             context.update(object=request.item.object)
-            # tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
-            # prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
-            # models.Workflow.annotate_tag_parents([request.item.object], tags)
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -60,9 +54,6 @@ class StudyLevelValueViewSet(HtmxViewSet):
         if request.method == "POST" and form.is_valid():
             self.perform_update(request.item, form)
             template = self.detail_fragment
-            # tags = models.ReferenceFilterTag.get_assessment_qs(request.item.assessment.id)
-            # prefetch_related_objects([request.item.object], "admission_tags", "removal_tags")
-            # models.Workflow.annotate_tag_parents([request.item.object], tags)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 

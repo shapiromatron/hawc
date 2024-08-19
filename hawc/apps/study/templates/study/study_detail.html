@@ -62,12 +62,13 @@
       {% endactions %}
 
     {% else %}
-      {% actions %}
-        {% if object.bioassay %}
+
+      {% if object.bioassay %}
+        {% actions %}
           <span class="dropdown-header">Animal bioassay</span>
           <a class="dropdown-item" href="{% url 'animalv2:studylevelvalues' object.pk %}">View study level values</a>
-        {% endif %}
-      {% endactions %}
+        {% endactions %}
+      {% endif %}
     {% endif %}
   </div>
 
