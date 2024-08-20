@@ -24,7 +24,7 @@
       {% for visual in objects %}
         <tr>
           <td>
-            <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
+            <a href="{{visual.get_absolute_url}}">{{visual.title}}{{visual.tags}}</a>
             {% if not visual.published %}
               <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
             {% endif %}

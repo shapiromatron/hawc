@@ -1,38 +1,30 @@
-<tr hx-target="this" hx-swap="outerHTML" class="tag-detail-row">
-  <td>
-    {{object.name}}
-    {% if canEdit or permissions.edit %}
-      {% if not object.publicly_available %}
-        <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+<div
+  {% if canEdit or permissions.edit %}
+    hx-get="{{ object.get_edit_url }}"
+    class="list-group-item clickable d-flex"
+    hx-indicator="#spinner-{{object.pk}}"
+    title="Click to update" hx-swap="outerHTML"
+  {% else %}
+    class="list-group-item d-flex"
+  {% endif %}>
+  <div class="col-3 pl-4">
+    <div class="row justify-content-between">
+      <p class="label" style="font-size: 1.2rem; background-color: {{object.color}}; color: {{object.text_color}};">{{object.name}}</p>
+      <div class="card mx-3 p-1 d-inline-block {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
+        <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-5 pl-2">
+    <p>{{object.description}}</p>
+  </div>
+  <div class="col-3 pl-2">
+    {% with parent=object.get_parent %}
+      {% if parent != object.get_root %}
+        <p class="label" style="font-size: 1.2rem; background-color: {{object.get_parent.color}}; color: {{object.get_parent.text_color}};">{{object.get_parent.name}}</p>
+      {% else %}
+        <i>Root Node</i>
       {% endif %}
-    {% endif %}
-  </td>
-  <td>{{object.description|safe}}</td>
-  <td><i class="fa fa-square" style="color: {{object.color}};"></i></td>
-  {% if action == 'delete' %}
-    <td>
-      <form class="alert alert-danger">
-        {% csrf_token %}
-        <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
-        <div class="d-flex">
-          <button class="btn btn-sm btn-danger"
-                  hx-post="{{ object.get_delete_url }}"
-                  hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
-          <button class="btn btn-sm btn-light ml-2"
-                  hx-get="{{ object.get_absolute_url }}">Cancel</button>
-        </div>
-      </form>
-    </td>
-  {% elif canEdit or permissions.edit %}
-    <td>
-      <button
-        class="btn btn-sm btn-primary"
-        hx-get="{{ object.get_edit_url }}">
-        <i class="fa fa-fw fa-edit"></i>&nbsp;Update</button>
-      <button
-        class="btn btn-sm btn-danger"
-        hx-get="{{ object.get_delete_url }}">
-        <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
-    </td>
-  {% endif %}
-</tr>
+    {% endwith %}
+  </div>
+</div>

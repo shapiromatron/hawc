@@ -1,14 +1,15 @@
-<table class="table table-sm table-striped">
-  {% if canEdit %}
-    {% bs4_colgroup '20,50,10,20' %}
-    {% bs4_thead 'Tag,Description,Color,Editing' %}
-  {% else %}
-    {% bs4_colgroup '30,60,10' %}
-    {% bs4_thead 'Tag,Description,Color' %}
+<div class="my-2 box-shadow-minor list-group py-0" id="tag-listgroup">
+  {% if object_list.exists %}
+    <div class="list-group-item d-flex font-weight-bold bg-gray rounded-top">
+      <div class="col-3 pl-2">Name</div>
+      <div class="col-5 pl-2">Description</div>
+      <div class="col-3 pl-2">Parent</div>
+    </div>
   {% endif %}
-  <tbody id="tag-tbody">
-    {% for object in object_list %}
-      {% include "assessment/fragments/tag_row.html" %}
-    {% endfor %}
-  </tbody>
-</table>
+  {% for object in object_list %}
+    {% include "assessment/fragments/tag_row.html" %}
+  {% endfor %}
+  <div class="alert alert-info text-center show-only-child my-0">No labels created (yet).</div>
+</div>
+
+
