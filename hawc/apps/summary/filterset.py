@@ -1,7 +1,9 @@
 import django_filters as df
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
+from django.contrib.contenttypes.models import ContentType
 
 from ..assessment.constants import RobName
+from ..assessment.models import Tag, TaggedItem
 from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import constants, models
 
@@ -19,6 +21,12 @@ class VisualFilterSet(BaseFilterSet):
         help_text="Type of visualization to display",
         empty_label="All visual types",
     )
+    tag = df.ChoiceFilter(
+        method="filter_tag",
+        label="Applied tag",
+        help_text="Visualizations with tag applied",
+        empty_label="All tags",
+    )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
@@ -28,7 +36,7 @@ class VisualFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Visual
-        fields = ["title", "type", "published"]
+        fields = ["title", "type", "tag", "published"]
         form = InlineFilterForm
 
     def filter_queryset(self, queryset):
@@ -37,6 +45,17 @@ class VisualFilterSet(BaseFilterSet):
         if not self.perms["edit"]:
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
+
+    def filter_tag(self, queryset, name, value):
+        if not value:
+            return queryset
+        content_type = ContentType.objects.get_for_model(models.Visual)
+        subquery = TaggedItem.objects.filter(
+            tag_id=value,
+            content_type=content_type,
+            object_id=OuterRef("pk"),
+        )
+        return queryset.filter(Exists(subquery))
 
     def get_type_choices(self):
         choices = (
@@ -53,10 +72,14 @@ class VisualFilterSet(BaseFilterSet):
                 for value, label in choices
             ]
         return choices
+    
+    def get_tag_choices(self):
+        return [(tag.pk,tag.get_nested_name()) for tag in Tag.get_assessment_qs(self.assessment.pk)]
 
     def create_form(self):
         form = super().create_form()
         form.fields["type"].choices = self.get_type_choices()
+        form.fields["tag"].choices = self.get_tag_choices()
         return form
 
 
@@ -73,6 +96,17 @@ class DataPivotFilterSet(VisualFilterSet):
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("datapivotquery", "datapivotupload")
+
+    def filter_tag(self, queryset, name, value):
+        if not value:
+            return queryset
+        content_types = ContentType.objects.get_for_models(models.DataPivot,models.DataPivotQuery,models.DataPivotUpload).values()
+        subquery = TaggedItem.objects.filter(
+            tag_id=value,
+            content_type__in=content_types,
+            object_id=OuterRef("pk"),
+        )
+        return queryset.filter(Exists(subquery))
 
     def get_type_choices(self):
         choice_options = (
