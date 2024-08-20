@@ -1,17 +1,18 @@
 {% if oob %}
-<div 
+  <div
+    class="d-flex align-items-center ml-1"
     id="tag-indicators"
     hx-swap-oob="outerHTML"
->
+  >
     {% for tag in tags %}
-    {{tag}}
+      <div class="label mx-1 mb-3" style="background-color: {{tag.color}}" title="{{tag.description}}">{{tag.name}}</div>
     {% endfor %}
-</div>
+  </div>
 {% else %}
-<div
+  <div
     id="tag-indicators"
     hx-get="{% url 'assessment:tag-item' content_type object_id %}?action=tag_indicators"
     hx-trigger="load"
     hx-swap="none"
-></div>
+  ></div>
 {% endif %}
