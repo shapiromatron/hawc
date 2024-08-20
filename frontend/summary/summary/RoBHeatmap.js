@@ -51,6 +51,7 @@ class RoBHeatmap extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
+            tagIndicators = $(`<div id="tag-indicators" hx-get="${this.data.tag_indicators_htmx}" hx-trigger="load" hx-swap="none">`),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
@@ -63,6 +64,7 @@ class RoBHeatmap extends BaseVisual {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
+                tagIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 this.addActionsMenu(),
             ]);
