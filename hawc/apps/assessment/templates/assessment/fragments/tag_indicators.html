@@ -5,7 +5,7 @@
     hx-swap-oob="outerHTML"
   >
     {% for tag in tags %}
-      <div class="label mx-1 mb-3" style="background-color: {{tag.color}}" title="{{tag.description}}">{{tag.name}}</div>
+      <div class="label mx-1 mb-3" style="background-color: {{tag.color}}; color: {{tag.text_color}};" title="{{tag.description}}">{{tag.name}}</div>
     {% endfor %}
   </div>
 {% else %}

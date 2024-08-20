@@ -1346,6 +1346,7 @@ class Tag(AssessmentRootMixin, MP_Node):
     color = ColorField(default="#ffffff")
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="tags")
     published = models.BooleanField(default=False)
+    text_color = ColorField(default="#000000")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -1360,6 +1361,15 @@ class Tag(AssessmentRootMixin, MP_Node):
         kwargs["name"] = cls.get_assessment_root_name(assessment_id)
         kwargs["assessment_id"] = assessment_id
         return cls.add_root(**kwargs)
+
+    def save(self, *args, **kwargs):
+        hex_color = self.color.lstrip('#')
+        (r, g, b) = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        a_type = [r / 255.0, g / 255.0, b / 255.0]
+        a_type = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in a_type]
+        luminance = 0.2126 * a_type[0] + 0.7152 * a_type[1] + 0.0722 * a_type[2]
+        self.text_color = "#000000" if luminance > 0.5 else "#FFFFFF"
+        super().save(*args, **kwargs)
 
     def get_nested_name(self) -> str:
         if self.is_root():
