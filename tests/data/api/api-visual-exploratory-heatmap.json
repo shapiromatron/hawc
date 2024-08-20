@@ -124,6 +124,7 @@
   },
   "slug": "exploratory-heatmap",
   "studies": [],
+  "tag_htmx": "/assessment/tag-item/133/8/?action=tag",
   "title": "exploratory-heatmap",
   "url": "/summary/visual/assessment/2/exploratory-heatmap/",
   "url_delete": "/summary/visual/assessment/2/exploratory-heatmap/delete/",

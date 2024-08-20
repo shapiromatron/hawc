@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -687,11 +688,20 @@ class TagForm(forms.ModelForm):
             self.fields["parent"].initial = self.instance.get_parent()
         self.fields["parent"].queryset = self.get_parent_queryset()
         self.fields["parent"].label_from_instance = lambda tag: tag.get_nested_name()
+        self.fields["description"].widget.attrs["rows"] = 2
 
     @property
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name", "published", css_class="col-md-3"),
+                cfl.Column("color", css_class="col-md-1"),
+                cfl.Column("description", css_class="col"),
+                cfl.Column("parent", css_class="col-md-2"),
+            ),
+        )
         return helper
 
     def get_parent_queryset(self):

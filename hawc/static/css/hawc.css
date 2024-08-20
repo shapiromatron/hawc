@@ -50,6 +50,23 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
 }
 /* end sidebar */
 
+.label {
+    font-weight: bold;
+    width: fit-content;
+    border-radius: 8px 15px 15px 8px;
+    overflow: hidden;
+    font-size: 0.85rem;
+    padding: .2rem 1rem .2rem .4rem;
+    clip-path: polygon(
+        0% 0,
+        calc(100% - 12px) 0,
+        100% 48%,
+        100% 52%,
+        calc(100% - 12px) 100%,
+        0% 100%
+    )
+}
+
 .unpublishedBadge+.actionsMenu, .unpublishedBadge+button.close {
     margin-left: unset !important;
 }

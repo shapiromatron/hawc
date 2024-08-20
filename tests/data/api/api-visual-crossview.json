@@ -3335,6 +3335,7 @@
   },
   "slug": "crossview",
   "studies": [],
+  "tag_htmx": "/assessment/tag-item/133/4/?action=tag",
   "title": "crossview",
   "url": "/summary/visual/assessment/2/crossview/",
   "url_delete": "/summary/visual/assessment/2/crossview/delete/",

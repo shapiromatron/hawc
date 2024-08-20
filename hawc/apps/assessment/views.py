@@ -965,7 +965,8 @@ class TagViewSet(HtmxViewSet):
         if request.method == "POST":
             self.perform_delete(request.item)
             return self.str_response()
-        return render(request, self.detail_fragment, self.get_context_data())
+        form = forms.TagForm(data=None, instance=request.item.object)
+        return render(request, self.form_fragment, self.get_context_data(form=form))
 
 
 class TagItem(HtmxView):
