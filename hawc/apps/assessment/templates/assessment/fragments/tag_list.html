@@ -1,9 +1,8 @@
 <div class="my-2 box-shadow-minor list-group py-0" id="tag-listgroup">
   {% if object_list.exists %}
     <div class="list-group-item d-flex font-weight-bold bg-gray rounded-top">
-      <div class="col-3 pl-2">Name</div>
-      <div class="col-5 pl-2">Description</div>
-      <div class="col-3 pl-2">Parent</div>
+      <div class="col-6 pl-2">Name</div>
+      <div class="col-6 pl-2">Description</div>
     </div>
   {% endif %}
   {% for object in object_list %}
