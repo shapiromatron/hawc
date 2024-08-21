@@ -21,7 +21,6 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseFilterList,
-    BaseList,
     BaseUpdate,
 )
 from ..riskofbias.models import RiskOfBiasMetric
@@ -34,59 +33,10 @@ def get_visual_list_crumb(assessment) -> Breadcrumb:
     )
 
 
-def get_summary_list_crumb(assessment) -> Breadcrumb:
-    return Breadcrumb(name="Summary", url=reverse("summary:list", args=(assessment.id,)))
-
-
 def get_table_list_crumb(assessment) -> Breadcrumb:
     return Breadcrumb(
         name="Summary tables", url=reverse("summary:tables_list", args=(assessment.id,))
     )
-
-
-# SUMMARY-TEXT
-class SummaryTextList(BaseList):
-    parent_model = Assessment
-    model = models.SummaryText
-    breadcrumb_active_name = "Executive summary"
-
-    def get_queryset(self):
-        rt = self.model.get_assessment_root_node(self.assessment.id)
-        return super().get_queryset().filter(pk__in=[rt.pk])
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="summaryTextStartup", data=dict(assessment_id=self.assessment.id, editMode=False)
-        )
-
-
-class SummaryTextModify(BaseCreate):
-    # Base view for all Create, Update, Delete GET operations
-    parent_model = Assessment
-    parent_template_name = "assessment"
-    model = models.SummaryText
-    form_class = forms.SummaryTextForm
-    http_method_names = ("get",)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Update text",
-            [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
-        )
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="summaryTextStartup",
-            data=dict(
-                assessment_id=self.assessment.id,
-                editMode=True,
-                csrf=get_token(self.request),
-            ),
-        )
 
 
 # SUMMARY TABLE
