@@ -1,7 +1,7 @@
 <div
   {% if canEdit or permissions.edit %}
     hx-get="{{ object.get_edit_url }}"
-    class="list-group-item clickable d-flex"
+    class="list-group-item clickable d-flex label-row"
     hx-indicator="#spinner-{{object.pk}}"
     title="Click to update" hx-swap="outerHTML"
   {% else %}
@@ -14,7 +14,7 @@
       <div class="card mx-3 d-inline-block align-self-start {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
         <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
       </div>
-      <p class="m-0 col">{{object.description}}</p>
+      <p class="m-0 col align-self-center">{{object.description}}</p>
     </div>
   </div>
 </div>
