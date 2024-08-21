@@ -24,10 +24,12 @@
       {% for visual in objects %}
         <tr>
           <td>
-            <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
-            {% for tagged_item in visual.tags.all %}
-            <span class="label tny mx-1 mb-3" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.text_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</span>
-            {% endfor %}
+            <div class="d-flex">
+              <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
+              {% for tagged_item in visual.tags.all %}
+              <div class="tny mx-1 label label-clip" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.text_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
+              {% endfor %}
+            </div>
             {% if not visual.published %}
               <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
             {% endif %}
@@ -46,10 +48,3 @@
   <p><b>{{n_objects}}</b> visual{{n_objects|pluralize}} found.</p>
 {% endblock content %}
 
-{% block extrajs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
-    });
-  </script>
-{% endblock extrajs %}
