@@ -1502,7 +1502,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -1544,7 +1543,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: ''
@@ -1584,7 +1582,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: false
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
@@ -1624,7 +1621,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''

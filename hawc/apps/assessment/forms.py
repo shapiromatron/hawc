@@ -298,7 +298,6 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_bmd",
             "enable_summary_tables",
             "enable_visuals",
-            "enable_summary_text",
             "enable_downloads",
             "noel_name",
             "rob_name",
