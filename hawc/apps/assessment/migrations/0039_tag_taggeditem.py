@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ("numchild", models.PositiveIntegerField(default=0)),
                 ("name", models.CharField(max_length=20, unique=True)),
                 ("description", models.TextField(blank=True)),
-                ("color", hawc.apps.common.models.ColorField(default="#ffffff")),
+                ("color", hawc.apps.common.models.ColorField(default="#0071bc")),
                 ("published", models.BooleanField(default=False)),
                 ("text_color", hawc.apps.common.models.ColorField(default="#000000")),
                 ("created", models.DateTimeField(auto_now_add=True)),
