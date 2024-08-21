@@ -49,7 +49,9 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     font-weight: normal;
 }
 /* end sidebar */
-
+.tny {
+    font-size: 0.75rem !important;
+}
 .label {
     font-weight: bold;
     width: fit-content;
