@@ -23,9 +23,9 @@ class VisualFilterSet(BaseFilterSet):
     )
     tag = df.ChoiceFilter(
         method="filter_tag",
-        label="Applied tag",
+        label="Applied label",
         help_text="Visualizations with tag applied",
-        empty_label="All tags",
+        empty_label="All labels",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],

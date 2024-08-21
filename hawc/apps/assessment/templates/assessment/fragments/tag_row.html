@@ -9,8 +9,8 @@
   {% endif %}>
   <div class="col-3 pl-4">
     <div class="row justify-content-between">
-      <p class="label" style="font-size: 1.2rem; background-color: {{object.color}}; color: {{object.text_color}};">{{object.name}}</p>
-      <div class="card mx-3 p-1 d-inline-block {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
+      <p class="label" style="background-color: {{object.color}}; color: {{object.text_color}};">{{object.name}}</p>
+      <div class="card mx-3 d-inline-block {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
         <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
       </div>
     </div>
@@ -21,7 +21,7 @@
   <div class="col-3 pl-2">
     {% with parent=object.get_parent %}
       {% if parent != object.get_root %}
-        <p class="label" style="font-size: 1.2rem; background-color: {{object.get_parent.color}}; color: {{object.get_parent.text_color}};">{{object.get_parent.name}}</p>
+        <p class="label" style="background-color: {{object.get_parent.color}}; color: {{object.get_parent.text_color}};">{{object.get_parent.name}}</p>
       {% else %}
         <i>Root Node</i>
       {% endif %}

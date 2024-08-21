@@ -19,7 +19,7 @@
           <a class="dropdown-item" href="{{object.get_delete_url}}">
             <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
           </a>
-          <a class="dropdown-item" data-toggle="modal" data-target="#tag-modal" hx-get="{% url 'assessment:tag-item' content_object.0.pk content_object.1 %}?action=tag" hx-target="#tag-modal-content">Apply tags</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#tag-modal" hx-get="{% url 'assessment:tag-item' content_object.0.pk content_object.1 %}?action=tag" hx-target="#tag-modal-content">Apply labels</a>
         {% endif %}
       {% endactions %}
     {% endif %}

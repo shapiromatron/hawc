@@ -735,7 +735,8 @@ class TagItemForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(
         required=False,
         queryset=models.Tag.objects.all(),
-        help_text="Select tag(s) to apply.",
+        label="Labels",
+        help_text="Select label(s) to apply.",
     )
 
     def __init__(self, *args, **kwargs):

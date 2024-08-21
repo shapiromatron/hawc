@@ -51,7 +51,7 @@ class ExternalWebsite extends BaseVisual {
                 {
                     "hx-get": this.data.tag_htmx,
                     "hx-target": "#tag-modal-content",
-                    text: "Apply tags",
+                    text: "Apply labels",
                     "data-toggle": "modal",
                     "data-target": "#tag-modal",
                 }
