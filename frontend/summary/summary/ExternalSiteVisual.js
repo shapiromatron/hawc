@@ -62,7 +62,9 @@ class ExternalWebsite extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
-            tagIndicators = $(`<div id="tag-indicators" hx-get="${this.data.tag_indicators_htmx}" hx-trigger="load" hx-swap="none">`),
+            tagIndicators = $(
+                `<div id="tag-indicators" hx-get="${this.data.tag_indicators_htmx}" hx-trigger="load" hx-swap="none">`
+            ),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>");
