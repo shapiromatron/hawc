@@ -48,3 +48,10 @@
   <p><b>{{n_objects}}</b> visual{{n_objects|pluralize}} found.</p>
 {% endblock content %}
 
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+    });
+  </script>
+{% endblock extrajs %}
