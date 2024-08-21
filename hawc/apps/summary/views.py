@@ -255,6 +255,7 @@ class SummaryTableDelete(GetSummaryTableMixin, BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["content_object"] = object_to_content_object(self.get_object())
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
         )
@@ -755,6 +756,7 @@ class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context["content_object"] = object_to_content_object(self.get_object())
         context["config"] = {
             "data_url": self.object.get_data_url(),
             "settings": self.object.settings,
@@ -804,6 +806,7 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["content_object"] = object_to_content_object(self.get_object())
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )

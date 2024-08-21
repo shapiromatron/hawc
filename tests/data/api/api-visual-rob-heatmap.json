@@ -489,6 +489,7 @@
     }
   ],
   "tag_htmx": "/assessment/tag-item/133/3/?action=tag",
+  "tag_indicators_htmx": "/assessment/tag-item/133/3/?action=tag_indicators",
   "title": "rob-heatmap",
   "url": "/summary/visual/assessment/2/rob-heatmap/",
   "url_delete": "/summary/visual/assessment/2/rob-heatmap/delete/",

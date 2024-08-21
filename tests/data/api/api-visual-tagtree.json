@@ -26,6 +26,7 @@
   "slug": "tagtree",
   "studies": [],
   "tag_htmx": "/assessment/tag-item/133/6/?action=tag",
+  "tag_indicators_htmx": "/assessment/tag-item/133/6/?action=tag_indicators",
   "title": "tagtree",
   "url": "/summary/visual/assessment/2/tagtree/",
   "url_delete": "/summary/visual/assessment/2/tagtree/delete/",

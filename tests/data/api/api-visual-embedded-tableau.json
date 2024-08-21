@@ -26,6 +26,7 @@
   "slug": "embedded-tableau",
   "studies": [],
   "tag_htmx": "/assessment/tag-item/133/7/?action=tag",
+  "tag_indicators_htmx": "/assessment/tag-item/133/7/?action=tag_indicators",
   "title": "embedded-tableau",
   "url": "/summary/visual/assessment/2/embedded-tableau/",
   "url_delete": "/summary/visual/assessment/2/embedded-tableau/delete/",
