@@ -354,7 +354,9 @@ class VisualizationList(BaseFilterList):
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type", "tag"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "tag"],
+                dynamic_fields=["title", "type"],
             )
 
     def get_context_data(self, **kwargs):

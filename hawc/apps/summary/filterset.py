@@ -1,6 +1,6 @@
 import django_filters as df
-from django.db.models import Q, Exists, OuterRef
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Exists, OuterRef, Q
 
 from ..assessment.constants import RobName
 from ..assessment.models import Tag, TaggedItem
@@ -72,9 +72,11 @@ class VisualFilterSet(BaseFilterSet):
                 for value, label in choices
             ]
         return choices
-    
+
     def get_tag_choices(self):
-        return [(tag.pk,tag.get_nested_name()) for tag in Tag.get_assessment_qs(self.assessment.pk)]
+        return [
+            (tag.pk, tag.get_nested_name()) for tag in Tag.get_assessment_qs(self.assessment.pk)
+        ]
 
     def create_form(self):
         form = super().create_form()
@@ -100,7 +102,9 @@ class DataPivotFilterSet(VisualFilterSet):
     def filter_tag(self, queryset, name, value):
         if not value:
             return queryset
-        content_types = ContentType.objects.get_for_models(models.DataPivot,models.DataPivotQuery,models.DataPivotUpload).values()
+        content_types = ContentType.objects.get_for_models(
+            models.DataPivot, models.DataPivotQuery, models.DataPivotUpload
+        ).values()
         subquery = TaggedItem.objects.filter(
             tag_id=value,
             content_type__in=content_types,
