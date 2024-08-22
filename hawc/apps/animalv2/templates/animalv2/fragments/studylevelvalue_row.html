@@ -1,30 +1,33 @@
-<div
-  {% if obj_perms.edit or permissions.edit %}
-    hx-get="{{ object.get_edit_url }}"
-    class="box-shadow p-3 rounded mb-4 clickable studylevelvalue-row"
-    title="Click to update" hx-swap="outerHTML"
-  {% else %}
-    class="box-shadow p-3 rounded mb-4"
+<tr hx-target="this" hx-swap="outerHTML" class="studylevelvalue-detail-row">
+  <td>{{object.system}}</td>
+  <td>{{object.get_value_type_display}}</td>
+  <td>{{object.value}}</td>
+  <td>{{object.units}}</td>
+  <td>{{object.comments}}</td>
+  {% if action == 'delete' %}
+    <td>
+      <form class="alert alert-danger">
+        {% csrf_token %}
+        <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
+        <div class="d-flex">
+          <button class="btn btn-sm btn-danger"
+                  hx-post="{{ object.get_delete_url }}"
+                  hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+          <button class="btn btn-sm btn-light ml-2"
+                  hx-get="{{ object.get_absolute_url }}">Cancel</button>
+        </div>
+      </form>
+    </td>
+  {% elif obj_perms.edit or permissions.edit %}
+    <td>
+      <button
+        class="btn btn-sm btn-primary"
+        hx-get="{{ object.get_edit_url }}">
+        <i class="fa fa-fw fa-edit"></i>&nbsp;Update</button>
+      <button
+        class="btn btn-sm btn-danger"
+        hx-get="{{ object.get_delete_url }}">
+        <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
+    </td>
   {% endif %}
-  style="width: auto;">
-  <table class="table table-sm table-striped">
-    <thead>
-      <tr>
-        <th>System</th>
-        <th>Value type</th>
-        <th>Value</th>
-        <th>Units</th>
-        <th>Comments</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{object.system}}</td>
-        <td>{{object.value_type}}</td>
-        <td>{{object.value}}</td>
-        <td>{{object.units}}</td>
-        <td>{{object.comments}}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+</tr>

@@ -4,18 +4,26 @@
   <div class="d-flex">
     <h2 class="mb-2">Study Level Values</h2>
     {% if obj_perms.edit %}
-      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target="#studylevelvalue-list" hx-swap="afterbegin" href="/">Create new study level value</a>
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target="#attach-tbody" hx-swap="afterbegin" href="/">Create new study level value</a>
     {% endif %}
   </div>
-  <p class="text-muted vw75 mt-0 mb-2">
-    View study level values.
-  </p>
-  <div id="studylevelvalue-list">
-    {% for object in object_list %}
-      {% include "animalv2/fragments/studylevelvalue_row.html" %}
-    {% endfor %}
-    <div class="alert alert-info text-center show-only-child">No study level values created (yet).</div>
-  </div>
+  <table class="table table-sm table-striped">
+    {% if obj_perms.edit %}
+      {% bs4_thead 'System,Value type,Value,Units,Comments,Editing' %}
+    {% else %}
+      {% bs4_thead 'System,Value type,Value,Units,Comments' %}
+    {% endif %}
+    <tbody id="attach-tbody">
+      {% for object in object_list %}
+        {% include "animalv2/fragments/studylevelvalue_row.html" %}
+      {% endfor %}
+      <tr class="show-only-child">
+        <td colspan="6">
+          <div class="alert alert-info text-center">No study level values created (yet).</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 {% endblock %}
 
 {% block extrajs %}
@@ -23,7 +31,7 @@
   {% include "common/helptext_popup_js.html" %}
   <script type="text/javascript">
     $(window).ready(function() {
-      window.app.HAWCUtils.addScrollHtmx("studylevelvalue-edit-row", "studylevelvalue-row", "studylevelvalue-conf-delete");
+      //window.app.HAWCUtils.addScrollHtmx("studylevelvalue-edit-row", "studylevelvalue-row", "studylevelvalue-conf-delete");
     });
   </script>
 {% endblock %}

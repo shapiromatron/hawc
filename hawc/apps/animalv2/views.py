@@ -64,4 +64,4 @@ class StudyLevelValueViewSet(HtmxViewSet):
             return self.str_response()
         form = forms.StudyLevelValueForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
-        return render(request, self.form_fragment, context)
+        return render(request, self.detail_fragment, context)

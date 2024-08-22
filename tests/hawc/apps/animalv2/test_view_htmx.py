@@ -42,9 +42,13 @@ class TestStudyLevelValues:
         url = studylevelvalue.get_edit_url()
         inputs = {
             "system": "System update",
+            "value_type": 1,
+            "value": 10,
+            "units": 1,
+            "comments": "a comment",
         }
         resp = client.post(url, data=inputs)
-        assertTemplateUsed(resp, "animalv2/fragments/studylevelvalue_edit_row.html")
+        assertTemplateUsed(resp, "animalv2/fragments/studylevelvalue_row.html")
         assert resp.status_code == 200
         assert "System update" in str(resp.content)
         assert models.StudyLevelValue.objects.count() == initial_studylevelvalue_count + 1
