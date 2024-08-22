@@ -1,6 +1,7 @@
 import reversion
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..vocab.models import Term
@@ -371,7 +372,7 @@ class DataExtraction(models.Model):
     response_units = models.CharField(
         max_length=32,
         blank=True,
-        help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)",
+        help_text="Units the response was measured in (i.e., \u03bcg/dL, % control, etc.)",
     )
     dose_response_observations = models.TextField(help_text="TODO")
     result_details = models.TextField(help_text="TODO")
@@ -441,6 +442,39 @@ class DoseResponseAnimalLevelData(models.Model):
         return self.data_extraction.get_study()
 
 
+class StudyLevelValue(models.Model):
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="values")
+    system = models.CharField(
+        verbose_name="System or health effect basis",
+        max_length=128,
+        blank=True,
+        help_text="Identify the health system of concern (e.g., Hepatic, Nervous, Reproductive)",
+    )
+    value_type = models.PositiveSmallIntegerField(
+        choices=constants.StudyLevelTypeChoices.choices,
+        help_text="Type of derived value",
+    )
+    value = models.FloatField(help_text="The value")
+    units = models.ForeignKey("assessment.DoseUnits", on_delete=models.CASCADE)
+    comments = models.TextField(
+        blank=True, help_text="General comments related to the derivation of this value"
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def get_assessment(self):
+        return self.study.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "delete"])
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(AnimalGroup)
@@ -451,3 +485,4 @@ reversion.register(ObservationTime)
 reversion.register(DataExtraction)
 reversion.register(DoseResponseGroupLevelData)
 reversion.register(DoseResponseAnimalLevelData)
+reversion.register(StudyLevelValue)
