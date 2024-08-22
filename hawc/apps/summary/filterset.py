@@ -148,6 +148,12 @@ class SummaryTableFilterSet(BaseFilterSet):
         help_text="Type of summary table to display",
         empty_label="All table types",
     )
+    tag = df.ChoiceFilter(
+        method="filter_tag",
+        label="Applied label",
+        help_text="Visualizations with tag applied",
+        empty_label="All labels",
+    )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
         label="Published",
@@ -157,7 +163,7 @@ class SummaryTableFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.SummaryTable
-        fields = ["title", "type", "published"]
+        fields = ["title", "type", "tag", "published"]
         form = InlineFilterForm
 
     def filter_queryset(self, queryset):
@@ -166,6 +172,22 @@ class SummaryTableFilterSet(BaseFilterSet):
         if not self.perms["edit"]:
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
+
+    def filter_tag(self, queryset, name, value):
+        if not value:
+            return queryset
+        content_type = ContentType.objects.get_for_model(models.SummaryTable)
+        subquery = TaggedItem.objects.filter(
+            tag_id=value,
+            content_type=content_type,
+            object_id=OuterRef("pk"),
+        )
+        return queryset.filter(Exists(subquery))
+
+    def get_tag_choices(self):
+        return [
+            (tag.pk, tag.get_nested_name()) for tag in Tag.get_assessment_qs(self.assessment.pk)
+        ]
 
     def create_form(self):
         form = super().create_form()
@@ -176,5 +198,6 @@ class SummaryTableFilterSet(BaseFilterSet):
         )
         choices = [constants.TableType(choice) for choice in sorted(set(choices))]
         form.fields["type"].choices = [(choice.value, choice.label) for choice in choices]
+        form.fields["tag"].choices = self.get_tag_choices()
 
         return form
