@@ -1,5 +1,5 @@
 
-<div hx-target="this" hx-swap="outerHTML" class="tag-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}">
+<div hx-target="this" hx-swap="outerHTML" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}">
   <form method="post" enctype="multipart/form-data" class="d-flex align-items-center p-1 w-100">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
@@ -17,7 +17,7 @@
                 <div class="row pb-1 w-100"></div>
                 <div class="d-flex justify-content-end pl-2">
                   <button class="btn btn-sm btn-danger"
-                          id="tag-conf-delete"
+                          id="label-conf-delete"
                           hx-post="{{ object.get_delete_url }}"
                           hx-indicator="#spinner-{{object.pk}}"
                           hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
@@ -28,7 +28,7 @@
             <div class="d-flex justify-content-end">
               <button
                 class="btn btn-sm btn-danger p-2 flex-shrink-0 align-self-end mb-2"
-                id="tag-delete"
+                id="label-delete"
                 hx-get="{{ object.get_delete_url }}">
                 <i class="fa fa-fw fa-trash"></i>
               </button>
@@ -62,7 +62,7 @@
         <button class="btn btn-light px-3 py-2 ml-2"
                 id="binding-cancel"
                 type='button'
-                onclick="window.app.HAWCUtils.hideElement($(this).closest('.tag-edit-row'), true)">
+                onclick="window.app.HAWCUtils.hideElement($(this).closest('.label-edit-row'), true)">
           Cancel
         </button>
       {% endif %}

@@ -370,6 +370,7 @@
   "slug": "bioassay-aggregation",
   "studies": [],
   "tag_htmx": "/assessment/tag-item/133/10/?action=tag",
+  "tag_indicators_htmx": "/assessment/tag-item/133/10/?action=tag_indicators",
   "title": "bioassay-aggregation",
   "url": "/summary/visual/assessment/2/bioassay-aggregation/",
   "url_delete": "/summary/visual/assessment/2/bioassay-aggregation/delete/",

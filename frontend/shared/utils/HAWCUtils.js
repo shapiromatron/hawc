@@ -471,8 +471,8 @@ class HAWCUtils {
                     $(editElement).attr("scrolltop", scrollTo);
                 }
                 // animate scroll to form
-                const scrollTo = $(editElement).offset().top - 20;
-                $("body,html").animate({scrollTop: scrollTo}, 400);
+                const scrollTo = $(editElement).offset().top - 75;
+                $("body,html").animate({scrollTop: scrollTo}, 500);
             } else {
                 // if the form is being replaced by a read row, scroll to original position
                 if (
@@ -481,7 +481,7 @@ class HAWCUtils {
                     !$(elSwapIn).hasClass("clone")
                 ) {
                     const scrollTo = $(elSwapOut).attr("scrolltop");
-                    $("body,html").animate({scrollTop: scrollTo}, 400);
+                    $("body,html").animate({scrollTop: scrollTo}, 500);
                 }
             }
         });

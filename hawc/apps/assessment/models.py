@@ -1343,7 +1343,7 @@ class Tag(AssessmentRootMixin, MP_Node):
 
     name = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True)
-    color = ColorField(default="#ffffff")
+    color = ColorField(default="#0071bc")
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="tags")
     published = models.BooleanField(default=False)
     text_color = ColorField(default="#000000")

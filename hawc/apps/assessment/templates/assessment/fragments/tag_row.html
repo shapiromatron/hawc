@@ -1,30 +1,20 @@
 <div
   {% if canEdit or permissions.edit %}
     hx-get="{{ object.get_edit_url }}"
-    class="list-group-item clickable d-flex"
+    class="list-group-item clickable d-flex label-row"
     hx-indicator="#spinner-{{object.pk}}"
     title="Click to update" hx-swap="outerHTML"
   {% else %}
     class="list-group-item d-flex"
   {% endif %}>
-  <div class="col-3 pl-4">
-    <div class="row justify-content-between">
-      <p class="label" style="background-color: {{object.color}}; color: {{object.text_color}};">{{object.name}}</p>
-      <div class="card mx-3 d-inline-block {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
+  <div class="pl-4">
+    <div class="row">
+      {% widthratio object.depth 10 20 as marginLeft %}
+      <p class="label align-self-start" style="background-color: {{object.color}}; color: {{object.text_color}}; {% if object.depth > 0 %} margin-left: {{ marginLeft|add:"-4" }}rem;{% endif %}">{{object.name}}</p>
+      <div class="card mx-3 d-inline-block align-self-start {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
         <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
       </div>
+      <p class="m-0 col align-self-center">{{object.description}}</p>
     </div>
-  </div>
-  <div class="col-5 pl-2">
-    <p>{{object.description}}</p>
-  </div>
-  <div class="col-3 pl-2">
-    {% with parent=object.get_parent %}
-      {% if parent != object.get_root %}
-        <p class="label" style="background-color: {{object.get_parent.color}}; color: {{object.get_parent.text_color}};">{{object.get_parent.name}}</p>
-      {% else %}
-        <i>Root Node</i>
-      {% endif %}
-    {% endwith %}
   </div>
 </div>

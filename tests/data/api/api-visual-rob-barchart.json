@@ -486,6 +486,7 @@
     }
   ],
   "tag_htmx": "/assessment/tag-item/133/5/?action=tag",
+  "tag_indicators_htmx": "/assessment/tag-item/133/5/?action=tag_indicators",
   "title": "rob-barchart",
   "url": "/summary/visual/assessment/2/rob-barchart/",
   "url_delete": "/summary/visual/assessment/2/rob-barchart/delete/",
