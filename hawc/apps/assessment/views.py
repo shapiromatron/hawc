@@ -916,6 +916,7 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
 class TagList(BaseList):
     parent_model = models.Assessment
     model = models.Tag
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -972,52 +973,58 @@ class TagViewSet(HtmxViewSet):
 class TagItem(HtmxView):
     actions = {"tag", "tag_indicators"}
 
-    def tag(self, request: HttpRequest, *args, **kwargs):
-        content_type = self.kwargs.get("content_type")
-        object_id = self.kwargs.get("object_id")
-        content_object = ContentType.objects.get_for_id(content_type).get_object_for_this_type(
-            pk=object_id
-        )
-        if not content_object.get_assessment().user_can_edit_object(request.user):
+    def dispatch(self, request, *args, **kwargs):
+        self.content_type = self.kwargs.get("content_type")
+        self.object_id = self.kwargs.get("object_id")
+
+        try:
+            self.content_object = ContentType.objects.get_for_id(
+                self.content_type
+            ).get_object_for_this_type(pk=self.object_id)
+            self.assessment = self.content_object.get_assessment()
+        except ObjectDoesNotExist:
+            raise Http404()
+
+        handler = self.get_handler(request)
+        if request.action == "tag" and not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        elif not self.assessment.user_can_view_object(request.user):
             raise PermissionDenied()
 
-        context = dict(content_type=content_type, object_id=object_id)
+        return handler(request, *args, **kwargs)
+
+    def tag(self, request: HttpRequest, *args, **kwargs):
+        context = dict(content_type=self.content_type, object_id=self.object_id)
         if request.method == "GET":
             form = forms.TagItemForm(
                 data=dict(
                     tags=models.Tag.objects.filter(
-                        items__content_type=content_type, items__object_id=object_id
+                        items__content_type=self.content_type, items__object_id=self.object_id
                     )
                 ),
-                content_object=content_object,
-                content_type=content_type,
-                object_id=object_id,
+                content_object=self.content_object,
+                content_type=self.content_type,
+                object_id=self.object_id,
             )
         else:
             form = forms.TagItemForm(
                 data=request.POST,
-                content_object=content_object,
-                content_type=content_type,
-                object_id=object_id,
+                content_object=self.content_object,
+                content_type=self.content_type,
+                object_id=self.object_id,
             )
             if form.is_valid():
                 form.save()
                 context["saved"] = True
-                context["tags"] = models.Tag.objects.get_applied(content_object)
+                context["tags"] = models.Tag.objects.get_applied(self.content_object)
         context["form"] = form
         return render(request, "assessment/components/tag_modal_content.html", context)
 
     def tag_indicators(self, request: HttpRequest, *args, **kwargs):
-        content_type = self.kwargs.get("content_type")
-        object_id = self.kwargs.get("object_id")
-        content_object = ContentType.objects.get_for_id(content_type).get_object_for_this_type(
-            pk=object_id
-        )
-
         context = dict(
-            content_type=content_type,
-            object_id=object_id,
-            tags=models.Tag.objects.get_applied(content_object),
+            content_type=self.content_type,
+            object_id=self.object_id,
+            tags=models.Tag.objects.get_applied(self.content_object),
             oob=True,
         )
         return render(request, "assessment/fragments/tag_indicators.html", context)
