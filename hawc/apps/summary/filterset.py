@@ -1,6 +1,6 @@
 import django_filters as df
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Prefetch, Q
 
 from ..assessment.constants import RobName
 from ..assessment.models import Tag, TaggedItem
@@ -39,8 +39,21 @@ class VisualFilterSet(BaseFilterSet):
         fields = ["title", "type", "tag", "published"]
         form = InlineFilterForm
 
+    def annotate_queryset(self, queryset):
+        if self.perms["edit"]:
+            return queryset.prefetch_related(Prefetch("tags", to_attr="visible_tags"))
+        else:
+            return queryset.prefetch_related(
+                Prefetch(
+                    "tags",
+                    queryset=TaggedItem.objects.filter(tag__published=True),
+                    to_attr="visible_tags",
+                )
+            )
+
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
+        queryset = self.annotate_queryset(queryset)
         query = Q(assessment=self.assessment)
         if not self.perms["edit"]:
             query &= Q(published=True)
@@ -74,9 +87,10 @@ class VisualFilterSet(BaseFilterSet):
         return choices
 
     def get_tag_choices(self):
-        return [
-            (tag.pk, tag.get_nested_name()) for tag in Tag.get_assessment_qs(self.assessment.pk)
-        ]
+        tags = Tag.get_assessment_qs(self.assessment.pk)
+        if not self.perms["edit"]:
+            tags = tags.filter(published=True)
+        return [(tag.pk, tag.get_nested_name()) for tag in tags]
 
     def create_form(self):
         form = super().create_form()
@@ -95,6 +109,26 @@ class DataPivotFilterSet(VisualFilterSet):
 
     class Meta(VisualFilterSet.Meta):
         model = models.DataPivot
+
+    def annotate_queryset(self, queryset):
+        if self.perms["edit"]:
+            return queryset.prefetch_related(
+                Prefetch("datapivotquery__tags", to_attr="visible_query_tags"),
+                Prefetch("datapivotupload__tags", to_attr="visible_upload_tags"),
+            )
+        else:
+            return queryset.prefetch_related(
+                Prefetch(
+                    "datapivotquery__tags",
+                    queryset=TaggedItem.objects.filter(tag__published=True),
+                    to_attr="visible_query_tags",
+                ),
+                Prefetch(
+                    "datapivotupload__tags",
+                    queryset=TaggedItem.objects.filter(tag__published=True),
+                    to_attr="visible_upload_tags",
+                ),
+            )
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("datapivotquery", "datapivotupload")
@@ -169,7 +203,16 @@ class SummaryTableFilterSet(BaseFilterSet):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         query = Q(assessment=self.assessment)
-        if not self.perms["edit"]:
+        if self.perms["edit"]:
+            queryset = queryset.prefetch_related(Prefetch("tags", to_attr="visible_tags"))
+        else:
+            queryset = queryset.prefetch_related(
+                Prefetch(
+                    "tags",
+                    queryset=TaggedItem.objects.filter(tag__published=True),
+                    to_attr="visible_tags",
+                )
+            )
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
 
@@ -185,9 +228,10 @@ class SummaryTableFilterSet(BaseFilterSet):
         return queryset.filter(Exists(subquery))
 
     def get_tag_choices(self):
-        return [
-            (tag.pk, tag.get_nested_name()) for tag in Tag.get_assessment_qs(self.assessment.pk)
-        ]
+        tags = Tag.get_assessment_qs(self.assessment.pk)
+        if not self.perms["edit"]:
+            tags = tags.filter(published=True)
+        return [(tag.pk, tag.get_nested_name()) for tag in tags]
 
     def create_form(self):
         form = super().create_form()

@@ -1021,10 +1021,13 @@ class TagItem(HtmxView):
         return render(request, "assessment/components/tag_modal_content.html", context)
 
     def tag_indicators(self, request: HttpRequest, *args, **kwargs):
+        tags = models.Tag.objects.get_applied(self.content_object)
+        if not self.assessment.user_can_edit_object(request.user):
+            tags = tags.filter(published=True)
         context = dict(
             content_type=self.content_type,
             object_id=self.object_id,
-            tags=models.Tag.objects.get_applied(self.content_object),
+            tags=tags,
             oob=True,
         )
         return render(request, "assessment/fragments/tag_indicators.html", context)
