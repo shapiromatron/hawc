@@ -680,10 +680,8 @@ class TagForm(forms.ModelForm):
         fields = ["name", "description", "parent", "color", "published"]
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment", None)
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        if assessment:
-            self.instance.assessment = assessment
         if self.instance.pk is not None:
             self.fields["parent"].initial = self.instance.get_parent()
         self.fields["parent"].queryset = self.get_parent_queryset()
@@ -705,7 +703,7 @@ class TagForm(forms.ModelForm):
         return helper
 
     def get_parent_queryset(self):
-        root = models.Tag.get_assessment_root(self.instance.assessment.pk)
+        root = models.Tag.get_assessment_root(self.assessment.pk)
         queryset = models.Tag.get_tree(root)
         if self.instance.pk is not None:
             queryset = queryset.exclude(
@@ -720,7 +718,7 @@ class TagForm(forms.ModelForm):
             # handle new instance
             if instance.pk is None:
                 instance = models.Tag.create_tag(
-                    assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
+                    assessment_id=self.assessment.pk, parent_id=parent.pk, instance=instance
                 )
             # handle existing instance
             else:

@@ -952,12 +952,16 @@ class TagViewSet(HtmxViewSet):
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "POST":
-            form = forms.TagForm(request.POST, instance=request.item.object)
+            form = forms.TagForm(
+                request.POST, instance=request.item.object, assessment=request.item.assessment
+            )
             if form.is_valid():
                 self.perform_update(request.item, form)
                 template = self.detail_fragment
         else:
-            form = forms.TagForm(data=None, instance=request.item.object)
+            form = forms.TagForm(
+                data=None, instance=request.item.object, assessment=request.item.assessment
+            )
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
@@ -966,7 +970,9 @@ class TagViewSet(HtmxViewSet):
         if request.method == "POST":
             self.perform_delete(request.item)
             return self.str_response()
-        form = forms.TagForm(data=None, instance=request.item.object)
+        form = forms.TagForm(
+            data=None, instance=request.item.object, assessment=request.item.assessment
+        )
         return render(request, self.form_fragment, self.get_context_data(form=form))
 
 
