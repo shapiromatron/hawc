@@ -129,7 +129,7 @@ class HEROFetch:
                 url = "https://heronetnext.epa.gov/api/reference/export/json"
                 params = {"id": request_ids, "type": "hero"}
                 try:
-                    r = requests.get(url, params, headers=headers, timeout=30.0)
+                    r = requests.post(url, params, headers=headers, timeout=30.0)
                     if r.status_code == 200:
                         results = r.json()
                     else:
