@@ -11122,15 +11122,148 @@
       - type: content
         value: <p data-block-key="ci8dg">This is the child page too.</p>
         id: 3cd2f6cf-39e4-4a1b-a44f-7150986568d5
+- model: mgmt.tasktype
+  pk: 1
+  fields:
+    assessment: 1
+    name: Preparation
+    order: 10
+    description: ' '
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.tasktype
+  pk: 2
+  fields:
+    assessment: 1
+    name: Data Extraction
+    order: 20
+    description: ' '
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.tasktype
+  pk: 3
+  fields:
+    assessment: 1
+    name: QA/QC
+    order: 30
+    description: ' '
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.tasktype
+  pk: 4
+  fields:
+    assessment: 1
+    name: Study Evaluation
+    order: 40
+    description: ' '
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.taskstatus
+  pk: 1
+  fields:
+    assessment: 1
+    name: Not Started
+    value: 10
+    description: ' '
+    order: 10
+    color: '#CFCFCF'
+    terminal_status: false
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.taskstatus
+  pk: 2
+  fields:
+    assessment: 1
+    name: Started
+    value: 20
+    description: ' '
+    order: 20
+    color: 'FFCC00'
+    terminal_status: false
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.taskstatus
+  pk: 3
+  fields:
+    assessment: 1
+    name: Completed
+    value: 30
+    description: ' '
+    order: 30
+    color: '00CC00'
+    terminal_status: false
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.taskstatus
+  pk: 4
+  fields:
+    assessment: 1
+    name: Abandoned
+    value: 40
+    description: ' '
+    order: 40
+    color: 'CC3333'
+    terminal_status: false
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+- model: mgmt.tasktrigger
+  pk: 1
+  fields:
+    assessment: 1
+    task_type: 1
+    next_status: 2
+    current_status: 1
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+    event: 10
+- model: mgmt.tasktrigger
+  pk: 2
+  fields:
+    assessment: 1
+    task_type: 1
+    next_status: 3
+    current_status: 2
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+    event: 20
+- model: mgmt.tasktrigger
+  pk: 3
+  fields:
+    assessment: 1
+    task_type: 1
+    next_status: 2
+    current_status: 1
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+    event: 20
+- model: mgmt.tasktrigger
+  pk: 4
+  fields:
+    assessment: 1
+    task_type: 1
+    next_status: 2
+    current_status: 1
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+    event: 30
+- model: mgmt.tasktrigger
+  pk: 5
+  fields:
+    assessment: 1
+    task_type: 1
+    next_status: 3
+    current_status: 2
+    created: 2025-08-01 04:00:00+00:00
+    last_updated: 2025-08-01 04:00:00+00:00
+    event: 40
 - model: mgmt.task
   pk: 1
   fields:
     owner:
     - team@hawcproject.org
     study: 1
-    type: 10
-    status: 30
-    open: false
+    type: 1
+    status: 3
     due_date: 2025-08-01 04:00:00+00:00
     started: null
     completed: 2020-08-14 18:59:43.848775+00:00
@@ -11140,9 +11273,8 @@
     owner:
     - team@hawcproject.org
     study: 1
-    type: 20
-    status: 20
-    open: false
+    type: 2
+    status: 2
     due_date: null
     started: null
     completed: null
@@ -11151,9 +11283,8 @@
   fields:
     owner: null
     study: 1
-    type: 30
-    status: 10
-    open: false
+    type: 3
+    status: 1
     due_date: null
     started: null
     completed: null
@@ -11162,9 +11293,8 @@
   fields:
     owner: null
     study: 1
-    type: 40
-    status: 10
-    open: false
+    type: 4
+    status: 1
     due_date: null
     started: null
     completed: null

@@ -14,7 +14,6 @@ class TaskExport(ModelExport):
             "type_display": "type_display",
             "status": "status",
             "status_display": "status_display",
-            "open": "open",
             "due_date": "due_date",
             "started": "started",
             "completed": "completed",

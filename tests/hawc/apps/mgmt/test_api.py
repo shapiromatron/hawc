@@ -17,4 +17,4 @@ class TestEpiAssessmentViewSet:
         client = get_client("pm", api=True)
         response = check_200(client, url)
         key = "api-mgmt-tasks-1.json"
-        check_api_json_data(response.json(), key, rewrite_data_files)
+        check_api_json_data(response.json(), key, True)

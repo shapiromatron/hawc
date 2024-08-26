@@ -26,3 +26,10 @@ class TaskStatus(models.IntegerChoices):
             return models.Q(status__in=[30, 40])
         else:
             return models.Q(status=value)
+
+
+class StartTaskTriggerEvent(models.IntegerChoices):
+    STUDY_CREATION = 10, "Create Study"
+    DATA_EXTRACTION = 20, "Data Extraction"
+    MODIFY_ROB = 30, "Modify Study Evaluation"
+    COMPLETE_ROB = 40, "Complete Study Evaluation"
