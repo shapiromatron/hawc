@@ -27,13 +27,13 @@
             <div class="d-flex align-items-center">
               <a class="text-nowrap" href="{{visual.get_absolute_url}}">{{visual.title}}</a>
               {% for tagged_item in visual.visible_tags %}
-                <div class="tny mx-1 label" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.color|contrast_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
+                <div class="tny mx-1 label" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.text_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
               {% endfor %}
               {% for tagged_item in visual.datapivotquery.visible_query_tags %}
-                <div class="tny mx-1 label" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.color|contrast_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
+                <div class="tny mx-1 label" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.text_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
               {% endfor %}
               {% for tagged_item in visual.datapivotupload.visible_upload_tags %}
-                <div class="tny mx-1 label" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.color|contrast_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
+                <div class="tny mx-1 label" style="background-color: {{tagged_item.tag.color}}; color: {{tagged_item.tag.text_color}};" title="{{tagged_item.tag.description}}">{{tagged_item.tag.name}}</div>
               {% endfor %}
               {% if not visual.published %}
                 <i class="fa fa-eye-slash mx-1" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>

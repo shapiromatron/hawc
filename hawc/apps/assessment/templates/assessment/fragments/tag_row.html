@@ -10,7 +10,7 @@
   <div class="pl-4">
     <div class="row">
       {% widthratio object.depth 10 20 as marginLeft %}
-      <p class="label align-self-start" style="background-color: {{object.color}}; color: {{object.color|contrast_color}}; {% if object.depth > 0 %} margin-left: {{ marginLeft|add:"-4" }}rem;{% endif %}">{{object.name}}</p>
+      <p class="label align-self-start" style="background-color: {{object.color}}; color: {{object.text_color}}; {% if object.depth > 0 %} margin-left: {{ marginLeft|add:"-4" }}rem;{% endif %}">{{object.name}}</p>
       <div class="card mx-3 d-inline-block align-self-start {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
         <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
       </div>
