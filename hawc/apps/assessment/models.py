@@ -1360,6 +1360,7 @@ class Tag(AssessmentRootMixin, MP_Node):
         """
         kwargs["name"] = cls.get_assessment_root_name(assessment_id)
         kwargs["assessment_id"] = assessment_id
+        kwargs["published"] = True
         return cls.add_root(**kwargs)
 
     def save(self, *args, **kwargs):

@@ -918,9 +918,15 @@ class TagList(BaseList):
     model = models.Tag
     assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
+    def get_queryset(self):
+        # include root for permission checking
+        self.queryset = models.Tag.get_assessment_qs(self.assessment.pk, include_root=True)
+        return super().get_queryset()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tags"] = models.Tag.get_assessment_qs(self.assessment.pk, include_root=False)
+        # remove root from object list
+        context["object_list"] = context["object_list"][1:]
         return context
 
 
