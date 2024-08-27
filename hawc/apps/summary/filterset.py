@@ -62,9 +62,11 @@ class VisualFilterSet(BaseFilterSet):
     def filter_tag(self, queryset, name, value):
         if not value:
             return queryset
+        tag = Tag.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.Visual)
         subquery = TaggedItem.objects.filter(
-            tag_id=value,
+            tag__path__startswith=tag.path,
+            tag__depth__gte=tag.depth,
             content_type=content_type,
             object_id=OuterRef("pk"),
         )
@@ -136,11 +138,13 @@ class DataPivotFilterSet(VisualFilterSet):
     def filter_tag(self, queryset, name, value):
         if not value:
             return queryset
+        tag = Tag.objects.get(pk=value)
         content_types = ContentType.objects.get_for_models(
             models.DataPivot, models.DataPivotQuery, models.DataPivotUpload
         ).values()
         subquery = TaggedItem.objects.filter(
-            tag_id=value,
+            tag__path__startswith=tag.path,
+            tag__depth__gte=tag.depth,
             content_type__in=content_types,
             object_id=OuterRef("pk"),
         )
@@ -219,9 +223,11 @@ class SummaryTableFilterSet(BaseFilterSet):
     def filter_tag(self, queryset, name, value):
         if not value:
             return queryset
+        tag = Tag.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.SummaryTable)
         subquery = TaggedItem.objects.filter(
-            tag_id=value,
+            tag__path__startswith=tag.path,
+            tag__depth__gte=tag.depth,
             content_type=content_type,
             object_id=OuterRef("pk"),
         )

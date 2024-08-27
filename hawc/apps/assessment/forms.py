@@ -671,8 +671,6 @@ class DatasetForm(forms.ModelForm):
 
 
 class TagForm(forms.ModelForm):
-    # TODO make htmx not allow multiple open updates,
-    # or make sure changing parent fails upstream under right conditions
     parent = forms.ModelChoiceField(None, empty_label=None)
 
     class Meta:
@@ -710,6 +708,24 @@ class TagForm(forms.ModelForm):
                 path__startswith=self.instance.path, depth__gte=self.instance.depth
             )
         return queryset
+
+    def clean(self):
+        cleaned_data = super().clean()
+        parent_conflict_msg = "Cannot be published: parent label is unpublished."
+        descendant_conflict_msg = "Cannot be unpublished: child label is published."
+        # if published changed, check parent and subtree published status
+        if "published" in self.changed_data:
+            if cleaned_data["published"] and not cleaned_data["parent"].published:
+                self.add_error("published", parent_conflict_msg)
+            elif not cleaned_data["published"] and self.instance.pk is not None:
+                descendants = self.instance.get_descendants()
+                if any(_.published for _ in descendants):
+                    self.add_error("published", descendant_conflict_msg)
+        # else if parent changed, check parent published status
+        elif "parent" in self.changed_data:
+            if cleaned_data["published"] and not cleaned_data["parent"].published:
+                self.add_error("parent", parent_conflict_msg)
+        return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
