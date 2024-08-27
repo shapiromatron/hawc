@@ -20,7 +20,7 @@ class HAWCMgr(BaseUserManager):
     # from https://docs.djangoproject.com/en/1.5/topics/auth/customizing/
     # also from UserManager(BaseUserManager)
 
-    def create_user(self, email, password=None, external_id=None, **extra_fields):
+    def _create_user(self, email, password=None, external_id=None, **extra_fields):
         if not email:
             raise ValueError("Users must have an email address")
         if settings.AUTH_PROVIDERS == {AuthProvider.django} and not password:
@@ -37,9 +37,7 @@ class HAWCMgr(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             external_id=external_id,
-            is_staff=False,
             is_active=True,
-            is_superuser=False,
             last_login=now,
             date_joined=now,
             **extra_fields,
@@ -49,11 +47,15 @@ class HAWCMgr(BaseUserManager):
 
         return user
 
+    def create_user(self, email, password=None, external_id=None, **extra_fields):
+        extra_fields["is_staff"] = False
+        extra_fields["is_superuser"] = False
+        return self._create_user(email, password, external_id, **extra_fields)
+
     def create_superuser(self, email, password=None, external_id=None, **extra_fields):
-        user = self.create_user(email, password, external_id, **extra_fields)
-        user.is_superuser = True
-        user.is_staff = True
-        user.save()
+        extra_fields["is_staff"] = True
+        extra_fields["is_superuser"] = True
+        return self._create_user(email, password, external_id, **extra_fields)
 
     def active(self):
         return self.filter(is_active=True)
