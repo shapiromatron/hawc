@@ -65,6 +65,7 @@ class VisualFilterSet(BaseFilterSet):
         tag = Tag.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.Visual)
         subquery = TaggedItem.objects.filter(
+            **(dict(tag__published=True) if not self.perms["edit"] else dict()),
             tag__path__startswith=tag.path,
             tag__depth__gte=tag.depth,
             content_type=content_type,
@@ -143,6 +144,7 @@ class DataPivotFilterSet(VisualFilterSet):
             models.DataPivot, models.DataPivotQuery, models.DataPivotUpload
         ).values()
         subquery = TaggedItem.objects.filter(
+            **(dict(tag__published=True) if not self.perms["edit"] else dict()),
             tag__path__startswith=tag.path,
             tag__depth__gte=tag.depth,
             content_type__in=content_types,
@@ -226,6 +228,7 @@ class SummaryTableFilterSet(BaseFilterSet):
         tag = Tag.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.SummaryTable)
         subquery = TaggedItem.objects.filter(
+            **(dict(tag__published=True) if not self.perms["edit"] else dict()),
             tag__path__startswith=tag.path,
             tag__depth__gte=tag.depth,
             content_type=content_type,
