@@ -77,7 +77,6 @@ class TaskManager(BaseManager):
         """
 
         TaskTrigger = apps.get_model("mgmt", "TaskTrigger")
-        trigger_events = []
 
         def status_by_value(statuses, val):
             for status in statuses:
@@ -96,21 +95,18 @@ class TaskManager(BaseManager):
         for value, name in constants.StartTaskTriggerEvent.choices:
             task_type = None
 
+            curr_status, next_status = (
+                constants.TaskStatus.NOT_STARTED,
+                constants.TaskStatus.STARTED,
+            )
+
             # for each study trigger, get the associated task types and statuses from the assessment level
             if value == constants.StartTaskTriggerEvent.STUDY_CREATION:
                 task_type = get_task_type(task_types, assessment, constants.TaskType.PREPARATION)
-                curr_status, next_status = (
-                    constants.TaskStatus.NOT_STARTED,
-                    constants.TaskStatus.STARTED,
-                )
 
             elif value == constants.StartTaskTriggerEvent.DATA_EXTRACTION:
                 # this event has two
                 task_type = get_task_type(task_types, assessment, constants.TaskType.PREPARATION)
-                curr_status, next_status = (
-                    constants.TaskStatus.NOT_STARTED,
-                    constants.TaskStatus.STARTED,
-                )
                 curr_status = status_by_value(task_statuses, curr_status)
                 next_status = status_by_value(task_statuses, next_status)
 
@@ -130,10 +126,6 @@ class TaskManager(BaseManager):
 
             elif value == constants.StartTaskTriggerEvent.MODIFY_ROB:
                 task_type = get_task_type(task_types, assessment, constants.TaskType.ROB)
-                curr_status, next_status = (
-                    constants.TaskStatus.NOT_STARTED,
-                    constants.TaskStatus.STARTED,
-                )
 
             elif value == constants.StartTaskTriggerEvent.COMPLETE_ROB:
                 task_type = get_task_type(task_types, assessment, constants.TaskType.ROB)
@@ -153,7 +145,6 @@ class TaskManager(BaseManager):
                 next_status=next_status,
                 event=value,
             )
-        logger.info(f"Creating {len(trigger_events)} triggers for assessment {assessment.id}.")
 
     def _get_missing_tasks(self, study, assessment, statuses, types):
         """Return list of unsaved Task objects for single study."""
@@ -189,6 +180,7 @@ class TaskManager(BaseManager):
         return new_tasks
 
     def _get_missing_statuses(self, assessment):
+        """Return list of all task status objects for single assessment."""
         TaskStatus = apps.get_model("mgmt", "TaskStatus")
         statuses = []
         # create all possible statuses for each task
@@ -198,13 +190,14 @@ class TaskManager(BaseManager):
                 name=name,
                 value=value,
                 order=value,
-                color=self.get_status_color(value),
-                terminal_status=self.get_terminal(name),
+                color=self._get_status_color(value),
+                terminal_status=self._get_terminal(name),
             )
             statuses.append(status_instance)
         return statuses
 
     def _get_missing_types(self, assessment):
+        """Return list of all task type objects for single assessment."""
         TaskType = apps.get_model("mgmt", "TaskType")
         types = []
 
@@ -217,13 +210,13 @@ class TaskManager(BaseManager):
             types.append(type_instance)
         return types
 
-    def get_terminal(self, status):
+    def _get_terminal(self, status):
         if status == "Completed" or status == "Abandoned":
             return True
         else:
             return False
 
-    def get_status_color(self, val):
+    def _get_status_color(self, val):
         colors = {
             10: "#CFCFCF",
             20: "#FFCC00",
@@ -272,7 +265,7 @@ class TaskManager(BaseManager):
             )
 
             if trigger.first():
-                task.status = trigger.next_status
+                task.status = trigger.first().next_status
                 task.save()
 
                 # if a user is supplied, assign them the task

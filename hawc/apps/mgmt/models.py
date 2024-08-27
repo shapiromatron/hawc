@@ -18,9 +18,6 @@ from . import constants, managers
 logger = logging.getLogger(__name__)
 
 
-# these are assessment specific. Right now there are 4 hard coded task types, we would want to
-# create a django migration that converts the hard coded ones into rows in the TaskTable model
-# {eg., Preparation, Data Extraction, QA/QC, Study Evaluation}
 class TaskType(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
@@ -30,8 +27,6 @@ class TaskType(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
 
-# again, these are currently hard coded, but we'd want to create a django migration that convert the hard coded ones into ones w/ a migration
-# current values are {eg., Started, Not Started, Completed, Abandoned}
 class TaskStatus(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     name = models.CharField(max_length=32)
@@ -47,9 +42,6 @@ class TaskStatus(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
 
-# the `TaskTrigger` is basically triggers that would say something like if a Study is edited, change this status.
-# There can be multiple triggers with the same task type/current status. task triggers an also create tasks
-# if current_status is null. These will be implemented as checks in django signals
 class TaskTrigger(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)  # is this actually needed
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
@@ -119,7 +111,8 @@ class Task(models.Model):
         """Save task as started by user if currently not started."""
         if not self.started:
             self.owner = user
-            logger.info(f'Starting "{self.type.name()}" task {self.id}')
+            self.started = timezone.now()
+            logger.info(f'Starting "{self.type.name}" task {self.id}')
         self.save()
 
     def stop_if_started(self):
