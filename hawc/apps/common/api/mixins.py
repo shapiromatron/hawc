@@ -69,7 +69,7 @@ class ListUpdateModelMixin:
                     try:
                         value = validator(value)
                     except ValidationError as err:
-                        raise DrfValidationError(err) from err
+                        raise DrfValidationError(err) from None
                 update_bulk_dict[field.source or field_name] = value
         return update_bulk_dict
 
