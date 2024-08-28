@@ -48,13 +48,12 @@ class HAWCMgr(BaseUserManager):
         return user
 
     def create_user(self, email, password=None, external_id=None, **extra_fields):
-        extra_fields["is_staff"] = False
-        extra_fields["is_superuser"] = False
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, external_id, **extra_fields)
 
     def create_superuser(self, email, password=None, external_id=None, **extra_fields):
-        extra_fields["is_staff"] = True
-        extra_fields["is_superuser"] = True
+        extra_fields.update(is_staff=True, is_superuser=True)
         return self._create_user(email, password, external_id, **extra_fields)
 
     def active(self):
