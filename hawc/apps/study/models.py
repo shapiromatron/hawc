@@ -161,8 +161,8 @@ class Study(Reference):
     def get_final_rob_url(self):
         try:
             return self.get_final_rob().get_final_url()
-        except ObjectDoesNotExist:
-            raise Http404("Final RoB does not exist")
+        except ObjectDoesNotExist as err:
+            raise Http404("Final RoB does not exist") from err
 
     def get_assessment(self):
         return self.assessment
@@ -231,8 +231,8 @@ class Study(Reference):
             return self.riskofbiases.get(final=True, active=True)
         except ObjectDoesNotExist as err:
             raise err
-        except MultipleObjectsReturned:
-            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one')
+        except MultipleObjectsReturned as err:
+            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one') from err
 
     def get_final_qs(self):
         return self.riskofbiases.filter(active=True, final=True).prefetch_related(
