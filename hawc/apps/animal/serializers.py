@@ -42,8 +42,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
         if dtxsid:
             try:
                 data["dtxsid"] = DSSTox.objects.get(pk=dtxsid)
-            except models.ObjectDoesNotExist:
-                raise serializers.ValidationError(dict(dtxsid=f"DSSTox {dtxsid} does not exist"))
+            except models.ObjectDoesNotExist as exc:
+                raise serializers.ValidationError(
+                    dict(dtxsid=f"DSSTox {dtxsid} does not exist")
+                ) from exc
 
         return data
 
