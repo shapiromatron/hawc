@@ -1,3 +1,5 @@
+import pytest
+
 from hawc.apps.common.templatetags.hawc import e_notation, hastext
 
 
@@ -10,8 +12,14 @@ class TestHasText:
 
 
 class TestENotation:
-    def test_e_notation(self):
-        assert e_notation(1) == 1
-        assert e_notation(0.0009) == " 9.00e-04"
-        assert e_notation(0.0000001) == " 1e-07"
-        assert e_notation(100000) == 100000
+    @pytest.mark.parametrize(
+        "input,output",
+        [
+            (1, "1"),
+            (0.0009, "9.00e-04"),
+            (1e-7, "1e-07"),
+            (10000, "10000"),
+        ],
+    )
+    def test_e_notation(self, input, output):
+        assert e_notation(input) == output
