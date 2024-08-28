@@ -6,7 +6,7 @@
   {% if object.can_delete %}
     {% include "hawc/_delete_block.html" with name="animal-group" notes="This will remove all data associated with the animal-group, including dose-regimes, endpoints, and BMD modeling runs." %}
   {% else %}
-    {% alert type="danger" %}
+    {% alert %}
       Cannot be deleted. The dosing regime is associated with at least one more animal group; please delete associated animal groups before continuing.
     {% endalert %}
   {% endif %}

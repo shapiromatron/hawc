@@ -209,7 +209,7 @@
   </div>
 
   {% if obj_perms.edit and overview.conflicts %}
-    {% alert type="danger" classes="mt-3" dismiss="True" %}
+    {% alert classes="mt-3" dismiss="True" %}
       <b>References have tag conflicts!</b><br>
       <p class="m-0">{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
     {% endalert %}

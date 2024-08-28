@@ -13,7 +13,7 @@
       This study currently has no type(s) selected. If you'd like to perform study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
     {% endalert %}
   {% elif object.final and not object.study_reviews_complete %}
-    {% alert type="danger" %}
+    {% alert %}
       All other {{assessment.get_rob_name_display|lower}} reviews for this study must be complete
       in order to complete the final review.
     {% endalert %}

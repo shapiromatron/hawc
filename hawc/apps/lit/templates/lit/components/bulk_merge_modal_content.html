@@ -42,7 +42,7 @@
     </ul>
   {% endif %}
   {% if message and not merged %}
-    {% alert type="danger" classes="mt-4" %} {{message}} {% endalert %}
+    {% alert classes="mt-4" %} {{message}} {% endalert %}
   {% endif %}
   {% if merged %}
     {% alert type="success" classes="mt-4" %} {{message}} {% endalert %}
