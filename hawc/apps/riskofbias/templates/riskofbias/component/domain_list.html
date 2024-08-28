@@ -8,9 +8,9 @@
     <h4>{{metric.name}}{% debug_badge metric.id %}</h4>
     <p class="mb-0">{{metric.description|safe}}</p>
   {% empty %}
-    {% alert "type=info" %}No evaluation metrics available for this domain.{% endalert %}
+    {% alert type="info" %}No evaluation metrics available for this domain.{% endalert %}
   {% endfor %}
   <hr/>
 {% empty %}
-  {% alert "type=info" %}No evaluation domains available for this study type.{% endalert %}
+  {% alert type="info" %}No evaluation domains available for this study type.{% endalert %}
 {% endfor %}

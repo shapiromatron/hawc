@@ -63,7 +63,7 @@
   </div>
 
   {% if not object.get_study_types and obj_perms.edit %}
-    {% alert "type=warning" %}
+    {% alert type="warning" %}
       This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
     {% endalert %}
   {% endif %}

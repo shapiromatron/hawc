@@ -54,22 +54,14 @@ def icon(name: str):
     return format_html('<span class="fa fa-fw {} mr-1" aria-hidden="true"></span>', name)
 
 
-def parse_tag_args(token):
-    variables = token.split_contents()[1:]
-    kwargs = {}
-    args = []
-    for variable in variables:
-        try:
-            (key, val) = variable[1:-1].split("=")
-            kwargs[key] = val
-        except ValueError:
-            args.append(variable[1:-1])
-    return args, kwargs
+def token_kwargs(bits, parser, support_legacy=False):
+    kwargs = template.base.token_kwargs(bits, parser, support_legacy)
+    return dict((k, v.var) for k, v in kwargs.items())
 
 
 @register.tag(name="alert")
 def bs4_alert(parser, token):
-    args, kwargs = parse_tag_args(token)
+    kwargs = token_kwargs(token.split_contents()[1:], parser)
     alert_type = kwargs.get("type", "danger")
     dismiss = kwargs.get("dismiss", False)
     classes = kwargs.get("classes", "")

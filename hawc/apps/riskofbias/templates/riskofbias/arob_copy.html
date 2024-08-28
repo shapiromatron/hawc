@@ -3,7 +3,7 @@
 {% block content %}
   {% crispy form %}
   <div id='extra_content' class='hidden'>
-    {% alert "type=warning" %}
+    {% alert type="warning" %}
       <h4>Warning!</h4>
       <p>Copying this approach from another assessment will delete all {{assessment.get_rob_name_display|lower}}
         information currently saved in this assessment. This includes all domains and metrics

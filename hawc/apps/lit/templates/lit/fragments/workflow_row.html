@@ -50,7 +50,7 @@
             </span>
           {% endif %}
           {% if not object.admission_tags.exists and not object.admission_source.exists %}
-            {% alert "type=warning" "classes=text-center" %}
+            {% alert type="warning" classes="text-center" %}
               <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; No admission criteria selected. <b>All references will be admitted to this workflow.</b>
             {% endalert %}
           {% endif %}
@@ -84,7 +84,7 @@
             </span>
           {% endif %}
           {% if not object.removal_tags.exists and not object.removal_source.exists %}
-            {% alert "classes=text-center" %}
+            {% alert classes="text-center" %}
               <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; No removal criteria selected. <b>No references will be removed from this workflow.</b>
             {% endalert %}
           {% endif %}

@@ -9,7 +9,7 @@
     {% for object in object_list %}
       {% include "udf/fragments/udf_row.html" with udf=object only %}
     {% empty %}
-      {% alert "type=info" %}No forms found.{% endalert %}
+      {% alert type="info" %}No forms found.{% endalert %}
     {% endfor %}
   </div>
   {% include "includes/paginator.html" with plural_object_name="forms" %}

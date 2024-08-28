@@ -31,7 +31,7 @@
         <div id="study-type-select">
           <label for="study-type-select">Study Type(s)</label>
           {% if form.study_type.errors %}
-            {% alert "type=danger" "classes=pb-0" %}{{form.study_type.errors}}{% endalert %}
+            {% alert type="danger" classes="pb-0" %}{{form.study_type.errors}}{% endalert %}
           {% endif %}
           <div id="study-type-select">
             {% for checkbox in form.study_type %}
@@ -44,7 +44,7 @@
         </div>
         {% csrf_token %}
         {% if form.references.errors %}
-          {% alert "type=danger" %}{{form.references.errors}}{% endalert %}
+          {% alert type="danger" %}{{form.references.errors}}{% endalert %}
         {% endif %}
         <div class="form-actions">
           <input type="submit" class="btn btn-primary" value="Convert selected to studies">
@@ -52,7 +52,7 @@
       </div>
     </form>
   {% else %}
-    {% alert "type=success" "dismiss=True" %}
+    {% alert type="success" dismiss="True" %}
       <b>Nothing to be done!</b><br/>
       <p>No references have been marked for inclusion which aren't studies already.</p>
     {% endalert %}

@@ -3,7 +3,7 @@
 {% block content %}
   {{ block.super }}
   {% if object.has_study %}
-    {% alert "type=danger" "classes=my-2" %}
+    {% alert type="danger" classes="my-2" %}
       <h4><i class="fa fa-exclamation-triangle"></i>&nbsp;Delete this reference?</h4>
       <p>This reference cannot be deleted; it has a data extraction or study evaluation associated with it. Please delete the <a href="{{object.study.get_absolute_url}}">study</a>. This will remove all associated data and this reference.</p>
     {% endalert %}

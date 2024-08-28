@@ -15,9 +15,12 @@
           id="ref-form-{{ref.pk}}" hx-target="#ref-form-{{ref.pk}}" hx-swap="delete swap:1s">
         {% include 'lit/_reference_with_tags.html' with conflict_resolution=True show_actions=True show_user_tags=True %}
       </li>
+      <li class="list-group-item">
+        {% alert type="warning" %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
+      </li>
     {% empty %}
       <li class="list-group-item">
-        {% alert "type=warning" %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
+        {% alert type="warning" %}{% icon "fa-exclamation-triangle" %}No conflicts found.{% endalert %}
       </li>
     {% endfor %}
   </ul>
