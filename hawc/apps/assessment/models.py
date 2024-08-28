@@ -437,7 +437,9 @@ class Assessment(models.Model):
                 cache.clear()
             else:
                 # in prod, throw exception
-                raise NotImplementedError("Cannot wipe assessment cache using this cache backend")
+                raise NotImplementedError(
+                    "Cannot wipe assessment cache using this cache backend"
+                ) from None
 
         # refresh materialized views
         refresh_all_mvs(force=True)
@@ -1119,8 +1121,8 @@ class DatasetRevision(models.Model):
 
         try:
             df = func(data.file, **kwargs)
-        except Exception:
-            raise ValueError("Unable load dataframe")
+        except Exception as exc:
+            raise ValueError("Unable load dataframe") from exc
 
         if df.shape[0] == 0:
             raise ValueError("Dataframe contains no rows")

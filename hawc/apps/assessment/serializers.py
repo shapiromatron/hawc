@@ -24,8 +24,10 @@ class DSSToxSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
-        except ValueError:
-            raise serializers.ValidationError(f"Invalid DTXSID: {validated_data["dtxsid"]}")
+        except ValueError as exc:
+            raise serializers.ValidationError(
+                f"Invalid DTXSID: {validated_data["dtxsid"]}"
+            ) from exc
         return models.DSSTox.objects.create(dtxsid=substance.dtxsid, content=substance.content)
 
 
@@ -116,8 +118,8 @@ class RelatedEffectTagSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"'{data}' must be a string.")
         try:
             return models.EffectTag.objects.get(name=data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"'{data}' not found.")
+        except ObjectDoesNotExist as exc:
+            raise serializers.ValidationError(f"'{data}' not found.") from exc
 
 
 class DoseUnitsSerializer(serializers.ModelSerializer):

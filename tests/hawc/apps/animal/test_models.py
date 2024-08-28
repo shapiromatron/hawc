@@ -65,7 +65,7 @@ class TestEndpoint:
 def _check_percent_control(inputs, outputs, data_type):
     data = [{"n": el[1], "response": el[2], "stdev": el[3]} for el in inputs]
     models.EndpointGroup.percentControl(data_type, data)
-    for i, d in enumerate(outputs):
+    for i, _d in enumerate(outputs):
         if outputs[i][0] is None:
             assert outputs[i][0] == data[i]["percentControlMean"]
         else:

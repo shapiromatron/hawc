@@ -80,7 +80,7 @@ def autocomplete(Model, field: str, multi: bool = False):
 @admin.display(description="Detailed edit link")
 def admin_edit_link(instance):
     """
-    Generate a read-only edit link in the admin for deatiled editing.
+    Generate a read-only edit link in the admin for detailed editing.
     """
     if instance.pk:
         url = reverse(
