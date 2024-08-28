@@ -292,7 +292,7 @@ class Study(Reference):
         Communication.set_message(self, text)
 
     def user_can_toggle_editable(self, user) -> bool:
-        return self.assessment.user_can_edit_assessment(user)
+        return self.assessment.user_is_project_manager_or_higher(user)
 
     def toggle_editable(self):
         self.editable = not self.editable
