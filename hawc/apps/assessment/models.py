@@ -355,11 +355,6 @@ class Assessment(models.Model):
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: AssessmentPermissions | None = None) -> bool:
-        if perms is None:
-            perms = self.get_permissions()
-        return perms.project_manager_or_higher(user)
-
     def user_is_reviewer_or_higher(self, user) -> bool:
         perms = self.get_permissions()
         return perms.reviewer_or_higher(user)
@@ -442,7 +437,9 @@ class Assessment(models.Model):
                 cache.clear()
             else:
                 # in prod, throw exception
-                raise NotImplementedError("Cannot wipe assessment cache using this cache backend")
+                raise NotImplementedError(
+                    "Cannot wipe assessment cache using this cache backend"
+                ) from None
 
         # refresh materialized views
         refresh_all_mvs(force=True)
@@ -1124,8 +1121,8 @@ class DatasetRevision(models.Model):
 
         try:
             df = func(data.file, **kwargs)
-        except Exception:
-            raise ValueError("Unable load dataframe")
+        except Exception as exc:
+            raise ValueError("Unable load dataframe") from exc
 
         if df.shape[0] == 0:
             raise ValueError("Dataframe contains no rows")
