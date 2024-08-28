@@ -18,7 +18,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
   # web application
-  "Django~=5.0.7",
+  "Django~=5.1",
   "django-crispy-forms==2.2",
   "crispy-bootstrap4==2024.1",
   "django-filter==24.2",
