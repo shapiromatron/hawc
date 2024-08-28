@@ -355,11 +355,6 @@ class Assessment(models.Model):
             perms = self.get_permissions()
         return perms.can_edit_object(user)
 
-    def user_can_edit_assessment(self, user, perms: AssessmentPermissions | None = None) -> bool:
-        if perms is None:
-            perms = self.get_permissions()
-        return perms.project_manager_or_higher(user)
-
     def user_is_reviewer_or_higher(self, user) -> bool:
         perms = self.get_permissions()
         return perms.reviewer_or_higher(user)

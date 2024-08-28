@@ -253,7 +253,7 @@ class RobAssignmentUpdate(BaseFilterList):
     assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_queryset(self):
-        if not self.assessment.user_can_edit_assessment(self.request.user):
+        if not self.assessment.user_is_project_manager_or_higher(self.request.user):
             raise PermissionDenied()
         robs = models.RiskOfBias.objects.prefetch_related("author", "scores")
         return (
@@ -295,7 +295,7 @@ class RobNumberReviewsUpdate(BaseUpdate):
             assessment=self.kwargs.get("pk"),
         )
         obj = super().get_object(object=obj)
-        if not self.assessment.user_can_edit_assessment(self.request.user):
+        if not self.assessment.user_is_project_manager_or_higher(self.request.user):
             raise PermissionDenied()
         return obj
 
@@ -468,8 +468,9 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
     def get_object(self, **kwargs):
         # either project managers OR the author can edit/view.
         obj = super().get_object(**kwargs)
-        if obj.author != self.request.user and not self.assessment.user_can_edit_assessment(
-            self.request.user
+        if (
+            obj.author != self.request.user
+            and not self.assessment.user_is_project_manager_or_higher(self.request.user)
         ):
             raise PermissionDenied
         return obj
