@@ -12,7 +12,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api.utils import get_published_only
-from ..common.helper import FlatExport
+from ..common.helper import FlatExport, try_parse_list_ints
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..study.models import Study
@@ -36,7 +36,7 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
         """
         assessment: Assessment = self.get_object()
         published_only = get_published_only(assessment, request)
-        study_ids = [int(study_id) for study_id in self.request.query_params.get("study_ids", [])]
+        study_ids = try_parse_list_ints(request.query_params.get("study_ids"))
         qs = (
             models.DataExtraction.objects.get_qs(assessment)
             .published_only(published_only)
