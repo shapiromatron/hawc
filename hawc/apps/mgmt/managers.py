@@ -92,7 +92,7 @@ class TaskManager(BaseManager):
             return None
 
         # default hardcoded triggers, will clean up when using user-defined triggers
-        for value, name in constants.StartTaskTriggerEvent.choices:
+        for value, _ in constants.StartTaskTriggerEvent.choices:
             task_type = None
 
             curr_status, next_status = (
