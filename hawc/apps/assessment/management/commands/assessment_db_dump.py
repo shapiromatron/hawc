@@ -135,7 +135,7 @@ class Command(UnicodeCommand):
         self.stdout.write("--- HAWC PRE-DATABASE SCHEMA\n")
         self.stdout.write("----------------------------\n")
         proc = subprocess.Popen(
-            ["pg_dump", "-d", dbname, "--section=pre-data", "--no-owner"],
+            ["pg_dump", "-d", dbname, "--section=pre-data", "--no-owner"],  # noqa: S607
             stdout=subprocess.PIPE,
             shell=False,
         )
@@ -147,7 +147,7 @@ class Command(UnicodeCommand):
         self.stdout.write("--- HAWC POST-DATABASE SCHEMA\n")
         self.stdout.write("-----------------------------\n")
         proc = subprocess.Popen(
-            ["pg_dump", "-d", dbname, "--section=post-data", "--no-owner"],
+            ["pg_dump", "-d", dbname, "--section=post-data", "--no-owner"],  # noqa: S607
             stdout=subprocess.PIPE,
             shell=False,
         )
