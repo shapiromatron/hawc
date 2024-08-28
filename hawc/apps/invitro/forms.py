@@ -305,8 +305,8 @@ class IVEndpointForm(forms.ModelForm):
         data = self.cleaned_data["additional_fields"]
         try:
             json.loads(data)
-        except ValueError:
-            raise forms.ValidationError("Must be valid JSON.")
+        except ValueError as err:
+            raise forms.ValidationError("Must be valid JSON.") from err
         return data
 
     @property

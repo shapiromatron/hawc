@@ -185,8 +185,8 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             author = None
             try:
                 author = HAWCUser.objects.get(id=author_id)
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError("Invalid author_id")
+            except ObjectDoesNotExist as err:
+                raise serializers.ValidationError("Invalid author_id") from err
 
             data["author"] = author
 
@@ -329,7 +329,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             try:
                 score = models.RiskOfBiasScore.objects.create(**score_data, riskofbias=instance)
             except ValidationError as err:
-                raise serializers.ValidationError(err.message)
+                raise serializers.ValidationError(err.message) from err
             for overridden_object in overridden_objects:
                 overridden_object.score = score
                 overridden_object.save()
@@ -358,7 +358,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             try:
                 score.save()
             except ValidationError as err:
-                raise serializers.ValidationError(err.message)
+                raise serializers.ValidationError(err.message) from err
 
         # update overrides
         new_overrides = []
