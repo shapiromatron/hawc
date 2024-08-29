@@ -208,8 +208,8 @@ class RiskOfBias(AssessmentEditViewSet):
 
         try:
             study = Study.objects.get(id=study_id)
-        except ObjectDoesNotExist:
-            raise ValidationError("Invalid study_id")
+        except ObjectDoesNotExist as err:
+            raise ValidationError("Invalid study_id") from err
 
         # permission check using the user submitting the request
         if not study.user_can_edit_study(study.assessment, request.user):

@@ -4,7 +4,9 @@
   {% if animal_group.dosing_regime %}
     {% crispy form %}
   {% else %}
-    {% alert danger %}Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.{% endalert %}
+    {% alert %}
+      Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.
+    {% endalert %}
   {% endif %}
 
   {# extra stuff that JS will move to correct location #}

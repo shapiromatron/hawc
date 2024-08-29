@@ -77,8 +77,8 @@ class EhvTermViewSet(viewsets.GenericViewSet):
                 namespace=constants.VocabularyNamespace.EHV,
                 deprecated_on__isnull=True,
             )
-        except models.Term.DoesNotExist:
-            raise exceptions.NotFound()
+        except models.Term.DoesNotExist as err:
+            raise exceptions.NotFound() from err
         return Response(term.ehv_endpoint_name())
 
     @action(detail=True, methods=("post",), url_path="related-entity")

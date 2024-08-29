@@ -64,8 +64,8 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
         # get base queryset
         try:
             qs = self.get_base_queryset(self.qry)
-        except ValueError:
-            raise BadRequest("Invalid filter parameters")
+        except ValueError as err:
+            raise BadRequest("Invalid filter parameters") from err
 
         # check forwarded values for search_fields
         self.search_fields = self.forwarded.get("search_fields") or self.search_fields
@@ -77,8 +77,8 @@ class BaseAutocomplete(autocomplete.Select2QuerySetView):
             # order by field and get distinct
             try:
                 qs = qs.order_by(self.field).distinct(self.field)
-            except FieldError:
-                raise BadRequest("Invalid field parameters")
+            except FieldError as err:
+                raise BadRequest("Invalid field parameters") from err
         else:
             # check forwarded values for ordering
             self.order_by = self.forwarded.get("order_by") or self.order_by

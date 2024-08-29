@@ -529,10 +529,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: summarytext
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
     model: visual
 - model: contenttypes.contenttype
   fields:
@@ -1506,7 +1502,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -1548,7 +1543,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: ''
@@ -1588,7 +1582,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: false
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
@@ -1628,7 +1621,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -9752,126 +9744,6 @@
     notes: ''
     adjustment_factors:
     - 1
-- model: summary.summarytext
-  pk: 1
-  fields:
-    path: '0001'
-    depth: 1
-    numchild: 2
-    assessment: 2
-    title: assessment-2
-    slug: assessment-2-slug
-    text: Root-level text
-    created: 2020-02-27 20:35:25.660031+00:00
-    last_updated: 2020-02-27 20:35:25.660075+00:00
-- model: summary.summarytext
-  pk: 2
-  fields:
-    path: '0002'
-    depth: 1
-    numchild: 0
-    assessment: 1
-    title: assessment-1
-    slug: assessment-1-slug
-    text: Root-level text
-    created: 2020-02-27 20:35:25.667126+00:00
-    last_updated: 2020-02-27 20:35:25.667163+00:00
-- model: summary.summarytext
-  pk: 3
-  fields:
-    path: '0003'
-    depth: 1
-    numchild: 0
-    assessment: 3
-    title: assessment-3
-    slug: assessment-3-slug
-    text: Root-level text
-    created: 2020-04-10 17:45:45.143229+00:00
-    last_updated: 2020-04-10 17:45:45.143229+00:00
-- model: summary.summarytext
-  pk: 4
-  fields:
-    path: '00010001'
-    depth: 2
-    numchild: 2
-    assessment: 2
-    title: '1'
-    slug: '1'
-    text: <p>Level 1 text.</p>
-    created: 2020-11-25 20:22:28.807081+00:00
-    last_updated: 2020-11-25 20:23:38.366594+00:00
-- model: summary.summarytext
-  pk: 5
-  fields:
-    path: '00010003'
-    depth: 2
-    numchild: 0
-    assessment: 2
-    title: '2'
-    slug: '2'
-    text: <p>Level 2 text.</p>
-    created: 2020-11-25 20:22:42.083087+00:00
-    last_updated: 2020-11-25 20:23:43.154300+00:00
-- model: summary.summarytext
-  pk: 6
-  fields:
-    path: '000100010001'
-    depth: 3
-    numchild: 0
-    assessment: 2
-    title: 1a
-    slug: 1a
-    text: <p>Level 1A text.</p>
-    created: 2020-11-25 20:24:01.021842+00:00
-    last_updated: 2020-11-25 20:24:01.021887+00:00
-- model: summary.summarytext
-  pk: 7
-  fields:
-    path: '000100010002'
-    depth: 3
-    numchild: 2
-    assessment: 2
-    title: 1b
-    slug: 1b
-    text: <p>Level 1B text.</p>
-    created: 2020-11-25 20:24:16.857811+00:00
-    last_updated: 2020-11-25 20:24:23.483729+00:00
-- model: summary.summarytext
-  pk: 8
-  fields:
-    path: '0001000100020001'
-    depth: 4
-    numchild: 0
-    assessment: 2
-    title: 1-B-alpha
-    slug: 1-B-alpha
-    text: <p>Level 1-B-alpha text.</p>
-    created: 2020-11-25 20:25:04.079740+00:00
-    last_updated: 2020-11-25 20:25:04.079763+00:00
-- model: summary.summarytext
-  pk: 9
-  fields:
-    path: '0001000100020002'
-    depth: 4
-    numchild: 0
-    assessment: 2
-    title: 1-B-beta
-    slug: 1-B-beta
-    text: <p>Level 1-B-beta text.</p>
-    created: 2020-11-25 20:25:37.723914+00:00
-    last_updated: 2020-11-25 20:25:37.723938+00:00
-- model: summary.summarytext
-  pk: 10
-  fields:
-    path: '0004'
-    depth: 1
-    numchild: 0
-    assessment: 4
-    title: assessment-4
-    slug: assessment-4-slug
-    text: Root-level text
-    created: 2022-10-27 21:02:29.800145+00:00
-    last_updated: 2022-10-27 21:02:29.800198+00:00
 - model: summary.summarytable
   pk: 1
   fields:

@@ -55,6 +55,7 @@ class DssSubstance(NamedTuple):
         response = requests.get(
             f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}",
             headers={"x-api-key": settings.CCTE_API_KEY, "Content-Type": "application/json"},
+            timeout=15,
         )
         response_dict = response.json()
         if response_dict.get("dtxsid") != dtxsid:
