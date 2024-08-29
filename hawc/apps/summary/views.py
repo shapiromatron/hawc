@@ -123,8 +123,8 @@ class SummaryTableCreate(BaseCreate):
         kwargs = super().get_form_kwargs()
         try:
             table_type = constants.TableType(self.kwargs["table_type"])
-        except ValueError:
-            raise Http404()
+        except ValueError as err:
+            raise Http404() from err
         kwargs["table_type"] = table_type
         return kwargs
 
@@ -378,8 +378,8 @@ class VisualizationCreate(BaseCreate):
         kwargs["visual_type"] = self.kwargs.get("visual_type")
         try:
             constants.VisualType(kwargs["visual_type"])
-        except ValueError:
-            raise Http404
+        except ValueError as err:
+            raise Http404 from err
 
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
@@ -394,8 +394,8 @@ class VisualizationCreate(BaseCreate):
                     kwargs["evidence_type"] = constants.get_default_evidence_type(
                         kwargs["visual_type"]
                     )
-                except ValueError:
-                    raise Http404
+                except ValueError as err:
+                    raise Http404 from err
             if (
                 kwargs["evidence_type"]
                 not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
@@ -503,8 +503,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_form_class(self):
         try:
             return forms.get_visual_form(self.object.visual_type)
-        except ValueError:
-            raise Http404
+        except ValueError as err:
+            raise Http404 from err
 
     def get_template_names(self):
         visual_type = self.object.visual_type
@@ -605,8 +605,8 @@ class DataPivotQueryNew(DataPivotNew):
         try:
             evidence_type = constants.StudyType(self.kwargs["study_type"])
             _ = prefilters.get_prefilter_cls(None, evidence_type, self.assessment)
-        except (KeyError, ValueError):
-            raise Http404
+        except (KeyError, ValueError) as err:
+            raise Http404 from err
         return evidence_type
 
     def get_form_kwargs(self):

@@ -42,10 +42,10 @@
     </ul>
   {% endif %}
   {% if message and not merged %}
-    <div class="alert alert-danger mt-4">{{message}}</div>
+    {% alert classes="mt-4" %} {{message}} {% endalert %}
   {% endif %}
   {% if merged %}
-    <div class="alert alert-success mt-4">{{message}}</div>
+    {% alert type="success" classes="mt-4" %} {{message}} {% endalert %}
   {% endif %}
 </div>
 <div class="modal-footer">

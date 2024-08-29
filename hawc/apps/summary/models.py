@@ -171,7 +171,7 @@ class SummaryTable(models.Model):
             try:
                 self.get_table()
             except ValueError as e:
-                raise ValidationError({"content": str(e)})
+                raise ValidationError({"content": str(e)}) from e
 
         # clean up control characters before string validation
         content_str = json.dumps(self.content).replace('\\"', '"')
@@ -483,7 +483,7 @@ class Visual(models.Model):
         try:
             return from_json(json.dumps(self.settings))
         except ValueError as err:
-            raise ValueError(err)
+            raise ValueError(err) from err
 
     def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
         studies = self.get_studies()

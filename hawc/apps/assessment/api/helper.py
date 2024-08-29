@@ -33,5 +33,5 @@ def get_assessment_from_query(request: Request) -> models.Assessment:
     assessment_id = get_assessment_id_param(request)
     try:
         return models.Assessment.objects.get(pk=assessment_id)
-    except models.Assessment.DoesNotExist:
-        raise InvalidAssessmentID()
+    except models.Assessment.DoesNotExist as exc:
+        raise InvalidAssessmentID() from exc

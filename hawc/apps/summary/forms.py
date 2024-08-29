@@ -638,8 +638,8 @@ def get_visual_form(visual_type):
             constants.VisualType.IMAGE: ImageVisualForm,
             constants.VisualType.PRISMA: PrismaVisualForm,
         }[visual_type]
-    except Exception:
-        raise ValueError()
+    except Exception as exc:
+        raise ValueError() from exc
 
 
 class DataPivotForm(forms.ModelForm):
