@@ -1,7 +1,5 @@
 <div class="list-group-item d-flex p-0 flex-wrap">
-  <div class="col-md-2 bg-light font-weight-normal align-content-center text-center">
-    {{text}}
-  </div>
+  <div class="col-md-2 bg-light align-content-center">{{text}}</div>
   <div class="col-md-10 py-2">
     <div class="d-flex align-items-center flex-wrap flex-md-nowrap">
       <div class="input-group input-group-sm flex-shrink-0 px-2" style="width: fit-content;" role="group" aria-label="Downlink link button group with format select">
@@ -19,15 +17,12 @@
           <div class="input-group-append">
             <div class="input-group-text">
               <input id="{{name}}-checkbox" class="form-check-input unpublished-checkbox mx-0" type="checkbox" data-url="{{name}}-url">
-              <label class="form-check-label pl-3" for="{{name}}-checkbox">
-                Include Unpublished Data
-              </label>
+              <label class="form-check-label pl-3" for="{{name}}-checkbox">Include Unpublished Data</label>
             </div>
-
           </div>
         {% endif %}
       </div>
-      <p class="text-muted my-0 small">{{help_text}}</p>
     </div>
+    <p class="text-muted mx-2 mt-1 small">{{help_text}}</p>
   </div>
 </div>
