@@ -1,15 +1,17 @@
 {% if action == 'delete' %}
   <td>
-    <form class="alert alert-danger">
-      {% csrf_token %}
-      <i class="fa fa-fw fa-exclamation-triangle mx-1"></i>Are you sure you want to delete?
-      <div class="d-flex flex-row-reverse">
-        <button id="{{model}}-confirm-del" class="btn btn-sm btn-danger mx-1" hx-post="{% crud_url app model 'delete' object.pk %}"
-                hx-swap="outerHTML swap:1s">Confirm</button>
-        <button id="{{model}}-cancel-del" class="btn btn-sm btn-secondary mx-1"
-                hx-get="{% crud_url app model 'read' object.pk %}">Cancel</button>
-      </div>
-    </form>
+    {% alert %}
+      <form>
+        {% csrf_token %}
+        <i class="fa fa-fw fa-exclamation-triangle mx-1"></i>Are you sure you want to delete?
+        <div class="d-flex flex-row-reverse">
+          <button id="{{model}}-confirm-del" class="btn btn-sm btn-danger mx-1" hx-post="{% crud_url app model 'delete' object.pk %}"
+                  hx-swap="outerHTML swap:1s">Confirm</button>
+          <button id="{{model}}-cancel-del" class="btn btn-sm btn-secondary mx-1"
+                  hx-get="{% crud_url app model 'read' object.pk %}">Cancel</button>
+        </div>
+      </form>
+    {% endalert %}
   </td>
 {% elif permissions.edit or obj_perms.edit and crud == "Update" %}
   <td>

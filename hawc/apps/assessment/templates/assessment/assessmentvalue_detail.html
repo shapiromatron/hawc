@@ -63,7 +63,7 @@
     </tbody>
   </table>
   {% if obj_perms.edit and object.check_calculated_value.show_warning %}
-    {% alert warning %}
+    {% alert type="warning" %}
       <p><b>Note: this message only appears to team members and higher.</b></p>
       <p>
         The calculated {{object.get_value_type_display}} ({{object.check_calculated_value.calculated_value|e_notation}} {{object.value_unit|default:""}}), is > {{object.check_calculated_value.tolerance|percentage}} different than the reported value ({{object.value}} {{object.value_unit|default:""}}). The calculated value was generated using the formula POD / UF, or {{object.pod_value}} / {{object.uncertainty}} = {{object.check_calculated_value.calculated_value|e_notation}}. This difference may be due to the level of precision the {{object.get_value_type_display}} is reported, but please review in case of an error.
