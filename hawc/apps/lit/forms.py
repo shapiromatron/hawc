@@ -808,8 +808,18 @@ class VennForm(forms.Form):
         return helper
 
     def get_venn(self):
-        n = 0
+        sets = []
         for field in ("tag1", "tag2", "tag3", "tag4"):
-            if self.cleaned_data[field] is not None:
-                n += 1
-        return n
+            tag = self.cleaned_data[field]
+            if tag is not None:
+                sets.append(
+                    dict(
+                        name=tag.name,
+                        values=list(
+                            models.Reference.objects.filter(
+                                tags__path__startswith=tag.path
+                            ).values_list("id", flat=True)
+                        ),
+                    )
+                )
+        return {"sets": sets}

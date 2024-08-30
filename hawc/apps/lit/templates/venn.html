@@ -2,5 +2,9 @@
 
 {% block content %}
   {% crispy form %}
-  {% include 'lit/components/venn.html' %}
+  <div id='main'></div>
 {% endblock %}
+
+{% block extrajs %}
+  {{ config|json_script:"config" }}
+{% endblock extrajs %}

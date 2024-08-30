@@ -1215,9 +1215,11 @@ class VennView(BaseDetail):
     template_name = "venn.html"
 
     def get_context_data(self, **kw):
-        context = super().get_context_data(**kw)
         form = forms.VennForm(assessment=self.assessment, data=self.request.GET)
+        kw["form"] = form
         if form.is_valid():
-            context["n"] = form.get_venn()
-        context["form"] = form
-        return context
+            kw["data"] = form.get_venn()
+        return super().get_context_data(**kw)
+
+    def get_app_config(self, context) -> WebappConfig:
+        return WebappConfig(app="litStartup", page="startupVenn", data=context["data"])
