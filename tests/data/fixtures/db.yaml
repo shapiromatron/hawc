@@ -11178,7 +11178,7 @@
     value: 20
     description: ' '
     order: 20
-    color: 'FFCC00'
+    color: '#FFCC00'
     terminal_status: false
     created: 2025-08-01 04:00:00+00:00
     last_updated: 2025-08-01 04:00:00+00:00
@@ -11190,7 +11190,7 @@
     value: 30
     description: ' '
     order: 30
-    color: '00CC00'
+    color: '#00CC00'
     terminal_status: false
     created: 2025-08-01 04:00:00+00:00
     last_updated: 2025-08-01 04:00:00+00:00
@@ -11202,7 +11202,7 @@
     value: 40
     description: ' '
     order: 40
-    color: 'CC3333'
+    color: '#CC3333'
     terminal_status: false
     created: 2025-08-01 04:00:00+00:00
     last_updated: 2025-08-01 04:00:00+00:00

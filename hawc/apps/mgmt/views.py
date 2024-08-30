@@ -51,7 +51,6 @@ class EnsureExtractionStartedMixin:
     def get_success_url(self):
         study = self.object.study
         user = self.request.user
-        models.Task.objects.ensure_preparation_stopped(study)
         models.Task.objects.ensure_extraction_started(study, user)
         return super().get_success_url()
 

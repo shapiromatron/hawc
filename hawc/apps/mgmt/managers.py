@@ -44,7 +44,7 @@ class TaskManager(BaseManager):
         types = self._get_missing_types(assessment)
 
         for study in studies:
-            tasks.extend(self._get_missing_tasks(study, assessment, statuses, types))
+            tasks.extend(self._get_missing_tasks(study, statuses, types))
         logger.info(f"Creating {len(tasks)} tasks for assessment {assessment.id}.")
         self.bulk_create(tasks)
 
@@ -62,7 +62,7 @@ class TaskManager(BaseManager):
 
         statuses = self._get_missing_statuses(assessment)
         types = self._get_missing_types(assessment)
-        tasks = self._get_missing_tasks(study, assessment, statuses, types)
+        tasks = self._get_missing_tasks(study, statuses, types)
 
         logger.info(f"Creating {len(tasks)} tasks for study {study.id}.")
         self.bulk_create(tasks)
@@ -78,75 +78,61 @@ class TaskManager(BaseManager):
 
         TaskTrigger = apps.get_model("mgmt", "TaskTrigger")
 
-        def status_by_value(statuses, val):
-            for status in statuses:
-                if status.value == val:
-                    return status
-            return None
-
-        def get_task_type(qs, assessment, task_type):
-            """Get task if exists in qs, else return None."""
-            for type in qs:
-                if type.order == task_type and type.assessment == assessment:
+        def get_task_type(task_type):
+            """Get task by type if exists in qs, else return None."""
+            for type in task_types:
+                if type.order == task_type:
                     return type
             return None
 
-        # default hardcoded triggers, will clean up when using user-defined triggers
-        for value, _ in constants.StartTaskTriggerEvent.choices:
-            task_type = None
+        def get_task_status(task_status):
+            """Get task status if exists in qs, else return None."""
+            for status in task_statuses:
+                if status.order == task_status:
+                    return status
+            return None
 
-            curr_status, next_status = (
-                constants.TaskStatus.NOT_STARTED,
-                constants.TaskStatus.STARTED,
-            )
+        def create_trigger(task_type, event, trigger_type):
+            """Create trigger given event and task type"""
+            if trigger_type == "Start":
+                curr_status = get_task_status(constants.TaskStatus.NOT_STARTED)
+                next_status = get_task_status(constants.TaskStatus.STARTED)
+            elif trigger_type == "End":
+                curr_status = get_task_status(constants.TaskStatus.STARTED)
+                next_status = get_task_status(constants.TaskStatus.COMPLETED)
 
-            # for each study trigger, get the associated task types and statuses from the assessment level
-            if value == constants.StartTaskTriggerEvent.STUDY_CREATION:
-                task_type = get_task_type(task_types, assessment, constants.TaskType.PREPARATION)
-
-            elif value == constants.StartTaskTriggerEvent.DATA_EXTRACTION:
-                # this event has two
-                task_type = get_task_type(task_types, assessment, constants.TaskType.PREPARATION)
-                curr_status = status_by_value(task_statuses, curr_status)
-                next_status = status_by_value(task_statuses, next_status)
-
+            if curr_status and next_status:
                 TaskTrigger.objects.get_or_create(
                     assessment=assessment,
                     task_type=task_type,
                     current_status=curr_status,
                     next_status=next_status,
-                    event=value,
+                    event=event,
                 )
 
-                task_type = get_task_type(task_types, assessment, constants.TaskType.EXTRACTION)
-                curr_status, next_status = (
-                    constants.TaskStatus.STARTED,
-                    constants.TaskStatus.COMPLETED,
-                )
+        # default hardcoded triggers
+        for event, _ in constants.StartTaskTriggerEvent.choices:
+            # for each study trigger, get the associated task types from the assessment level
+            if event == constants.StartTaskTriggerEvent.STUDY_CREATION:
+                task_type = get_task_type(constants.TaskType.PREPARATION)
+                create_trigger(task_type, event, "Start")
 
-            elif value == constants.StartTaskTriggerEvent.MODIFY_ROB:
-                task_type = get_task_type(task_types, assessment, constants.TaskType.ROB)
+            elif event == constants.StartTaskTriggerEvent.DATA_EXTRACTION:
+                # this event has two
+                task_type = get_task_type(constants.TaskType.PREPARATION)
+                create_trigger(task_type, event, "End")
+                task_type = get_task_type(constants.TaskType.EXTRACTION)
+                create_trigger(task_type, event, "Start")
 
-            elif value == constants.StartTaskTriggerEvent.COMPLETE_ROB:
-                task_type = get_task_type(task_types, assessment, constants.TaskType.ROB)
-                curr_status, next_status = (
-                    constants.TaskStatus.STARTED,
-                    constants.TaskStatus.COMPLETED,
-                )
+            elif event == constants.StartTaskTriggerEvent.MODIFY_ROB:
+                task_type = get_task_type(constants.TaskType.ROB)
+                create_trigger(task_type, event, "Start")
 
-            curr_status = status_by_value(task_statuses, curr_status)
-            next_status = status_by_value(task_statuses, next_status)
+            elif event == constants.StartTaskTriggerEvent.COMPLETE_ROB:
+                task_type = get_task_type(constants.TaskType.ROB)
+                create_trigger(task_type, event, "End")
 
-            # create a trigger associated with the study assessment, task types, and statuses
-            TaskTrigger.objects.get_or_create(
-                assessment=assessment,
-                task_type=task_type,
-                current_status=curr_status,
-                next_status=next_status,
-                event=value,
-            )
-
-    def _get_missing_tasks(self, study, assessment, statuses, types):
+    def _get_missing_tasks(self, study, statuses, types):
         """Return list of unsaved Task objects for single study."""
         existing_tasks = study.tasks.all()
         new_tasks = []
@@ -164,17 +150,16 @@ class TaskManager(BaseManager):
 
             if task is not None:
                 continue
-
             if type == constants.TaskType.PREPARATION:
                 new_tasks.append(self.model(study=study, type=types[0], status=statuses[0]))
 
-            if assessment.enable_data_extraction:
+            if study.assessment.enable_data_extraction:
                 if type == constants.TaskType.EXTRACTION:
                     new_tasks.append(self.model(study=study, type=types[1], status=statuses[0]))
                 if type == constants.TaskType.QA:
                     new_tasks.append(self.model(study=study, type=types[2], status=statuses[0]))
 
-            if assessment.enable_risk_of_bias and type == constants.TaskType.ROB:
+            if study.assessment.enable_risk_of_bias and type == constants.TaskType.ROB:
                 new_tasks.append(self.model(study=study, type=types[3], status=statuses[0]))
 
         return new_tasks
@@ -231,12 +216,6 @@ class TaskManager(BaseManager):
         if tasks:
             self.trigger_changes(tasks, constants.StartTaskTriggerEvent.STUDY_CREATION, user)
 
-    def ensure_preparation_stopped(self, study):
-        """Stop preparation task if started."""
-        tasks = self.filter(study=study)
-        if tasks:
-            self.trigger_changes(tasks, constants.StartTaskTriggerEvent.DATA_EXTRACTION)
-
     def ensure_extraction_started(self, study, user):
         """Start extraction task if not started."""
         tasks = self.filter(study=study)
@@ -266,10 +245,8 @@ class TaskManager(BaseManager):
 
             if trigger.first():
                 task.status = trigger.first().next_status
-                task.save()
 
-                # if a user is supplied, assign them the task
-                if user:
-                    task.start_if_unstarted(user)
-                else:
+                if task.started:
                     task.stop_if_started()
+                else:
+                    task.start_if_unstarted(user)

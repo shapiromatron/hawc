@@ -100,10 +100,14 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and completion"""
-        if self.status.terminal_status:
-            self.completed = timezone.now()
-        else:
+        if self.status.order == constants.TaskStatus.NOT_STARTED:
+            self.started = None
             self.completed = None
+        elif self.status.order == constants.TaskStatus.STARTED:
+            self.started = timezone.now()
+            self.completed = None
+        elif self.status.terminal_status:
+            self.completed = timezone.now()
 
         super().save(*args, **kwargs)
 
@@ -111,15 +115,13 @@ class Task(models.Model):
         """Save task as started by user if currently not started."""
         if not self.started:
             self.owner = user
-            self.started = timezone.now()
             logger.info(f'Starting "{self.type.name}" task {self.id}')
-        self.save()
+            self.save()
 
     def stop_if_started(self):
         """Stop task if currently started."""
         if self.started:
             logger.info(f'Stopping "{self.type.name}" task {self.id}')
-            self.status = constants.TaskStatus.COMPLETED
             self.save()
 
     @classmethod
@@ -153,6 +155,7 @@ class Task(models.Model):
     def overdue(self):
         return (
             self.due_date
-            and self.status in [constants.TaskStatus.NOT_STARTED, constants.TaskStatus.STARTED]
+            and self.status.order
+            in [constants.TaskStatus.NOT_STARTED, constants.TaskStatus.STARTED]
             and self.due_date < now()
         )
