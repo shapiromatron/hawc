@@ -2,7 +2,7 @@ import json
 import re
 
 import pytest
-from django.test.client import Client, RequestFactory
+from django.test.client import Client
 from django.urls import reverse
 from django.utils.http import urlencode
 from rest_framework.test import APIClient
@@ -374,69 +374,6 @@ class TestSummaryAssessmentViewSet:
         data = resp.json()
         key = f"api-summary-heatmap-datasets-{db_keys.assessment_working}.json"
         check_api_json_data(data, key, rewrite_data_files)
-
-
-@pytest.mark.django_db
-class TestSummaryTextViewSet:
-    def test_current_schema_host(self):
-        # undocumented API in django; test to ensure it exists
-        factory = RequestFactory()
-        request = factory.get("/test")
-        assert request._current_scheme_host == "http://testserver"
-
-    def test_permissions(self, db_keys):
-        assessment_id = db_keys.assessment_working
-        root = models.SummaryText.get_assessment_root_node(assessment_id)
-
-        data = {
-            "assessment": assessment_id,
-            "title": "lvl_1a",
-            "slug": "lvl_1a",
-            "text": "text",
-            "parent": root.id,
-            "sibling": None,
-        }
-        user_anon = APIClient()
-        user_reviewer = APIClient()
-        assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
-        user_team = APIClient()
-        assert user_team.login(username="team@hawcproject.org", password="pw") is True
-
-        # list
-        url = reverse("summary:api:summary-text-list")
-        response = user_reviewer.get(url)
-        assert response.status_code == 400
-        assert "Please provide an `assessment_id`" in response.json()["detail"]
-        response = user_reviewer.get(url + f"?assessment_id={assessment_id}")
-        assert response.status_code == 200
-        assert response.json()[0]["title"] == "assessment-1"
-
-        # creates
-        url = reverse("summary:api:summary-text-list")
-        for user in [user_anon, user_reviewer]:
-            response = user.post(url, data, format="json")
-            assert response.status_code == 403
-        response = user_team.post(url, data, format="json")
-        assert response.status_code == 201
-        obj_id = response.json()["id"]
-
-        # updates
-        data.update(title="my-title")
-        url = reverse("summary:api:summary-text-detail", args=(obj_id,))
-        for user in [user_anon, user_reviewer]:
-            response = user.patch(url, data, format="json")
-            assert response.status_code == 403
-        response = user_team.patch(url, data, format="json")
-        assert response.status_code == 200
-        assert response.json()["title"] == "my-title"
-
-        # deletes
-        url = reverse("summary:api:summary-text-detail", args=(obj_id,))
-        for user in [user_anon, user_reviewer]:
-            response = user.delete(url)
-            assert response.status_code == 403
-        response = user_team.delete(url)
-        assert response.status_code == 204
 
 
 @pytest.mark.django_db

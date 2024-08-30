@@ -112,7 +112,7 @@ def update_pubmed_queries(apps, schema_editor):
     qs = PubMedQuery.objects.all()
     n_total = qs.count()
     updates = []
-    for idx, query in enumerate(qs):
+    for _idx, query in enumerate(qs):
         if query.results:
             results = json.loads(query.results)
             results = dict(

@@ -60,7 +60,7 @@ class PubMedSearch(PubMedUtility):
             return self.id_count
 
         data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
-        r = requests.post(PubMedSearch.base_url, data=data)
+        r = requests.post(PubMedSearch.base_url, data=data, timeout=15)
         if r.status_code == 200:
             txt = ET.fromstring(r.text)
             self.id_count = int(txt.find("Count").text)
@@ -86,7 +86,7 @@ class PubMedSearch(PubMedUtility):
         self.request_count = len(rng)
         for retstart in rng:
             data["retstart"] = retstart
-            resp = requests.post(PubMedSearch.base_url, data=data)
+            resp = requests.post(PubMedSearch.base_url, data=data, timeout=15)
             if resp.status_code == 200:
                 ids.extend(self._parse_ids(resp.text))
             else:
@@ -150,7 +150,7 @@ class PubMedFetch(PubMedUtility):
                 break
 
             data["id"] = self.ids[retstart : retstart + self.settings["retmax"]]
-            resp = requests.post(PubMedFetch.base_url, data=data)
+            resp = requests.post(PubMedFetch.base_url, data=data, timeout=15)
             if resp.status_code == 200:
                 tree = ET.fromstring(resp.text.encode("utf-8"))
                 if tree.tag != "PubmedArticleSet":

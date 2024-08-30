@@ -153,8 +153,8 @@ class HtmxViewSet(View):
             object = get_object_or_404(self.model, pk=self.kwargs.get(self.pk_url_kwarg))
         try:
             assessment: Assessment = parent.get_assessment() if parent else object.get_assessment()
-        except AssessmentNotFound:
-            raise PermissionDenied()
+        except AssessmentNotFound as err:
+            raise PermissionDenied() from err
         return Item(object=object, parent=parent, assessment=assessment)
 
     def get_context_data(self, **kwargs):

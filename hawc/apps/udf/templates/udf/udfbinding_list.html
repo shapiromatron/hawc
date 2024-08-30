@@ -18,7 +18,9 @@
     {% for object in object_list %}
       {% include "udf/fragments/udf_row.html" with udf=object.form binding=object binding_type=model_binding %}
     {% endfor %}
-    <div class="alert alert-info text-center show-only-child">No tag or model bindings exist for this assessment.</div>
+    {% alert type="info" classes="text-center show-only-child" %}
+      No tag or model bindings exist for this assessment.
+    {% endalert %}
   </div>
 {% endblock %}
 

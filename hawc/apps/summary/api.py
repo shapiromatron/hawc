@@ -131,18 +131,6 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
         return FlatExport.api_response(df, obj.slug)
 
 
-class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
-    edit_check_keys = ["assessment"]
-    assessment_filter_args = "assessment"
-    model = models.SummaryText
-    pagination_class = DisabledPagination
-    filter_backends = (InAssessmentFilter,)
-    serializer_class = serializers.SummaryTextSerializer
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-
 class SummaryTableViewSet(AssessmentEditViewSet):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
