@@ -1341,9 +1341,9 @@ class Content(models.Model):
 class Label(AssessmentRootMixin, MP_Node):
     objects = managers.LabelManager()
 
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20)
     description = models.TextField(blank=True)
-    color = ColorField(default="#0071bc")
+    color = ColorField(default="#4d8055")
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="labels")
     published = models.BooleanField(default=False)
     text_color = ColorField(default="#000000")
@@ -1352,6 +1352,9 @@ class Label(AssessmentRootMixin, MP_Node):
 
     cache_template_taglist = "assessment.label.labellist.assessment-{0}"
     cache_template_tagtree = "assessment.label.labeltree.assessment-{0}"
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["assessment", "name"], name="label_name")]
 
     @classmethod
     def create_root(cls, assessment_id, **kwargs):
