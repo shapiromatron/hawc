@@ -49,11 +49,11 @@ class ExternalWebsite extends BaseVisual {
                 {href: this.data.url_update, text: "Update"},
                 {href: this.data.url_delete, text: "Delete"},
                 {
-                    "hx-get": this.data.tag_htmx,
-                    "hx-target": "#tag-modal-content",
+                    "hx-get": this.data.label_htmx,
+                    "hx-target": "#label-modal-content",
                     text: "Apply labels",
                     "data-toggle": "modal",
-                    "data-target": "#tag-modal",
+                    "data-target": "#label-modal",
                 }
             );
         }
@@ -62,8 +62,8 @@ class ExternalWebsite extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
-            tagIndicators = $(
-                `<div id="tag-indicators" hx-get="${this.data.tag_indicators_htmx}" hx-trigger="load" hx-swap="none">`
+            labelIndicators = $(
+                `<div id="label-indicators" hx-get="${this.data.label_indicators_htmx}" hx-trigger="load" hx-swap="none">`
             ),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
@@ -78,7 +78,7 @@ class ExternalWebsite extends BaseVisual {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
-                tagIndicators,
+                labelIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 actions,
             ]);

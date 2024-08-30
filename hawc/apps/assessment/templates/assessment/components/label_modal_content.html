@@ -11,15 +11,15 @@
     {% crispy form %}
   </div>
   {% if saved %}
-    <div class="alert alert-success mt-4">Tags applied.</div>
+    <div class="alert alert-success mt-4">Labels applied.</div>
   {% endif %}
 </div>
 <div class="modal-footer">
   <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner" aria-hidden="true"></i>
   <button class="btn btn-primary ml-2"
-          hx-target="#tag-modal-content"
+          hx-target="#label-modal-content"
           hx-indicator="#spinner"
-          hx-post="{% url 'assessment:tag-item' content_type object_id %}?action=tag">
+          hx-post="{% url 'assessment:label-item' content_type object_id %}?action=label">
     Save
   </button>
   <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">
@@ -27,5 +27,5 @@
   </button>
 </div>
 {% if saved %}
-  {% include "assessment/fragments/tag_indicators.html" with oob=True %}
+  {% include "assessment/fragments/label_indicators.html" with oob=True %}
 {% endif %}

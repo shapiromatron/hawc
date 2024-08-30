@@ -38,11 +38,11 @@ class BaseVisual {
             {href: this.data.url_update, text: "Update"},
             {href: this.data.url_delete, text: "Delete"},
             {
-                "hx-get": this.data.tag_htmx,
-                "hx-target": "#tag-modal-content",
+                "hx-get": this.data.label_htmx,
+                "hx-target": "#label-modal-content",
                 text: "Apply labels",
                 "data-toggle": "modal",
-                "data-target": "#tag-modal",
+                "data-target": "#label-modal",
             },
         ]);
     }

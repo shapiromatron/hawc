@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Exists, OuterRef, Prefetch, Q
 
 from ..assessment.constants import RobName
-from ..assessment.models import Tag, TaggedItem
+from ..assessment.models import Label, LabeledItem
 from ..common.filterset import BaseFilterSet, InlineFilterForm
 from . import constants, models
 
@@ -21,10 +21,10 @@ class VisualFilterSet(BaseFilterSet):
         help_text="Type of visualization to display",
         empty_label="All visual types",
     )
-    tag = df.ChoiceFilter(
-        method="filter_tag",
+    label = df.ChoiceFilter(
+        method="filter_label",
         label="Applied label",
-        help_text="Visualizations with tag applied",
+        help_text="Visualizations with label applied",
         empty_label="All labels",
     )
     published = df.ChoiceFilter(
@@ -36,18 +36,18 @@ class VisualFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.Visual
-        fields = ["title", "type", "tag", "published"]
+        fields = ["title", "type", "label", "published"]
         form = InlineFilterForm
 
     def annotate_queryset(self, queryset):
         if self.perms["edit"]:
-            return queryset.prefetch_related(Prefetch("tags", to_attr="visible_tags"))
+            return queryset.prefetch_related(Prefetch("labels", to_attr="visible_labels"))
         else:
             return queryset.prefetch_related(
                 Prefetch(
-                    "tags",
-                    queryset=TaggedItem.objects.filter(tag__published=True),
-                    to_attr="visible_tags",
+                    "labels",
+                    queryset=LabeledItem.objects.filter(label__published=True),
+                    to_attr="visible_labels",
                 )
             )
 
@@ -59,15 +59,15 @@ class VisualFilterSet(BaseFilterSet):
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
 
-    def filter_tag(self, queryset, name, value):
+    def filter_label(self, queryset, name, value):
         if not value:
             return queryset
-        tag = Tag.objects.get(pk=value)
+        label = Label.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.Visual)
-        subquery = TaggedItem.objects.filter(
-            **(dict(tag__published=True) if not self.perms["edit"] else dict()),
-            tag__path__startswith=tag.path,
-            tag__depth__gte=tag.depth,
+        subquery = LabeledItem.objects.filter(
+            **(dict(label__published=True) if not self.perms["edit"] else dict()),
+            label__path__startswith=label.path,
+            label__depth__gte=label.depth,
             content_type=content_type,
             object_id=OuterRef("pk"),
         )
@@ -89,16 +89,16 @@ class VisualFilterSet(BaseFilterSet):
             ]
         return choices
 
-    def get_tag_choices(self):
-        tags = Tag.get_assessment_qs(self.assessment.pk)
+    def get_label_choices(self):
+        labels = Label.get_assessment_qs(self.assessment.pk)
         if not self.perms["edit"]:
-            tags = tags.filter(published=True)
-        return [(tag.pk, tag.get_nested_name()) for tag in tags]
+            labels = labels.filter(published=True)
+        return [(label.pk, label.get_nested_name()) for label in labels]
 
     def create_form(self):
         form = super().create_form()
         form.fields["type"].choices = self.get_type_choices()
-        form.fields["tag"].choices = self.get_tag_choices()
+        form.fields["label"].choices = self.get_label_choices()
         return form
 
 
@@ -116,37 +116,37 @@ class DataPivotFilterSet(VisualFilterSet):
     def annotate_queryset(self, queryset):
         if self.perms["edit"]:
             return queryset.prefetch_related(
-                Prefetch("datapivotquery__tags", to_attr="visible_query_tags"),
-                Prefetch("datapivotupload__tags", to_attr="visible_upload_tags"),
+                Prefetch("datapivotquery__labels", to_attr="visible_query_labels"),
+                Prefetch("datapivotupload__labels", to_attr="visible_upload_labels"),
             )
         else:
             return queryset.prefetch_related(
                 Prefetch(
-                    "datapivotquery__tags",
-                    queryset=TaggedItem.objects.filter(tag__published=True),
-                    to_attr="visible_query_tags",
+                    "datapivotquery__labels",
+                    queryset=LabeledItem.objects.filter(label__published=True),
+                    to_attr="visible_query_labels",
                 ),
                 Prefetch(
-                    "datapivotupload__tags",
-                    queryset=TaggedItem.objects.filter(tag__published=True),
-                    to_attr="visible_upload_tags",
+                    "datapivotupload__labels",
+                    queryset=LabeledItem.objects.filter(label__published=True),
+                    to_attr="visible_upload_labels",
                 ),
             )
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("datapivotquery", "datapivotupload")
 
-    def filter_tag(self, queryset, name, value):
+    def filter_label(self, queryset, name, value):
         if not value:
             return queryset
-        tag = Tag.objects.get(pk=value)
+        label = Label.objects.get(pk=value)
         content_types = ContentType.objects.get_for_models(
             models.DataPivot, models.DataPivotQuery, models.DataPivotUpload
         ).values()
-        subquery = TaggedItem.objects.filter(
-            **(dict(tag__published=True) if not self.perms["edit"] else dict()),
-            tag__path__startswith=tag.path,
-            tag__depth__gte=tag.depth,
+        subquery = LabeledItem.objects.filter(
+            **(dict(label__published=True) if not self.perms["edit"] else dict()),
+            label__path__startswith=label.path,
+            label__depth__gte=label.depth,
             content_type__in=content_types,
             object_id=OuterRef("pk"),
         )
@@ -188,10 +188,10 @@ class SummaryTableFilterSet(BaseFilterSet):
         help_text="Type of summary table to display",
         empty_label="All table types",
     )
-    tag = df.ChoiceFilter(
-        method="filter_tag",
+    label = df.ChoiceFilter(
+        method="filter_label",
         label="Applied label",
-        help_text="Visualizations with tag applied",
+        help_text="Visualizations with label applied",
         empty_label="All labels",
     )
     published = df.ChoiceFilter(
@@ -203,44 +203,44 @@ class SummaryTableFilterSet(BaseFilterSet):
 
     class Meta:
         model = models.SummaryTable
-        fields = ["title", "type", "tag", "published"]
+        fields = ["title", "type", "label", "published"]
         form = InlineFilterForm
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         query = Q(assessment=self.assessment)
         if self.perms["edit"]:
-            queryset = queryset.prefetch_related(Prefetch("tags", to_attr="visible_tags"))
+            queryset = queryset.prefetch_related(Prefetch("labels", to_attr="visible_labels"))
         else:
             queryset = queryset.prefetch_related(
                 Prefetch(
-                    "tags",
-                    queryset=TaggedItem.objects.filter(tag__published=True),
-                    to_attr="visible_tags",
+                    "labels",
+                    queryset=LabeledItem.objects.filter(label__published=True),
+                    to_attr="visible_labels",
                 )
             )
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
 
-    def filter_tag(self, queryset, name, value):
+    def filter_label(self, queryset, name, value):
         if not value:
             return queryset
-        tag = Tag.objects.get(pk=value)
+        label = Label.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.SummaryTable)
-        subquery = TaggedItem.objects.filter(
-            **(dict(tag__published=True) if not self.perms["edit"] else dict()),
-            tag__path__startswith=tag.path,
-            tag__depth__gte=tag.depth,
+        subquery = LabeledItem.objects.filter(
+            **(dict(label__published=True) if not self.perms["edit"] else dict()),
+            label__path__startswith=label.path,
+            label__depth__gte=label.depth,
             content_type=content_type,
             object_id=OuterRef("pk"),
         )
         return queryset.filter(Exists(subquery))
 
-    def get_tag_choices(self):
-        tags = Tag.get_assessment_qs(self.assessment.pk)
+    def get_label_choices(self):
+        labels = Label.get_assessment_qs(self.assessment.pk)
         if not self.perms["edit"]:
-            tags = tags.filter(published=True)
-        return [(tag.pk, tag.get_nested_name()) for tag in tags]
+            labels = labels.filter(published=True)
+        return [(label.pk, label.get_nested_name()) for label in labels]
 
     def create_form(self):
         form = super().create_form()
@@ -251,6 +251,6 @@ class SummaryTableFilterSet(BaseFilterSet):
         )
         choices = [constants.TableType(choice) for choice in sorted(set(choices))]
         form.fields["type"].choices = [(choice.value, choice.label) for choice in choices]
-        form.fields["tag"].choices = self.get_tag_choices()
+        form.fields["label"].choices = self.get_label_choices()
 
         return form

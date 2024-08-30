@@ -1338,20 +1338,20 @@ class Content(models.Model):
         return cache_html
 
 
-class Tag(AssessmentRootMixin, MP_Node):
-    objects = managers.TagManager()
+class Label(AssessmentRootMixin, MP_Node):
+    objects = managers.LabelManager()
 
     name = models.CharField(max_length=20, unique=True)
     description = models.TextField(blank=True)
     color = ColorField(default="#0071bc")
-    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="tags")
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="labels")
     published = models.BooleanField(default=False)
     text_color = ColorField(default="#000000")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    cache_template_taglist = "assessment.tag.taglist.assessment-{0}"
-    cache_template_tagtree = "assessment.tag.tagtree.assessment-{0}"
+    cache_template_taglist = "assessment.label.labellist.assessment-{0}"
+    cache_template_tagtree = "assessment.label.labeltree.assessment-{0}"
 
     @classmethod
     def create_root(cls, assessment_id, **kwargs):
@@ -1379,17 +1379,17 @@ class Tag(AssessmentRootMixin, MP_Node):
             return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     def get_absolute_url(self):
-        return reverse("assessment:tag-htmx", args=[self.pk, "read"])
+        return reverse("assessment:label-htmx", args=[self.pk, "read"])
 
     def get_edit_url(self):
-        return reverse("assessment:tag-htmx", args=[self.pk, "update"])
+        return reverse("assessment:label-htmx", args=[self.pk, "update"])
 
     def get_delete_url(self):
-        return reverse("assessment:tag-htmx", args=[self.pk, "delete"])
+        return reverse("assessment:label-htmx", args=[self.pk, "delete"])
 
 
-class TaggedItem(models.Model):
-    tag = models.ForeignKey(Tag, models.CASCADE, related_name="items")
+class LabeledItem(models.Model):
+    label = models.ForeignKey(Label, models.CASCADE, related_name="items")
     content_type = models.ForeignKey(ContentType, models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")

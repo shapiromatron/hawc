@@ -363,7 +363,7 @@ class LogManager(BaseManager):
         return aggregations
 
 
-class TagManager(MP_NodeManager):
+class LabelManager(MP_NodeManager):
     def get_applied(self, _object):
         content_type, object_id = object_to_content_object(_object)
         return self.filter(items__content_type=content_type, items__object_id=object_id)

@@ -8,7 +8,7 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2> {% include "assessment/fragments/tag_indicators.html" with content_type=content_object.0.pk object_id=content_object.1 %}
+    <h2>{{object}}</h2> {% include "assessment/fragments/label_indicators.html" with content_type=content_object.0.pk object_id=content_object.1 %}
     {% include "common/unpublished_badge.html" %}
     {% actions %}
       <a class="dropdown-item" href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a>
@@ -17,7 +17,7 @@
         <a class="dropdown-item" href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a>
         <a class="dropdown-item" href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}{% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a>
         <a class="dropdown-item" href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a>
-        <a class="dropdown-item" data-toggle="modal" data-target="#tag-modal" hx-get="{% url 'assessment:tag-item' content_object.0.pk content_object.1 %}?action=tag" hx-target="#tag-modal-content">Apply labels</a>
+        <a class="dropdown-item" data-toggle="modal" data-target="#label-modal" hx-get="{% url 'assessment:label-item' content_object.0.pk content_object.1 %}?action=label" hx-target="#label-modal-content">Apply labels</a>
       {% endif %}
     {% endactions %}
   </div>
@@ -33,7 +33,7 @@
 
   {% endblock dp_content %}
 
-  {% include "assessment/components/tag_modal.html" with modal_id="tag-modal"%}
+  {% include "assessment/components/label_modal.html" with modal_id="label-modal"%}
 
 {% endblock %}
 

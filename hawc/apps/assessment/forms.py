@@ -670,11 +670,11 @@ class DatasetForm(forms.ModelForm):
         field_classes = {"description": QuillField}
 
 
-class TagForm(forms.ModelForm):
+class LabelForm(forms.ModelForm):
     parent = forms.ModelChoiceField(None, empty_label=None)
 
     class Meta:
-        model = models.Tag
+        model = models.Label
         fields = ["name", "description", "parent", "color", "published"]
 
     def __init__(self, *args, **kwargs):
@@ -685,7 +685,7 @@ class TagForm(forms.ModelForm):
         if self.instance.pk is not None:
             self.fields["parent"].initial = self.instance.get_parent()
         self.fields["parent"].queryset = self.get_parent_queryset()
-        self.fields["parent"].label_from_instance = lambda tag: tag.get_nested_name()
+        self.fields["parent"].label_from_instance = lambda label: label.get_nested_name()
         self.fields["description"].widget.attrs["rows"] = 2
 
     @property
@@ -703,8 +703,8 @@ class TagForm(forms.ModelForm):
         return helper
 
     def get_parent_queryset(self):
-        root = models.Tag.get_assessment_root(self.instance.assessment.pk)
-        queryset = models.Tag.get_tree(root)
+        root = models.Label.get_assessment_root(self.instance.assessment.pk)
+        queryset = models.Label.get_tree(root)
         if self.instance.pk is not None:
             queryset = queryset.exclude(
                 path__startswith=self.instance.path, depth__gte=self.instance.depth
@@ -735,7 +735,7 @@ class TagForm(forms.ModelForm):
             parent = self.cleaned_data["parent"]
             # handle new instance
             if instance.pk is None:
-                instance = models.Tag.create_tag(
+                instance = models.Label.create_tag(
                     assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
                 )
             # handle existing instance
@@ -747,10 +747,10 @@ class TagForm(forms.ModelForm):
         return instance
 
 
-class TagItemForm(forms.Form):
-    tags = forms.ModelMultipleChoiceField(
+class LabelItemForm(forms.Form):
+    labels = forms.ModelMultipleChoiceField(
         required=False,
-        queryset=models.Tag.objects.all(),
+        queryset=models.Label.objects.all(),
         label="Labels",
         help_text="Select label(s) to apply.",
     )
@@ -760,9 +760,9 @@ class TagItemForm(forms.Form):
         self.content_type = kwargs.pop("content_type")
         self.object_id = kwargs.pop("object_id")
         super().__init__(*args, **kwargs)
-        tags = models.Tag.get_assessment_qs(content_object.get_assessment().pk)
-        self.fields["tags"].queryset = tags
-        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+        labels = models.Label.get_assessment_qs(content_object.get_assessment().pk)
+        self.fields["labels"].queryset = labels
+        self.fields["labels"].label_from_instance = lambda label: label.get_nested_name()
 
     @property
     def helper(self):
@@ -772,16 +772,16 @@ class TagItemForm(forms.Form):
 
     @transaction.atomic
     def save(self):
-        # delete old tags
-        models.TaggedItem.objects.filter(
+        # delete old labels
+        models.LabeledItem.objects.filter(
             content_type_id=self.content_type, object_id=self.object_id
         ).delete()
-        # apply new tags
-        tags = []
-        for tag in self.cleaned_data["tags"]:
-            tags.append(
-                models.TaggedItem(
-                    tag=tag, content_type_id=self.content_type, object_id=self.object_id
+        # apply new labels
+        labels = []
+        for label in self.cleaned_data["labels"]:
+            labels.append(
+                models.LabeledItem(
+                    label=label, content_type_id=self.content_type, object_id=self.object_id
                 )
             )
-        models.TaggedItem.objects.bulk_create(tags)
+        models.LabeledItem.objects.bulk_create(labels)

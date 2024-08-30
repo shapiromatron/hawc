@@ -74,19 +74,19 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["url_delete"] = instance.get_delete_url()
             ret["data_url"] = instance.get_data_url()
             content_type, object_id = object_to_content_object(instance)
-            ret["tag_htmx"] = (
+            ret["label_htmx"] = (
                 reverse(
-                    "assessment:tag-item",
+                    "assessment:label-item",
                     kwargs={"content_type": content_type.pk, "object_id": object_id},
                 )
-                + "?action=tag"
+                + "?action=label"
             )
-            ret["tag_indicators_htmx"] = (
+            ret["label_indicators_htmx"] = (
                 reverse(
-                    "assessment:tag-item",
+                    "assessment:label-item",
                     kwargs={"content_type": content_type.pk, "object_id": object_id},
                 )
-                + "?action=tag_indicators"
+                + "?action=label_indicators"
             )
 
         if instance.visual_type in [

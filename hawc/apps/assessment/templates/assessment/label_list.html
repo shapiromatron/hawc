@@ -4,8 +4,8 @@
   <div class="d-flex mt-1">
     <h2 class="mb-0">Labels</h2>
     <button class="btn btn-primary ml-2 ml-auto align-self-start flex-shrink-0"
-            hx-get="{% url 'assessment:tag-htmx' assessment.pk 'create' %}"
-            hx-target="#tag-listgroup"
+            hx-get="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
+            hx-target="#label-listgroup"
             hx-swap="beforeend"
     >
       <i class="fa fa-fw fa-save"></i>&nbsp;
@@ -13,9 +13,9 @@
     </button>
   </div>
   <div>
-    <div class="my-2 box-shadow-minor list-group py-0" id="tag-listgroup">
+    <div class="my-2 box-shadow-minor list-group py-0" id="label-listgroup">
       {% for object in object_list %}
-        {% include "assessment/fragments/tag_row.html" with canEdit=True %}
+        {% include "assessment/fragments/label_row.html" with canEdit=True %}
       {% endfor %}
       <div class="alert alert-info text-center show-only-child my-0">No labels created (yet).</div>
     </div>

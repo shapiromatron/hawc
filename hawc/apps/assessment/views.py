@@ -913,14 +913,14 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
         raise PermissionDenied()
 
 
-class TagList(BaseList):
+class LabelList(BaseList):
     parent_model = models.Assessment
-    model = models.Tag
+    model = models.Label
     assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_queryset(self):
         # include root for permission checking
-        self.queryset = models.Tag.get_assessment_qs(self.assessment.pk, include_root=True)
+        self.queryset = models.Label.get_assessment_qs(self.assessment.pk, include_root=True)
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):
@@ -930,12 +930,12 @@ class TagList(BaseList):
         return context
 
 
-class TagViewSet(HtmxViewSet):
+class LabelViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
-    model = models.Tag
-    form_fragment = "assessment/fragments/tag_edit_row.html"
-    detail_fragment = "assessment/fragments/tag_row.html"
+    model = models.Label
+    form_fragment = "assessment/fragments/label_edit_row.html"
+    detail_fragment = "assessment/fragments/label_row.html"
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -945,12 +945,12 @@ class TagViewSet(HtmxViewSet):
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "POST":
-            form = forms.TagForm(request.POST, assessment=request.item.assessment)
+            form = forms.LabelForm(request.POST, assessment=request.item.assessment)
             if form.is_valid():
                 self.perform_create(request.item, form)
                 template = self.detail_fragment
         else:
-            form = forms.TagForm(assessment=request.item.assessment)
+            form = forms.LabelForm(assessment=request.item.assessment)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
@@ -958,12 +958,12 @@ class TagViewSet(HtmxViewSet):
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         if request.method == "POST":
-            form = forms.TagForm(request.POST, instance=request.item.object)
+            form = forms.LabelForm(request.POST, instance=request.item.object)
             if form.is_valid():
                 self.perform_update(request.item, form)
                 template = self.detail_fragment
         else:
-            form = forms.TagForm(data=None, instance=request.item.object)
+            form = forms.LabelForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, template, context)
 
@@ -972,12 +972,12 @@ class TagViewSet(HtmxViewSet):
         if request.method == "POST":
             self.perform_delete(request.item)
             return self.str_response()
-        form = forms.TagForm(data=None, instance=request.item.object)
+        form = forms.LabelForm(data=None, instance=request.item.object)
         return render(request, self.form_fragment, self.get_context_data(form=form))
 
 
-class TagItem(HtmxView):
-    actions = {"tag", "tag_indicators"}
+class LabelItem(HtmxView):
+    actions = {"label", "label_indicators"}
 
     def dispatch(self, request, *args, **kwargs):
         self.content_type = self.kwargs.get("content_type")
@@ -992,19 +992,19 @@ class TagItem(HtmxView):
             raise Http404()
 
         handler = self.get_handler(request)
-        if request.action == "tag" and not self.assessment.user_can_edit_object(request.user):
+        if request.action == "label" and not self.assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
         elif not self.assessment.user_can_view_object(request.user):
             raise PermissionDenied()
 
         return handler(request, *args, **kwargs)
 
-    def tag(self, request: HttpRequest, *args, **kwargs):
+    def label(self, request: HttpRequest, *args, **kwargs):
         context = dict(content_type=self.content_type, object_id=self.object_id)
         if request.method == "GET":
-            form = forms.TagItemForm(
+            form = forms.LabelItemForm(
                 data=dict(
-                    tags=models.Tag.objects.filter(
+                    labels=models.Label.objects.filter(
                         items__content_type=self.content_type, items__object_id=self.object_id
                     )
                 ),
@@ -1013,7 +1013,7 @@ class TagItem(HtmxView):
                 object_id=self.object_id,
             )
         else:
-            form = forms.TagItemForm(
+            form = forms.LabelItemForm(
                 data=request.POST,
                 content_object=self.content_object,
                 content_type=self.content_type,
@@ -1022,18 +1022,18 @@ class TagItem(HtmxView):
             if form.is_valid():
                 form.save()
                 context["saved"] = True
-                context["tags"] = models.Tag.objects.get_applied(self.content_object)
+                context["labels"] = models.Label.objects.get_applied(self.content_object)
         context["form"] = form
-        return render(request, "assessment/components/tag_modal_content.html", context)
+        return render(request, "assessment/components/label_modal_content.html", context)
 
-    def tag_indicators(self, request: HttpRequest, *args, **kwargs):
-        tags = models.Tag.objects.get_applied(self.content_object)
+    def label_indicators(self, request: HttpRequest, *args, **kwargs):
+        labels = models.Label.objects.get_applied(self.content_object)
         if not self.assessment.user_can_edit_object(request.user):
-            tags = tags.filter(published=True)
+            labels = labels.filter(published=True)
         context = dict(
             content_type=self.content_type,
             object_id=self.object_id,
-            tags=tags,
+            labels=labels,
             oob=True,
         )
-        return render(request, "assessment/fragments/tag_indicators.html", context)
+        return render(request, "assessment/fragments/label_indicators.html", context)

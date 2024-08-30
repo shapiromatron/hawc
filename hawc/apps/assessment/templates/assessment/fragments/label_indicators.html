@@ -1,0 +1,18 @@
+{% if oob %}
+  <div
+    class="d-flex align-items-center ml-1"
+    id="label-indicators"
+    hx-swap-oob="outerHTML"
+  >
+    {% for label in labels %}
+      <div class="label mx-1 mb-3" style="background-color: {{label.color}}; color: {{label.text_color}};" title="{{label.description}}">{{label.name}}</div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div
+    id="label-indicators"
+    hx-get="{% url 'assessment:label-item' content_type object_id %}?action=label_indicators"
+    hx-trigger="load"
+    hx-swap="none"
+  ></div>
+{% endif %}

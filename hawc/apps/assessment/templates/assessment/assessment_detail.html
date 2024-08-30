@@ -22,7 +22,7 @@
           <a class="dropdown-item" hx-get="{% url 'assessment:attachment-htmx' object.pk 'create' %}" hx-trigger="click" hx-target="#attach-tbody" hx-swap="beforeend" href="/">Add an attachment</a>
           <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
           <a class="dropdown-item" href="{% url 'assessment:values-create' object.pk %}">Add a value</a>
-          <a class="dropdown-item" href="{% url 'assessment:manage-tags' object.pk %}">Manage labels</a>
+          <a class="dropdown-item" href="{% url 'assessment:manage-labels' object.pk %}">Manage labels</a>
           <div class="dropdown-divider"></div>
         {% else %}
           {% if obj_perms.edit_assessment %}

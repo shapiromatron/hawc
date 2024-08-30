@@ -38,14 +38,14 @@
             <i class="fa fa-spinner fa-spin align-self-center htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i>
             <button class="btn btn-primary px-4 py-2 ml-2"
                     id="binding-update"
-                    hx-post="{% url 'assessment:tag-htmx' object.pk 'update' %}"
+                    hx-post="{% url 'assessment:label-htmx' object.pk 'update' %}"
                     hx-indicator="#spinner-{{object.pk}}">
               <i class="fa fa-fw fa-save"></i>&nbsp;
               Update
             </button>
             <button class="btn btn-light px-3 py-2 ml-2"
                     id="binding-cancel"
-                    hx-get="{% url 'assessment:tag-htmx' object.pk 'read' %}"
+                    hx-get="{% url 'assessment:label-htmx' object.pk 'read' %}"
                     hx-indicator="#spinner-{{object.pk}}">
               Cancel
             </button>
@@ -55,7 +55,7 @@
         <i class="fa fa-spinner fa-spin htmx-indicator mr-2" id="spinner-{{object.pk}}" aria-hidden="true"></i>
         <button class="btn btn-primary px-4 py-2"
                 id="binding-create"
-                hx-post="{% url 'assessment:tag-htmx' assessment.pk 'create' %}"
+                hx-post="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
                 hx-indicator="#spinner-{{object.pk}}">
           <i class="fa fa-fw fa-save"></i>&nbsp;Create
         </button>

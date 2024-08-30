@@ -31,8 +31,8 @@ class EndpointAggregation extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
-            tagIndicators = $(
-                `<div id="tag-indicators" hx-get="${this.data.tag_indicators_htmx}" hx-trigger="load" hx-swap="none">`
+            labelIndicators = $(
+                `<div id="label-indicators" hx-get="${this.data.label_indicators_htmx}" hx-trigger="load" hx-swap="none">`
             ),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
@@ -58,7 +58,7 @@ class EndpointAggregation extends BaseVisual {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
-                tagIndicators,
+                labelIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 actions,
             ]);

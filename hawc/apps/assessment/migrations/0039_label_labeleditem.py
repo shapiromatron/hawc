@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Tag",
+            name="label",
             fields=[
                 (
                     "id",
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                     "assessment",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="tags",
+                        related_name="labels",
                         to="assessment.assessment",
                     ),
                 ),
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
             bases=(hawc.apps.common.models.AssessmentRootMixin, models.Model),
         ),
         migrations.CreateModel(
-            name="TaggedItem",
+            name="LabeledItem",
             fields=[
                 (
                     "id",
@@ -65,11 +65,11 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "tag",
+                    "label",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="items",
-                        to="assessment.tag",
+                        to="assessment.label",
                     ),
                 ),
             ],

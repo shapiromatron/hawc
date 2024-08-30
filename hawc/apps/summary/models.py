@@ -24,7 +24,7 @@ from hawc.tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
-from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, TaggedItem
+from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
 from ..common.helper import (
     FlatExport,
     PydanticToDjangoError,
@@ -126,7 +126,7 @@ class SummaryTable(models.Model):
         help_text="For assessments marked for public viewing, mark table to be viewable by public",
     )
     caption = models.TextField(blank=True, validators=[validate_html_tags, validate_hyperlinks])
-    tags = GenericRelation(TaggedItem)
+    labels = GenericRelation(LabeledItem)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -285,7 +285,7 @@ class Visual(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    tags = GenericRelation(TaggedItem)
+    labels = GenericRelation(LabeledItem)
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -674,7 +674,7 @@ class DataPivotUpload(DataPivot):
         max_length=64,
         blank=True,
     )
-    tags = GenericRelation(TaggedItem)
+    labels = GenericRelation(LabeledItem)
 
     @property
     def visual_type(self):
@@ -717,7 +717,7 @@ class DataPivotQuery(DataPivot):
         "creating one plot similar, but not identical, dose-units.",
     )
     prefilters = models.JSONField(default=dict)
-    tags = GenericRelation(TaggedItem)
+    labels = GenericRelation(LabeledItem)
 
     def clean(self):
         count = self.get_queryset().count()

@@ -139,21 +139,21 @@ urlpatterns = [
         {"action": "update_item"},
         name="publish-update",
     ),
-    # assessment tags
+    # assessment labels
     path(
-        "<int:pk>/tags/",
-        views.TagList.as_view(),
-        name="manage-tags",
+        "<int:pk>/labels/",
+        views.LabelList.as_view(),
+        name="manage-labels",
     ),
     path(
-        "tag/<int:pk>/<slug:action>/",
-        views.TagViewSet.as_view(),
-        name="tag-htmx",
+        "label/<int:pk>/<slug:action>/",
+        views.LabelViewSet.as_view(),
+        name="label-htmx",
     ),
     path(
-        "tag-item/<int:content_type>/<int:object_id>/",
-        views.TagItem.as_view(),
-        name="tag-item",
+        "label-item/<int:content_type>/<int:object_id>/",
+        views.LabelItem.as_view(),
+        name="label-item",
     ),
     # api views
     path("api/", include((router.urls, "api"))),
