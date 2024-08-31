@@ -1193,7 +1193,7 @@ class GroupResult(models.Model):
             """
             control = None
 
-            for i, rg in enumerate(rgs):
+            for _i, rg in enumerate(rgs):
                 if rg["group"]["isControl"]:
                     control = rg
                     break
@@ -1208,7 +1208,7 @@ class GroupResult(models.Model):
 
         n_1, mu_1, sd_1 = get_control_group(rgs)
 
-        for i, rg in enumerate(rgs):
+        for _i, rg in enumerate(rgs):
             mean = low = high = None
 
             if estimate_type in ["median", "mean"] and variance_type in [

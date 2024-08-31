@@ -50,8 +50,6 @@ def test_get_200():
 
     urls = [
         # summary tables
-        reverse("summary:list", args=(main,)),
-        reverse("summary:create", args=(main,)),
         reverse("summary:tables_list", args=(main,)),
         reverse("summary:tables_create_selector", args=(main,)),
         reverse("summary:tables_create", args=(main, table_type)),

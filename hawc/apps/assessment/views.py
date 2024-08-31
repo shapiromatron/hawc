@@ -709,8 +709,8 @@ class LogObjectList(ListView):
     def dispatch(self, request, *args, **kwargs):
         try:
             content_type = ContentType.objects.get_for_id(kwargs["content_type"])
-        except ObjectDoesNotExist:
-            raise Http404()
+        except ObjectDoesNotExist as exc:
+            raise Http404() from exc
         first_log = self.model.objects.filter(**self.kwargs).first()
         if not first_log:
             first_log = self.model(content_type=content_type, object_id=kwargs["object_id"])

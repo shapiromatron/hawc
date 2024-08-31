@@ -195,7 +195,7 @@ def _validate_json_pydantic(value: str, Model: type[BaseModel]):
     try:
         Model.model_validate_json(value)
     except PydanticValidationError as err:
-        raise ValidationError(err.json())
+        raise ValidationError(err.json()) from err
 
 
 def validate_json_pydantic(Model: type[BaseModel]) -> Callable:

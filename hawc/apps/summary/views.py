@@ -21,7 +21,6 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseFilterList,
-    BaseList,
     BaseUpdate,
 )
 from ..riskofbias.models import RiskOfBiasMetric
@@ -34,59 +33,10 @@ def get_visual_list_crumb(assessment) -> Breadcrumb:
     )
 
 
-def get_summary_list_crumb(assessment) -> Breadcrumb:
-    return Breadcrumb(name="Summary", url=reverse("summary:list", args=(assessment.id,)))
-
-
 def get_table_list_crumb(assessment) -> Breadcrumb:
     return Breadcrumb(
         name="Summary tables", url=reverse("summary:tables_list", args=(assessment.id,))
     )
-
-
-# SUMMARY-TEXT
-class SummaryTextList(BaseList):
-    parent_model = Assessment
-    model = models.SummaryText
-    breadcrumb_active_name = "Executive summary"
-
-    def get_queryset(self):
-        rt = self.model.get_assessment_root_node(self.assessment.id)
-        return super().get_queryset().filter(pk__in=[rt.pk])
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="summaryTextStartup", data=dict(assessment_id=self.assessment.id, editMode=False)
-        )
-
-
-class SummaryTextModify(BaseCreate):
-    # Base view for all Create, Update, Delete GET operations
-    parent_model = Assessment
-    parent_template_name = "assessment"
-    model = models.SummaryText
-    form_class = forms.SummaryTextForm
-    http_method_names = ("get",)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Update text",
-            [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
-        )
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="summaryTextStartup",
-            data=dict(
-                assessment_id=self.assessment.id,
-                editMode=True,
-                csrf=get_token(self.request),
-            ),
-        )
 
 
 # SUMMARY TABLE
@@ -176,8 +126,8 @@ class SummaryTableCreate(BaseCreate):
         kwargs = super().get_form_kwargs()
         try:
             table_type = constants.TableType(self.kwargs["table_type"])
-        except ValueError:
-            raise Http404()
+        except ValueError as err:
+            raise Http404() from err
         kwargs["table_type"] = table_type
         return kwargs
 
@@ -434,8 +384,8 @@ class VisualizationCreate(BaseCreate):
         kwargs["visual_type"] = self.kwargs.get("visual_type")
         try:
             constants.VisualType(kwargs["visual_type"])
-        except ValueError:
-            raise Http404
+        except ValueError as err:
+            raise Http404 from err
 
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
@@ -450,8 +400,8 @@ class VisualizationCreate(BaseCreate):
                     kwargs["evidence_type"] = constants.get_default_evidence_type(
                         kwargs["visual_type"]
                     )
-                except ValueError:
-                    raise Http404
+                except ValueError as err:
+                    raise Http404 from err
             if (
                 kwargs["evidence_type"]
                 not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
@@ -559,8 +509,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_form_class(self):
         try:
             return forms.get_visual_form(self.object.visual_type)
-        except ValueError:
-            raise Http404
+        except ValueError as err:
+            raise Http404 from err
 
     def get_template_names(self):
         visual_type = self.object.visual_type
@@ -661,8 +611,8 @@ class DataPivotQueryNew(DataPivotNew):
         try:
             evidence_type = constants.StudyType(self.kwargs["study_type"])
             _ = prefilters.get_prefilter_cls(None, evidence_type, self.assessment)
-        except (KeyError, ValueError):
-            raise Http404
+        except (KeyError, ValueError) as err:
+            raise Http404 from err
         return evidence_type
 
     def get_form_kwargs(self):
