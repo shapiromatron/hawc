@@ -1,10 +1,6 @@
-from django.core.exceptions import ValidationError
-from django.db import transaction
 from django.urls import reverse
 from rest_framework import serializers
 
-from ..common import validators
-from ..common.clean import sanitize_html
 from ..common.helper import SerializerHelper, object_to_content_object
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models

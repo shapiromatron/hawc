@@ -988,8 +988,8 @@ class LabelItem(HtmxView):
                 self.content_type
             ).get_object_for_this_type(pk=self.object_id)
             self.assessment = self.content_object.get_assessment()
-        except ObjectDoesNotExist:
-            raise Http404()
+        except ObjectDoesNotExist as err:
+            raise Http404() from err
 
         handler = self.get_handler(request)
         if request.action == "label" and not self.assessment.user_can_edit_object(request.user):
