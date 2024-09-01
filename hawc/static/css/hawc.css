@@ -59,6 +59,7 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     overflow: hidden;
     font-size: 0.85rem;
     padding: .2rem 1rem .2rem .4rem;
+    font-family: Source Sans Pro Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans;
     clip-path: polygon(
         0% 0,
         calc(100% - 12px) 0,
@@ -142,6 +143,19 @@ tfoot > tr > td {
 }
 .dark-link, .dark-link:visited {
     color: #495057;
+}
+.clickable, .clickable .bg-light {
+    transition: background-color 0.20s ease;
+    cursor: pointer;
+}
+.clickable:active {
+    background-color: #e3e4e5 !important;
+}
+.bg-light.clickable:hover, .clickable:hover .bg-light {
+    background-color: #e6e7e8 !important;
+}
+.bg-light.clickable:active, .clickable:active .bg-light {
+    background-color: #d4d5d6 !important;
 }
 .showOptsCaret:hover .optsCaret {
     opacity: 1;

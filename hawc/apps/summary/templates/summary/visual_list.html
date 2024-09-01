@@ -27,13 +27,13 @@
             <div class="d-flex align-items-center">
               <a class="text-nowrap" href="{{visual.get_absolute_url}}">{{visual.title}}</a>
               {% for labeled_item in visual.visible_labels %}
-                <div class="tny mx-1 label" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</div>
+                <a class="tny mx-1 label" href="{{labeled_item.label.get_labeled_items_url}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
               {% endfor %}
               {% for labeled_item in visual.datapivotquery.visible_query_labels %}
-                <div class="tny mx-1 label" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</div>
+                <a class="tny mx-1 label" href="{{labeled_item.label.get_labeled_items_url}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
               {% endfor %}
               {% for labeled_item in visual.datapivotupload.visible_upload_labels %}
-                <div class="tny mx-1 label" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</div>
+                <a class="tny mx-1 label" href="{{labeled_item.label.get_labeled_items_url}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
               {% endfor %}
               {% if not visual.published %}
                 <i class="fa fa-eye-slash mx-1" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>

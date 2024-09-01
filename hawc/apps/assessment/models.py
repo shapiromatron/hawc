@@ -1344,8 +1344,13 @@ class Label(AssessmentRootMixin, MP_Node):
     cache_template_taglist = "assessment.label.labellist.assessment-{0}"
     cache_template_tagtree = "assessment.label.labeltree.assessment-{0}"
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
         constraints = [models.UniqueConstraint(fields=["assessment", "name"], name="label_name")]
+
+    def __str__(self):
+        return self.name
 
     @classmethod
     def create_root(cls, assessment_id, **kwargs):
@@ -1372,6 +1377,9 @@ class Label(AssessmentRootMixin, MP_Node):
         else:
             return f"{'━ ' * (self.depth - 1)}{self.name}"
 
+    def get_labeled_items_url(self):
+        return reverse("assessment:labeled-items", args=[self.pk])
+
     def get_absolute_url(self):
         return reverse("assessment:label-htmx", args=[self.pk, "read"])
 
@@ -1383,12 +1391,17 @@ class Label(AssessmentRootMixin, MP_Node):
 
 
 class LabeledItem(models.Model):
+    objects = managers.LabeledItemManager()
+
     label = models.ForeignKey(Label, models.CASCADE, related_name="items")
     content_type = models.ForeignKey(ContentType, models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.label} on {self.content_object}"
 
 
 reversion.register(DSSTox)

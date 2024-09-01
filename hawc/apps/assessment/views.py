@@ -930,6 +930,25 @@ class LabelList(BaseList):
         return context
 
 
+class LabeledItemList(BaseDetail):
+    parent_model = models.Assessment
+    model = models.Label
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+    template_name = "assessment/labeleditem_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            object_list=models.LabeledItem.objects.filter(
+                label__path__startswith=self.object.path,
+                label__depth__gte=self.object.depth,
+            )
+            .order_by("content_type", "object_id")
+            .distinct("content_type", "object_id")
+        )
+        return context
+
+
 class LabelViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
