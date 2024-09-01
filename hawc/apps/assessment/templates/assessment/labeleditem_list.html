@@ -2,21 +2,21 @@
 
 {% block content %}
 
-<h2 class="mb-0 d-flex align-items-center mb-2">Objects with <div class="mx-2 label" style="background-color: {{object.color}}; color: {{object.text_color}}; font-size: 1.4rem;" title="{{object.description}}">{{object.name}}</div> label</h2>
+  <h2 class="mb-0 d-flex align-items-center mb-2">Objects with <div class="mx-2 label" style="background-color: {{object.color}}; color: {{object.text_color}}; font-size: 1.4rem;" title="{{object.description}}">{{object.name}}</div> label</h2>
 
-<div class="list-group my-2 py-0">
-{% for object in object_list %}
-<a class="list-group-item clickable text-dark d-flex p-0" href="{{object.content_object.get_absolute_url}}">
-    <div class="col-auto bg-light py-2 font-weight-light text-center" style="width: 10rem;">{{object.content_object|verbose_name|title}}</div>
-    <div class="col-8 py-2 d-flex align-items-center">{{object.content_object}}
-        <i class="text-secondary fa fa-{{ object.content_object.published|yesno:'eye,eye-slash' }} px-2" title="{{ object.content_object.published|yesno:'Published,Unpublished' }}"></i>
-    {% for labeled_item in object.content_object.labels.all %}
-        <div class="tny mr-2 label" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</div>
+  <div class="list-group my-2 py-0">
+    {% for object in object_list %}
+      <a class="list-group-item clickable text-dark d-flex p-0" href="{{object.content_object.get_absolute_url}}">
+        <div class="col-auto bg-light py-2 font-weight-light text-center" style="width: 10rem;">{{object.content_object|verbose_name|title}}</div>
+        <div class="col-8 py-2 d-flex align-items-center">{{object.content_object}}
+          <i class="text-secondary fa fa-{{ object.content_object.published|yesno:'eye,eye-slash' }} px-2" title="{{ object.content_object.published|yesno:'Published,Unpublished' }}"></i>
+          {% for labeled_item in object.content_object.labels.all %}
+            <div class="tny mr-2 label" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</div>
+          {% endfor %}
+        </div>
+      </a>
+    {% empty %}
+      {% alert type="warning" classes="my-0" %} No objects found.{% endalert %}
     {% endfor %}
-    </div>
-</a>
-{% empty %}
-{% alert type="warning" classes="my-0" %} No objects found.{% endalert %}
-{% endfor %}
-</div>
+  </div>
 {% endblock %}
