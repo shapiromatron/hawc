@@ -29,7 +29,20 @@ client.set_authentication_token(token=getpass())
 
 # get all references for an assessment
 client.lit.references(assessment_id=123)
+```
 
+An interactive client also exists which downloads figures or visualizations:
+
+```python
+from getpass import getpass
+from hawc_client import HawcClient
+
+client = HawcClient("https://hawcproject.org")
+client.set_authentication_token(getpass(), login=True)  # must set login to True
+
+with client.interactive(headless=False) as iclient:
+    iclient.download_visual(123, 'visual.png')
+    iclient.download_data_pivot(456, 'data-pivot.png')
 ```
 
 There are many more commands available in the HAWC client that aren't documented here. It is recommended to use an interactive terminal session using a jupyter notebook to browse the available methods and their docstrings for more details.
@@ -44,6 +57,19 @@ Client tutorials for common operations are below:
 - Bioassay: [Creating bioassay data](https://github.com/shapiromatron/hawc/blob/master/scripts/client/bioassay-crud.ipynb)
 
 ### Changelog
+
+#### [2024-2](https://pypi.org/project/hawc-client/2024.2/) (July 2024)
+
+* Minor documentation and docstring updates
+
+#### [2024-1](https://pypi.org/project/hawc-client/2024.1/) (February 2024)
+
+* Add new interactive client for downloading visual and data pivots images
+* Updated study evaluation/risk of bias APIs
+* Add APIs to modify EffectTags, commonly used in animal and epi models
+* Add APIs to modify epiv2 models
+* Add APIs to modify Visuals and Data Pivots
+* Add APIs to modify Assessments, Assessment Values, and Assessment Details
 
 #### [2023-2](https://pypi.org/project/hawc-client/2023.2/) (April 2023)
 

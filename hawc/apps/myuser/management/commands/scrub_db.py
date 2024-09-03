@@ -44,7 +44,7 @@ class Command(BaseCommand):
         fake = Faker()
         Faker.seed(555)
 
-        # slow; since we're using the same password for everyone... cache it
+        # slow; but since we're using the same password for everyone... generate once
         hash_password = make_password("pw")
 
         # generate
@@ -53,23 +53,22 @@ class Command(BaseCommand):
             user.last_name = fake.last_name()
             user.email = f"{user.first_name.lower()}.{user.last_name.lower()}@{fake.domain_name()}"
             if user.external_id:
-                user.external_id = f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"  # noqa: S311
+                user.external_id = (
+                    f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"  # noqa: S311
+                )
             user.password = hash_password
             user.save()
 
         # save superuser
-        superuser = (
-            get_user_model()
-            .objects.filter(is_superuser=True, is_active=True)
-            .order_by("id")
-            .first()
+        superusers = (
+            get_user_model().objects.filter(is_superuser=True, is_active=True).order_by("id")[:2]
         )
-        superuser.first_name = "Super"
-        superuser.last_name = "Duper"
-        superuser.email = "admin@hawcproject.org"
-        superuser.external_id = "sudo"
-        user.password = hash_password
-        superuser.save()
+        for i, superuser in enumerate(superusers, start=1):
+            superuser.first_name = "HAWC"
+            superuser.last_name = f"Admin #{i}"
+            superuser.email = f"admin{i}@hawcproject.org"
+            superuser.external_id = f"admin{i}"
+            superuser.save()
 
         num_users = get_user_model().objects.count()
         message = dedent(
@@ -77,9 +76,8 @@ class Command(BaseCommand):
         Rewrite complete!
 
         - All {num_users} users have randomly generated names and email addresses.
+        - Two superusers have the usernames `admin1@hawcproject.org` and `admin2@hawcproject.org`
         - All {num_users} users have passwords set to `pw`
-        - A superuser has the username `admin@hawcproject.org`
-        - A superuser has the password `pw`
         """
         )
 

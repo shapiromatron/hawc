@@ -4,6 +4,110 @@
     name: localhost
 - model: contenttypes.contenttype
   fields:
+    app_label: wagtailcore
+    model: page
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailadmin
+    model: admin
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: groupapprovaltask
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: locale
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: site
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: modellogentry
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: collectionviewrestriction
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: collection
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: groupcollectionpermission
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: referenceindex
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: revision
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: grouppagepermission
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: pageviewrestriction
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowpage
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowcontenttype
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowtask
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: task
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflow
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: workflowstate
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: taskstate
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: pagelogentry
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: comment
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: commentreply
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailcore
+    model: pagesubscription
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtaildocs
+    model: document
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailimages
+    model: image
+- model: contenttypes.contenttype
+  fields:
     app_label: auth
     model: permission
 - model: contenttypes.contenttype
@@ -44,6 +148,46 @@
     model: version
 - model: contenttypes.contenttype
   fields:
+    app_label: wagtailforms
+    model: formsubmission
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailredirects
+    model: redirect
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailembeds
+    model: embed
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailusers
+    model: userprofile
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtaildocs
+    model: uploadeddocument
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailimages
+    model: rendition
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailimages
+    model: uploadedimage
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailsearch
+    model: query
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailsearch
+    model: querydailyhits
+- model: contenttypes.contenttype
+  fields:
+    app_label: wagtailsearch
+    model: indexentry
+- model: contenttypes.contenttype
+  fields:
     app_label: taggit
     model: tag
 - model: contenttypes.contenttype
@@ -61,23 +205,19 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: dsstox
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: assessment
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: AssessmentDetail
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
-    model: values
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: attachment
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: baseendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: effecttag
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -93,14 +233,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: effecttag
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
-    model: baseendpoint
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
     model: timespentediting
 - model: contenttypes.contenttype
   fields:
@@ -113,11 +245,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
-    model: job
-- model: contenttypes.contenttype
-  fields:
-    app_label: assessment
-    model: communication
+    model: dsstox
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
@@ -125,11 +253,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
+    model: job
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
     model: content
 - model: contenttypes.contenttype
   fields:
-    app_label: vocab
-    model: term
+    app_label: assessment
+    model: communication
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessmentvalue
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessmentdetail
 - model: contenttypes.contenttype
   fields:
     app_label: vocab
@@ -137,15 +277,15 @@
 - model: contenttypes.contenttype
   fields:
     app_label: vocab
+    model: term
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
     model: entitytermrelation
 - model: contenttypes.contenttype
   fields:
     app_label: lit
-    model: literatureassessment
-- model: contenttypes.contenttype
-  fields:
-    app_label: lit
-    model: search
+    model: identifiers
 - model: contenttypes.contenttype
   fields:
     app_label: lit
@@ -153,7 +293,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: lit
-    model: identifiers
+    model: reference
 - model: contenttypes.contenttype
   fields:
     app_label: lit
@@ -165,15 +305,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: lit
-    model: reference
+    model: search
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: literatureassessment
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: userreferencetag
 - model: contenttypes.contenttype
   fields:
     app_label: lit
     model: userreferencetags
 - model: contenttypes.contenttype
   fields:
-    app_label: lit
-    model: userreferencetag
+    app_label: riskofbias
+    model: riskofbias
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
@@ -185,31 +333,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
-    model: riskofbias
-- model: contenttypes.contenttype
-  fields:
-    app_label: riskofbias
     model: riskofbiasscore
-- model: contenttypes.contenttype
-  fields:
-    app_label: riskofbias
-    model: riskofbiasscoreoverrideobject
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
     model: riskofbiasassessment
 - model: contenttypes.contenttype
   fields:
-    app_label: study
-    model: study
+    app_label: riskofbias
+    model: riskofbiasscoreoverrideobject
 - model: contenttypes.contenttype
   fields:
     app_label: study
     model: attachment
 - model: contenttypes.contenttype
   fields:
-    app_label: animal
-    model: experiment
+    app_label: study
+    model: study
 - model: contenttypes.contenttype
   fields:
     app_label: animal
@@ -217,11 +357,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: animal
-    model: dosingregime
+    model: dosegroup
 - model: contenttypes.contenttype
   fields:
     app_label: animal
-    model: dosegroup
+    model: dosingregime
 - model: contenttypes.contenttype
   fields:
     app_label: animal
@@ -232,12 +372,36 @@
     model: endpointgroup
 - model: contenttypes.contenttype
   fields:
-    app_label: epi
-    model: criteria
+    app_label: animal
+    model: experiment
 - model: contenttypes.contenttype
   fields:
-    app_label: epi
-    model: country
+    app_label: eco
+    model: nestedterm
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: state
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: vocab
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: effect
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: design
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: cause
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: result
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -245,27 +409,19 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: ethnicity
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
-    model: studypopulationcriteria
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
-    model: studypopulation
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
-    model: outcome
-- model: contenttypes.contenttype
-  fields:
-    app_label: epi
     model: comparisonset
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: group
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: criteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: ethnicity
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -273,7 +429,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: centraltendency
+    model: group
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -281,11 +437,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: resultmetric
+    model: groupresult
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: resultadjustmentfactor
+    model: outcome
 - model: contenttypes.contenttype
   fields:
     app_label: epi
@@ -293,7 +449,23 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epi
-    model: groupresult
+    model: resultadjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: resultmetric
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: studypopulation
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: studypopulationcriteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: centraltendency
 - model: contenttypes.contenttype
   fields:
     app_label: epimeta
@@ -309,7 +481,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
-    model: ivchemical
+    model: ivbenchmark
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
@@ -317,11 +489,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
-    model: ivexperiment
-- model: contenttypes.contenttype
-  fields:
-    app_label: invitro
-    model: ivendpointcategory
+    model: ivchemical
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
@@ -329,11 +497,15 @@
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
+    model: ivendpointcategory
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
     model: ivendpointgroup
 - model: contenttypes.contenttype
   fields:
     app_label: invitro
-    model: ivbenchmark
+    model: ivexperiment
 - model: contenttypes.contenttype
   fields:
     app_label: bmd
@@ -345,19 +517,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: summarytext
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
-    model: summarytable
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
-    model: visual
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
     model: datapivot
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: datapivotquery
 - model: contenttypes.contenttype
   fields:
     app_label: summary
@@ -365,7 +529,11 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: datapivotquery
+    model: visual
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: summarytable
 - model: contenttypes.contenttype
   fields:
     app_label: mgmt
@@ -377,11 +545,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: country
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
-    model: design
+    model: adjustmentfactor
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -389,7 +553,7 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: criteria
+    model: design
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
@@ -397,71 +561,686 @@
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: exposurelevel
-- model: contenttypes.contenttype
-  fields:
-    app_label: epiv2
     model: outcome
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
-    model: adjustmentfactor
+    model: exposurelevel
 - model: contenttypes.contenttype
   fields:
     app_label: epiv2
     model: dataextraction
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: country
+    app_label: udf
+    model: userdefinedform
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: state
+    app_label: udf
+    model: tagbinding
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: climate
+    app_label: udf
+    model: modelbinding
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: ecoregion
+    app_label: docs
+    model: documentationpage
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: reference
+    app_label: docs
+    model: documentationpagetag
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: metadata
+    app_label: lit
+    model: workflow
 - model: contenttypes.contenttype
   fields:
-    app_label: eco
-    model: result
-- model: contenttypes.contenttype
+    app_label: udf
+    model: tagudfcontent
+- model: auth.permission
   fields:
-    app_label: eco
-    model: country
-- model: contenttypes.contenttype
+    name: Can access Wagtail admin
+    content_type:
+    - wagtailadmin
+    - admin
+    codename: access_admin
+- model: auth.permission
   fields:
-    app_label: eco
-    model: climate
-- model: contenttypes.contenttype
+    name: Lock/unlock pages you've locked
+    content_type:
+    - wagtailcore
+    - page
+    codename: lock_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: ecoregion
-- model: contenttypes.contenttype
+    name: Publish any page
+    content_type:
+    - wagtailcore
+    - page
+    codename: publish_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: reference
-- model: contenttypes.contenttype
+    name: Unlock any page
+    content_type:
+    - wagtailcore
+    - page
+    codename: unlock_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: metadata
-- model: contenttypes.contenttype
+    name: Can change page
+    content_type:
+    - wagtailcore
+    - page
+    codename: change_page
+- model: auth.permission
   fields:
-    app_label: eco
-    model: quantitative
+    name: Can add page
+    content_type:
+    - wagtailcore
+    - page
+    codename: add_page
+- model: auth.permission
+  fields:
+    name: Can change document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: change_document
+- model: auth.permission
+  fields:
+    name: Can delete document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: delete_document
+- model: auth.permission
+  fields:
+    name: Can choose document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: choose_document
+- model: auth.permission
+  fields:
+    name: Can add document
+    content_type:
+    - wagtaildocs
+    - document
+    codename: add_document
+- model: auth.permission
+  fields:
+    name: Can add image
+    content_type:
+    - wagtailimages
+    - image
+    codename: add_image
+- model: auth.permission
+  fields:
+    name: Can change image
+    content_type:
+    - wagtailimages
+    - image
+    codename: change_image
+- model: auth.permission
+  fields:
+    name: Can delete image
+    content_type:
+    - wagtailimages
+    - image
+    codename: delete_image
+- model: auth.permission
+  fields:
+    name: Can choose image
+    content_type:
+    - wagtailimages
+    - image
+    codename: choose_image
+- model: auth.group
+  fields:
+    name: Moderators
+    permissions:
+    - - access_admin
+      - wagtailadmin
+      - admin
+    - - add_document
+      - wagtaildocs
+      - document
+    - - change_document
+      - wagtaildocs
+      - document
+    - - choose_document
+      - wagtaildocs
+      - document
+    - - delete_document
+      - wagtaildocs
+      - document
+    - - add_image
+      - wagtailimages
+      - image
+    - - change_image
+      - wagtailimages
+      - image
+    - - choose_image
+      - wagtailimages
+      - image
+    - - delete_image
+      - wagtailimages
+      - image
+- model: auth.group
+  fields:
+    name: Editors
+    permissions:
+    - - access_admin
+      - wagtailadmin
+      - admin
+    - - add_document
+      - wagtaildocs
+      - document
+    - - change_document
+      - wagtaildocs
+      - document
+    - - choose_document
+      - wagtaildocs
+      - document
+    - - delete_document
+      - wagtaildocs
+      - document
+    - - add_image
+      - wagtailimages
+      - image
+    - - change_image
+      - wagtailimages
+      - image
+    - - choose_image
+      - wagtailimages
+      - image
+    - - delete_image
+      - wagtailimages
+      - image
+- model: wagtailcore.locale
+  pk: 1
+  fields:
+    language_code: en
+- model: wagtailcore.site
+  fields:
+    hostname: localhost
+    port: 8000
+    site_name: HAWC
+    root_page: 3
+    is_default_site: true
+- model: wagtailcore.collection
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 0
+    name: Root
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - add_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - add_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - change_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - change_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - choose_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - choose_document
+    - wagtaildocs
+    - document
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - add_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - add_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - change_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - change_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Moderators
+    collection: 1
+    permission:
+    - choose_image
+    - wagtailimages
+    - image
+- model: wagtailcore.groupcollectionpermission
+  fields:
+    group:
+    - Editors
+    collection: 1
+    permission:
+    - choose_image
+    - wagtailimages
+    - image
+- model: wagtailcore.page
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 1
+    translation_key: f3a37d2d-b672-4e29-967d-05d22ba816af
+    locale: 1
+    latest_revision: null
+    live: true
+    has_unpublished_changes: false
+    first_published_at: null
+    last_published_at: null
+    live_revision: null
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: Root
+    draft_title: Root
+    slug: root
+    content_type:
+    - wagtailcore
+    - page
+    url_path: /
+    owner: null
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: null
+    alias_of: null
+- model: wagtailcore.page
+  pk: 3
+  fields:
+    path: '00010001'
+    depth: 2
+    numchild: 2
+    translation_key: 6f152189-4b4a-4e44-8b81-28640717b408
+    locale: 1
+    latest_revision: 1
+    live: true
+    has_unpublished_changes: false
+    first_published_at: 2023-11-22 14:56:19.512229+00:00
+    last_published_at: 2023-11-22 14:56:19.512229+00:00
+    live_revision: 1
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: HAWC Documentation
+    draft_title: HAWC Documentation
+    slug: hawc-documentation
+    content_type:
+    - docs
+    - documentationpage
+    url_path: /hawc-documentation/
+    owner:
+    - admin@hawcproject.org
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: 2023-11-22 14:56:19.464008+00:00
+    alias_of: null
+- model: wagtailcore.page
+  pk: 4
+  fields:
+    path: '000100010001'
+    depth: 3
+    numchild: 0
+    translation_key: f62eccfa-fe8b-429d-ba9c-6cffb41a68a6
+    locale: 1
+    latest_revision: 2
+    live: true
+    has_unpublished_changes: false
+    first_published_at: 2023-11-22 14:57:48.877055+00:00
+    last_published_at: 2023-11-22 14:57:48.877055+00:00
+    live_revision: 2
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: Public Page
+    draft_title: Public Page
+    slug: public-page
+    content_type:
+    - docs
+    - documentationpage
+    url_path: /hawc-documentation/public-page/
+    owner:
+    - admin@hawcproject.org
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: 2023-11-22 14:57:48.850356+00:00
+    alias_of: null
+- model: wagtailcore.page
+  pk: 5
+  fields:
+    path: '000100010002'
+    depth: 3
+    numchild: 0
+    translation_key: e36aa9ca-62a5-4d93-a13f-c9b2fd36e598
+    locale: 1
+    latest_revision: 3
+    live: false
+    has_unpublished_changes: true
+    first_published_at: null
+    last_published_at: null
+    live_revision: null
+    go_live_at: null
+    expire_at: null
+    expired: false
+    locked: false
+    locked_at: null
+    locked_by: null
+    title: Draft Page
+    draft_title: Draft Page
+    slug: draft-page
+    content_type:
+    - docs
+    - documentationpage
+    url_path: /hawc-documentation/draft-page/
+    owner:
+    - admin@hawcproject.org
+    seo_title: ''
+    show_in_menus: false
+    search_description: ''
+    latest_revision_created_at: 2023-11-22 14:58:09.626465+00:00
+    alias_of: null
+- model: wagtailcore.revision
+  pk: 1
+  fields:
+    content_type:
+    - docs
+    - documentationpage
+    base_content_type:
+    - wagtailcore
+    - page
+    object_id: '3'
+    created_at: 2023-11-22 14:56:19.464008+00:00
+    user:
+    - admin@hawcproject.org
+    object_str: HAWC Documentation
+    content:
+      pk: 3
+      body: ''
+      live: true
+      path: '00010001'
+      slug: hawc-documentation
+      depth: 2
+      intro: Click the links below for helpful guides on how to use the features in
+        HAWC.
+      owner: 1
+      title: HAWC Documentation
+      locale: 1
+      locked: false
+      expired: false
+      alias_of: null
+      numchild: 0
+      url_path: /hawc-documentation/
+      expire_at: null
+      locked_at: null
+      locked_by: null
+      seo_title: ''
+      go_live_at: null
+      draft_title: HAWC Documentation
+      content_type: 157
+      live_revision: null
+      show_in_menus: false
+      latest_revision: null
+      translation_key: 6f152189-4b4a-4e44-8b81-28640717b408
+      last_published_at: null
+      first_published_at: null
+      search_description: ''
+      wagtail_admin_comments: []
+      has_unpublished_changes: false
+      latest_revision_created_at: null
+    approved_go_live_at: null
+- model: wagtailcore.revision
+  pk: 2
+  fields:
+    content_type:
+    - docs
+    - documentationpage
+    base_content_type:
+    - wagtailcore
+    - page
+    object_id: '4'
+    created_at: 2023-11-22 14:57:48.850356+00:00
+    user:
+    - admin@hawcproject.org
+    object_str: Public Page
+    content:
+      pk: 4
+      body: <p data-block-key="n2xsw">Instructions on how to use HAWC.</p>
+      live: true
+      path: '000100010001'
+      slug: public-page
+      depth: 3
+      intro: This page is has been published.
+      owner: 1
+      title: Public Page
+      locale: 1
+      locked: false
+      expired: false
+      alias_of: null
+      numchild: 0
+      url_path: /hawc-documentation/public-page/
+      expire_at: null
+      locked_at: null
+      locked_by: null
+      seo_title: ''
+      go_live_at: null
+      draft_title: Public Page
+      content_type: 158
+      live_revision: null
+      show_in_menus: false
+      latest_revision: null
+      translation_key: f62eccfa-fe8b-429d-ba9c-6cffb41a68a6
+      last_published_at: null
+      first_published_at: null
+      search_description: ''
+      wagtail_admin_comments: []
+      has_unpublished_changes: false
+      latest_revision_created_at: null
+    approved_go_live_at: null
+- model: wagtailcore.revision
+  pk: 3
+  fields:
+    content_type:
+    - docs
+    - documentationpage
+    base_content_type:
+    - wagtailcore
+    - page
+    object_id: '5'
+    created_at: 2023-11-22 14:58:09.626465+00:00
+    user:
+    - admin@hawcproject.org
+    object_str: Draft Page
+    content:
+      pk: 5
+      body: ''
+      live: false
+      path: '000100010002'
+      slug: draft-page
+      depth: 3
+      intro: This page isn't finished.
+      owner: 1
+      title: Draft Page
+      locale: 1
+      locked: false
+      expired: false
+      alias_of: null
+      numchild: 0
+      url_path: /hawc-documentation/draft-page/
+      expire_at: null
+      locked_at: null
+      locked_by: null
+      seo_title: ''
+      go_live_at: null
+      draft_title: Draft Page
+      content_type: 158
+      live_revision: null
+      show_in_menus: false
+      latest_revision: null
+      translation_key: e36aa9ca-62a5-4d93-a13f-c9b2fd36e598
+      last_published_at: null
+      first_published_at: null
+      search_description: ''
+      wagtail_admin_comments: []
+      has_unpublished_changes: false
+      latest_revision_created_at: null
+    approved_go_live_at: null
+- model: wagtailcore.grouppagepermission
+  pk: 1
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - add_page
+    - wagtailcore
+    - page
+- model: wagtailcore.grouppagepermission
+  pk: 2
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - change_page
+    - wagtailcore
+    - page
+- model: wagtailcore.grouppagepermission
+  pk: 3
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - publish_page
+    - wagtailcore
+    - page
+- model: wagtailcore.grouppagepermission
+  pk: 4
+  fields:
+    group:
+    - Editors
+    page: 1
+    permission:
+    - add_page
+    - wagtailcore
+    - page
+- model: wagtailcore.grouppagepermission
+  pk: 5
+  fields:
+    group:
+    - Editors
+    page: 1
+    permission:
+    - change_page
+    - wagtailcore
+    - page
+- model: wagtailcore.grouppagepermission
+  pk: 6
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - lock_page
+    - wagtailcore
+    - page
+- model: wagtailcore.grouppagepermission
+  pk: 7
+  fields:
+    group:
+    - Moderators
+    page: 1
+    permission:
+    - unlock_page
+    - wagtailcore
+    - page
+- model: wagtailcore.pageviewrestriction
+  pk: 1
+  fields:
+    restriction_type: login
+    password: ''
+    page: 3
+    groups: []
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
@@ -476,6 +1255,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.156609+00:00
+    email_verified_on: 2020-01-25 14:23:16.156609+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -492,6 +1272,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.170965+00:00
+    email_verified_on: 2020-01-25 14:23:16.170965+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -508,6 +1289,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.172427+00:00
+    email_verified_on: 2020-01-25 14:23:16.172427+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -524,6 +1306,7 @@
     license_v1_accepted: false
     license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.173584+00:00
+    email_verified_on: 2020-01-25 14:23:16.173584+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
@@ -540,6 +1323,7 @@
     license_v1_accepted: false
     license_v2_accepted: false
     date_joined: 2020-01-25 14:23:16.175169+00:00
+    email_verified_on: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
 - model: authtoken.token
@@ -641,78 +1425,13 @@
       casrn: 7732-18-5
       dtxcid: DTXCID106296
       dtxsid: DTXSID6026296
-      nhanes: null
       smiles: O
-      stereo: '0'
-      density: null
-      expocat: null
-      isotope: 0
-      qcLevel: 1
-      qcNotes: null
       inchikey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      irisLink: null
-      isMarkush: 0
       iupacName: Water
-      pprtvLink: null
       compoundId: 6296
       molFormula: H2O
       pubchemCid: 962
-      toxvalData: Y
-      averageMass: 18.015
-      cpdataCount: 32127
-      inchiString: 'InChI=1S/H2O/h1H2
-
-        '
-      pubmedCount: 140447.0
-      qcLevelDesc: 'Level 1: Expert curated, highest confidence in accuracy and consistency
-        of unique chemical identifiers'
-      totalAssays: null
-      activeAssays: null
-      henrysLawAtm: null
-      pubchemCount: 857
-      sourcesCount: 300
-      hrDiphniaLc50: null
-      msReadySmiles: null
-      percentAssays: null
-      pkaaOperaPred: null
-      pkabOperaPred: null
-      preferredName: Water
-      toxcastSelect: null
-      devtoxTestPred: null
-      multicomponent: 0
-      oralRatLd50Mol: null
-      surfaceTension: null
-      hrFatheadMinnow: null
-      qsarReadySmiles: null
-      monoisotopicMass: 18.010564684
-      wikipediaArticle: Properties of water
-      hasStructureImage: 1
-      genericSubstanceId: 26296
-      descriptorStringTsv: "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0"
-      thermalConductivity: null
-      waterSolubilityTest: null
-      operaKmDaysOperaPred: null
-      waterSolubilityOpera: null
-      octanolWaterPartition: null
-      relatedStructureCount: 1
-      relatedSubstanceCount: 12
-      tetrahymenaPyriformis: null
-      viscosityCpCpTestPred: null
-      flashPointDegcTestPred: null
-      expocatMedianPrediction: null
-      amesMutagenicityTestPred: null
-      boilingPointDegcTestPred: null
-      meltingPointDegcTestPred: null
-      octanolAirPartitionCoeff: null
-      boilingPointDegcOperaPred: null
-      meltingPointDegcOperaPred: null
-      soilAdsorptionCoefficient: null
-      vaporPressureMmhgTestPred: null
-      biodegradationHalfLifeDays: null
-      vaporPressureMmhgOperaPred: null
-      atmosphericHydroxylationRate: null
-      bioconcentrationFactorTestPred: null
-      bioconcentrationFactorOperaPred: null
+      inchiString: 'InChI=1S/H2O/h1H2'
     created: 2020-08-12 19:34:12.687630+00:00
     last_updated: 2020-08-12 19:34:12.687630+00:00
 - model: assessment.dsstox
@@ -723,78 +1442,13 @@
       casrn: 1836-75-5
       dtxcid: DTXCID30970
       dtxsid: DTXSID7020970
-      nhanes: Y
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
-      stereo: '0'
-      density: 1.452
-      expocat: Y
-      isotope: 0
-      qcLevel: 1
-      qcNotes: null
       inchikey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      irisLink: null
-      isMarkush: 0
       iupacName: 2,4-Dichloro-1-(4-nitrophenoxy)benzene
-      pprtvLink: Nitrofentechnicalgrade
       compoundId: 970
       molFormula: C12H7Cl2NO3
       pubchemCid: 15787
-      toxvalData: Y
-      averageMass: 284.09
-      cpdataCount: null
-      inchiString: 'InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H
-
-        '
-      pubmedCount: 341.0
-      qcLevelDesc: 'Level 1: Expert curated, highest confidence in accuracy and consistency
-        of unique chemical identifiers'
-      totalAssays: 1029
-      activeAssays: 163
-      henrysLawAtm: 6.79835e-05
-      pubchemCount: 116
-      sourcesCount: 201
-      hrDiphniaLc50: 1.63682e-06
-      msReadySmiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
-      percentAssays: 16.0
-      pkaaOperaPred: null
-      pkabOperaPred: null
-      preferredName: Nitrofen
-      toxcastSelect: 163/1029
-      devtoxTestPred: 0.697
-      multicomponent: 0
-      oralRatLd50Mol: 0.00961612
-      surfaceTension: null
-      hrFatheadMinnow: 1.06905e-06
-      qsarReadySmiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
-      monoisotopicMass: 282.9802985
-      wikipediaArticle: Nitrofen
-      hasStructureImage: 1
-      genericSubstanceId: 20970
-      descriptorStringTsv: "0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t1\t1\t1\t0\t0\t1\t1\t0\t0\t0\t0\t0\t0\t1\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0"
-      thermalConductivity: 133.645
-      waterSolubilityTest: 1.86209e-06
-      operaKmDaysOperaPred: 7.23919
-      waterSolubilityOpera: 3.53106e-06
-      octanolWaterPartition: 4.6398
-      relatedStructureCount: null
-      relatedSubstanceCount: null
-      tetrahymenaPyriformis: 3.22107e-06
-      viscosityCpCpTestPred: null
-      flashPointDegcTestPred: 184.658
-      expocatMedianPrediction: '2.23E-07'
-      amesMutagenicityTestPred: 0.751
-      boilingPointDegcTestPred: 359.215
-      meltingPointDegcTestPred: 99.224
-      octanolAirPartitionCoeff: 8.61388
-      boilingPointDegcOperaPred: 358.785
-      meltingPointDegcOperaPred: 70.1221
-      soilAdsorptionCoefficient: 10030.7
-      vaporPressureMmhgTestPred: 4.48745e-07
-      biodegradationHalfLifeDays: 3.71673
-      vaporPressureMmhgOperaPred: 1.71599e-06
-      atmosphericHydroxylationRate: 2.58539e-12
-      bioconcentrationFactorTestPred: 899.498
-      bioconcentrationFactorOperaPred: 739.33
+      inchiString: 'InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H'
     created: 2020-08-12 19:45:56.718230+00:00
     last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
@@ -818,7 +1472,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -860,7 +1513,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: ''
@@ -900,7 +1552,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: false
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
@@ -940,7 +1591,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -1381,6 +2031,16 @@
     template: <h1>Resources</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.timespentediting
+  pk: 1
+  fields:
+    seconds: 5.0
+    assessment: 1
+    content_type:
+    - assessment
+    - assessment
+    object_id: 1
+    created: 2024-03-13 11:30:01.123456+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -2029,8 +2689,16 @@
     path: '000400020003'
     depth: 3
     numchild: 0
-    name: Tier III
+    name: Tier III Demo
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 40
+  fields:
+    path: '99990001'
+    depth: 2
+    numchild: 0
+    name: Orphan
+    slug: orphan
 - model: lit.referencetags
   pk: 2
   fields:
@@ -2056,6 +2724,11 @@
   fields:
     tag: 33
     content_object: 11
+- model: lit.referencetags
+  pk: 7
+  fields:
+    tag: 33
+    content_object: 13
 - model: lit.reference
   pk: 1
   fields:
@@ -2432,11 +3105,20 @@
     - 2
     identifiers:
     - 9
-- model: lit.userreferencetags
-  pk: 1
+- model: lit.reference
+  pk: 13
   fields:
-    tag: 33
-    content_object: 1
+    assessment: 4
+    title: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
+    year: 2024
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2024-06-14 14:23:16.370427+00:00
+    last_updated: 2024-06-14 20:14:41.479008+00:00
+    block_id: null
 - model: lit.userreferencetags
   pk: 2
   fields:
@@ -2488,6 +3170,61 @@
     is_resolved: false
     created: 2022-10-27 21:37:16.158160+00:00
     last_updated: 2022-10-27 21:40:28.356071+00:00
+- model: lit.workflowadmissiontags
+  pk: 2
+  fields:
+    tag: 23
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 4
+  fields:
+    tag: 24
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 5
+  fields:
+    tag: 25
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 6
+  fields:
+    tag: 26
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 7
+  fields:
+    tag: 27
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 8
+  fields:
+    tag: 28
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 9
+  fields:
+    tag: 29
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 10
+  fields:
+    tag: 30
+    content_object: 1
+- model: lit.workflow
+  pk: 1
+  fields:
+    assessment: 2
+    title: Test Workflow
+    description: References that have been tagged for inclusion and are ready for
+      more specific tagging.
+    link_tagging: true
+    link_conflict_resolution: true
+    admission_tags_descendants: false
+    removal_tags_descendants: false
+    created: 2024-06-24 20:30:11.688206+00:00
+    last_updated: 2024-06-24 20:30:32.920691+00:00
+    admission_source: []
+    removal_source: []
 - model: study.study
   pk: 1
   fields:
@@ -8977,126 +9714,6 @@
     notes: ''
     adjustment_factors:
     - 1
-- model: summary.summarytext
-  pk: 1
-  fields:
-    path: '0001'
-    depth: 1
-    numchild: 2
-    assessment: 2
-    title: assessment-2
-    slug: assessment-2-slug
-    text: Root-level text
-    created: 2020-02-27 20:35:25.660031+00:00
-    last_updated: 2020-02-27 20:35:25.660075+00:00
-- model: summary.summarytext
-  pk: 2
-  fields:
-    path: '0002'
-    depth: 1
-    numchild: 0
-    assessment: 1
-    title: assessment-1
-    slug: assessment-1-slug
-    text: Root-level text
-    created: 2020-02-27 20:35:25.667126+00:00
-    last_updated: 2020-02-27 20:35:25.667163+00:00
-- model: summary.summarytext
-  pk: 3
-  fields:
-    path: '0003'
-    depth: 1
-    numchild: 0
-    assessment: 3
-    title: assessment-3
-    slug: assessment-3-slug
-    text: Root-level text
-    created: 2020-04-10 17:45:45.143229+00:00
-    last_updated: 2020-04-10 17:45:45.143229+00:00
-- model: summary.summarytext
-  pk: 4
-  fields:
-    path: '00010001'
-    depth: 2
-    numchild: 2
-    assessment: 2
-    title: '1'
-    slug: '1'
-    text: <p>Level 1 text.</p>
-    created: 2020-11-25 20:22:28.807081+00:00
-    last_updated: 2020-11-25 20:23:38.366594+00:00
-- model: summary.summarytext
-  pk: 5
-  fields:
-    path: '00010003'
-    depth: 2
-    numchild: 0
-    assessment: 2
-    title: '2'
-    slug: '2'
-    text: <p>Level 2 text.</p>
-    created: 2020-11-25 20:22:42.083087+00:00
-    last_updated: 2020-11-25 20:23:43.154300+00:00
-- model: summary.summarytext
-  pk: 6
-  fields:
-    path: '000100010001'
-    depth: 3
-    numchild: 0
-    assessment: 2
-    title: 1a
-    slug: 1a
-    text: <p>Level 1A text.</p>
-    created: 2020-11-25 20:24:01.021842+00:00
-    last_updated: 2020-11-25 20:24:01.021887+00:00
-- model: summary.summarytext
-  pk: 7
-  fields:
-    path: '000100010002'
-    depth: 3
-    numchild: 2
-    assessment: 2
-    title: 1b
-    slug: 1b
-    text: <p>Level 1B text.</p>
-    created: 2020-11-25 20:24:16.857811+00:00
-    last_updated: 2020-11-25 20:24:23.483729+00:00
-- model: summary.summarytext
-  pk: 8
-  fields:
-    path: '0001000100020001'
-    depth: 4
-    numchild: 0
-    assessment: 2
-    title: 1-B-alpha
-    slug: 1-B-alpha
-    text: <p>Level 1-B-alpha text.</p>
-    created: 2020-11-25 20:25:04.079740+00:00
-    last_updated: 2020-11-25 20:25:04.079763+00:00
-- model: summary.summarytext
-  pk: 9
-  fields:
-    path: '0001000100020002'
-    depth: 4
-    numchild: 0
-    assessment: 2
-    title: 1-B-beta
-    slug: 1-B-beta
-    text: <p>Level 1-B-beta text.</p>
-    created: 2020-11-25 20:25:37.723914+00:00
-    last_updated: 2020-11-25 20:25:37.723938+00:00
-- model: summary.summarytext
-  pk: 10
-  fields:
-    path: '0004'
-    depth: 1
-    numchild: 0
-    assessment: 4
-    title: assessment-4
-    slug: assessment-4-slug
-    text: Root-level text
-    created: 2022-10-27 21:02:29.800145+00:00
-    last_updated: 2022-10-27 21:02:29.800198+00:00
 - model: summary.summarytable
   pk: 1
   fields:
@@ -9203,7 +9820,7 @@
         col_span: 1
         row_span: 1
         quill_text: <p><strong><em><u>Other features</u></em></strong></p><ul><li>bullets can be added</li><li><a
-          href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
+          href="https://pubmed.ncbi.nlm.nih.gov/" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
           can be added</li></ul>
       - row: 7
         column: 1
@@ -9395,14 +10012,14 @@
     slug: example-heatmap
     assessment: 1
     visual_type: 2
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
       - 1
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17,"sort_order":"short_citation"}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:32:30.901597+00:00
     last_updated: 2020-02-27 20:33:06.585979+00:00
     endpoints: []
@@ -9413,6 +10030,7 @@
     slug: example-barchart
     assessment: 1
     visual_type: 3
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9420,7 +10038,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:34:17.606164+00:00
     last_updated: 2020-02-27 20:34:17.606186+00:00
     endpoints: []
@@ -9431,14 +10048,14 @@
     slug: rob-heatmap
     assessment: 2
     visual_type: 2
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30,"sort_order":"short_citation"}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:35:41.634588+00:00
     last_updated: 2020-05-08 19:36:41.324440+00:00
     endpoints: []
@@ -9449,6 +10066,7 @@
     slug: crossview
     assessment: 2
     visual_type: 1
+    evidence_type: 0
     dose_units: 1
     prefilters:
       published_only: true
@@ -9457,7 +10075,6 @@
       filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}
     caption: <p>example</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:19.255703+00:00
     last_updated: 2020-05-08 19:37:19.255730+00:00
     endpoints: []
@@ -9468,6 +10085,7 @@
     slug: rob-barchart
     assessment: 2
     visual_type: 3
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
@@ -9475,7 +10093,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:44.283008+00:00
     last_updated: 2020-05-08 19:38:48.445082+00:00
     endpoints: []
@@ -9486,12 +10103,12 @@
     slug: tagtree
     assessment: 2
     visual_type: 4
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:43:09.448597+00:00
     last_updated: 2020-05-08 19:43:09.448621+00:00
     endpoints: []
@@ -9502,6 +10119,7 @@
     slug: embedded-tableau
     assessment: 2
     visual_type: 5
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
@@ -9510,7 +10128,6 @@
       ":embed=y"], "filters": []}
     caption: <p>iris (flowers)</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:45:29.985823+00:00
     last_updated: 2020-05-08 19:45:29.985848+00:00
     endpoints: []
@@ -9521,12 +10138,12 @@
     slug: exploratory-heatmap
     assessment: 2
     visual_type: 6
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":"and"}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 14:25:27.528283+00:00
     last_updated: 2020-11-25 14:29:33.991892+00:00
     endpoints: []
@@ -9537,12 +10154,12 @@
     slug: plotly
     assessment: 2
     visual_type: 7
+    evidence_type: 3
     dose_units: null
     prefilters: {}
     settings: {"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2023-05-19 14:25:27.528283+00:00
     last_updated: 2023-05-19 14:25:27.528283+00:00
     endpoints: []
@@ -9553,12 +10170,12 @@
     slug: bioassay-aggregation
     assessment: 2
     visual_type: 0
+    evidence_type: 0
     dose_units: 1
     prefilters: {}
     settings: {}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 18:32:07.260499+00:00
     last_updated: 2020-11-25 18:35:00.094667+00:00
     endpoints:
@@ -9570,11 +10187,12 @@
     slug: smart-tags
     assessment: 2
     visual_type: 2
+    evidence_type: 0
     dose_units: null
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16,"sort_order":"short_citation"}
     caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
       an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
       a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
@@ -9586,9 +10204,27 @@
       class="smart-tag active" data-pk="2" data-type="data_pivot">This is an inline
       data pivot.</div>
     published: true
-    sort_order: short_citation
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
+    endpoints: []
+- model: summary.visual
+  pk: 12
+  fields:
+    title: image
+    slug: image
+    assessment: 2
+    visual_type: 8
+    evidence_type: 3
+    dose_units: null
+    prefilters: {}
+    settings:
+      alt_text: Hello alt text
+      max_width: 600
+    caption: Hello caption.
+    image: "summary/visual/images/iris.png"
+    published: true
+    created: 2023-11-15 14:25:27.528283+00:00
+    last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
 - model: summary.datapivot
   pk: 1
@@ -9604,11 +10240,11 @@
       "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "percent control low", "high_field_name": "percent control high", "header_name": "percent
       control low", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "percent control mean", "header_name": "percent
       control mean", "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study
-      name", "header_style": "header", "text_style": "base", "dpe": "study", "field_index": "study name"}, {"field_name": "experiment name", "header_name": "experiment
-      name", "header_style": "header", "text_style": "base", "dpe": "experiment", "field_index": "experiment name"}, {"field_name": "animal group name", "header_name":
-      "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "field_index": "animal group name"}, {"field_name": "endpoint name",
-      "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe": "endpoint_complete", "field_index": "endpoint name"}, {"field_name":
-      "dose", "header_name": "dose (mg/kg/d)", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "dose"}], "barchart": {"dpe": "---", "field_name":
+      name", "header_style": "header", "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "experiment name", "header_name": "experiment
+      name", "header_style": "header", "text_style": "base", "dpe": "experiment", "to_right": false}, {"field_name": "animal group name", "header_name":
+      "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "to_right": false}, {"field_name": "endpoint name",
+      "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe": "endpoint_complete", "to_right": false}, {"field_name":
+      "dose", "header_name": "dose (mg/kg/d)", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name":
       "---", "error_low_field_name": "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style":
       "base", "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space":
       false}], "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name":
@@ -9694,7 +10330,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>caption</p>
     published: true
     created: 2020-05-08 17:48:36.143248+00:00
@@ -9718,11 +10354,8 @@
       2", "marker_style": "base", "dpe": "endpoint_complete", "conditional_formatting": []}, {"field_name": "Dose 3", "header_name": "Dose 3", "marker_style": "base",
       "dpe": "endpoint_complete", "conditional_formatting": []}, {"field_name": "Dose 4", "header_name": "Dose 4", "marker_style": "base", "dpe": "endpoint_complete",
       "conditional_formatting": []}, {"field_name": "Dose 5", "header_name": "Dose 5", "marker_style": "base", "dpe": "endpoint_complete", "conditional_formatting":
-      []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "study", "field_index":
-      "study name"}, {"field_name": "experiment name", "header_name": "experiment name", "header_style": "header", "text_style": "base", "dpe": "experiment", "field_index":
-      "experiment name"}, {"field_name": "animal group name", "header_name": "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group",
-      "field_index": "animal group name"}, {"field_name": "endpoint name", "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe":
-      "endpoint_complete", "field_index": "endpoint name"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
+      []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "experiment name", "header_name": "experiment name", "header_style": "header", "text_style": "base", "dpe": "experiment", "to_right": false}, {"field_name": "animal group name", "header_name": "animal group name", "header_style": "header", "text_style": "base", "dpe": "animal_group", "to_right": false}, {"field_name": "endpoint name", "header_name": "endpoint name", "header_style": "header", "text_style": "base", "dpe":
+      "endpoint_complete", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
       "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true},
       "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom":
       null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---",
@@ -9808,7 +10441,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
     created: 2020-05-08 17:52:21.928839+00:00
@@ -9828,11 +10461,11 @@
       []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name":
       "---", "header_name": "---", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---", "marker_style":
       "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header",
-      "text_style": "base", "dpe": "study", "field_index": "study name"}, {"field_name": "protocol name", "header_name": "protocol name", "header_style": "header",
-      "text_style": "base", "dpe": "meta_protocol", "field_index": "protocol name"}, {"field_name": "health outcome", "header_name": "health outcome", "header_style":
-      "header", "text_style": "base", "dpe": "meta_result", "field_index": "health outcome"}, {"field_name": "total references", "header_name": "total references",
-      "header_style": "header", "text_style": "base", "dpe": "meta_result", "field_index": "total references"}, {"field_name": "N", "header_name": "N", "header_style":
-      "header", "text_style": "base", "dpe": "meta_result", "field_index": "N"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
+      "text_style": "base", "dpe": "study", "to_right": false}, {"field_name": "protocol name", "header_name": "protocol name", "header_style": "header",
+      "text_style": "base", "dpe": "meta_protocol", "to_right": false}, {"field_name": "health outcome", "header_name": "health outcome", "header_style":
+      "header", "text_style": "base", "dpe": "meta_result", "to_right": false}, {"field_name": "total references", "header_name": "total references",
+      "header_style": "header", "text_style": "base", "dpe": "meta_result", "to_right": false}, {"field_name": "N", "header_name": "N", "header_style":
+      "header", "text_style": "base", "dpe": "meta_result", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name":
       "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true},
       "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom":
       null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---",
@@ -9918,7 +10551,7 @@
       "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill":
       "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"},
       {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name":
-      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
     created: 2020-05-09 03:22:01.190725+00:00
@@ -9936,12 +10569,12 @@
       "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name": "---", "high_field_name": "---", "header_name": "---", "marker_style":
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "estimate", "header_name": "estimate", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width":
-      150, "field_index": "study name"}, {"field_name": "study population name", "header_name": "study population name", "header_style": "header", "text_style": "base",
-      "dpe": "---", "max_width": 100, "field_index": "study population name"}, {"field_name": "outcome name", "header_name": "outcome name", "header_style": "header",
-      "text_style": "base", "dpe": "---", "field_index": "outcome name"}, {"field_name": "comparison set name", "header_name": "comparison set name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "max_width": 100, "field_index": "comparison set name"}, {"field_name": "exposure group name", "header_name":
-      "exposure group name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width": 100, "field_index": "exposure group name"}, {"field_name":
-      "N", "header_name": "N", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "N"}], "barchart": {"dpe": "---", "field_name": "---",
+      150, "to_right": false}, {"field_name": "study population name", "header_name": "study population name", "header_style": "header", "text_style": "base",
+      "dpe": "---", "max_width": 100, "to_right": false}, {"field_name": "outcome name", "header_name": "outcome name", "header_style": "header",
+      "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "comparison set name", "header_name": "comparison set name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "max_width": 100, "to_right": false}, {"field_name": "exposure group name", "header_name":
+      "exposure group name", "header_style": "header", "text_style": "base", "dpe": "---", "max_width": 100, "to_right": false}, {"field_name":
+      "N", "header_name": "N", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---",
       "error_low_field_name": "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base",
       "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}],
       "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier":
@@ -10027,7 +10660,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>Example.</p>
     published: true
     created: 2020-05-11 02:26:51.725098+00:00
@@ -10046,11 +10679,11 @@
       "minimum dose", "marker_style": "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "Dose 1", "header_name": "Dose 1", "marker_style":
       "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "Dose 2", "header_name": "Dose 2", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}, {"field_name": "Dose 3", "header_name": "Dose 3", "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name":
-      "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "study name"}, {"field_name": "chemical
-      name", "header_name": "chemical name", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "chemical name"}, {"field_name": "cell species",
-      "header_name": "cell species", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "cell species"}, {"field_name": "IVEndpoint name",
-      "header_name": "IVEndpoint name", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "IVEndpoint name"}, {"field_name": "---", "header_name":
-      "---", "header_style": "header", "text_style": "base", "dpe": "---", "field_index": "---"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name":
+      "study name", "header_name": "study name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "chemical
+      name", "header_name": "chemical name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "cell species",
+      "header_name": "cell species", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "IVEndpoint name",
+      "header_name": "IVEndpoint name", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "---", "header_name":
+      "---", "header_style": "header", "text_style": "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name":
       "---", "error_high_field_name": "---", "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting":
       [], "error_show_tails": true}, "spacers": [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name":
       "---", "order": "asc", "custom": null}, {"field_name": "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains",
@@ -10136,7 +10769,7 @@
       1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "blue", "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern":
       "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid",
       "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke": "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill":
-      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:10:29.880052+00:00
@@ -10155,11 +10788,11 @@
       "base", "conditional_formatting": []}], "datapoint_settings": [{"field_name": "dose", "header_name": "dose", "marker_style": "base", "dpe": "---", "conditional_formatting":
       []}, {"field_name": "---", "header_name": "---", "marker_style": "base", "dpe": "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---",
       "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings": [{"field_name": "study name", "header_name": "study name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "study name"}, {"field_name": "chemical name", "header_name": "chemical name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "chemical name"}, {"field_name": "cell species", "header_name": "cell species", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "cell species"}, {"field_name": "IVEndpoint name", "header_name": "IVEndpoint name", "header_style":
-      "header", "text_style": "base", "dpe": "---", "field_index": "IVEndpoint name"}, {"field_name": "---", "header_name": "---", "header_style": "header", "text_style":
-      "base", "dpe": "---", "field_index": "---"}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name": "---",
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "chemical name", "header_name": "chemical name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "cell species", "header_name": "cell species", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "IVEndpoint name", "header_name": "IVEndpoint name", "header_style":
+      "header", "text_style": "base", "dpe": "---", "to_right": false}, {"field_name": "---", "header_name": "---", "header_style": "header", "text_style":
+      "base", "dpe": "---", "to_right": false}], "barchart": {"dpe": "---", "field_name": "---", "error_low_field_name": "---", "error_high_field_name": "---",
       "header_name": "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base", "conditional_formatting": [], "error_show_tails": true}, "spacers":
       [{"index": -1, "show_line": true, "line_style": "reference line", "extra_space": false}], "sorts": [{"field_name": "---", "order": "asc", "custom": null}, {"field_name":
       "---", "order": "asc", "custom": null}], "filters": [{"field_name": "---", "quantifier": "contains", "value": ""}, {"field_name": "---", "quantifier": "contains",
@@ -10245,7 +10878,7 @@
       "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "orange", "fill": "#ffb100", "fill-opacity":
       0.8, "stroke": "#dc8f00", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8, "stroke":
       "#5e5e5e", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c",
-      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}}
+      "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
     created: 2020-05-11 04:12:54.866928+00:00
@@ -10304,6 +10937,33 @@
     preferred_units: '[]'
     prefilters:
       published_only: true
+- model: docs.documentationpage
+  pk: 3
+  fields:
+    page_ptr: 3
+    tagline: Click the links below for helpful guides on how to use the features in HAWC.
+    body:
+      - type: content
+        value: <p data-block-key="ai8dg">This is the root page.</p>
+        id: 1cd2f6cf-39e4-4a1b-a44f-7150986568d5
+- model: docs.documentationpage
+  pk: 4
+  fields:
+    page_ptr: 4
+    tagline: This page is has been published.
+    body:
+      - type: content
+        value: <p data-block-key="bi8dg">This is the child page.</p>
+        id: 2cd2f6cf-39e4-4a1b-a44f-7150986568d5
+- model: docs.documentationpage
+  pk: 5
+  fields:
+    page_ptr: 5
+    tagline: This page isn't finished.
+    body:
+      - type: content
+        value: <p data-block-key="ci8dg">This is the child page too.</p>
+        id: 3cd2f6cf-39e4-4a1b-a44f-7150986568d5
 - model: mgmt.task
   pk: 1
   fields:
@@ -10372,10 +11032,10 @@
 - model: udf.ModelBinding
   pk: 1
   fields:
-    assessment: 1
+    assessment: 4
     content_type:
-    - animal
-    - endpoint
+    - study
+    - study
     form: 1
     creator:
     - pm@hawcproject.org
@@ -10384,13 +11044,36 @@
 - model: udf.TagBinding
   pk: 1
   fields:
-    assessment: 1
-    tag: 2
+    assessment: 4
+    tag: 32
     form: 1
     creator:
     - pm@hawcproject.org
     created: 2023-09-17 04:10:29.880052+00:00
     last_updated: 2023-09-17 04:15:33.309627+00:00
+- model: udf.ModelUDFContent
+  pk: 1
+  fields:
+    model_binding: 1
+    content_type:
+    - study
+    - study
+    object_id: 9
+    content:
+      field1: test
+      field2: 123
+    created: 2024-03-12 15:19:07.533314+00:00
+    last_updated: 2024-03-12 15:19:07.533329+00:00
+- model: udf.TagUDFContent
+  pk: 1
+  fields:
+    reference: 13
+    tag_binding: 1
+    content:
+      field1: testing
+      field2: 321
+    created: 2024-05-08 12:21:07.533314+00:00
+    last_updated:  2024-05-08 12:21:07.533314+00:00
 - model: reversion.revision
   pk: 1
   fields:

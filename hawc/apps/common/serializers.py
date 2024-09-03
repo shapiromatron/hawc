@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any
+from typing import Any, TypeVar
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,13 +17,15 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
 
+T = TypeVar("T", bound=BaseModel)
 
-def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) -> BaseModel:
+
+def validate_pydantic(pydantic_class: type[T], field: str | None, data: Any) -> T:
     """Validation helper to validate a field to a pydantic model.
 
     Args:
         pydantic_class (BaseModel): A Pydantic base class
-        field (str): the field to raise the error on
+        field (str|None): the field to raise the error on, or None
         data (Any): the data to be validated
 
     Raises:
@@ -33,9 +35,10 @@ def validate_pydantic(pydantic_class: type[BaseModel], field: str, data: Any) ->
         BaseModel: The pydantic BaseModel
     """
     try:
-        return pydantic_class.parse_obj(data)
+        return pydantic_class.model_validate(data)
     except PydanticError as err:
-        raise DrfValidationError({field: err.json()})
+        message = {field: err.json()} if field else err.json()
+        raise DrfValidationError(message) from err
 
 
 def validate_jsonschema(data: Any, schema: dict) -> Any:
@@ -54,7 +57,7 @@ def validate_jsonschema(data: Any, schema: dict) -> Any:
     try:
         jsonschema.validate(data, schema)
     except jsonschema.ValidationError as err:
-        raise serializers.ValidationError(err.message)
+        raise serializers.ValidationError(err.message) from err
     return data
 
 
@@ -67,7 +70,11 @@ class UnusedSerializer(serializers.Serializer):
     pass
 
 
-class HeatmapQuerySerializer(serializers.Serializer):
+class ExportQuerySerializer(serializers.Serializer):
+    """
+    Serializer for exports that may or may not include unpublished data.
+    """
+
     unpublished = serializers.BooleanField(default=False)
 
 
@@ -92,12 +99,12 @@ def get_matching_instance(Model: models.Model, data: dict, field_name: str) -> m
 
     try:
         return Model.objects.get(id=id_)
-    except ValueError:
+    except ValueError as error:
         err[field_name] = f"`{field_name} must be a number; got {id_}."
-        raise serializers.ValidationError(err)
-    except models.ObjectDoesNotExist:
+        raise serializers.ValidationError(err) from error
+    except models.ObjectDoesNotExist as error:
         err[field_name] = f"{Model.__name__} {id_} does not exist."
-        raise serializers.ValidationError(err)
+        raise serializers.ValidationError(err) from error
 
 
 def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> list[models.Model]:
@@ -123,12 +130,12 @@ def get_matching_instances(Model: models.Model, data: dict, field_name: str) -> 
     for id_ in ids:
         try:
             instances.append(Model.objects.get(id=id_))
-        except ValueError:
+        except ValueError as error:
             err[field_name] = f"`{field_name} must be a number; got {id_}."
-            raise serializers.ValidationError(err)
-        except models.ObjectDoesNotExist:
+            raise serializers.ValidationError(err) from error
+        except models.ObjectDoesNotExist as error:
             err[field_name] = f"{Model.__name__} {id_} does not exist."
-            raise serializers.ValidationError(err)
+            raise serializers.ValidationError(err) from error
 
     return instances
 
@@ -155,7 +162,7 @@ class FlexibleChoiceField(serializers.ChoiceField):
                 return key
 
         # No exact match; if a string was passed in let's try case-insensitive value match
-        if type(data) is str:
+        if isinstance(data, str):
             key = get_id_from_choices(self._choices.items(), data)
             if key is not None:
                 return key
@@ -197,7 +204,7 @@ class FlexibleChoiceArrayField(serializers.ChoiceField):
 
                 if not element_handled:
                     # No exact match; if a string was passed in let's try case-insensitive value match
-                    if type(x) is str:
+                    if isinstance(x, str):
                         key = get_id_from_choices(self._choices.items(), x)
                         if key is not None:
                             converted_values.append(key)
@@ -297,13 +304,13 @@ class IdLookupMixin:
     """
 
     def to_internal_value(self, data):
-        if type(data) is int:
+        if isinstance(data, int):
             try:
                 obj = self.Meta.model.objects.get(id=data)
                 return obj
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist as err:
                 err_msg = f"Invalid id supplied for {self.Meta.model.__name__} lookup"
-                raise serializers.ValidationError(err_msg)
+                raise serializers.ValidationError(err_msg) from err
 
         return super().to_internal_value(data)
 
@@ -580,11 +587,29 @@ class PydanticDrfSerializer(BaseModel):
         if extras:
             d.update(extras)
         try:
-            return cls.parse_obj(d)
+            return cls.model_validate(d)
         except PydanticError as err:
             errors = defaultdict(list)
             for e in err.errors():
                 for key in e["loc"]:
                     error_key = key if key != "__root__" else "non_field_errors"
                     errors[error_key].append(e["msg"])
-            raise DrfValidationError(errors)
+            raise DrfValidationError(errors) from err
+
+
+class RequiredIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+
+
+def check_ids(data: list[dict]) -> list[int]:
+    """Ensure data passed via a request contains a list of integers; else raise ValidationError
+
+    Args:
+        data (list): a DRF Request data object
+
+    Returns:
+        list[int]: a list of integers from the request data
+    """
+    ser = RequiredIdSerializer(data=data, many=True)
+    ser.is_valid(raise_exception=True)
+    return [int(el["id"]) for el in ser.validated_data]

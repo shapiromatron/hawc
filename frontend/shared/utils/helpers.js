@@ -33,7 +33,7 @@ const helpers = {
     fetchGet: {
         credentials: "same-origin",
     },
-    docUrlRoot: "https://hawc.readthedocs.io/en/latest/",
+    docUrlRoot: "https://hawc.readthedocs.io",
     escapeRegexString(unescapedString) {
         // https://www.npmjs.com/package/escape-regex-string
         return unescapedString.replace(regexEscapeChars, "\\$&");
@@ -383,6 +383,10 @@ const helpers = {
         let group = d3.group(values, ...keys),
             depth = keys.length;
         return groupToNest(group, depth);
+    },
+    castNumberOrKeepString: text => {
+        const maybeNumber = parseFloat(text);
+        return isNaN(maybeNumber) ? text : maybeNumber;
     },
 };
 export default helpers;

@@ -3,13 +3,13 @@
 {% block content %}
 
   {% if crud == "Read" %}
-  <div class="d-flex">
-    <h2>{{object}}</h2>
-    {% if obj_perms.edit %}
-      {% actions %}
+    <div class="d-flex">
+      <h2>{{object}}</h2>
+      {% if obj_perms.edit %}
+        {% actions %}
           <span class="dropdown-header">Endpoint Editing</span>
           <a class="dropdown-item" href="{{ object.get_update_url }}">Update endpoint</a>
-          <a class="dropdown-item" href="{% audit_url object %}">Change logs</a>
+          <a class="dropdown-item" href="{% audit_url object %}">View change logs</a>
           <a class="dropdown-item" href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a>
           {% if assessment.enable_bmd and object.bmd_modeling_possible %}
             {% if bmd_session or assessment.bmd_settings.can_create_sessions %}
@@ -23,15 +23,15 @@
               {% endif %}
             {% endif %}
           {% endif %}
-      {% endactions %}
-    {% elif assessment.enable_bmd and object.bmd_modeling_possible and bmd_session %}
-      {% actions %}
+        {% endactions %}
+      {% elif assessment.enable_bmd and object.bmd_modeling_possible and bmd_session %}
+        {% actions %}
           <span class="dropdown-header">BMD Modeling</span>
           <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
           <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
-      {% endactions %}
-    {% endif %}
-  </div>
+        {% endactions %}
+      {% endif %}
+    </div>
   {% endif %}
 
   <!-- Endpoint details -->
@@ -39,15 +39,14 @@
     <div id="dr-details" class="col-md-7">
       <h3>Endpoint Details</h3>
       <div id="endpoint-details-table"></div>
-
+      {% include "udf/fragments/table.html" with object=udf_content %}
       <h3>Dataset</h3>
       <table id="dr-tbl" class="table table-sm table-striped"></table>
     </div>
 
     <div id='dr-plot-container' class="col-md-5">
       <h3>Plot</h3>
-      <div id='bmd_ds_plot'></div>
-      <br/>
+      <div id='bmd_ds_plot' class="mb-5"></div>
       <div id="endpoint-general-notes"></div>
     </div>
   </div>
@@ -56,13 +55,13 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-      const data = {{object.get_json|safe}};
-      window.app.startup("animalStartup", function(app){
-          var endpoint = new app.Endpoint(data);
-          endpoint.build_details_table($('#endpoint-details-table'));
-          endpoint.build_endpoint_table($('#dr-tbl'));
-          endpoint.renderPlot($('#bmd_ds_plot'), {showBmd: true});
-          endpoint.build_general_notes($('#endpoint-general-notes'));
-      })
+    const data = {{object.get_json|safe}};
+    window.app.startup("animalStartup", function(app){
+      var endpoint = new app.Endpoint(data);
+      endpoint.build_details_table($('#endpoint-details-table'));
+      endpoint.build_endpoint_table($('#dr-tbl'));
+      endpoint.renderPlot($('#bmd_ds_plot'), {showBmd: true});
+      endpoint.build_general_notes($('#endpoint-general-notes'));
+    })
   </script>
 {% endblock %}

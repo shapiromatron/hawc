@@ -8,7 +8,7 @@ import reversion
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import FieldError, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
@@ -81,7 +81,9 @@ def get_referrer(request: HttpRequest, default: str) -> str:
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
-def create_object_log(verb: str, obj, assessment_id: int, user_id: int, log_message: str = ""):
+def create_object_log(
+    verb: str, obj, assessment_id: int | None, user_id: int, log_message: str = ""
+):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
 
@@ -90,7 +92,7 @@ def create_object_log(verb: str, obj, assessment_id: int, user_id: int, log_mess
     Args:
         verb (str): the action being performed
         obj (Any): the object
-        assessment_id (int): the object assessment id
+        assessment_id (int|None): the object assessment id
         user_id (int): the user id
         log_message (str): override for custom message
     """
@@ -192,9 +194,12 @@ class AssessmentPermissionsMixin:
         # determine relevant study for a given object, and then checks its editable status.
         # If not set, raises a PermissionDenied.
         study_editability = self.check_study_editability(user, assessment, obj)
-        if study_editability is not None:
-            if study_editability is False:
-                raise PermissionDenied
+        if study_editability is False:
+            raise PermissionDenied()
+
+    def deny_for_locked_assessment(self, assessment):
+        if not assessment.editable:
+            raise PermissionDenied()
 
     def check_study_editability(self, user, assessment, obj):
         # TODO - investigate refactoring only in the case where an object is being mutated; not read
@@ -239,13 +244,20 @@ class AssessmentPermissionsMixin:
             self.assessment = obj.get_assessment()
 
         permission_checked = False
-        if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
-            permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
-            self.deny_for_locked_study(self.request.user, self.assessment, obj)
-            permission_checked = self.assessment.user_can_edit_object(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
-            permission_checked = self.assessment.user_can_view_object(self.request.user)
+        user = self.request.user
+        match self.assessment_permission:
+            case AssessmentViewPermissions.PROJECT_MANAGER:
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
+            case AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+                self.deny_for_locked_assessment(self.assessment)
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
+            case AssessmentViewPermissions.TEAM_MEMBER:
+                permission_checked = self.assessment.user_is_team_member_or_higher(user)
+            case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
+                self.deny_for_locked_study(user, self.assessment, obj)
+                permission_checked = self.assessment.user_can_edit_object(user)
+            case AssessmentViewPermissions.VIEWER:
+                permission_checked = self.assessment.user_can_view_object(user)
 
         if not permission_checked:
             raise PermissionDenied()
@@ -264,18 +276,23 @@ class AssessmentPermissionsMixin:
             raise ValueError("No assessment object; required to check permission")
 
         permission_checked = False
-        if self.assessment_permission is AssessmentViewPermissions.PROJECT_MANAGER:
-            self.check_queryset_study_editability(queryset)
-            permission_checked = self.assessment.user_can_edit_assessment(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.TEAM_MEMBER:
-            self.check_queryset_study_editability(queryset)
-            permission_checked = self.assessment.user_can_edit_object(self.request.user)
-        elif self.assessment_permission is AssessmentViewPermissions.VIEWER:
-            permission_checked = self.assessment.user_can_view_object(self.request.user)
-
+        user = self.request.user
+        match self.assessment_permission:
+            case AssessmentViewPermissions.PROJECT_MANAGER:
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
+            case AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE:
+                self.deny_for_locked_assessment(self.assessment)
+                permission_checked = self.assessment.user_is_project_manager_or_higher(user)
+            case AssessmentViewPermissions.TEAM_MEMBER:
+                permission_checked = self.assessment.user_is_team_member_or_higher(user)
+            case AssessmentViewPermissions.TEAM_MEMBER_EDITABLE:
+                self.check_queryset_study_editability(queryset)
+                permission_checked = self.assessment.user_can_edit_object(user)
+            case AssessmentViewPermissions.VIEWER:
+                permission_checked = self.assessment.user_can_view_object(user)
         if not permission_checked:
             raise PermissionDenied()
-        logger.debug("Permissions checked: queryset)")
+        logger.debug("Permissions checked: queryset")
 
         return queryset
 
@@ -296,54 +313,12 @@ class AssessmentPermissionsMixin:
 
 class TimeSpentOnPageMixin:
     def get(self, request, *args, **kwargs):
-        TimeSpentEditing.set_start_time(
-            self.request.session.session_key,
-            self.request.path,
-        )
+        TimeSpentEditing.set_start_time(request)
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
-        response = super().get_success_url()
-        TimeSpentEditing.add_time_spent_job(
-            self.request.session.session_key,
-            self.request.path,
-            self.object,
-            self.assessment.id,
-        )
-        return response
-
-
-class CopyAsNewSelectorMixin:
-    copy_model = None  # required
-    template_name_suffix = "_copy_selector"
-
-    def get_related_id(self):
-        return self.object.id
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # prevents copy from locked studies
-        if context["obj_perms"]["edit"] is False:
-            raise PermissionDenied
-
-        related_id = self.get_related_id()
-        context["form"] = self.form_class(parent_id=related_id)
-        context["breadcrumbs"].append(
-            Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}")
-        )
-        return context
-
-    def get_template_names(self):
-        if self.template_name is not None:
-            name = self.template_name
-        else:
-            name = "{}/{}{}.html".format(
-                self.copy_model._meta.app_label,
-                self.copy_model._meta.object_name.lower(),
-                self.template_name_suffix,
-            )
-        return [name]
+        TimeSpentEditing.add_time_spent_job(self.request, self.object, self.assessment.id)
+        return super().get_success_url()
 
 
 class WebappMixin:
@@ -354,7 +329,7 @@ class WebappMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.get_app_config:
-            context["config"] = self.get_app_config(context).dict()
+            context["config"] = self.get_app_config(context).model_dump()
         return context
 
 
@@ -384,7 +359,7 @@ class BaseDetail(WebappMixin, AssessmentPermissionsMixin, DetailView):
 
 class BaseDelete(WebappMixin, AssessmentPermissionsMixin, MessageMixin, DeleteView):
     crud = "Delete"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
     # remove `delete` from method names
     # delete method CBV different than post; we only need to implement POST
     # - https://github.com/django/django/blob/c3d7a71f836f7cfe8fa90dd9ae95b37b660d5aae/django/views/generic/edit.py#L220
@@ -437,7 +412,7 @@ class BaseUpdate(
     WebappMixin, TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView
 ):
     crud = "Update"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     @transaction.atomic
     def form_valid(self, form):
@@ -477,7 +452,7 @@ class BaseCreate(
     parent_model: type[models.Model]
     parent_template_name: str
     crud = "Create"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def dispatch(self, *args, **kwargs):
         parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -533,6 +508,34 @@ class BaseCreate(
         crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         crumbs.append(Breadcrumb(name=f"Create {self.model._meta.verbose_name}"))
         return crumbs
+
+
+class BaseCopyForm(BaseUpdate):
+    copy_model: type[models.Model]
+    breadcrumb_name: str = ""
+    template_name = "common/copy_selector.html"
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.pop("instance")
+        kw["parent"] = self.object
+        return kw
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(form.get_success_url())
+
+    def get_template_names(self) -> list[str]:
+        if self.template_name:
+            return [self.template_name]
+        model_meta = self.copy_model._meta
+        return [f"{model_meta.app_label}/{model_meta.object_name.lower()}_copy_selector.html"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][-1] = Breadcrumb(
+            name=self.breadcrumb_name or f"Copy {self.copy_model._meta.verbose_name}"
+        )
+        return context
 
 
 class BaseList(WebappMixin, AssessmentPermissionsMixin, ListView):
@@ -720,11 +723,7 @@ class FilterSetMixin:
         return self._filterset
 
     def get_queryset(self):
-        try:
-            return self.filterset.qs
-        except FieldError:
-            # TODO - remove try/except after https://github.com/carltongibson/django-filter/pull/1598
-            return super().get_queryset().none()
+        return self.filterset.qs
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

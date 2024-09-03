@@ -10,6 +10,7 @@ from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
 from ..common.helper import WebappConfig
 from ..common.views import (
+    BaseCopyForm,
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
@@ -18,13 +19,12 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
-    CopyAsNewSelectorMixin,
     HeatmapBase,
     beta_tester_required,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from ..study.views import StudyDetail
+from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
 
 
@@ -60,9 +60,10 @@ class ExperimentDetail(BaseDetail):
     model = models.Experiment
 
 
-class ExperimentCopyAsNewSelector(CopyAsNewSelectorMixin, StudyDetail):
+class ExperimentCopyForm(BaseCopyForm):
     copy_model = models.Experiment
     form_class = forms.ExperimentSelectorForm
+    model = Study
 
 
 class ExperimentUpdate(BaseUpdate):
@@ -205,9 +206,10 @@ class AnimalGroupDetail(BaseDetail):
         return context
 
 
-class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentDetail):
+class AnimalGroupCopyForm(BaseCopyForm):
     copy_model = models.AnimalGroup
     form_class = forms.AnimalGroupSelectorForm
+    model = models.Experiment
 
 
 class AnimalGroupUpdate(BaseUpdate):
@@ -243,12 +245,10 @@ class AnimalGroupDelete(BaseDelete):
         return self.object.experiment.get_absolute_url()
 
 
-class EndpointCopyAsNewSelector(CopyAsNewSelectorMixin, AnimalGroupDetail):
+class EndpointCopyForm(BaseCopyForm):
     copy_model = models.Endpoint
     form_class = forms.EndpointSelectorForm
-
-    def get_related_id(self):
-        return self.object.experiment.study_id
+    model = models.AnimalGroup
 
 
 # Dosing Regime Views
@@ -314,7 +314,7 @@ class DosingRegimeUpdate(BaseUpdate):
         return context
 
     def get_success_url(self):
-        super().get_success_url()
+        super().get_success_url()  # trigger TimeSpentOnPageMixin
         return self.object.dosed_animals.get_absolute_url()
 
 
@@ -439,7 +439,8 @@ class EndpointListV2(BaseList):
         )
 
 
-class EndpointDetail(BaseDetail):
+class EndpointDetail(UDFDetailMixin, BaseDetail):
+    model = models.Endpoint
     queryset = models.Endpoint.objects.select_related(
         "animal_group",
         "animal_group__dosing_regime",

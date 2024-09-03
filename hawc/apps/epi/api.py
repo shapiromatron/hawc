@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework import mixins, status, viewsets
@@ -10,34 +8,24 @@ from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
     AssessmentEditViewSet,
-    AssessmentLevelPermissions,
+    BaseAssessmentViewSet,
     CleanupFieldsBaseViewSet,
     EditPermissionsCheckMixin,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.api import ReadWriteSerializerMixin
-from ..common.helper import FlatExport, re_digits
+from ..common.api import ReadWriteSerializerMixin, get_published_only
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
-from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata
 
 
-class EpiAssessmentViewSet(viewsets.GenericViewSet):
+class EpiAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
-
-    def get_outcome_queryset(self):
-        perms = self.assessment.user_permissions(self.request.user)
-        if not perms["edit"]:
-            return models.Outcome.objects.published(self.assessment)
-        return models.Outcome.objects.get_qs(self.assessment)
 
     @action(
         detail=True,
@@ -48,11 +36,19 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
     def export(self, request, pk):
         """
         Retrieve epidemiology data for assessment.
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
         """
         self.get_object()
-        exporter = exports.OutcomeComplete(
-            self.get_outcome_queryset(), filename=f"{self.assessment}-epi"
-        )
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        published_only = get_published_only(self.assessment, request)
+        if published_only:
+            qs = models.Outcome.objects.published(self.assessment)
+        else:
+            qs = models.Outcome.objects.get_qs(self.assessment)
+        exporter = exports.OutcomeComplete(qs, filename=f"{self.assessment}-epi")
         return Response(exporter.build_export())
 
     @action(
@@ -69,16 +65,14 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         is present then results from all studies are shown.
         """
         self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-epi-study-heatmap-pub-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-epi-study-heatmap-unpub-{not published_only}"
+        df = cacheable(
+            lambda: models.Result.heatmap_study_df(self.assessment, published_only=published_only),
+            key,
+        )
         return FlatExport.api_response(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
 
     @action(
@@ -95,16 +89,14 @@ class EpiAssessmentViewSet(viewsets.GenericViewSet):
         is present then results from all studies are shown.
         """
         self.get_object()
-        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser = ExportQuerySerializer(data=request.query_params)
         ser.is_valid(raise_exception=True)
-        unpublished = ser.data["unpublished"]
-        if unpublished and not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied("You must be part of the team to view unpublished data")
-        key = f"assessment-{self.assessment.id}-epi-result-heatmap-pub-{unpublished}"
-        df = cache.get(key)
-        if df is None:
-            df = models.Result.heatmap_df(self.assessment.id, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_1_HR)
+        published_only = get_published_only(self.assessment, request)
+        key = f"assessment-{self.assessment.id}-epi-result-heatmap-unpub-{not published_only}"
+        df = cacheable(
+            lambda: models.Result.heatmap_df(self.assessment.id, published_only=published_only),
+            key,
+        )
         return FlatExport.api_response(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
 
 
@@ -224,7 +216,7 @@ class StudyPopulation(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 fixed = []
                 for el in data_probe:
-                    if type(el) is str:
+                    if isinstance(el, str):
                         try:
                             criteria = models.Criteria.objects.get(
                                 description=el, assessment_id=assessment_id
@@ -277,21 +269,17 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
 
     def handle_dtxsid(self, request):
         """
-        Calls get_or_create for DSSTox to ensure that the appropriate DXXTox exists in the db.
+        Check that DTXSID exists in HAWC and can be added.
         """
-        if "dtxsid" in request.data:
-            dtxsid_probe = request.data["dtxsid"]
+        if dtxsid := request.data.get("dtxsid"):
             try:
-                DSSTox.objects.get_or_create(dtxsid=dtxsid_probe)
-            except ValueError:
-                raise ValidationError(
-                    f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
-                )
+                DSSTox.objects.get(dtxsid=dtxsid)
+            except DSSTox.DoesNotExist as err:
+                raise ValidationError(f"{dtxsid} does not exist in HAWC") from err
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         self.handle_dtxsid(request)
-
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic
@@ -464,7 +452,7 @@ class Result(EditPermissionsCheckMixin, AssessmentEditViewSet):
 
                 fixed = []
                 for el in data_probe:
-                    if type(el) is str:
+                    if isinstance(el, str):
                         try:
                             adj_factor = models.AdjustmentFactor.objects.get(
                                 description=el, assessment_id=assessment_id

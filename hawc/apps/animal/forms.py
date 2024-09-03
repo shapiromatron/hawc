@@ -13,7 +13,8 @@ from ..common.autocomplete import (
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
-from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm, QuillField
+from ..common.forms import BaseFormHelper, CopyForm, QuillField
+from ..udf.forms import UDFModelFormMixin
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
@@ -52,12 +53,6 @@ class ExperimentForm(ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -118,10 +113,19 @@ class ExperimentForm(ModelForm):
         return self.cleaned_data.get("purity_qualifier", "")
 
 
-class ExperimentSelectorForm(CopyAsNewSelectorForm):
-    label = "Experiment"
-    parent_field = "study_id"
-    autocomplete_class = autocomplete.ExperimentAutocomplete
+class ExperimentSelectorForm(CopyForm):
+    legend_text = "Copy experiment"
+    help_text = "Select an existing experiment as a template to create a new one."
+    create_url_pattern = "animal:experiment_new"
+    selector = forms.ModelChoiceField(
+        queryset=models.Experiment.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study=self.parent
+        )
 
 
 class AnimalGroupForm(ModelForm):
@@ -221,10 +225,19 @@ class AnimalGroupForm(ModelForm):
         return cleaned_data
 
 
-class AnimalGroupSelectorForm(CopyAsNewSelectorForm):
-    label = "Animal group"
-    parent_field = "experiment_id"
-    autocomplete_class = autocomplete.AnimalGroupAutocomplete
+class AnimalGroupSelectorForm(CopyForm):
+    legend_text = "Copy animal group"
+    help_text = "Select an existing animal group as a template to create a new one."
+    create_url_pattern = "animal:animal_group_new"
+    selector = forms.ModelChoiceField(
+        queryset=models.AnimalGroup.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            experiment=self.parent
+        )
 
 
 class GenerationalAnimalGroupForm(AnimalGroupForm):
@@ -235,7 +248,7 @@ class GenerationalAnimalGroupForm(AnimalGroupForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["generation"].choices = self.fields["generation"].choices[1:]
+        self.fields["generation"].choices = constants.Generation.choices[1:]
         self.fields["parents"].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment
         )
@@ -352,7 +365,7 @@ def dosegroup_formset_factory(groups, num_dose_groups):
     return FS(data)
 
 
-class EndpointForm(ModelForm):
+class EndpointForm(UDFModelFormMixin, ModelForm):
     class Meta:
         model = models.Endpoint
         fields = (
@@ -430,6 +443,7 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
+        self.set_udf_field(self.instance.assessment)
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
     @property
@@ -461,19 +475,9 @@ class EndpointForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
         helper.form_id = "endpoint"
-
-        self.fields["diagnostic"].widget.attrs["rows"] = 2
-        for fld in ("results_notes", "endpoint_notes", "power_notes"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
+        helper.set_textarea_height(("diagnostic",), 2)
+        helper.set_textarea_height(("results_notes", "endpoint_notes", "power_notes"), 3)
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"),
             cfl.Div(id="vocab"),
@@ -670,10 +674,25 @@ EndpointGroupFormSet = modelformset_factory(
 )
 
 
-class EndpointSelectorForm(CopyAsNewSelectorForm):
-    label = "Endpoint"
-    parent_field = "animal_group__experiment__study_id"
-    autocomplete_class = autocomplete.EndpointAutocomplete
+class EndpointSelectorForm(CopyForm):
+    legend_text = "Copy endpoint"
+    help_text = "Select an existing endpoint as a template to create a new one."
+    create_url_pattern = "animal:endpoint_new"
+    selector = forms.ModelChoiceField(
+        queryset=models.Endpoint.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = (
+            self.fields["selector"]
+            .queryset.filter(animal_group__experiment__study=self.parent.experiment.study_id)
+            .select_related("animal_group__experiment")
+            .order_by("animal_group__experiment__name", "animal_group__name", "name")
+        )
+        self.fields["selector"].label_from_instance = (
+            lambda obj: f"{obj.animal_group.experiment} | {obj.animal_group} | {obj}"
+        )
 
 
 class MultipleEndpointChoiceField(forms.ModelMultipleChoiceField):

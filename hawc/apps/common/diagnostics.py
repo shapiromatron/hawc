@@ -43,6 +43,12 @@ def diagnostic_cache(modeladmin, request, queryset):
     modeladmin.message_user(request, message)
 
 
+def clear_cache(modeladmin, request, queryset):
+    cache.clear()
+    message = "Cache cleared successfully"
+    modeladmin.message_user(request, message)
+
+
 def diagnostic_email(modeladmin, request, queryset):
     to_email = request.user.email
     send_mail(

@@ -109,7 +109,7 @@ class RobCleanupStore {
         this.clearFetchedScores();
         const {host, items, assessment_id} = this.config,
             url = h.getUrlWithAssessment(
-                h.getObjectUrl(host, items.url, this.selectedMetric),
+                h.getObjectUrl(host, items.url, this.selectedMetric) + "scores/",
                 assessment_id
             );
 

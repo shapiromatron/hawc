@@ -7,14 +7,11 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
-from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponseNotAllowed,
     HttpResponseRedirect,
     JsonResponse,
 )
@@ -22,7 +19,6 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
@@ -30,7 +26,7 @@ from django.views.generic.edit import CreateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, cacheable
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
@@ -48,17 +44,10 @@ from ..common.views import (
     get_referrer,
 )
 from ..materialized.models import refresh_all_mvs
+from ..mgmt.analytics.overall import compute_object_counts
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
-
-
-def percentage(numerator, denominator):
-    # Checking for denominator counts that are zero when dividing
-    try:
-        return numerator / float(denominator)
-    except ZeroDivisionError:
-        return 0
 
 
 # General views
@@ -89,125 +78,6 @@ class About(TemplateView):
             return HttpResponseRedirect(settings.EXTERNAL_ABOUT)
         return super().dispatch(request, *args, **kwargs)
 
-    def get_object_counts(self):
-        key = "about-counts"
-        counts = cache.get(key)
-        if counts is None:
-            updated = timezone.now()
-
-            users = apps.get_model("myuser", "HAWCUser").objects.count()
-
-            assessments = models.Assessment.objects.count()
-
-            references = apps.get_model("lit", "Reference").objects.count()
-
-            tags = apps.get_model("lit", "ReferenceTags").objects.count()
-
-            references_tagged = (
-                apps.get_model("lit", "ReferenceTags").objects.distinct("content_object_id").count()
-            )
-
-            assessments_with_studies = (
-                apps.get_model("study", "Study")
-                .objects.values_list("assessment_id", flat=True)
-                .distinct()
-                .count()
-            )
-
-            studies = apps.get_model("study", "Study").objects.count()
-
-            rob_scores = apps.get_model("riskofbias", "RiskOfBiasScore").objects.count()
-
-            studies_with_rob = (
-                apps.get_model("study", "Study")
-                .objects.annotate(robc=Count("riskofbiases"))
-                .filter(robc__gt=0)
-                .count()
-            )
-
-            endpoints = apps.get_model("animal", "Endpoint").objects.count()
-
-            endpoints_with_data = (
-                apps.get_model("animal", "EndpointGroup")
-                .objects.order_by("endpoint_id")
-                .distinct("endpoint_id")
-                .count()
-            )
-
-            outcomes = apps.get_model("epi", "Outcome").objects.count()
-
-            results = apps.get_model("epi", "Result").objects.count()
-
-            results_with_data = (
-                apps.get_model("epi", "GroupResult")
-                .objects.order_by("result_id")
-                .distinct("result_id")
-                .count()
-            )
-
-            iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
-
-            iv_endpoints_with_data = (
-                apps.get_model("invitro", "IVEndpointGroup")
-                .objects.order_by("endpoint_id")
-                .distinct("endpoint_id")
-                .count()
-            )
-
-            visuals = (
-                apps.get_model("summary", "Visual").objects.count()
-                + apps.get_model("summary", "DataPivot").objects.count()
-            )
-
-            assessments_with_visuals = len(
-                set(
-                    models.Assessment.objects.order_by("-created")
-                    .annotate(vc=Count("visuals"))
-                    .filter(vc__gt=0)
-                    .values_list("id", flat=True)
-                ).union(
-                    set(
-                        models.Assessment.objects.order_by("-created")
-                        .annotate(dp=Count("datapivot"))
-                        .filter(dp__gt=0)
-                        .values_list("id", flat=True)
-                    )
-                )
-            )
-
-            counts = dict(
-                updated=updated,
-                users=users,
-                assessments=assessments,
-                references=references,
-                tags=tags,
-                references_tagged=references_tagged,
-                references_tagged_percent=percentage(references_tagged, references),
-                studies=studies,
-                assessments_with_studies=assessments_with_studies,
-                assessments_with_studies_percent=percentage(assessments_with_studies, assessments),
-                rob_scores=rob_scores,
-                studies_with_rob=studies_with_rob,
-                studies_with_rob_percent=percentage(studies_with_rob, studies),
-                endpoints=endpoints,
-                endpoints_with_data=endpoints_with_data,
-                endpoints_with_data_percent=percentage(endpoints_with_data, endpoints),
-                outcomes=outcomes,
-                results=results,
-                results_with_data=results_with_data,
-                results_with_data_percent=percentage(results_with_data, results),
-                iv_endpoints=iv_endpoints,
-                iv_endpoints_with_data=iv_endpoints_with_data,
-                iv_endpoints_with_data_percent=percentage(iv_endpoints_with_data, iv_endpoints),
-                visuals=visuals,
-                assessments_with_visuals=assessments_with_visuals,
-                assessments_with_visuals_percent=percentage(assessments_with_visuals, assessments),
-            )
-            cache_duration = 60 * 60 * 24  # one day
-            cache.set(key, counts, cache_duration)  # cache for one day
-            logger.info("Setting about-page cache")
-        return counts
-
     def get_rob_name(self):
         if settings.HAWC_FLAVOR == "PRIME":
             return constants.RobName.ROB.label
@@ -221,7 +91,7 @@ class About(TemplateView):
         context.update(
             HAWC_FLAVOR=settings.HAWC_FLAVOR,
             rob_name=self.get_rob_name(),
-            counts=self.get_object_counts(),
+            counts=cacheable(lambda: compute_object_counts(), "assessment.views.about:counts"),
         )
         context["page"] = models.Content.rendered_page(
             models.ContentTypeChoices.ABOUT, self.request, context
@@ -245,7 +115,7 @@ class Resources(TemplateView):
         return context
 
 
-class Contact(LoginRequiredMixin, MessageMixin, FormView):
+class Contact(MessageMixin, FormView):
     template_name = "hawc/contact.html"
     form_class = forms.ContactForm
     success_url = reverse_lazy("home")
@@ -254,6 +124,8 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         if settings.EXTERNAL_CONTACT_US:
             return HttpResponseRedirect(settings.EXTERNAL_CONTACT_US)
+        elif self.request.user.is_anonymous and not settings.TURNSTILE_SITE:
+            return HttpResponseRedirect(settings.LOGIN_URL)
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
@@ -435,6 +307,7 @@ class AssessmentDetail(BaseDetail):
         )
         context["values"] = self.object.values.order_by("value_type")
         context["adaf_footnote"] = constants.ADAF_FOOTNOTE
+        context["is_team_member"] = self.object.user_is_team_member_or_higher(self.request.user)
         return context
 
 
@@ -449,7 +322,7 @@ class AssessmentModulesUpdate(AssessmentUpdate):
     success_message = "Assessment modules updated."
     form_class = forms.AssessmentModulesForm
     template_name = "assessment/assessment_module_form.html"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
 
 class AssessmentDelete(BaseDelete):
@@ -489,6 +362,7 @@ class AssessmentDownloads(BaseDetail):
     def get_context_data(self, **kwargs):
         kwargs.update(
             EpiVersion=constants.EpiVersion,
+            allow_unpublished=self.assessment.user_is_team_member_or_higher(self.request.user),
         )
         return super().get_context_data(**kwargs)
 
@@ -561,7 +435,6 @@ class AttachmentViewSet(HtmxViewSet):
     model = models.Attachment
     form_fragment = "assessment/fragments/attachment_edit_row.html"
     detail_fragment = "assessment/fragments/attachment_row.html"
-    list_fragment = "assessment/fragments/attachment_list.html"
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -582,11 +455,7 @@ class AttachmentViewSet(HtmxViewSet):
                 template = self.detail_fragment
         else:
             form = forms.AttachmentForm()
-            template = self.list_fragment
         context = self.get_context_data(form=form)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            request.item.assessment, False
-        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -731,7 +600,7 @@ class CleanExtractedData(BaseEndpointList):
 
     breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
-    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -752,29 +621,20 @@ class CloseWindow(TemplateView):
 
 
 class UpdateSession(View):
-    http_method_names = ("post",)
-
-    def isTruthy(self, request, field):
-        return request.POST.get(field, "true") == "true"
+    http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
-        if request.method != "POST":
-            return HttpResponseNotAllowed(["POST"])
         response = {}
         if request.POST.get("refresh"):
-            if request.user.is_authenticated:
-                old_time = request.session.get_expiry_date().isoformat()
-                request.session.set_expiry(None)  # use the global session expiry policy
-                new_time = request.session.get_expiry_date().isoformat()
-                response = {
-                    "message": f"Session extended from {old_time} to {new_time}.",
-                    "new_expiry_time": new_time,
-                }
-            else:
-                response = {
-                    "message": "Session not renewed.",
-                    "new_expiry_time": None,
-                }
+            if not request.user.is_authenticated:
+                raise Http404()
+            old_time = request.session.get_expiry_date().isoformat()
+            request.session.set_expiry(None)  # use the global session expiry policy
+            new_time = request.session.get_expiry_date().isoformat()
+            response = {
+                "message": f"Session extended from {old_time} to {new_time}.",
+                "new_expiry_time": new_time,
+            }
         return JsonResponse(response)
 
 
@@ -788,7 +648,7 @@ class CleanStudyRoB(BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
     breadcrumb_active_name = "Clean reviews"
-    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = constants.AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_app_config(self, context) -> WebappConfig:
         return WebappConfig(
@@ -800,7 +660,7 @@ class CleanStudyRoB(BaseDetail):
                     "assessment:api:assessment-endpoints", args=(self.assessment.id,)
                 ),
                 items=dict(
-                    url=reverse("riskofbias:api:metric_scores-list"),
+                    url=reverse("riskofbias:api:metric-list"),
                     patchUrl=reverse("riskofbias:api:score-cleanup-list"),
                 ),
                 studyTypes=dict(url=reverse("study:api:study-types")),
@@ -847,8 +707,8 @@ class LogObjectList(ListView):
     def dispatch(self, request, *args, **kwargs):
         try:
             content_type = ContentType.objects.get_for_id(kwargs["content_type"])
-        except ObjectDoesNotExist:
-            raise Http404()
+        except ObjectDoesNotExist as exc:
+            raise Http404() from exc
         first_log = self.model.objects.filter(**self.kwargs).first()
         if not first_log:
             first_log = self.model(content_type=content_type, object_id=kwargs["object_id"])

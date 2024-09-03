@@ -72,7 +72,9 @@ class FilterWidget extends Component {
         const {toggleItemSelection, colorScale, maxValue, settings} = this.props.store,
             {rows} = this.props.store.getTableData,
             itemRows = [...this.props.store.intersection[widget.column][item]],
-            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length,
+            numItems = this.props.store.getCount(
+                itemRows.filter(itemRow => rows.includes(itemRow))
+            ),
             isSelected = _itemState[item],
             showCounts = settings.show_counts;
 

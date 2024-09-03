@@ -4,7 +4,9 @@
   {% if animal_group.dosing_regime %}
     {% crispy form %}
   {% else %}
-    <div class="alert alert-danger" role="alert">Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.</div>
+    {% alert %}
+      Cannot create or modify an endpoint. The animal group has no dose regime. Please update the animal group to add a dosing regime before continuing.
+    {% endalert %}
   {% endif %}
 
   {# extra stuff that JS will move to correct location #}
@@ -99,40 +101,40 @@
       "litterEffectRequired": {{form.instance.litter_effect_required|lower}},
       "doses": {{animal_group.get_doses_json|safe}},
       {% if form.instance.id  %}
-      "endpoint_data": {{form.instance.get_json|safe}}
+        "endpoint_data": {{form.instance.get_json|safe}}
       {% else %}
-      "endpoint_data": {
-        "animal_group": {{animal_group.get_json|safe}},
-        "groups": [],
-        "noel_names": {{form.noel_names|safe}},
-        "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
-        "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
-        "FEL": {{form.FEL.value|default_if_none:"-999"}}
-      }
+        "endpoint_data": {
+          "animal_group": {{animal_group.get_json|safe}},
+          "groups": [],
+          "noel_names": {{form.noel_names|safe}},
+          "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
+          "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
+          "FEL": {{form.FEL.value|default_if_none:"-999"}}
+        }
       {% endif %}
     }
   </script>
   <script type="text/javascript">
-  $(document).ready(() => {
-    const settings = window.app.getConfig();
-    window.app.startup("animalStartup", function (animal) {
-      animal.startupEndpointForm(document.getElementById("vocab"), settings.vocabulary);
-      $("#row_id_name_1").remove();
-      $("#row_id_system_4").remove();
-      $("#row_id_name_term_5").remove();
-      $("#endpoint")
-        .removeClass("hidden")
-        .hide()
-        .fadeIn({
-          complete: () => {
-            new animal.EditEndpoint(settings);
-          },
+    $(document).ready(() => {
+      const settings = window.app.getConfig();
+      window.app.startup("animalStartup", function (animal) {
+        animal.startupEndpointForm(document.getElementById("vocab"), settings.vocabulary);
+        $("#row_id_name_1").remove();
+        $("#row_id_system_4").remove();
+        $("#row_id_name_term_5").remove();
+        $("#endpoint")
+          .removeClass("hidden")
+          .hide()
+          .fadeIn({
+            complete: () => {
+              new animal.EditEndpoint(settings);
+            },
+          });
+        $("#div_id_endpoint_notes").one("focusin", function () {
+          $("input.form-control").first().focus()
         });
-      $("#div_id_endpoint_notes").one("focusin", function () {
-        $("input.form-control").first().focus()
       });
     });
-  });
   </script>
   {% include "common/helptext_popup_js.html" %}
 {% endblock %}

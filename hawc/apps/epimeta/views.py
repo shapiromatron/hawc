@@ -3,6 +3,7 @@ from django.db.models import Case, F, When
 from ..assessment.models import Assessment
 from ..common.helper import WebappConfig
 from ..common.views import (
+    BaseCopyForm,
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
@@ -10,7 +11,6 @@ from ..common.views import (
     BaseFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
-    CopyAsNewSelectorMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -86,9 +86,10 @@ class MetaResultCreate(BaseCreateWithFormset):
         return kwargs
 
 
-class MetaResultCopyAsNew(CopyAsNewSelectorMixin, MetaProtocolDetail):
+class MetaResultCopyForm(BaseCopyForm):
     copy_model = models.MetaResult
     form_class = forms.MetaResultSelectorForm
+    model = models.MetaProtocol
 
 
 class MetaResultDetail(BaseDetail):

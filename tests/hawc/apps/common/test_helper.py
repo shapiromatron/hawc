@@ -35,6 +35,20 @@ class TestFlatFileExporter:
         )
 
 
+@pytest.mark.parametrize(
+    "kw,expected",
+    [
+        [dict(items=list("abcde"), target="c", after="b", n_cols=2), "abcde"],
+        [dict(items=list("abcde"), target="b", after=None), "bacde"],
+        [dict(items=list("abcde"), target="c", after="a", n_cols=2), "acdbe"],
+        [dict(items=list("abcde"), target="d", after="b"), "abdce"],
+        [dict(items=list("abcde"), target="b", after="d", n_cols=2), "adbce"],
+    ],
+)
+def test_reorder_list(kw, expected):
+    assert "".join(helper.reorder_list(**kw)) == expected
+
+
 def test_df_move_column():
     df = pd.read_csv(StringIO("a,b,c\n1,2,3"))
 
@@ -105,32 +119,57 @@ class Schema(BaseModel):
 class TestPydanticToDjangoError:
     bad_obj = {"children": [{"integer": "test"}, {}]}
     err_messages = [
-        "string: field required",
-        "children->0->integer: value is not a valid integer",
-        "children->1->integer: field required",
+        "string: Field required",
+        "children->0->integer: Input should be a valid integer, unable to parse string as an integer",
+        "children->1->integer: Field required",
     ]
 
     def test_django_error(self):
         with pytest.raises(DjangoValidationError) as err:
             with helper.PydanticToDjangoError(drf=False):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"__all__": self.err_messages}
 
     def test_drf_error(self):
         with pytest.raises(DRFValidationError) as err:
             with helper.PydanticToDjangoError(drf=True):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"non_field_errors": self.err_messages}
 
     def test_fields(self):
         # don't include a field; useful for field in form validation
         with pytest.raises(DjangoValidationError) as err:
             with helper.PydanticToDjangoError(include_field=False):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == self.err_messages
 
         # specify the field; useful for form validation
         with pytest.raises(DjangoValidationError) as err:
             with helper.PydanticToDjangoError(field="field"):
-                Schema.parse_obj(self.bad_obj)
+                Schema.model_validate(self.bad_obj)
         assert err.value.args[0] == {"field": self.err_messages}
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ([[1, 2], [3, 4]], [1, 2, 3, 4]),  # list
+        ([(1, 2), (3, 4)], [1, 2, 3, 4]),  # tuple
+        ([(1, [2]), (3, 4)], [1, [2], 3, 4]),  # nested
+    ],
+)
+def test_flatten(input, expected):
+    assert list(helper.flatten(input)) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ([], []),
+        (["a"], ["a"]),
+        (["a", "a", "a"], ["a", "a (2)", "a (3)"]),
+        (["a", "b", "a"], ["a", "b", "a (2)"]),
+    ],
+)
+def test_unique_text_list(input, expected):
+    assert list(helper.unique_text_list(input)) == expected

@@ -1,27 +1,22 @@
-from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewSet
+from ..assessment.api import AssessmentViewSet, BaseAssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
-from ..common.helper import re_digits
+from ..common.api.utils import get_published_only
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from . import exports, models, serializers
 
 
-class EpiMetaAssessmentViewSet(viewsets.GenericViewSet):
+class EpiMetaAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    queryset = Assessment.objects.all()
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
 
-    def get_meta_result_queryset(self):
-        perms = self.assessment.user_permissions(self.request.user)
-        if not perms["edit"]:
+    def get_meta_result_queryset(self, request):
+        published_only = get_published_only(self.assessment, request)
+        if published_only:
             return models.MetaResult.objects.published(self.assessment)
         return models.MetaResult.objects.get_qs(self.assessment)
 
@@ -34,10 +29,15 @@ class EpiMetaAssessmentViewSet(viewsets.GenericViewSet):
     def export(self, request, pk):
         """
         Retrieve epidemiology meta-analysis data for an assessment.
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
         """
         self.get_object()
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
         exporter = exports.MetaResultFlatComplete(
-            self.get_meta_result_queryset(), filename=f"{self.assessment}-epi-meta"
+            self.get_meta_result_queryset(request), filename=f"{self.assessment}-epi-meta"
         )
         return Response(exporter.build_export())
 

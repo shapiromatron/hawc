@@ -45,7 +45,7 @@ class SortingTable extends Component {
                                             handleSelect={value => {
                                                 store.updateElement(idx, "field_name", value);
                                             }}
-                                            choices={dp._get_header_options_react(true)}
+                                            choices={store.fieldColumns}
                                             required={false}
                                             value={data.field_name}
                                         />

@@ -43,14 +43,11 @@ class BaseCell(BaseModel):
 
     @classmethod
     def parse_args(cls, *args):
-        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args, strict=True)})
+        return cls(**{key: arg for key, arg in zip(cls.model_fields.keys(), args, strict=True)})
 
 
 class BaseCellGroup(BaseModel):
     cells: list[BaseCell] = []
-
-    class Config:
-        underscore_attrs_are_private = True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,8 +96,8 @@ class BaseTable(BaseCellGroup):
                         if table_cells[cell.row + i][cell.column + j]:
                             raise ValueError(f"Cell overlap at {cell}")
                         table_cells[cell.row + i][cell.column + j] = True
-            except IndexError:
-                raise ValueError(f"{cell} outside of table bounds")
+            except IndexError as err:
+                raise ValueError(f"{cell} outside of table bounds") from err
 
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
@@ -160,4 +157,4 @@ class BaseTable(BaseCellGroup):
 
     @classmethod
     def build_default(cls):
-        return cls.parse_obj(cls.get_default_props())
+        return cls.model_validate(cls.get_default_props())

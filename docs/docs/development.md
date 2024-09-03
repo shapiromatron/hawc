@@ -5,14 +5,14 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.11
+- [Python](https://www.python.org/) == 3.12
 - [Node.js](https://nodejs.org)
 - [Yarn](https://yarnpkg.com/) < 2
-- [PostgreSQL](https://www.postgresql.org/) >= 12
+- [PostgreSQL](https://www.postgresql.org/) >= 16
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
-- Python code must comply with code formatters and linters: black and ruff
+- Python code must comply with code formatters and linters: ruff
 - Javascript code must comply with eslint formatters
 - All unit-test (currently in python-only) must pass; please write test when contributing new code
 
@@ -28,7 +28,7 @@ mkdir -p ~/dev
 cd ~/dev
 git clone https://github.com/shapiromatron/hawc.git
 
-# create virtual environment and install requirements
+# create virtual environment
 cd ~/dev/hawc
 python -m venv venv
 
@@ -36,7 +36,9 @@ python -m venv venv
 source ./venv/bin/activate
 
 # install requirements
-./venv/bin/pip install -r ./requirements/dev.txt
+python -m pip install -U pip uv
+uv pip install -e ".[dev,docs]"
+uv pip install -e client
 
 # create a PostgreSQL database and superuser
 createuser --superuser --no-password hawc
@@ -49,7 +51,7 @@ For Windows, use anaconda or miniconda to get requirements can be used to get de
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.11 postgresql
+conda install python=3.12 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
 
@@ -60,8 +62,9 @@ git clone https://github.com/shapiromatron/hawc.git
 
 :: install python requirements
 cd %HOMEPATH%\dev\hawc
-python -m pip install --upgrade pip
-pip install -r requirements\dev.txt
+python -m pip install -U pip uv
+uv pip install -e ".[dev,docs]"
+uv pip install -e client
 
 :: setup and start PostgreSQL; in this example we'll put it in dev
 cd %HOMEPATH%\dev
@@ -190,7 +193,25 @@ On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short 
 make startdb
 ```
 
+### Pre commit hooks
+
+There are number of code quality checks that standardize and format code to make sure that our source code is consistent regardless of the developer. These checks are automatically run when the code is submitted for review, and the linting checks must pass to have a valid review. However, this can be a surprise if you don't run the linters prior to pushning a commit.
+
+The development environment includes [pre-commit](https://pre-commit.com/) to automatically check linters and formatters prior to committing changes.  This would prevent you from pushing code that hadn't been run through the linters. To set up pre-commit, run the following command:
+
+```bash
+pre-commit install
+
+# run on all files to make sure it is installed correctly
+pre-commit run --all-files
+```
+
+!!! note
+
+    This is completely optional; you can use if you wish but it's not required.
+
 ## Local Settings
+
 ### Django settings inheritance
 
 HAWC settings are structured according to the django settings framework. Within ``hawc/main/settings``, there are a number of settings files that inherit using the following pattern:
@@ -218,7 +239,6 @@ HAWC settings are structured according to the django settings framework. Within 
 
 To make changes to your local environment, create (and then modify) ``hawc/main/settings/local.py``. This file is not created by default (and is not tracked in git), but a template can be copied and renamed from ``hawc/main/settings/local.example.py`` as a starting point. You can make changes to this file to configure your local environment, such as which database is used or the "flavor" of HAWC (see "More Settings").
 
-
 ## Testing HAWC
 
 ### The test database
@@ -233,6 +253,16 @@ This makes the test database useful when writing new features. There are multipl
  **Project manager** | pm@hawcproject.org       | pw
  **Team member**     | team@hawcproject.org     | pw
  **Reviewer**        | reviewer@hawcproject.org | pw
+
+
+There are currently four assessments in the database:
+
+ID | Name | Editable | Public
+---|---|---|---
+1 | Chemical Z | Yes | No
+2 | Chemical X | No | Yes
+3 | Chemical Y | Yes | Yes
+4 | Chemical A | Yes | No
 
 As new features are added, adding and changing content in the test database will be required to test these features. Instructions for loading and dumping are described below.
 
@@ -272,7 +302,6 @@ If tests aren't working after the database has changed (ie., migrated); try drop
 
 Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
 
-
 ### Loading a database dump
 
 If you have a database dump saved locally, you can load that in instead. If you have multiple databases, you can switch them on the fly in your local.py settings (see Django Settings Inheritance above).
@@ -300,7 +329,6 @@ manage scrub_db
 # dump in gzipped format
 pg_dump -U hawc hawc | gzip > db_dump.sql.gz
 ```
-
 
 ### Mocking external resources in tests
 
@@ -369,6 +397,12 @@ set INTEGRATION_TESTS=1
 py.test -sv tests/integration/ --pdb
 ```
 
+It can be helpful to record interactions initially when writing an integration test. This can be done using this command:
+
+```bash
+playwright codegen 127.0.0.1:8000
+```
+
 By default, the integration tests run in "headless" mode, or without a browser being shown. When editing integration tests, use the interactive mode to capture user operations:
 
 ```bash
@@ -377,9 +411,16 @@ make test-integration-debug
 # use set instead of export on windows
 export INTEGRATION_TESTS=1
 export PWDEBUG=1
-py.test -sv tests/integration/test_login.py --pdb
+py.test -sv tests/integration/test_myuser.py --pdb
 ```
 
+Sometimes you may want to run a test multiple times to check for flakiness:
+
+```bash
+for i in {1..10}; do
+INTEGRATION_TESTS=1 py.test -sv tests/integration/ -k test_example
+done
+```
 
 ## More settings
 
@@ -388,7 +429,6 @@ py.test -sv tests/integration/test_login.py --pdb
 [Visual Studio Code]( https://code.visualstudio.com/) is the recommended editor for this project. Recommended extensions include:
 
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
-- [Black formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
 - [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
@@ -411,7 +451,7 @@ When using the recommended settings below, your python and javascript code shoul
         "editor.quickSuggestions": false
     },
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.fixAll": true
@@ -455,25 +495,22 @@ Possible values include:
 - PRIME (default application; as hosted at <https://hawcproject.org>)
 - EPA (EPA application; as hosted at EPA)
 
-### Compiling USWDS
+### Updating EPA.gov style
 
-The EPA flavor of HAWC uses a framework from the [U.S. Web Design System](https://designsystem.digital.gov/) (USWDS) adapted for the agency. USWDS is a large package with thousands of resources; HAWC only includes a subset of these files. Including further components requires installing USWDS, and adding the component names to [`frontend/uswds/sass/styles.scss`](https://designsystem.digital.gov/components/packages/). The following command will rebuild this code:
+There are multiple styles available when using HAWC; and the EPA style has to be updated periodically for the same look at feel as the EPA website. The following steps describe how to update HAWC styling with the EPA theme:
 
-```bash
-cd ~/dev/hawc/frontend
+1.  In your browser, go to the [EPA Template](https://www.epa.gov/themes/epa_theme/pattern-lab/patterns/pages-standalone-template/pages-standalone-template.rendered.html) site. We recommend Firefox or Internet Explorer.
+2.  Right click the page and select "Save As" to download the page as an .html file.
+3. Open the downloaded `EPA Template_US EPA_files` folder.
+4. Open `styles.css` in VS Code.
+5. Replace the contents of `hawc/static/css/epa/core/style.css` with the updated `styles.css`.
+    *  Edit font locations in style sheet to point to `//www.epa.gov/themes/epa_theme/` instead of relative paths
+6. Overwrite any necessary changes in `hawc/static/css/epa-hawc.css` to maintain HAWC styling.
+7. Test changes locally to ensure HAWC matches EPA.gov styling.  On the base.html, you may want to disable caching for the header and footer components (or cache for 1 second) so it makes it easier to see the changes.
 
-# rebuild CSS
-npm run uswds-compile
+A few revisions were made to USWDS assets:
 
-# copy fonts, img, js
-npm run uswds-copy-assets
-```
-
-After running, manually delete unused fonts and images.
-
-A few major revisions were made to the compiled USWDS assets, most notably:
-
-- Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
+* Update the fonts path location to pull from an external delivery network instead of the `../fonts` location in the styles.css file. This was done using a search/replace on that file.
 
 ### Materialized views
 
@@ -503,3 +540,30 @@ To generate a report on the lines of code, install [cloc](https://github.com/AlD
 ```bash
 make loc
 ```
+
+### Testing the client
+
+Most tests for the `hawc-client` package are integrated into our standard test suite using pytest. However, the interactive tests which require interacting with the HTML DOM to download figures and images couldn't be integrated into the standard test suite without significant effort. Therefore, it requires manually running a test using our test fixture.
+
+To run this script, start the django webserver using the hawc-fixture database. It must be running on port 8000, and the django webserver as well as the node javascript server. Make sure that the django debug toolbar is not enabled:
+
+```bash
+export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
+createdb -U hawc-fixture
+python manage.py load_test_db
+python scripts/test_iclient.py
+```
+
+Make sure the standard unit tests pass as well as the addition `test_iclient.py` tests before distributing a new version of the `hawc-client` package.
+
+### Testing with Turnstile
+
+Turnstile can be enabled for human verification on select views in HAWC, generally related to authentication requests. For testing (in development mode), use the following keys keys in django settings:
+
+```py
+TURNSTILE_SITE = "1x00000000000000000000AA"  # always passes, or
+TURNSTILE_SITE = "2x00000000000000000000AB"  # always blocks
+TURNSTILE_KEY = "1x0000000000000000000000000000000AA"  # valid key
+```
+
+These options are described in detail in the turnstile testing [documentation](https://developers.cloudflare.com/turnstile/reference/testing/).

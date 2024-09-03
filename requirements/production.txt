@@ -1,6 +1,0 @@
--r base.txt
-
-django-anymail==10.0
-sentry_sdk==1.28.1
-
-./dist/hawc-2023.2-py3-none-any.whl

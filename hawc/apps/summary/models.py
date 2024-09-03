@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from operator import methodcaller
 
 import pandas as pd
 from django.contrib.postgres.fields import ArrayField
@@ -14,7 +13,6 @@ from plotly.graph_objs._figure import Figure
 from plotly.io import from_json
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
-from treebeard.mp_tree import MP_Node
 
 from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import BaseTable, GenericTable
@@ -23,11 +21,10 @@ from hawc.tools.tables.set import StudyEvaluationTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
-from ..assessment.constants import EpiVersion
+from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
     FlatExport,
-    HAWCDjangoJSONEncoder,
     PydanticToDjangoError,
     ReportExport,
     SerializerHelper,
@@ -45,81 +42,6 @@ from ..study.models import Study
 from . import constants, managers, prefilters
 
 logger = logging.getLogger(__name__)
-
-
-class SummaryText(MP_Node):
-    objects = managers.SummaryTextManager()
-
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
-    title = models.CharField(max_length=128)
-    slug = models.SlugField(
-        verbose_name="URL Name",
-        help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
-        unique=True,
-    )
-    text = models.TextField(default="")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    BREADCRUMB_PARENT = "assessment"
-
-    class Meta:
-        verbose_name_plural = "Summary Text Descriptions"
-        unique_together = (
-            ("assessment", "title"),
-            ("assessment", "slug"),
-        )
-
-    def __str__(self):
-        return self.title
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
-    @classmethod
-    def get_assessment_root_node(cls, assessment_id):
-        return SummaryText.objects.get(title=f"assessment-{assessment_id}")
-
-    @classmethod
-    def get_assessment_queryset(cls, assessment_id):
-        return cls.get_assessment_root_node(assessment_id).get_descendants()
-
-    @classmethod
-    def build_default(cls, assessment):
-        assessment = SummaryText.add_root(
-            assessment=assessment,
-            title=f"assessment-{assessment.pk}",
-            slug=f"assessment-{assessment.pk}-slug",
-            text="Root-level text",
-        )
-
-    @classmethod
-    def get_assessment_descendants(cls, assessment_id, json_encode=True):
-        """
-        Return all, excluding root
-        """
-        root = cls.get_assessment_root_node(assessment_id)
-        tags = SummaryText.dump_bulk(root)
-
-        if json_encode:
-            return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
-        else:
-            return tags
-
-    @classmethod
-    def get_assessment_qs(cls, assessment_id):
-        """
-        Return queryset, including root.
-        """
-        root = cls.get_assessment_root_node(assessment_id)
-        return cls.get_tree(parent=root)
-
-    def get_absolute_url(self):
-        return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
-
-    def get_assessment(self):
-        return self.assessment
 
 
 class SummaryTable(models.Model):
@@ -140,7 +62,7 @@ class SummaryTable(models.Model):
     )
     content = models.JSONField(default=dict)
     table_type = models.PositiveSmallIntegerField(
-        choices=constants.TableType.choices, default=constants.TableType.GENERIC
+        choices=constants.TableType, default=constants.TableType.GENERIC
     )
     published = models.BooleanField(
         default=False,
@@ -215,9 +137,9 @@ class SummaryTable(models.Model):
         schema_class = self.get_content_schema_class()
         # ensure the assessment id is from the object; not custom config
         kwargs = {}
-        if "assessment_id" in schema_class.schema()["properties"]:
+        if "assessment_id" in schema_class.model_json_schema()["properties"]:
             kwargs["assessment_id"] = self.assessment_id
-        return schema_class.parse_obj(dict(self.content, **kwargs))
+        return schema_class.model_validate(dict(self.content, **kwargs))
 
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
@@ -249,7 +171,7 @@ class SummaryTable(models.Model):
             try:
                 self.get_table()
             except ValueError as e:
-                raise ValidationError({"content": str(e)})
+                raise ValidationError({"content": str(e)}) from e
 
         # clean up control characters before string validation
         content_str = json.dumps(self.content).replace('\\"', '"')
@@ -281,7 +203,8 @@ class Visual(models.Model):
         "(no spaces or special-characters).",
     )
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
-    visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType.choices)
+    visual_type = models.PositiveSmallIntegerField(choices=constants.VisualType)
+    evidence_type = models.PositiveSmallIntegerField(choices=constants.StudyType)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
     endpoints = models.ManyToManyField(
         BaseEndpoint,
@@ -296,12 +219,13 @@ class Visual(models.Model):
         verbose_name="Publish visual for public viewing",
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
-    sort_order = models.CharField(
-        max_length=40,
-        choices=constants.SortOrder.choices,
-        default=constants.SortOrder.SC,
-    )
     prefilters = models.JSONField(default=dict)
+    image = models.ImageField(
+        upload_to="summary/visual/images",
+        blank=True,
+        null=True,
+        help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -337,6 +261,15 @@ class Visual(models.Model):
 
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
+
+    def get_visual_type_display(self):
+        label = constants.VisualType(self.visual_type).label
+        if (
+            self.visual_type == constants.VisualType.ROB_HEATMAP
+            or self.visual_type == constants.VisualType.ROB_BARCHART
+        ) and self.assessment.rob_name == RobName.SE:
+            label = label.replace("risk of bias", "study evaluation")
+        return label
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
@@ -451,7 +384,7 @@ class Visual(models.Model):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
     def get_filterset_class(self):
-        return prefilters.VisualTypePrefilter.from_visual_type(self.visual_type).value
+        return prefilters.get_prefilter_cls(self.visual_type, self.evidence_type, self.assessment)
 
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
@@ -489,14 +422,13 @@ class Visual(models.Model):
 
         return Endpoint.objects.none()
 
-    def get_studies(self, request=None) -> models.QuerySet[Study] | list[Study]:
+    def get_studies(self, request=None) -> list[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
         to the model.
         """
         qs = Study.objects.none()
-        filters = {}
 
         if self.visual_type in [
             constants.VisualType.ROB_HEATMAP,
@@ -507,34 +439,7 @@ class Visual(models.Model):
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
-            cleaned_prefilters = fs.form.cleaned_data
-
-            # TODO - fix - we should use a different set of prefilters for studies
-            study_fields = ["published_only", "studies"]
-            endpoint_prefilters = {
-                k: v
-                for k, v in cleaned_prefilters.items()
-                if k not in study_fields and not k.startswith("cb_")  # skip `checkbox` fields
-            }
-            if any(value for value in endpoint_prefilters.values()):
-                endpoint_qs = fs.qs
-                filters["id__in"] = set(
-                    endpoint_qs.values_list("animal_group__experiment__study_id", flat=True)
-                )
-            else:
-                if f := cleaned_prefilters.pop(study_fields[0], False):
-                    filters["published"] = f
-                if f := cleaned_prefilters.get(study_fields[1], []):
-                    filters["id__in"] = f
-
-            qs = Study.objects.assessment_qs(self.assessment).filter(**filters)
-
-        # TODO - remove? handle sort order in visualization?
-        if self.sort_order:
-            if self.sort_order == constants.SortOrder.OC.value:
-                qs = sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
-            else:
-                qs = qs.order_by(self.sort_order)
+            qs = fs.qs
 
         return qs
 
@@ -578,10 +483,15 @@ class Visual(models.Model):
         try:
             return from_json(json.dumps(self.settings))
         except ValueError as err:
-            raise ValueError(err)
+            raise ValueError(err) from err
 
     def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
-        study_ids = list(self.get_studies().values_list("id", flat=True))
+        studies = self.get_studies()
+        study_ids = (
+            list(studies.values_list("id", flat=True))
+            if isinstance(studies, models.QuerySet)
+            else [study.id for study in studies]
+        )
         settings = self.settings
 
         qs = RiskOfBiasScore.objects.filter(
@@ -687,7 +597,8 @@ class DataPivot(models.Model):
         return self.visual_type
 
     @staticmethod
-    def reset_row_overrides(settings: dict):
+    def reset_row_overrides(settings: dict) -> None:
+        # reset row overrides in-place
         settings["row_overrides"] = []
 
 
@@ -723,10 +634,10 @@ class DataPivotQuery(DataPivot):
     MAXIMUM_QUERYSET_COUNT = 1000
 
     evidence_type = models.PositiveSmallIntegerField(
-        choices=constants.StudyType.choices, default=constants.StudyType.BIOASSAY
+        choices=constants.StudyType, default=constants.StudyType.BIOASSAY
     )
     export_style = models.PositiveSmallIntegerField(
-        choices=constants.ExportStyle.choices,
+        choices=constants.ExportStyle,
         default=constants.ExportStyle.EXPORT_GROUP,
         help_text="The export style changes the level at which the "
         "data are aggregated, and therefore which columns and types "
@@ -826,9 +737,7 @@ class DataPivotQuery(DataPivot):
         return exporter
 
     def get_filterset_class(self):
-        return prefilters.StudyTypePrefilter.from_study_type(
-            self.evidence_type, self.assessment
-        ).value
+        return prefilters.get_prefilter_cls(None, self.evidence_type, self.assessment)
 
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
@@ -863,7 +772,6 @@ class DataPivotQuery(DataPivot):
             raise ValueError("Unknown type")
 
 
-reversion.register(SummaryText)
 reversion.register(SummaryTable)
 reversion.register(DataPivot)
 reversion.register(DataPivotUpload)

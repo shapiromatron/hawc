@@ -11,7 +11,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from pydantic import Field, root_validator, validator
+from pydantic import Field, field_validator, model_validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
@@ -72,7 +72,7 @@ class SearchSerializer(serializers.ModelSerializer):
             else:
                 raise serializers.ValidationError("API currently only supports PubMed/HERO imports")
         except ValidationError as err:
-            raise serializers.ValidationError(err.message)
+            raise serializers.ValidationError(err.message) from err
 
     @transaction.atomic
     def create(self, validated_data):
@@ -180,10 +180,10 @@ class BulkReferenceTagSerializer(serializers.Serializer):
     def validate_csv(self, value):
         try:
             df = pd.read_csv(StringIO(value)).drop_duplicates()
-        except pd.errors.ParserError:
-            raise serializers.ValidationError("CSV could not be parsed")
-        except pd.errors.EmptyDataError:
-            raise serializers.ValidationError("CSV must not be empty")
+        except pd.errors.ParserError as err:
+            raise serializers.ValidationError("CSV could not be parsed") from err
+        except pd.errors.EmptyDataError as err:
+            raise serializers.ValidationError("CSV must not be empty") from err
 
         # ensure columns are expected
         expected_columns = ["reference_id", "tag_id"]
@@ -379,7 +379,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         try:
             self.fetched_content = models.Identifiers.objects.validate_hero_ids(self.hero_ids)
         except ValidationError as err:
-            raise serializers.ValidationError(err.args[0])
+            raise serializers.ValidationError(err.args[0]) from err
 
         return replace
 
@@ -408,32 +408,32 @@ class FilterReferences(PydanticDrfSerializer):
     required_tags: list[int] = []
     pruned_tags: list[int] = []
 
-    @validator("untagged", pre=True)
+    @field_validator("untagged", mode="before")
     def validate_untagged_presence(cls, v):
         # if untagged is passed in as a query param without value, assume its True
         return v == "" or v
 
-    @validator("search")
+    @field_validator("search")
     def validate_search_id(cls, v):
         try:
             return models.Search.objects.get(pk=v)
-        except models.Search.DoesNotExist:
-            raise ValueError("Invalid search id")
+        except models.Search.DoesNotExist as err:
+            raise ValueError("Invalid search id") from err
 
-    @validator("tag")
+    @field_validator("tag")
     def validate_tag_id(cls, v):
         try:
             return models.ReferenceFilterTag.objects.get(pk=v)
-        except models.ReferenceFilterTag.DoesNotExist:
-            raise ValueError("Invalid tag id")
+        except models.ReferenceFilterTag.DoesNotExist as err:
+            raise ValueError("Invalid tag id") from err
 
-    @validator("required_tags", "pruned_tags", pre=True)
+    @field_validator("required_tags", "pruned_tags", mode="before")
     def str_to_list(cls, v):
         if not isinstance(v, str):
             raise ValueError("Expected a comma-delimited list of ids")
         return [_.strip() for _ in v.split(",")]
 
-    @validator("required_tags", "pruned_tags")
+    @field_validator("required_tags", "pruned_tags")
     def validate_tag_ids(cls, v):
         tags = models.ReferenceFilterTag.objects.filter(pk__in=v)
         matched_tag_ids = tags.values_list("pk", flat=True)
@@ -442,18 +442,18 @@ class FilterReferences(PydanticDrfSerializer):
             raise ValueError(f"Invalid tag ids: {', '.join([str(_) for _ in missing_tag_ids])}")
         return tags
 
-    @root_validator
-    def check_constraints(cls, values):
+    @model_validator(mode="after")
+    def check_constraints(self):
         # untagged and tag_id/required_tags/pruned_tags are mutually exclusive
-        if values.get("untagged") and any(
-            [values.get(_) for _ in ["tag", "required_tags", "pruned_tags"]]
+        if self.untagged and any(
+            [getattr(self, _) for _ in ["tag", "required_tags", "pruned_tags"]]
         ):
             raise ValueError("Do not combine 'untagged' with other tag filters")
-        if any([values.get(_) for _ in ["required_tags", "pruned_tags"]]) and not values.get("tag"):
+        if any([getattr(self, _) for _ in ["required_tags", "pruned_tags"]]) and not self.tag:
             raise ValueError(
                 "'required_tags' and 'pruned_tags' require a root 'tag_id' to function correctly."
             )
-        return values
+        return self
 
     def get_queryset(self):
         qs = models.Reference.objects.filter(assessment_id=self.assessment_id)

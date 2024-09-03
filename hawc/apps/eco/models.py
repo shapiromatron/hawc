@@ -7,7 +7,7 @@ from django.utils.text import format_lazy
 from treebeard.mp_tree import MP_Node
 
 from ..common.helper import new_window_a
-from ..common.models import NumericTextField
+from ..common.models import NumericTextField, clone_name
 from ..epi.models import Country
 from ..study.models import Study
 from . import managers
@@ -24,10 +24,11 @@ class State(models.Model):
 
 class NestedTerm(MP_Node):
     name = models.CharField(max_length=128)
-    type = models.CharField(choices=TypeChoices.choices, max_length=2, default="CE")
+    type = models.CharField(choices=TypeChoices, max_length=2, default="CE")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
+    deprecated_on = models.DateTimeField(blank=True, default=None, null=True)
 
     node_order_by = ["name"]
 
@@ -66,7 +67,7 @@ class NestedTerm(MP_Node):
 
 
 class Vocab(models.Model):
-    category = models.IntegerField(choices=VocabCategories.choices)
+    category = models.IntegerField(choices=VocabCategories)
     value = models.CharField(max_length=128)
     parent = models.ForeignKey(
         "self",
@@ -76,6 +77,7 @@ class Vocab(models.Model):
         related_name="children",
         related_query_name="children",
     )
+    deprecated_on = models.DateTimeField(blank=True, default=None, null=True)
 
     class Meta:
         verbose_name = "Controlled vocabulary"
@@ -95,14 +97,14 @@ class Design(models.Model):
     name = models.CharField(max_length=128, help_text="Name to refer to this study design")
     design = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": VocabCategories.TYPE},
+        limit_choices_to={"category": VocabCategories.TYPE, "deprecated_on": None},
         on_delete=models.CASCADE,
         help_text="Select study design",
         related_name="designs_by_type",
     )
     study_setting = models.ForeignKey(
         Vocab,
-        limit_choices_to={"category": VocabCategories.SETTING},
+        limit_choices_to={"category": VocabCategories.SETTING, "deprecated_on": None},
         on_delete=models.CASCADE,
         help_text="Select the setting in which evidence was generated",
         related_name="designs_by_setting",
@@ -118,14 +120,14 @@ class Design(models.Model):
     ecoregions = models.ManyToManyField(
         Vocab,
         blank=True,
-        limit_choices_to={"category": VocabCategories.ECOREGION},
-        help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')}, if known",
+        limit_choices_to={"category": VocabCategories.ECOREGION, "deprecated_on": None},
+        help_text=f"Select one or more {new_window_a('https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states', 'Level III Ecoregions')} from the continental US, if known",  # noqa: S608
         related_name="designs_by_ecoregion",
     )
     habitats = models.ManyToManyField(
         Vocab,
-        limit_choices_to={"category": VocabCategories.HABITAT},
-        help_text="Select one or more habitats to which the evidence applies.",
+        limit_choices_to={"category": VocabCategories.HABITAT, "deprecated_on": None},
+        help_text=f"Select one or more {new_window_a('https://global-ecosystems.org/', 'IUCN Global Ecosystems')} to which the evidence applies.",
         related_name="designs_by_habitat",
     )
     habitats_as_reported = models.TextField(
@@ -135,7 +137,7 @@ class Design(models.Model):
     )
     climates = models.ManyToManyField(
         Vocab,
-        limit_choices_to={"category": VocabCategories.CLIMATE},
+        limit_choices_to={"category": VocabCategories.CLIMATE, "deprecated_on": None},
         help_text=f"Select one or more {new_window_a('http://koeppen-geiger.vu-wien.ac.at/present.htm', 'Koppen climate classifications')} to which the evidence applies",
         related_name="designs_by_climate",
     )
@@ -168,7 +170,7 @@ class Design(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -310,7 +312,7 @@ class Cause(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -387,7 +389,7 @@ class Effect(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -408,7 +410,7 @@ class Result(models.Model):
         default=0,
     )
     relationship_direction = models.IntegerField(
-        choices=ChangeTrajectory.choices,
+        choices=ChangeTrajectory,
         verbose_name="Direction of relationship",
         help_text="Direction of cause and effect relationship",
     )
@@ -521,7 +523,7 @@ class Result(models.Model):
 
     def clone(self):
         self.id = None
-        self.sort_order = self.sort_order + 1
+        self.sort_order += 1
         self.save()
         return self
 

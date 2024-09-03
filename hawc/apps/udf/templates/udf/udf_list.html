@@ -1,33 +1,22 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-<div class="dropdown btn-group float-right">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
-    <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'udf:udf_create' %}">Create a form</a>
-    </div>
-</div>
-<h2>User Defined Forms</h2>
-{% if object_list %}
-<table id="mainTbl" class="table table-sm table-striped">
-    {% bs4_colgroup '20,40,20,20' %}
-    {% bs4_thead 'Name,Description,Creator,Last Updated' %}
-    <tbody>
-        {% for object in object_list %}
-        <tr>
-            <td>
-                <p class='mb-0'><a href="{{object.get_absolute_url}}">{{object.name}}</a></p>
-            </td>
-            <td>{{object.description}}</td>
-            <td>{{object.creator}}</td>
-            <td>{{object.last_updated|date:"Y-m-d"}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-{% alert info %}No forms found.{% endalert %}
-{% endif %}
-
-{% include "includes/paginator.html" with plural_object_name="forms" %}
+  <div class="d-flex align-items-start">
+    <h2 class="mt-0 mb-2">User Defined Fields</h2>
+    <a class="ml-auto btn btn-primary mt-1" href="{% url 'udf:udf_create' %}">Create a form</a>
+  </div>
+  <div class="list-group mb-4">
+    {% for object in object_list %}
+      {% include "udf/fragments/udf_row.html" with udf=object only %}
+    {% empty %}
+      {% alert type="info" %}No forms found.{% endalert %}
+    {% endfor %}
+  </div>
+  {% include "includes/paginator.html" with plural_object_name="forms" %}
 {% endblock content %}
+
+{% block extrajs %}
+  <script>
+    window.app.HAWCUtils.dynamicFormListeners();
+  </script>
+{% endblock extrajs %}

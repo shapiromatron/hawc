@@ -11,7 +11,7 @@ class TestInvitro(PlaywrightTestCase):
         # /in-vitro/assessment/:id/endpoint-categories/update/
         self.login_and_goto_url(
             page,
-            f"{self.live_server_url}/in-vitro/assessment/2/endpoint-categories/update/",
+            f"{self.live_server_url}/in-vitro/assessment/1/endpoint-categories/update/",
             "pm@hawcproject.org",
         )
         expect(page.locator("text=Modify in-vitro endpoint categories")).to_be_visible()

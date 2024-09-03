@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db import connections
 
@@ -94,6 +95,11 @@ def vcr_config():
 def vcr_cassette_dir(request):
     cassette_dir = Path(__file__).parent.absolute() / "data/cassettes" / request.module.__name__
     return str(cassette_dir)
+
+
+@pytest.fixture
+def pm_user():
+    return get_user_model().objects.get(email="pm@hawcproject.org")
 
 
 @pytest.fixture(scope="session")

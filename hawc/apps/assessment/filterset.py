@@ -8,6 +8,8 @@ from ..common.filterset import (
     BaseFilterSet,
     ExpandableFilterForm,
     InlineFilterForm,
+    OrderingFilter,
+    PaginationFilter,
 )
 from ..common.helper import new_window_a
 from ..myuser.models import HAWCUser
@@ -65,7 +67,7 @@ class AssessmentFilterSet(BaseFilterSet):
             | Q(details__project_type__icontains=value)
             | Q(details__report_id__icontains=value)
         )
-        return queryset.filter(query)
+        return queryset.filter(query).distinct()
 
     def filter_role(self, queryset, name, value):
         return queryset.filter(**{value: self.request.user})
@@ -161,3 +163,40 @@ class LogFilterSet(BaseFilterSet):
         ].help_text = f"""Data {new_window_a(url, "content type")}; by filtering by data types below the content type can also be set."""
         form.fields["user"].queryset = self.assessment.pms_and_team_users()
         return form
+
+
+class EffectTagFilterSet(df.FilterSet):
+    name = df.CharFilter(lookup_expr="icontains")
+
+
+class AssessmentValueFilterSet(df.FilterSet):
+    name = df.CharFilter(
+        field_name="assessment__name",
+        lookup_expr="icontains",
+        label="Assessment name",
+    )
+    cas = df.CharFilter(
+        field_name="assessment__cas",
+        label="Assessment CAS",
+    )
+    dtxsid = df.CharFilter(
+        field_name="assessment__dtxsids__dtxsid",
+        label="Assessment DTXSID",
+    )
+    project_type = df.CharFilter(
+        field_name="assessment__details__project_type",
+        lookup_expr="icontains",
+        label="Assessment project type",
+    )
+    year = df.CharFilter(field_name="assessment__year", label="Assessment year")
+
+    order_by = OrderingFilter(
+        fields=(("assessment__name", "name"), ("assessment__id", "assessment_id")),
+        initial="name",
+    )
+
+    paginate_by = PaginationFilter()
+
+    class Meta:
+        model = models.AssessmentValue
+        fields = ("value_type",)

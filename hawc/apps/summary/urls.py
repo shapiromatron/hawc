@@ -8,24 +8,12 @@ router.register(r"assessment", api.SummaryAssessmentViewSet, basename="assessmen
 router.register(r"visual", api.VisualViewSet, basename="visual")
 router.register(r"data_pivot", api.DataPivotViewSet, basename="data_pivot")
 router.register(r"data_pivot_query", api.DataPivotQueryViewSet, basename="data_pivot_query")
-router.register(r"summary-text", api.SummaryTextViewSet, basename="summary-text")
 router.register(r"summary-table", api.SummaryTableViewSet, basename="summary-table")
 
 app_name = "summary"
 urlpatterns = [
     # API
     path("api/", include((router.urls, "api"))),
-    # SUMMARY-TEXT
-    path(
-        "assessment/<int:pk>/summaries/",
-        views.SummaryTextList.as_view(),
-        name="list",
-    ),
-    path(
-        "assessment/<int:pk>/summaries/modify/",
-        views.SummaryTextModify.as_view(),
-        name="create",
-    ),
     # SUMMARY TABLES
     path("assessment/<int:pk>/tables/", views.SummaryTableList.as_view(), name="tables_list"),
     path(
@@ -75,6 +63,11 @@ urlpatterns = [
         name="visualization_create",
     ),
     path(
+        "assessment/<int:pk>/visuals/<int:visual_type>/create/<int:study_type>/",
+        views.VisualizationCreate.as_view(),
+        name="visualization_create",
+    ),
+    path(
         "assessment/<int:pk>/visuals/copy/",
         views.VisualizationCopySelector.as_view(),
         name="visualization_copy_selector",
@@ -85,7 +78,7 @@ urlpatterns = [
         name="visualization_copy",
     ),
     path(
-        "assessment/<int:pk>/type/<int:visual_type>/data/",
+        "assessment/<int:pk>/type/<int:visual_type>/<int:study_type>/data/",
         views.VisualizationCreateTester.as_view(),
         name="visualization_create_tester",
     ),

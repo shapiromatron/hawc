@@ -1,7 +1,6 @@
 from pathlib import Path
 from textwrap import dedent
 
-import numpy as np
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -16,6 +15,7 @@ from hawc.apps.assessment import constants
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
+from ..common.auth.turnstile import Turnstile
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
     BaseFormHelper,
@@ -155,7 +155,6 @@ class AssessmentDetailForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["extra"].widget.attrs["rows"] = 3
         cancel_url = (
             self.instance.get_absolute_url()
             if self.instance.id
@@ -164,6 +163,7 @@ class AssessmentDetailForm(forms.ModelForm):
         helper = BaseFormHelper(
             self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
         )
+        helper.set_textarea_height(("extra",), 3)
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
         helper.add_row("report_id", 3, "col-md-4")
@@ -237,24 +237,9 @@ class AssessmentValueForm(forms.ModelForm):
             if not cleaned_data.get("uncertainty"):
                 msg = "Required for Noncancer evaluation types."
                 self.add_error("uncertainty", msg)
-        if (
-            cleaned_data.get("value")
-            and cleaned_data.get("pod_value")
-            and cleaned_data.get("uncertainty")
-        ):
-            if not np.isclose(
-                cleaned_data["value"],
-                cleaned_data["pod_value"] / cleaned_data["uncertainty"],
-                rtol=0.01,
-            ):
-                msg = "POD / uncertainty is not equal to value."
-                self.add_error("value", msg)
 
     @property
     def helper(self):
-        for fld in ["comments", "basis", "extra"]:
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(
                 self,
@@ -270,6 +255,8 @@ class AssessmentValueForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
+
+        helper.set_textarea_height(("comments", "basis", "extra"), 3)
         helper.add_row("evaluation_type", 2, "col-md-6")
         helper.add_row("value_type", 4, "col-md-3")
         helper.add_row("confidence", 3, "col-md-4")
@@ -311,7 +298,6 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_bmd",
             "enable_summary_tables",
             "enable_visuals",
-            "enable_summary_text",
             "enable_downloads",
             "noel_name",
             "rob_name",
@@ -343,7 +329,7 @@ class AssessmentModulesForm(forms.ModelForm):
         )
         helper.add_row("enable_literature_review", 3, "col-lg-4")
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
-        helper.add_row("enable_visuals", 3, "col-lg-4")
+        helper.add_row("enable_visuals", 2, "col-lg-6")
         helper.add_row("noel_name", 3, "col-lg-4")
         helper.add_row("epi_version", 1, "col-lg-4")
         return helper
@@ -513,8 +499,15 @@ class ContactForm(forms.Form):
         self.back_href = kwargs.pop("back_href")
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        self.fields["name"].initial = self.user.get_full_name()
-        self.fields["email"].initial = self.user.email
+        if self.user.is_anonymous:
+            self.fields["name"].disabled = False
+            self.fields["email"].disabled = False
+        else:
+            self.fields["name"].initial = self.user.get_full_name()
+            self.fields["email"].initial = self.user.email
+        self.enable_turnstile: bool = self.user.is_anonymous
+        if self.enable_turnstile:
+            self.turnstile = Turnstile()
         self.fields["previous_page"].initial = self.back_href
 
     def send_email(self):
@@ -532,12 +525,20 @@ class ContactForm(forms.Form):
 
     @property
     def helper(self):
-        return BaseFormHelper(
+        helper = BaseFormHelper(
             self,
             legend_text="Contact us",
             help_text="Have a question, comment, or need some help? Use this form to to let us know what's going on.",
             cancel_url=self.back_href,
         )
+        if self.enable_turnstile:
+            helper.layout.insert(len(helper.layout) - 1, self.turnstile.render())
+        return helper
+
+    def clean(self):
+        if self.enable_turnstile:
+            self.turnstile.validate(self.data)
+        return self.cleaned_data
 
 
 class DatasetForm(forms.ModelForm):
@@ -587,9 +588,7 @@ class DatasetForm(forms.ModelForm):
                 "cancel_url": self.instance.assessment.get_absolute_url(),
             }
 
-        inputs[
-            "help_text"
-        ] = """Datasets are tabular data files that may contain information
+        inputs["help_text"] = """Datasets are tabular data files that may contain information
         which was captured in external data systems.  A dataset can be used for generating a
         custom visualization. All datasets are public and can be downloaded if an assessment
         is made public. Only team-members or higher can view or download older versions of a
@@ -657,7 +656,7 @@ class DatasetForm(forms.ModelForm):
                 dataset=instance,
                 version=instance.get_new_version_value(),
                 data=self.cleaned_data["revision_data"],
-                metadata=self.revision_metadata.dict(),
+                metadata=self.revision_metadata.model_dump(),
                 excel_worksheet_name=self.cleaned_data["revision_excel_worksheet_name"],
                 notes=self.cleaned_data["revision_notes"],
             )

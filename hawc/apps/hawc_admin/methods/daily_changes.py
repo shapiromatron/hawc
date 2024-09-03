@@ -1,16 +1,17 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pandas as pd
 import plotly.express as px
 from django.db.models import Count
 from django.db.models.functions import Trunc
+from django.utils.timezone import now
 from reversion.models import Revision
 
 
 def _get_df(Model, freq: str, field: str) -> pd.DataFrame:
     qs = (
         Model.objects.all()
-        .filter(**{f"{field}__gt": datetime.today() - timedelta(days=365)})
+        .filter(**{f"{field}__date__gt": now() - timedelta(days=365)})
         .annotate(date=Trunc(field, freq))
         .order_by("date")
         .values("date")
@@ -22,7 +23,7 @@ def _get_df(Model, freq: str, field: str) -> pd.DataFrame:
 def daily_changes():
     df = _get_df(Revision, "day", "date_created")
     df["weekday"] = df.date.dt.day_name()
-    df["weekofyear"] = df.date.dt.weekofyear
+    df["weekofyear"] = df.date.dt.isocalendar().week
     df["year"] = df.date.dt.year
     df["yr-wk"] = df.year.astype(str) + "-" + df.weekofyear.astype(str)
     lines = px.line(

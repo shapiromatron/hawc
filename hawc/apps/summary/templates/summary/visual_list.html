@@ -15,27 +15,28 @@
     {% endif %}
   </div>
 
-{% include 'common/inline_filter_form.html' %}
+  {% include 'common/inline_filter_form.html' %}
 
   <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup "50,26,12,12" %}
     {% bs4_thead "Visual,Type,Created,Modified" %}
     <tbody>
       {% for visual in objects %}
-      <tr>
-        <td>
-          <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
-          {% if not visual.published %}
-          <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
-          {% endif %}
-          {% if visual.caption %}
-          <div class='text-muted'>{{visual.captionstriptags|striptags|truncatewords:20|safe}}</div>
-          {% endif %}
-        </td>
-        <td>{{visual.get_visual_type_display}}</td>
-        <td>{{ visual.created|date:"Y-m-d" }}</td>
-        <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
-      </tr>
+        <tr>
+          <td>
+            <a href="{{visual.get_absolute_url}}">{{visual.title}}</a>
+            {% if not visual.published %}
+              <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+            {% endif %}
+            {% debug_badge visual.id %}
+            {% if visual.caption %}
+              <div class='text-muted'>{{visual.captionstriptags|striptags|truncatewords:20|safe}}</div>
+            {% endif %}
+          </td>
+          <td>{{visual.get_visual_type_display}}</td>
+          <td>{{ visual.created|date:"Y-m-d" }}</td>
+          <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
@@ -43,9 +44,9 @@
 {% endblock content %}
 
 {% block extrajs %}
-<script type="text/javascript">
-  $(document).ready(function(){
-    window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
-  });
-</script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
+    });
+  </script>
 {% endblock extrajs %}

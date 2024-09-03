@@ -1,36 +1,36 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex mb-2">
+  <div class="d-flex mb-2">
     <h2 class="mb-0">Outcomes ({{page_obj.paginator.count}} found)</h2>
     {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
-    {% actions %}
+      {% actions %}
         <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
-    {% endactions %}
+      {% endactions %}
     {% endif %}
-</div>
-{% include 'common/inline_filter_form.html' %}
-<table class="table table-sm table-striped">
+  </div>
+  {% include 'common/inline_filter_form.html' %}
+  <table class="table table-sm table-striped">
     {% bs4_colgroup '25,25,25,25' %}
     {% bs4_thead 'Study,Study Population,Design,Outcome' %}
     <tbody>
-        {% for object in object_list %}
+      {% for object in object_list %}
         <tr>
-            <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a></td>
-            <td><a href="{{object.design.get_absolute_url}}">{{object.design}}</a></td>
-            <td>{{object.design.get_study_design_display}}</td>
-            <td>{{object}}</td>
+          <td><a href="{{object.design.study.get_absolute_url}}">{{object.design.study.short_citation}}</a>{% debug_badge object.design.study_id %}</td>
+          <td><a href="{{object.design.get_absolute_url}}">{{object.design}}</a>{% debug_badge object.design_id %}</td>
+          <td>{{object.design.get_study_design_display}}</td>
+          <td>{{object}}{% debug_badge object.id %}</td>
         </tr>
-        {% empty %}
+      {% empty %}
         <tr>
-            <td colspan="4">
-                No outcomes available
-            </td>
+          <td colspan="4">
+            No outcomes available
+          </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 
-{% include "includes/paginator.html" with plural_object_name="endpoints" %}
+  {% include "includes/paginator.html" with plural_object_name="endpoints" %}
 
 {% endblock %}

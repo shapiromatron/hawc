@@ -1,12 +1,14 @@
 """
 Twitter Bootstrap 4 - helper methods
 """
+
 import re
 from textwrap import dedent
 from uuid import uuid4
 
 from django import template
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from django.utils.safestring import SafeString, mark_safe
 from plotly.graph_objs._figure import Figure
 
 register = template.Library()
@@ -47,22 +49,37 @@ def bs4_fullrow(text: str, tr_attrs: str = "") -> str:
     )
 
 
+@register.simple_tag()
+def icon(name: str):
+    return format_html('<span class="fa fa-fw {} mr-1" aria-hidden="true"></span>', name)
+
+
+def parse_tokens(token, parser) -> dict:
+    data = template.base.token_kwargs(token.split_contents()[1:], parser)
+    return {k: v.var for k, v in data.items()}
+
+
 @register.tag(name="alert")
 def bs4_alert(parser, token):
-    args = token.contents.split()
-    alert_type = args[1] if len(args) > 1 else "danger"
+    kw = parse_tokens(token, parser)
     nodelist = parser.parse(("endalert",))
     parser.delete_first_token()
-    return AlertWrapperNode(nodelist, alert_type)
+    return AlertWrapperNode(nodelist, kw)
 
 
 class AlertWrapperNode(template.Node):
-    def __init__(self, nodelist, alert_type: str):
+    dismiss_html = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+
+    def __init__(self, nodelist, kw: dict):
         self.nodelist = nodelist
-        self.alert_type = alert_type
+        self.type = kw.get("type", "danger")
+        self.dismiss = kw.get("dismiss", False)
+        self.classes = kw.get("classes", "")
 
     def render(self, context):
-        return f'<div class="alert alert-{self.alert_type}">{self.nodelist.render(context)}</div>'
+        return format_html(
+            f'<div class="alert alert-{self.type} {self.classes}">{self.dismiss_html if self.dismiss else ""}{self.nodelist.render(context)}</div>'
+        )
 
 
 @register.simple_tag(name="actions")
@@ -99,7 +116,7 @@ def plotly(fig: Figure | None, **kw) -> str:
     return mark_safe(
         dedent(
             f"""
-    <div id="{id}"><span class="text-muted">Loading...</span></div>
+    <div id="{id}"><span class="is-loading text-muted">Loading, please wait...</span></div>
     <script>document.addEventListener("{event}", {func}, false);</script>"""
         )
     )
@@ -124,3 +141,29 @@ def add_class(value, css_class):
     else:
         return mark_safe(string.replace(">", f' class="{css_class}">'))
     return value
+
+
+@register.simple_tag
+def analytics_card(value, label):
+    return mark_safe(
+        f"""
+        <div class="card box-shadow">
+            <div class="card-body">
+                <h2 class="m-0 mt-1">{ value }</h2>
+                <p class="small">{ label }</p>
+            </div>
+        </div>
+        """
+    )
+
+
+@register.simple_tag
+def list_punctuation(loop, conjunction: str = "or") -> SafeString:
+    # return commas between items if > 2, and the appropriate conjunction
+    num_items = loop["counter"] + loop["revcounter"] - 1
+    if loop["revcounter0"] > 1:
+        # if >2 remaining, add commas
+        return mark_safe(", ")
+    elif loop["revcounter0"] == 1:
+        return mark_safe(f"{',' if num_items >= 3 else ''} {conjunction} ")
+    return mark_safe("")

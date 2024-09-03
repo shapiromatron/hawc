@@ -85,3 +85,106 @@ class TestLiterature(PlaywrightTestCase):
                 "text=Nutrient content of fish powder from low value fish and fish byproducts."
             )
         ).to_be_visible()
+
+    def test_workflows(self):
+        page = self.page
+        page.goto(self.live_server_url)
+
+        # /design/:id/
+        self.login_and_goto_url(
+            page, f"{self.live_server_url}/lit/assessment/4/workflows/", "pm@hawcproject.org"
+        )
+
+        expect(page.get_by_role("heading", name="Workflows")).to_be_visible()
+
+        # Create workflow
+        page.get_by_role("link", name="Create new workflow").click()
+        page.get_by_label("Title*").click()
+        page.get_by_label("Title*").fill("Title/Abstract")
+        page.get_by_text("Link tagging").click()
+        page.get_by_text("Link conflict resolution").click()
+        page.get_by_role("group", name="Removal Criteria").get_by_label(
+            "Tagged With:"
+        ).select_option("32")
+        page.locator("#div_id_removal_tags_descendants").get_by_text(
+            "Include Descendants of above tag(s)"
+        ).click()
+        page.locator("#workflow-create").click()
+
+        # Check workflow exists as expected
+        expect(page.get_by_role("heading", name="Title/Abstract")).to_be_visible()
+        expect(page.get_by_text("No admission criteria selected.")).to_be_visible()
+        expect(
+            page.get_by_text("Tagged with Inclusion (including descendant tags)")
+        ).to_be_visible()
+        expect(page.get_by_text("Conflict Resolution linked on Literature Review")).to_be_visible()
+        expect(page.get_by_text("Tagging linked on Literature Review")).to_be_visible()
+
+        # Update workflow
+        page.get_by_title("Click to update").click()
+        page.get_by_label("Title*").click()
+        page.get_by_label("Title*").fill("Title/Abstract 2")
+        page.locator("#workflow-update").click()
+
+        # check update worked
+        expect(page.get_by_role("heading", name="Title/Abstract 2")).to_be_visible()
+
+        # Check that new Literature Review tiles have been added
+        page.get_by_label("breadcrumb").get_by_role("link", name="Literature review").click()
+        expect(page.get_by_text("in Title/Abstract 2")).to_be_visible()
+        expect(page.get_by_role("link", name="1  needs tagging")).to_be_visible()
+        expect(page.get_by_role("link", name=re.compile(r"\d+ ≠ with conflicts"))).to_be_visible()
+
+        # go back and check delete
+        page.get_by_text("Actions").click()
+        page.get_by_role("link", name="View Workflows").click()
+        page.get_by_title("Click to update").click()
+        page.get_by_role("button", name=" Delete").click()
+        expect(page.get_by_text("Are you sure you want to")).to_be_visible()
+        page.get_by_role("button", name=" Delete").click()
+        expect(page.get_by_role("heading", name="Title/Abstract 2")).not_to_be_visible()
+
+    def test_udf_tagging(self):
+        page = self.page
+        page.goto(self.live_server_url)
+
+        self.login_and_goto_url(
+            page, f"{self.live_server_url}/lit/assessment/4/tag/", "team@hawcproject.org"
+        )
+
+        page.get_by_text("Human Study", exact=True).click()
+        expect(page.get_by_text("Tag Form")).to_be_visible()
+        expect(page.get_by_label("Field1")).to_be_visible()
+        page.get_by_label("Field1").fill("")
+        expect(page.get_by_label("Field2")).to_be_visible()
+        page.get_by_label("Field2").fill("")
+
+        # Tagging without filling out UDF returns error
+        page.get_by_role("button", name="Save and next").click()
+        expect(page.get_by_text("An error was found with tag form data.")).to_be_visible()
+        expect(
+            page.locator("#div_id_32-field1").get_by_text("This field is required.")
+        ).to_be_visible()
+        expect(
+            page.locator("#div_id_32-field2").get_by_text("This field is required.")
+        ).to_be_visible()
+
+        # tagging with UDF data should work
+        page.get_by_label("Field1").fill("1001")
+        page.get_by_label("Field2").fill("2002")
+        page.get_by_role("button", name="Save and next").click()
+        expect(
+            page.get_by_text("Ethnopharmacological investigation")
+        ).to_be_visible()  # on to next reference
+
+        # go back to reference, check data stays
+        page.get_by_text("Frédéric Chopin 2024").click()
+        expect(page.get_by_title("Inclusion ➤ Human Study")).to_be_visible()
+        expect(page.get_by_label("Field1")).to_have_value("1001")
+        expect(page.get_by_label("Field2")).to_have_value("2002")
+
+        # remove tag, UDF goes away
+        page.get_by_title("Inclusion ➤ Human Study").click()
+        expect(page.get_by_label("Field1")).not_to_be_visible()
+        expect(page.get_by_label("Field2")).not_to_be_visible()
+        page.get_by_role("button", name="Save and next").click()

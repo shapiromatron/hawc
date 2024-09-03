@@ -1,16 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="ivChemical"></div>
+  <div id="ivChemical"></div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
-const canEdit = {{obj_perms.edit|lower}},
-    id = {{object.id}};
-window.app.startup("invitroStartup", function(app){
-    window.canEdit = canEdit;
-    app.IVChemical.displayAsPage(id, $("#ivChemical"));
-});
-</script>
+  <script type="text/javascript">
+    const canEdit = {{obj_perms.edit|lower}},
+          id = {{object.id}};
+    window.app.startup("invitroStartup", function(app){
+      window.canEdit = canEdit;
+      app.IVChemical.displayAsPage(id, $("#ivChemical"));
+    });
+  </script>
 {% endblock %}

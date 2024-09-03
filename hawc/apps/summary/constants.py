@@ -1,5 +1,5 @@
 from django.db import models
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 
 class StudyType(models.IntegerChoices):
@@ -26,11 +26,30 @@ class VisualType(models.IntegerChoices):
     EXTERNAL_SITE = 5, "embedded external website"
     EXPLORE_HEATMAP = 6, "exploratory heatmap"
     PLOTLY = 7, "plotly"
+    IMAGE = 8, "static image"
+    PRISMA = 9, "PRISMA"
 
 
-class SortOrder(models.TextChoices):
-    SC = "short_citation", "Short Citation"
-    OC = "overall_confidence", "Final Study Confidence"
+VISUAL_EVIDENCE_CHOICES = {
+    VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
+    VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},
+    VisualType.ROB_HEATMAP: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
+    VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
+    VisualType.LITERATURE_TAGTREE: {StudyType.OTHER},
+    VisualType.EXTERNAL_SITE: {StudyType.OTHER},
+    VisualType.EXPLORE_HEATMAP: {StudyType.OTHER},
+    VisualType.PLOTLY: {StudyType.OTHER},
+    VisualType.IMAGE: {StudyType.OTHER},
+    VisualType.PRISMA: {StudyType.OTHER},
+}
+
+
+def get_default_evidence_type(visual_type: VisualType) -> StudyType:
+    """Return StudyType for visual if only one option exists, otherwise raise ValueError."""
+    choices = VISUAL_EVIDENCE_CHOICES[visual_type]
+    if len(choices) > 1:
+        raise ValueError(f"No default evidence type for visual {visual_type}; multiple exist.")
+    return next(iter(choices))
 
 
 class ExportStyle(models.IntegerChoices):
@@ -43,5 +62,5 @@ class TableauFilter(BaseModel):
     value: str
 
 
-class TableauFilterList(BaseModel):
-    __root__: list[TableauFilter]
+class TableauFilterList(RootModel):
+    root: list[TableauFilter]

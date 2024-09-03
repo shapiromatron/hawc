@@ -3,172 +3,211 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid">
-  <h2>{{action}} a new visualization</h2>
-  <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
-    you would like to create.</p>
-  <div class="row">
-    <div class="col-md-9">
-      <select id="vis_selector" class="form-control col-md-12">
-        <option value="4" data-url="{% url viz_url_pattern assessment.id 4 %}">
-          Literature tagtree</option>
-        <option value="6" data-url="{% url viz_url_pattern assessment.id 6 %}">
-          Exploratory heatmap</option>
-        <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
-          Embedded external website</option>
-        {% if feature_flags.ENABLE_PLOTLY_VISUAL %}
-        <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
-          Plotly visual</option>
+  <div class="container-fluid">
+    <h2>{{action}} a new visualization</h2>
+    <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
+      you would like to create.</p>
+    <div class="row">
+      <div class="col-md-9">
+        <select id="vis_selector" class="form-control col-md-12">
+          <option value="4" data-url="{% url viz_url_pattern assessment.id 4 %}">
+            Literature tagtree</option>
+          <option value="6" data-url="{% url viz_url_pattern assessment.id 6 %}">
+            Exploratory heatmap</option>
+          <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
+            Embedded external website</option>
+          {% if feature_flags.ENABLE_WIP_VISUALS %}
+            <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
+              Plotly visual</option>
+            <option value="9" data-url="{% url viz_url_pattern assessment.id 9 %}">
+              PRISMA visual</option>
+          {% endif %}
+          <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
+            {{assessment.get_rob_name_display}} heatmap</option>
+          <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
+            {{assessment.get_rob_name_display}} barchart</option>
+          <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
+            Data pivot</option>
+          <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
+            Bioassay endpoint crossview</option>
+          <option value="8" data-url="{% url viz_url_pattern assessment.id 8 %}">
+            Static image</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <a id="create_btn" class="btn btn-block btn-primary" href="#">Select</a>
+      </div>
+    </div>
+    <div id="detail_display" class="row py-3"></div>
+    <div id="detail_library" class="hidden">
+      <div id="detail-0" class="col-md-12" >
+        <h3>Bioassay endpoint aggregation</h3>
+        <div class="row">
+          <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
+        </div>
+        <div class="row">
+          <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
+        </div>
+        <p class="form-text text-muted">
+          Select a subset of animal bioassay endpoints and present these using
+          an exposure-response array or forest-plot design.
+          Also creates a dose-response summary table of selected endpoints.
+          Interactive, clicking on any point shows dose-response details.
+        </p>
+      </div>
+      <div id="detail-1" class="col-md-12" >
+        <h3>Bioassay endpoint crossview</h3>
+        <div class="row">
+          <img alt="Image of a bioassay endpoint crossview figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
+        </div>
+        <p class="form-text text-muted">
+          All animal bioassay dose-response datasets available in a HAWC assessment
+          for a given dose-unit, with response normalized to percent change from
+          control using spline interpolation. Interactive, clicking on any line
+          displays dose-response details and highlights metadata in red.
+          An endpoint can only plotted if it has dose-response data extracted, and
+          at least <strong>3-dose groups</strong> (an interpolation is created
+          between non-control dose-groups, and 2+ are required to create a line).
+        </p>
+      </div>
+      <div id="detail-100" class="col-md-12" >
+        <h3>Data Pivot</h3>
+        <div class="row">
+          <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+          <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+        </div>
+        <p class="form-text text-muted">
+          Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
+          from a tab-delimited file can be used to generate custom forest-plot
+          style visualizations. Displayed text-fields and numbers to plot are
+          customizable; results can be sorted and filter, and conditional-formatting
+          can also be applied.
+        </p>
+      </div>
+      <div id="detail-2" class="col-md-12">
+        {% if action == "Create" %}
+          <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 2 0 %}" />
+          <label for="bio">Bioassay</label>
+          <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 2 1 %}" />
+          <label for="epi">Epidemiology</label>
+          <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 2 2 %}" />
+          <label for="invitro">In vitro</label>
         {% endif %}
-        <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
-          {{assessment.get_rob_name_display}} heatmap</option>
-        <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
-          {{assessment.get_rob_name_display}} barchart</option>
-        <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
-          Data pivot</option>
-        <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
-          Bioassay endpoint crossview</option>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <a id="create_btn" class="btn btn-block btn-primary" href="#">Select</a>
+        <h3>{{assessment.get_rob_name_display}} heatmap</h3>
+        <div class="row">
+          <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
+               src="{% static '/img/summary/rob-heatmap.svg' %}">
+        </div>
+        <p class="form-text text-muted">
+          A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
+          {{assessment.get_rob_name_display|lower}} findings for each metric. This plot is interactive; a user
+          can select and row, column, or cell, to view all details associated
+          with these cells.
+        </p>
+      </div>
+      <div id="detail-3" class="col-md-12">
+        {% if action == "Create" %}
+          <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 3 0 %}" />
+          <label for="bio">Bioassay</label>
+          <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 3 1 %}" />
+          <label for="epi">Epidemiology</label>
+          <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 3 2 %}" />
+          <label for="invitro">In vitro</label>
+        {% endif %}
+        <h3>{{assessment.get_rob_name_display}} barchart</h3>
+        <div class="row">
+          <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
+               src="{% static '/img/summary/rob-barchart.svg' %}">
+        </div>
+        <p class="form-text text-muted">
+          A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
+          each judgment, for each metric, in a selectable subset of studies.
+        </p>
+      </div>
+      <div id="detail-4" class="col-md-12">
+        <h3>Literature tagtree</h3>
+        <div class="row">
+          <img alt="Image of a literature tagtree" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
+        </div>
+        <p class="form-text text-muted">
+          A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
+        </p>
+      </div>
+      <div id="detail-5" class="col-md-12">
+        <h3>Embedded external website</h3>
+        <div class="row">
+          <img alt="Image of an embedded external website" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
+        </div>
+        <p class="form-text text-muted">
+          Embed an external website. The following websites can be linked to:
+        </p>
+        <ul>
+          <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
+        </ul>
+        <p class="form-text text-muted">
+          If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
+        </p>
+      </div>
+      <div id="detail-6" class="col-md-12">
+        <h3>Exploratory heatmap</h3>
+        <div class="row">
+          <img alt="Image of an exploratory data heatmap" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
+        </div>
+        <p class="form-text text-muted">
+          A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented
+          in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a
+            href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
+        </p>
+      </div>
+      <div id="detail-7" class="col-md-12">
+        <h3>Plotly visual</h3>
+        <div class="row">
+          <img alt="Image of a graph made using plotly" class="col-md-10 col-md-offset-1"
+               src="{% static '/img/summary/plotly-example.jpg' %}">
+        </div>
+        <p class="form-text text-muted">
+          Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
+        </p>
+      </div>
+      <div id="detail-8" class="col-md-12">
+        <h3>Static image</h3>
+        <p class="form-text text-muted">
+          Upload an image to be displayed as a visual. The file formats .jpeg, .jpg, and .png are supported.
+        </p>
+      </div>
+      <div id="detail-9" class="col-md-12">
+        <h3>PRISMA Visual</h3>
+        <p class="form-text text-muted">
+          Create a PRISMA visual.
+        </p>
+      </div>
     </div>
   </div>
-  <div id="detail_display" class="row py-3"></div>
-  <div id="detail_library" class="hidden">
-    <div id="detail-0" class="col-md-12" >
-      <h3>Bioassay endpoint aggregation</h3>
-      <div class="row">
-        <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
-      </div>
-      <div class="row">
-        <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
-      </div>
-      <p class="form-text text-muted">
-        Select a subset of animal bioassay endpoints and present these using
-        an exposure-response array or forest-plot design.
-        Also creates a dose-response summary table of selected endpoints.
-        Interactive, clicking on any point shows dose-response details.
-      </p>
-    </div>
-    <div id="detail-1" class="col-md-12" >
-      <h3>Bioassay endpoint crossview</h3>
-      <div class="row">
-        <img alt="Image of a bioassay endpoint crossview figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
-      </div>
-      <p class="form-text text-muted">
-        All animal bioassay dose-response datasets available in a HAWC assessment
-        for a given dose-unit, with response normalized to percent change from
-        control using spline interpolation. Interactive, clicking on any line
-        displays dose-response details and highlights metadata in red.
-        An endpoint can only plotted if it has dose-response data extracted, and
-        at least <strong>3-dose groups</strong> (an interpolation is created
-        between non-control dose-groups, and 2+ are required to create a line).
-      </p>
-    </div>
-    <div id="detail-100" class="col-md-12" >
-      <h3>Data Pivot</h3>
-      <div class="row">
-        <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
-        <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
-      </div>
-      <p class="form-text text-muted">
-        Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
-        from a tab-delimited file can be used to generate custom forest-plot
-        style visualizations. Displayed text-fields and numbers to plot are
-        customizable; results can be sorted and filter, and conditional-formatting
-        can also be applied.
-      </p>
-    </div>
-    <div id="detail-2" class="col-md-12">
-      <h3>{{assessment.get_rob_name_display}} heatmap</h3>
-      <div class="row">
-        <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
-          src="{% static '/img/summary/rob-heatmap.svg' %}">
-      </div>
-      <p class="form-text text-muted">
-        A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
-        {{assessment.get_rob_name_display|lower}} findings for each metric. This plot is interactive; a user
-        can select and row, column, or cell, to view all details associated
-        with these cells.
-      </p>
-    </div>
-    <div id="detail-3" class="col-md-12">
-      <h3>{{assessment.get_rob_name_display}} barchart</h3>
-      <div class="row">
-        <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
-          src="{% static '/img/summary/rob-barchart.svg' %}">
-      </div>
-      <p class="form-text text-muted">
-        A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
-        each judgment, for each metric, in a selectable subset of studies.
-      </p>
-    </div>
-    <div id="detail-4" class="col-md-12">
-      <h3>Literature tagtree</h3>
-      <div class="row">
-        <img alt="Image of a literature tagtree" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
-      </div>
-      <p class="form-text text-muted">
-        A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
-      </p>
-    </div>
-    <div id="detail-5" class="col-md-12">
-      <h3>Embedded external website</h3>
-      <div class="row">
-        <img alt="Image of an embedded external website" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
-      </div>
-      <p class="form-text text-muted">
-        Embed an external website. The following websites can be linked to:
-      </p>
-      <ul>
-        <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
-      </ul>
-      <p class="form-text text-muted">
-        If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
-      </p>
-    </div>
-    <div id="detail-6" class="col-md-12">
-      <h3>Exploratory heatmap</h3>
-      <div class="row">
-        <img alt="Image of an exploratory data heatmap" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
-      </div>
-      <p class="form-text text-muted">
-        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented
-        in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a
-          href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
-      </p>
-    </div>
-    <div id="detail-7" class="col-md-12">
-      <h3>Plotly visual</h3>
-      <div class="row">
-        <img alt="Image of a graph made using plotly" class="col-md-10 col-md-offset-1"
-          src="{% static '/img/summary/plotly-example.jpg' %}">
-      </div>
-      <p class="form-text text-muted">
-        Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
-      </p>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
-  $(document).ready(function () {
+  <script type="text/javascript">
+    $(document).ready(function () {
     // change selector detail
-    window.app.HAWCUtils.onSelectChangeShowDetail(
+      window.app.HAWCUtils.onSelectChangeShowDetail(
         document.getElementById("vis_selector"),
         document.getElementById("detail_display"),
         document.getElementById("detail_library")
       );
 
     // change the url when selector changes
-    var selector = $('#vis_selector'),
-      btn = $('#create_btn');
-    selector.on('change', function () {
-      btn.attr('href', selector.find(":selected").data('url'));
-    }).trigger('change')
-  });
-</script>
+      $("#detail_display").on("subselect:change", function () {
+        let selection = $("#vis_selector option:selected"),
+            subselection = $("#detail_display input[type=radio][name=evidence-type]:checked"),
+            url = subselection.length ? subselection.data("url") : selection.data("url");
+        $("#create_btn").attr("href",url||"");
+      });
+      $("#detail_display").on("select:change", function () {
+        $("#detail_display input[type=radio][name=evidence-type]").first().prop("checked",true)
+        $("#detail_display input[type=radio][name=evidence-type]").on("change",()=>$("#detail_display").trigger("subselect:change"));
+        $("#detail_display").trigger("subselect:change");
+      });
+      $("#detail_display").trigger("select:change");
+    });
+  </script>
 {% endblock %}

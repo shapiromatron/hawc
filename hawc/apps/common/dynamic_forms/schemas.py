@@ -1,8 +1,10 @@
 """Schemas to build dynamic Django forms."""
+
 from enum import Enum
+from typing import Any
 
 from django.forms import HiddenInput, JSONField
-from pydantic import BaseModel, conlist, root_validator, validator
+from pydantic import BaseModel, conlist, field_validator, model_validator
 
 from ..forms import DynamicFormField
 from . import fields, forms
@@ -51,13 +53,8 @@ class Condition(BaseModel):
     subject: str
     observers: list[str]
     comparison: Comparison = Comparison.EQUALS
-    comparison_value: bool | str | int | conlist(bool | str | int, min_items=1)
+    comparison_value: bool | str | int | conlist(bool | str | int, min_length=1)
     behavior: Behavior = Behavior.SHOW
-
-    class Config:
-        """Schema config."""
-
-        smart_union = True
 
 
 class Schema(BaseModel):
@@ -66,22 +63,21 @@ class Schema(BaseModel):
     fields: list[fields.Field]
     conditions: list[Condition] = []
 
-    @root_validator(skip_on_failure=True)
-    def validate_conditions(cls, values):
+    @model_validator(mode="after")
+    def validate_conditions(self):
         """Validate conditions."""
         # condition subjects and observers should be existing fields
-        fields = values["fields"]
-        field_names = {field.name for field in fields}
-        conditions = values["conditions"]
+        field_names = {field.name for field in self.fields}
+        conditions = self.conditions
         subjects = {condition.subject for condition in conditions}
         observers = {observer for condition in conditions for observer in condition.observers}
         if bad_subjects := (subjects - field_names):
             raise ValueError(f"Invalid condition subject(s): {', '.join(bad_subjects)}")
         if bad_observers := (observers - field_names):
             raise ValueError(f"Invalid condition observer(s): {', '.join(bad_observers)}")
-        return values
+        return self
 
-    @validator("fields")
+    @field_validator("fields")
     def unique_field_names(cls, v):
         """Validate field names."""
         unique_names = {field.name for field in v}
@@ -98,3 +94,22 @@ class Schema(BaseModel):
         if len(self.fields) == 0:
             return JSONField(widget=HiddenInput(), required=False)
         return DynamicFormField(prefix, self.to_form, form_kwargs, *args, **kwargs)
+
+    def to_list(self, data: dict) -> list[tuple[str, Any]]:
+        """Return a list of key, value tuples for data in this schema."""
+        items = []
+        for field in self.fields:
+            field_value = data.get(field.name)
+            field_kwargs = field.get_form_field_kwargs()
+            value = field_value
+            if "choices" in field_kwargs and field_value is not None and field_value != "":
+                choice_map = dict(field_kwargs["choices"])
+                value = (
+                    "|".join([choice_map[i] for i in field_value])
+                    if isinstance(value, list)
+                    else choice_map[field_value]
+                )
+            if value:
+                label = field.get_verbose_name()
+                items.append((label, value))
+        return items

@@ -1,7 +1,4 @@
-from django.conf import settings
-from django.core.cache import cache
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
@@ -9,15 +6,15 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from ..assessment.api import (
     AssessmentEditViewSet,
-    AssessmentLevelPermissions,
     AssessmentViewSet,
+    BaseAssessmentViewSet,
     EditPermissionsCheckMixin,
     InAssessmentFilter,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers, table_serializers
@@ -38,15 +35,9 @@ class UnpublishedFilter(BaseFilterBackend):
         return queryset
 
 
-class SummaryAssessmentViewSet(viewsets.GenericViewSet):
+class SummaryAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
     @action(
         detail=True,
@@ -56,7 +47,7 @@ class SummaryAssessmentViewSet(viewsets.GenericViewSet):
     def heatmap_datasets(self, request, pk):
         """Returns a list of the heatmap datasets available for an assessment."""
         instance = self.get_object()
-        datasets = models.Visual.get_heatmap_datasets(instance).dict()
+        datasets = models.Visual.get_heatmap_datasets(instance).model_dump()
         return Response(datasets)
 
 
@@ -140,18 +131,6 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
         return FlatExport.api_response(df, obj.slug)
 
 
-class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
-    edit_check_keys = ["assessment"]
-    assessment_filter_args = "assessment"
-    model = models.SummaryText
-    pagination_class = DisabledPagination
-    filter_backends = (InAssessmentFilter,)
-    serializer_class = serializers.SummaryTextSerializer
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-
 class SummaryTableViewSet(AssessmentEditViewSet):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
@@ -177,9 +156,5 @@ class SummaryTableViewSet(AssessmentEditViewSet):
         ser.is_valid(raise_exception=True)
         # get cached value
         cache_key = f"assessment-{self.assessment.id}-summary-table-{ser.cache_key}"
-        data = cache.get(cache_key)
-        if data is None:
-            # if cached value does not exist, get the data and set the cache
-            data = ser.get_data()
-            cache.set(cache_key, data, settings.CACHE_1_HR)
+        data = cacheable(lambda: ser.get_data(), cache_key)
         return Response(data)

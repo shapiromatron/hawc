@@ -1,5 +1,4 @@
-import json
-from pathlib import Path
+from copy import deepcopy
 
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,26 +9,19 @@ from rest_framework.test import APIClient
 from hawc.apps.assessment.models import Assessment, DoseUnits
 from hawc.apps.epi import constants, models
 
-from ..test_utils import check_details_of_last_log_entry
-
-DATA_ROOT = Path(__file__).parents[3] / "data/api"
+from ..test_utils import check_api_json_data, check_details_of_last_log_entry
 
 
 @pytest.mark.django_db
 class TestEpiAssessmentViewSet:
-    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
+    def _test_flat_export(
+        self, rewrite_data_files: bool, fn: str, url: str, user: str = "reviewer"
+    ):
         client = APIClient()
-        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        assert client.login(username=f"{user}@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-
-        path = Path(DATA_ROOT / fn)
-        data = resp.json()
-
-        if rewrite_data_files:
-            path.write_text(json.dumps(data, indent=2, sort_keys=True))
-
-        assert data == json.loads(path.read_text())
+        check_api_json_data(resp.json(), fn, rewrite_data_files)
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
@@ -45,10 +37,27 @@ class TestEpiAssessmentViewSet:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
+        # test unpublished data request
+        team_client = APIClient()
+        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+        for url in urls:
+            url += "?format=json&unpublished=true"
+            assert rev_client.get(url).status_code == 403
+            assert team_client.get(url).status_code == 200
+
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        fn = "api-epi-assessment-export.json"
+        # published
+        fn = "api-epi-assessment-export-unpublished-False.json"
         url = reverse("epi:api:assessment-export", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
+
+        # unpublished (requires team or higher)
+        fn = "api-epi-assessment-export-unpublished-True.json"
+        url = (
+            reverse("epi:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=true"
+        )
+        self._test_flat_export(rewrite_data_files, fn, url, "team")
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
@@ -56,13 +65,13 @@ class TestEpiAssessmentViewSet:
         url = reverse("epi:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
 
-        # unpublished
+        # unpublished (requires team or higher)
         fn = "api-epi-assessment-study-heatmap-unpublished-True.json"
         url = (
             reverse("epi:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
-        self._test_flat_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url, "team")
 
     def test_result_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
@@ -70,13 +79,13 @@ class TestEpiAssessmentViewSet:
         url = reverse("epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
 
-        # unpublished
+        # unpublished (requires team or higher)
         fn = "api-epi-assessment-result-heatmap-unpublished-True.json"
         url = (
             reverse("epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
-        self._test_flat_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url, "team")
 
 
 @pytest.mark.django_db
@@ -481,8 +490,11 @@ class TestOutcomeApi:
             "effect_subtype": "test subtype",
         }
 
-        diagname_data = base_data
+        diagname_data = deepcopy(base_data)
         diagname_data["diagnostic"] = diagnostic_name.upper()
+
+        tag_data = deepcopy(base_data)
+        tag_data["effects"] = ["tag1"]
 
         just_created_outcome_id = None
 
@@ -512,6 +524,9 @@ class TestOutcomeApi:
             with pytest.raises(ObjectDoesNotExist):
                 models.Outcome.objects.get(id=just_created_outcome_id)
 
+        def check_tag_status(resp):
+            assert len(resp.json()["effects"]) == 1
+
         create_scenarios = (
             {
                 "desc": "basic outcome creation",
@@ -526,6 +541,13 @@ class TestOutcomeApi:
                 "expected_keys": {"id"},
                 "data": diagname_data,
                 "post_request_test": outcome_lookup_test,
+            },
+            {
+                "desc": "creation with tag",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": tag_data,
+                "post_request_test": check_tag_status,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
@@ -646,6 +668,9 @@ class TestResultApi:
 
         base_data = self.get_upload_data()
 
+        tag_data = deepcopy(base_data)
+        tag_data["resulttags"] = ["tag1"]
+
         def result_lookup_test(resp):
             nonlocal just_created_result_id
 
@@ -681,6 +706,9 @@ class TestResultApi:
                 and found_existing_by_description is True
                 and found_new_one is True
             )
+
+        def check_tag_status(resp):
+            assert len(resp.json()["resulttags"]) == 1
 
         def altered_result_test(resp):
             nonlocal just_created_result_id
@@ -724,6 +752,13 @@ class TestResultApi:
                     }
                 ),
                 "post_request_test": result_lookup_test_with_factors,
+            },
+            {
+                "desc": "result with resulttags creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": tag_data,
+                "post_request_test": check_tag_status,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
@@ -1427,12 +1462,16 @@ class TestExposureApi:
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
         scenarios = (
-            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "empty payload doesn't crash",
+                "expected_code": 400,
+                "data": {},
+            },
             {
                 "desc": "dtxsid must be a existing/importable one",
                 "expected_code": 400,
-                "expected_content": "does not exist and could not be imported",
-                "data": self.get_upload_data({"dtxsid": "bad value"}),
+                "expected_content": "DTXSID0000000 does not exist in HAWC",
+                "data": self.get_upload_data({"dtxsid": "DTXSID0000000"}),
             },
             {
                 "desc": "match data types",
@@ -1466,8 +1505,6 @@ class TestExposureApi:
 
         just_created_exposure_id = None
 
-        new_dtxsid = "DTXSID1020190"
-
         base_data = self.get_upload_data()
 
         def exposure_lookup_test(resp):
@@ -1479,12 +1516,6 @@ class TestExposureApi:
 
             if just_created_exposure_id is None:
                 just_created_exposure_id = exposure_id
-
-        def exposure_lookup_test_with_new_dtxsid(resp):
-            exposure_id = resp.json()["id"]
-            exposure = models.Exposure.objects.get(id=exposure_id)
-            assert exposure.name == base_data["name"]
-            assert exposure.dtxsid.dtxsid == new_dtxsid
 
         def exposure_lookup_test_with_new_metric_unit(resp):
             exposure_id = resp.json()["id"]
@@ -1517,13 +1548,6 @@ class TestExposureApi:
                 "expected_keys": {"id"},
                 "data": self.get_upload_data(),
                 "post_request_test": exposure_lookup_test,
-            },
-            {
-                "desc": "on the fly dtxsid creation",
-                "expected_code": 201,
-                "expected_keys": {"id"},
-                "data": self.get_upload_data({"dtxsid": new_dtxsid}),
-                "post_request_test": exposure_lookup_test_with_new_dtxsid,
             },
             {
                 "desc": "dose unit by name",

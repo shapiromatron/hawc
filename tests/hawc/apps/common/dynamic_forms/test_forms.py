@@ -9,7 +9,7 @@ from hawc.apps.common.dynamic_forms import Schema
 class TestDynamicForm:
     def test_field_rendering(self, complete_schema):
         # ensure schema with all field types can render without error
-        schema = Schema.parse_obj(complete_schema)
+        schema = Schema.model_validate(complete_schema)
         form_rendering = render_crispy_form(schema.to_form({}))
         assert len(form_rendering) > 0
 
@@ -17,28 +17,33 @@ class TestDynamicForm:
         # ensure yesno field with inline styles renders as expected
         yesno = deepcopy(complete_schema)
         yesno["fields"] = [field for field in yesno["fields"] if field["name"] == "yesno"]
-        schema = Schema.parse_obj(yesno)
+        schema = Schema.model_validate(yesno)
         form_rendering = render_crispy_form(schema.to_form({}))
         expected = """
-            <div id="div_id_yesno" class="form-group">
-                <label class="">Yes/no field?</label>
-                <div>
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
-                        <label class="custom-control-label" for="id_yesno_0">Yes</label>
+        <div class="form-row">
+            <div class="col-6">
+                <div id="div_id_yesno" class="form-group">
+                    <label class="">Yes/no field?</label>
+                    <div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" name="yesno" value="yes" id="id_yesno_0">
+                            <label class="custom-control-label" for="id_yesno_0">Yes</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
+                            <label class="custom-control-label" for="id_yesno_1">No</label>
+                        </div>
+                        <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
                     </div>
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
-                        <label class="custom-control-label" for="id_yesno_1">No</label>
-                    </div>
-                    <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
                 </div>
-            </div>"""
+            </div>
+        </div>
+        """
         assertInHTML(expected, form_rendering)
 
     def test_validation(self):
         schema_dict = {"fields": [{"name": "integer", "type": "integer", "required": True}]}
-        schema = Schema.parse_obj(schema_dict)
+        schema = Schema.model_validate(schema_dict)
         # check required
         form_data = {}
         form = schema.to_form(form_data)
@@ -65,7 +70,7 @@ class TestDynamicForm:
                 }
             ],
         }
-        schema = Schema.parse_obj(schema_dict)
+        schema = Schema.model_validate(schema_dict)
         # required should remain required when shown
         form_data = {"field1": "not value"}
         form = schema.to_form(form_data)

@@ -165,7 +165,7 @@ class VisualCustomizationPanel extends Component {
         );
     }
     renderAdvancedTab() {
-        const {settings, changeSettings} = this.props.store.subclass;
+        const {settings, changeSettings, getColumnsOptionsWithNull} = this.props.store.subclass;
         return (
             <div>
                 <div className="card">
@@ -314,6 +314,19 @@ class VisualCustomizationPanel extends Component {
                                 <ValueDisplaySelect
                                     onChange={value => changeSettings("show_counts", value)}
                                     value={settings.show_counts}
+                                />
+                            </div>
+                            <div className="col-md-3">
+                                <SelectInput
+                                    label="Count column"
+                                    name={"count_column"}
+                                    choices={getColumnsOptionsWithNull}
+                                    multiple={false}
+                                    handleSelect={value => changeSettings("count_column", value)}
+                                    value={settings.count_column}
+                                    helpText={
+                                        "Column used to calculate heatmap and filter widget counts; defaults to number of rows in the dataset."
+                                    }
                                 />
                             </div>
                         </div>

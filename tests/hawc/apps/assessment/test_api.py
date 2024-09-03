@@ -4,6 +4,9 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment import constants
+from hawc.apps.assessment.models import DSSTox
+
+from ..test_utils import get_client
 
 
 def has_redis():
@@ -99,11 +102,48 @@ class TestDatasetViewSet:
 class TestDssToxViewSet:
     def test_expected_response(self):
         dtxsid = "DTXSID6026296"
-        client = APIClient()
+        client = get_client("team", api=True)
         url = reverse("assessment:api:dsstox-detail", args=(dtxsid,))
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
+
+    def test_create_log_required(self):
+        data = {"dtxsid": "DTXSID1020190"}
+        url = reverse("assessment:api:dsstox-list")
+        client = get_client("", api=True)
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 403
+
+    @pytest.mark.vcr
+    def test_create_dtxsid(self):
+        data = {"dtxsid": "DTXSID1020190"}
+        url = reverse("assessment:api:dsstox-list")
+        client = get_client("team", api=True)
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 201
+        created = DSSTox.objects.get(dtxsid=resp.json()["dtxsid"])
+        assert resp.json()["content"]["preferredName"] == created.content["preferredName"]
+
+    @pytest.mark.vcr
+    def test_existing_dtxsid(self):
+        data = {"dtxsid": "DTXSID6026296"}
+        client = get_client("team", api=True)
+        url = reverse("assessment:api:dsstox-list")
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+        assert resp.json()["dtxsid"] == [
+            "DSSTox substance with this DSSTox substance identifier (DTXSID) already exists."
+        ]
+
+    @pytest.mark.vcr
+    def test_invalid_dtxsid(self):
+        data = {"dtxsid": "dtxsid0000000000"}
+        client = get_client("team", api=True)
+        url = reverse("assessment:api:dsstox-list")
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+        assert resp.json() == ["Invalid DTXSID: dtxsid0000000000"]
 
 
 @pytest.mark.django_db
@@ -244,3 +284,35 @@ class TestAssessmentViewSet:
         response = client.get(url + "?query=58-08-2")
         assert response.status_code == 200
         assert len(response.json()) == 1
+
+    def test_endpoints(self, db_keys):
+        url = reverse("assessment:api:assessment-endpoints", args=(db_keys.assessment_final,))
+        client = get_client("pm", True)
+        response = client.get(url)
+        assert response.status_code == 200
+        assert len(response.json()["items"]) == 21
+
+
+@pytest.mark.django_db
+class TestEffectTagViewSet:
+    def test_anon_permissions(self):
+        anon = get_client(api=True)
+        url = reverse("assessment:api:effect-tag-list")
+
+        # list
+        response = anon.get(url)
+        assert response.status_code == 200
+
+        # create
+        response = anon.post(url, {"name": "foo", "slug": "foo"}, format="json")
+        assert response.status_code == 403
+
+        # detail
+        response = anon.get(reverse("assessment:api:effect-tag-detail", args=(1,)))
+        assert response.status_code == 200
+
+    def test_create(self):
+        team = get_client("team", api=True)
+        url = reverse("assessment:api:effect-tag-list")
+        response = team.post(url, {"name": "foo", "slug": "foo"}, format="json")
+        assert response.status_code == 201

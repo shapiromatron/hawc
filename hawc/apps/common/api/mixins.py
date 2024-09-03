@@ -31,11 +31,7 @@ class ListUpdateModelMixin:
             header_name = "http_{}".format(self.bulk_header.strip().replace("-", "_")).upper()
             return (
                 bool(self.request.META.get(header_name, None)),
-                {
-                    "detail": "Header '{}' should be provided for bulk operation.".format(
-                        self.bulk_header
-                    )
-                },
+                {"detail": f"Header '{self.bulk_header}' should be provided for bulk operation."},
             )
         else:
             return True, {}
@@ -73,7 +69,7 @@ class ListUpdateModelMixin:
                     try:
                         value = validator(value)
                     except ValidationError as err:
-                        raise DrfValidationError(err)
+                        raise DrfValidationError(err) from None
                 update_bulk_dict[field.source or field_name] = value
         return update_bulk_dict
 

@@ -15,7 +15,7 @@ from ..common.autocomplete import (
 )
 from ..common.forms import (
     BaseFormHelper,
-    CopyAsNewSelectorForm,
+    CopyForm,
     check_unique_for_assessment,
     form_actions_create_or_close,
 )
@@ -149,11 +149,6 @@ class StudyPopulationForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -168,7 +163,7 @@ class StudyPopulationForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("age_profile", 2, "col-md-6")
         helper.add_row("countries", 3, "col-md-4")
@@ -191,10 +186,19 @@ class StudyPopulationForm(forms.ModelForm):
         return cleaned_data
 
 
-class StudyPopulationSelectorForm(CopyAsNewSelectorForm):
-    label = "Study Population"
-    parent_field = "study_id"
-    autocomplete_class = autocomplete.StudyPopulationAutocomplete
+class StudyPopulationSelectorForm(CopyForm):
+    legend_text = "Copy Study Population"
+    help_text = "Select an existing study population as a template to create a new one."
+    create_url_pattern = "epi:sp_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.StudyPopulation.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study=self.parent
+        )
 
 
 class AdjustmentFactorForm(forms.ModelForm):
@@ -261,11 +265,6 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -280,7 +279,7 @@ class ExposureForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("inhalation", 6, "col-md-2")
         helper.add_row("measured", 3, "col-md-4")
@@ -288,12 +287,14 @@ class ExposureForm(forms.ModelForm):
         helper.add_row("age_of_exposure", 3, "col-md-6")
 
         inhalation_idx = helper.find_layout_idx_for_field_name("inhalation")
-        helper.layout[inhalation_idx].append(
+        helper.layout[inhalation_idx].css_class = "px-3"
+        helper.layout.insert(
+            inhalation_idx,
             cfl.HTML(
-                f"""<div class="col-md-12 pb-2">
-                    <small class="form-text text-muted">{self.instance.ROUTE_HELP_TEXT}</small>
-                </div>"""
-            )
+                f"""<div class="form-group mb-2">
+                <p><b>Exposure Route(s)</b></p>
+                <p class="text-muted">{self.instance.ROUTE_HELP_TEXT}</p></div>"""
+            ),
         )
 
         helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
@@ -306,10 +307,19 @@ class ExposureForm(forms.ModelForm):
         return helper
 
 
-class ExposureSelectorForm(CopyAsNewSelectorForm):
-    label = "Exposure"
-    parent_field = "study_population_id"
-    autocomplete_class = autocomplete.ExposureAutocomplete
+class ExposureSelectorForm(CopyForm):
+    legend_text = "Copy Exposure"
+    help_text = "Select an existing exposure as a template to create a new one."
+    create_url_pattern = "epi:exp_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Exposure.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study_population=self.parent
+        )
 
 
 class OutcomeForm(forms.ModelForm):
@@ -355,11 +365,6 @@ class OutcomeForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -374,7 +379,7 @@ class OutcomeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("system", 3, "col-md-4")
         helper.add_row("diagnostic", 2, "col-md-6")
@@ -386,10 +391,19 @@ class OutcomeForm(forms.ModelForm):
         return helper
 
 
-class OutcomeSelectorForm(CopyAsNewSelectorForm):
-    label = "Outcome"
-    parent_field = "study_population_id"
-    autocomplete_class = autocomplete.OutcomeAutocomplete
+class OutcomeSelectorForm(CopyForm):
+    legend_text = "Copy Outcome"
+    help_text = "Select an existing outcome as a template to create a new one."
+    create_url_pattern = "epi:outcome_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Outcome.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study_population=self.parent
+        )
 
 
 class ComparisonSet(forms.ModelForm):
@@ -418,11 +432,6 @@ class ComparisonSet(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             if self.instance.outcome:
                 url = self.instance.outcome.get_absolute_url()
@@ -441,20 +450,38 @@ class ComparisonSet(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         return helper
 
 
-class ComparisonSetByStudyPopulationSelectorForm(CopyAsNewSelectorForm):
-    label = "Comparison set"
-    parent_field = "study_population_id"
-    autocomplete_class = autocomplete.ComparisonSetAutocomplete
+class ComparisonSetByStudyPopulationSelectorForm(CopyForm):
+    legend_text = "Copy Comparison Set"
+    help_text = "Select an existing comparison set as a template to create a new one."
+    create_url_pattern = "epi:cs_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.ComparisonSet.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study_population=self.parent
+        )
 
 
-class ComparisonSetByOutcomeSelectorForm(CopyAsNewSelectorForm):
-    label = "Comparison set"
-    parent_field = "outcome_id"
-    autocomplete_class = autocomplete.ComparisonSetAutocomplete
+class ComparisonSetByOutcomeSelectorForm(CopyForm):
+    legend_text = "Copy Comparison Set"
+    help_text = "Select an existing comparison set as a template to create a new one."
+    create_url_pattern = "epi:cs_outcome_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.ComparisonSet.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            outcome=self.parent
+        )
 
 
 class GroupForm(forms.ModelForm):
@@ -468,11 +495,6 @@ class SingleGroupForm(GroupForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         inputs = {
             "legend_text": f"Update {self.instance}",
             "help_text": self.HELP_TEXT_UPDATE,
@@ -480,7 +502,7 @@ class SingleGroupForm(GroupForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("sex", 2, "col-md-6")
         helper.add_row("eligible_n", 3, "col-md-4")
@@ -648,11 +670,6 @@ class ResultForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -667,7 +684,7 @@ class ResultForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("metric", 3, "col-md-4")
         helper.add_row("data_location", 2, "col-md-6")
@@ -693,10 +710,19 @@ class ResultForm(forms.ModelForm):
         return helper
 
 
-class ResultSelectorForm(CopyAsNewSelectorForm):
-    label = "Result"
-    parent_field = "outcome_id"
-    autocomplete_class = autocomplete.ResultAutocomplete
+class ResultSelectorForm(CopyForm):
+    legend_text = "Copy Result"
+    help_text = "Select an existing result as a template to create a new one."
+    create_url_pattern = "epi:result_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Result.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            outcome=self.parent
+        )
 
 
 class ResultUpdateForm(ResultForm):

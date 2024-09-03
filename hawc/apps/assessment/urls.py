@@ -11,6 +11,7 @@ router.register("value", api.AssessmentValueViewSet, basename="value")
 router.register("dataset", api.DatasetViewSet, basename="dataset")
 router.register("dsstox", api.DssToxViewSet, basename="dsstox")
 router.register("strain", api.StrainViewSet, basename="strain")
+router.register("effect-tag", api.EffectTagViewSet, basename="effect-tag")
 
 
 app_name = "assessment"
@@ -67,28 +68,9 @@ urlpatterns = [
     ),
     # attachment objects
     path(
-        "attachment/<int:pk>/create/",
+        "attachment/<int:pk>/<slug:action>/",
         views.AttachmentViewSet.as_view(),
-        {"action": "create"},
-        name="attachment-create",
-    ),
-    path(
-        "attachment/<int:pk>/",
-        views.AttachmentViewSet.as_view(),
-        {"action": "read"},
-        name="attachment-detail",
-    ),
-    path(
-        "attachment/<int:pk>/update/",
-        views.AttachmentViewSet.as_view(),
-        {"action": "update"},
-        name="attachment-update",
-    ),
-    path(
-        "attachment/<int:pk>/delete/",
-        views.AttachmentViewSet.as_view(),
-        {"action": "delete"},
-        name="attachment-delete",
+        name="attachment-htmx",
     ),
     # dataset
     path("<int:pk>/dataset/create/", views.DatasetCreate.as_view(), name="dataset_create"),

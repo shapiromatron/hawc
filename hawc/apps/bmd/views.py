@@ -26,7 +26,7 @@ class AssessSettingsUpdate(BaseUpdate):
     success_message = "BMD Settings updated."
     model = models.AssessmentSettings
     form_class = forms.AssessmentSettingsForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_object(self, **kwargs):
         # get the bmd settings of the specified assessment
@@ -42,8 +42,10 @@ class SessionCreate(RedirectView):
             raise PermissionDenied()
         try:
             obj = models.Session.create_new(self.object)
-        except ValueError:
-            raise BadRequest("Assessment BMDS version is unsupported, can't create a new session.")
+        except ValueError as exc:
+            raise BadRequest(
+                "Assessment BMDS version is unsupported, can't create a new session."
+            ) from exc
         return obj.get_update_url()
 
 
@@ -90,7 +92,7 @@ class SessionUpdate(BaseDetail):
     success_message = "BMD session updated."
     model = models.Session
     get_app_config = partialmethod(_get_session_config, is_editing=True)
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)

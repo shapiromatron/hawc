@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from ..assessment.api import user_can_edit_object
 from ..assessment.models import DoseUnits, DSSTox
-from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
+from ..assessment.serializers import DSSToxSerializer, RelatedEffectTagSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
@@ -42,8 +42,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
         if dtxsid:
             try:
                 data["dtxsid"] = DSSTox.objects.get(pk=dtxsid)
-            except models.ObjectDoesNotExist:
-                raise serializers.ValidationError(dict(dtxsid=f"DSSTox {dtxsid} does not exist"))
+            except models.ObjectDoesNotExist as exc:
+                raise serializers.ValidationError(
+                    dict(dtxsid=f"DSSTox {dtxsid} does not exist")
+                ) from exc
 
         return data
 
@@ -236,10 +238,10 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
 
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    effects = EffectTagsSerializer(read_only=True)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
-    groups = EndpointGroupSerializer(many=True, required=False)
     name = serializers.CharField(required=False)
+    effects = RelatedEffectTagSerializer(required=False, many=True)
+    groups = EndpointGroupSerializer(required=False, many=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -254,9 +256,9 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret["variance_name"] = instance.variance_name
         ret["data_type_label"] = instance.get_data_type_display()
         ret["observation_time_units"] = instance.get_observation_time_units_display()
-        ret[
-            "expected_adversity_direction_text"
-        ] = instance.get_expected_adversity_direction_display()
+        ret["expected_adversity_direction_text"] = (
+            instance.get_expected_adversity_direction_display()
+        )
         ret["monotonicity"] = instance.get_monotonicity_display()
         ret["trend_result"] = instance.get_trend_result_display()
         ret["additional_fields"] = json.loads(instance.additional_fields)
@@ -365,10 +367,12 @@ class EndpointSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         validated_data.pop("groups", None)
-        endpoint = models.Endpoint.objects.create(**validated_data)
+        effects = validated_data.pop("effects", [])
+        instance = models.Endpoint.objects.create(**validated_data)
         for group_serializer in self.group_serializers:
-            group_serializer.save(endpoint_id=endpoint.id)
-        return endpoint
+            group_serializer.save(endpoint_id=instance.id)
+        instance.effects.set(effects)
+        return instance
 
     class Meta:
         model = models.Endpoint

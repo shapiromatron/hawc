@@ -1,7 +1,11 @@
 import pytest
 from django.http.response import HttpResponse
+from django.test import RequestFactory
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
+from wagtail.admin.views.account import AccountView, BaseSettingsPanel, NameEmailSettingsPanel
+
+from hawc.apps.myuser.models import HAWCUser
 
 from ..test_utils import check_200, get_client
 
@@ -55,11 +59,9 @@ class TestDashboard:
             resp = pm_client.get(url)
             check_admin_login_redirect(resp)
             resp = admin_client.get(url)
-            assert resp.status_code == 400
-            resp = admin_client.get(url, HTTP_HX_REQUEST="true")
             assert resp.status_code == 200
 
-    def test_htmx_post(self):
+    def test_htmx_form_get(self):
         admin_client = get_client("admin")
         requests = [
             ("?action=growth", {"assessment_id": 1, "grouper": "W"}),
@@ -67,13 +69,12 @@ class TestDashboard:
         ]
         for extra, data in requests:
             url = reverse("admin_dashboard") + extra
-            resp = admin_client.get(url, HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url)
             assert resp.status_code == 200
-            resp = admin_client.post(url, data=data, HTTP_HX_REQUEST="true")
+            resp = admin_client.get(url, data=data)
             assert resp.status_code == 200
 
 
-@pytest.mark.django_db
 @pytest.mark.django_db
 class TestMediaPreview:
     def test_permission(self):
@@ -87,3 +88,19 @@ class TestMediaPreview:
         client = get_client("admin")
         resp = check_200(client, url)
         assertTemplateUsed(resp, "admin/media_preview.html")
+
+
+@pytest.mark.django_db
+class TestWagtailAccounts:
+    def test_no_name_email_panel(self):
+        # confirm `NameEmailSettingsPanel` is removed from the accounts page
+        factory = RequestFactory()
+        request = factory.get("/admin/cms/account/")
+        request.user = HAWCUser.objects.filter(is_superuser=True).first()
+        view = AccountView()
+        view.setup(request)
+        context = view.get_context_data()
+        for panel_set in context["panels_by_tab"].values():
+            for panel in panel_set:
+                assert isinstance(panel, BaseSettingsPanel)
+                assert not isinstance(panel, NameEmailSettingsPanel)

@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import pytest
 from django.core.cache import cache
@@ -8,22 +10,12 @@ import hawc.apps.epiv2.models as epiv2models
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment import constants
 from hawc.apps.assessment.models import DoseUnits, Strain
-from hawc.apps.epi.models import (
-    ComparisonSet,
-    Criteria,
-    Exposure,
-    Group,
-    GroupNumericalDescriptions,
-    GroupResult,
-    Outcome,
-    Result,
-    ResultMetric,
-    StudyPopulation,
-)
+from hawc.apps.epi.models import ResultMetric
 from hawc.apps.lit.models import Reference
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study import constants as studyconstants
 from hawc.apps.study.models import Study
+from hawc.apps.summary.models import DataPivot
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
@@ -235,6 +227,7 @@ class TestClient(LiveServerTestCase, TestCase):
             power_notes="...",
             results_notes="...",
             endpoint_notes="...",
+            effects=["tag1"],
             groups=[
                 dict(
                     dose_group_id=0,
@@ -267,6 +260,9 @@ class TestClient(LiveServerTestCase, TestCase):
         )
         endpoint = client.animal.create_endpoint(data)
         assert isinstance(endpoint, dict) and endpoint["id"] > 0
+        assert len(endpoint["effects"]) == 1
+        assert endpoint["effects"][0] == {"name": "tag1", "slug": "tag1"}
+        assert len(endpoint["groups"]) == 3
 
         # test cleanup; remove what we just created
         Experiment.objects.filter(id=experiment["id"]).delete()
@@ -313,6 +309,21 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, list)
         assert len(response) == 3
 
+    def test_effect_tag(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        # test create
+        response = client.assessment.effect_tag_create(name="foo", slug="foo")
+        assert response == {"name": "foo", "slug": "foo"}
+
+        # test list
+        response = client.assessment.effect_tag_list()
+        assert response["count"] >= 3
+
+        response = client.assessment.effect_tag_list(name="foo")
+        assert response["count"] == 1
+        assert response["results"] == [{"name": "foo", "slug": "foo"}]
+
     ###################
     # EpiClient tests #
     ###################
@@ -332,14 +343,15 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.epi.metadata(self.db_keys.assessment_client)
         assert isinstance(response, dict)
 
-    def test_epi_create(self):
+    def test_epi_crud(self):
         """
-        Test all the create methods for epi
+        Test all the CRUD methods for epi
         """
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
 
-        # study population
+        # Study Population #
+        # create
         study_pop_name = "test study pop"
         data = dict(
             study=self.db_keys.study_working,
@@ -356,7 +368,20 @@ class TestClient(LiveServerTestCase, TestCase):
         study_pop_id = study_pop["id"]
         assessment_id = study_pop["study"]["assessment"]
 
-        # criteria
+        # read
+        assert client.epi.get_study_population(study_pop_id) == study_pop
+
+        study_pop_list = client.epi.get_study_populations(self.db_keys.assessment_working)
+        assert isinstance(study_pop_list, pd.DataFrame) and study_pop_list.shape[0] == 1
+
+        # update
+        study_pop = client.epi.update_study_population(
+            study_pop_id, {"region": "some other region"}
+        )
+        assert study_pop["region"] == "some other region"
+
+        # Criteria #
+        # create
         criteria_desc = "test criteria"
         criteria = client.epi.create_criteria(
             {"description": criteria_desc, "assessment": assessment_id}
@@ -364,7 +389,16 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(criteria, dict) and criteria["description"] == criteria_desc
         criteria_id = criteria["id"]
 
-        # exposure
+        # read
+        assert client.epi.get_criteria(criteria_id)["description"] == criteria_desc
+
+        # update
+        updated_criteria = client.epi.update_criteria(
+            criteria_id, {"description": "updated test criteria"}
+        )
+        assert updated_criteria["description"] == "updated test criteria"
+
+        # Exposure #
         exposure_name = "test exposure"
         dose_units = DoseUnits.objects.first()
         exposure = client.epi.create_exposure(
@@ -402,7 +436,15 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(exposure, dict) and exposure["name"] == exposure_name
         exposure_id = exposure["id"]
 
-        # comparison set
+        # read
+        assert client.epi.get_exposure(exposure_id)["name"] == exposure_name
+
+        # update
+        exposure = client.epi.update_exposure(exposure_id, {"description": "my longer desc"})
+        assert exposure["description"] == "my longer desc"
+
+        # Comparison Set #
+        # create
         comparison_set_name = "test comparison set"
         comparison_set = client.epi.create_comparison_set(
             {
@@ -415,7 +457,17 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(comparison_set, dict) and comparison_set["name"] == comparison_set_name
         comparison_set_id = comparison_set["id"]
 
-        # group
+        # read
+        assert client.epi.get_comparison_set(comparison_set_id) == comparison_set
+
+        # update
+        comparison_set = client.epi.update_comparison_set(
+            comparison_set_id, {"description": "updated description here"}
+        )
+        assert comparison_set["description"] == "updated description here"
+
+        # Group #
+        # create
         group_name = "test group"
         group = client.epi.create_group(
             {
@@ -436,7 +488,14 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(group, dict) and group["name"] == group_name
         group_id = group["id"]
 
-        # group numerical description
+        # read
+        assert client.epi.get_group(group_id)["name"] == group_name
+
+        # update
+        group = client.epi.update_group(group_id, {"comments": "updated comments"})
+        assert group["comments"] == "updated comments"
+
+        # Group Numerical Description #
         num_desc = "test numerical description"
         nd = client.epi.create_numerical_description(
             {
@@ -452,7 +511,14 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(nd, dict) and nd["description"] == num_desc
         nd_id = nd["id"]
 
-        # outcome
+        # read
+        assert client.epi.get_numerical_description(nd_id)["description"] == num_desc
+
+        # update
+        nd = client.epi.update_numerical_description(nd_id, {"mean": 2.4})
+        assert nd["mean"] == 2.4
+
+        # Outcome #
         outcome_name = "test outcome"
         outcome = client.epi.create_outcome(
             {
@@ -467,12 +533,22 @@ class TestClient(LiveServerTestCase, TestCase):
                 "summary": "my dsummary",
                 "effect": "my effect",
                 "effect_subtype": "my subtype",
+                "effects": ["tag1"],
             }
         )
         assert isinstance(outcome, dict) and outcome["name"] == outcome_name
         outcome_id = outcome["id"]
+        assert len(outcome["effects"]) == 1
+        assert outcome["effects"][0] == {"name": "tag1", "slug": "tag1"}
 
-        # result
+        # read
+        assert client.epi.get_outcome(outcome_id)["name"] == outcome_name
+
+        # update
+        outcome = client.epi.update_outcome(outcome_id, {"effect": "updated effect"})
+        assert outcome["effect"] == "updated effect"
+
+        # Result #
         result_name = "test result"
         result_metric = ResultMetric.objects.first()
         result = client.epi.create_result(
@@ -497,12 +573,24 @@ class TestClient(LiveServerTestCase, TestCase):
                 "factors_applied": ["birth order"],
                 "factors_considered": ["dynamic factor", "study center"],
                 "comments": "comments go here",
+                "resulttags": ["tag2"],
             }
         )
         assert isinstance(result, dict) and result["name"] == result_name
         result_id = result["id"]
+        assert len(result["resulttags"]) == 1
+        assert result["resulttags"][0] == {"name": "tag2", "slug": "tag2"}
 
-        # group result
+        # read
+        assert client.epi.get_result(result_id)["name"] == result_name
+
+        # update
+        result = client.epi.update_result(
+            result_id, {"metric_description": "updated met desc here"}
+        )
+        assert result["metric_description"] == "updated met desc here"
+
+        # Group Result #
         gr_pval = 0.432
         group_result = client.epi.create_group_result(
             {
@@ -524,16 +612,23 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(group_result, dict) and group_result["p_value"] == gr_pval
         group_result_id = group_result["id"]
 
+        # read
+        assert client.epi.get_group_result(group_result_id)["p_value"] == gr_pval
+
+        # update
+        group_result = client.epi.update_group_result(group_result_id, {"n": 51})
+        assert group_result["n"] == 51
+
         # test cleanup; remove what we just created
-        Criteria.objects.filter(id=criteria_id).delete()
-        GroupResult.objects.filter(id=group_result_id).delete()
-        Result.objects.filter(id=result_id).delete()
-        Outcome.objects.filter(id=outcome_id).delete()
-        GroupNumericalDescriptions.objects.filter(id=nd_id).delete()
-        Group.objects.filter(id=group_id).delete()
-        ComparisonSet.objects.filter(id=comparison_set_id).delete()
-        Exposure.objects.filter(id=exposure_id).delete()
-        StudyPopulation.objects.filter(id=study_pop_id).delete()
+        assert client.epi.delete_criteria(criteria_id).status_code == 204
+        assert client.epi.delete_group_result(group_result_id).status_code == 204
+        assert client.epi.delete_result(result_id).status_code == 204
+        assert client.epi.delete_outcome(outcome_id).status_code == 204
+        assert client.epi.delete_numerical_description(nd_id).status_code == 204
+        assert client.epi.delete_group(group_id).status_code == 204
+        assert client.epi.delete_comparison_set(comparison_set_id).status_code == 204
+        assert client.epi.delete_exposure(exposure_id).status_code == 204
+        assert client.epi.delete_study_population(study_pop_id).status_code == 204
 
     #####################
     # EpiV2Client tests #
@@ -831,7 +926,7 @@ class TestClient(LiveServerTestCase, TestCase):
         epi_client = client.epiv2
 
         metadata = epi_client.metadata()
-        assert type(metadata) is dict
+        assert isinstance(metadata, dict)
 
         # spotcheck a few items in the returned metadata
         things_to_check = [
@@ -1129,10 +1224,19 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_reviews(self):
         client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
         response = client.riskofbias.reviews(self.db_keys.assessment_final)
         assert isinstance(response, list) and len(response) > 0
         assert len(response) == 6
         assert response[0]["scores"][0]["score_symbol"] == "++"
+
+    def test_riskofbias_final_reviews(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("team@hawcproject.org", "pw")
+        response = client.riskofbias.final_reviews(self.db_keys.assessment_final)
+        assert isinstance(response, list) and len(response) > 0
+        assert len(response) > 0
+        assert all(review["final"] is True for review in response)
 
     #######################
     # SummaryClient tests #
@@ -1142,6 +1246,67 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    def test_summary_crud(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("admin@hawcproject.org", "pw")
+        # Visual #
+        # create
+        visual_title = "barchart-2"
+        visual_data = {
+            "title": visual_title,
+            "slug": "barchart-2",
+            "visual_type": 3,
+            "evidence_type": 0,
+            "settings": json.loads(
+                '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}'
+            ),
+            "assessment": self.db_keys.assessment_working,
+            "prefilters": {},
+            "caption": "<p>caption</p>",
+            "published": True,
+            "sort_order": "short_citation",
+            "endpoints": [],
+            "studies": [],
+        }
+        visual = client.summary.create_visual(visual_data)
+        assert isinstance(visual, dict) and visual["title"] == visual_title
+        visual_id = visual["id"]
+
+        # read
+        visual = client.summary.get_visual(visual_id).json()
+        assert visual["title"] == visual_title
+
+        # update
+        visual_data["published"] = False
+        visual = client.summary.update_visual(visual_id, visual_data)
+        assert visual["published"] is False
+
+        # Data Pivot #
+        # read
+        slug = "animal-bioassay-data-pivot-endpoint"
+        dp_id = DataPivot.objects.get(slug=slug).pk
+        dp = client.summary.get_datapivot(dp_id).json()
+        assert dp["slug"] == slug
+
+        # create
+        new_slug = f"{slug}-2"
+        new_dp_data = dp.copy()
+        new_dp_data["slug"] = new_slug
+        new_dp_data.pop("id")
+        new_dp = client.summary.create_datapivot(new_dp_data)
+        assert new_dp["slug"] == new_slug
+        new_dp_id = new_dp["id"]
+
+        # update
+        assert new_dp_data["published"] is True
+        new_dp_data["published"] = False
+        new_dp = client.summary.update_datapivot(new_dp_id, new_dp_data)
+        assert new_dp["published"] is False
+
+        # Delete all the objects we created
+        assert client.summary.delete_visual(visual_id) is None
+        assert client.summary.delete_datapivot(new_dp_id) is None
 
     #####################
     # StudyClient tests #

@@ -21,6 +21,17 @@ class ReadOnlyAdmin(admin.ModelAdmin):
         return False
 
 
+class ReadOnlyTabularInline(admin.TabularInline):
+    def has_add_permission(self, request, obj):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 class YesNoFilter(admin.SimpleListFilter):
     """
     Filter to include/exclude a query.
@@ -69,7 +80,7 @@ def autocomplete(Model, field: str, multi: bool = False):
 @admin.display(description="Detailed edit link")
 def admin_edit_link(instance):
     """
-    Generate a read-only edit link in the admin for deatiled editing.
+    Generate a read-only edit link in the admin for detailed editing.
     """
     if instance.pk:
         url = reverse(

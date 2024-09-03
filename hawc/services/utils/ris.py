@@ -3,6 +3,7 @@ import re
 from copy import copy
 
 import rispy
+from rispy.parser import ParseError
 
 from .authors import get_author_short_text, normalize_authors
 
@@ -26,7 +27,7 @@ class RisImporter:
             [content for content in reader]
             f.seek(0)
             return True
-        except OSError as err:
+        except ParseError as err:
             logger.warning(err)
             return False
 
@@ -138,8 +139,8 @@ class ReferenceParser:
             return None
         try:
             return int(value)
-        except ValueError:
-            raise ValueError(f"Invalid year: {value}")
+        except ValueError as err:
+            raise ValueError(f"Invalid year: {value}") from err
 
     def get_doi(self, val) -> str | None:
         doi = self.content.get("doi", None)
@@ -150,8 +151,8 @@ class ReferenceParser:
     def get_id(self, val) -> int:
         try:
             return int(val)
-        except (TypeError, ValueError):
-            raise ValueError(self.ID_MISSING)
+        except (TypeError, ValueError) as err:
+            raise ValueError(self.ID_MISSING) from err
 
     def _get_field(self, fields, default):
         for fld in fields:
@@ -163,7 +164,7 @@ class ReferenceParser:
         # get PMID if specified in that field
         if "pubmed_id" in self.content:
             pubmed_id = self.content["pubmed_id"]
-            if type(pubmed_id) is int:
+            if isinstance(pubmed_id, int):
                 return pubmed_id
             else:
                 m = self.re_pmid.findall(pubmed_id)

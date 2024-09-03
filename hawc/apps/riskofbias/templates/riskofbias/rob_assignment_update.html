@@ -1,17 +1,17 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-        <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
-        {% actions %}
-            <a class="dropdown-item" href="{% url 'riskofbias:rob_num_reviewers' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update number of reviewers</a>
-        {% endactions %}
-    </div>
-    {% include 'common/inline_filter_form.html' %}
-    <div id="main"></div>
-    {% include "includes/paginator.html" with plural_object_name="assignments" %}
+  <div class="d-flex">
+    <h2>Update {{assessment.get_rob_name_display|lower}} assignments</h2>
+    {% actions %}
+      <a class="dropdown-item" href="{% url 'riskofbias:rob_num_reviewers' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update number of reviewers</a>
+    {% endactions %}
+  </div>
+  {% include 'common/inline_filter_form.html' %}
+  <div id="main"></div>
+  {% include "includes/paginator.html" with plural_object_name="assignments" %}
 {% endblock %}
 
 {% block extrajs %}
-    {{config|json_script:"config"}}
+  {{config|json_script:"config"}}
 {% endblock extrajs %}

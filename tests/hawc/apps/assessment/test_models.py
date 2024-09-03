@@ -53,6 +53,15 @@ class TestContent:
         assert cache.get(key) is None
 
 
+class TestAssessmentDetail:
+    def test_get_peer_review_status_display(self):
+        obj = models.AssessmentDetail(peer_review_status=constants.PeerReviewType.JOURNAL)
+        assert obj.get_peer_review_status_display() == constants.PeerReviewType.JOURNAL.label
+
+        obj = models.AssessmentDetail(peer_review_status=constants.PeerReviewType.OTHER)
+        assert obj.get_peer_review_status_display() == ""
+
+
 class TestDSSTox:
     @pytest.mark.django_db
     def test_pydantic_model(self):
@@ -62,4 +71,4 @@ class TestDSSTox:
             models.DSSTox.objects.get(dtxsid="DTXSID7020970"),
         ]
         for chem in chemicals:
-            models.DSSTox.Content.parse_obj(chem.content)
+            models.DSSTox.Content.model_validate(chem.content)

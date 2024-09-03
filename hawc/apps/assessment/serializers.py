@@ -2,22 +2,33 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from plotly.subplots import make_subplots
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
 
+from ...services.epa.dsstox import DssSubstance
 from ..common.serializers import FlexibleChoiceField
 from ..study.models import Study
 from . import constants, models
 
 
 class DSSToxSerializer(serializers.ModelSerializer):
-    dashboard_url = serializers.URLField(source="get_dashboard_url")
-    img_url = serializers.URLField(source="get_img_url")
+    dashboard_url = serializers.URLField(source="get_dashboard_url", read_only=True)
+    img_url = serializers.URLField(source="get_img_url", read_only=True)
 
     class Meta:
         model = models.DSSTox
         fields = "__all__"
+        read_only_fields = ["content"]
+
+    def create(self, validated_data):
+        try:
+            substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
+        except ValueError as exc:
+            raise serializers.ValidationError(
+                f"Invalid DTXSID: {validated_data["dtxsid"]}"
+            ) from exc
+        return models.DSSTox.objects.create(dtxsid=substance.dtxsid, content=substance.content)
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
@@ -91,17 +102,24 @@ class AssessmentValueSerializer(serializers.ModelSerializer):
         exclude = ("created", "last_updated")
 
 
-class EffectTagsSerializer(serializers.ModelSerializer):
-    def to_internal_value(self, data):
-        raise ParseError("Not implemented!")
-
-    def to_representation(self, obj):
-        # obj is a model-manager in this case; convert to list to serialize
-        return list(obj.values("slug", "name"))
-
+class EffectTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EffectTag
-        fields = "__all__"
+        fields = ["name", "slug"]
+
+
+class RelatedEffectTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.EffectTag
+        fields = ["name", "slug"]
+
+    def to_internal_value(self, data):
+        if not isinstance(data, str):
+            raise serializers.ValidationError(f"'{data}' must be a string.")
+        try:
+            return models.EffectTag.objects.get(name=data)
+        except ObjectDoesNotExist as exc:
+            raise serializers.ValidationError(f"'{data}' not found.") from exc
 
 
 class DoseUnitsSerializer(serializers.ModelSerializer):

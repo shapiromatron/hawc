@@ -98,7 +98,7 @@ class StudyPopulationCriteria(models.Model):
     study_population = models.ForeignKey(
         "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
     )
-    criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType.choices)
+    criteria_type = models.CharField(max_length=1, choices=constants.CriteriaType)
 
 
 class StudyPopulation(models.Model):
@@ -137,7 +137,7 @@ class StudyPopulation(models.Model):
     )
     design = models.CharField(
         max_length=2,
-        choices=constants.Design.choices,
+        choices=constants.Design,
         help_text="Choose the most specific description of study design." + HAWC_VIS_NOTE,
     )
     age_profile = models.CharField(
@@ -206,57 +206,6 @@ class StudyPopulation(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "sp-id",
-            "sp-url",
-            "sp-name",
-            "sp-design",
-            "sp-age_profile",
-            "sp-source",
-            "sp-countries",
-            "sp-region",
-            "sp-state",
-            "sp-eligible_n",
-            "sp-invited_n",
-            "sp-participant_n",
-            "sp-inclusion_criteria",
-            "sp-exclusion_criteria",
-            "sp-confounding_criteria",
-            "sp-comments",
-            "sp-created",
-            "sp-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        def getCriteriaList(lst, filt):
-            return "|".join(
-                [d["description"] for d in [d for d in lst if d["criteria_type"] == filt]]
-            )
-
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["design"],
-            ser["age_profile"],
-            ser["source"],
-            "|".join([c["name"] for c in ser["countries"]]),
-            ser["region"],
-            ser["state"],
-            ser["eligible_n"],
-            ser["invited_n"],
-            ser["participant_n"],
-            getCriteriaList(ser["criteria"], "Inclusion"),
-            getCriteriaList(ser["criteria"], "Exclusion"),
-            getCriteriaList(ser["criteria"], "Confounding"),
-            ser["comments"],
-            ser["created"],
-            ser["last_updated"],
-        )
-
     class Meta:
         ordering = ("name",)
 
@@ -319,7 +268,7 @@ class Outcome(BaseEndpoint):
         help_text="Effect subtype, using common-vocabulary. Use title style (capitalize all words). Ex. Absolute"
         + formatHelpTextNotes("This field is not mandatory; often no effect subtype is necessary"),
     )
-    diagnostic = models.PositiveSmallIntegerField(choices=constants.Diagnostic.choices)
+    diagnostic = models.PositiveSmallIntegerField(choices=constants.Diagnostic)
     diagnostic_description = models.TextField(
         help_text='Copy and paste diagnostic methods directly from study. Ex. "Birth weight (grams) was measured by trained midwives at delivery." '
         + formatHelpTextNotes("Use quotation marks around direct quotes from a study")
@@ -378,44 +327,6 @@ class Outcome(BaseEndpoint):
 
     def can_create_sets(self):
         return not self.study_population.can_create_sets()
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "outcome-id",
-            "outcome-url",
-            "outcome-name",
-            "outcome-effects",
-            "outcome-system",
-            "outcome-effect",
-            "outcome-effect_subtype",
-            "outcome-diagnostic",
-            "outcome-diagnostic_description",
-            "outcome-age_of_measurement",
-            "outcome-outcome_n",
-            "outcome-summary",
-            "outcome-created",
-            "outcome-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            "|".join([str(d["name"]) for d in ser["effects"]]),
-            ser["system"],
-            ser["effect"],
-            ser["effect_subtype"],
-            ser["diagnostic"],
-            ser["diagnostic_description"],
-            ser["age_of_measurement"],
-            ser["outcome_n"],
-            ser["summary"],
-            ser["created"],
-            ser["last_updated"],
-        )
 
     def get_study(self):
         return self.study_population.get_study()
@@ -486,28 +397,6 @@ class ComparisonSet(models.Model):
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "cs-id",
-            "cs-url",
-            "cs-name",
-            "cs-description",
-            "cs-created",
-            "cs-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["description"],
-            ser["created"],
-            ser["last_updated"],
-        )
-
     def get_study(self):
         if self.study_population:
             return self.study_population.get_study()
@@ -547,7 +436,7 @@ class Group(models.Model):
         + "typically the group with the lowest or no exposure",
         blank=True,
     )
-    sex = models.CharField(max_length=1, default=constants.Sex.U, choices=constants.Sex.choices)
+    sex = models.CharField(max_length=1, default=constants.Sex.U, choices=constants.Sex)
     ethnicities = models.ManyToManyField(Ethnicity, blank=True, help_text="Optional")
     eligible_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Eligible N", help_text="Optional"
@@ -589,44 +478,6 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "group-id",
-            "group-group_id",
-            "group-name",
-            "group-numeric",
-            "group-comparative_name",
-            "group-sex",
-            "group-ethnicities",
-            "group-eligible_n",
-            "group-invited_n",
-            "group-participant_n",
-            "group-isControl",
-            "group-comments",
-            "group-created",
-            "group-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["group_id"],
-            ser["name"],
-            ser["numeric"],
-            ser["comparative_name"],
-            ser["sex"],
-            "|".join([d["name"] for d in ser["ethnicities"]]),
-            ser["eligible_n"],
-            ser["invited_n"],
-            ser["participant_n"],
-            ser["isControl"],
-            ser["comments"],
-            ser["created"],
-            ser["last_updated"],
-        )
 
 
 class Exposure(models.Model):
@@ -771,65 +622,6 @@ class Exposure(models.Model):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "exposure-id",
-            "exposure-url",
-            "exposure-name",
-            "exposure-inhalation",
-            "exposure-dermal",
-            "exposure-oral",
-            "exposure-in_utero",
-            "exposure-iv",
-            "exposure-unknown_route",
-            "exposure-measured",
-            "exposure-metric",
-            "exposure-metric_units_id",
-            "exposure-metric_units_name",
-            "exposure-metric_description",
-            "exposure-analytical_method",
-            "exposure-sampling_period",
-            "exposure-age_of_exposure",
-            "exposure-duration",
-            "exposure-n",
-            "exposure-exposure_distribution",
-            "exposure-description",
-            "exposure-created",
-            "exposure-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        if ser is None:
-            ser = {}
-        units = ser.get("metric_units", {})
-        return (
-            ser.get("id"),
-            ser.get("url"),
-            ser.get("name"),
-            ser.get("inhalation"),
-            ser.get("dermal"),
-            ser.get("oral"),
-            ser.get("in_utero"),
-            ser.get("iv"),
-            ser.get("unknown_route"),
-            ser.get("measured"),
-            ser.get("metric"),
-            units.get("id"),
-            units.get("name"),
-            ser.get("metric_description"),
-            ser.get("analytical_method"),
-            ser.get("sampling_period"),
-            ser.get("age_of_exposure"),
-            ser.get("duration"),
-            ser.get("n"),
-            ser.get("exposure_distribution"),
-            ser.get("description"),
-            ser.get("created"),
-            ser.get("last_updated"),
-        )
-
     def get_study(self):
         return self.study_population.get_study()
 
@@ -850,13 +642,13 @@ class CentralTendency(models.Model):
         + HAWC_VIS_NOTE,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=constants.EstimateType.choices,
+        choices=constants.EstimateType,
         verbose_name="Central estimate type",
         default=constants.EstimateType.NONE,
     )
     variance = models.FloatField(blank=True, null=True, verbose_name="Variance")
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+        choices=constants.VarianceType, default=constants.VarianceType.NONE
     )
     lower_ci = models.FloatField(
         blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value"
@@ -891,42 +683,6 @@ class CentralTendency(models.Model):
     def __str__(self):
         return f"{{CT id={self.id}, exposure={self.exposure}}}"
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "central_tendency-id",
-            "central_tendency-estimate",
-            "central_tendency-estimate_type",
-            "central_tendency-variance",
-            "central_tendency-variance_type",
-            "central_tendency-lower_ci",
-            "central_tendency-upper_ci",
-            "central_tendency-lower_range",
-            "central_tendency-upper_range",
-            "central_tendency-description",
-            "central_tendency-lower_bound_interval",
-            "central_tendency-upper_bound_interval",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        if ser is None:
-            ser = {}
-        return (
-            ser.get("id"),
-            ser.get("estimate"),
-            ser.get("estimate_type"),
-            ser.get("variance"),
-            ser.get("variance_type"),
-            ser.get("lower_ci"),
-            ser.get("upper_ci"),
-            ser.get("lower_range"),
-            ser.get("upper_range"),
-            ser.get("description"),
-            ser.get("lower_bound_interval"),
-            ser.get("upper_bound_interval"),
-        )
-
 
 class GroupNumericalDescriptions(models.Model):
     objects = managers.GroupNumericalDescriptionsManager()
@@ -939,7 +695,7 @@ class GroupNumericalDescriptions(models.Model):
     )
     mean = models.FloatField(blank=True, null=True, verbose_name="Central estimate")
     mean_type = models.PositiveSmallIntegerField(
-        choices=constants.GroupMeanType.choices,
+        choices=constants.GroupMeanType,
         verbose_name="Central estimate type",
         default=constants.GroupMeanType.NONE,
     )
@@ -948,15 +704,15 @@ class GroupNumericalDescriptions(models.Model):
     )
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.GroupVarianceType.choices, default=constants.GroupVarianceType.NONE
+        choices=constants.GroupVarianceType, default=constants.GroupVarianceType.NONE
     )
     lower = models.FloatField(blank=True, null=True)
     lower_type = models.PositiveSmallIntegerField(
-        choices=constants.LowerLimit.choices, default=constants.LowerLimit.NONE
+        choices=constants.LowerLimit, default=constants.LowerLimit.NONE
     )
     upper = models.FloatField(blank=True, null=True)
     upper_type = models.PositiveSmallIntegerField(
-        choices=constants.UpperLimit.choices, default=constants.UpperLimit.NONE
+        choices=constants.UpperLimit, default=constants.UpperLimit.NONE
     )
 
     class Meta:
@@ -1055,7 +811,7 @@ class Result(models.Model):
         verbose_name="Dose Response Trend",
         help_text=OPTIONAL_NOTE,
         default=constants.DoseResponse.NA,
-        choices=constants.DoseResponse.choices,
+        choices=constants.DoseResponse,
     )
     dose_response_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     prevalence_incidence = models.CharField(
@@ -1067,7 +823,7 @@ class Result(models.Model):
     statistical_power = models.PositiveSmallIntegerField(
         help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE,
         default=constants.StatisticalPower.NR,
-        choices=constants.StatisticalPower.choices,
+        choices=constants.StatisticalPower,
     )
     statistical_power_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     statistical_test_results = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1085,12 +841,12 @@ class Result(models.Model):
         blank=True,
     )
     estimate_type = models.PositiveSmallIntegerField(
-        choices=constants.EstimateType.choices,
+        choices=constants.EstimateType,
         verbose_name="Central estimate type",
         default=constants.EstimateType.NONE,
     )
     variance_type = models.PositiveSmallIntegerField(
-        choices=constants.VarianceType.choices, default=constants.VarianceType.NONE
+        choices=constants.VarianceType, default=constants.VarianceType.NONE
     )
     ci_units = models.FloatField(
         blank=True,
@@ -1130,72 +886,6 @@ class Result(models.Model):
 
     def get_absolute_url(self):
         return reverse("epi:result_detail", args=(self.pk,))
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "metric-id",
-            "metric-name",
-            "metric-abbreviation",
-            "result-id",
-            "result-name",
-            "result-metric_description",
-            "result-metric_units",
-            "result-data_location",
-            "result-population_description",
-            "result-dose_response",
-            "result-dose_response_details",
-            "result-prevalence_incidence",
-            "result-statistical_power",
-            "result-statistical_power_details",
-            "result-statistical_test_results",
-            "result-trend_test",
-            "result-adjustment_factors",
-            "result-adjustment_factors_considered",
-            "result-estimate_type",
-            "result-variance_type",
-            "result-ci_units",
-            "result-comments",
-            "result-created",
-            "result-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        def getFactorList(lst, isIncluded):
-            return "|".join(
-                [
-                    d["description"]
-                    for d in [d for d in lst if d["included_in_final_model"] == isIncluded]
-                ]
-            )
-
-        return (
-            ser["metric"]["id"],
-            ser["metric"]["metric"],
-            ser["metric"]["abbreviation"],
-            ser["id"],
-            ser["name"],
-            ser["metric_description"],
-            ser["metric_units"],
-            ser["data_location"],
-            ser["population_description"],
-            ser["dose_response"],
-            ser["dose_response_details"],
-            ser["prevalence_incidence"],
-            ser["statistical_power"],
-            ser["statistical_power_details"],
-            ser["statistical_test_results"],
-            ser["trend_test"],
-            getFactorList(ser["factors"], True),
-            getFactorList(ser["factors"], False),
-            ser["estimate_type"],
-            ser["variance_type"],
-            ser["ci_units"],
-            ser["comments"],
-            ser["created"],
-            ser["last_updated"],
-        )
 
     def get_study(self):
         return self.outcome.get_study()
@@ -1293,7 +983,8 @@ class Result(models.Model):
 
         df2 = pd.DataFrame(data=qs, columns=["id", *exposure_cols]).set_index("id")
         df2["exposure route"] = df2[exposure_cols].apply(
-            lambda x: "|".join(x.index[x == True]).replace("_", " "), axis=1  # noqa: E712
+            lambda x: "|".join(x.index[x == True]).replace("_", " "),  # noqa: E712
+            axis=1,
         )
         df2 = df2.drop(columns=exposure_cols)
 
@@ -1367,7 +1058,7 @@ class GroupResult(models.Model):
     )
     p_value_qualifier = models.CharField(
         max_length=1,
-        choices=constants.PValueQualifier.choices,
+        choices=constants.PValueQualifier,
         default="-",
         verbose_name="p-value qualifier",
         help_text="Select n.s. if results are not statistically significant; otherwise, choose the appropriate qualifier. "
@@ -1394,7 +1085,7 @@ class GroupResult(models.Model):
         + HAWC_VIS_NOTE_UNSTYLED,
     )
     main_finding_support = models.PositiveSmallIntegerField(
-        choices=constants.MainFinding.choices,
+        choices=constants.MainFinding,
         help_text="Select appropriate level of support for the main finding."
         + 'See "Results" section of https://ehp.niehs.nih.gov/1205502/ for examples and further details. '
         + 'Choose between "inconclusive" vs. "not-supportive" based on chemical- and study-specific context. '
@@ -1425,48 +1116,6 @@ class GroupResult(models.Model):
     @property
     def upper_bound_interval(self):
         return self.upper_range if self.upper_ci is None else self.upper_ci
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "result_group-id",
-            "result_group-n",
-            "result_group-estimate",
-            "result_group-variance",
-            "result_group-lower_ci",
-            "result_group-upper_ci",
-            "result_group-lower_range",
-            "result_group-upper_range",
-            "result_group-lower_bound_interval",
-            "result_group-upper_bound_interval",
-            "result_group-p_value_qualifier",
-            "result_group-p_value",
-            "result_group-is_main_finding",
-            "result_group-main_finding_support",
-            "result_group-created",
-            "result_group-last_updated",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["n"],
-            ser["estimate"],
-            ser["variance"],
-            ser["lower_ci"],
-            ser["upper_ci"],
-            ser["lower_range"],
-            ser["upper_range"],
-            ser["lower_bound_interval"],
-            ser["upper_bound_interval"],
-            ser["p_value_qualifier_display"],
-            ser["p_value"],
-            ser["is_main_finding"],
-            ser["main_finding_support"],
-            ser["created"],
-            ser["last_updated"],
-        )
 
     @staticmethod
     def stdev(variance_type, variance, n):
@@ -1544,7 +1193,7 @@ class GroupResult(models.Model):
             """
             control = None
 
-            for i, rg in enumerate(rgs):
+            for _i, rg in enumerate(rgs):
                 if rg["group"]["isControl"]:
                     control = rg
                     break
@@ -1559,7 +1208,7 @@ class GroupResult(models.Model):
 
         n_1, mu_1, sd_1 = get_control_group(rgs)
 
-        for i, rg in enumerate(rgs):
+        for _i, rg in enumerate(rgs):
             mean = low = high = None
 
             if estimate_type in ["median", "mean"] and variance_type in [

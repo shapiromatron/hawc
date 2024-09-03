@@ -95,6 +95,41 @@ export const DATA_FILTER_CONTAINS = "contains",
             return [];
         }
     },
+    readableCustomQueryFilters = function(filters, filter_query) {
+        let optMap = _.keyBy(DATA_FILTER_OPTIONS, "id"),
+            getValue = i => {
+                const filter = filters[i - 1], // convert 1 to 0 indexing
+                    valStr = _.isNaN(_.toNumber(filter.value))
+                        ? `"${filter.value}"`
+                        : `${filter.value}`;
+                return `"${filter.column}" ${optMap[filter.type].label} ${valStr} {${i}}`;
+            },
+            negateValue = v => {
+                return ["NOT", v];
+            },
+            andValues = (l, r) => {
+                return [l, "AND", r];
+            },
+            orValues = (l, r) => {
+                return [l, "OR", r];
+            },
+            stringify = (arr, depth) => {
+                if (!Array.isArray(arr)) {
+                    return `${"  ".repeat(depth)}${arr}`;
+                }
+                let flat_arr = [];
+                for (const v of arr) {
+                    flat_arr.push(stringify(v, depth + 1));
+                }
+                return `${"  ".repeat(depth)}(\n${flat_arr.join("\n")}\n${"  ".repeat(depth)})`;
+            };
+        try {
+            let parsed = Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            return stringify(parsed, 0);
+        } catch (err) {
+            return "Unable to parse query";
+        }
+    },
     applyFilterLogic = function(arr, filters, filter_logic, includes, excludes) {
         filters
             .filter(d => d.column !== NULL_VALUE)

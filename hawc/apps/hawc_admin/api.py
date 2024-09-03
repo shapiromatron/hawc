@@ -1,12 +1,14 @@
 from django.utils import timezone
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from ..assessment.exports import ValuesListExport
+from ..assessment import exports
+from ..assessment.filterset import AssessmentValueFilterSet
 from ..assessment.models import AssessmentValue
 from ..common.api import FivePerMinuteThrottle
+from ..common.api.filters import filtered_qs
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
 from .actions import media_metadata_report
@@ -40,7 +42,8 @@ class ReportsViewSet(viewsets.ViewSet):
     @action(detail=False, renderer_classes=PandasRenderers)
     def values(self, request):
         """Gets all value data across all assessments."""
-        export = ValuesListExport(
-            queryset=AssessmentValue.objects.all(), filename="hawc-assessment-values"
-        ).build_export()
-        return Response(export, status=status.HTTP_200_OK)
+        qs = AssessmentValue.objects.all()
+        exporter = exports.AssessmentExporter.flat_export(
+            filtered_qs(qs, AssessmentValueFilterSet, request), filename="assessment-values"
+        )
+        return Response(exporter)

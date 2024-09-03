@@ -1,4 +1,4 @@
-from django.db import migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -7,8 +7,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterIndexTogether(
-            name="identifiers",
-            index_together=set([("database", "unique_id")]),
+        migrations.AddIndex(
+            model_name="identifiers",
+            index=models.Index(
+                fields=["database", "unique_id"], name="lit_identif_databas_394ab9_idx"
+            ),
         ),
     ]

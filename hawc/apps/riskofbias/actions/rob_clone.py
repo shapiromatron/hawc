@@ -24,7 +24,7 @@ class BulkCopyAuthor(IntEnum):
 class BulkRobCopyData(pydantic.BaseModel):
     src_assessment_id: int
     dst_assessment_id: int
-    dst_author_id: int | None
+    dst_author_id: int | None = None
     src_dst_study_ids: list[tuple[int, int]]
     src_dst_metric_ids: list[tuple[int, int]]
     copy_mode: BulkCopyMode
@@ -201,8 +201,8 @@ class BulkRobCopyAction(BaseApiAction):
         if src_assessment is None or dst_assessment is None:
             return False, "Invalid source and/or destination assessment ID."
         if (
-            src_assessment.user_can_edit_assessment(request.user) is False
-            or dst_assessment.user_can_edit_assessment(request.user) is False
+            src_assessment.user_is_project_manager_or_higher(request.user) is False
+            or dst_assessment.user_is_project_manager_or_higher(request.user) is False
         ):
             return False, "Must be a Project Manager for source and destination assessments."
         return super().has_permission(request)

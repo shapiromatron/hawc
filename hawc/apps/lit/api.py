@@ -2,41 +2,32 @@ from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.express as px
-from django.conf import settings
-from django.core.cache import cache
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, mixins, permissions, status, viewsets
+from rest_framework import exceptions, mixins, permissions, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
 from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 
 from ..assessment.api import (
-    METHODS_NO_PUT,
-    AssessmentLevelPermissions,
     AssessmentRootedTagTreeViewSet,
+    BaseAssessmentViewSet,
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
-from ..common.helper import FlatExport, re_digits
+from ..common.helper import FlatExport, cacheable
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
 from . import constants, exports, filterset, models, serializers
 
 
-class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
+class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
-    filterset_class = None
     serializer_class = UnusedSerializer
-    lookup_value_regex = re_digits
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
     @action(
         detail=True,
@@ -266,10 +257,7 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         """
         instance = self.get_object()
         key = f"assessment-{instance.id}-lit-tag-heatmap"
-        df = cache.get(key)
-        if df is None:
-            df = models.Reference.objects.heatmap_dataframe(instance.id)
-            cache.set(key, df, settings.CACHE_1_HR)
+        df = cacheable(lambda: models.Reference.objects.heatmap_dataframe(instance.id), key)
         return FlatExport.api_response(df=df, filename=f"df-{instance.id}")
 
     @transaction.atomic
@@ -338,21 +326,15 @@ class LiteratureAssessmentViewSet(viewsets.GenericViewSet):
         try:
             # engine required since this is a BytesIO stream
             df = pd.read_excel(file_, engine="openpyxl")
-        except (BadZipFile, ValueError):
-            raise ParseError({"file": "Unable to parse excel file"})
+        except (BadZipFile, ValueError) as err:
+            raise ParseError({"file": "Unable to parse excel file"}) from err
 
         return FlatExport.api_response(df=df, filename=file_.name)
 
 
-class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class SearchViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, BaseAssessmentViewSet):
     model = models.Search
     serializer_class = serializers.SearchSerializer
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
-    lookup_value_regex = re_digits
-
-    def get_queryset(self):
-        return self.model.objects.all()
 
 
 class ReferenceFilterTagViewSet(AssessmentRootedTagTreeViewSet):
@@ -364,19 +346,20 @@ class ReferenceViewSet(
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
+    BaseAssessmentViewSet,
 ):
-    http_method_names = METHODS_NO_PUT
+    model = models.Reference
     serializer_class = serializers.ReferenceSerializer
-    permission_classes = (AssessmentLevelPermissions,)
-    action_perms = {}
-    queryset = models.Reference.objects.all()
+    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
     def get_queryset(self):
         qs = super().get_queryset()
         if self.action in ("tag", "resolve_conflict"):
             qs = qs.select_related("assessment__literature_settings").prefetch_related(
-                "user_tags__tags", "tags"
+                "user_tags__tags",
+                "tags",
+                "saved_tag_contents",
+                "assessment__udf_tag_bindings__form",
             )
         return qs
 
@@ -390,9 +373,12 @@ class ReferenceViewSet(
         if assessment.user_can_edit_object(self.request.user):
             try:
                 tags = [int(tag) for tag in self.request.data.get("tags", [])]
-                resolved = instance.update_tags(request.user, tags)
+                udf_data = self.request.data.get("udf_data")
+                resolved = instance.update_tags(request.user, tags, udf_data)
             except ValueError:
                 return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
+            except DjangoValidationError as err:
+                return Response({"UDF-form": err}, status=400)
             response["status"] = "success"
             response["resolved"] = resolved
         return Response(response)
@@ -423,11 +409,11 @@ class ReferenceViewSet(
 
     @action(
         detail=False,
-        url_path=r"search/type/(?P<db_id>[\d])/id/(?P<id>.*)",
+        url_path=r"search/type/(?P<db_id>\d)/id/(?P<id>.*)",
         renderer_classes=PandasRenderers,
         permission_classes=(permissions.IsAdminUser,),
     )
-    def id_search(self, request, id: str, db_id: int):
+    def id_search(self, request, db_id: str, id: str):
         db_id = int(db_id)
         if db_id not in constants.ReferenceDatabase:
             raise ValidationError({"type": f"Must be in {constants.ReferenceDatabase.choices}"})

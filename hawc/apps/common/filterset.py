@@ -74,7 +74,7 @@ class GridColumn(BaseModel):
 
 
 class GridRow(BaseModel):
-    columns: conlist(GridColumn, min_items=1)
+    columns: conlist(GridColumn, min_length=1)
 
     def apply_layout(self, helper, index):
         for i, column in enumerate(self.columns):
@@ -82,11 +82,11 @@ class GridRow(BaseModel):
         helper[index : index + len(self.columns)].wrap_together(cfl.Row)
 
 
-GridColumn.update_forward_refs()
+GridColumn.model_rebuild()
 
 
 class GridLayout(BaseModel):
-    rows: conlist(GridRow, min_items=1)
+    rows: conlist(GridRow, min_length=1)
 
     def apply_layout(self, helper):
         for i, row in enumerate(self.rows):
@@ -101,7 +101,7 @@ class InlineFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         """Grabs grid_layout kwarg and passes it to GridLayout to apply the layout."""
         layout = kwargs.pop("grid_layout", None)
-        self.grid_layout = GridLayout.parse_obj(layout) if layout else None
+        self.grid_layout = GridLayout.model_validate(layout) if layout else None
         self.main_field = kwargs.pop("main_field", None)
         self.appended_fields = kwargs.pop("appended_fields", [])
         self.dynamic_fields = kwargs.pop("dynamic_fields", [])
@@ -130,6 +130,7 @@ class ExpandableFilterForm(InlineFilterForm):
         """Remove 'is_expanded' from form data before data is used for filtering."""
         cleaned_data = super().clean()
         cleaned_data.pop("is_expanded", None)
+        return cleaned_data
 
 
 class BaseFilterSet(df.FilterSet):

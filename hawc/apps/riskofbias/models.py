@@ -14,7 +14,7 @@ from django.utils.html import strip_tags
 from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import constants, managers
@@ -75,7 +75,7 @@ class RiskOfBiasMetric(models.Model):
     description = models.TextField(
         blank=True, help_text="Detailed instructions for how to apply this metric."
     )
-    responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses.choices)
+    responses = models.PositiveSmallIntegerField(choices=constants.RiskOfBiasResponses)
     required_animal = models.BooleanField(
         default=True,
         verbose_name="Required for bioassay?",
@@ -268,25 +268,6 @@ class RiskOfBias(models.Model):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    @staticmethod
-    def flat_header_row(final_only: bool = True):
-        col = ["rob-id", "rob-created", "rob-last_updated"]
-        if not final_only:
-            col[1:1] = ["rob-active", "rob-final", "rob-author_id", "rob-author_name"]
-        return col
-
-    @staticmethod
-    def flat_data_row(ser, final_only: bool = True):
-        row = [ser["id"], ser["created"], ser["last_updated"]]
-        if not final_only:
-            row[1:1] = [
-                ser["active"],
-                ser["final"],
-                ser["author"]["id"],
-                ser["author"]["full_name"],
-            ]
-        return row
-
     def get_override_options(self) -> dict:
         """Get risk of bias override options and overrides
 
@@ -363,7 +344,7 @@ class RiskOfBiasScore(models.Model):
     label = models.CharField(max_length=128, blank=True)
     score = models.PositiveSmallIntegerField(choices=constants.SCORE_CHOICES)
     bias_direction = models.PositiveSmallIntegerField(
-        choices=constants.BiasDirections.choices,
+        choices=constants.BiasDirections,
         default=constants.BiasDirections.BIAS_DIRECTION_UNKNOWN,
         help_text="Judgment of direction of bias (⬆ = away from null, ⬇ = towards null); only add entry if important to show in visuals",
     )
@@ -390,42 +371,6 @@ class RiskOfBiasScore(models.Model):
 
     def get_assessment(self):
         return self.metric.get_assessment()
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "rob-domain_id",
-            "rob-domain_name",
-            "rob-domain_description",
-            "rob-metric_id",
-            "rob-metric_name",
-            "rob-metric_description",
-            "rob-score_id",
-            "rob-score_is_default",
-            "rob-score_label",
-            "rob-score_score",
-            "rob-score_description",
-            "rob-score_bias_direction",
-            "rob-score_notes",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["metric"]["domain"]["id"],
-            ser["metric"]["domain"]["name"],
-            ser["metric"]["domain"]["description"],
-            ser["metric"]["id"],
-            ser["metric"]["name"],
-            ser["metric"]["description"],
-            ser["id"],
-            ser["is_default"],
-            ser["label"],
-            ser["score"],
-            ser["score_description"],
-            ser["bias_direction"],
-            cleanHTML(ser["notes"]),
-        )
 
     @property
     def score_symbol(self):

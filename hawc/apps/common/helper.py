@@ -2,10 +2,11 @@ import decimal
 import logging
 import re
 from collections import defaultdict
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import timedelta
+from itertools import chain
 from math import inf
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, TypeVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,7 +16,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
-from django.http import QueryDict
+from django.http import HttpRequest, QueryDict
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import lazy
@@ -29,6 +30,8 @@ from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
+
+from .middleware import _local_thread
 
 logger = logging.getLogger(__name__)
 
@@ -139,22 +142,61 @@ def map_enum(df: pd.DataFrame, field: str, choices: Choices, replace: bool = Fal
         df.rename(columns={key: field}, inplace=True)
 
 
-def df_move_column(df: pd.DataFrame, target: str, after: str | None = None) -> pd.DataFrame:
+def reorder_list(items: list, target: Any, after: Any | None = None, n_cols: int = 1) -> list:
+    """Returns a copy of a list with elements reordered.
+
+    Args:
+        items (list): a list of items
+        target (Any): the key to move
+        after (Any | None, default None): the key to move target after.
+        n_cols (int, default 1): the number of sequential targets to move.
+
+    Raises:
+        NotImplementedError: _description_
+
+    Returns:
+        list: _description_
+    """
+    target_index = items.index(target)
+    target_index_max = target_index + n_cols
+    insert_index = (-1 if after is None else items.index(after)) + 1
+
+    if target_index == insert_index:
+        return items
+    elif target_index > (insert_index):
+        return (
+            items[:insert_index]
+            + items[target_index:target_index_max]
+            + items[insert_index:target_index]
+            + items[target_index_max:]
+        )
+    elif target_index_max < insert_index:
+        return (
+            items[:target_index]
+            + items[target_index_max:insert_index]
+            + items[target_index:target_index_max]
+            + items[insert_index:]
+        )
+    else:
+        raise NotImplementedError("Unreachable code")
+
+
+def df_move_column(
+    df: pd.DataFrame, target: str, after: str | None = None, n_cols: int = 1
+) -> pd.DataFrame:
     """Move target column after another column.
 
     Args:
         df (pd.DataFrame): The dataframe to modify.
         target (str): Name of the column to move
-        after (Optional[str], optional): Name of column to move after; if None, puts first.
+        after (Optional[str], optional): Name of column to move after; if None, puts first
+        n_cols (int): Number of target columns to move; defaults to 1
 
     Returns:
         pd.DataFrame: The mutated dataframe.
     """
-    cols = df.columns.tolist()
-    target_name = cols.pop(cols.index(target))
-    insert_index = cols.index(after) + 1 if after else 0
-    cols.insert(insert_index, target_name)
-    return df[cols]
+    new_cols = reorder_list(df.columns.tolist(), target, after, n_cols)
+    return df[new_cols]
 
 
 def url_query(path: str, query: dict) -> str:
@@ -377,7 +419,7 @@ def get_id_from_choices(items, lookup_value):
     lookup_index = 1
     return_index = 0
 
-    if case_insensitive and type(lookup_value) is str:
+    if case_insensitive and isinstance(lookup_value, str):
         lookup_value = lookup_value.lower()
         matching_vals = [
             x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value
@@ -503,16 +545,20 @@ class PydanticToDjangoError:
             raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
 
 
+T = TypeVar("T")
+
+
 def cacheable(
-    callable: Callable, cache_key: str, flush: bool = False, cache_duration: int = -1, **kw
-) -> Any:
+    callable: Callable[..., T], cache_key: str, flush: bool = False, cache_duration: int = -1, **kw
+) -> T:
     """Get the result from cache or call method to recreate and cache.
 
     Args:
         callable (Callable): method to evaluation if not found in cache
         cache_key (str): the cache key to get/set
         flush (bool, default False): Force flush the cache and re-evaluate.
-        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR
+        cache_duration (int, default -1): cache key duration; if negative, use settings.CACHE_1_HR.
+        **kw: keyword arguments passed to callable
 
     Returns:
         The result from the callable, either from cache or regenerated.
@@ -526,3 +572,31 @@ def cacheable(
             cache_duration = settings.CACHE_1_HR
         cache.set(cache_key, result, cache_duration)
     return result
+
+
+def flatten(lst: Iterable[Iterable]) -> Iterable:
+    # given a list of lists (or other iterables), flatten the top-level iterable
+    return chain(*(item for item in lst))
+
+
+def get_current_request() -> HttpRequest:
+    """Returns the current request object"""
+    return _local_thread.request
+
+
+def get_current_user():
+    """Returns the current request user"""
+    return get_current_request().user
+
+
+def unique_text_list(items: list[str]) -> list[str]:
+    """Return a list of unique items in a text list"""
+    items = items.copy()
+    duplicates = {}
+    for i, item in enumerate(items):
+        if item in duplicates:
+            duplicates[item] += 1
+            items[i] = f"{item} ({duplicates[item]})"
+        else:
+            duplicates[item] = 1
+    return items
