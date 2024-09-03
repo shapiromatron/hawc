@@ -1,16 +1,16 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div id="exposureForm">
-      {% crispy form %}
-    </div>
+  <div id="exposureForm">
+    {% crispy form %}
+  </div>
 
-    <div id="ctFormset">
-      <legend>Central Tendencies
-        <button class="float-right btn btn-primary" title="Add new central tendency" type="button" id="addFormToFormset">+</button>
-      </legend>
-      {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
-    </div>
+  <div id="ctFormset">
+    <legend>Central Tendencies
+      <button class="float-right btn btn-primary" title="Add new central tendency" type="button" id="addFormToFormset">+</button>
+    </legend>
+    {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
+  </div>
 {% endblock %}
 
 {% block extrajs %}

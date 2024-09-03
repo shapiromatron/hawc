@@ -15,7 +15,7 @@ class HAWCUtils {
     static booleanCheckbox(value) {
         return value
             ? `<i class="fa fa-check"><span class="invisible">${value}</span></i>`
-            : `<i class="fa fa-minus"><span class="invisible">${value}</span></i>`;
+            : `<i class="fa fa-times"><span class="invisible">${value}</span></i>`;
     }
 
     static newWindowPopupLink(triggeringLink) {
@@ -78,10 +78,11 @@ class HAWCUtils {
     }
 
     static addAlert(content, $div) {
-        $div = $div || $("#content");
+        $div = $div || $("#main-content-container");
         $div.prepend(
-            $('<div class="alert alert-danger">')
+            $('<div class="alert alert-danger" data-testid="error">')
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+                .append("<i class='fa fa-fw fa-exclamation-triangle mr-1'></i>")
                 .append(content)
         );
     }
@@ -302,7 +303,12 @@ class HAWCUtils {
             handleChange = () => {
                 const selector = `#detail-${$selectEl.val()}`,
                     clone = $insertItems.find(selector).clone();
-                $insertEl.fadeOut(() => $insertEl.html(clone).fadeIn());
+                $insertEl.fadeOut(() =>
+                    $insertEl
+                        .html(clone)
+                        .trigger("select:change")
+                        .fadeIn()
+                );
             };
         $selectEl.on("change", handleChange).trigger("change");
     }
@@ -327,6 +333,162 @@ class HAWCUtils {
                 }
             })
             .trigger("change");
+    }
+
+    static dynamicFormListeners() {
+        function compare(comparison, x, y) {
+            // comparisons are done on flat arrays
+            x = _.isArray(x) ? x : [x];
+            y = _.isArray(y) ? y : [y];
+            switch (comparison) {
+                case "equals":
+                    return _.isEqual(x, y);
+                case "in":
+                    return _.intersection(x, y).length > 0;
+                case "contains":
+                    return _.intersection(x, y).length === y.length;
+            }
+        }
+
+        function getValue(el) {
+            const type = $(el).attr("type");
+            // checkbox/radio inputs return values based on checked property
+            // and value attribute
+            if (type === "checkbox" || type === "radio") {
+                const value = $(el).attr("value"),
+                    checked = $(el).prop("checked");
+                // if the input has a value attribute...
+                if (value !== undefined) {
+                    // then the checked property determines
+                    // whether to use this value attribute
+                    return checked ? value : undefined;
+                }
+                // if there is no value attribute,
+                // the checked property is used
+                return checked;
+            }
+            // number inputs need to be parsed from their string value
+            if (type === "number") {
+                return parseFloat($(el).val());
+            }
+            // all other inputs return their computed value
+            return $(el).val();
+        }
+
+        function getValues($inputs) {
+            // get array of values from inputs
+            return _.chain($inputs)
+                .map(getValue)
+                .filter(v => v !== undefined)
+                .flatten()
+                .value();
+        }
+
+        // conditions are passed into the django template as scripts
+        const $ = window.$,
+            $conditionsScripts = $('script[id^="conditions-"]');
+        $conditionsScripts.remove(); // we only want these handled once, so remove them from dom
+        for (const $conditions of $conditionsScripts) {
+            // parse the conditions from script
+            const conditions = JSON.parse($conditions.textContent);
+            for (const condition of conditions) {
+                const $subject = $(`#div_${condition.subject_id}`),
+                    $subjectInput = $subject.find(":input");
+                // add listeners on all inputs in the subject div
+                $subjectInput.on("input", () => {
+                    for (const observerId of condition.observer_ids) {
+                        const $observer = $(`#div_${observerId}`),
+                            $observerInput = $observer.find(":input"),
+                            // get array of values from subject inputs
+                            value = getValues($subjectInput),
+                            // compare subject values against comparison value
+                            check = compare(
+                                condition.comparison,
+                                value,
+                                condition.comparison_value
+                            ),
+                            // determine whether observers should be shown or hidden
+                            show = condition.behavior === "show" ? check : !check;
+                        // hide the observer parent div (ie bootstrap column), and disable the observer inputs
+                        $observer.parent().prop("hidden", !show);
+                        $observerInput.prop("disabled", !show);
+                    }
+                });
+                // trigger input on subject to hide/show based on initial data
+                $subjectInput.trigger("input");
+            }
+        }
+    }
+
+    static addAnchorLinks(parent, selector) {
+        $(parent)
+            .find(selector)
+            .each(function(index) {
+                const id = $(this).attr("id");
+                if (id) {
+                    $(this).append(
+                        `<a href="#${id}" class="ml-2 anchor-link" title="Section link"><span class="fa fa-fw fa-chain"></span></a>`
+                    );
+                }
+            });
+    }
+
+    static hideElement(el, deleteEl) {
+        const scrollVal = $(el).attr("scrolltop");
+        deleteEl ? $(el).remove() : $(el).addClass("hidden");
+        if (scrollVal) {
+            $("body,html").animate({scrollTop: scrollVal}, 400);
+        }
+    }
+
+    static addScrollHtmx(editClass, detailClass, deleteBtnId = null) {
+        $("body").on("htmx:afterSwap", function(evt) {
+            const elSwapOut = evt.detail.target,
+                elSwapIn = evt.detail.elt,
+                editElement = $(elSwapIn).hasClass(editClass)
+                    ? elSwapIn
+                    : $(elSwapIn)
+                          .children("." + editClass)
+                          .first();
+
+            if ($(editElement).length && !$(editElement).hasClass("hidden")) {
+                if ($(elSwapOut).hasClass(editClass)) {
+                    // Maintain scroll attr between elements if source has a scollTop attr
+                    // eg., if source and target are a form (failed update/create),
+                    // otherwise set to current position.
+                    const scrollTo = $(elSwapOut).attr("scrolltop") || $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", scrollTo);
+                } else {
+                    // otherwise, set scroll attr to current scroll position so we can return later
+                    const scrollTo = $("body,html").scrollTop();
+                    $(editElement).attr("scrolltop", scrollTo);
+                }
+                // animate scroll to form
+                const scrollTo = $(editElement).offset().top - 20;
+                $("body,html").animate({scrollTop: scrollTo}, 400);
+            } else {
+                // if the form is being replaced by a read row, scroll to original position
+                if (
+                    $(elSwapIn).hasClass(detailClass) &&
+                    $(elSwapOut).hasClass(editClass) &&
+                    !$(elSwapIn).hasClass("clone")
+                ) {
+                    const scrollTo = $(elSwapOut).attr("scrolltop");
+                    $("body,html").animate({scrollTop: scrollTo}, 400);
+                }
+            }
+        });
+        if (deleteBtnId) {
+            $("body").on("htmx:afterRequest", function(evt) {
+                // handle successful row deletion
+                const elSwapOut = evt.detail.target,
+                    targetEl = evt.detail.elt,
+                    scrollPosition = $(elSwapOut).attr("scrolltop");
+                if (targetEl.getAttribute("id") == deleteBtnId && evt.detail.successful) {
+                    $("body,html").animate({scrollTop: scrollPosition}, 800);
+                }
+            });
+        }
     }
 }
 export default HAWCUtils;

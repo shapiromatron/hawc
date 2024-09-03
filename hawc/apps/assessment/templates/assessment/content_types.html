@@ -4,34 +4,24 @@
 
 
 {% block content %}
-<h2>Content Types</h2>
-<p>
+  <h2>Content Types</h2>
+  <p>
     Each type of data in HAWC is assigned an integer based content type ID. Generally these IDs are used on the backend for various operations and configurations, but in some cases, knowing the content type for a particular class of data can be useful for filtering or sorting purposes. The labels for the applications are the machine-readable version of the tables, but hopefully they're named reasonably close to the human-readable forms.
-</p>
-<p><b>Selected values for key data in HAWC are shown below:</b></p>
-<table class="table table-sm">
-    <colgroup>
-        <col width="40%"/>
-        <col width="40%"/>
-        <col width="20%"/>
-    </colgroup>
-    <thead>
-        <tr>
-            <th>Domain</th>
-            <th>Dataset</th>
-            <th>ID</th>
-        </tr>
-    </thead>
+  </p>
+  <p><b>Selected values for key data in HAWC are shown below:</b></p>
+  <table class="table table-sm">
+    {% bs4_colgroup '40,40,20' %}
+    {% bs4_thead 'Domain,Dataset,ID' %}
     <tbody>
-        {% for ct in content_types %}
+      {% for ct in content_types %}
         <tr>
-            <td>{{ct.app_label}}</td>
-            <td>{{ct.model}}</td>
-            <td>{{ct.id}}</td>
+          <td>{{ct.app_label}}</td>
+          <td>{{ct.model}}</td>
+          <td>{{ct.id}}</td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 
 {% endblock content %}
 

@@ -84,8 +84,10 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
+    "hawc.apps.common.middleware.ThreadLocalMiddleware",
 )
 
 # Install applications
@@ -112,6 +114,19 @@ INSTALLED_APPS = (
     "crispy_forms",
     "crispy_bootstrap4",
     "webpack_loader",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail_draftail_anchors",
+    "wagtail",
+    "modelcluster",
     # Custom apps
     "hawc.apps.common",
     "hawc.apps.myuser",
@@ -132,6 +147,7 @@ INSTALLED_APPS = (
     "hawc.apps.materialized",
     "hawc.apps.epiv2",
     "hawc.apps.udf",
+    "hawc.apps.docs",
 )
 # DB settings
 DATABASES = {
@@ -149,6 +165,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Celery settings
 CELERY_BROKER_URL = os.getenv("DJANGO_BROKER_URL")
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_RESULT_BACKEND = os.getenv("DJANGO_CELERY_RESULT_BACKEND")
 CELERY_RESULT_EXPIRES = 60 * 60 * 5  # 5 hours
 CELERY_TASK_ACKS_LATE = True
@@ -194,9 +211,10 @@ SESSION_COOKIE_DOMAIN = os.getenv("HAWC_SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_NAME = os.getenv("HAWC_SESSION_COOKIE_NAME", "sessionid")
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_CACHE_ALIAS = "default"
-TURNSTYLE_SITE = os.environ.get("TURNSTYLE_SITE", "")
-TURNSTYLE_KEY = os.environ.get("TURNSTYLE_KEY", "")
+TURNSTILE_SITE = os.environ.get("TURNSTILE_SITE", "")
+TURNSTILE_KEY = os.environ.get("TURNSTILE_KEY", "")
 INCLUDE_ADMIN = bool(os.environ.get("HAWC_INCLUDE_ADMIN", "True") == "True")
+EMAIL_VERIFICATION_REQUIRED = bool(os.environ.get("EMAIL_VERIFICATION_REQUIRED", "False") == "True")
 
 # Server URL settings
 ROOT_URLCONF = "hawc.main.urls"
@@ -218,6 +236,17 @@ STATICFILES_FINDERS = (
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
+
+# Wagtail setup
+WAGTAIL_SITE_NAME = "HAWC"
+WAGTAILADMIN_BASE_URL = ""
+WAGTAIL_FRONTEND_LOGIN_URL = LOGIN_URL
+DRAFTAIL_ANCHORS_RENDERER = "wagtail_draftail_anchors.rich_text.render_span"
+WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
+WAGTAILUSERS_PASSWORD_ENABLED = False
+WAGTAIL_EMAIL_MANAGEMENT_ENABLED = False
+WAGTAIL_ENABLE_UPDATE_CHECK = False
+WAGTAIL_ALLOW_UNICODE_SLUGS = False
 
 # Logging configuration
 LOGGING = {
@@ -346,3 +375,5 @@ IS_TESTING = False
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 DISCLAIMER_TEXT = ""
+
+FORMS_URLFIELD_ASSUME_HTTPS = True

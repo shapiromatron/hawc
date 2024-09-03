@@ -24,8 +24,9 @@ export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 sync-dev:  ## Sync dev environment after code checkout
-	python -m pip install -U pip
-	python -m pip install -r requirements/dev.txt
+	python -m pip install -U pip uv
+	uv pip install -e ".[dev,docs]"
+	uv pip install -e client
 	yarn --cwd frontend
 	python manage.py migrate
 	python manage.py recreate_views
@@ -62,19 +63,25 @@ loc: ## Generate lines of code report
 
 lint: lint-py lint-js  ## Check formatting issues
 
-format: format-py format-js  ## Fix formatting issues where possible
+format: format-py format-js format-html ## Fix formatting issues where possible
 
 lint-py:  ## Check python formatting issues
-	@ruff format . --check && ruff .
+	@ruff format . --check && ruff check .
 
 format-py:  ## Fix python formatting issues where possible
-	@ruff format . && ruff . --fix --show-fixes
+	@ruff format . && ruff check . --fix --show-fixes
 
 lint-js:  ## Check javascript formatting issues
 	@npm --prefix ./frontend run lint
 
 format-js:  ## Fix javascript formatting issues where possible
 	@npm --prefix ./frontend run format
+
+lint-html:  ## Check HTML formatting issues where possible
+	@djhtml --tabwidth 2 --check hawc/
+
+format-html:  ## Fix HTML formatting issues where possible
+	@djhtml --tabwidth 2 hawc/
 
 test:  ## Run python tests
 	@py.test
@@ -96,5 +103,5 @@ test-js:  ## Run javascript tests
 
 coverage:  ## Run coverage and create html report
 	coverage run -m pytest
-	coverage html -d coverage_html
+	coverage html -d coverage_html -i
 	@echo "Report ready: ./coverage_html/index.html"

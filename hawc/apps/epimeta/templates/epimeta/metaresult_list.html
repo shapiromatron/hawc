@@ -1,67 +1,67 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-<div class="d-flex mb-2">
+  <div class="d-flex mb-2">
     <h2 class="mb-0">Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
     {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
-    {% actions %}
+      {% actions %}
         <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
-    {% endactions %}
+      {% endactions %}
     {% endif %}
-</div>
-{% include 'common/inline_filter_form.html' %}
-<table id="mainTbl" class="table table-sm table-striped">
+  </div>
+  {% include 'common/inline_filter_form.html' %}
+  <table id="mainTbl" class="table table-sm table-striped">
     {% bs4_colgroup '13,17,19,14,13,12,12' %}
     {% bs4_thead 'Study,Meta result,Protocol,Health outcome,Exposure,Confidence interval,Estimate' %}
     <tbody>
-        {% for object in object_list %}
+      {% for object in object_list %}
         <tr>
-            <td>
-                <a
-                    href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>
-            </td>
-            <td class="previewModalParent">
-                <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
-                <a href="{{object.get_absolute_url}}">{{object.label}}</a>
-            </td>
-            <td>
-                <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>
-            </td>
-            <td>
-                {{object.health_outcome|default:"--"}}
-            </td>
-            <td>
-                {{object.exposure_name|default:"--"}}
-            </td>
-            <td>
-                {% if object.ci_units_percentage is not None %}
-                    {{object.ci_units_percentage}}%
-                {% else %}
-                    --
-                {% endif %}
-            </td>
-            <td>
-                {{object.estimate_formatted|default:"--"}}
-            </td>
+          <td>
+            <a
+              href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>{% debug_badge object.protocol.study_id %}
+          </td>
+          <td class="previewModalParent">
+            <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+            <a href="{{object.get_absolute_url}}">{{object.label}}</a>{% debug_badge object.id %}
+          </td>
+          <td>
+            <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>{% debug_badge object.protocol_id %}
+          </td>
+          <td>
+            {{object.health_outcome|default:"--"}}
+          </td>
+          <td>
+            {{object.exposure_name|default:"--"}}
+          </td>
+          <td>
+            {% if object.ci_units_percentage is not None %}
+              {{object.ci_units_percentage}}%
+            {% else %}
+              --
+            {% endif %}
+          </td>
+          <td>
+            {{object.estimate_formatted|default:"--"}}
+          </td>
         </tr>
-        {% empty %}
+      {% empty %}
         <tr>
-            <td colspan="7">
-                No results available
-            </td>
+          <td colspan="7">
+            No results available
+          </td>
         </tr>
-        {% endfor %}
+      {% endfor %}
     </tbody>
-</table>
+  </table>
 
-{% include "includes/paginator.html" with plural_object_name="results" %}
+  {% include "includes/paginator.html" with plural_object_name="results" %}
 
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
+  <script type="text/javascript">
     window.app.startup("epiMetaStartup", function (app) {
-        $("i.previewModalIcon").click(e=>app.MetaResult.displayAsModal($(e.target).data("id")));
+      $("i.previewModalIcon").click(e=>app.MetaResult.displayAsModal($(e.target).data("id")));
     });
-</script>
+  </script>
 {% endblock %}

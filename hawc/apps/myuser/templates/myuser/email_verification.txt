@@ -1,0 +1,9 @@
+Hello {{user.get_full_name}},
+
+To verify your email address on {{domain}}, please open the following link:
+
+- {{verify_url}}
+
+If you did not create an account, please ignore this message. Thank you for joining HAWC; we hope you find the application helpful in your health assessment!
+
+The HAWC team

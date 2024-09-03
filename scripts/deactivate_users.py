@@ -2,6 +2,7 @@
 Mark old IDs as inactive; ensure that new ID users have the same id. Used
 when a user creates multiple accounts and only wants to keep one.
 """
+
 import logging
 import os
 import sys

@@ -4,6 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common import validators
+from ..common.clean import sanitize_html
 from ..common.helper import SerializerHelper, tryParseInt
 from ..myuser.models import HAWCUser
 from ..myuser.serializers import HAWCUserSerializer
@@ -103,7 +104,7 @@ class RiskOfBiasScoreCleanupSerializer(serializers.ModelSerializer):
 
     def validate_notes(self, value):
         validators.validate_hyperlinks(value)
-        return validators.clean_html(value)
+        return sanitize_html.clean_html(value)
 
 
 class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
@@ -129,7 +130,7 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
 
     def validate_notes(self, value):
         validators.validate_hyperlinks(value)
-        return validators.clean_html(value)
+        return sanitize_html.clean_html(value)
 
 
 class StudyScoreSerializer(RiskOfBiasScoreSerializer):
@@ -184,8 +185,8 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             author = None
             try:
                 author = HAWCUser.objects.get(id=author_id)
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError("Invalid author_id")
+            except ObjectDoesNotExist as err:
+                raise serializers.ValidationError("Invalid author_id") from err
 
             data["author"] = author
 
@@ -328,7 +329,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             try:
                 score = models.RiskOfBiasScore.objects.create(**score_data, riskofbias=instance)
             except ValidationError as err:
-                raise serializers.ValidationError(err.message)
+                raise serializers.ValidationError(err.message) from err
             for overridden_object in overridden_objects:
                 overridden_object.score = score
                 overridden_object.save()
@@ -357,7 +358,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             try:
                 score.save()
             except ValidationError as err:
-                raise serializers.ValidationError(err.message)
+                raise serializers.ValidationError(err.message) from err
 
         # update overrides
         new_overrides = []
@@ -386,7 +387,7 @@ class RiskOfBiasAssignmentSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         assessment = self.instance.study.assessment if self.instance else data["study"].assessment
-        if not assessment.user_can_edit_assessment(self.context["request"].user):
+        if not assessment.user_is_project_manager_or_higher(self.context["request"].user):
             raise PermissionDenied()
         if "author" in data and not assessment.user_can_edit_object(data["author"]):
             raise serializers.ValidationError({"author": "Author cannot be assigned"})

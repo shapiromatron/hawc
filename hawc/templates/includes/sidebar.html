@@ -1,68 +1,73 @@
 <ul class="{{ul_class}}">
+  <li class="{{li_class}}">
+    <a class="{{a_class}}"  href="{% url 'home' %}">HAWC Home</a>
+  </li>
+  <li class="{{li_class}}">
+    <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+  </li>
+  {% if assessment %}
     <li class="{{li_class}}">
-        <a class="{{a_class}}"  href="{% url 'home' %}">HAWC Home</a>
+      <a class="{{a_class}}" href="{{ assessment.get_absolute_url }}">{{ assessment }}</a>
+      <ul class="{{sub_ul}}">
+        {% if assessment.enable_literature_review %}
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'lit:overview' assessment.pk %}">Literature review</a>
+          </li>
+        {% endif %}
+
+        {% if assessment.enable_project_management and user.is_authenticated %}
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'mgmt:task-dashboard' assessment.pk %}">Management dashboard</a>
+          </li>
+        {% endif %}
+
+        {% if assessment.enable_data_extraction %}
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'study:list' assessment.pk %}">Study list</a>
+          </li>
+
+          {% if assessment.enable_risk_of_bias %}
+            <li class="{{li_class}}">
+              <a class="{{a_class}}" href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a>
+            </li>
+          {% endif %}
+
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a>
+          </li>
+        {% endif %}
+
+        {% if assessment.enable_summary_tables %}
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'summary:tables_list' assessment.pk %}">Summary tables</a>
+          </li>
+        {% endif %}
+
+        {% if assessment.enable_visuals %}
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
+          </li>
+        {% endif %}
+
+        {% if assessment.enable_downloads %}
+          <li class="{{li_class}}">
+            <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">Downloads</a>
+          </li>
+        {% endif %}
+      </ul>
     </li>
-    <li class="{{li_class}}">
-        <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-    </li>
-    {% if assessment %}
-    <li class="{{li_class}}">
-        <a class="{{a_class}}" href="{{ assessment.get_absolute_url }}">{{ assessment }}</a>
-        <ul class="{{sub_ul}}">
-            {% if assessment.enable_literature_review %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'lit:overview' assessment.pk %}">Literature review</a>
-            </li>
-            {% endif %}
+  {% endif %}
 
-            {% if assessment.enable_project_management and user.is_authenticated %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'mgmt:task-dashboard' assessment.pk %}">Management dashboard</a>
-            </li>
-            {% endif %}
-
-            {% if assessment.enable_data_extraction %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'study:list' assessment.pk %}">Study list</a>
-            </li>
-
-            {% if assessment.enable_risk_of_bias %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a>
-            </li>
-            {% endif %}
-
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a>
-            </li>
-            {% endif %}
-
-            {% if assessment.enable_summary_tables %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'summary:tables_list' assessment.pk %}">Summary tables</a>
-            </li>
-            {% endif %}
-
-            {% if assessment.enable_visuals %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
-            </li>
-            {% endif %}
-
-            {% if assessment.enable_summary_text %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'summary:list' assessment.pk %}">Executive summary</a>
-            </li>
-            {% endif %}
-
-            {% if assessment.enable_downloads %}
-            <li class="{{li_class}}">
-                <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">Downloads</a>
-            </li>
-            {% endif %}
-        </ul>
-    </li>
+  {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
+    {% if expand_docs %}
+      {% include 'docs/components/sidebar_docs_tree.html' %}
+    {% else %}
+      <li class="{{li_class}}">
+        <a class="{{a_class}}" href="{% url 'wagtail_serve' '' %}">HAWC Documentation</a>
+      </li>
     {% endif %}
-    <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
-    <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
+  {% endif %}
+
+  <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
+  <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
 </ul>

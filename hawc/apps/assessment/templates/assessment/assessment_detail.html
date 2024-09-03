@@ -2,62 +2,62 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{object}}{% debug_badge object.id %}</h2>
     {% if crud == "Read" %}
       {% actions %}
           <!-- assessment editing -->
-          {% if obj_perms.edit %}
-            <span class="dropdown-header">Assessment Editing</span>
-            {% if obj_perms.edit_assessment %}
+        {% if obj_perms.edit %}
+          <span class="dropdown-header">Assessment Editing</span>
+          {% if obj_perms.edit_assessment %}
             <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
             <a class="dropdown-item" href="{% url 'assessment:modules_update' object.pk %}">Update modules</a>
             <a class="dropdown-item" href="{{ object.get_details_form_url }}">Update additional details</a>
             <a class="dropdown-item" href="{% url 'assessment:delete' object.pk %}">Delete assessment</a>
-            {% endif %}
-            {% if feature_flags.ENABLE_UDF %}
-            <a class="dropdown-item" href="{{ object.get_udf_list_url }}">User defined models</a>
-            {% endif %}
-            <a class="dropdown-item" href="{{ object.get_clear_cache_url }}">Clear assessment cache</a>
-            <a class="dropdown-item" href="{{ object.get_assessment_logs_url }}">Change logs</a>
-            <a class="dropdown-item" hx-get="{% url 'assessment:attachment-create' object.pk %}" hx-trigger="click" hx-target="#attach_table" hx-swap="outerHTML" href="/">Add an attachment</a>
-            <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
-            <a class="dropdown-item" href="{% url 'assessment:values-create' object.pk %}">Add a value</a>
-            <div class="dropdown-divider"></div>
-          {% else %}
-            {% if obj_perms.edit_assessment %}
-              {% comment "User has permission but assessment is locked" %}{% endcomment %}
-              <span class="dropdown-header">Assessment Editing</span>
-              <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
-              <div class="dropdown-divider"></div>
-            {% endif %}
           {% endif %}
+          {% if feature_flags.ENABLE_UDF %}
+            <a class="dropdown-item" href="{{ object.get_udf_list_url }}">User defined field bindings</a>
+          {% endif %}
+          <a class="dropdown-item" href="{{ object.get_clear_cache_url }}">Clear assessment cache</a>
+          <a class="dropdown-item" href="{{ object.get_assessment_logs_url }}">View change logs</a>
+          <a class="dropdown-item" hx-get="{% url 'assessment:attachment-htmx' object.pk 'create' %}" hx-trigger="click" hx-target="#attach-tbody" hx-swap="beforeend" href="/">Add an attachment</a>
+          <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
+          <a class="dropdown-item" href="{% url 'assessment:values-create' object.pk %}">Add a value</a>
+          <div class="dropdown-divider"></div>
+        {% else %}
+          {% if obj_perms.edit_assessment %}
+              {% comment "User has permission but assessment is locked" %}{% endcomment %}
+            <span class="dropdown-header">Assessment Editing</span>
+            <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
+            <div class="dropdown-divider"></div>
+          {% endif %}
+        {% endif %}
 
           <!-- application settings -->
-          <span class="dropdown-header">Application settings</span>
-          {% if assessment.enable_risk_of_bias %}
+        <span class="dropdown-header">Application settings</span>
+        {% if assessment.enable_risk_of_bias %}
           <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a>
-          {% endif %}
+        {% endif %}
 
-          {% if assessment.enable_bmd %}
+        {% if assessment.enable_bmd %}
           <a class="dropdown-item" href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a>
-          {% endif %}
+        {% endif %}
 
-          {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
+        {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
           <a class="dropdown-item" href="{% url 'invitro:endpointcategory_update' object.pk %}">In vitro endpoint categories</a>
-          {% endif%}
+        {% endif%}
 
           <!-- data cleanup -->
-          {% if assessment.enable_data_extraction and obj_perms.edit_assessment or assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
+        {% if assessment.enable_data_extraction and obj_perms.edit_assessment or assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
           <div class="dropdown-divider"></div>
           <span class="dropdown-header">Data cleanup views</span>
-              {% if assessment.enable_data_extraction %}
-              <a class="dropdown-item" href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a>
-              {% endif%}
-              {% if assessment.enable_risk_of_bias %}
-              <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
-              {% endif %}
-              <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
+          {% if assessment.enable_data_extraction %}
+            <a class="dropdown-item" href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a>
+          {% endif%}
+          {% if assessment.enable_risk_of_bias %}
+            <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
           {% endif %}
+          <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
+        {% endif %}
       {% endactions %}
     {% endif %}
   </div>
@@ -79,10 +79,10 @@
       {% endif %}
 
       {% if object.dtxsids.count > 0 %}
-          <tr>
-            <th>DSSTox substance identifiers (DTXSID)</th>
-            <td id="dtxsid-app"></td>
-          </tr>
+        <tr>
+          <th>DSSTox substance identifiers (DTXSID)</th>
+          <td id="dtxsid-app"></td>
+        </tr>
       {% endif %}
 
       <tr>
@@ -96,31 +96,31 @@
       </tr>
 
       {% if object.assessment_objective %}
-      <tr>
-        <th>Objective</th>
-        <td>{{object.assessment_objective|safe}}</td>
-      </tr>
+        <tr>
+          <th>Objective</th>
+          <td>{{object.assessment_objective|safe}}</td>
+        </tr>
       {% endif %}
 
       {% if object.authors %}
-      <tr>
-        <th>Authors</th>
-        <td>{{object.authors|safe}}</td>
-      </tr>
+        <tr>
+          <th>Authors</th>
+          <td>{{object.authors|safe}}</td>
+        </tr>
       {% endif %}
 
       {% if object.conflicts_of_interest %}
-      <tr>
-        <th>Conflicts of interest</th>
-        <td>{{object.conflicts_of_interest|safe}}</td>
-      </tr>
+        <tr>
+          <th>Conflicts of interest</th>
+          <td>{{object.conflicts_of_interest|safe}}</td>
+        </tr>
       {% endif %}
 
       {% if object.funding_source %}
-      <tr>
-        <th>Funding source</th>
-        <td>{{object.funding_source|safe}}</td>
-      </tr>
+        <tr>
+          <th>Funding source</th>
+          <td>{{object.funding_source|safe}}</td>
+        </tr>
       {% endif %}
 
       {% if object.details %}
@@ -128,102 +128,105 @@
       {% endif %}
 
       {% if object.vocabulary %}
-      <tr>
-        <th>Vocabulary</th>
-        <td>{{object.get_vocabulary_display}}</td>
-      </tr>
+        <tr>
+          <th>Vocabulary</th>
+          <td>{{object.get_vocabulary_display}}</td>
+        </tr>
       {% endif %}
     </tbody>
   </table>
 
-  {% if obj_perms.edit %}
-  <h3>Assessment details for team members*</h3>
-  <table id="assessment_table" class="table table-sm table-striped">
-    {% bs4_colgroup '25,25,25,25' %}
-    <tbody>
-      <tr>
-        <th>Assessment team</th>
-        <td>
-          <p><strong>Project manager{{ object.project_manager.all|pluralize }}</strong></p>
-          <ul class="mb-0">
-            {% for m in object.project_manager.active %}
-              <li>{{ m.get_full_name }}</li>
-            {% endfor %}
-          </ul>
-        </td>
-        <td>
-          <p><strong>Team member{{ object.team_members.all|pluralize }}</strong></p>
-          <ul class="mb-0">
-            {% for m in object.team_members.active %}
-            <li>{{ m.get_full_name }}</li>
-            {% empty %}
-            <li><i>None assigned</i></li>
-            {% endfor %}
-          </ul>
-        </td>
-        <td>
-          <p><strong>Reviewer{{ object.reviewers.all|pluralize }}</strong></p>
-          <ul class="mb-0">
-            {% for m in object.reviewers.active %}
-            <li>{{ m.get_full_name }}</li>
-            {% empty %}
-            <li><i>None assigned</i></li>
-            {% endfor %}
-          </ul>
-        </td>
-      </tr>
+  {% if is_team_member %}
+    <div class="bg-lightblue rounded p-3 mb-3">
+      <h3>Assessment details for team members*</h3>
+      <table id="assessment_table" class="table table-sm table-striped bg-white my-0">
+        {% bs4_colgroup '25,25,25,25' %}
+        <tbody>
+          <tr>
+            <th>Assessment team</th>
+            <td>
+              <p><strong>Project manager{{ object.project_manager.all|pluralize }}</strong></p>
+              <ul class="mb-0">
+                {% for m in object.project_manager.active %}
+                  <li title="{{m.email}}">{{ m.get_full_name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>
+              <p><strong>Team member{{ object.team_members.all|pluralize }}</strong></p>
+              <ul class="mb-0">
+                {% for m in object.team_members.active %}
+                  <li title="{{m.email}}">{{ m.get_full_name }}</li>
+                {% empty %}
+                  <li><i>None assigned</i></li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>
+              <p><strong>Reviewer{{ object.reviewers.all|pluralize }}</strong></p>
+              <ul class="mb-0">
+                {% for m in object.reviewers.active %}
+                  <li title="{{m.email}}">{{ m.get_full_name }}</li>
+                {% empty %}
+                  <li><i>None assigned</i></li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
 
-      <tr>
-        <th>Editable</th>
-        <td colspan="3">{{object.editable|yesno:"Yes,No"}}</td>
-      </tr>
+          <tr>
+            <th>Assessment ID</th>
+            <td colspan="3">{{object.id}}</td>
+          </tr>
 
-      <tr>
-        <th>Public</th>
-        <td colspan="3">
+          <tr>
+            <th>Editable</th>
+            <td colspan="3">{{object.editable|yesno:"Yes,No"}}</td>
+          </tr>
+
+          <tr>
+            <th>Public</th>
+            <td colspan="3">
+              {% if object.public_on %}
+                Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
+              {% else %}
+                No; this assessment is currently private
+              {% endif %}
+            </td>
+          </tr>
+
           {% if object.public_on %}
-          Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
-          {% else %}
-          No; this assessment is currently private
+            <tr>
+              <th>Hidden from public assessments page?</th>
+              <td colspan="3">{{object.hide_from_public_page|yesno:"Yes; available if you have the link but hidden from the list page,No; it's available via searching or browsing"|safe}}</td>
+            </tr>
           {% endif %}
-        </td>
-      </tr>
 
-      {% if object.public_on %}
-      <tr>
-        <th>Hidden from public assessments page?</th>
-        <td colspan="3">{{object.hide_from_public_page|yesno:"Yes; available if you have the link but hidden from the list page,No; it's available via searching or browsing"|safe}}</td>
-      </tr>
-      {% endif %}
+          <tr>
+            <th>Date created</th>
+            <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
+          </tr>
 
-      <tr>
-        <th>Date created</th>
-        <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
-      </tr>
+          {% if object.details and object.details.qa_id %}
+            {% url_or_span object.details.qa_id object.details.qa_url as qa_identifier %}
+            <tr>
+              <th>QA Identifier</th>
+              <td colspan="3">{{ qa_identifier }}</td>
+            </tr>
+          {% endif %}
 
-      {% if object.details and object.details.qa_id %}
-      {% url_or_span object.details.qa_id object.details.qa_url as qa_identifier %}
-      <tr>
-        <th>QA Identifier</th>
-        <td colspan="3">{{ qa_identifier }}</td>
-      </tr>
-      {% endif %}
-
-      {% if internal_communications|hastext %}
-      <tr>
-        <th>Internal communications</th>
-        <td colspan="3">{{ internal_communications|safe }}</td>
-      </tr>
-      {% endif %}
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="5" class="text-muted">
-          * These fields are only shown to assessment team members, even if the assessment is made public.
-        </td>
-      </tr>
-    </tfoot>
-  </table>
+          {% if internal_communications|hastext %}
+            <tr>
+              <th>Internal communications</th>
+              <td colspan="3">{{ internal_communications|safe }}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+      <span class="text-muted">
+        * These fields are only shown to assessment team members, even if the assessment is made public.
+      </span>
+    </div>
   {% endif %}
 
   {% if crud == "Read" %}
@@ -235,25 +238,21 @@
 {% endblock content %}
 
 {% block extrajs %}
-{% if crud == "Read" and object.dtxsids.first %}
-<script type="text/javascript">
-  window.addEventListener("DOMContentLoaded", function () {
-    const dtxsids = {{dtxsids|safe}},
-      el = document.getElementById('dtxsid-app');
-    window.app.startup("assessmentStartup", function(app){
-      app.renderDssToxTabs(el, dtxsids);
+  {% if crud == "Read" and object.dtxsids.first %}
+    <script type="text/javascript">
+      window.addEventListener("DOMContentLoaded", function () {
+        const dtxsids = {{dtxsids|safe}},
+              el = document.getElementById('dtxsid-app');
+        window.app.startup("assessmentStartup", function(app){
+          app.renderDssToxTabs(el, dtxsids);
+        });
+      });
+    </script>
+  {% endif %}
+  <script type="text/javascript">
+    $(window).ready(function() {
+      window.app.HAWCUtils.addScrollHtmx("attachment-edit-row", "attachment-detail-row");
     });
-  });
-</script>
-{% endif %}
-<script type="text/javascript">
-  htmx.onLoad(function (target) {
-    // attachment-form events
-    const form = $(target).find('.attachment-form');
-    if (form) {
-      form.find("#id_title").focus();
-    }
-  });
-</script>
-{% include "common/helptext_popup_js.html" %}
+  </script>
+  {% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

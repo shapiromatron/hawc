@@ -2,6 +2,7 @@ from zipfile import BadZipFile
 
 import pandas as pd
 import plotly.express as px
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, mixins, permissions, status
@@ -325,8 +326,8 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
         try:
             # engine required since this is a BytesIO stream
             df = pd.read_excel(file_, engine="openpyxl")
-        except (BadZipFile, ValueError):
-            raise ParseError({"file": "Unable to parse excel file"})
+        except (BadZipFile, ValueError) as err:
+            raise ParseError({"file": "Unable to parse excel file"}) from err
 
         return FlatExport.api_response(df=df, filename=file_.name)
 
@@ -349,12 +350,16 @@ class ReferenceViewSet(
 ):
     model = models.Reference
     serializer_class = serializers.ReferenceSerializer
+    http_method_names = ["get", "post", "patch", "delete", "head", "options", "trace"]
 
     def get_queryset(self):
         qs = super().get_queryset()
         if self.action in ("tag", "resolve_conflict"):
             qs = qs.select_related("assessment__literature_settings").prefetch_related(
-                "user_tags__tags", "tags"
+                "user_tags__tags",
+                "tags",
+                "saved_tag_contents",
+                "assessment__udf_tag_bindings__form",
             )
         return qs
 
@@ -368,9 +373,12 @@ class ReferenceViewSet(
         if assessment.user_can_edit_object(self.request.user):
             try:
                 tags = [int(tag) for tag in self.request.data.get("tags", [])]
-                resolved = instance.update_tags(request.user, tags)
+                udf_data = self.request.data.get("udf_data")
+                resolved = instance.update_tags(request.user, tags, udf_data)
             except ValueError:
                 return Response({"tags": "Array of tags must be valid primary keys"}, status=400)
+            except DjangoValidationError as err:
+                return Response({"UDF-form": err}, status=400)
             response["status"] = "success"
             response["resolved"] = resolved
         return Response(response)

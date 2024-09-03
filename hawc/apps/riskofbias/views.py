@@ -89,7 +89,7 @@ class ARoBEdit(BaseDetail):
     crud = "Update"
     model = models.Assessment
     template_name = "riskofbias/arob_edit.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,7 +118,7 @@ class ARoBTextEdit(BaseUpdate):
     template_name = "riskofbias/arob_text_form.html"
     form_class = forms.RobTextForm
     success_message = "Help text has been updated."
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -214,6 +214,7 @@ class RobAssignmentList(BaseFilterList):
     template_name = "riskofbias/rob_assignment_list.html"
     paginate_by = 50
     filterset_class = StudyFilterSet
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         if not self.assessment.user_can_edit_object(self.request.user):
@@ -249,10 +250,10 @@ class RobAssignmentUpdate(BaseFilterList):
     template_name = "riskofbias/rob_assignment_update.html"
     filterset_class = StudyFilterSet
     paginate_by = 50
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_queryset(self):
-        if not self.assessment.user_can_edit_assessment(self.request.user):
+        if not self.assessment.user_is_project_manager_or_higher(self.request.user):
             raise PermissionDenied()
         robs = models.RiskOfBias.objects.prefetch_related("author", "scores")
         return (
@@ -284,6 +285,7 @@ class RobAssignmentUpdate(BaseFilterList):
 class RobNumberReviewsUpdate(BaseUpdate):
     model = models.RiskOfBiasAssessment
     form_class = forms.NumberOfReviewersForm
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
     success_message = "Number of reviewers updated."
     template_name = "riskofbias/reviewers_form.html"
 
@@ -293,7 +295,7 @@ class RobNumberReviewsUpdate(BaseUpdate):
             assessment=self.kwargs.get("pk"),
         )
         obj = super().get_object(object=obj)
-        if not self.assessment.user_can_edit_assessment(self.request.user):
+        if not self.assessment.user_is_project_manager_or_higher(self.request.user):
             raise PermissionDenied()
         return obj
 
@@ -466,8 +468,9 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
     def get_object(self, **kwargs):
         # either project managers OR the author can edit/view.
         obj = super().get_object(**kwargs)
-        if obj.author != self.request.user and not self.assessment.user_can_edit_assessment(
-            self.request.user
+        if (
+            obj.author != self.request.user
+            and not self.assessment.user_is_project_manager_or_higher(self.request.user)
         ):
             raise PermissionDenied
         return obj

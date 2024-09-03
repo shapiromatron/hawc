@@ -1,31 +1,30 @@
-<div class="alert alert-danger my-2">
+{% alert classes="my-2" %}
   <h4><i class="fa fa-exclamation-triangle"></i>&nbsp;Delete this {{name}}?</h4>
   <p>{{notes}}</p>
 
   {% if confirm %}
-  <div id='deleteConfirm'>
-    <b>Type "delete" to confirm:</b>
-    <input id="confirmationText" class="form-control" placeholder='Type "delete" to confirm'></input>
-  </div>
+    <div id='deleteConfirm'>
+      <b>Type "delete" to confirm:</b>
+      <input id="confirmationText" class="form-control" placeholder='Type "delete" to confirm' />
+    </div>
   {% endif %}
 
   <form id="deleteConfirmationActionsDiv" action="." method="post" class="{% if confirm %}hidden{% endif %}">
     <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i>&nbsp;Delete {{name}}</button>
     <a href="{{cancel_url}}" class="btn btn-light ml-2">Cancel</a>
     {% csrf_token %}
-    </fieldset>
   </form>
-</div>
+{% endalert %}
 
 {% if confirm %}
-<script>
-  window.addEventListener('load', function () {
-    $('#confirmationText').on('keyup', function(){
-      if (this.value === "delete") {
-        $('#deleteConfirmationActionsDiv').removeClass('hidden');
-        $('#deleteConfirm').addClass('hidden');
-      }
+  <script>
+    window.addEventListener('load', function () {
+      $('#confirmationText').on('keyup', function(){
+        if (this.value === "delete") {
+          $('#deleteConfirmationActionsDiv').removeClass('hidden');
+          $('#deleteConfirm').addClass('hidden');
+        }
+      });
     });
-  });
-</script>
+  </script>
 {% endif %}

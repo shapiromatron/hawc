@@ -13,77 +13,301 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        AP//gokhrRwDAAAA//8DAJ/bft70JgAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedBookArticle><BookDocument><PMID Version="1">20301382</PMID><ArticleIdList><ArticleId
+        IdType="bookaccession">NBK1203</ArticleId></ArticleIdList><Book><Publisher><PublisherName>University
+        of Washington, Seattle</PublisherName><PublisherLocation>Seattle (WA)</PublisherLocation></Publisher><BookTitle
+        book="gene">GeneReviews<sup>&#xae;</sup></BookTitle><PubDate><Year>1993</Year></PubDate><BeginningDate><Year>1993</Year></BeginningDate><EndingDate><Year>2024</Year></EndingDate><AuthorList
+        Type="editors" CompleteYN="Y"><Author ValidYN="Y"><LastName>Adam</LastName><ForeName>Margaret
+        P</ForeName><Initials>MP</Initials></Author><Author ValidYN="Y"><LastName>Feldman</LastName><ForeName>Jerry</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Mirzaa</LastName><ForeName>Ghayda M</ForeName><Initials>GM</Initials></Author><Author
+        ValidYN="Y"><LastName>Pagon</LastName><ForeName>Roberta A</ForeName><Initials>RA</Initials></Author><Author
+        ValidYN="Y"><LastName>Wallace</LastName><ForeName>Stephanie E</ForeName><Initials>SE</Initials></Author><Author
+        ValidYN="Y"><LastName>Bean</LastName><ForeName>Lora JH</ForeName><Initials>LJH</Initials></Author><Author
+        ValidYN="Y"><LastName>Gripp</LastName><ForeName>Karen W</ForeName><Initials>KW</Initials></Author><Author
+        ValidYN="Y"><LastName>Amemiya</LastName><ForeName>Anne</ForeName><Initials>A</Initials></Author></AuthorList><Medium>Internet</Medium></Book><ArticleTitle
+        book="gene" part="kss">Single Large-Scale Mitochondrial DNA Deletion Syndromes</ArticleTitle><Language>eng</Language><AuthorList
+        Type="authors" CompleteYN="Y"><Author ValidYN="Y"><LastName>Goldstein</LastName><ForeName>Amy</ForeName><Initials>A</Initials><AffiliationInfo><Affiliation>Mitochondrial
+        Medicine Frontier Program, Division of Human Genetics, Department of Pediatrics,
+        Children''s Hospital of Philadelphia, University of Pennsylvania Perelman
+        School of Medicine, Philadelphia, Pennsylvania</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Falk</LastName><ForeName>Marni J</ForeName><Initials>MJ</Initials><AffiliationInfo><Affiliation>Mitochondrial
+        Medicine Frontier Program, Division of Human Genetics, Department of Pediatrics,
+        Children''s Hospital of Philadelphia, University of Pennsylvania Perelman
+        School of Medicine, Philadelphia, Pennsylvania</Affiliation></AffiliationInfo></Author></AuthorList><PublicationType
+        UI="D016454">Review</PublicationType><Abstract><AbstractText Label="CLINICAL
+        CHARACTERISTICS">Single large-scale mitochondrial DNA deletion syndromes (SLSMDSs)
+        comprise overlapping clinical phenotypes including Kearns-Sayre syndrome (KSS),
+        KSS spectrum, Pearson syndrome (PS), chronic progressive external ophthalmoplegia
+        (CPEO), and CPEO-plus. <i>KSS</i> is a progressive multisystem disorder with
+        onset before age 20 years characterized by pigmentary retinopathy, CPEO, and
+        cardiac conduction abnormality. Additional features can include cerebellar
+        ataxia, tremor, intellectual disability or cognitive decline, dementia, sensorineural
+        hearing loss, oropharyngeal and esophageal dysfunction, exercise intolerance,
+        muscle weakness, and endocrinopathies. Brain imaging typically shows bilateral
+        lesions in the globus pallidus and white matter. <i>KSS spectrum</i> includes
+        individuals with KSS in addition to individuals with ptosis and/or ophthalmoparesis
+        and at least one of the following: retinopathy, ataxia, cardiac conduction
+        defects, hearing loss, growth deficiency, cognitive impairment, tremor, or
+        cardiomyopathy. Compared to CPEO-plus, individuals with KSS spectrum have
+        more severe muscle involvement (e.g., weakness, atrophy) and overall have
+        a worse prognosis. <i>PS</i> is characterized by pancytopenia (typically transfusion-dependent
+        sideroblastic anemia with variable cell line involvement), exocrine pancreatic
+        dysfunction, poor weight gain, and lactic acidosis. PS manifestations also
+        include renal tubular acidosis, short stature, and elevated liver enzymes.
+        PS may be fatal in infancy due to neutropenia-related infection or refractory
+        metabolic acidosis. <i>CPEO</i> is characterized by ptosis, ophthalmoplegia,
+        oropharyngeal weakness, variable proximal limb weakness, and/or exercise intolerance.
+        <i>CPEO-plus</i> includes CPEO with additional multisystemic involvement including
+        neuropathy, diabetes mellitus, migraines, hypothyroidism, neuropsychiatric
+        manifestations, and optic neuropathy. Rarely, an SLSMDS can manifest as <i>Leigh
+        syndrome</i>, which is characterized as developmental delays, neurodevelopmental
+        regression, lactic acidosis, and bilateral symmetric basal ganglia, brain
+        stem, and/or midbrain lesions on MRI.</AbstractText><AbstractText Label="DIAGNOSIS/TESTING">The
+        diagnosis of an SLSMDS is established in a proband with characteristic clinical
+        features by identification of a mitochondrial DNA (mtDNA) deletion ranging
+        in size from 1.1 to 10 kb on molecular genetic testing. SLSMDSs can be identified
+        in DNA from blood, buccal cells, and urine in affected children; analysis
+        of skeletal muscle tissue may be required to detect an SLSMDS in an affected
+        adult.</AbstractText><AbstractText Label="MANAGEMENT"><i>Targeted therapy:</i>
+        Folinic acid supplementation in individuals with KSS with low 5-methyltetrahydrofolate
+        in CSF or white matter abnormalities on brain MRI. <i>Supportive care:</i>
+        Consider mitochondrial supplement therapies such as coenzyme Q<sub>10</sub>
+        and antioxidants; optimize nutrition and exercise regimen to prevent acute
+        decompensation; physical and occupational therapy for myopathy and/or ataxia;
+        standard treatment with anti-seizure medication; hearing aids or cochlear
+        implants for sensorineural hearing loss; developmental and educational support;
+        feeding therapy; consider gastrostomy tube placement if poor weight gain,
+        choking, or aspiration risk is present; dilation of the upper esophageal sphincter
+        to alleviate cricopharyngeal achalasia; prophylactic placement of cardiac
+        pacemaker in individuals with cardiac conduction block, with consideration
+        of an implantable cardioverter defibrillator; hormone replacement therapy
+        per endocrinologist; electrolyte monitoring and replacement for renal tubular
+        acidosis; eyelid slings and/or ptosis repair for severe ptosis; eye ointment
+        for dry eyes; eyeglass prisms for diplopia; transfusion therapy for individuals
+        with PS with sideroblastic anemia; replacement of pancreatic enzymes for exocrine
+        pancreatic insufficiency; ventilatory support for respiratory abnormalities
+        that may occur in individuals with Leigh syndrome; standard treatment of anxiety
+        and/or depression; social work support and care coordination as needed. <i>Surveillance:</i>
+        Annual neurology assessment for ataxia, neuropathy, seizures, and myopathy;
+        annual audiology evaluation; annual assessment of developmental progress,
+        educational needs, and cognitive issues; annual evaluation by a neuro-ophthalmologist
+        and/or retinal specialist and oculoplastics; measurement of growth parameters
+        and evaluation of nutritional status and safety of oral intake at each visit;
+        annual assessment of mobility and self-help skills with physical medicine,
+        occupational therapy, and/or physical therapy; EKG and echocardiogram every
+        six to 12 months; annual assessment with an endocrinologist; BUN and creatinine,
+        with consideration of cystatin C in those with low muscle mass; complete blood
+        count in those with PS to assess transfusion needs with additional labs per
+        hematologist, and ferritin for those needing recurrent transfusions as needed;
+        annual complete blood count in those with other SLSMDSs; fecal fat and fecal
+        elastase as needed based on symptoms; monitor for evidence of aspiration and
+        respiratory insufficiency at each visit; assess family needs at each visit.
+        <i>Agents/circumstances to avoid:</i> Volatile anesthetic hypersensitivity
+        may occur. Avoid prolonged treatment with propofol (&gt;30-60 minutes). Medications
+        should be reviewed with a physician familiar with mitochondrial disorders
+        including a thorough individualized assessment of risk vs benefit as several
+        medications may be toxic to mitochondria.</AbstractText><AbstractText Label="GENETIC
+        COUNSELING">SLSMDSs are almost never inherited, suggesting that these disorders
+        are typically caused by a <i>de novo</i> single large-scale mitochondrial
+        DNA deletion (SLSMD) that occurs in the mother''s oocytes during germline
+        development or in the embryo during embryogenesis. If the mother is clinically
+        unaffected and the proband represents a simplex case (i.e., a single affected
+        family member), the empiric risk to the sibs of a proband is very low (at
+        or below 1%). If the mother is affected, the recurrence risk to sibs is estimated
+        to be approximately 4% (one in 24 births). Maternal transmission to more than
+        one child has not been reported to date. Prenatal testing for a pregnancy
+        at increased risk and preimplantation genetic testing are scientifically possible
+        but technically prohibitive as next-generation sequencing methodology does
+        not accurately quantify heteroplasmy level of an SLSMD and droplet digital
+        quantitative PCR cannot reliably detect less than 10% heteroplasmy levels
+        of an SLSMD. Further, prenatal testing is not clinically available due to
+        the inability to accurately interpret the clinical prognosis based on prenatal
+        diagnostic results of an SLSMD.</AbstractText><CopyrightInformation>Copyright
+        &#xa9; 1993-2024, University of Washington, Seattle. GeneReviews is a registered
+        trademark of the University of Washington, Seattle. All rights reserved.</CopyrightInformation></Abstract><Sections><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Summary">Summary</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.GeneReview_Scope"><i>GeneReview</i> Scope</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Diagnosis">Diagnosis</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Clinical_Characteristics">Clinical Characteristics</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Genetically_Related_Disorders">Genetically
+        Related Disorders</SectionTitle></Section><Section><SectionTitle book="gene"
+        part="kss" sec="kss.Differential_Diagnosis">Differential Diagnosis</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Management">Management</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Genetic_Counseling">Genetic Counseling</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Resources">Resources</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Molecular_Genetics">Molecular Genetics</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.Chapter_Notes">Chapter Notes</SectionTitle></Section><Section><SectionTitle
+        book="gene" part="kss" sec="kss.References">References</SectionTitle></Section></Sections><KeywordList
+        Owner="NLM"><Keyword MajorTopicYN="N">mtDNA Deletion Syndromes</Keyword><Keyword
+        MajorTopicYN="N">SLSMDS</Keyword><Keyword MajorTopicYN="N">mtDNA Deletion
+        Syndromes</Keyword><Keyword MajorTopicYN="N">SLSMDS</Keyword><Keyword MajorTopicYN="N">Pearson
+        Syndrome</Keyword><Keyword MajorTopicYN="N">Kearns-Sayre Syndrome (KSS)</Keyword><Keyword
+        MajorTopicYN="N">Chronic Progressive External Ophthalmoplegia (CPEO)</Keyword><Keyword
+        MajorTopicYN="N">Leigh Syndrome (mtDNA deletion)</Keyword><Keyword MajorTopicYN="N">CPEO-Plus</Keyword><Keyword
+        MajorTopicYN="N">Kearns-Sayre Syndrome Spectrum</Keyword><Keyword MajorTopicYN="N">Single
+        Large-Scale Mitochondrial DNA Deletion Syndromes</Keyword></KeywordList><ContributionDate><Year>2003</Year><Month>12</Month><Day>17</Day></ContributionDate><DateRevised><Year>2023</Year><Month>9</Month><Day>28</Day></DateRevised><ItemList
+        ListType="Synonyms"><Item>mtDNA Deletion Syndromes</Item><Item>SLSMDS</Item></ItemList><ReferenceList><Reference><Citation>Al-Gadi
+        IS, Haas RH, Falk MJ, Goldstein A, McCormack SE. Endocrine disorders in primary
+        mitochondrial disease. J Endocr Soc. 2018;2:361-73.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC5865537</ArticleId><ArticleId IdType="pubmed">29594260</ArticleId></ArticleIdList></Reference><Reference><Citation>Alter
+        BP. Pearson syndrome in a Diamond-Blackfan anemia cohort. Blood. 2014;124:312-3.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC4102705</ArticleId><ArticleId IdType="pubmed">25035146</ArticleId></ArticleIdList></Reference><Reference><Citation>Barcelos
+        I, Shadiack E, Ganetzky RD, Falk MJ. Mitochondrial medicine therapies: rationale,
+        evidence, and dosing guidelines. Curr Opin Pediatr. 2020;32:707-18.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC7774245</ArticleId><ArticleId IdType="pubmed">33105273</ArticleId></ArticleIdList></Reference><Reference><Citation>Bernard
+        AM, Vyskocil AA, Mahieu P, Lauwerys RR. Assessment of urinary retinol-binding
+        protein as an index of proximal tubular injury. Clin Chem. 1987;33:775-9</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">3297418</ArticleId></ArticleIdList></Reference><Reference><Citation>Bosworth
+        CM, Grandhi S, Gould MP, LaFramboise T. Detection and quantification of mitochondrial
+        DNA deletions from next-generation sequence data. BMC Bioinformatics. 2017;18:407.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC5657046</ArticleId><ArticleId IdType="pubmed">29072135</ArticleId></ArticleIdList></Reference><Reference><Citation>Broomfield
+        A, Sweeney MG, Woodward CE, Fratter C, Morris AM, Leonard JV, Abulhoul L,
+        Grunewald S, Clayton PT, Hanna MG, Poulton J, Rahman S. Paediatric single
+        mitochondrial DNA deletion disorders: an overlapping spectrum of disease.
+        J Inherit Metab Dis. 2015;38:445-57.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC4432108</ArticleId><ArticleId
+        IdType="pubmed">25352051</ArticleId></ArticleIdList></Reference><Reference><Citation>Chinnery
+        PF, DiMauro S, Shanske S, Schon EA, Zeviani M, Mariotti C, Carrara F, Lombes
+        A, Laforet P, Ogier H, Jaksch M, Lochm&#xfc;ller H, Horvath R, Deschauer M,
+        Thorburn DR, Bindoff LA, Poulton J, Taylor RW, Matthews JN, Turnbull DM. Risk
+        of developing a mitochondrial DNA deletion disorder. Lancet. 2004;364:592-6.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15313359</ArticleId></ArticleIdList></Reference><Reference><Citation>Crippa
+        BL, Leon E, Calhoun A, Lowichik A, Pasquali M, Longo N. Biochemical abnormalities
+        in Pearson syndrome. Am J Med Genet A. 2015;167A:621-8.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">25691415</ArticleId></ArticleIdList></Reference><Reference><Citation>Damas
+        J, Carneiro J, Amorim A, Pereira F. MitoBreak: the mitochondrial DNA breakpoints
+        database. Nucleic Acids Res. 2014;42:D1261-8.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC3965124</ArticleId><ArticleId IdType="pubmed">24170808</ArticleId></ArticleIdList></Reference><Reference><Citation>De
+        Vries MC, Brown DA, Allen ME, Bindoff L, Gorman GS, Karaa A, Keshavan N, Lamperti
+        C, McFarland R, Ng YS, O''Callaghan M, Pitceathly RDS, Rahman S, Russel FGM,
+        Varhaug KN, Schirris TJJ, Mancuso M. Safety of drug use in patients with a
+        primary mitochondrial disease: An international Delphi-based consensus. J
+        Inherit Metab Dis. 2020;43:800-18.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC7383489</ArticleId><ArticleId
+        IdType="pubmed">32030781</ArticleId></ArticleIdList></Reference><Reference><Citation>DiMauro
+        S, Schon EA. Mitochondrial respiratory-chain diseases. N Engl J Med. 2003;348:2656-68</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">12826641</ArticleId></ArticleIdList></Reference><Reference><Citation>Eviatar
+        L, Shanske S, Gauthier B, Abrams C, Maytal J, Slavin M, Valderrama E, DiMauro
+        S. Kearns-Sayre syndrome presenting as renal tubular acidosis. Neurology.
+        1990;40:1761-3.</Citation><ArticleIdList><ArticleId IdType="pubmed">2234434</ArticleId></ArticleIdList></Reference><Reference><Citation>Farruggia
+        P, Di Cataldo A, Pinto RM, Palmisani E, Macaluso A, Valvo LL, Cantarini ME,
+        Tornesello A, Corti P, Fioredda F, Varotto S, Martire B, Moroni I, Puccio
+        G, Russo G, Dufour C, Pillon M. Pearson syndrome: a retrospective cohort study
+        from the Marrow Failure Study Group of A.I.E.O.P. (Associazione Italiana Emato-Oncologia
+        Pediatrica). JIMD Rep. 2016;26:37-43.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC4864774</ArticleId><ArticleId IdType="pubmed">26238250</ArticleId></ArticleIdList></Reference><Reference><Citation>Ganetzky
+        RD, Falk MJ. 8-year retrospective analysis of intravenous arginine therapy
+        for acute metabolic strokes in pediatric mitochondrial disease. Mol Genet
+        Metab. 2018;123:301-8.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC5849405</ArticleId><ArticleId
+        IdType="pubmed">29428506</ArticleId></ArticleIdList></Reference><Reference><Citation>Gorman
+        GS, Chinnery PF, DiMauro S, Hirano M, Koga Y, McFarland R, Suomalainen A,
+        Thorburn DR, Zeviani M, Turnbull DM. Mitochondrial diseases. Nat Rev Dis Primers.
+        2016;2:16080.</Citation><ArticleIdList><ArticleId IdType="pubmed">27775730</ArticleId></ArticleIdList></Reference><Reference><Citation>Grady
+        JP, Campbell G, Ratnaike T, Blakely EL, Falkous G, Nesbitt V, Schaefer AM,
+        McNally RJ, Gorman GS, Taylor RW, Turnbull DM, McFarland R. Disease progression
+        in patients with single, large-scale mitochondrial DNA deletions. Brain. 2014;137:323-34.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC3914470</ArticleId><ArticleId IdType="pubmed">24277717</ArticleId></ArticleIdList></Reference><Reference><Citation>Gustafson
+        MA, McCormick EM, Perera L, Longley MJ, Bai R, Kong J, Dulik M, Shen L, Goldstein
+        AC, McCormack SE, Laskin BL, Leroy BP, Ortiz-Gonzalez XR, Ellington MG, Copeland
+        WC, Falk MJ. Mitochondrial single-stranded DNA binding protein novel de novo
+        SSBP1 mutation in a child with single large-scale mtDNA deletion (SLSMD) clinically
+        manifesting as Pearson, Kearns-Sayre, and Leigh syndromes. PLoS One. 2019;14:e0221829.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC6719858</ArticleId><ArticleId IdType="pubmed">31479473</ArticleId></ArticleIdList></Reference><Reference><Citation>Herget-Rosenthal
+        S, Poppen D, H&#xfc;sing J, Marggraf G, Pietruck F, Jakob HG, Philipp T, Kribben
+        A. Prognostic value of tubular proteinuria and enzymuria in nonoliguric acute
+        tubular necrosis. Clin Chem. 2004;50:552-8</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">14709451</ArticleId></ArticleIdList></Reference><Reference><Citation>Hsieh
+        VC, Krane EJ, Morgan PG. Mitochondrial disease and anesthesia. Journal of
+        Inborn Errors of Metabolism &amp; Screening. 2017;5:1-5.</Citation></Reference><Reference><Citation>Kabunga
+        P, Lau AK, Phan K, Puranik R, Liang C, Davis RL, Sue CM, Sy RW. Systematic
+        review of cardiac electrical disease in Kearns-Sayre syndrome and mitochondrial
+        cytopathy. Int J Cardiol. 2015;181:303-10.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">25540845</ArticleId></ArticleIdList></Reference><Reference><Citation>Katsanos
+        KH, Elisaf M, Bairaktari E, Tsianos EV. Severe hypomagnesemia and hypoparathyroidism
+        in Kearns-Sayre syndrome. Am J Nephrol. 2001;21:150-3.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">11359024</ArticleId></ArticleIdList></Reference><Reference><Citation>Lake
+        NJ, Compton AG, Rahman S, Thorburn DR. Leigh syndrome: one disorder, more
+        than 75 monogenic causes. Ann Neurol. 2016;79:190-203.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">26506407</ArticleId></ArticleIdList></Reference><Reference><Citation>Mancuso
+        M, Orsucci D, Angelini C, Bertini E, Carelli V, Comi GP, Donati MA, Federico
+        A, Minetti C, Moggio M, Mongini T, Santorelli FM, Servidei S, Tonin P, Toscano
+        A, Bruno C, Bello L, Caldarazzo Ienco E, Cardaioli E, Catteruccia M, Da Pozzo
+        P, Filosto M, Lamperti C, Moroni I, Musumeci O, Pegoraro E, Ronchi D, Sauchelli
+        D, Scarpelli M, Sciacco M, Valentino ML, Vercelli L, Zeviani M, Siciliano
+        G. Redefining phenotypes associated with mitochondrial DNA single deletion.
+        J Neurol. 2015;262:1301-9.</Citation><ArticleIdList><ArticleId IdType="pubmed">25808502</ArticleId></ArticleIdList></Reference><Reference><Citation>Manea
+        EM, Leverger G, Bellmann F, Stanescu PA, Mircea A, L&#xe8;bre AS, R&#xf6;tig
+        A, Munnich A. Pearson syndrome in the neonatal period: two case reports and
+        review of the literature. J Pediatr Hematol Oncol. 2009;31:947-51.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">19881395</ArticleId></ArticleIdList></Reference><Reference><Citation>Melzer
+        N, Ruck T, Fuhr P, Gold R, Hohlfeld R, Marx A, Melms A, Tackenberg B, Schalke
+        B, Schneider-Gold C, Zimprich F, Meuth SG, Wiendl H. Clinical features, pathogenesis,
+        and treatment of myasthenia gravis: a supplement to the Guidelines of the
+        German Neurological Society. J Neurol. 2016;263:1473-94.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC4971048</ArticleId><ArticleId IdType="pubmed">26886206</ArticleId></ArticleIdList></Reference><Reference><Citation>Moscatelli
+        M, Ardissone A, Lamantea E, Zorzi G, Bruno C, Moroni I, Erbetta A, Chiapparini
+        L. Kearns-Sayre syndrome: expanding spectrum of a "novel" mitochondrial leukomyeloencephalopathy.
+        Neurol Sci. 2022;43:2081-4.</Citation><ArticleIdList><ArticleId IdType="pubmed">35031921</ArticleId></ArticleIdList></Reference><Reference><Citation>Mita
+        S, Rizzuto R, Moraes CT, Shanske S, Arnaudo E, Fabrizi GM, Koga Y, DiMauro
+        S, Schon EA. Recombination via flanking direct repeats is a major cause of
+        large-scale deletions of human mitochondrial DNA. Nucleic Acids Res. 1990;18:561-7</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC333462</ArticleId><ArticleId IdType="pubmed">2308845</ArticleId></ArticleIdList></Reference><Reference><Citation>Morel
+        AS, Joris N, Meuli R, Jacquemont S, Ballhausen D, Bonaf&#xe9; L, Fattet S,
+        Tolsa JF. Early neurological impairment and severe anemia in a newborn with
+        Pearson syndrome. Eur J Pediatr. 2009;168:311-5.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">18553104</ArticleId></ArticleIdList></Reference><Reference><Citation>Parikh
+        S, Goldstein A, Karaa A, Koenig MK, Anselm I, Brunel-Guitton C, Christodoulou
+        J, Cohen BH, Dimmock D, Enns GM, Falk MJ, Feigenbaum A, Frye RE, Ganesh J,
+        Griesemer D, Haas R, Horvath R, Korson M, Kruer MC, Mancuso M, McCormack S,
+        Raboisson MJ, Reimschisel T, Salvarinova R, Saneto RP, Scaglia F, Shoffner
+        J, Stacpoole PW, Sue CM, Tarnopolsky M, Van Karnebeek C, Wolfe LA, Cunningham
+        ZZ, Rahman S, Chinnery PF. Patient care standards for primary mitochondrial
+        disease: a consensus statement from the Mitochondrial Medicine Society. Genet
+        Med. 2017;19:1380-97.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC7804217</ArticleId><ArticleId
+        IdType="pubmed">28749475</ArticleId></ArticleIdList></Reference><Reference><Citation>Pitceathly
+        RD, Rahman S, Hanna MG. Single deletions in mitochondrial DNA--molecular mechanisms
+        and disease phenotypes in clinical practice. Neuromuscul Disord. 2012;22:577-86.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">22578526</ArticleId></ArticleIdList></Reference><Reference><Citation>Quijada-Fraile
+        P, O''Callaghan M, Mart&#xed;n-Hern&#xe1;ndez E, Montero R, Garcia-Cazorla
+        &#xc0;, de Arag&#xf3;n AM, Muchart J, M&#xe1;laga I, Pardo R, Garc&#xed;a-Gonzalez
+        P, Jou C, Montoya J, Emperador S, Ruiz-Pesini E, Arenas J, Martin MA, Ormazabal
+        A, Pineda M, Garc&#xed;a-Silva MT, Artuch R. Follow-up of folinic acid supplementation
+        for patients with cerebral folate deficiency and Kearns-Sayre syndrome. Orphanet
+        J Rare Dis. 2014;9:217.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC4302586</ArticleId><ArticleId
+        IdType="pubmed">25539952</ArticleId></ArticleIdList></Reference><Reference><Citation>Reynolds
+        E, Byrne M, Ganetzky R, Parikh S. Pediatric single large-scale mtDNA deletion
+        syndromes: The power of patient reported outcomes. Mol Genet Metab. 2021;134:301-8.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">34862134</ArticleId></ArticleIdList></Reference><Reference><Citation>Schaefer
+        AM, McFarland R, Blakely EL, He L, Whittaker RG, Taylor RW, Chinnery PF, Turnbull
+        DM. Prevalence of mitochondrial DNA disease in adults. Ann Neurol. 2008;63:35-9.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17886296</ArticleId></ArticleIdList></Reference><Reference><Citation>Schon
+        EA. Rearrangements of mitochondrial DNA. In: Holt I, ed. Genetics of Mitochondrial
+        Diseases. Oxford, UK: Oxford University Press; 2003:111-24.</Citation></Reference><Reference><Citation>Trivedi
+        M, Goldstein A, Arora G. Prophylactic pacemaker placement at first signs of
+        conduction disease in Kearns-Sayre syndrome. Cardiol Young. 2018;28:1487-8.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">30326976</ArticleId></ArticleIdList></Reference><Reference><Citation>Vaidya
+        VS, Waikar SS, Ferguson MA, Collings FB, Sunderland K, Gioules C, Bradwin
+        G, Matsouaka R, Betensky RA, Curhan GC, Bonventre JV. Urinary biomarkers for
+        sensitive and specific detection of acute kidney injury in humans. Clin Transl
+        Sci. 2008;1:200-8.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2638059</ArticleId><ArticleId
+        IdType="pubmed">19212447</ArticleId></ArticleIdList></Reference><Reference><Citation>Williams
+        TB, Daniels M, Puthenveetil G, Chang R, Wang RY, Abdenur JE. Pearson syndrome:
+        unique endocrine manifestations including neonatal diabetes and adrenal insufficiency.
+        Mol Genet Metab. 2012;106:104-7.</Citation><ArticleIdList><ArticleId IdType="pubmed">22424738</ArticleId></ArticleIdList></Reference></ReferenceList></BookDocument><PubmedBookData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2023</Year><Month>9</Month><Day>28</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2023</Year><Month>9</Month><Day>28</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2023</Year><Month>9</Month><Day>28</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">20301382</ArticleId></ArticleIdList></PubmedBookData></PubmedBookArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -98,20 +322,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:40 GMT
+      - Tue, 20 Feb 2024 16:42:39 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD70A4A27193A50000395053EC32B2.1.1.m_3
+      - 322C45D975EA9B45000040E1B51BAAB0.1.1.m_3
       NCBI-SID:
-      - C8F994955F27CF7C_68B0SID
+      - ACA17E58BFE028EB_3576SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C8F994955F27CF7C_68B0SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:40 GMT
+      - ncbi_sid=ACA17E58BFE028EB_3576SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:40 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -119,9 +343,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '6'
-      X-Test-Test:
-      - test42
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

@@ -28,6 +28,19 @@ class TestEpiAssessmentViewSet:
         key = "api-epiv2-export-1.json"
         check_api_json_data(response.json(), key, rewrite_data_files)
 
+        # use study filter
+        response = client.get(
+            url,
+            data={"unpublished": True, "study_ids": [1]},
+            format="application/json",
+        )
+        assert len(response.json()) == 12
+        response = client.get(
+            url,
+            data={"unpublished": True, "study_ids": [2]},
+        )
+        assert len(response.json()) == 0
+
     def test_study_export(self, rewrite_data_files):
         url = reverse("epiv2:api:assessment-study-export", args=(1,))
 

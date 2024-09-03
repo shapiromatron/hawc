@@ -9,8 +9,9 @@ from ..assessment.api import (
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
+from ..common.api.utils import get_published_only
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from . import exports, models, serializers
 
 
@@ -18,9 +19,9 @@ class IVAssessmentViewSet(BaseAssessmentViewSet):
     model = Assessment
     serializer_class = UnusedSerializer
 
-    def get_endpoint_queryset(self):
-        perms = self.assessment.user_permissions(self.request.user)
-        if not perms["edit"]:
+    def get_endpoint_queryset(self, request):
+        published_only = get_published_only(self.assessment, request)
+        if published_only:
             return models.IVEndpoint.objects.published(self.assessment).order_by("id")
         return models.IVEndpoint.objects.get_qs(self.assessment).order_by("id")
 
@@ -31,10 +32,18 @@ class IVAssessmentViewSet(BaseAssessmentViewSet):
         renderer_classes=PandasRenderers,
     )
     def full_export(self, request, pk):
+        """
+        Retrieve complete in vitro data
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
         self.get_object()
-        self.object_list = self.get_endpoint_queryset()
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        self.object_list = self.get_endpoint_queryset(request)
         exporter = exports.DataPivotEndpoint(
-            self.object_list, filename=f"{self.assessment}-invitro"
+            self.object_list, filename=f"{self.assessment}-invitro", assessment=self.assessment
         )
         return Response(exporter.build_export())
 

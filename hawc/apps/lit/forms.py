@@ -2,6 +2,7 @@ import logging
 from io import StringIO
 
 import pandas as pd
+from crispy_forms import layout as cfl
 from django import forms
 from django.core.validators import URLValidator
 from django.db import transaction
@@ -9,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
+from ..common.autocomplete import AutocompleteSelectMultipleWidget
 from ..common.forms import (
     BaseFormHelper,
     ConfirmationField,
@@ -20,6 +22,7 @@ from ..common.forms import (
 from ..study.constants import StudyTypeChoices
 from ..study.models import Study
 from . import constants, models
+from .autocomplete import SearchAutocomplete
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +70,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
-            self.fields[fld].widget.attrs["rows"] = 3
+        helper.set_textarea_height(("keyword_list_1", "keyword_list_2", "keyword_list_3"))
         helper.add_row("conflict_resolution", 2, "col-md-6")
         helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
@@ -178,10 +180,10 @@ class ImportForm(SearchForm):
         try:
             # convert to a set, then a list to remove duplicate ids
             ids = list(set(int(el) for el in search_string.split(",")))
-        except ValueError:
+        except ValueError as err:
             raise forms.ValidationError(
                 "Must be a comma-separated list of positive integer identifiers"
-            )
+            ) from err
 
         if len(ids) == 0 or any([el < 0 for el in ids]):
             raise forms.ValidationError("At least one positive identifier must exist")
@@ -282,7 +284,7 @@ class RisImportForm(SearchForm):
             try:
                 self._references = ris.RisImporter(f).references
             except ValueError as err:
-                raise forms.ValidationError(str(err))
+                raise forms.ValidationError(str(err)) from err
 
         # ensure at least one reference exists
         if len(self._references) == 0:
@@ -459,11 +461,6 @@ class ReferenceForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if fld in ["title", "authors_short", "authors", "journal"]:
-                widget.attrs["rows"] = 3
-
         inputs = {
             "legend_text": "Update reference details",
             "help_text": "Update reference information which was fetched from database or reference upload.",
@@ -471,7 +468,7 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("title", "authors_short", "authors", "journal"))
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
         helper.add_row("doi_id", 3, "col-md-4")
@@ -519,13 +516,104 @@ class ReferenceForm(forms.ModelForm):
         return instance
 
 
+class WorkflowForm(forms.ModelForm):
+    admission_tags = forms.ModelMultipleChoiceField(
+        required=False, queryset=models.ReferenceFilterTag.objects.all(), label="Tagged With:"
+    )
+    removal_tags = forms.ModelMultipleChoiceField(
+        required=False, queryset=models.ReferenceFilterTag.objects.all(), label="Tagged With:"
+    )
+
+    class Meta:
+        model = models.Workflow
+        exclude = ("assessment", "created", "last_updated")
+        widgets = {
+            "admission_source": AutocompleteSelectMultipleWidget(
+                autocomplete_class=SearchAutocomplete
+            ),
+            "removal_source": AutocompleteSelectMultipleWidget(
+                autocomplete_class=SearchAutocomplete
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment.id)
+        for field in ["admission_tags", "removal_tags"]:
+            self.fields[field].queryset = tags
+            self.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
+            self.fields[field].widget.attrs["size"] = 5
+
+        for field in ["admission_source", "removal_source"]:
+            self.fields[field].label = "Search/Import Source"
+            self.fields[field].widget.set_filters({"assessment_id": self.instance.assessment.id})
+
+        for field in ["admission_tags_descendants", "removal_tags_descendants"]:
+            self.fields[field].hover_help = True
+            self.fields[field].label = "Include Descendants of above tag(s)"
+
+        if not self.instance.assessment.literature_settings.conflict_resolution:
+            self.fields["link_conflict_resolution"].widget = forms.HiddenInput()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.set_textarea_height(("description",), 2)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("title"),
+                cfl.Column("link_tagging"),
+                cfl.Column("link_conflict_resolution"),
+            ),
+            cfl.Row(
+                cfl.Column("description"),
+            ),
+            cfl.Row(
+                cfl.Column(
+                    cfl.Fieldset(
+                        "Admission Criteria",
+                        cfl.Row(
+                            cfl.Column("admission_tags", css_class="col-md-12"),
+                        ),
+                        cfl.Row(cfl.Column("admission_tags_descendants")),
+                        cfl.Row(cfl.Column("admission_source", css_class="col-md-12")),
+                        css_class="fieldset-border mx-2 mb-4",
+                    ),
+                ),
+                cfl.Column(
+                    cfl.Fieldset(
+                        "Removal Criteria",
+                        cfl.Row(
+                            cfl.Column("removal_tags", css_class="col-md-12"),
+                        ),
+                        cfl.Row(cfl.Column("removal_tags_descendants")),
+                        cfl.Row(cfl.Column("removal_source", css_class="col-md-12")),
+                        css_class="fieldset-border mx-2 mb-4",
+                    ),
+                ),
+            ),
+        )
+        return helper
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for tag_list in ["admission_tags", "removal_tags"]:
+            tag_ids = list(cleaned_data[tag_list].values_list("id", flat=True))
+            cleaned_data[tag_list] = tag_ids
+
+
 class TagsCopyForm(forms.Form):
     assessment = forms.ModelChoiceField(queryset=Assessment.objects.all(), empty_label=None)
     confirmation = ConfirmationField()
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        self.assessment = kwargs.pop("instance")
+        user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
         self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
@@ -575,7 +663,7 @@ class ReferenceExcelUploadForm(forms.Form):
             df = pd.read_excel(fn.file)
         except Exception as e:
             logger.warning(e)
-            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR) from e
 
         # check column names
         if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
@@ -583,8 +671,8 @@ class ReferenceExcelUploadForm(forms.Form):
 
         try:
             hawc_ids = df["HAWC ID"].astype(int).tolist()
-        except pd.errors.IntCastingNaNError:
-            raise forms.ValidationError("HAWC IDs must be integers.")
+        except pd.errors.IntCastingNaNError as err:
+            raise forms.ValidationError("HAWC IDs must be integers.") from err
 
         # check valid HAWC IDs
         qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)
@@ -654,3 +742,30 @@ class BulkReferenceStudyExtractForm(forms.Form):
         for reference in references:
             study_attrs = {st: True for st in study_type}
             Study.save_new_from_reference(reference, study_attrs)
+
+
+class BulkMergeConflictsForm(forms.Form):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        help_text="Select tag(s) to bulk merge conflicts for. This includes all descendant tag(s).",
+    )
+    include_without_conflict = forms.BooleanField(
+        label="Include references without conflicts",
+        help_text="Includes references that are not shown on the conflict resolution page. This refers to references with one unresolved user tag.",
+        required=False,
+    )
+    cache_key = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        self.fields["tags"].queryset = tags
+        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+        self.fields["tags"].widget.attrs["size"] = 9
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper

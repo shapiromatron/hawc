@@ -3,12 +3,12 @@
 {% block content %}
   {% crispy form %}
   <div id='extra_content' class="hidden">
-    <div class="alert alert-warning">
+    {% alert type="warning" %}
       <h4>Warning!</h4>
       <p>Loading this approach will delete all {{assessment.get_rob_name_display|lower}}
         information currently saved in this assessment. This includes all domains and metrics
         which currently exist, as well as any completed evaluations for studies already assessed.</p>
-    </div>
+    {% endalert %}
   </div>
   <div id="detail_display" class="hidden"></div>
   <div id="detail_library" class="hidden">
@@ -23,17 +23,17 @@
 
 
 {% block extrajs %}
-<script type="text/javascript">
-$(document).ready(function () {
+  <script type="text/javascript">
+    $(document).ready(function () {
   // move extra-content to appropriate location then make visible
-  $('#extra_content').insertBefore($('#div_id_rob_type')).removeClass('hidden');
-  $('#detail_display').insertAfter($('#div_id_rob_type')).removeClass('hidden');
+      $('#extra_content').insertBefore($('#div_id_rob_type')).removeClass('hidden');
+      $('#detail_display').insertAfter($('#div_id_rob_type')).removeClass('hidden');
   // handle selector change
-  window.app.HAWCUtils.onSelectChangeShowDetail(
-    document.getElementById("id_rob_type"),
-    document.getElementById("detail_display"),
-    document.getElementById("detail_library")
-  );
-});
-</script>
+      window.app.HAWCUtils.onSelectChangeShowDetail(
+        document.getElementById("id_rob_type"),
+        document.getElementById("detail_display"),
+        document.getElementById("detail_library")
+      );
+    });
+  </script>
 {% endblock extrajs %}

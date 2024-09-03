@@ -7,7 +7,9 @@
   "data_url": "/summary/api/visual/6/data/",
   "dose_units": null,
   "endpoints": [],
+  "evidence_type": 3,
   "id": 6,
+  "image": null,
   "last_updated": "2020-05-08T15:43:09.448621-04:00",
   "prefilters": {},
   "published": true,
@@ -22,7 +24,6 @@
     "width": 1280
   },
   "slug": "tagtree",
-  "sort_order": "short_citation",
   "studies": [],
   "title": "tagtree",
   "url": "/summary/visual/assessment/2/tagtree/",

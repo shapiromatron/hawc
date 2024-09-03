@@ -7,7 +7,9 @@
   "data_url": "/summary/api/visual/5/data/",
   "dose_units": null,
   "endpoints": [],
+  "evidence_type": 0,
   "id": 5,
+  "image": null,
   "last_updated": "2020-05-08T15:38:48.445082-04:00",
   "prefilters": {
     "studies": [
@@ -195,7 +197,6 @@
     "yAxisLabel": ""
   },
   "slug": "rob-barchart",
-  "sort_order": "short_citation",
   "studies": [
     {
       "abstract": "<span class=\"abstract_label\">BACKGROUND: </span>Decabromodiphenyl ether (DecaBDE; CASRN 1163-19-5) is a flame retardant used in a variety of manufactured products. A single oral dose of 20.1 mg/kg administered to mice on postnatal day 3 has been reported to alter motor activity at 2, 4, and 6 months of age.<br><span class=\"abstract_label\">METHODS: </span>To further evaluate these results, a developmental neurotoxicity study was conducted in the most commonly used species for studies of this type, the rat, according to international validated testing guidelines and Good Laboratory Practice Standards. DecaBDE was administered orally via gavage in corn oil to dams from gestation day 6 to weaning at doses of 0, 1, 10, 100, or 1,000 mg/kg/day. Standard measures of growth, development, and neurological endpoints were evaluated in the offspring. Motor activity was assessed at 2 months of age. Additional motor activity assessments were conducted at 4 and 6 months of age. Neuropathology and morphometry evaluations of the offspring were performed at weaning and adulthood.<br><span class=\"abstract_label\">RESULTS: </span>No treatment-related neurobehavioral changes were observed in detailed clinical observations, startle response, or learning and memory tests. No test substance-related changes were noted in motor activity assessments performed at 2, 4, or 6 months of age. Finally, no treatment-related neuropathological or morphometric alterations were found.<br><span class=\"abstract_label\">CONCLUSIONS: </span>Under the conditions of this study, the no-observed-adverse-effect level for developmental neurotoxicity of DecaBDE was 1,000 mg/kg/day, the highest dose tested.",

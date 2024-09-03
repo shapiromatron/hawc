@@ -42,8 +42,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
         if dtxsid:
             try:
                 data["dtxsid"] = DSSTox.objects.get(pk=dtxsid)
-            except models.ObjectDoesNotExist:
-                raise serializers.ValidationError(dict(dtxsid=f"DSSTox {dtxsid} does not exist"))
+            except models.ObjectDoesNotExist as exc:
+                raise serializers.ValidationError(
+                    dict(dtxsid=f"DSSTox {dtxsid} does not exist")
+                ) from exc
 
         return data
 
@@ -254,9 +256,9 @@ class EndpointSerializer(serializers.ModelSerializer):
         ret["variance_name"] = instance.variance_name
         ret["data_type_label"] = instance.get_data_type_display()
         ret["observation_time_units"] = instance.get_observation_time_units_display()
-        ret[
-            "expected_adversity_direction_text"
-        ] = instance.get_expected_adversity_direction_display()
+        ret["expected_adversity_direction_text"] = (
+            instance.get_expected_adversity_direction_display()
+        )
         ret["monotonicity"] = instance.get_monotonicity_display()
         ret["trend_result"] = instance.get_trend_result_display()
         ret["additional_fields"] = json.loads(instance.additional_fields)

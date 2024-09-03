@@ -35,10 +35,10 @@ class SimpleStudySerializer(StudySerializer):
 
             try:
                 Reference.objects.get(id=ref_id)
-            except ValueError:
-                raise serializers.ValidationError("Reference ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError("Reference ID does not exist.")
+            except ValueError as err:
+                raise serializers.ValidationError("Reference ID must be a number.") from err
+            except ObjectDoesNotExist as err:
+                raise serializers.ValidationError("Reference ID does not exist.") from err
 
         return super().validate(data)
 
@@ -130,7 +130,7 @@ class StudyFromIdentifierSerializer(serializers.ModelSerializer):
                 data["db_type"], data["db_id"]
             )
         except ValidationError as err:
-            raise serializers.ValidationError(err.message)
+            raise serializers.ValidationError(err.message) from err
 
         return data
 

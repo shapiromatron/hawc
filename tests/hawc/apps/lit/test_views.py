@@ -7,7 +7,7 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
-from hawc.apps.lit.models import Reference
+from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.study.models import Study
 
 from ..test_utils import check_200, get_client
@@ -20,6 +20,8 @@ class TestViewPermissions:
         views = [
             reverse("lit:tag-status", args=(3,)),
             reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)),
+            reverse("lit:workflows", args=(db_keys.assessment_working,)),
+            reverse("lit:overview", args=(db_keys.assessment_conflict_resolution,)),
         ]
         for client in clients:
             c = Client()
@@ -34,6 +36,8 @@ class TestViewPermissions:
         views = [
             (reverse("lit:tag-status", args=(3,)), 403),
             (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
+            (reverse("lit:workflows", args=(db_keys.assessment_working,)), 403),
+            (reverse("lit:overview", args=(db_keys.assessment_working,)), 403),
         ]
         for url, status in views:
             response = c.get(url)
@@ -140,6 +144,27 @@ class TestRefFilterList:
         n_results = b"References (1 found)"
         title = b"Psycho-physiological effects of the terrorist sarin attack on the Tokyo subway system."
         assert (n_results in resp.content) and (title in resp.content)
+
+
+@pytest.mark.django_db
+class TestTagsCopy:
+    def test_success(self):
+        c = Client()
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
+        a_id = 3
+
+        # check GET
+        url = reverse("lit:tags_copy", args=(a_id,))
+        resp = c.get(url)
+        assertTemplateUsed(resp, "lit/tags_copy.html")
+
+        assert not ReferenceFilterTag.get_assessment_qs(a_id).filter(name="Tier III Demo").exists()
+
+        # check POST
+        resp = c.post(url, {"assessment": 4, "confirmation": "confirm"}, follow=True)
+        assertTemplateUsed(resp, "lit/tags_update.html")
+
+        assert ReferenceFilterTag.get_assessment_qs(a_id).filter(name="Tier III Demo").exists()
 
 
 @pytest.mark.django_db

@@ -1,61 +1,60 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <h3>Included references in literature search/import</h3>
-    <p class="text-muted">The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. You can individually convert each reference to a study that allows you to continue with extraction/review, or you can select multiple references via the checkbox and bulk-convert at the bottom of the form.</p>
-    <p class="text-muted">Select one or more references from the list below:</p>
-    {% if object_list.count > 0 %}
-        <form method="post">
-            <ul class="list-group my-3 vw75">
-            {% for object in object_list %}
-                    <li class="list-group-item d-flex col">
-                        <div class="col-auto d-flex align-content-center pl-4 pr-5">  
-                            <input style="width: 17px;" type="checkbox" name="references" value="{{object.id}}">
-                        </div>
-                        <div style="width: 75vw;">
-                            {% include 'lit/_reference_with_tags.html' with ref=object hide_abstract=True extra_tag_classes='smaller' %}
-                        </div>
-                        <div>
-                            <a class="btn btn-sm btn-primary d-flex flex-shrink-0 ml-2" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a>
-                        </div>
-                    </li>
-            {% endfor %}
-            </ul>
-            <div>
-                <h4>Create studies from selected references</h4>
-                <p class="text-muted">Select one more references from the list above, and a study
-                    type to apply to these references. These references will be bulk-converted to
-                    studies.
-                </p>
-                <hr>
-                <div id="study-type-select">
-                    <label for="study-type-select">Study Type(s)</label>
-                    {% if form.study_type.errors %}
-                    <div class="alert alert-danger">{{form.study_type.errors}}</div>
-                    {% endif %}
-                    <div id="study-type-select">
-                        {% for checkbox in form.study_type %}
-                            <div class="form-check-inline">
-                                <label>{{ checkbox.tag }}  {{ checkbox.choice_label }}</label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <p class="text-muted">Selected study types will be applied to all created studies.</p>
-                </div>
-                {% csrf_token %}
-                {% if form.references.errors %}
-                <div class="alert alert-danger">{{form.references.errors}}</div>
-                {% endif %}
-                <div class="form-actions">
-                    <input type="submit" class="btn btn-primary" value="Convert selected to studies">
-                </div>
+  <h3>Included references in literature search/import</h3>
+  <p class="text-muted">The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. You can individually convert each reference to a study that allows you to continue with extraction/review, or you can select multiple references via the checkbox and bulk-convert at the bottom of the form.</p>
+  <p class="text-muted">Select one or more references from the list below:</p>
+  {% if object_list.count > 0 %}
+    <form method="post">
+      <ul class="list-group my-3 vw75">
+        {% for object in object_list %}
+          <li class="list-group-item d-flex col">
+            <div class="col-auto d-flex align-content-center pl-4 pr-5">
+              <input style="width: 17px;" type="checkbox" name="references" value="{{object.id}}">
             </div>
-        </form>
-    {% else %}
-        <div class="alert alert-success">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <b>Nothing to be done!</b><br/>
-            <p>No references have been marked for inclusion which aren't studies already.</p>
+            <div style="width: 75vw;">
+              {% include 'lit/_reference_with_tags.html' with ref=object hide_abstract=True extra_tag_classes='smaller' %}
+            </div>
+            <div>
+              <a class="btn btn-sm btn-primary d-flex flex-shrink-0 ml-2" href="{% url 'study:new_study' object.pk %}"><i class="fa fa-plus mr-1"></i>Convert</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+      <div>
+        <h4>Create studies from selected references</h4>
+        <p class="text-muted">Select one more references from the list above, and a study
+          type to apply to these references. These references will be bulk-converted to
+          studies.
+        </p>
+        <hr>
+        <div id="study-type-select">
+          <label for="study-type-select">Study Type(s)</label>
+          {% if form.study_type.errors %}
+            {% alert classes="pb-0" %}{{form.study_type.errors}}{% endalert %}
+          {% endif %}
+          <div id="study-type-select">
+            {% for checkbox in form.study_type %}
+              <div class="form-check-inline">
+                <label>{{ checkbox.tag }}  {{ checkbox.choice_label }}</label>
+              </div>
+            {% endfor %}
+          </div>
+          <p class="text-muted">Selected study types will be applied to all created studies.</p>
         </div>
-    {% endif %}
+        {% csrf_token %}
+        {% if form.references.errors %}
+          {% alert %}{{form.references.errors}}{% endalert %}
+        {% endif %}
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" value="Convert selected to studies">
+        </div>
+      </div>
+    </form>
+  {% else %}
+    {% alert type="success" dismiss=True %}
+      <b>Nothing to be done!</b><br/>
+      <p>No references have been marked for inclusion which aren't studies already.</p>
+    {% endalert %}
+  {% endif %}
 {% endblock %}

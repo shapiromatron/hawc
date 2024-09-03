@@ -7,6 +7,7 @@ import plotly.express as px
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.timezone import now
 from plotly.graph_objs._figure import Figure
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
@@ -27,9 +28,9 @@ class Task(models.Model):
         related_name="tasks",
     )
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
-    type = models.PositiveSmallIntegerField(choices=constants.TaskType.choices)
+    type = models.PositiveSmallIntegerField(choices=constants.TaskType)
     status = models.PositiveSmallIntegerField(
-        default=constants.TaskStatus.NOT_STARTED, choices=constants.TaskStatus.choices
+        default=constants.TaskStatus.NOT_STARTED, choices=constants.TaskStatus
     )
     open = models.BooleanField(default=False)
     due_date = models.DateTimeField(blank=True, null=True)
@@ -120,3 +121,11 @@ class Task(models.Model):
             hovermode=False,
         )
         return plot
+
+    @property
+    def overdue(self):
+        return (
+            self.due_date
+            and self.status in [constants.TaskStatus.NOT_STARTED, constants.TaskStatus.STARTED]
+            and self.due_date < now()
+        )

@@ -1,4 +1,3 @@
-from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.urls import reverse
@@ -7,13 +6,14 @@ from django.views.generic import ListView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, cacheable
 from ..common.htmx import HtmxGetMixin, HtmxViewSet, action, can_edit
-from ..common.views import BaseDetail, BaseFilterList, BaseList, FilterSetMixin, LoginRequiredMixin
+from ..common.views import BaseDetail, BaseFilterList, BaseList, LoginRequiredMixin
 from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
 from . import constants, filterset, forms, models
+from .analytics import overview, time_series, time_spent
 
 
 def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
@@ -22,20 +22,18 @@ def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
     )
 
 
-def studies_with_active_user_reviews(user, task_qs: QuerySet[models.Task]) -> QuerySet[Study]:
-    """Given a list of tasks, return studies that have an incomplete RiskOfBias
-    review by the current user. Reviews may be complete or incomplete; we just
-    check by the status of the mgmt.Task.
-    """
-    active_rob_tasks = task_qs.exclude_completed_and_abandonded().filter(
-        type=constants.TaskType.ROB
+def incomplete_rob_reviews(user, assessment: Assessment | None) -> list[RiskOfBias]:
+    """Return RiskOfBias objects that have an incomplete RiskOfBias review by the current user."""
+    qs = RiskOfBias.objects.all()
+    if assessment:
+        qs = qs.filter(study__assessment=assessment)
+    qs = (
+        qs.filter(active=True, author_id=user.id)
+        .prefetch_related("scores")
+        .select_related("study__assessment")
+        .order_by("study__assessment_id", "study__short_citation")
     )
-    own_reviews = RiskOfBias.objects.filter(author=user, active=True)
-    return (
-        Study.objects.filter(id__in=active_rob_tasks.values_list("study_id", flat=True))
-        .prefetch_related(Prefetch("riskofbiases", own_reviews, to_attr="own_reviews"))
-        .select_related("assessment")
-    )
+    return [rob for rob in qs if not rob.is_complete]
 
 
 # View mixins for ensuring tasks are started
@@ -58,8 +56,7 @@ class EnsureExtractionStartedMixin:
         return super().get_success_url()
 
 
-class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
-    filterset_class = filterset.UserTaskFilterSet
+class UserTaskList(LoginRequiredMixin, ListView):
     model = models.Task
     template_name = "mgmt/user_task_list.html"
 
@@ -68,50 +65,27 @@ class UserTaskList(LoginRequiredMixin, FilterSetMixin, ListView):
             super()
             .get_queryset()
             .owned_by(self.request.user)
+            .filter(status__in=[10, 20])
+            .order_by("-study__assessment_id", "id")
             .select_related("study__assessment")
-            .order_by("-study__assessment_id", "study__short_citation", "type")
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
-        context["studies"] = {
-            study.id: study
-            for study in studies_with_active_user_reviews(
-                self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
-            )
-        }
-        context["TaskType"] = constants.TaskType
-        return context
-
-
-class UserAssessmentTaskList(BaseFilterList):
-    filterset_class = filterset.UserTaskFilterSet
-    model = models.Task
-    parent_model = Assessment
-    template_name = "mgmt/user_assessment_task_list.html"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .owned_by(self.request.user)
-            .select_related("study__assessment")
-            .filter(study__assessment=self.assessment)
-            .order_by("study__short_citation", "type")
-        )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
-        context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
-        context["studies"] = {
-            study.id: study
-            for study in studies_with_active_user_reviews(
-                self.request.user, self.object_list.filter(type=constants.TaskType.ROB)
-            )
-        }
+        tasks = list(context["object_list"])
+        reviews = incomplete_rob_reviews(self.request.user, assessment=None)
+        assessments = {task.study.assessment for task in tasks}
+        assessments.update({rob.study.assessment for rob in reviews})
+        context["assessments"] = [
+            {
+                "assessment": assess,
+                "num_tasks": len(list(filter(lambda d: d.study.assessment_id == assess.id, tasks))),
+                "num_robs": len(
+                    list(filter(lambda d: d.study.assessment_id == assess.id, reviews))
+                ),
+            }
+            for assess in sorted(assessments, key=lambda d: (d.year, d.id), reverse=True)
+        ]
         return context
 
 
@@ -182,19 +156,33 @@ class AssessmentTaskList(BaseFilterList):
 class AssessmentAnalytics(HtmxGetMixin, BaseDetail):
     model = Assessment
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
-    actions: set[str] = {"index", "time_series", "time_spent", "growth"}
+    actions: set[str] = {"index", "time_series", "time_spent", "overview"}
 
     def index(self, request: HttpRequest, context: dict):
+        context["breadcrumbs"].append(mgmt_dashboard_breadcrumb(self.assessment))
+        context["breadcrumbs"].append(Breadcrumb(name="Analytics"))
         return render(request, "mgmt/analytics.html", context)
 
     def time_series(self, request: HttpRequest, context: dict):
+        context = cacheable(
+            lambda: time_series.get_context_data(self.assessment),
+            f"mgmt:analytics:time_series:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/time_series.html", context)
 
     def time_spent(self, request: HttpRequest, context: dict):
+        context = cacheable(
+            lambda: time_spent.get_context_data(self.assessment),
+            f"mgmt:analytics:time_spent:{self.assessment.id}",
+        )
         return render(request, "mgmt/analytics/time_spent.html", context)
 
-    def growth(self, request: HttpRequest, context: dict):
-        return render(request, "mgmt/analytics/growth.html", context)
+    def overview(self, request: HttpRequest, context: dict):
+        context = cacheable(
+            lambda: overview.get_context_data(self.assessment),
+            f"mgmt:analytics:overview:{self.assessment.id}",
+        )
+        return render(request, "mgmt/analytics/overview.html", context)
 
 
 class TaskViewSet(HtmxViewSet):
@@ -202,7 +190,7 @@ class TaskViewSet(HtmxViewSet):
     parent_model = Study
     model = models.Task
     form_fragment = "mgmt/fragments/task_form.html"
-    detail_fragment = "mgmt/fragments/task_cell.html"
+    detail_fragment = "mgmt/fragments/task_detail.html"
 
     @action(permission=can_edit)
     def read(self, request: HttpRequest, *args, **kwargs):

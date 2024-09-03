@@ -1,32 +1,24 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-    <div class="d-flex">
-      <h2>BMD sessions</h2>
-      {% if obj_perms.edit and crud == "Read" and assessment.bmd_settings.can_create_sessions %}
-        {% actions %}
-          <span class="dropdown-header">BMD editing</span>
-          <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create new</a>
-        {% endactions %}
-      {% endif %}
-    </div>
-    {% if not assessment.bmd_settings.can_create_sessions %}
-    <div class="alert alert-warning" role="alert">
+  <div class="d-flex">
+    <h2>BMD sessions</h2>
+    {% if obj_perms.edit and crud == "Read" and assessment.bmd_settings.can_create_sessions %}
+      {% actions %}
+        <span class="dropdown-header">BMD editing</span>
+        <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create new</a>
+      {% endactions %}
+    {% endif %}
+  </div>
+  {% if not assessment.bmd_settings.can_create_sessions %}
+    {% alert type="warning" %}
       <p>{{assessment.bmd_settings.get_version_display}} is no longer supported by HAWC. Change the assessment benchmark dose settings to the
         newest BMDS version to create new sessions.</p>
-    </div>
-    {% endif %}
-    <table class='table table-sm table-striped'>
-      <thead>
-        <tr>
-          <th>Session</th>
-          <th>BMDS version</th>
-          <th>Dose units</th>
-          <th>Created</th>
-          <th>Last updated</th>
-        </tr>
-      </thead>
-      <tbody>
+    {% endalert %}
+  {% endif %}
+  <table class='table table-sm table-striped'>
+    {% bs4_thead 'Session,BMDS Version,Dose Units,Created,Last Updated' %}
+    <tbody>
       {% for o in object_list %}
         <tr>
           <td>
@@ -42,6 +34,6 @@
           <td colspan="5"><p class='form-text text-muted'><i>No BMD modeling sessions available.</i></p></td>
         </tr>
       {% endfor %}
-      </tbody>
-    </table>
+    </tbody>
+  </table>
 {% endblock %}

@@ -104,7 +104,7 @@ class CellTypeDelete(BaseDelete):
 class EndpointCategoryUpdate(BaseDetail):
     model = Assessment
     template_name = "invitro/ivendpointecategory_form.html"
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER
+    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

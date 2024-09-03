@@ -14,7 +14,7 @@ from ..test_utils import check_api_json_data, check_details_of_last_log_entry, g
 class TestAssessmentViewSet:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
         client = APIClient()
-        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
         check_api_json_data(resp.json(), fn, rewrite_data_files)
@@ -48,6 +48,18 @@ class TestAssessmentViewSet:
             + "?format=json"
         )
         self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_export_study_filter(self, db_keys):
+        url = (
+            reverse("animal:api:assessment-full-export", args=(db_keys.assessment_final,))
+            + "?format=json?"
+        )
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        resp = client.get(url, data={"study_ids": 7}, format="application/json")
+        assert len(resp.json()) == 25
+        resp = client.get(url, data={"study_ids": 6}, format="application/json")
+        assert len(resp.json()) == 0
 
     def test_missing_dosing_regime(self, rewrite_data_files: bool, db_keys):
         # create an animal group/endpoint with no dosing regime and make sure the export doesn't cause a 500 error

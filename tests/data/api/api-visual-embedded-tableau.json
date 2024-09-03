@@ -7,7 +7,9 @@
   "data_url": "/summary/api/visual/7/data/",
   "dose_units": null,
   "endpoints": [],
+  "evidence_type": 3,
   "id": 7,
+  "image": null,
   "last_updated": "2020-05-08T15:45:29.985848-04:00",
   "prefilters": {},
   "published": true,
@@ -22,7 +24,6 @@
     "filters": []
   },
   "slug": "embedded-tableau",
-  "sort_order": "short_citation",
   "studies": [],
   "title": "embedded-tableau",
   "url": "/summary/visual/assessment/2/embedded-tableau/",

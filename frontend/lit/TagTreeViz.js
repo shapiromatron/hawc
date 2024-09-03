@@ -189,7 +189,8 @@ class TagTreeViz extends D3Plot {
                 toggle(d);
             },
             fetch_references = function(tag) {
-                var title = `<h4>${tag.data.name}</h4>`,
+                const url = `/lit/assessment/${tag.assessment_id}/references/?tag_id=${tag.data.pk}`,
+                    title = `<h3>References tagged: <a class="refTag mb-0" href="${url}">${tag.data.name}</a></h3>`,
                     div = $("<div>");
 
                 self.modal

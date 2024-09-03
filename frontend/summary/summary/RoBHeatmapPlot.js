@@ -11,6 +11,7 @@ import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
 import HAWCModal from "shared/utils/HAWCModal";
+import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
@@ -31,8 +32,9 @@ class RoBHeatmapPlot extends D3Visualization {
         this.processData();
         if (this.cells_data.length === 0) {
             let robName = this.data.assessment_rob_name.toLowerCase();
-            return this.plot_div.html(
-                `<p>Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
+            return HAWCUtils.addAlert(
+                `Error: no studies with ${robName} selected. Please select at least one study with ${robName}.`,
+                this.plot_div
             );
         }
         this.get_plot_sizes();
@@ -132,11 +134,30 @@ class RoBHeatmapPlot extends D3Visualization {
                 .value();
         });
 
+        // default sort order alphabetically
         studies = _.chain(cells_data)
             .map(d => d.study_label)
             .uniq()
             .sort()
             .value();
+        if (this.data.settings.sort_order === "overall_confidence") {
+            // attempt to sort by overall confidence, but only if values are found
+            const tmp = _.chain(cells_data)
+                .filter(d => d.robArray[0].data.metric.domain.is_overall_confidence)
+                .map(d => {
+                    return {
+                        study_label: d.study_label,
+                        score: _.meanBy(d.robArray, f => f.data.score),
+                    };
+                })
+                .orderBy(["score", "study_label"], ["desc", "asc"])
+                .map(d => d.study_label)
+                .uniq()
+                .value();
+            if (tmp.length > 0) {
+                studies = tmp;
+            }
+        }
 
         metrics = _.chain(cells_data)
             .map(d => d.metric_label)

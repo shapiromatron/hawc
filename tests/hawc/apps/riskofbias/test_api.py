@@ -1,4 +1,5 @@
 import json
+import re
 from copy import deepcopy
 
 import pytest
@@ -6,7 +7,12 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.myuser.models import HAWCUser
-from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
+from hawc.apps.riskofbias.models import (
+    RiskOfBias,
+    RiskOfBiasDomain,
+    RiskOfBiasMetric,
+    RiskOfBiasScore,
+)
 from hawc.apps.study.models import Study
 
 from ..test_utils import check_api_json_data, check_details_of_last_log_entry, get_client
@@ -138,7 +144,8 @@ class TestRiskOfBiasViewSet:
         )
         resp = anon_client.get(url)
         assert resp.status_code == 200
-        check_api_json_data(resp.json(), fn, rewrite_data_files)
+        data = re.sub(r"obj_ct=\d+", "obj_ct=99999", json.dumps(resp.json()))
+        check_api_json_data(json.loads(data), fn, rewrite_data_files)
 
     def build_upload_payload(self, study, author, metrics, dummy_score):
         payload = {
@@ -560,3 +567,30 @@ class TestCleanupViewSet:
             "score_shade": "#00CC00",
             "score_symbol": "++",
         }
+
+
+@pytest.mark.django_db
+class TestDomainViewset:
+    def test_order_rob(self, db_keys):
+        c = APIClient()
+        first_before = (
+            RiskOfBiasDomain.objects.filter(assessment_id=db_keys.assessment_working)
+            .order_by("sort_order")
+            .first()
+        )
+        assert c.login(username="admin@hawcproject.org", password="pw") is True
+        url = (
+            reverse("riskofbias:api:domain-order-rob")
+            + f"?assessment_id={db_keys.assessment_working}"
+        )
+        payload = [[2, [2]], [1, [1]]]
+        response = c.patch(url, payload, content_type="application/json")
+        assert response.status_code == 204
+
+        first_after = (
+            RiskOfBiasDomain.objects.filter(assessment_id=db_keys.assessment_working)
+            .order_by("sort_order")
+            .first()
+        )
+
+        assert first_before.pk != first_after.pk

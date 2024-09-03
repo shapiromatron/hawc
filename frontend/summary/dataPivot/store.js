@@ -15,6 +15,15 @@ class SortStore {
     }
 
     @observable settings = null;
+    @observable fieldColumns = [];
+
+    @action.bound updateFieldColumns(fieldColumns) {
+        const options = fieldColumns.map(d => {
+            return {id: d, label: d};
+        });
+        options.unshift({id: NULL_CASE, label: NULL_CASE});
+        this.fieldColumns = options;
+    }
 
     @action.bound createNew() {
         this.settings.push({

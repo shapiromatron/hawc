@@ -1,1 +1,20 @@
-Assessment Time Series
+{% block content %}
+  <div class="row card-group">
+    {% include 'common/analytics_plot_data.html' with title='References created over time' data=refs %}
+    {% include 'common/analytics_plot_data.html' with title='Studies created over time' data=studies %}
+    {% include 'common/analytics_plot_data.html' with title=rob_title data=robs %}
+  </div>
+  <div class="row card-group">
+    {% include 'common/analytics_plot_data.html' with title='Bioassay experiments created over time' data=experiments %}
+    {% include 'common/analytics_plot_data.html' with title='Bioassay endpoints created over time' data=endpoints %}
+  </div>
+  <div class="row card-group">
+    {% include 'common/analytics_plot_data.html' with title='Epidemiology study populations created over time' data=sp %}
+    {% include 'common/analytics_plot_data.html' with title='Epidemiology outcomes created over time' data=outcome %}
+  </div>
+  <div class="row card-group">
+    {% include 'common/analytics_plot_data.html' with title='Data pivots created over time' data=datapivots %}
+    {% include 'common/analytics_plot_data.html' with title='Visuals created over time' data=visuals %}
+    {% include 'common/analytics_plot_data.html' with title='Total visuals and data pivots over time' data=total_visuals %}
+  </div>
+{% endblock %}

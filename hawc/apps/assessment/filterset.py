@@ -67,7 +67,7 @@ class AssessmentFilterSet(BaseFilterSet):
             | Q(details__project_type__icontains=value)
             | Q(details__report_id__icontains=value)
         )
-        return queryset.filter(query)
+        return queryset.filter(query).distinct()
 
     def filter_role(self, queryset, name, value):
         return queryset.filter(**{value: self.request.user})

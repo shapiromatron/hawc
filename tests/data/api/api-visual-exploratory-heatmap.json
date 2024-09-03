@@ -7,7 +7,9 @@
   "data_url": "/summary/api/visual/8/data/",
   "dose_units": null,
   "endpoints": [],
+  "evidence_type": 3,
   "id": 8,
+  "image": null,
   "last_updated": "2020-11-25T09:29:33.991892-05:00",
   "prefilters": {},
   "published": true,
@@ -121,7 +123,6 @@
     "y_tick_rotate": -90
   },
   "slug": "exploratory-heatmap",
-  "sort_order": "short_citation",
   "studies": [],
   "title": "exploratory-heatmap",
   "url": "/summary/visual/assessment/2/exploratory-heatmap/",

@@ -19,9 +19,10 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import DisabledPagination
+from ..common.api.utils import get_published_only
 from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
+from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from ..common.validators import validate_exact_ids
 from ..mgmt.models import Task
 from ..riskofbias import exports
@@ -47,16 +48,21 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
         Get all final risk of bias/study evaluations for an assessment.
         """
         self.get_object()
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        published_only = get_published_only(self.assessment, request)
         rob_name = self.assessment.get_rob_name_display().lower()
-        qs = models.RiskOfBiasScore.objects.filter(
-            riskofbias__active=True,
-            riskofbias__final=True,
-            riskofbias__study__assessment=self.assessment,
-        ).order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
-        exporter = exports.RiskOfBiasExporter.flat_export(
-            qs,
-            filename=f"{self.assessment}-{rob_name}",
+        qs = (
+            models.RiskOfBiasScore.objects.filter(
+                riskofbias__active=True,
+                riskofbias__final=True,
+                riskofbias__study__assessment=self.assessment,
+            )
+            .published_only(published_only)
+            .order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
         )
+        filename = f"{self.assessment}-{rob_name}"
+        exporter = exports.RiskOfBiasExporter.flat_export(qs, filename)
         return Response(exporter)
 
     @action(
@@ -70,15 +76,20 @@ class RiskOfBiasAssessmentViewSet(BaseAssessmentViewSet):
         Get all risk of bias/study evaluations for an assessment, including individual reviews.
         """
         self.get_object()
+        ser = ExportQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        published_only = get_published_only(self.assessment, request)
         rob_name = self.assessment.get_rob_name_display().lower()
-        qs = models.RiskOfBiasScore.objects.filter(
-            riskofbias__active=True,
-            riskofbias__study__assessment=self.assessment,
-        ).order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
-        exporter = exports.RiskOfBiasCompleteExporter.flat_export(
-            qs,
-            filename=f"{self.assessment}-{rob_name}-complete",
+        qs = (
+            models.RiskOfBiasScore.objects.filter(
+                riskofbias__active=True,
+                riskofbias__study__assessment=self.assessment,
+            )
+            .published_only(published_only)
+            .order_by("riskofbias__study__short_citation", "riskofbias_id", "id")
         )
+        filename = f"{self.assessment}-{rob_name}-complete"
+        exporter = exports.RiskOfBiasCompleteExporter.flat_export(qs, filename)
         return Response(exporter)
 
     @action(detail=False, methods=("post",), permission_classes=(IsAuthenticated,))
@@ -186,10 +197,10 @@ class RiskOfBias(AssessmentEditViewSet):
         # send time complete task
         if not serializer.errors:
             TimeSpentEditing.add_time_spent_job(
-                self.request.session.session_key,
-                serializer.instance.get_edit_url(),
+                self.request,
                 serializer.instance,
                 serializer.instance.get_assessment().id,
+                url=serializer.instance.get_edit_url(),
             )
 
     def create(self, request, *args, **kwargs):
@@ -197,8 +208,8 @@ class RiskOfBias(AssessmentEditViewSet):
 
         try:
             study = Study.objects.get(id=study_id)
-        except ObjectDoesNotExist:
-            raise ValidationError("Invalid study_id")
+        except ObjectDoesNotExist as err:
+            raise ValidationError("Invalid study_id") from err
 
         # permission check using the user submitting the request
         if not study.user_can_edit_study(study.assessment, request.user):

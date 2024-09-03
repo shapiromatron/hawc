@@ -8,10 +8,11 @@ from ..common.forms import BaseFormHelper, QuillField, check_unique_for_assessme
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
 from ..lit.models import Reference
+from ..udf.forms import UDFModelFormMixin
 from . import models
 
 
-class BaseStudyForm(forms.ModelForm):
+class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
     internal_communications = QuillField(
         required=False,
         help_text="Internal communications regarding this study; this field is only displayed to assessment team members. Could be to describe extraction notes to e.g., reference to full study reports or indicating which outcomes/endpoints in a study were not extracted.",
@@ -45,26 +46,21 @@ class BaseStudyForm(forms.ModelForm):
         if type(parent) is Assessment:
             self.instance.assessment = parent
         elif type(parent) is Reference:
+            self.instance.assessment = parent.assessment
             self.instance.reference_ptr = parent
+
         if self.instance:
             self.fields["internal_communications"].initial = self.instance.get_communications()
 
+        self.set_udf_field(self.instance.assessment)
         self.helper = self.setHelper()
 
     def setHelper(self, inputs: dict | None = None):
         if inputs is None:
             inputs = {}
-        for fld in ("full_citation", "coi_details", "funding_source", "ask_author"):
-            self.fields[fld].widget.attrs["rows"] = 3
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-            else:
-                widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("full_citation", "coi_details", "funding_source", "ask_author"))
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
@@ -153,13 +149,14 @@ class ReferenceStudyForm(BaseStudyForm):
         self.fields["title"].widget = TextInput()
         self.fields["authors"].widget = TextInput()
         self.fields["journal"].widget = TextInput()
-        self.fields["abstract"].widget.attrs["rows"] = 3
         inputs = {
             "legend_text": "Create a new study",
             "help_text": "",
             "cancel_url": reverse("study:list", args=[self.instance.assessment_id]),
         }
-        return super().setHelper(inputs)
+        helper = super().setHelper(inputs)
+        helper.set_textarea_height(("abstract",))
+        return helper
 
 
 class IdentifierStudyForm(forms.Form):

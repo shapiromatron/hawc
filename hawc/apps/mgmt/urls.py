@@ -1,17 +1,16 @@
-from django.conf import settings
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
 
-from . import views
+from . import api, views
+
+router = SimpleRouter()
+router.register("assessment", api.MgmtViewSet, basename="assessment")
 
 app_name = "mgmt"
 urlpatterns = [
+    path("api/", include((router.urls, "api"))),
     # user task-list
     path("tasks/", views.UserTaskList.as_view(), name="user-task-list"),
-    path(
-        "assessment/<int:pk>/tasks/",
-        views.UserAssessmentTaskList.as_view(),
-        name="user-assessment-task-list",
-    ),
     # assessment-level views
     path(
         "assessment/<int:pk>/",
@@ -25,24 +24,13 @@ urlpatterns = [
     ),
     # task htmx ViewSet
     path(
-        "task/<int:pk>/",
+        "task/<int:pk>/<slug:action>/",
         views.TaskViewSet.as_view(),
-        {"action": "read"},
-        name="task-detail",
+        name="task-htmx",
     ),
     path(
-        "taskv/<int:pk>/update/",
-        views.TaskViewSet.as_view(),
-        {"action": "update"},
-        name="task-update",
+        "assessment/<int:pk>/analytics/",
+        views.AssessmentAnalytics.as_view(),
+        name="assessment-analytics",
     ),
 ]
-
-if settings.HAWC_FEATURES.ENABLE_ANALYTICS:
-    urlpatterns += [
-        path(
-            "assessment/<int:pk>/analytics/",
-            views.AssessmentAnalytics.as_view(),
-            name="assessment-analytics",
-        ),
-    ]

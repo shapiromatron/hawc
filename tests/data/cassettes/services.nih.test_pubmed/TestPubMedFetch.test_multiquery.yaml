@@ -13,118 +13,340 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        AAAA//8DANzgk7wyfwAA
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">19008416</PMID><DateCompleted><Year>2009</Year><Month>01</Month><Day>05</Day></DateCompleted><DateRevised><Year>2022</Year><Month>04</Month><Day>10</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>322</Volume><Issue>5908</Issue><PubDate><Year>2008</Year><Month>Dec</Month><Day>12</Day></PubDate></JournalIssue><Title>Science
+        (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Genomic
+        loss of microRNA-101 leads to overexpression of histone methyltransferase
+        EZH2 in cancer.</ArticleTitle><Pagination><StartPage>1695</StartPage><EndPage>1699</EndPage><MedlinePgn>1695-9</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1126/science.1165395</ELocationID><Abstract><AbstractText>Enhancer
+        of zeste homolog 2 (EZH2) is a mammalian histone methyltransferase that contributes
+        to the epigenetic silencing of target genes and regulates the survival and
+        metastasis of cancer cells. EZH2 is overexpressed in aggressive solid tumors
+        by mechanisms that remain unclear. Here we show that the expression and function
+        of EZH2 in cancer cell lines are inhibited by microRNA-101 (miR-101). Analysis
+        of human prostate tumors revealed that miR-101 expression decreases during
+        cancer progression, paralleling an increase in EZH2 expression. One or both
+        of the two genomic loci encoding miR-101 were somatically lost in 37.5% of
+        clinically localized prostate cancer cells (6 of 16) and 66.7% of metastatic
+        disease cells (22 of 33). We propose that the genomic loss of miR-101 in cancer
+        leads to overexpression of EZH2 and concomitant dysregulation of epigenetic
+        pathways, resulting in cancer progression.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Varambally</LastName><ForeName>Sooryanarayana</ForeName><Initials>S</Initials><AffiliationInfo><Affiliation>Michigan
+        Center for Translational Pathology, University of Michigan Medical School,
+        Ann Arbor, MI 48109, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Cao</LastName><ForeName>Qi</ForeName><Initials>Q</Initials></Author><Author
+        ValidYN="Y"><LastName>Mani</LastName><ForeName>Ram-Shankar</ForeName><Initials>RS</Initials></Author><Author
+        ValidYN="Y"><LastName>Shankar</LastName><ForeName>Sunita</ForeName><Initials>S</Initials></Author><Author
+        ValidYN="Y"><LastName>Wang</LastName><ForeName>Xiaosong</ForeName><Initials>X</Initials></Author><Author
+        ValidYN="Y"><LastName>Ateeq</LastName><ForeName>Bushra</ForeName><Initials>B</Initials></Author><Author
+        ValidYN="Y"><LastName>Laxman</LastName><ForeName>Bharathi</ForeName><Initials>B</Initials></Author><Author
+        ValidYN="Y"><LastName>Cao</LastName><ForeName>Xuhong</ForeName><Initials>X</Initials></Author><Author
+        ValidYN="Y"><LastName>Jing</LastName><ForeName>Xiaojun</ForeName><Initials>X</Initials></Author><Author
+        ValidYN="Y"><LastName>Ramnarayanan</LastName><ForeName>Kalpana</ForeName><Initials>K</Initials></Author><Author
+        ValidYN="Y"><LastName>Brenner</LastName><ForeName>J Chad</ForeName><Initials>JC</Initials></Author><Author
+        ValidYN="Y"><LastName>Yu</LastName><ForeName>Jindan</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Kim</LastName><ForeName>Jung H</ForeName><Initials>JH</Initials></Author><Author
+        ValidYN="Y"><LastName>Han</LastName><ForeName>Bo</ForeName><Initials>B</Initials></Author><Author
+        ValidYN="Y"><LastName>Tan</LastName><ForeName>Patrick</ForeName><Initials>P</Initials></Author><Author
+        ValidYN="Y"><LastName>Kumar-Sinha</LastName><ForeName>Chandan</ForeName><Initials>C</Initials></Author><Author
+        ValidYN="Y"><LastName>Lonigro</LastName><ForeName>Robert J</ForeName><Initials>RJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Palanisamy</LastName><ForeName>Nallasivam</ForeName><Initials>N</Initials></Author><Author
+        ValidYN="Y"><LastName>Maher</LastName><ForeName>Christopher A</ForeName><Initials>CA</Initials></Author><Author
+        ValidYN="Y"><LastName>Chinnaiyan</LastName><ForeName>Arul M</ForeName><Initials>AM</Initials></Author></AuthorList><Language>eng</Language><DataBankList
+        CompleteYN="Y"><DataBank><DataBankName>GEO</DataBankName><AccessionNumberList><AccessionNumber>GSE13286</AccessionNumber></AccessionNumberList></DataBank></DataBankList><GrantList
+        CompleteYN="Y"><Grant><GrantID>UO1 111275</GrantID><Agency>PHS HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P50CA69568</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>K99
+        CA129565</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P50 CA069568</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>U01
+        CA111275-04</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P50 CA069568-06A10016</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>K99
+        CA129565-01A1</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>U01 CA111275</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D052061">Research
+        Support, N.I.H., Extramural</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2008</Year><Month>11</Month><Day>13</Day></ArticleDate></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Science</MedlineTA><NlmUniqueID>0404511</NlmUniqueID><ISSNLinking>0036-8075</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D020413">3'' Untranslated Regions</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D004268">DNA-Binding Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D006657">Histones</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="C534072">MIRN101 microRNA, human</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D035683">MicroRNAs</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D034741">RNA, Small Interfering</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D014157">Transcription Factors</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.1.1.43</RegistryNumber><NameOfSubstance UI="C498409">EZH2 protein, human</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.1.1.43</RegistryNumber><NameOfSubstance UI="D000071221">Enhancer of Zeste
+        Homolog 2 Protein</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.1.1.43</RegistryNumber><NameOfSubstance UI="D063151">Polycomb Repressive
+        Complex 2</NameOfSubstance></Chemical><Chemical><RegistryNumber>K3Z4F929H6</RegistryNumber><NameOfSubstance
+        UI="D008239">Lysine</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D020413" MajorTopicYN="N">3'' Untranslated Regions</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000465" MajorTopicYN="N">Algorithms</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001943" MajorTopicYN="N">Breast Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D045744" MajorTopicYN="N">Cell Line, Tumor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004268" MajorTopicYN="N">DNA-Binding Proteins</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018450" MajorTopicYN="N">Disease Progression</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000071221" MajorTopicYN="N">Enhancer of Zeste Homolog 2 Protein</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D044127" MajorTopicYN="N">Epigenesis, Genetic</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015972" MajorTopicYN="Y">Gene Expression Regulation, Neoplastic</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015894" MajorTopicYN="N">Genome, Human</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006657" MajorTopicYN="N">Histones</DescriptorName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008239" MajorTopicYN="N">Lysine</DescriptorName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008745" MajorTopicYN="N">Methylation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D035683" MajorTopicYN="N">MicroRNAs</DescriptorName><QualifierName UI="Q000235"
+        MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009362" MajorTopicYN="N">Neoplasm Metastasis</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009369" MajorTopicYN="N">Neoplasms</DescriptorName><QualifierName UI="Q000235"
+        MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D063151" MajorTopicYN="N">Polycomb Repressive Complex 2</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011401" MajorTopicYN="N">Promoter Regions, Genetic</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011471" MajorTopicYN="N">Prostatic Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName><QualifierName UI="Q000473" MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D034741" MajorTopicYN="N">RNA, Small Interfering</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D013274" MajorTopicYN="N">Stomach Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014157" MajorTopicYN="N">Transcription Factors</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="N">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="entrez"><Year>2008</Year><Month>11</Month><Day>15</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2008</Year><Month>11</Month><Day>15</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2009</Year><Month>1</Month><Day>6</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">19008416</ArticleId><ArticleId IdType="mid">NIHMS104414</ArticleId><ArticleId
+        IdType="pmc">PMC2684823</ArticleId><ArticleId IdType="doi">10.1126/science.1165395</ArticleId><ArticleId
+        IdType="pii">1165395</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Boyer
+        LA, et al. Nature. 2006 May 18;441:349.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16625203</ArticleId></ArticleIdList></Reference><Reference><Citation>Lee
+        TI, et al. Cell. 2006 Apr 21;125:301.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC3773330</ArticleId><ArticleId IdType="pubmed">16630818</ArticleId></ArticleIdList></Reference><Reference><Citation>Sher
+        F, et al. Stem Cells. 2008 Aug 7;</Citation></Reference><Reference><Citation>Varambally
+        S, et al. Nature. 2002;419:624.</Citation><ArticleIdList><ArticleId IdType="pubmed">12374981</ArticleId></ArticleIdList></Reference><Reference><Citation>Bracken
+        AP, et al. EMBO J. 2003 Oct 15;22:5323.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC213796</ArticleId><ArticleId IdType="pubmed">14532106</ArticleId></ArticleIdList></Reference><Reference><Citation>Erhardt
+        S, et al. Development. 2003 Sep;130:4235.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">12900441</ArticleId></ArticleIdList></Reference><Reference><Citation>Plath
+        K, et al. Science. 2003 Apr 4;300:131.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">12649488</ArticleId></ArticleIdList></Reference><Reference><Citation>Cao
+        R, et al. Science. 2002;298:1039.</Citation><ArticleIdList><ArticleId IdType="pubmed">12351676</ArticleId></ArticleIdList></Reference><Reference><Citation>Kuzmichev
+        A, Nishioka K, Erdjument-Bromage H, Tempst P, Reinberg D. Genes Dev. 2002
+        Nov 15;16:2893.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC187479</ArticleId><ArticleId
+        IdType="pubmed">12435631</ArticleId></ArticleIdList></Reference><Reference><Citation>Yu
+        J, et al. Cancer Cell. 2007 Nov;12:419.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17996646</ArticleId></ArticleIdList></Reference><Reference><Citation>Cao
+        Q, et al. Oncogene. 2008</Citation></Reference><Reference><Citation>Kleer
+        CG, et al. Proc Natl Acad Sci U S A. 2003 Sep 30;100:11606.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC208805</ArticleId><ArticleId IdType="pubmed">14500907</ArticleId></ArticleIdList></Reference><Reference><Citation>Croonquist
+        PA, Van Ness B. Oncogene. 2005 Sep 15;24:6269.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16007202</ArticleId></ArticleIdList></Reference><Reference><Citation>Takeshita
+        F, et al. Proc Natl Acad Sci U S A. 2005 Aug 23;102:12177.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1183487</ArticleId><ArticleId IdType="pubmed">16091473</ArticleId></ArticleIdList></Reference><Reference><Citation>Bachmann
+        IM, et al. J Clin Oncol. 2006 Jan 10;24:268.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16330673</ArticleId></ArticleIdList></Reference><Reference><Citation>Weikert
+        S, et al. Int J Mol Med. 2005 Aug;16:349.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16012774</ArticleId></ArticleIdList></Reference><Reference><Citation>Matsukawa
+        Y, et al. Cancer Sci. 2006 Jun;97:484.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16734726</ArticleId></ArticleIdList></Reference><Reference><Citation>Lewis
+        BP, Burge CB, Bartel DP. Cell. 2005 Jan 14;120:15.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15652477</ArticleId></ArticleIdList></Reference><Reference><Citation>Marson
+        A, et al. Cell. 2008 Aug 8;134:521.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2586071</ArticleId><ArticleId
+        IdType="pubmed">18692474</ArticleId></ArticleIdList></Reference><Reference><Citation>Sethupathy
+        P, Megraw M, Hatzigeorgiou AG. Nat Methods. 2006 Nov;3:881.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17060911</ArticleId></ArticleIdList></Reference><Reference><Citation>Krek
+        A, et al. Nat Genet. 2005 May;37:495.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15806104</ArticleId></ArticleIdList></Reference><Reference><Citation>Lewis
+        BP, Shih IH, Jones-Rhoades MW, Bartel DP, Burge CB. Cell. 2003 Dec 26;115:787.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">14697198</ArticleId></ArticleIdList></Reference><Reference><Citation>John
+        B, et al. PLoS Biol. 2004 Nov;2:e363.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC521178</ArticleId><ArticleId IdType="pubmed">15502875</ArticleId></ArticleIdList></Reference><Reference><Citation>Rusinov
+        V, Baev V, Minkov IN, Tabler M. Nucleic Acids Res. 2005 Jul 1;33:W696.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1160125</ArticleId><ArticleId IdType="pubmed">15980566</ArticleId></ArticleIdList></Reference><Reference><Citation>Pasini
+        D, Bracken AP, Jensen MR, Lazzerini Denchi E, Helin K. Embo J. 2004 Oct 13;23:4061.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC524339</ArticleId><ArticleId IdType="pubmed">15385962</ArticleId></ArticleIdList></Reference><Reference><Citation>Fiskus
+        W, et al. Mol Cancer Ther. 2006 Dec;5:3096.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17172412</ArticleId></ArticleIdList></Reference><Reference><Citation>Krutzfeldt
+        J, et al. Nature. 2005 Dec 1;438:685.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16258535</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">18927361</PMID><DateCompleted><Year>2008</Year><Month>11</Month><Day>03</Day></DateCompleted><DateRevised><Year>2009</Year><Month>11</Month><Day>19</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>322</Volume><Issue>5900</Issue><PubDate><Year>2008</Year><Month>Oct</Month><Day>17</Day></PubDate></JournalIssue><Title>Science
+        (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Genetics.
+        DNA test for breast cancer risk draws criticism.</ArticleTitle><Pagination><StartPage>357</StartPage><MedlinePgn>357</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1126/science.322.5900.357</ELocationID><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Couzin</LastName><ForeName>Jennifer</ForeName><Initials>J</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016433">News</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Science</MedlineTA><NlmUniqueID>0404511</NlmUniqueID><ISSNLinking>0036-8075</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D001943" MajorTopicYN="N">Breast Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020022" MajorTopicYN="Y">Genetic Predisposition to Disease</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005820" MajorTopicYN="Y">Genetic Testing</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020641" MajorTopicYN="N">Polymorphism, Single Nucleotide</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2008</Year><Month>10</Month><Day>18</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2008</Year><Month>11</Month><Day>4</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2008</Year><Month>10</Month><Day>18</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">18927361</ArticleId><ArticleId IdType="doi">10.1126/science.322.5900.357</ArticleId><ArticleId
+        IdType="pii">322/5900/357</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">18787170</PMID><DateCompleted><Year>2008</Year><Month>09</Month><Day>25</Day></DateCompleted><DateRevised><Year>2022</Year><Month>03</Month><Day>30</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>321</Volume><Issue>5895</Issue><PubDate><Year>2008</Year><Month>Sep</Month><Day>12</Day></PubDate></JournalIssue><Title>Science
+        (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>FBXW7
+        targets mTOR for degradation and cooperates with PTEN in tumor suppression.</ArticleTitle><Pagination><StartPage>1499</StartPage><EndPage>1502</EndPage><MedlinePgn>1499-502</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1126/science.1162981</ELocationID><Abstract><AbstractText>The
+        enzyme mTOR (mammalian target of rapamycin) is a major target for therapeutic
+        intervention to treat many human diseases, including cancer, but very little
+        is known about the processes that control levels of mTOR protein. Here, we
+        show that mTOR is targeted for ubiquitination and consequent degradation by
+        binding to the tumor suppressor protein FBXW7. Human breast cancer cell lines
+        and primary tumors showed a reciprocal relation between loss of FBXW7 and
+        deletion or mutation of PTEN (phosphatase and tensin homolog), which also
+        activates mTOR. Tumor cell lines harboring deletions or mutations in FBXW7
+        are particularly sensitive to rapamycin treatment, which suggests that loss
+        of FBXW7 may be a biomarker for human cancers susceptible to treatment with
+        inhibitors of the mTOR pathway.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Mao</LastName><ForeName>Jian-Hua</ForeName><Initials>JH</Initials><AffiliationInfo><Affiliation>Cancer
+        Research Institute, University of California at San Francisco, 2340 Sutter
+        Street, San Francisco, CA 94143, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Kim</LastName><ForeName>Il-Jin</ForeName><Initials>IJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Wu</LastName><ForeName>Di</ForeName><Initials>D</Initials></Author><Author
+        ValidYN="Y"><LastName>Climent</LastName><ForeName>Joan</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Kang</LastName><ForeName>Hio Chung</ForeName><Initials>HC</Initials></Author><Author
+        ValidYN="Y"><LastName>DelRosario</LastName><ForeName>Reyno</ForeName><Initials>R</Initials></Author><Author
+        ValidYN="Y"><LastName>Balmain</LastName><ForeName>Allan</ForeName><Initials>A</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>U01 CA084244-10</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>U01
+        CA084244-08</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>U01 CA084244</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>R01
+        CA116481</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>U01 CA084244-09</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Science</MedlineTA><NlmUniqueID>0404511</NlmUniqueID><ISSNLinking>0036-8075</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D018797">Cell Cycle Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D044783">F-Box Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D000073979">F-Box-WD Repeat-Containing Protein 7</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="C513273">FBXW7 protein, human</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D025521">Tumor Suppressor Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.3.2.27</RegistryNumber><NameOfSubstance UI="D044767">Ubiquitin-Protein Ligases</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.7.-</RegistryNumber><NameOfSubstance UI="D011494">Protein Kinases</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.7.1.1</RegistryNumber><NameOfSubstance UI="C546842">MTOR protein, human</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.7.1.1</RegistryNumber><NameOfSubstance UI="C546843">mTOR protein, mouse</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.7.11.1</RegistryNumber><NameOfSubstance UI="D051057">Proto-Oncogene Proteins
+        c-akt</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC 2.7.11.1</RegistryNumber><NameOfSubstance
+        UI="D058570">TOR Serine-Threonine Kinases</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        3.1.3.67</RegistryNumber><NameOfSubstance UI="D051059">PTEN Phosphohydrolase</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        3.1.3.67</RegistryNumber><NameOfSubstance UI="C494929">PTEN protein, human</NameOfSubstance></Chemical><Chemical><RegistryNumber>W36ZG6FT64</RegistryNumber><NameOfSubstance
+        UI="D020123">Sirolimus</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001943" MajorTopicYN="N">Breast Neoplasms</DescriptorName><QualifierName
+        UI="Q000188" MajorTopicYN="N">drug therapy</QualifierName><QualifierName UI="Q000235"
+        MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName><QualifierName
+        UI="Q000473" MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018797" MajorTopicYN="N">Cell Cycle Proteins</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002460" MajorTopicYN="N">Cell Line</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D045744" MajorTopicYN="N">Cell Line, Tumor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D044783" MajorTopicYN="N">F-Box Proteins</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000073979" MajorTopicYN="N">F-Box-WD Repeat-Containing Protein 7</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D017353" MajorTopicYN="N">Gene Deletion</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018628" MajorTopicYN="N">Gene Dosage</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020868" MajorTopicYN="N">Gene Silencing</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016147" MajorTopicYN="N">Genes, Tumor Suppressor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008819" MajorTopicYN="N">Mice, Nude</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009154" MajorTopicYN="N">Mutation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009368" MajorTopicYN="N">Neoplasm Transplantation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051059" MajorTopicYN="N">PTEN Phosphohydrolase</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010766" MajorTopicYN="N">Phosphorylation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011485" MajorTopicYN="N">Protein Binding</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011494" MajorTopicYN="N">Protein Kinases</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051057" MajorTopicYN="N">Proto-Oncogene Proteins c-akt</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015398" MajorTopicYN="N">Signal Transduction</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020123" MajorTopicYN="N">Sirolimus</DescriptorName><QualifierName UI="Q000494"
+        MajorTopicYN="N">pharmacology</QualifierName><QualifierName UI="Q000627" MajorTopicYN="N">therapeutic
+        use</QualifierName></MeshHeading><MeshHeading><DescriptorName UI="D058570"
+        MajorTopicYN="N">TOR Serine-Threonine Kinases</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014162" MajorTopicYN="N">Transfection</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D025521" MajorTopicYN="N">Tumor Suppressor Proteins</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D044767" MajorTopicYN="N">Ubiquitin-Protein Ligases</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName><QualifierName UI="Q000378"
+        MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D054875" MajorTopicYN="N">Ubiquitination</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2008</Year><Month>9</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2008</Year><Month>9</Month><Day>26</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2008</Year><Month>9</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">18787170</ArticleId><ArticleId IdType="mid">NIHMS132604</ArticleId><ArticleId
+        IdType="pmc">PMC2849753</ArticleId><ArticleId IdType="doi">10.1126/science.1162981</ArticleId><ArticleId
+        IdType="pii">321/5895/1499</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Welcker
+        M, Clurman BE. Nat. Rev. Cancer. 2008;8:83.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">18094723</ArticleId></ArticleIdList></Reference><Reference><Citation>Akhoondi
+        S, et al. Cancer Res. 2007;67:9006.</Citation><ArticleIdList><ArticleId IdType="pubmed">17909001</ArticleId></ArticleIdList></Reference><Reference><Citation>Mao
+        JH, et al. Nature. 2004;432:775.</Citation><ArticleIdList><ArticleId IdType="pubmed">15592418</ArticleId></ArticleIdList></Reference><Reference><Citation>Rajagopalan
+        H, et al. Nature. 2004;428:77.</Citation><ArticleIdList><ArticleId IdType="pubmed">14999283</ArticleId></ArticleIdList></Reference><Reference><Citation>Yada
+        M, et al. EMBO J. 2004;23:2116.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC424394</ArticleId><ArticleId
+        IdType="pubmed">15103331</ArticleId></ArticleIdList></Reference><Reference><Citation>Welcker
+        M, et al. Proc. Natl. Acad. Sci. U. S. A. 2004;101:9085.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC428477</ArticleId><ArticleId IdType="pubmed">15150404</ArticleId></ArticleIdList></Reference><Reference><Citation>Kemp
+        Z, et al. Cancer Res. 2005;65:11361.</Citation><ArticleIdList><ArticleId IdType="pubmed">16357143</ArticleId></ArticleIdList></Reference><Reference><Citation>Wu
+        G, et al. Mol. Cell Biol. 2001;21:7403.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC99913</ArticleId><ArticleId IdType="pubmed">11585921</ArticleId></ArticleIdList></Reference><Reference><Citation>Strohmaier
+        H, Spruck CH, Kaiser P, Won KA, Sangfelt O, Reed SI. Nature. 2001;413:316.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">11565034</ArticleId></ArticleIdList></Reference><Reference><Citation>Neve
+        RM, et al. Cancer Cell. 2006;10:515.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2730521</ArticleId><ArticleId
+        IdType="pubmed">17157791</ArticleId></ArticleIdList></Reference><Reference><Citation>Climent
+        J, et al. Cancer Res. 2007;67:818.</Citation><ArticleIdList><ArticleId IdType="pubmed">17234794</ArticleId></ArticleIdList></Reference><Reference><Citation>Chin
+        K, et al. Cancer Cell. 2006;10:529.</Citation><ArticleIdList><ArticleId IdType="pubmed">17157792</ArticleId></ArticleIdList></Reference><Reference><Citation>Fridlyand
+        J, et al. BMC Cancer. 2006;6:96.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC1459181</ArticleId><ArticleId
+        IdType="pubmed">16620391</ArticleId></ArticleIdList></Reference><Reference><Citation>Mao
+        JH, Wu D, Perez-Losada J, Nagase H, DelRosario R, Balmain A. Oncogene. 2003;22:8379.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">14627978</ArticleId></ArticleIdList></Reference><Reference><Citation>Di
+        Cristofano A, Pesce B, Cordon-Cardo C, Pandolfi PP. Nat. Genet. 1998;19:348.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">9697695</ArticleId></ArticleIdList></Reference><Reference><Citation>Steelman
+        LS, et al. Oncogene. 2008;27:4086.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC3836277</ArticleId><ArticleId
+        IdType="pubmed">18332865</ArticleId></ArticleIdList></Reference><Reference><Citation>Welcker
+        M, Orian A, Grim JE, Eisenman RN, Clurman BE. Curr. Biol. 2004;14:1852.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15498494</ArticleId></ArticleIdList></Reference><Reference><Citation>Buolamwini
+        JK, Addo J, Kamath S, Patil S, Mason D, Ores M. Curr. Cancer Drug Targets.
+        2005;5:57.</Citation><ArticleIdList><ArticleId IdType="pubmed">15720190</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -139,20 +361,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:33 GMT
+      - Tue, 20 Feb 2024 16:42:33 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B44F6B46659C500004F4F586FF70F.1.1.m_3
+      - 322C45D975EA9B45000028E19A47CA31.1.1.m_3
       NCBI-SID:
-      - C0E7CD976B59506A_2575SID
+      - 233B0FA234BBF70D_75E4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C0E7CD976B59506A_2575SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:34 GMT
+      - ncbi_sid=233B0FA234BBF70D_75E4SID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:34 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -161,8 +383,6 @@ interactions:
       - '10'
       X-RateLimit-Remaining:
       - '8'
-      X-Test-Test:
-      - test42
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -186,140 +406,420 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
     body:
-      string: !!binary |
-        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
-        AwAIoM8LVaAAAA==
+      string: '<?xml version="1.0" ?>
+
+        <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January
+        2024//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_240101.dtd">
+
+        <PubmedArticleSet>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">18487186</PMID><DateCompleted><Year>2008</Year><Month>05</Month><Day>27</Day></DateCompleted><DateRevised><Year>2021</Year><Month>10</Month><Day>20</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>320</Volume><Issue>5878</Issue><PubDate><Year>2008</Year><Month>May</Month><Day>16</Day></PubDate></JournalIssue><Title>Science
+        (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Design
+        logic of a cannabinoid receptor signaling network that triggers neurite outgrowth.</ArticleTitle><Pagination><StartPage>903</StartPage><EndPage>909</EndPage><MedlinePgn>903-9</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1126/science.1152662</ELocationID><Abstract><AbstractText>Cannabinoid
+        receptor 1 (CB1R) regulates neuronal differentiation. To understand the logic
+        underlying decision-making in the signaling network controlling CB1R-induced
+        neurite outgrowth, we profiled the activation of several hundred transcription
+        factors after cell stimulation. We assembled an in silico signaling network
+        by connecting CB1R to 23 activated transcription factors. Statistical analyses
+        of this network predicted a role for the breast cancer 1 protein BRCA1 in
+        neuronal differentiation and a new pathway from CB1R through phosphoinositol
+        3-kinase to the transcription factor paired box 6 (PAX6). Both predictions
+        were experimentally confirmed. Results of transcription factor activation
+        experiments that used pharmacological inhibitors of kinases revealed a network
+        organization of partial OR gates regulating kinases stacked above AND gates
+        that control transcription factors, which together allow for distributed decision-making
+        in CB1R-induced neurite outgrowth.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Bromberg</LastName><ForeName>Kenneth D</ForeName><Initials>KD</Initials><AffiliationInfo><Affiliation>Department
+        of Pharmacology and Systems Therapeutics, Mount Sinai School of Medicine,
+        New York, NY 10029, USA.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Ma''ayan</LastName><ForeName>Avi</ForeName><Initials>A</Initials></Author><Author
+        ValidYN="Y"><LastName>Neves</LastName><ForeName>Susana R</ForeName><Initials>SR</Initials></Author><Author
+        ValidYN="Y"><LastName>Iyengar</LastName><ForeName>Ravi</ForeName><Initials>R</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>R01 GM072853</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P50
+        GM071558</GrantID><Acronym>GM</Acronym><Agency>NIGMS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>5R24 CA095823-04</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>GM54508</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>T32
+        CA088796</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>T32 CA88796</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>R01
+        GM072853-04</GrantID><Acronym>GM</Acronym><Agency>NIGMS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>GM072853</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>1
+        S10 RR0 9145-01</GrantID><Acronym>RR</Acronym><Agency>NCRR NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P50 GM071558-020007</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P50
+        GM071558-030007</GrantID><Acronym>GM</Acronym><Agency>NIGMS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>R01 GM054508</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P50-071558</GrantID><Agency>PHS
+        HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P50 GM071558-01A2</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>R01
+        GM054508-21</GrantID><Acronym>GM</Acronym><Agency>NIGMS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P50 GM071558-02</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>R24
+        CA095823</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P50 GM071558-01A20007</GrantID><Acronym>GM</Acronym><Agency>NIGMS
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D052061">Research
+        Support, N.I.H., Extramural</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Science</MedlineTA><NlmUniqueID>0404511</NlmUniqueID><ISSNLinking>0036-8075</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D019313">BRCA1 Protein</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D005136">Eye Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D018398">Homeodomain Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D000071841">PAX6 Transcription Factor</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D051761">Paired Box Transcription Factors</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="C000605732">Pax6 protein, mouse</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="C000605733">Pax6 protein, rat</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D043884">Receptor, Cannabinoid, CB1</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D012097">Repressor Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D014157">Transcription Factors</NameOfSubstance></Chemical><Chemical><RegistryNumber>EC
+        2.7.1.-</RegistryNumber><NameOfSubstance UI="D019869">Phosphatidylinositol
+        3-Kinases</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D019313" MajorTopicYN="N">BRCA1 Protein</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002454" MajorTopicYN="N">Cell Differentiation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D045744" MajorTopicYN="N">Cell Line, Tumor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002478" MajorTopicYN="N">Cells, Cultured</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D019295" MajorTopicYN="N">Computational Biology</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003198" MajorTopicYN="N">Computer Simulation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005136" MajorTopicYN="N">Eye Proteins</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006624" MajorTopicYN="N">Hippocampus</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018398" MajorTopicYN="N">Homeodomain Proteins</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D053858" MajorTopicYN="N">Metabolic Networks and Pathways</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016501" MajorTopicYN="N">Neurites</DescriptorName><QualifierName UI="Q000502"
+        MajorTopicYN="Y">physiology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D009474" MajorTopicYN="N">Neurons</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="Y">cytology</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000071841" MajorTopicYN="N">PAX6 Transcription Factor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051761" MajorTopicYN="N">Paired Box Transcription Factors</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D019869" MajorTopicYN="N">Phosphatidylinositol 3-Kinases</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D025941" MajorTopicYN="N">Protein Interaction Mapping</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D043884" MajorTopicYN="N">Receptor, Cannabinoid, CB1</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012097" MajorTopicYN="N">Repressor Proteins</DescriptorName><QualifierName
+        UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015398" MajorTopicYN="Y">Signal Transduction</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D014157" MajorTopicYN="N">Transcription Factors</DescriptorName><QualifierName
+        UI="Q000037" MajorTopicYN="N">antagonists &amp; inhibitors</QualifierName><QualifierName
+        UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2008</Year><Month>5</Month><Day>20</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2008</Year><Month>5</Month><Day>28</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2008</Year><Month>5</Month><Day>20</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">18487186</ArticleId><ArticleId IdType="mid">NIHMS142954</ArticleId><ArticleId
+        IdType="pmc">PMC2776723</ArticleId><ArticleId IdType="doi">10.1126/science.1152662</ArticleId><ArticleId
+        IdType="pii">320/5878/903</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Jordan
+        JD, et al. J Biol Chem. 2005;280:11413.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15657046</ArticleId></ArticleIdList></Reference><Reference><Citation>He
+        JC, et al. J Biol Chem. 2005;280:33426.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16046413</ArticleId></ArticleIdList></Reference><Reference><Citation>Harkany
+        T, et al. Trends Pharmacol Sci. 2007;28:83.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17222464</ArticleId></ArticleIdList></Reference><Reference><Citation>Chevaleyre
+        V, Takahashi KA, Castillo PE. Annu Rev Neurosci. 2006;29:37.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16776579</ArticleId></ArticleIdList></Reference><Reference><Citation>Centonze
+        D, Finazzi-Agro A, Bernardi G, Maccarrone M. Trends Pharmacol Sci. 2007;28:180.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17350694</ArticleId></ArticleIdList></Reference><Reference><Citation>Bhalla
+        US, Ram PT, Iyengar R. Science. 2002;297:1018.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">12169734</ArticleId></ArticleIdList></Reference><Reference><Citation>Segal
+        RA. Annu Rev Neurosci. 2003;26:299.</Citation><ArticleIdList><ArticleId IdType="pubmed">12598680</ArticleId></ArticleIdList></Reference><Reference><Citation>Gutkind
+        JS. Sci STKE. 2000;2000:re1.</Citation><ArticleIdList><ArticleId IdType="pubmed">11752597</ArticleId></ArticleIdList></Reference><Reference><Citation>Clagett-Dame
+        M, McNeill EM, Muley PD. J Neurobiol. 2006;66:739.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16688769</ArticleId></ArticleIdList></Reference><Reference><Citation>Bader
+        GD, Betel D, Hogue CWV. Nucleic Acids Res. 2003;31:248.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC165503</ArticleId><ArticleId IdType="pubmed">12519993</ArticleId></ArticleIdList></Reference><Reference><Citation>Mishra
+        GR, et al. Nucleic Acids Res. 2006;34:D411.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1347503</ArticleId><ArticleId IdType="pubmed">16381900</ArticleId></ArticleIdList></Reference><Reference><Citation>Chatr-aryamontri
+        A, et al. Nucleic Acids Res. 2007;35:D572.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1751541</ArticleId><ArticleId IdType="pubmed">17135203</ArticleId></ArticleIdList></Reference><Reference><Citation>Xenarios
+        I, et al. Nucleic Acids Res. 2001;29:239.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC29798</ArticleId><ArticleId IdType="pubmed">11125102</ArticleId></ArticleIdList></Reference><Reference><Citation>Kerrien
+        S, et al. Nucleic Acids Res. 2007;35:D561.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1751531</ArticleId><ArticleId IdType="pubmed">17145710</ArticleId></ArticleIdList></Reference><Reference><Citation>Stark
+        C, et al. Nucleic Acids Res. 2006;34:D535.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1347471</ArticleId><ArticleId IdType="pubmed">16381927</ArticleId></ArticleIdList></Reference><Reference><Citation>Joshi-Tope
+        G, et al. Nucleic Acids Res. 2005;33:D428.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC540026</ArticleId><ArticleId IdType="pubmed">15608231</ArticleId></ArticleIdList></Reference><Reference><Citation>Husi
+        H, Ward MA, Choudhary JS, Blackstock WP, Grant SG. Nat Neurosci. 2000;3:661.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">10862698</ArticleId></ArticleIdList></Reference><Reference><Citation>Ma''ayan
+        A, et al. Science. 2005;309:1078.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC3032439</ArticleId><ArticleId
+        IdType="pubmed">16099987</ArticleId></ArticleIdList></Reference><Reference><Citation>Venkitaraman
+        AR. Cell. 2002;108:171.</Citation><ArticleIdList><ArticleId IdType="pubmed">11832208</ArticleId></ArticleIdList></Reference><Reference><Citation>Watts
+        DJ, Strogatz SH. Nature. 1998;393:440.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">9623998</ArticleId></ArticleIdList></Reference><Reference><Citation>Berger
+        SI, Posner JM, Ma''ayan A. BMC Bioinform. 2007;8:372.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC2082048</ArticleId><ArticleId IdType="pubmed">17916244</ArticleId></ArticleIdList></Reference><Reference><Citation>Gudmundsdottir
+        A, Ashworth A. Oncogene. 2006;25:5864.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16998501</ArticleId></ArticleIdList></Reference><Reference><Citation>Joukov
+        V, et al. Cell. 2006;127:539.</Citation><ArticleIdList><ArticleId IdType="pubmed">17081976</ArticleId></ArticleIdList></Reference><Reference><Citation>Gowen
+        LC, Johnson BL, Latour AM, Sulik KK, Koller BH. Nat Genet. 1996;12:191.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">8563759</ArticleId></ArticleIdList></Reference><Reference><Citation>Eccles
+        DM, Barker S, Pilz DT, Kennedy C. J Med Genet. 2003;40:24e.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1735401</ArticleId><ArticleId IdType="pubmed">12624153</ArticleId></ArticleIdList></Reference><Reference><Citation>Eccles
+        D, Bunyan D, Barker S, Castle B. J Med Genet. 2005;42:e42.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1736091</ArticleId><ArticleId IdType="pubmed">15994867</ArticleId></ArticleIdList></Reference><Reference><Citation>Houvras
+        Y, et al. J Biol Chem. 2000;275:36230.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">10945975</ArticleId></ArticleIdList></Reference><Reference><Citation>Gao
+        B, et al. FEBS Lett. 2001;488:179.</Citation><ArticleIdList><ArticleId IdType="pubmed">11163768</ArticleId></ArticleIdList></Reference><Reference><Citation>Dubrovska
+        A, et al. Oncogene. 2005;24:2289.</Citation><ArticleIdList><ArticleId IdType="pubmed">15735739</ArticleId></ArticleIdList></Reference><Reference><Citation>Garcia-Campmany
+        L, Marti E. Development. 2007;134:65.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17138664</ArticleId></ArticleIdList></Reference><Reference><Citation>Govek
+        EE, Newey SE, Van Aelst L. Genes Dev. 2005;19:1.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15630019</ArticleId></ArticleIdList></Reference><Reference><Citation>Ziv
+        NE, Smith SJ. Neuron. 1996;17:91.</Citation><ArticleIdList><ArticleId IdType="pubmed">8755481</ArticleId></ArticleIdList></Reference><Reference><Citation>Alessi
+        DR, et al. EMBO J. 1996;15:6541.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC452479</ArticleId><ArticleId
+        IdType="pubmed">8978681</ArticleId></ArticleIdList></Reference><Reference><Citation>Lang
+        D, Powell SK, Plummer RS, Young KP, Ruggeri BA. Biochem Pharmacol. 2007;73:1.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16904651</ArticleId></ArticleIdList></Reference><Reference><Citation>Yan
+        Q, et al. J Biol Chem. 2007;282:13954.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17374606</ArticleId></ArticleIdList></Reference><Reference><Citation>Shen-Orr
+        SS, Milo R, Mangan S, Alon U. Nat Genet. 2002;31:64.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">11967538</ArticleId></ArticleIdList></Reference><Reference><Citation>Miralem
+        T, Avraham HK. Mol Cell Biol. 2003;23:579.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC151527</ArticleId><ArticleId IdType="pubmed">12509456</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">18239126</PMID><DateCompleted><Year>2008</Year><Month>02</Month><Day>12</Day></DateCompleted><DateRevised><Year>2022</Year><Month>03</Month><Day>16</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>319</Volume><Issue>5863</Issue><PubDate><Year>2008</Year><Month>Feb</Month><Day>01</Day></PubDate></JournalIssue><Title>Science
+        (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Cancer
+        proliferation gene discovery through functional genomics.</ArticleTitle><Pagination><StartPage>620</StartPage><EndPage>624</EndPage><MedlinePgn>620-4</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1126/science.1149200</ELocationID><Abstract><AbstractText>Retroviral
+        short hairpin RNA (shRNA)-mediated genetic screens in mammalian cells are
+        powerful tools for discovering loss-of-function phenotypes. We describe a
+        highly parallel multiplex methodology for screening large pools of shRNAs
+        using half-hairpin barcodes for microarray deconvolution. We carried out dropout
+        screens for shRNAs that affect cell proliferation and viability in cancer
+        cells and normal cells. We identified many shRNAs to be antiproliferative
+        that target core cellular processes, such as the cell cycle and protein translation,
+        in all cells examined. Moreover, we identified genes that are selectively
+        required for proliferation and survival in different cell lines. Our platform
+        enables rapid and cost-effective genome-wide screens to identify cancer proliferation
+        and survival genes for target discovery. Such efforts are complementary to
+        the Cancer Genome Atlas and provide an alternative functional view of cancer
+        cells.</AbstractText></Abstract><AuthorList CompleteYN="Y"><Author ValidYN="Y"><LastName>Schlabach</LastName><ForeName>Michael
+        R</ForeName><Initials>MR</Initials><AffiliationInfo><Affiliation>Howard Hughes
+        Medical Institute and Department of Genetics, Center for Genetics and Genomics,
+        Brigham and Women''s Hospital, Harvard Medical School, Boston, MA 02115, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Luo</LastName><ForeName>Ji</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Solimini</LastName><ForeName>Nicole L</ForeName><Initials>NL</Initials></Author><Author
+        ValidYN="Y"><LastName>Hu</LastName><ForeName>Guang</ForeName><Initials>G</Initials></Author><Author
+        ValidYN="Y"><LastName>Xu</LastName><ForeName>Qikai</ForeName><Initials>Q</Initials></Author><Author
+        ValidYN="Y"><LastName>Li</LastName><ForeName>Mamie Z</ForeName><Initials>MZ</Initials></Author><Author
+        ValidYN="Y"><LastName>Zhao</LastName><ForeName>Zhenming</ForeName><Initials>Z</Initials></Author><Author
+        ValidYN="Y"><LastName>Smogorzewska</LastName><ForeName>Agata</ForeName><Initials>A</Initials></Author><Author
+        ValidYN="Y"><LastName>Sowa</LastName><ForeName>Mathew E</ForeName><Initials>ME</Initials></Author><Author
+        ValidYN="Y"><LastName>Ang</LastName><ForeName>Xiaolu L</ForeName><Initials>XL</Initials></Author><Author
+        ValidYN="Y"><LastName>Westbrook</LastName><ForeName>Thomas F</ForeName><Initials>TF</Initials></Author><Author
+        ValidYN="Y"><LastName>Liang</LastName><ForeName>Anthony C</ForeName><Initials>AC</Initials></Author><Author
+        ValidYN="Y"><LastName>Chang</LastName><ForeName>Kenneth</ForeName><Initials>K</Initials></Author><Author
+        ValidYN="Y"><LastName>Hackett</LastName><ForeName>Jennifer A</ForeName><Initials>JA</Initials></Author><Author
+        ValidYN="Y"><LastName>Harper</LastName><ForeName>J Wade</ForeName><Initials>JW</Initials></Author><Author
+        ValidYN="Y"><LastName>Hannon</LastName><ForeName>Gregory J</ForeName><Initials>GJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Elledge</LastName><ForeName>Stephen J</ForeName><Initials>SJ</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>P01 CA013106-37</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P01
+        CA013106</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><Acronym>HHMI</Acronym><Agency>Howard Hughes
+        Medical Institute</Agency><Country>United States</Country></Grant><Grant><GrantID>F31
+        NS054507</GrantID><Acronym>NS</Acronym><Agency>NINDS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>T32CA09216</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>T32
+        CA009216</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>R01 AG011085</GrantID><Acronym>AG</Acronym><Agency>NIA
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>F31
+        NS054507-01</GrantID><Acronym>NS</Acronym><Agency>NINDS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P01 CA013106-36</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D052061">Research
+        Support, N.I.H., Extramural</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Science</MedlineTA><NlmUniqueID>0404511</NlmUniqueID><ISSNLinking>0036-8075</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D035683">MicroRNAs</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D034741">RNA, Small Interfering</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
+        RefType="ErratumIn"><RefSource>Science.2008 Apr 18;320(5874):316</RefSource></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D001943" MajorTopicYN="N">Breast Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002460" MajorTopicYN="N">Cell Line</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D045744" MajorTopicYN="N">Cell Line, Tumor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D049109" MajorTopicYN="Y">Cell Proliferation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002470" MajorTopicYN="N">Cell Survival</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D003110" MajorTopicYN="N">Colonic Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015723" MajorTopicYN="N">Gene Library</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D052138" MajorTopicYN="Y">Genes, Neoplasm</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005822" MajorTopicYN="N">Genetic Vectors</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D015894" MajorTopicYN="N">Genome, Human</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D023281" MajorTopicYN="N">Genomics</DescriptorName><QualifierName UI="Q000379"
+        MajorTopicYN="Y">methods</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D035683" MajorTopicYN="N">MicroRNAs</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020411" MajorTopicYN="N">Oligonucleotide Array Sequence Analysis</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D034741" MajorTopicYN="N">RNA, Small Interfering</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012190" MajorTopicYN="N">Retroviridae</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="N">genetics</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2008</Year><Month>2</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">18239126</ArticleId><ArticleId IdType="mid">NIHMS249937</ArticleId><ArticleId
+        IdType="pmc">PMC2981870</ArticleId><ArticleId IdType="doi">10.1126/science.1149200</ArticleId><ArticleId
+        IdType="pii">319/5863/620</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Paddison
+        PJ, et al. Nature. 2004;428:427.</Citation><ArticleIdList><ArticleId IdType="pubmed">15042091</ArticleId></ArticleIdList></Reference><Reference><Citation>Silva
+        JM, et al. Nat Genet. 2005;37:1281.</Citation><ArticleIdList><ArticleId IdType="pubmed">16200065</ArticleId></ArticleIdList></Reference><Reference><Citation>Westbrook
+        TF, et al. Cell. 2005;121:837.</Citation><ArticleIdList><ArticleId IdType="pubmed">15960972</ArticleId></ArticleIdList></Reference><Reference><Citation>Popov
+        N, et al. Nat Cell Biol. 2007;9:765.</Citation><ArticleIdList><ArticleId IdType="pubmed">17558397</ArticleId></ArticleIdList></Reference><Reference><Citation>Kolfschoten
+        IG, et al. Cell. 2005;121:849.</Citation><ArticleIdList><ArticleId IdType="pubmed">15960973</ArticleId></ArticleIdList></Reference><Reference><Citation>Ngo
+        VN, et al. Nature. 2006;441:106.</Citation><ArticleIdList><ArticleId IdType="pubmed">16572121</ArticleId></ArticleIdList></Reference><Reference><Citation>Berns
+        K, et al. Nature. 2004;428:431.</Citation><ArticleIdList><ArticleId IdType="pubmed">15042092</ArticleId></ArticleIdList></Reference><Reference><Citation>Brummelkamp
+        TR, et al. Nat Chem Biol. 2006;2:202.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16474381</ArticleId></ArticleIdList></Reference><Reference><Citation>Sjoblom
+        T, et al. Science. 2006;314:268.</Citation><ArticleIdList><ArticleId IdType="pubmed">16959974</ArticleId></ArticleIdList></Reference><Reference><Citation>Wood
+        LD, et al. Science. 2007;318:1108.</Citation><ArticleIdList><ArticleId IdType="pubmed">17932254</ArticleId></ArticleIdList></Reference><Reference><Citation>Dickins
+        RA, et al. Nat Genet. 2005;37:1289.</Citation><ArticleIdList><ArticleId IdType="pubmed">16200064</ArticleId></ArticleIdList></Reference><Reference><Citation>Smyth
+        GK, Speed T. Methods. 2003;31:265.</Citation><ArticleIdList><ArticleId IdType="pubmed">14597310</ArticleId></ArticleIdList></Reference><Reference><Citation>Draviam
+        VM, et al. Nat Cell Biol. 2007;9:556.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17417629</ArticleId></ArticleIdList></Reference><Reference><Citation>Ito
+        M, Nakano T, Erdodi F, Hartshorne DJ. Mol Cell Biochem. 2004;259:197.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15124925</ArticleId></ArticleIdList></Reference><Reference><Citation>Jin
+        H, Sperka T, Herrlich P, Morrison H. Nature. 2006;442:576.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16885985</ArticleId></ArticleIdList></Reference><Reference><Citation>Vassilev
+        LT, et al. Science. 2004;303:844.</Citation><ArticleIdList><ArticleId IdType="pubmed">14704432</ArticleId></ArticleIdList></Reference><Reference><Citation>Solimini
+        NL, Luo J, Elledge SJ. Cell. 2007;130:986.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">17889643</ArticleId></ArticleIdList></Reference><Reference><Citation>Silva
+        JM, et al. Science. 2008;319:617.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2981861</ArticleId><ArticleId
+        IdType="pubmed">18239125</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">18239125</PMID><DateCompleted><Year>2008</Year><Month>02</Month><Day>12</Day></DateCompleted><DateRevised><Year>2024</Year><Month>01</Month><Day>04</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>319</Volume><Issue>5863</Issue><PubDate><Year>2008</Year><Month>Feb</Month><Day>01</Day></PubDate></JournalIssue><Title>Science
+        (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Profiling
+        essential genes in human mammary cells by multiplex RNAi screening.</ArticleTitle><Pagination><StartPage>617</StartPage><EndPage>620</EndPage><MedlinePgn>617-20</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1126/science.1149185</ELocationID><Abstract><AbstractText>By
+        virtue of their accumulated genetic alterations, tumor cells may acquire vulnerabilities
+        that create opportunities for therapeutic intervention. We have devised a
+        massively parallel strategy for screening short hairpin RNA (shRNA) collections
+        for stable loss-of-function phenotypes. We assayed from 6000 to 20,000 shRNAs
+        simultaneously to identify genes important for the proliferation and survival
+        of five cell lines derived from human mammary tissue. Lethal shRNAs common
+        to these cell lines targeted many known cell-cycle regulatory networks. Cell
+        line-specific sensitivities to suppression of protein complexes and biological
+        pathways also emerged, and these could be validated by RNA interference (RNAi)
+        and pharmacologically. These studies establish a practical platform for genome-scale
+        screening of complex phenotypes in mammalian cells and demonstrate that RNAi
+        can be used to expose genotype-specific sensitivities.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Silva</LastName><ForeName>Jose
+        M</ForeName><Initials>JM</Initials><AffiliationInfo><Affiliation>Watson School
+        of Biological Sciences, Howard Hughes Medical Institute, Cold Spring Harbor
+        Laboratory, Cold Spring Harbor, NY 11724, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Marran</LastName><ForeName>Krista</ForeName><Initials>K</Initials></Author><Author
+        ValidYN="Y"><LastName>Parker</LastName><ForeName>Joel S</ForeName><Initials>JS</Initials></Author><Author
+        ValidYN="Y"><LastName>Silva</LastName><ForeName>Javier</ForeName><Initials>J</Initials></Author><Author
+        ValidYN="Y"><LastName>Golding</LastName><ForeName>Michael</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Schlabach</LastName><ForeName>Michael R</ForeName><Initials>MR</Initials></Author><Author
+        ValidYN="Y"><LastName>Elledge</LastName><ForeName>Stephen J</ForeName><Initials>SJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Hannon</LastName><ForeName>Gregory J</ForeName><Initials>GJ</Initials></Author><Author
+        ValidYN="Y"><LastName>Chang</LastName><ForeName>Kenneth</ForeName><Initials>K</Initials></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><Acronym>HHMI</Acronym><Agency>Howard Hughes Medical
+        Institute</Agency><Country>United States</Country></Grant><Grant><GrantID>P01
+        CA013106</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>P01 CA013106-36</GrantID><Acronym>CA</Acronym><Agency>NCI
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P01
+        CA013106-37</GrantID><Acronym>CA</Acronym><Agency>NCI NIH HHS</Agency><Country>United
+        States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D052061">Research
+        Support, N.I.H., Extramural</PublicationType><PublicationType UI="D013486">Research
+        Support, U.S. Gov''t, Non-P.H.S.</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Science</MedlineTA><NlmUniqueID>0404511</NlmUniqueID><ISSNLinking>0036-8075</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D034741">RNA, Small Interfering</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D001940" MajorTopicYN="N">Breast</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="Y">cytology</QualifierName><QualifierName UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001943" MajorTopicYN="N">Breast Neoplasms</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002460" MajorTopicYN="N">Cell Line</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D045744" MajorTopicYN="N">Cell Line, Tumor</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D049109" MajorTopicYN="Y">Cell Proliferation</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002470" MajorTopicYN="Y">Cell Survival</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020869" MajorTopicYN="N">Gene Expression Profiling</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020043" MajorTopicYN="Y">Genes, Essential</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D023281" MajorTopicYN="N">Genomics</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D053858" MajorTopicYN="N">Metabolic Networks and Pathways</DescriptorName><QualifierName
+        UI="Q000235" MajorTopicYN="Y">genetics</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D020411" MajorTopicYN="N">Oligonucleotide Array Sequence Analysis</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010641" MajorTopicYN="N">Phenotype</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D034622" MajorTopicYN="Y">RNA Interference</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D034741" MajorTopicYN="N">RNA, Small Interfering</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2008</Year><Month>2</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">18239125</ArticleId><ArticleId IdType="mid">NIHMS249659</ArticleId><ArticleId
+        IdType="pmc">PMC2981861</ArticleId><ArticleId IdType="doi">10.1126/science.1149185</ArticleId><ArticleId
+        IdType="pii">319/5863/617</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Paddison
+        PJ, Caudy AA, Hannon GJ. Proc Natl Acad Sci USA. 2002;99:1443.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC122210</ArticleId><ArticleId IdType="pubmed">11818553</ArticleId></ArticleIdList></Reference><Reference><Citation>Elbashir
+        SM, et al. Nature. 2001;411:494.</Citation><ArticleIdList><ArticleId IdType="pubmed">11373684</ArticleId></ArticleIdList></Reference><Reference><Citation>Scherer
+        L, Rossi JJ. Curr Pharm Biotechnol. 2004;5:355.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15320766</ArticleId></ArticleIdList></Reference><Reference><Citation>Friedman
+        A, Perrimon N. Curr Opin Genet Dev. 2004;14:470.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">15380236</ArticleId></ArticleIdList></Reference><Reference><Citation>Bernards
+        R, Brummelkamp TR, Beijersbergen RL. Nat Methods. 2006;3:701.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16929315</ArticleId></ArticleIdList></Reference><Reference><Citation>Hemann
+        MT, et al. Nat Genet. 2003;33:396.</Citation><ArticleIdList><ArticleId IdType="pubmed">12567186</ArticleId></ArticleIdList></Reference><Reference><Citation>Snove
+        O, Jr, Rossi JJ. Nat Methods. 2006;3:689.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16929313</ArticleId></ArticleIdList></Reference><Reference><Citation>Farah
+        MH. Curr Drug Deliv. 2007;4:161.</Citation><ArticleIdList><ArticleId IdType="pubmed">17456035</ArticleId></ArticleIdList></Reference><Reference><Citation>de
+        Fougerolles A, Vornlocher HP, Maraganore J, Lieberman J. Nat Rev Drug Discov.
+        2007;6:443.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC7098199</ArticleId><ArticleId
+        IdType="pubmed">17541417</ArticleId></ArticleIdList></Reference><Reference><Citation>Aza-Blanc
+        P, et al. Mol Cell. 2003;12:627.</Citation><ArticleIdList><ArticleId IdType="pubmed">14527409</ArticleId></ArticleIdList></Reference><Reference><Citation>Whitehurst
+        AW, et al. Nature. 2007;446:815.</Citation><ArticleIdList><ArticleId IdType="pubmed">17429401</ArticleId></ArticleIdList></Reference><Reference><Citation>Natt
+        F. Curr Opin Mol Ther. 2007;9:242.</Citation><ArticleIdList><ArticleId IdType="pubmed">17608022</ArticleId></ArticleIdList></Reference><Reference><Citation>Paddison
+        PJ, et al. Nature. 2004;428:427.</Citation><ArticleIdList><ArticleId IdType="pubmed">15042091</ArticleId></ArticleIdList></Reference><Reference><Citation>Westbrook
+        TF, et al. Cell. 2005;121:837.</Citation><ArticleIdList><ArticleId IdType="pubmed">15960972</ArticleId></ArticleIdList></Reference><Reference><Citation>Root
+        DE, et al. Nat Methods. 2006;3:715.</Citation><ArticleIdList><ArticleId IdType="pubmed">16929317</ArticleId></ArticleIdList></Reference><Reference><Citation>Gazin
+        C, et al. Nature. 2007;449:1073.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2147719</ArticleId><ArticleId
+        IdType="pubmed">17960246</ArticleId></ArticleIdList></Reference><Reference><Citation>Ngo
+        VN, et al. Nature. 2006;441:106.</Citation><ArticleIdList><ArticleId IdType="pubmed">16572121</ArticleId></ArticleIdList></Reference><Reference><Citation>Silva
+        JM, et al. Nat Genet. 2005;37:1281.</Citation><ArticleIdList><ArticleId IdType="pubmed">16200065</ArticleId></ArticleIdList></Reference><Reference><Citation>Dickins
+        RA, et al. Nat Genet. 2005;37:1289.</Citation><ArticleIdList><ArticleId IdType="pubmed">16200064</ArticleId></ArticleIdList></Reference><Reference><Citation>Stegmeier
+        F, Hu G, Rickles RJ, Hannon GJ, Elledge SJ. Proc Natl Acad Sci USA. 2005;102:13212.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC1196357</ArticleId><ArticleId IdType="pubmed">16141338</ArticleId></ArticleIdList></Reference><Reference><Citation>Schlabach
+        MR, et al. Science. 2008;319:620.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2981870</ArticleId><ArticleId
+        IdType="pubmed">18239126</ArticleId></ArticleIdList></Reference><Reference><Citation>Nakayama
+        KI, Nakayama K. Nat Rev Cancer. 2006;6:369.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16633365</ArticleId></ArticleIdList></Reference><Reference><Citation>Peters
+        JM. Nat Rev Mol Cell Biol. 2006;7:644.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">16896351</ArticleId></ArticleIdList></Reference><Reference><Citation>Fang
+        G. Mol Biol Cell. 2002;13:755.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC99596</ArticleId><ArticleId
+        IdType="pubmed">11907259</ArticleId></ArticleIdList></Reference><Reference><Citation>Kops
+        GJ, Foltz DR, Cleveland DW. Proc Natl Acad Sci USA. 2004;101:8699.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC423258</ArticleId><ArticleId IdType="pubmed">15159543</ArticleId></ArticleIdList></Reference><Reference><Citation>Yen
+        TJ, et al. Nature. 1992;359:536.</Citation><ArticleIdList><ArticleId IdType="pubmed">1406971</ArticleId></ArticleIdList></Reference><Reference><Citation>Peng
+        J, Zhu Y, Milton JT, Price DH. Genes Dev. 1998;12:755.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC316581</ArticleId><ArticleId IdType="pubmed">9499409</ArticleId></ArticleIdList></Reference><Reference><Citation>Neve
+        RM, et al. Cancer Cell. 2006;10:515.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC2730521</ArticleId><ArticleId
+        IdType="pubmed">17157791</ArticleId></ArticleIdList></Reference><Reference><Citation>Moyer
+        JD, et al. Cancer Res. 1997;57:4838.</Citation><ArticleIdList><ArticleId IdType="pubmed">9354447</ArticleId></ArticleIdList></Reference><Reference><Citation>Jackson-Grusby
+        L, et al. Proc Natl Acad Sci USA. 1997;94:4681.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC20784</ArticleId><ArticleId IdType="pubmed">9114051</ArticleId></ArticleIdList></Reference><Reference><Citation>Palombella
+        VJ, et al. Cell. 1994;78:773.</Citation><ArticleIdList><ArticleId IdType="pubmed">8087845</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -334,20 +834,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Wed, 26 Jan 2022 16:24:34 GMT
+      - Tue, 20 Feb 2024 16:42:33 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B44F6B46659C500002B4F592ABF3F.1.1.m_3
+      - D0BD9F070703C0B500005ADC09CF10CE.1.1.m_3
       NCBI-SID:
-      - 5DE522FEB010F89F_3450SID
+      - AF190AACA772DF43_401DSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=5DE522FEB010F89F_3450SID; domain=.nih.gov; path=/; expires=Thu, 26
-        Jan 2023 16:24:35 GMT
+      - ncbi_sid=AF190AACA772DF43_401DSID; domain=.nih.gov; path=/; expires=Thu, 20
+        Feb 2025 16:42:34 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -355,9 +855,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '7'
-      X-Test-Test:
-      - test42
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

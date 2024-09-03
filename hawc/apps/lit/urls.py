@@ -137,9 +137,25 @@ urlpatterns = [
         name="tag-conflicts",
     ),
     path(
+        "assessment/<int:pk>/bulk-merge-conflicts/",
+        views.BulkMerge.as_view(),
+        name="bulk-merge-conflicts",
+    ),
+    path(
         "assessment/<int:pk>/user-tags/",
         views.UserTagList.as_view(),
         name="user-tag-list",
+    ),
+    path(
+        "assessment/<int:pk>/workflows/",
+        views.Workflows.as_view(),
+        name="workflows",
+    ),
+    # workflow objects
+    path(
+        "workflows/<int:pk>/<slug:action>/",
+        views.WorkflowViewSet.as_view(),
+        name="workflow-htmx",
     ),
     path("api/", include((router.urls, "api"))),
 ]

@@ -63,6 +63,21 @@ class TestLiteratureAssessmentViewSet:
         assert rev_client.post(url).status_code == 403
         assert pm_client.post(url, None).status_code == 400  # validation; not permission error
 
+    def test_references(self, db_keys):
+        c = APIClient()
+        assert c.login(username="reviewer@hawcproject.org", password="pw") is True
+        url = reverse("lit:api:assessment-references", args=(db_keys.assessment_final,))
+        response = c.get(url)
+        assert response.status_code == 200 and len(response.json()["results"]) == 5
+        # tag filtering
+        response = c.get(
+            url, {"tag_id": 11, "required_tags": [12], "pruned_tags": [13]}, format="json"
+        )
+        assert response.status_code == 200 and len(response.json()["results"]) == 2
+        # untagged references
+        response = c.get(url, {"untagged": ""}, format="json")
+        assert response.status_code == 200 and len(response.json()["results"]) == 1
+
     def test_export(self, rewrite_data_files: bool, db_keys):
         url = reverse("lit:api:assessment-reference-export", args=(db_keys.assessment_final,))
         fn = "api-lit-assessment-reference-export.json"
@@ -740,6 +755,15 @@ class TestReferenceViewSet:
         assert list(ref.tags.values_list("id", flat=True)) == tags
         assert ref.has_user_tag_conflicts() is False
 
+        # test tagging with UDF data
+        ref_udf = models.Reference.objects.filter(
+            study__assessment=db_keys.assessment_conflict_resolution
+        ).first()
+        update_udf_tags_url = reverse("lit:api:reference-tag", args=(ref_udf.pk,))
+        payload = {"tags": [33], "udf_data": {32: {"32-field1": "testing", "32-field2": "321"}}}
+        response = client.post(update_udf_tags_url, payload, format="json")
+        assert response.status_code == 200
+
     def test_tagging_invalid(self, db_keys):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
@@ -756,6 +780,16 @@ class TestReferenceViewSet:
         response = client.post(url, data, format="json")
         assert response.status_code == 400
         assert response.json() == {"tags": "Array of tags must be valid primary keys"}
+
+        # test invalid UDF
+        ref_udf = models.Reference.objects.filter(
+            study__assessment=db_keys.assessment_conflict_resolution
+        ).first()
+        update_udf_tags_url = reverse("lit:api:reference-tag", args=(ref_udf.pk,))
+        payload = {"tags": [33], "udf_data": {32: {"32-field1": "", "32-field2": "321"}}}
+        response = client.post(update_udf_tags_url, payload, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"UDF-form": [["32-field1", ["This field is required."]]]}
 
     def test_merge_tag_permissions(self):
         team = get_client("team", api=True)
@@ -803,3 +837,48 @@ class TestReferenceViewSet:
         response = client.get(url)
         assert response.status_code == 200
         assert len(response.json()) == 1
+
+
+@pytest.mark.django_db
+class TestReferenceFilterTagViewSet:
+    def test_crud(self):
+        client = get_client("pm", api=True)
+
+        # create
+        url = reverse("lit:api:tags-list") + "?assessment_id=3"
+        data = {"name": "Test", "parent": 28}
+        response = client.post(url, data, format="json")
+        assert response.status_code == 201
+        instance = response.json()
+        assert instance["name"] == "Test"
+
+        # detail
+        url = reverse("lit:api:tags-detail", args=(instance["id"],))
+        response = client.get(url, format="json")
+        assert response.json() == instance
+
+        # update
+        data = {"name": "Test2"}
+        response = client.patch(url, data, format="json")
+        assert response.status_code == 200
+        instance = response.json()
+        assert instance["name"] == "Test2"
+
+        # delete
+        response = client.delete(url, data, format="json")
+        assert response.status_code == 204
+
+    def test_move(self):
+        client = get_client("pm", api=True)
+        tags = models.ReferenceFilterTag.get_assessment_qs(3)
+        tag = tags.get(name="Tier I")
+        url = reverse("lit:api:tags-move", args=(tag.id,))
+
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier I", "Tier II", "Tier III"]
+
+        response = client.patch(url, {"newIndex": 2}, format="json")
+        assert response.json()["status"] is True
+
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier II", "Tier III", "Tier I"]
