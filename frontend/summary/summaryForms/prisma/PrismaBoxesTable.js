@@ -19,13 +19,6 @@ class PrismaBoxesTable extends Component {
             <div>
                 <h3>Boxes</h3>
                 <table className="table table-sm table-striped">
-                    {/* <colgroup>
-                    <col width="25%" />
-                    <col width="25%" />
-                    <col width="20%" />
-                    <col width="20%" />
-                    <col width="10%" />
-                </colgroup> */}
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -85,7 +78,7 @@ class BoxesRow extends BaseEditableRow {
             <tr>
                 <td colSpan="100%">
                     <div className="border my-2 p-2 pb-3 edit-form-background ">
-                        <div className="form-row my-2 mx-2">
+                        <div className="form-row my-2 mx-2 pad-form">
                             <TextInput
                                 name={`${key}-name-${index}`}
                                 value={row.name}

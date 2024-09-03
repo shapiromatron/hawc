@@ -19,13 +19,6 @@ class PrismaArrowsTable extends Component {
             <div>
                 <h3>Arrows</h3>
                 <table className="table table-sm table-striped">
-                    {/* <colgroup>
-                    <col width="25%" />
-                    <col width="25%" />
-                    <col width="20%" />
-                    <col width="20%" />
-                    <col width="10%" />
-                </colgroup> */}
                     <thead>
                         <tr>
                             <th>Source</th>
@@ -76,7 +69,7 @@ class ArrowsRow extends BaseEditableRow {
             <tr>
                 <td colSpan="100%">
                     <div className="border my-2 p-2 pb-3 edit-form-background ">
-                        <div className="form-row my-2 mx-2">
+                        <div className="form-row my-2 mx-2 pad-form">
                             <SelectInput
                                 name={`${key}-source-${index}`}
                                 value={row.source}
@@ -100,7 +93,7 @@ class ArrowsRow extends BaseEditableRow {
                             <IntegerInput
                                 name={`${key}-width-${index}`}
                                 value={row.width}
-                                label="width"
+                                label="Width"
                                 onChange={e =>
                                     changeArraySettings(key, index, "width", e.target.value)
                                 }

@@ -43,7 +43,7 @@ const moveArrayElementUp = function(arr, index) {
             <td>
                 {props.onEdit ? (
                     <button
-                        className="btn btn-sm btn-primary px-1"
+                        className="btn btn-sm btn-primary px-1 mr-1"
                         title="Edit row"
                         onClick={props.onEdit}>
                         <i className="fa fa-fw fa-pencil-square-o"></i>
