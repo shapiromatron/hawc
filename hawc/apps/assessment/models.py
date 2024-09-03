@@ -75,6 +75,7 @@ class DSSTox(models.Model):
         dtxsid: str | None
         smiles: str | None
         inchikey: str | None
+        preferredName: str | None
         iupacName: str | None
         compoundId: int | None
         molFormula: str | None
@@ -104,21 +105,17 @@ class DSSTox(models.Model):
 
     @property
     def verbose_link(self) -> str:
-        return f"{new_window_a(self.get_dashboard_url(), self.dtxsid)}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+        return f"{new_window_a(self.dashboard_url(), self.dtxsid)}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
 
     @classmethod
     def help_text(cls) -> str:
         return f'{new_window_a("https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database", "DssTox")} substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the <a href="https://comptox.epa.gov/dashboard/" rel="noopener noreferrer" target="_blank">DTXSID</a>.'
 
-    def get_dashboard_url(self) -> str:
-        return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
+    def dashboard_url(self) -> str:
+        return f"https://comptox.epa.gov/dashboard/chemical/details/{self.dtxsid}"
 
-    def get_img_url(self) -> str:
-        # TODO - always use api-ccte.epa.gov when API key is no longer required
-        if not settings.CCTE_API_KEY:
-            return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
-        else:
-            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}?x-api-key={settings.CCTE_API_KEY}"
+    def image_url(self) -> str:
+        return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}"
 
 
 class Assessment(models.Model):

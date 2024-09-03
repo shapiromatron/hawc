@@ -1428,6 +1428,7 @@
       smiles: O
       inchikey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
       iupacName: Water
+      preferredName: Water
       compoundId: 6296
       molFormula: H2O
       pubchemCid: 962
@@ -1445,6 +1446,7 @@
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
       inchikey: XITQUSLLOSKDTB-UHFFFAOYSA-N
       iupacName: 2,4-Dichloro-1-(4-nitrophenoxy)benzene
+      preferredName: Nitrofen
       compoundId: 970
       molFormula: C12H7Cl2NO3
       pubchemCid: 15787
