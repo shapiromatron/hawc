@@ -44,6 +44,6 @@ class ReportsViewSet(viewsets.ViewSet):
         """Gets all value data across all assessments."""
         qs = AssessmentValue.objects.all()
         exporter = exports.AssessmentExporter.flat_export(
-            filtered_qs(qs, AssessmentValueFilterSet, request), filename="hawc-assessment-values"
+            filtered_qs(qs, AssessmentValueFilterSet, request), filename="assessment-values"
         )
         return Response(exporter)

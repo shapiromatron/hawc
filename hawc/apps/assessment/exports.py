@@ -1,5 +1,5 @@
 from ..common.exports import Exporter, ModelExport
-from ..common.models import sql_display
+from ..common.models import sql_display, str_m2m
 from ..study.exports import StudyExport
 from . import constants
 
@@ -51,9 +51,15 @@ class AssessmentExport(ModelExport):
             "id": "id",
             "name": "name",
             "cas": "cas",
+            "dtxsids": "dtxsids__name",
             "year": "year",
             "created": "created",
             "last_updated": "last_updated",
+        }
+
+    def get_annotation_map(self, query_prefix):
+        return {
+            "dtxsids__name": str_m2m(query_prefix + "dtxsids__dtxsid"),
         }
 
     def prepare_df(self, df):
@@ -97,12 +103,6 @@ class AssessmentExporter(Exporter):
             AssessmentDetailExport("assessment_detail", "assessment__details"),
             AssessmentValueExport("assessment_value", ""),
             StudyExport(
-                "study",
-                "study",
-                include=(
-                    "id",
-                    "short_citation",
-                    "published",
-                ),
+                "study", "study", include=("id", "short_citation", "hero_id", "pubmed_id", "doi")
             ),
         ]
