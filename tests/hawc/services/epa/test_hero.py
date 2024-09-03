@@ -84,6 +84,24 @@ class TestHEROFetch:
         assert hero_getter.content[0]["PMID"] == 12654040
         assert hero_getter.content[2]["PMID"] is None
 
+    @pytest.mark.vcr
+    def test_source_parsing(self, settings):
+        ids = [54501, 5708371]  # journal, ECHA dossier
+        settings.HAWC_FEATURES.ENABLE_NEW_HERO = False
+
+        hero_getter = HEROFetch(id_list=ids)
+        hero_getter.get_content()
+        sources = [d["source"] for d in hero_getter.content]
+        assert sources == ["", "Environmental Health Perspectives 28:251-260."]
+
+        # settings.HAWC_FEATURES.ENABLE_NEW_HERO = True
+        # hero_getter = HEROFetch(id_list=ids)
+        # hero_getter.get_content()
+        # sources = [d["source"] for d in hero_getter.content]
+        # assert sources == ["Environmental Health Perspectives 28:251-260.", ""]
+
+        settings.HAWC_FEATURES.ENABLE_NEW_HERO = False
+
     def test_fake(self, settings):
         settings.HAWC_FEATURES.FAKE_IMPORTS = True
         ids = [123, 1234, 12345]

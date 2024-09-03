@@ -28,38 +28,41 @@ def _force_int(val, default=None) -> int | None:
         return default
 
 
+def format_source(content: dict) -> str:
+    return content.get("type_of_reference", "")  # TODO: ?
+
+
+def parse_article_new(content: dict) -> dict:
+    authors = normalize_authors(content.get("authors", []))
+    return dict(
+        json=content,
+        HEROID=_force_int(content.get("id")),
+        PMID=_force_int(content.get("accession_number")),
+        doi=try_get_doi(content.get("doi", "")),
+        title=content.get("title", ""),
+        abstract=content.get("abstract", ""),
+        source=format_source(content),
+        year=_force_int(content.get("year")),
+        authors=authors,
+        authors_short=get_author_short_text(authors),
+    )
+
+
 def parse_article(content: dict) -> dict:
-    if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
-        authors = normalize_authors(content.get("authors", []))
-        return dict(
-            json=content,
-            HEROID=_force_int(content.get("id")),
-            PMID=_force_int(content.get("accession_number")),
-            doi=try_get_doi(content.get("doi", "")),
-            title=content.get("title"),
-            abstract=content.get("abstract"),
-            source=content.get(
-                "type_of_reference"
-            ),  # TODO: need to construct source from journal/issue/pages/etc.
-            year=_force_int(content.get("year")),
-            authors=authors,
-            authors_short=get_author_short_text(authors),
-        )
-    else:
-        authors = normalize_authors(content.get("AUTHORS", "").split("; "))
-        authors_short = get_author_short_text(authors)
-        return dict(
-            json=content,
-            HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
-            PMID=_force_int(_parse_pseudo_json(content, "PMID")),
-            doi=try_get_doi(_parse_pseudo_json(content, "doi")),
-            title=_parse_pseudo_json(content, "TITLE"),
-            abstract=_parse_pseudo_json(content, "ABSTRACT"),
-            source=_parse_pseudo_json(content, "SOURCE"),
-            year=_force_int(_parse_pseudo_json(content, "YEAR")),
-            authors=authors,
-            authors_short=authors_short,
-        )
+    authors = normalize_authors(content.get("AUTHORS", "").split("; "))
+    authors_short = get_author_short_text(authors)
+    return dict(
+        json=content,
+        HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
+        PMID=_force_int(_parse_pseudo_json(content, "PMID")),
+        doi=try_get_doi(_parse_pseudo_json(content, "doi")),
+        title=_parse_pseudo_json(content, "TITLE"),
+        abstract=_parse_pseudo_json(content, "ABSTRACT"),
+        source=_parse_pseudo_json(content, "SOURCE"),
+        year=_force_int(_parse_pseudo_json(content, "YEAR")),
+        authors=authors,
+        authors_short=authors_short,
+    )
 
 
 class HEROFetch:
@@ -108,17 +111,11 @@ class HEROFetch:
             return dict(success=self.content, failure=self.failures)
 
         if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
-            # ensure valid api key
+            if settings.HERO_API_KEY is None:
+                raise ValueError("HERO_API_KEY required.")
             headers = {"Authorization": f"Bearer {settings.HERO_API_KEY}"}
-            r = requests.get(
-                "https://heronetnext.epa.gov/api/user/check",
-                headers=headers,
-                timeout=10.0,
-            )
-            if r.status_code != 200:
-                logger.info("Valid HERO API key required.")
-                return dict(success=[], failure=self.ids)
 
+        parse_func = parse_article_new if settings.HAWC_FEATURES.ENABLE_NEW_HERO else parse_article
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
             request_ids = self.ids[recstart : recstart + self.settings["recordsperpage"]]
@@ -153,7 +150,7 @@ class HEROFetch:
                     logger.info(f"HERO request failure: {url}")
 
             for ref in results:
-                self.content.append(parse_article(ref))
+                self.content.append(parse_func(ref))
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 
