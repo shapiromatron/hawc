@@ -127,9 +127,9 @@ class HEROFetch:
             results = []
             if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
                 url = "https://heronetnext.epa.gov/api/reference/export/json"
-                params = {"id": request_ids, "type": "hero"}
+                data = {"type": "hero", "id": request_ids}
                 try:
-                    r = requests.post(url, params, headers=headers, timeout=30.0)
+                    r = requests.post(url, json=data, headers=headers, timeout=30.0)
                     if r.status_code == 200:
                         results = r.json()
                     else:

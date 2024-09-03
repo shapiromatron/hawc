@@ -25,16 +25,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 15 Jul 2024 18:14:22 GMT
+      - Tue, 03 Sep 2024 14:24:30 GMT
       Strict-Transport-Security:
       - max-age=15724800; includeSubDomains
       content-security-policy:
-      - 'script-src ''self'' ''unsafe-eval''; style-src-attr ''self'' ''unsafe-inline'';
-        base-uri ''self''; img-src ''self'' www.epa.gov data: blob:; script-src-attr
-        ''self'' ''unsafe-inline''; script-src-elem ''self'' ''unsafe-inline''; form-action
-        ''self'' https://*.epa.gov; font-src ''self'' www.epa.gov; default-src ''self'';
-        style-src-elem ''self'' ''sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=''
-        ''sha256-vCpS8VyHtSqXbN/JkDhke+jauUq+p7lBAVCL+C75wZo=''; frame-ancestors ''self'''
+      - 'style-src-elem ''self'' ''sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=''
+        ''sha256-vCpS8VyHtSqXbN/JkDhke+jauUq+p7lBAVCL+C75wZo=''; default-src ''self'';
+        font-src ''self'' www.epa.gov; script-src-elem ''self'' ''unsafe-inline'';
+        base-uri ''self''; script-src-attr ''self'' ''unsafe-inline''; style-src-attr
+        ''self'' ''unsafe-inline''; script-src ''self'' ''unsafe-eval''; img-src ''self''
+        www.epa.gov data: blob:; form-action ''self'' https://*.epa.gov; frame-ancestors
+        ''self'''
       cross-origin-opener-policy:
       - same-origin
       referrer-policy:
@@ -49,7 +50,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"type": "hero", "id": [1201]}'
     headers:
       Accept:
       - '*/*'
@@ -57,12 +58,16 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/json
       User-Agent:
       - python-requests/2.32.3
       authorization:
       - <omitted>
-    method: GET
-    uri: https://heronetnext.epa.gov/api/reference/export/json?id=1201&type=hero
+    method: POST
+    uri: https://heronetnext.epa.gov/api/reference/export/json
   response:
     body:
       string: '[{"abstract": "Sprague-Dawley rats were exposed to 0.8 ppm ozone (O3),
@@ -107,16 +112,16 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Mon, 15 Jul 2024 18:14:24 GMT
+      - Tue, 03 Sep 2024 14:24:31 GMT
       Strict-Transport-Security:
       - max-age=15724800; includeSubDomains
       content-security-policy:
-      - 'frame-ancestors ''self''; img-src ''self'' www.epa.gov data: blob:; script-src-elem
-        ''self'' ''unsafe-inline''; default-src ''self''; form-action ''self'' https://*.epa.gov;
-        script-src ''self'' ''unsafe-eval''; style-src-attr ''self'' ''unsafe-inline'';
-        script-src-attr ''self'' ''unsafe-inline''; style-src-elem ''self'' ''sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=''
-        ''sha256-vCpS8VyHtSqXbN/JkDhke+jauUq+p7lBAVCL+C75wZo=''; base-uri ''self'';
-        font-src ''self'' www.epa.gov'
+      - 'script-src-attr ''self'' ''unsafe-inline''; form-action ''self'' https://*.epa.gov;
+        script-src ''self'' ''unsafe-eval''; default-src ''self''; font-src ''self''
+        www.epa.gov; img-src ''self'' www.epa.gov data: blob:; style-src-attr ''self''
+        ''unsafe-inline''; script-src-elem ''self'' ''unsafe-inline''; base-uri ''self'';
+        style-src-elem ''self'' ''sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=''
+        ''sha256-vCpS8VyHtSqXbN/JkDhke+jauUq+p7lBAVCL+C75wZo=''; frame-ancestors ''self'''
       cross-origin-opener-policy:
       - same-origin
       referrer-policy:
