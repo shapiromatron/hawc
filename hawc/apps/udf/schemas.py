@@ -25,16 +25,16 @@ class ModifyTagUDFContent(BaseModel):
             self.tag_binding_obj = models.TagBinding.objects.assessment_qs(self.assessment).get(
                 id=self.tag_binding
             )
-        except ObjectDoesNotExist:
-            raise ValueError("Tag binding not found")
+        except ObjectDoesNotExist as err:
+            raise ValueError("Tag binding not found") from err
 
         # get a reference for this assessment
         try:
             self.reference_obj = Reference.objects.assessment_qs(self.assessment).get(
                 id=self.reference
             )
-        except ObjectDoesNotExist:
-            raise ValueError("Reference not found")
+        except ObjectDoesNotExist as err:
+            raise ValueError("Reference not found") from err
 
         # check that UDF content conforms to schema
         self.tag_binding_obj.form.validate_data(self.content)
@@ -65,8 +65,8 @@ class ModifyModelUDFContent(BaseModel):
         ct = self.content_type.split(".")
         try:
             self.content_type_obj = ContentType.objects.get(app_label=ct[0], model=ct[1])
-        except ObjectDoesNotExist:
-            raise ValueError("Content type not found")
+        except ObjectDoesNotExist as err:
+            raise ValueError("Content type not found") from err
 
         # get an object for this assessment and content type
         try:
@@ -75,16 +75,18 @@ class ModifyModelUDFContent(BaseModel):
                 .objects.assessment_qs(self.assessment)
                 .get(id=self.object_id)
             )
-        except ObjectDoesNotExist:
-            raise ValueError("Object not found")
+        except ObjectDoesNotExist as err:
+            raise ValueError("Object not found") from err
 
         # get a model binding for this assessment for this content type
         try:
             self.binding_obj = models.ModelBinding.objects.assessment_qs(self.assessment).get(
                 content_type=self.content_type_obj
             )
-        except ObjectDoesNotExist:
-            raise ValueError("Model binding not found for this content type and assessment")
+        except ObjectDoesNotExist as err:
+            raise ValueError(
+                "Model binding not found for this content type and assessment"
+            ) from err
 
         # check that UDF content conforms to schema
         self.binding_obj.form.validate_data(self.content)

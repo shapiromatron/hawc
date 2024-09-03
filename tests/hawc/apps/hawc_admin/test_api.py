@@ -60,7 +60,7 @@ class TestAdminDiagnosticViewSet:
         # success - admin
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         url = reverse("api:diagnostic-throttle")
-        for i in range(5):
+        for _i in range(5):
             resp = client.get(url)
             assert "identity" in resp.data
 

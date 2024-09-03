@@ -326,8 +326,8 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
         try:
             # engine required since this is a BytesIO stream
             df = pd.read_excel(file_, engine="openpyxl")
-        except (BadZipFile, ValueError):
-            raise ParseError({"file": "Unable to parse excel file"})
+        except (BadZipFile, ValueError) as err:
+            raise ParseError({"file": "Unable to parse excel file"}) from err
 
         return FlatExport.api_response(df=df, filename=file_.name)
 
