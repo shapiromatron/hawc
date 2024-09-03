@@ -31,9 +31,6 @@ def default_configuration(sender, instance, created, **kwargs):
         logger.info("Creating new BMD settings assessment creation")
         apps.get_model("bmd", "AssessmentSettings").build_default(instance)
 
-        logger.info("Creating default summary text")
-        apps.get_model("summary", "SummaryText").build_default(instance)
-
         logger.info("Building in-vitro endpoint category-root")
         apps.get_model("invitro", "IVEndpointCategory").create_root(assessment_id=instance.pk)
 

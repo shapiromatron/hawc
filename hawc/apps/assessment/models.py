@@ -242,12 +242,6 @@ class Assessment(models.Model):
         default=True,
         help_text="Create visualizations of data and/or study evaluations extracted in HAWC, or using data uploaded from a tabular dataset. Show the visuals link on the assessment sidebar.",
     )
-    enable_summary_text = models.BooleanField(
-        default=True,
-        help_text="Create custom-text to describe methodology and results of the "
-        "assessment; insert tables, figures, and visualizations to using "
-        '"smart-tags" which link to other data in HAWC.',
-    )
     enable_downloads = models.BooleanField(
         default=True,
         help_text="Show the downloads link on the assessment sidebar.",

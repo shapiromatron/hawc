@@ -49,12 +49,6 @@
           </li>
         {% endif %}
 
-        {% if assessment.enable_summary_text %}
-          <li class="{{li_class}}">
-            <a class="{{a_class}}" href="{% url 'summary:list' assessment.pk %}">Executive summary</a>
-          </li>
-        {% endif %}
-
         {% if assessment.enable_downloads %}
           <li class="{{li_class}}">
             <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">Downloads</a>

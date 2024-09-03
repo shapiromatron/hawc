@@ -32,16 +32,6 @@ from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
 
-class SummaryTextForm(forms.ModelForm):
-    class Meta:
-        model = models.SummaryText
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-
-
 class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
