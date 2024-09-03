@@ -11,7 +11,6 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db import models
 from django.http import HttpRequest
@@ -61,12 +60,6 @@ class DSSTox(models.Model):
         ordering = ("dtxsid",)
         verbose_name = "DSSTox substance"
         verbose_name_plural = "DSSTox substances"
-        indexes = [
-            GinIndex(
-                constants.DSSTOX_SEARCH_VECTOR,
-                name="dsstox_search_idx",
-            )
-        ]
 
     class Content(PydanticModel):
         id: str

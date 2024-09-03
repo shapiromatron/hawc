@@ -1,4 +1,3 @@
-from django.contrib.postgres.search import SearchVector
 from django.db import models
 
 from .permissions import AssessmentPermissions
@@ -134,6 +133,3 @@ class UncertaintyChoices(models.IntegerChoices):
     THIRTY_THOUSAND = 30_000, "30,000"
     ONE_HUNDRED_THOUSAND = 100_000, "100,000"
     THREE_HUNDRED_THOUSAND = 300_000, "300,000"
-
-
-DSSTOX_SEARCH_VECTOR = SearchVector("dtxsid", "content", config="english")
