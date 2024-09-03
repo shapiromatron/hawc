@@ -10,6 +10,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView, TemplateView
 
+from hawc.apps.lit.models import Reference
+
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
@@ -435,6 +437,15 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        if context["visual_type"] == constants.VisualType.PRISMA:
+            context["prisma_metrics"] = {
+                "tag_pairs": Reference.objects.tag_pairs(self.parent.references.all()),
+                "search_pairs": list(
+                    Reference.searches.through.objects.filter(
+                        reference_id__in=self.parent.references.all()
+                    ).values("search_id", "reference_id")
+                ),
+            }
         return context
 
     def get_initial_visual(self, context) -> dict:
