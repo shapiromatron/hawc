@@ -18,6 +18,18 @@ from ..study.exports import StudyExport
 from . import constants, models
 
 
+def foobar(series:pd.Series):
+    return (
+        series
+        .str.replace("\n", " ")
+        .str.replace("\r", "")
+        .str.replace("<br>", "\n")
+        .str.replace("&nbsp;", " ")
+        .str.replace(r"<[^>]*>","",regex=True) # strip tags
+        .str.replace(r"&(?:\w+|#\d+);","",regex=True) # strip entities
+    )
+
+
 def cont_ci(stdev, n, response):
     """
     Two-tailed t-test, assuming 95% confidence interval.
@@ -112,7 +124,8 @@ class ExperimentExport(ModelExport):
         # clean html text
         description = self.get_column_name("description")
         if description in df.columns:
-            df.loc[:, description] = df[description].apply(cleanHTML)
+            #df.loc[:, description] = df[description].apply(cleanHTML)
+            df.loc[:, description] = foobar(df[description])
         return df
 
 
@@ -148,7 +161,8 @@ class AnimalGroupExport(ModelExport):
         # clean html text
         comments = self.get_column_name("comments")
         if comments in df.columns:
-            df.loc[:, comments] = df[comments].apply(cleanHTML)
+            #df.loc[:, comments] = df[comments].apply(cleanHTML)
+            df.loc[:, comments] = foobar(df[comments])
         return df
 
 
@@ -185,7 +199,8 @@ class DosingRegimeExport(ModelExport):
         # clean html text
         description = self.get_column_name("description")
         if description in df.columns:
-            df.loc[:, description] = df[description].apply(cleanHTML)
+            #df.loc[:, description] = df[description].apply(cleanHTML)
+            df.loc[:, description] = foobar(df[description])
         return df
 
 
@@ -259,11 +274,13 @@ class EndpointExport(ModelExport):
         # clean html text
         results_notes = self.get_column_name("results_notes")
         if results_notes in df.columns:
-            df.loc[:, results_notes] = df[results_notes].apply(cleanHTML)
+            #df.loc[:, results_notes] = df[results_notes].apply(cleanHTML)
+            df.loc[:, results_notes] = foobar(df[results_notes])
 
         endpoint_notes = self.get_column_name("endpoint_notes")
-        if results_notes in df.columns:
-            df.loc[:, endpoint_notes] = df[endpoint_notes].apply(cleanHTML)
+        if endpoint_notes in df.columns:
+            #df.loc[:, endpoint_notes] = df[endpoint_notes].apply(cleanHTML)
+            df.loc[:, endpoint_notes] = foobar(df[endpoint_notes])
 
         return df
 
@@ -341,6 +358,26 @@ class EndpointGroupFlatComplete(FlatFileExporter):
         # TODO this is really slow; maybe its the filtering to find matching dose group ids?
         # solutions: ?, put the burden on SQL w/ Prefetch and Subquery (messy)
         # long term solutions: group and dose group should be related
+        
+        df1 = df.pivot(index="endpoint_group-id",columns="dose_group-dose_units_name",values="dose_group-dose")
+        df1 = df1.add_prefix("doses-")
+        return (df.merge(df1,left_on="endpoint_group-id",right_index=True)
+            .drop(
+                columns=[
+                    "dose_group-id",
+                    "dose_group-dose_units_name",
+                    "dose_group-dose_group_id",
+                    "dose_group-dose",
+                ]
+            )
+            .drop_duplicates(
+                subset=df.columns[df.columns.str.endswith("-id")].difference(
+                    ["dose_group-id"]
+                )
+            )
+            .reset_index(drop=True))
+
+        """
         def _func(group_df: pd.DataFrame) -> pd.DataFrame:
             # handle case with no dose data
             if group_df["dose_group-id"].isna().all():
@@ -351,12 +388,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
                 "dose_group-dose"
             ].tolist()
 
-            # return a df that is dose agnostic
-            return group_df.drop_duplicates(
-                subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(
-                    ["dose_group-id"]
-                )
-            )
+            return group_df
 
         return (
             df.groupby("endpoint_group-id", group_keys=False, sort=False)
@@ -369,8 +401,17 @@ class EndpointGroupFlatComplete(FlatFileExporter):
                     "dose_group-dose",
                 ]
             )
+            .drop_duplicates(
+                subset=df.columns[df.columns.str.endswith("-id")].difference(
+                    ["dose_group-id"]
+                )
+            )
             .reset_index(drop=True)
         )
+        """
+        
+        
+
 
     def handle_stdev(self, df: pd.DataFrame) -> pd.DataFrame:
         df["endpoint_group-stdev"] = df.apply(
