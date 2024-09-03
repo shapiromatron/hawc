@@ -787,8 +787,8 @@ class VennForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
+        tags = kwargs.pop("tags")
         super().__init__(*args, **kwargs)
-        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
         self.fields["tag1"].empty_label = None
         self.fields["tag2"].empty_label = None
         for field in ("tag1", "tag2", "tag3", "tag4"):

@@ -1215,10 +1215,17 @@ class VennView(BaseDetail):
     template_name = "venn.html"
 
     def get_context_data(self, **kw):
-        form = forms.VennForm(assessment=self.assessment, data=self.request.GET)
-        kw["form"] = form
-        if form.is_valid():
-            kw["data"] = form.get_venn()
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        form = forms.VennForm(
+            assessment=self.assessment,
+            tags=tags,
+            data=self.request.GET if self.request.GET else None,
+            initial=dict(tag1=tags[0], tag2=tags[1]),
+        )
+        kw.update(
+            form=form,
+            data=form.get_venn() if form.is_valid() else {"sets": []},
+        )
         return super().get_context_data(**kw)
 
     def get_app_config(self, context) -> WebappConfig:

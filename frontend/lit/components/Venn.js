@@ -127,7 +127,7 @@ const renderPlot = function(el, data) {
                 return 0;
             }
         },
-        make2 = function(el, width, height, labels, circles, intersections) {
+        make = function(el, {width, height, labels, ellipses, intersections}) {
             const svg = d3
                 .select(el)
                 .append("svg")
@@ -136,82 +136,6 @@ const renderPlot = function(el, data) {
                 .attr("height", height)
                 .attr("style", "border: 1px solid #efefef;");
 
-            svg.selectAll("text.lbl")
-                .data(labels)
-                .join("text")
-                .attr("class", "lbl")
-                .attr("x", d => d.x)
-                .attr("y", d => d.y)
-                .style("text-anchor", d => d.anchor)
-                .style("font-weight", "bold")
-                .text(d => d.text);
-
-            svg.selectAll("circle")
-                .data(circles)
-                .join("circle")
-                .attr("cx", d => d.cx)
-                .attr("cy", d => d.cy)
-                .attr("r", 150)
-                .attr("fill", d => d.fill)
-                .attr("stroke", d => d.fill)
-                .attr("stroke-width", 3)
-                .style("fill-opacity", 0.3)
-                .style("stroke-opacity", 0.5);
-
-            svg.selectAll("text.intersection")
-                .data(intersections)
-                .join("text")
-                .attr("class", "intersection")
-                .attr("x", d => d.x)
-                .attr("y", d => d.y)
-                .style("text-anchor", "middle")
-                .text((d, i) => d.text);
-        },
-        make3 = function(el, width, height, labels, circles, intersections) {
-            const svg = d3
-                .select(el)
-                .append("svg")
-                .attr("viewBox", [0, 0, width, height])
-                .attr("width", width)
-                .attr("height", height)
-                .attr("style", "border: 1px solid #efefef;");
-            svg.selectAll("text.lbl")
-                .data(labels)
-                .join("text")
-                .attr("class", "lbl")
-                .attr("x", d => d.x)
-                .attr("y", d => d.y)
-                .style("text-anchor", d => d.anchor)
-                .style("font-weight", "bold")
-                .text(d => d.text);
-            svg.selectAll("circle")
-                .data(circles)
-                .join("circle")
-                .attr("cx", d => d.cx)
-                .attr("cy", d => d.cy)
-                .attr("r", 120)
-                .attr("fill", d => d.fill)
-                .attr("stroke", d => d.fill)
-                .attr("stroke-width", 3)
-                .style("fill-opacity", 0.3)
-                .style("stroke-opacity", 0.5);
-            svg.selectAll("text.intersection")
-                .data(intersections)
-                .join("text")
-                .attr("class", "intersection")
-                .attr("x", d => d.x)
-                .attr("y", d => d.y)
-                .style("text-anchor", "middle")
-                .text((d, i) => d.text);
-        },
-        make4 = function(el, height, width, labels, ellipses, intersections) {
-            const svg = d3
-                .select(el)
-                .append("svg")
-                .attr("viewBox", [0, 0, width, height])
-                .attr("width", width)
-                .attr("height", height)
-                .attr("style", "border: 1px solid #efefef;");
             svg.selectAll("text.lbl")
                 .data(labels)
                 .join("text")
@@ -229,7 +153,7 @@ const renderPlot = function(el, data) {
                 .attr("cy", d => d.cy)
                 .attr("rx", d => d.rx)
                 .attr("ry", d => d.ry)
-                .attr("transform", d => d.t)
+                .attr("transform", d => d.t || "")
                 .attr("fill", d => d.fill)
                 .attr("stroke", d => d.fill)
                 .attr("stroke-width", 3)
@@ -246,57 +170,78 @@ const renderPlot = function(el, data) {
                 .text((d, i) => d.text)
                 .append("svg:title")
                 .text(d => d.hover);
-        };
-
-    const sets = compareSets(data),
-        nSets = data.sets.length,
+        },
         width = 600,
-        height = 400;
+        height = 400,
+        sets = compareSets(data),
+        nSets = data.sets.length;
+
+    if (nSets < 2 || nSets > 4) {
+        return null;
+    }
 
     if (nSets === 2) {
-        const labels = [
-                {x: 120, y: 70, text: data.sets[0].name, anchor: "end"},
-                {x: 470, y: 70, text: data.sets[1].name, anchor: "start"},
+        const a = data.sets[0].name,
+            b = data.sets[1].name;
+        make(el, {
+            width,
+            height,
+            labels: [
+                {x: 120, y: 70, text: a, anchor: "end"},
+                {x: 470, y: 70, text: b, anchor: "start"},
             ],
-            circles = [
-                {cx: 200, cy: 220, fill: "red"},
-                {cx: 400, cy: 220, fill: "blue"},
+            ellipses: [
+                {cx: 200, cy: 220, fill: "red", rx: 150, ry: 150},
+                {cx: 400, cy: 220, fill: "blue", rx: 150, ry: 150},
             ],
-            intersections = [
-                {x: 180, y: 220, text: sets.a.length},
-                {x: 300, y: 220, text: sets.ab.length},
-                {x: 420, y: 220, text: sets.b.length},
-            ];
-        make2(el, width, height, labels, circles, intersections);
+            intersections: [
+                {x: 180, y: 220, text: sets.a.length, hover: a},
+                {x: 300, y: 220, text: sets.ab.length, hover: `${a} ∩ ${b}`},
+                {x: 420, y: 220, text: sets.b.length, hover: b},
+            ],
+        });
     } else if (nSets === 3) {
-        const labels = [
-                {x: 410, y: 70, text: data.sets[0].name, anchor: "start"},
-                {x: 130, y: 350, text: data.sets[1].name, anchor: "end"},
-                {x: 470, y: 350, text: data.sets[2].name, anchor: "start"},
+        const a = data.sets[0].name,
+            b = data.sets[1].name,
+            c = data.sets[2].name;
+        make(el, {
+            width,
+            height,
+            labels: [
+                {x: 410, y: 70, text: a, anchor: "start"},
+                {x: 130, y: 350, text: b, anchor: "end"},
+                {x: 470, y: 350, text: c, anchor: "start"},
             ],
-            circles = [
-                {cx: 230, cy: 265, fill: "red"},
-                {cx: 370, cy: 265, fill: "green"},
-                {cx: 300, cy: 135, fill: "blue"},
+            ellipses: [
+                {cx: 230, cy: 265, fill: "red", rx: 120, ry: 120},
+                {cx: 370, cy: 265, fill: "green", rx: 120, ry: 120},
+                {cx: 300, cy: 135, fill: "blue", rx: 120, ry: 120},
             ],
-            intersections = [
-                {x: 300, y: 95, text: sets.a.length},
-                {x: 185, y: 310, text: sets.b.length},
-                {x: 415, y: 310, text: sets.c.length},
-                {x: 300, y: 225, text: sets.abc.length},
-                {x: 245, y: 190, text: sets.ab.length},
-                {x: 355, y: 190, text: sets.ac.length},
-                {x: 300, y: 300, text: sets.bc.length},
-            ];
-        make3(el, width, height, labels, circles, intersections);
+            intersections: [
+                {x: 300, y: 95, text: sets.a.length, hover: a},
+                {x: 185, y: 310, text: sets.b.length, hover: b},
+                {x: 415, y: 310, text: sets.c.length, hover: c},
+                {x: 300, y: 225, text: sets.abc.length, hover: `${a} ∩ ${b} ∩ ${c}`},
+                {x: 245, y: 190, text: sets.ab.length, hover: `${a} ∩ ${b}`},
+                {x: 355, y: 190, text: sets.ac.length, hover: `${a} ∩ ${c}`},
+                {x: 300, y: 300, text: sets.bc.length, hover: `${b} ∩ ${c}`},
+            ],
+        });
     } else if (nSets === 4) {
-        const labels = [
+        const a = data.sets[0].name,
+            b = data.sets[1].name,
+            c = data.sets[2].name,
+            d = data.sets[3].name;
+        make(el, {
+            width,
+            height,
+            labels: [
                 {x: 160, y: 40, text: data.sets[0].name, anchor: "middle"},
                 {x: 430, y: 40, text: data.sets[1].name, anchor: "middle"},
                 {x: 140, y: 330, text: data.sets[2].name, anchor: "end"},
                 {x: 455, y: 330, text: data.sets[3].name, anchor: "start"},
             ],
-            ellipses = [
+            ellipses: [
                 {
                     cx: 305,
                     cy: 195,
@@ -331,26 +276,26 @@ const renderPlot = function(el, data) {
                     fill: "blue",
                 },
             ],
-            intersections = [
-                {x: 230, y: 80, text: sets.a.length, hover: "a"},
-                {x: 370, y: 80, text: sets.b.length, hover: "b"},
-                {x: 120, y: 190, text: sets.c.length, hover: "c"},
-                {x: 480, y: 190, text: sets.d.length, hover: "d"},
-                {x: 300, y: 110, text: sets.ab.length, hover: "ab"},
-                {x: 180, y: 120, text: sets.ac.length, hover: "ac"},
-                {x: 420, y: 280, text: sets.ad.length, hover: "ad"},
-                {x: 300, y: 360, text: sets.cd.length, hover: "cd"},
-                {x: 180, y: 280, text: sets.bc.length, hover: "bc"},
-                {x: 415, y: 120, text: sets.bd.length, hover: "bd"},
-                {x: 220, y: 180, text: sets.abc.length, hover: "abc"},
-                {x: 380, y: 180, text: sets.abd.length, hover: "abd"},
-                {x: 250, y: 320, text: sets.acd.length, hover: "acd"},
-                {x: 350, y: 320, text: sets.bcd.length, hover: "bcd"},
-                {x: 300, y: 250, text: sets.abcd.length, hover: "abcd"},
-            ];
-        make4(el, height, width, labels, ellipses, intersections);
+            intersections: [
+                {x: 230, y: 80, text: sets.a.length, hover: a},
+                {x: 370, y: 80, text: sets.b.length, hover: b},
+                {x: 120, y: 190, text: sets.c.length, hover: c},
+                {x: 480, y: 190, text: sets.d.length, hover: d},
+                {x: 300, y: 110, text: sets.ab.length, hover: `${a} ∩ ${b}`},
+                {x: 180, y: 120, text: sets.ac.length, hover: `${a} ∩ ${c}`},
+                {x: 420, y: 280, text: sets.ad.length, hover: `${a} ∩ ${d}`},
+                {x: 300, y: 360, text: sets.cd.length, hover: `${c} ∩ ${d}`},
+                {x: 180, y: 280, text: sets.bc.length, hover: `${b} ∩ ${c}`},
+                {x: 415, y: 120, text: sets.bd.length, hover: `${b} ∩ ${d}`},
+                {x: 220, y: 180, text: sets.abc.length, hover: `${a} ∩ ${b} ∩ ${c}`},
+                {x: 380, y: 180, text: sets.abd.length, hover: `${a} ∩ ${b} ∩ ${d}`},
+                {x: 250, y: 320, text: sets.acd.length, hover: `${a} ∩ ${c} ∩ ${d}`},
+                {x: 350, y: 320, text: sets.bcd.length, hover: `${b} ∩ ${c} ∩ ${d}`},
+                {x: 300, y: 250, text: sets.abcd.length, hover: `${a} ∩ ${b} ∩ ${c} ∩ ${d}`},
+            ],
+        });
     } else {
-        throw new Error("Too many sets.");
+        throw new Error(`Cannot make with ${nSets}.`);
     }
 };
 
