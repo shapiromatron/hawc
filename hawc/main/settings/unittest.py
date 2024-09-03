@@ -41,6 +41,7 @@ EXTERNAL_CONTACT_US = None
 EXTERNAL_ABOUT = None
 EXTERNAL_RESOURCES = None
 
-HERO_API_KEY = "secret"
+if HERO_API_KEY is None:
+    HERO_API_KEY = "secret"
 
 logging.disable(logging.CRITICAL)

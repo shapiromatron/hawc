@@ -94,22 +94,120 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 03 Sep 2024 16:33:50 GMT
+      - Tue, 03 Sep 2024 18:30:14 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
       - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=35006843; Expires=Wed, 04 Sep 2024 16:33:50 GMT; Path=/; HttpOnly
-      - CFTOKEN=97177469; Expires=Wed, 04 Sep 2024 16:33:50 GMT; Path=/; HttpOnly
-      - JSESSIONID=324C75221ED30E4830B0490F5B19B51D.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F09%2F03%2012%3A33%3A50; Path=/
+      - CFID=35015325; Expires=Wed, 04 Sep 2024 18:30:14 GMT; Path=/; HttpOnly
+      - CFTOKEN=33363746; Expires=Wed, 04 Sep 2024 18:30:14 GMT; Path=/; HttpOnly
+      - JSESSIONID=4DF3DB2D49215C50DD2D48BC33F5DA8E.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F03%2014%3A30%3A14; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-Frame-Options:
       - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"type": "hero", "id": [54501, 5708371]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.3
+      authorization:
+      - <omitted>
+    method: POST
+    uri: https://heronetnext.epa.gov/api/reference/export/json
+  response:
+    body:
+      string: '[{"abstract": "In our laboratory, chronically feeding cadmium to groups
+        of rats has been reproducibly associated with average increases of 15 to 20
+        mm Hg in systolic pressure. A total of 497 female Long-Evans rats were continuously
+        provided with drinking water fortified with five essential elements and containing
+        from 0.01 to 50 ppm cadmium, as the acetate, from weaning for as long as 30
+        months. These rats, plus 311 matched control animals which received fortified
+        water without added cadmium, were fed a special low-cadmium diet. All 808
+        rats were weighed at least monthly as a screen for cadmium toxicity, and their
+        systolic pressures were measured every 3 or 6 months. The two lowest concentrations
+        of cadmium tested (0.01 and 0.03 ppm) were not pressor; the three highest
+        concentrations (10, 25, and 50 ppm) ultimately proved to be toxic. All indirect
+        systolic pressures (each measured in triplicate) of all rats which received
+        0.1 to 5 ppm cadmium (i.e., nontoxic pressor doses) averaged 15.0 mm Hg more
+        than simultaneously measured pressures of control rats. This average increase
+        over the control pressure is extremely significant statistically, even though
+        it seems relatively small in absolute terms. Occasionally, however, some rats
+        had much larger than average increases in pressure; thus, 10 of 60 rats receiving
+        from 0.1 to 0.5 ppm cadmium for 18 months had systolic pressures that were
+        more than 50 mm Hg above the average pressure of the control rats. Cadmium-induced
+        hypertension is not limited to females or to a particular strain. Although
+        we have usually used one strain of female Long-Evans rat from a single source,
+        males of the same strain and female Sprague-Dawley rats have also developed
+        comparable hypertension. All subgroup II elements can apparently induce similar
+        increases in systolic pressure averaging 15 to 20 mm Hg, but cadmium is pressor
+        in much smaller amounts than mercury or zinc. Thus, to induce a demonstrable
+        increase in pressure requires more than ten times as much divalent mercuric
+        ion as cadmium and more than 1000 times as much zinc as cadmium. Exposure
+        to another metal along with cadmium can markedly alter the ability of cadmium
+        to induce hypertension. Selenium protects against the hypertension induced
+        by twice as much cadmium. Large excesses of both zinc and copper have also
+        inhibited the induction of hypertension by cadmium. In contrast, lead, which
+        like cadmium, can also induce hypertension, augments rather than inhibits
+        cadmium-induced hypertension; thus, lead and cadmium together can induce an
+        average increase in systolic pressure in excess of 40 mm Hg, at least twice
+        as large as is usually induced by either metal alone.", "accession_number":
+        "488039", "authors": ["Perry, H. M.", "Erlanger, M.", "Perry, E. F."], "doi":
+        "10.1289/ehp.7928251", "id": "54501", "alternate_title2": "Environ Health
+        Perspect", "full_journal_name": "Environmental Health Perspectives", "language":
+        "English", "label": "54501", "year": "1979", "serial_number": ["ISSN 0091-6765",
+        "EISSN 1552-9924"], "start_page": "251-260", "secondary_title": "Environmental
+        Health Perspectives", "title": "Increase in the systolic pressure of rats
+        chronically fed cadmium", "type_of_reference": "Journal", "urls": ["http://dx.doi.org/10.1289/ehp.7928251"],
+        "volume": "28"}, {"authors": ["ECHA,"], "id": "5708371", "language": "English",
+        "label": "5708371", "year": "2019", "title": "Registration dossier: Triethoxy(3,3,4,4,5,5,6,6,7,7,8,8,8-tridecafluorooctyl)silane
+        (CASRN: 51851-37-7): Developmental toxicity/teratogenicity: Key | Experimental",
+        "type_of_reference": "Report", "urls": ["https://echa.europa.eu/registration-dossier/-/registered-dossier/24656/7/9/3"]}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3699'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 03 Sep 2024 18:30:17 GMT
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      content-security-policy:
+      - 'script-src-attr ''self'' ''unsafe-inline''; form-action ''self'' https://*.epa.gov;
+        script-src ''self'' ''unsafe-eval''; default-src ''self''; font-src ''self''
+        www.epa.gov; img-src ''self'' www.epa.gov data: blob:; style-src-attr ''self''
+        ''unsafe-inline''; script-src-elem ''self'' ''unsafe-inline''; base-uri ''self'';
+        style-src-elem ''self'' ''sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=''
+        ''sha256-vCpS8VyHtSqXbN/JkDhke+jauUq+p7lBAVCL+C75wZo=''; frame-ancestors ''self'''
+      cross-origin-opener-policy:
+      - same-origin
+      referrer-policy:
+      - same-origin
+      vary:
+      - Cookie
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
     status:
       code: 200
       message: OK

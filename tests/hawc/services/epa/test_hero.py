@@ -51,7 +51,7 @@ class TestHEROFetch:
             "doi": "10.1165/ajrcmb.20.2.3269",
             "title": "Centriacinar remodeling and sustained procollagen gene expression after exposure to ozone and nitrogen dioxide",
             "abstract": "Sprague-Dawley rats were exposed to 0.8 ppm ozone (O3), to 14.4 ppm nitrogen dioxide (NO2), or to both gases simultaneously for 6 h per day for up to 90 d. The extent of histopathologic changes within the central acinus of the lungs was compared after 7 or 78 to 90 d of exposure using morphometric analysis by placement of concentric arcs radiating outward from a single reference point at the level of the bronchiole- alveolar duct junction. Lesions in the lungs of rats exposed to the mixture of gases extended approximately twice as far into the acinus as in those exposed to each individual gas. The extent of tissue involvement was the same at 78 to 90 d as noted at 7 d in all exposure groups. At the end of exposure, in situ hybridization for procollagen types I and III demonstrated high levels of messenger RNA within central acini in the lungs of animals exposed to the combination of O3 and NO2. In contrast, animals exposed to each individual gas had a similar pattern of message expression compared with that seen in control animals, although centriacinar histologic changes were still significantly different from control animals. We conclude that the progressive pulmonary fibrosis that occurs in rats exposed to the combination of O3 and NO2 is due to sustained, elevated expression of the genes for procollagen types I and III. This effect at the gene level is correlated with the more severe histologic lesions seen in animals exposed to both O3 and NO2 compared with those exposed to each individual gas. In contrast, the sustained expression of the procollagen genes is not associated with a shift in the distribution of the lesions because the area of change in each group after 7 d of exposure was the same as after 78 to 90 d of exposure.",
-            "source": "Journal",
+            "source": "Am J Respir Cell Mol Biol. 20:303-311",
             "year": 1999,
             "authors": [
                 "Farman CA",
@@ -86,20 +86,20 @@ class TestHEROFetch:
 
     @pytest.mark.vcr
     def test_source_parsing(self, settings):
+        # check custom parsing function for various references
+
         ids = [54501, 5708371]  # journal, ECHA dossier
-        settings.HAWC_FEATURES.ENABLE_NEW_HERO = False
 
         hero_getter = HEROFetch(id_list=ids)
         hero_getter.get_content()
         sources = [d["source"] for d in hero_getter.content]
         assert sources == ["", "Environmental Health Perspectives 28:251-260."]
 
-        # settings.HAWC_FEATURES.ENABLE_NEW_HERO = True
-        # hero_getter = HEROFetch(id_list=ids)
-        # hero_getter.get_content()
-        # sources = [d["source"] for d in hero_getter.content]
-        # assert sources == ["Environmental Health Perspectives 28:251-260.", ""]
-
+        settings.HAWC_FEATURES.ENABLE_NEW_HERO = True
+        hero_getter = HEROFetch(id_list=ids)
+        hero_getter.get_content()
+        sources = [d["source"] for d in hero_getter.content]
+        assert sources == ["Environ Health Perspect. 28:251-260", ""]
         settings.HAWC_FEATURES.ENABLE_NEW_HERO = False
 
     def test_fake(self, settings):

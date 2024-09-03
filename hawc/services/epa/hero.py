@@ -7,7 +7,7 @@ from django.conf import settings
 
 from hawc.services.utils.doi import try_get_doi
 
-from ..utils.authors import get_author_short_text, normalize_authors
+from ..utils.authors import get_author_short_text, get_first, normalize_authors
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,21 @@ def _force_int(val, default=None) -> int | None:
 
 
 def format_source(content: dict) -> str:
-    return content.get("type_of_reference", "")  # TODO: ?
+    """
+    Generate a reasonable source string that may be specific enough to find the original article.
+    This currently has custom logic for journal articles, otherwise it returns an empty string.
+    """
+    ref_type = content["type_of_reference"]
+    if ref_type == "Journal":
+        source = get_first(content, ["alternate_title2", "full_journal_name", "secondary_title"])
+        volume = content.get("volume", "")
+        pages = content.get("start_page", "")
+        if source:
+            source += f". {volume}"
+        if pages:
+            source += f":{pages}"
+        return source
+    return ""
 
 
 def parse_article_new(content: dict) -> dict:
