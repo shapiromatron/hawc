@@ -41,10 +41,14 @@
         {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
       {% endif %}
       {% optional_table_row "Species and strain" object.species_studied|default:"" %}
-      {% if object.study %}
+      {% if object.studies.all %}
         <tr>
-          <th>Key Study</th>
-          <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
+          <th>Key Studies</th>
+          <td>
+            {% for study in object.studies.all  %}
+              <a href="{{object.study.get_absolute_url}}">{{object.study}}</a>&nbsp;
+            {% endfor %}
+          </td>
         </tr>
       {% endif %}
       {% if object.show_cancer_fields %}
