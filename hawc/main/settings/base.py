@@ -330,6 +330,9 @@ PUBMED_MAX_QUERY_SIZE = 10000
 # CCTE API key
 CCTE_API_KEY = os.getenv("CCTE_API_KEY")
 
+# HERO API key
+HERO_API_KEY = os.getenv("HERO_API_KEY")
+
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
