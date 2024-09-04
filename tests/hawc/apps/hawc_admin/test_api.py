@@ -60,7 +60,7 @@ class TestAdminDiagnosticViewSet:
         # success - admin
         assert client.login(username="admin@hawcproject.org", password="pw") is True
         url = reverse("api:diagnostic-throttle")
-        for i in range(5):
+        for _i in range(5):
             resp = client.get(url)
             assert "identity" in resp.data
 
@@ -82,7 +82,7 @@ class TestReportsViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
         df = pd.read_json(StringIO(resp.content.decode()))
-        assert df.shape == (3, 33)
+        assert df.shape == (3, 44)
 
 
 @pytest.mark.django_db

@@ -59,8 +59,8 @@ class StudyPopulationCountrySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"'{data}' must be a string.")
         try:
             return models.Country.objects.get(code=data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"'{data}' is not a country.")
+        except ObjectDoesNotExist as err:
+            raise serializers.ValidationError(f"'{data}' is not a country.") from err
 
 
 class OutcomeLinkSerializer(serializers.ModelSerializer):

@@ -228,7 +228,7 @@ class Search(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
-        verbose_name_plural = "searches"
+        verbose_name_plural = "searches / imports"
         unique_together = (("assessment", "slug"), ("assessment", "title"))
         ordering = ["-last_updated"]
         get_latest_by = "last_updated"
@@ -644,10 +644,10 @@ class Identifiers(models.Model):
         # create, but don't save reference object
         try:
             content = self.get_content()
-        except ValueError:
+        except ValueError as err:
             if self.database == constants.ReferenceDatabase.PUBMED:
                 self.update_pubmed_content([self])
-            raise AttributeError(f"Content invalid JSON: {self.unique_id}")
+            raise AttributeError(f"Content invalid JSON: {self.unique_id}") from err
 
         if self.database == constants.ReferenceDatabase.PUBMED:
             ref = Reference(
@@ -939,8 +939,8 @@ class Reference(models.Model):
 
                 try:
                     binding = TagBinding.objects.get(assessment=self.assessment_id, tag=udf_tag_id)
-                except TagBinding.DoesNotExist:
-                    raise ValidationError("UDF binding not found")
+                except TagBinding.DoesNotExist as err:
+                    raise ValidationError("UDF binding not found") from err
 
                 # handle edge-case where a select multiple only has one selected
                 # TODO - can this code + JS be removed to fix this issue?

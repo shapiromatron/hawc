@@ -209,19 +209,17 @@
   </div>
 
   {% if obj_perms.edit and overview.conflicts %}
-    <div class="alert alert-danger mt-3">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {% alert classes="mt-3" dismiss=True %}
       <b>References have tag conflicts!</b><br>
       <p class="m-0">{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
-    </div>
+    {% endalert %}
   {% endif %}
 
   {% if assessment.enable_data_extraction and need_import_count > 0 %}
-    <div class="alert alert-warning mt-3">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {% alert type="warning" classes="mt-3" dismiss=True %}
       <b>New references marked for inclusion.</b><br>
       <p class="m-0">{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
-    </div>
+    {% endalert %}
   {% endif %}
 
   <h3>Literature searches & imports</h3>

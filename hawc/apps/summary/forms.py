@@ -32,16 +32,6 @@ from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
 
-class SummaryTextForm(forms.ModelForm):
-    class Meta:
-        model = models.SummaryText
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-
-
 class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
@@ -648,8 +638,8 @@ def get_visual_form(visual_type):
             constants.VisualType.IMAGE: ImageVisualForm,
             constants.VisualType.PRISMA: PrismaVisualForm,
         }[visual_type]
-    except Exception:
-        raise ValueError()
+    except Exception as exc:
+        raise ValueError() from exc
 
 
 class DataPivotForm(forms.ModelForm):
