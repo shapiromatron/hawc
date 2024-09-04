@@ -60,15 +60,3 @@ class TestAssessmentDetail:
 
         obj = models.AssessmentDetail(peer_review_status=constants.PeerReviewType.OTHER)
         assert obj.get_peer_review_status_display() == ""
-
-
-class TestDSSTox:
-    @pytest.mark.django_db
-    def test_pydantic_model(self):
-        # test that both DSSTox objects can be parsed by the schema without errors
-        chemicals = [
-            models.DSSTox.objects.get(dtxsid="DTXSID6026296"),
-            models.DSSTox.objects.get(dtxsid="DTXSID7020970"),
-        ]
-        for chem in chemicals:
-            models.DSSTox.Content.model_validate(chem.content)

@@ -61,20 +61,6 @@ class DSSTox(models.Model):
         verbose_name = "DSSTox substance"
         verbose_name_plural = "DSSTox substances"
 
-    class Content(PydanticModel):
-        id: str
-        casrn: str
-        dtxcid: str | None
-        dtxsid: str | None
-        smiles: str | None
-        inchikey: str | None
-        preferredName: str | None
-        iupacName: str | None
-        compoundId: int | None
-        molFormula: str | None
-        pubchemCid: int | None
-        inchiString: str | None
-
     def __str__(self):
         return self.dtxsid
 
