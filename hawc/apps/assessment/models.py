@@ -11,6 +11,8 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
 from django.db import models
 from django.http import HttpRequest
@@ -22,8 +24,7 @@ from django.utils.functional import cached_property
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from hawc.services.epa.dsstox import DssSubstance
-
+from ...services.epa.dsstox import DssSubstance
 from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
 from ..common.models import get_private_data_storage
@@ -52,6 +53,13 @@ class DSSTox(models.Model):
         verbose_name="DSSTox substance identifier (DTXSID)",
     )
     content = models.JSONField(default=dict)
+    search = models.GeneratedField(
+        db_persist=True,
+        expression=SearchVector(
+            "dtxsid", "content__preferredName", "content__casrn", config="english"
+        ),
+        output_field=SearchVectorField(),
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -60,6 +68,7 @@ class DSSTox(models.Model):
         ordering = ("dtxsid",)
         verbose_name = "DSSTox substance"
         verbose_name_plural = "DSSTox substances"
+        indexes = [GinIndex("search", name="dsstox_search_idx")]
 
     def __str__(self):
         return self.dtxsid
