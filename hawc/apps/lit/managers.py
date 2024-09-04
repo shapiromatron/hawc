@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.search import SearchQuery
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Count, Q, QuerySet
@@ -22,7 +21,7 @@ from ...services.epa import hero
 from ...services.nih import pubmed
 from ..assessment.managers import published
 from ..common.helper import flatten
-from ..common.models import BaseManager, replace_null, str_m2m
+from ..common.models import BaseManager, replace_null, search_query, str_m2m
 from ..study.managers import study_df_annotations
 from . import constants
 
@@ -773,7 +772,7 @@ class ReferenceQuerySet(models.QuerySet):
             Queryset: The filtered ReferenceQueryset
         """
         return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
-            search=SearchQuery(search_text, search_type="websearch", config="english")
+            search=search_query(search_text)
         )
 
     def in_workflow(self, workflow: "Workflow"):

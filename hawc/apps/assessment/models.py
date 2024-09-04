@@ -11,6 +11,8 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
 from django.db import models
 from django.http import HttpRequest
@@ -22,8 +24,7 @@ from django.utils.functional import cached_property
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from hawc.services.epa.dsstox import DssSubstance
-
+from ...services.epa.dsstox import DssSubstance
 from ..common.exceptions import AssessmentNotFound
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
 from ..common.models import get_private_data_storage
@@ -52,6 +53,13 @@ class DSSTox(models.Model):
         verbose_name="DSSTox substance identifier (DTXSID)",
     )
     content = models.JSONField(default=dict)
+    search = models.GeneratedField(
+        db_persist=True,
+        expression=SearchVector(
+            "dtxsid", "content__preferredName", "content__casrn", config="english"
+        ),
+        output_field=SearchVectorField(),
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -60,6 +68,7 @@ class DSSTox(models.Model):
         ordering = ("dtxsid",)
         verbose_name = "DSSTox substance"
         verbose_name_plural = "DSSTox substances"
+        indexes = [GinIndex("search", name="dsstox_search_idx")]
 
     def __str__(self):
         return self.dtxsid
@@ -84,21 +93,17 @@ class DSSTox(models.Model):
 
     @property
     def verbose_link(self) -> str:
-        return f"{new_window_a(self.get_dashboard_url(), self.dtxsid)}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+        return f"{new_window_a(self.dashboard_url(), self.dtxsid)}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
 
     @classmethod
     def help_text(cls) -> str:
         return f'{new_window_a("https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database", "DssTox")} substance identifier (recommended). When using an identifier, chemical name and CASRN are standardized using the <a href="https://comptox.epa.gov/dashboard/" rel="noopener noreferrer" target="_blank">DTXSID</a>.'
 
-    def get_dashboard_url(self) -> str:
-        return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
+    def dashboard_url(self) -> str:
+        return f"https://comptox.epa.gov/dashboard/chemical/details/{self.dtxsid}"
 
-    def get_img_url(self) -> str:
-        # TODO - always use api-ccte.epa.gov when API key is no longer required
-        if not settings.CCTE_API_KEY:
-            return f"https://comptox.epa.gov/dashboard-api/ccdapp1/chemical-files/image/by-dtxsid/{self.dtxsid}"
-        else:
-            return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}?x-api-key={settings.CCTE_API_KEY}"
+    def image_url(self) -> str:
+        return f"https://api-ccte.epa.gov/chemical/file/image/search/by-dtxsid/{self.dtxsid}"
 
 
 class Assessment(models.Model):

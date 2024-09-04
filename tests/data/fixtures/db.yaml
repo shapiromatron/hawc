@@ -1421,64 +1421,36 @@
   pk: DTXSID6026296
   fields:
     content:
+      id: FD70373DEB12FD6675FDFD64FDFDFD0E3AFD53FD74784AFD5AFD1136FD
       casrn: 7732-18-5
       dtxcid: DTXCID106296
       dtxsid: DTXSID6026296
       smiles: O
-      infoMsg: null
-      synGsid: 26296
-      synType: DSSTox_Substance_Id
-      checksum: NA
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
-      molWeight: 18.015
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
-      molFormula: H2O
-      warningMsg: null
-      processedAs: LOOKUP
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
-      collidingGsid: null
-      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      inchikey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      iupacName: Water
       preferredName: Water
-      synIdentifier: DTXSID6026296
-      collidingCasrn: null
-      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      origIdentifier: DTXSID6026296
-      trimmedWhitespace: false
-      trimmedLeadingZeros: false
-      reformattedIdentifier: false
-      collidingPreferredName: null
+      compoundId: 6296
+      molFormula: H2O
+      pubchemCid: 962
+      inchiString: 'InChI=1S/H2O/h1H2'
     created: 2020-08-12 19:34:12.687630+00:00
     last_updated: 2020-08-12 19:34:12.687630+00:00
 - model: assessment.dsstox
   pk: DTXSID7020970
   fields:
     content:
+      id: FDFD541B510CFD2C5064FD1FFDFD06FD40FD111324FDFD7D29FD0F74FD4EFD
       casrn: 1836-75-5
       dtxcid: DTXCID30970
       dtxsid: DTXSID7020970
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
-      infoMsg: null
-      synGsid: 20970
-      synType: DSSTox_Substance_Id
-      checksum: NA
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
-      molWeight: 284.09
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
-      molFormula: C12H7Cl2NO3
-      warningMsg: null
-      processedAs: LOOKUP
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
-      collidingGsid: null
-      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      inchikey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      iupacName: 2,4-Dichloro-1-(4-nitrophenoxy)benzene
       preferredName: Nitrofen
-      synIdentifier: DTXSID7020970
-      collidingCasrn: null
-      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      origIdentifier: DTXSID7020970
-      trimmedWhitespace: false
-      trimmedLeadingZeros: false
-      reformattedIdentifier: false
-      collidingPreferredName: null
+      compoundId: 970
+      molFormula: C12H7Cl2NO3
+      pubchemCid: 15787
+      inchiString: 'InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H'
     created: 2020-08-12 19:45:56.718230+00:00
     last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
