@@ -4,10 +4,10 @@ import re
 import xml.etree.ElementTree as ET
 from itertools import chain
 
-import requests
 from django.conf import settings as hawc_settings
 
 from ..utils.authors import get_author_short_text, normalize_author
+from ..utils.sessions import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,9 @@ def connect(api_key: str):
 class PubMedUtility:
     """Register tools with this utility class to import PubMed settings."""
 
+    def __init__(self):
+        self.session = get_session({"Content-Type": "text/xml"})
+
     def _register_instance(self):
         if settings.api_key != PubMedSettings.PLACEHOLDER:
             self.settings["api_key"] = settings.api_key
@@ -47,6 +50,7 @@ class PubMedSearch(PubMedUtility):
     default_settings = dict(retmax=5000, db="pubmed")
 
     def __init__(self, term, **kwargs):
+        super().__init__()
         self.id_count: int | None = None
         self.settings = PubMedSearch.default_settings.copy()
         self._register_instance()
@@ -60,7 +64,7 @@ class PubMedSearch(PubMedUtility):
             return self.id_count
 
         data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
-        r = requests.post(PubMedSearch.base_url, data=data, timeout=15)
+        r = self.session.post(PubMedSearch.base_url, data=data, timeout=15)
         if r.status_code == 200:
             txt = ET.fromstring(r.text)
             self.id_count = int(txt.find("Count").text)
@@ -86,7 +90,7 @@ class PubMedSearch(PubMedUtility):
         self.request_count = len(rng)
         for retstart in rng:
             data["retstart"] = retstart
-            resp = requests.post(PubMedSearch.base_url, data=data, timeout=15)
+            resp = self.session.post(PubMedSearch.base_url, data=data, timeout=15)
             if resp.status_code == 200:
                 ids.extend(self._parse_ids(resp.text))
             else:
@@ -114,9 +118,8 @@ class PubMedFetch(PubMedUtility):
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
     default_settings = dict(retmax=1000, db="pubmed", retmode="xml")
 
-    def __init__(self, id_list, **kwargs):
-        if id_list is None:
-            raise Exception("List of IDs are required for a PubMed search")
+    def __init__(self, id_list: list[int], **kwargs):
+        super().__init__()
         self.ids = id_list
         self.content: list[dict] = []
         self.settings = PubMedFetch.default_settings.copy()
@@ -150,7 +153,7 @@ class PubMedFetch(PubMedUtility):
                 break
 
             data["id"] = self.ids[retstart : retstart + self.settings["retmax"]]
-            resp = requests.post(PubMedFetch.base_url, data=data, timeout=15)
+            resp = self.session.post(PubMedFetch.base_url, data=data, timeout=15)
             if resp.status_code == 200:
                 tree = ET.fromstring(resp.text.encode("utf-8"))
                 if tree.tag != "PubmedArticleSet":
