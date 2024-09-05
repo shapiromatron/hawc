@@ -67,7 +67,7 @@ class CardsRow extends EditableRow {
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings, getLinkingOptions, getTagOptions} = this.props.store.subclass;
+        const {changeArraySettings, getLinkingOptions, getCountOptions} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -163,7 +163,7 @@ class CardsRow extends EditableRow {
                                     changeArraySettings(key, index, "tag", value)
                                 }
                                 multiple={false}
-                                choices={getTagOptions()}
+                                choices={getCountOptions()}
                             />
                         </div>
                         <div className="form-row justify-content-center">

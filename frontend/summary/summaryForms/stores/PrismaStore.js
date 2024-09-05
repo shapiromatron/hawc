@@ -129,9 +129,16 @@ class PrismaStore {
         this.settings.arrows.push(createArrowRow());
     }
 
-    @action.bound getTagOptions() {
-        // TODO: get tag options from assessment
-        return [{id: 1, label: "test"}];
+    @action.bound getCountOptions() {
+        const tag_options = this.count_data.map(tag => {
+                return {id: tag.id, label: "TAG | " + tag.name}
+            });
+        const search_options = this.count_data.map(search => {
+            return { id: search.id, label: "SEARCH | " + search.name }
+        });
+        const options = Object.assign({}, tag_options, search_options);
+        options.unshift({ id: NULL_VALUE, label: NULL_VALUE });
+        return options;
     }
 
     @action.bound getArrowOptions() {
