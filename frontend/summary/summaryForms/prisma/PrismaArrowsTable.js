@@ -19,13 +19,15 @@ class PrismaArrowsTable extends Component {
             <div>
                 <h3>Arrows</h3>
                 <table className="table table-sm table-striped">
+                    <colgroup>
+                        <col width="45%" />
+                        <col width="45%" />
+                        <col width="10%" />
+                    </colgroup>
                     <thead>
                         <tr>
                             <th>Source</th>
                             <th>Destination</th>
-                            <th>Width</th>
-                            <th>Type</th>
-                            <th>Color</th>
                             <ActionsTh onClickNew={createNewArrow} />
                         </tr>
                     </thead>
@@ -57,9 +59,6 @@ class ArrowsRow extends EditableRow {
             <tr>
                 <td>{row.source}</td>
                 <td>{row.dest}</td>
-                <td>{row.width}</td>
-                <td>{row.type}</td>
-                <td>{row.color}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}

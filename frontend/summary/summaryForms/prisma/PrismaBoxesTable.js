@@ -19,18 +19,14 @@ class PrismaBoxesTable extends Component {
             <div>
                 <h3>Boxes</h3>
                 <table className="table table-sm table-striped">
+                    <colgroup>
+                        <col width="45%" />
+                        <col width="45%" />
+                        <col width="10%" />
+                    </colgroup>
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Width</th>
-                            <th>Height</th>
-                            <th>Border Width</th>
-                            <th>rx</th>
-                            <th>ry</th>
-                            <th>Background Color</th>
-                            <th>Border Color</th>
-                            <th>Font Color</th>
-                            <th>Text Formatting Style</th>
                             <th>Section</th>
                             <ActionsTh onClickNew={createNewBox} />
                         </tr>
@@ -62,15 +58,6 @@ class BoxesRow extends EditableRow {
         return (
             <tr>
                 <td>{row.name}</td>
-                <td>{row.width}</td>
-                <td>{row.height}</td>
-                <td>{row.border_width}</td>
-                <td>{row.rx}</td>
-                <td>{row.ry}</td>
-                <td>{row.bg_color}</td>
-                <td>{row.border_color}</td>
-                <td>{row.font_color}</td>
-                <td>{row.text_style}</td>
                 <td>{row.section}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
