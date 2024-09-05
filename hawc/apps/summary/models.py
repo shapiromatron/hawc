@@ -14,11 +14,10 @@ from plotly.io import from_json
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from hawc.tools.tables.ept import EvidenceProfileTable
-from hawc.tools.tables.generic import BaseTable, GenericTable
-from hawc.tools.tables.parser import QuillParser
-from hawc.tools.tables.set import StudyEvaluationTable
-
+from ...tools.tables.ept import EvidenceProfileTable
+from ...tools.tables.generic import BaseTable, GenericTable
+from ...tools.tables.parser import QuillParser
+from ...tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
