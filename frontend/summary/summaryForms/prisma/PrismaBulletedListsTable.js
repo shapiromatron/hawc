@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {ActionsTh, BaseEditableRow, MoveRowTd} from "shared/components/EditableRowData";
+import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -37,7 +37,14 @@ class PrismaBulletedListsTable extends Component {
                     </thead>
                     <tbody>
                         {items.map((row, index) => {
-                            return <BulletedListsRow row={row} index={index} key={index} />;
+                            return (
+                                <BulletedListsRow
+                                    row={row}
+                                    index={index}
+                                    key={index}
+                                    initiallyEditable={row.name == ""}
+                                />
+                            );
                         })}
                     </tbody>
                 </table>
@@ -48,7 +55,7 @@ class PrismaBulletedListsTable extends Component {
 
 @inject("store")
 @observer
-class BulletedListsRow extends BaseEditableRow {
+class BulletedListsRow extends EditableRow {
     renderViewRow(row, index) {
         const {deleteArrayElement} = this.props.store.subclass;
 

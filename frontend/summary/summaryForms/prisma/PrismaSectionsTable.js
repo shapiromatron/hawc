@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {ActionsTh, BaseEditableRow, MoveRowTd} from "shared/components/EditableRowData";
+import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
 
@@ -34,7 +34,14 @@ class PrismaSectionsTable extends Component {
                     </thead>
                     <tbody>
                         {items.map((row, index) => {
-                            return <SectionsRow row={row} index={index} key={index} />;
+                            return (
+                                <SectionsRow
+                                    row={row}
+                                    index={index}
+                                    key={index}
+                                    initiallyEditable={row.name == ""}
+                                />
+                            );
                         })}
                     </tbody>
                 </table>
@@ -45,7 +52,7 @@ class PrismaSectionsTable extends Component {
 
 @inject("store")
 @observer
-class SectionsRow extends BaseEditableRow {
+class SectionsRow extends EditableRow {
     renderViewRow(row, index) {
         const {deleteArrayElement} = this.props.store.subclass;
 

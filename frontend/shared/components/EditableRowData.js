@@ -79,34 +79,32 @@ const moveArrayElementUp = function(arr, index) {
         );
     };
 
-class BaseEditableRow extends Component {
+class EditableRow extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {edit: this.startEditable()};
-    }
-
-    startEditable() {
-        // if name is empty, default to edit row
-        return this.props.row.name == "";
+        this.state = {edit: props.initiallyEditable};
     }
 
     render() {
         if (this.state.edit) {
             return this.renderEditRow(this.props.row, this.props.index);
-        } else {
-            return this.renderViewRow(this.props.row, this.props.index);
         }
+        return this.renderViewRow(this.props.row, this.props.index);
     }
 
     renderViewRow(row, index) {
-        return null;
+        throw new Error("Requires implementation");
     }
 
     renderEditRow(row, index) {
-        return null;
+        throw new Error("Requires implementation");
     }
 }
+EditableRow.propTypes = {
+    initiallyEditable: PropTypes.bool.isRequired,
+    row: PropTypes.object.isRequired,
+    index: PropTypes.number.isRequired,
+};
 
 ActionsTh.propTypes = {
     onClickNew: PropTypes.func,
@@ -117,15 +115,11 @@ MoveRowTd.propTypes = {
     onMoveDown: PropTypes.func,
     onDelete: PropTypes.func,
 };
-BaseEditableRow.propTypes = {
-    row: PropTypes.object,
-    index: PropTypes.number,
-};
 
 export {
     ActionsTh,
-    BaseEditableRow,
     deleteArrayElement,
+    EditableRow,
     moveArrayElementDown,
     moveArrayElementUp,
     MoveRowTd,
