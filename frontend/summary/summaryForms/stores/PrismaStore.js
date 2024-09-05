@@ -5,7 +5,7 @@ import {NULL_VALUE} from "summary/summary/constants";
 
 import PrismaDefaultSettings from "../prisma/PrismaDefaultSettings";
 
-let createSectionRow = function() {
+const createSectionRow = function() {
         return {
             name: "",
             width: 0,
@@ -133,11 +133,8 @@ class PrismaStore {
     }
 
     @action.bound getLinkingOptions(key) {
-        // TODO: enforce unique names for sections/boxes etc.
-        // also, update this reactively when new section added?
-        const options = [];
-        this.settings[key].forEach(value => {
-            options.push({id: value.name, label: value.name});
+        const options = this.settings[key].map(value => {
+            return {id: value.name, label: value.name};
         });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
