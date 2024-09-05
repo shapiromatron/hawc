@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from django.utils import timezone
 
@@ -42,7 +44,7 @@ class TestTermSerializer:
             {"id": 2, "name": "Serum", "type": 1, "deprecated": True},
             {"id": unchanged_term.id, "name": unchanged_term.name},
         ]
-        before_test = timezone.now()
+        before_test = timezone.now() - timedelta(seconds=1)
         ser = TermSerializer(instance=terms, data=data, many=True, partial=True)
         assert ser.is_valid()
         updated_instances = ser.save()
