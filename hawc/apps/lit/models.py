@@ -228,7 +228,7 @@ class Search(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
-        verbose_name_plural = "searches"
+        verbose_name_plural = "searches / imports"
         unique_together = (("assessment", "slug"), ("assessment", "title"))
         ordering = ["-last_updated"]
         get_latest_by = "last_updated"
