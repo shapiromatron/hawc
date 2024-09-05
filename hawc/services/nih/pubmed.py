@@ -4,7 +4,7 @@ import re
 import xml.etree.ElementTree as ET
 from itertools import chain
 
-from django.conf import settings as hawc_settings
+from django.conf import settings
 
 from ..utils.authors import get_author_short_text, normalize_author
 from ..utils.sessions import get_session
@@ -12,85 +12,57 @@ from ..utils.sessions import get_session
 logger = logging.getLogger(__name__)
 
 
-class PubMedSettings:
-    """Module-level settings to check that PubMed requests registered."""
-
-    PLACEHOLDER = "PLACEHOLDER"
-
-    def __init__(self):
-        self.api_key = self.PLACEHOLDER
-
-    def connect(self, api_key: str):
-        self.api_key = api_key
-
-
-# global singleton
-settings = PubMedSettings()
-
-
-def connect(api_key: str):
-    settings.connect(api_key)
-
-
-class PubMedUtility:
-    """Register tools with this utility class to import PubMed settings."""
-
-    def __init__(self):
-        self.session = get_session({"Accept": "text/xml"})
-
-    def _register_instance(self):
-        if settings.api_key != PubMedSettings.PLACEHOLDER:
-            self.settings["api_key"] = settings.api_key
-
-
-class PubMedSearch(PubMedUtility):
+class PubMedSearch:
     """Search PubMed with search-term and return a complete list of PubMed IDs."""
 
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
-    default_settings = dict(retmax=5000, db="pubmed")
+    default_data = dict(db="pubmed", retmode="xml")
+    retmax = 5000
 
-    def __init__(self, term, **kwargs):
-        super().__init__()
+    def __init__(self, term: str):
         self.id_count: int | None = None
-        self.settings = PubMedSearch.default_settings.copy()
-        self._register_instance()
-        self.settings["term"] = term
-        for k, v in kwargs.items():
-            self.settings[k] = v
+        self.term = term
+        self.session = get_session()
+
+    def get_payload(self, extra: dict | None = None) -> dict:
+        payload = self.default_data.copy()
+        payload["term"] = self.term
+        if settings.PUBMED_API_KEY:
+            payload["api_key"] = settings.PUBMED_API_KEY
+        if extra:
+            payload.update(extra)
+        return payload
 
     def _get_id_count(self) -> int:
-        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
-            self.id_count = 1
-            return self.id_count
+        if settings.HAWC_FEATURES.FAKE_IMPORTS:
+            return 1
 
-        data = dict(db=self.settings["db"], term=self.settings["term"], rettype="count")
-        r = self.session.post(PubMedSearch.base_url, data=data, timeout=15)
-        if r.status_code == 200:
-            txt = ET.fromstring(r.text)
-            self.id_count = int(txt.find("Count").text)
+        payload = self.get_payload(extra=dict(rettype="count"))
+        response = self.session.post(PubMedSearch.base_url, data=payload, timeout=15)
+        if response.status_code == 200:
+            txt = ET.fromstring(response.text)
             logger.info(f"{self.id_count} references found")
+            return int(txt.find("Count").text)
         else:
             raise Exception("Search query failed; please reformat query or try again later")
-
-        return self.id_count
 
     def _parse_ids(self, tree: str) -> list[int]:
         return [int(id.text) for id in ET.fromstring(tree).find("IdList").findall("Id")]
 
     def _fetch_ids(self):
-        if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+        if settings.HAWC_FEATURES.FAKE_IMPORTS:
             self.ids = [random.randrange(100_000_000, 999_9999_999)]  # noqa: S311
             return
 
         ids = []
-        data = self.settings.copy()
+        payload = self.get_payload(extra=dict(retmax=self.retmax))
         if self.id_count is None:
             self._get_id_count()
-        rng = list(range(0, self.id_count, self.settings["retmax"]))
+        rng = list(range(0, self.id_count, self.retmax))
         self.request_count = len(rng)
         for retstart in rng:
-            data["retstart"] = retstart
-            resp = self.session.post(PubMedSearch.base_url, data=data, timeout=15)
+            payload["retstart"] = retstart
+            resp = self.session.post(PubMedSearch.base_url, data=payload, timeout=15)
             if resp.status_code == 200:
                 ids.extend(self._parse_ids(resp.text))
             else:
@@ -98,7 +70,8 @@ class PubMedSearch(PubMedUtility):
         self.ids = ids
 
     def get_ids_count(self) -> int:
-        return self._get_id_count()
+        self.id_count = self._get_id_count()
+        return self.id_count
 
     def get_ids(self) -> list[int]:
         self._fetch_ids()
@@ -112,20 +85,25 @@ class PubMedSearch(PubMedUtility):
         }
 
 
-class PubMedFetch(PubMedUtility):
+class PubMedFetch:
     """Given a list of PubMed IDs, return list of dict of PubMed citation."""
 
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-    default_settings = dict(retmax=1000, db="pubmed", retmode="xml")
+    default_data = dict(retmax=1000, db="pubmed", retmode="xml")
 
     def __init__(self, id_list: list[int], **kwargs):
         super().__init__()
         self.ids = id_list
         self.content: list[dict] = []
-        self.settings = PubMedFetch.default_settings.copy()
-        self._register_instance()
-        for k, v in kwargs.items():
-            self.settings[k] = v
+        self.session = get_session()
+
+    def get_payload(self, extra: dict | None = None) -> dict:
+        payload = self.default_data.copy()
+        if settings.PUBMED_API_KEY:
+            payload["api_key"] = settings.PUBMED_API_KEY
+        if extra:
+            payload.update(extra)
+        return payload
 
     def fake(self) -> list[dict]:
         return [
@@ -144,16 +122,16 @@ class PubMedFetch(PubMedUtility):
         ]
 
     def get_content(self) -> list[dict]:
-        data = self.settings.copy()
-        rng = list(range(0, len(self.ids), self.settings["retmax"]))
+        payload = self.get_payload()
+        rng = list(range(0, len(self.ids), payload["retmax"]))
         self.request_count = len(rng)
         for retstart in rng:
-            if hawc_settings.HAWC_FEATURES.FAKE_IMPORTS:
+            if settings.HAWC_FEATURES.FAKE_IMPORTS:
                 self.content = self.fake()
                 break
 
-            data["id"] = self.ids[retstart : retstart + self.settings["retmax"]]
-            resp = self.session.post(PubMedFetch.base_url, data=data, timeout=15)
+            payload["id"] = self.ids[retstart : retstart + payload["retmax"]]
+            resp = self.session.post(PubMedFetch.base_url, data=payload, timeout=15)
             if resp.status_code == 200:
                 tree = ET.fromstring(resp.text.encode("utf-8"))
                 if tree.tag != "PubmedArticleSet":
@@ -164,7 +142,7 @@ class PubMedFetch(PubMedUtility):
                         self.content.append(result)
             else:
                 logger.error(f"Pubmed failure: {resp.status_code} -> {resp.text}")
-                logger.error(f"Pubmed failure data submission: {data}")
+                logger.error(f"Pubmed failure data submission: {payload}")
                 raise Exception("Fetch query failed; please reformat query or try again later")
         return self.content
 
