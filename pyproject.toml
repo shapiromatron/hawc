@@ -2,7 +2,7 @@
 name = "hawc"
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
-readme = "README.rst"
+readme = "README.md"
 dynamic = ["version", "description"]
 keywords = [
   "data visualization",
