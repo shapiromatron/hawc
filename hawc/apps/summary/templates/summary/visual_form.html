@@ -44,8 +44,8 @@
       "rob_metrics": {{rob_metrics|safe}},
       "initial_data": {{initial_data|safe}},
       "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",
-      "clear_cache_url": "{{assessment.get_clear_cache_url}}",
-      {% if prisma_data %}"prisma_data": {{prisma_data}}{% endif %}
+      "clear_cache_url": "{{assessment.get_clear_cache_url}}"
+      {% if prisma_data %},"prisma_data": {{prisma_data|safe}}{% endif %}
     }
   </script>
   <script type="text/javascript">
