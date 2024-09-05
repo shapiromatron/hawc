@@ -2,7 +2,7 @@ import html
 import json
 import urllib.parse
 
-from hawc.apps.lit.constants import DOI_EXTRACT
+from ...apps.lit.constants import DOI_EXTRACT
 
 
 def try_get_doi(text: str, full_text: bool = False) -> str | None:

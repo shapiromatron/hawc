@@ -5,8 +5,8 @@ from typing import Any
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from hawc.apps.assessment.models import DSSTox
-from hawc.services.epa.dsstox import DssSubstance
+from .....services.epa.dsstox import DssSubstance
+from ...models import DSSTox
 
 
 def _dict_hash(dict: dict[str, Any]) -> str:

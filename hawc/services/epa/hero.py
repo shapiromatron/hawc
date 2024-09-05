@@ -5,8 +5,7 @@ from typing import Any
 import requests
 from django.conf import settings
 
-from hawc.services.utils.doi import try_get_doi
-
+from ...services.utils.doi import try_get_doi
 from ..utils.authors import get_author_short_text, get_first, normalize_authors
 
 logger = logging.getLogger(__name__)
