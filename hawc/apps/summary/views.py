@@ -535,6 +535,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
+        if context["visual_type"] == constants.VisualType.PRISMA:
+            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
         )
