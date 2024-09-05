@@ -36,7 +36,7 @@ class PubMedUtility:
     """Register tools with this utility class to import PubMed settings."""
 
     def __init__(self):
-        self.session = get_session({"Content-Type": "text/xml"})
+        self.session = get_session({"Accept": "text/xml"})
 
     def _register_instance(self):
         if settings.api_key != PubMedSettings.PLACEHOLDER:
