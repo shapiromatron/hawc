@@ -11,7 +11,7 @@ from django.db import connection
 from django.db.backends.base import creation
 from django.test.utils import setup_databases
 
-from hawc.apps.common.signals import ignore_signals
+from ...signals import ignore_signals
 
 
 def load_iris_dataset() -> pd.DataFrame:
