@@ -12,6 +12,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from hawc.apps.assessment import constants
+from hawc.apps.study.autocomplete import StudyAutocomplete
 from hawc.apps.study.models import Study
 from hawc.services.epa.dsstox import DssSubstance
 
@@ -211,6 +212,7 @@ class AssessmentValueForm(forms.ModelForm):
             "confidence": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="confidence"
             ),
+            "studies": AutocompleteSelectMultipleWidget(autocomplete_class=StudyAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):
@@ -218,7 +220,7 @@ class AssessmentValueForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
+        self.fields["studies"].queryset = Study.objects.filter(assessment=self.instance.assessment)
 
     def clean(self):
         cleaned_data = super().clean()

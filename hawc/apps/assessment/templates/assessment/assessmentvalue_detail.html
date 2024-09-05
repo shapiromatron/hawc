@@ -46,7 +46,7 @@
           <th>Key Studies</th>
           <td>
             {% for study in object.studies.all  %}
-              <a href="{{object.study.get_absolute_url}}">{{object.study}}</a>&nbsp;
+              <a class="badge badge-info mr-1" href="{{study.get_absolute_url}}">{{study}}</a>
             {% endfor %}
           </td>
         </tr>
