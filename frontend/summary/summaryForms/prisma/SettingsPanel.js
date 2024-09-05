@@ -14,16 +14,11 @@ class SettingsPanel extends Component {
         return (
             <Tabs>
                 <TabList>
-                    <Tab>Data</Tab>
-                    <Tab>Other Settings</Tab>
+                    <Tab>Overall</Tab>
+                    <Tab>Flowchart</Tab>
                 </TabList>
                 <TabPanel>
-                    <PrismaDataTab></PrismaDataTab>
-                </TabPanel>
-                <TabPanel>
                     <div>
-                        <legend>Prisma Settings</legend>
-                        <p className="form-text text-muted">....</p>
                         <TextInput
                             name="title"
                             label="Plot Title"
@@ -31,6 +26,9 @@ class SettingsPanel extends Component {
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                         />
                     </div>
+                </TabPanel>
+                <TabPanel>
+                    <PrismaDataTab />
                 </TabPanel>
             </Tabs>
         );

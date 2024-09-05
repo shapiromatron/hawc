@@ -1,12 +1,14 @@
 import _ from "lodash";
 import {action, observable} from "mobx";
 import {deleteArrayElement} from "shared/components/EditableRowData";
+import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-import PrismaDefaultSettings from "../prisma/PrismaDefaultSettings";
+import defaultSettings from "../prisma/PrismaDefaultSettings";
 
 const createSectionRow = function() {
         return {
+            key: h.randomString(),
             name: "",
             width: 0,
             height: 0,
@@ -21,6 +23,7 @@ const createSectionRow = function() {
     },
     createBoxRow = function() {
         return {
+            key: h.randomString(),
             name: "",
             width: 0,
             height: 0,
@@ -36,6 +39,7 @@ const createSectionRow = function() {
     },
     createBulletedListRow = function() {
         return {
+            key: h.randomString(),
             name: "",
             width: 0,
             height: 0,
@@ -51,6 +55,7 @@ const createSectionRow = function() {
     },
     createCardRow = function() {
         return {
+            key: h.randomString(),
             name: "",
             width: 0,
             height: 0,
@@ -66,6 +71,7 @@ const createSectionRow = function() {
     },
     createArrowRow = function() {
         return {
+            key: h.randomString(),
             source: "",
             dest: "",
             width: 0,
@@ -81,7 +87,7 @@ class PrismaStore {
     @observable settings = null;
 
     getDefaultSettings() {
-        return PrismaDefaultSettings;
+        return defaultSettings;
     }
 
     @action.bound changeSettings(path, value) {
@@ -128,13 +134,16 @@ class PrismaStore {
     }
 
     @action.bound getArrowOptions() {
-        // TODO: gather all options for arrow start/end
-        return [{id: 1, label: "test"}];
+        const options = this.settings.boxes.map(value => {
+            return {id: value.key, label: value.name};
+        });
+        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
+        return options;
     }
 
     @action.bound getLinkingOptions(key) {
         const options = this.settings[key].map(value => {
-            return {id: value.name, label: value.name};
+            return {id: value.key, label: value.name};
         });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
