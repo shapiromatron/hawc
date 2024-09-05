@@ -6,8 +6,8 @@ from subprocess import CalledProcessError
 
 from django.urls import reverse_lazy
 
-from hawc.constants import AuthProvider, FeatureFlags
-from hawc.services.utils.git import Commit
+from ...constants import AuthProvider, FeatureFlags
+from ...services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent

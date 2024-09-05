@@ -4,11 +4,11 @@ from typing import Any
 
 import pydantic
 
-from hawc.apps.assessment.models import Assessment, Log
-from hawc.apps.common.actions import BaseApiAction
-from hawc.apps.myuser.models import HAWCUser
-from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
-from hawc.apps.study.models import Study
+from ...assessment.models import Assessment, Log
+from ...common.actions import BaseApiAction
+from ...myuser.models import HAWCUser
+from ...riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
+from ...study.models import Study
 
 
 class BulkCopyMode(IntEnum):
