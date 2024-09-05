@@ -103,6 +103,6 @@ class AssessmentExporter(Exporter):
             AssessmentDetailExport("assessment_detail", "assessment__details"),
             AssessmentValueExport("assessment_value", ""),
             StudyExport(
-                "study", "study", include=("id", "short_citation", "hero_id", "pubmed_id", "doi")
+                "study", "studies", include=("id", "short_citation", "hero_id", "pubmed_id", "doi")
             ),
         ]
