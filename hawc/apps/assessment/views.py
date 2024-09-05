@@ -930,23 +930,27 @@ class LabelList(BaseList):
         return context
 
 
-class LabeledItemList(BaseDetail):
+class LabeledItemList(BaseFilterList):
     parent_model = models.Assessment
-    model = models.Label
+    model = models.LabeledItem
     assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
     template_name = "assessment/labeleditem_list.html"
+    filterset_class = filterset.LabeledItemFilterset
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(
-            object_list=models.LabeledItem.objects.filter(
-                label__path__startswith=self.object.path,
-                label__depth__gte=self.object.depth,
-            )
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="name",
+            appended_fields=["label"],
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("label")
             .order_by("content_type", "object_id")
             .distinct("content_type", "object_id")
         )
-        return context
 
 
 class LabelViewSet(HtmxViewSet):
@@ -1052,6 +1056,7 @@ class LabelItem(HtmxView):
         context = dict(
             content_type=self.content_type,
             object_id=self.object_id,
+            assessment=self.assessment,
             labels=labels,
             oob=True,
         )

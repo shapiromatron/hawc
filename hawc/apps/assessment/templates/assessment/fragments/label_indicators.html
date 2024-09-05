@@ -1,11 +1,11 @@
 {% if oob %}
   <div
-    class="d-flex align-items-center ml-1"
+    class="d-flex align-items-center ml-1 flex-wrap"
     id="label-indicators"
     hx-swap-oob="outerHTML"
   >
     {% for label in labels %}
-      <a class="label mx-1 mb-3" href="{{label.get_labeled_items_url}}" style="background-color: {{label.color}}; color: {{label.text_color}};" title="{{label.description}}">{{label.name}}</a>
+      <a class="label m-1 flex-shrink-0" href="{% url 'assessment:labeled-items' assessment.pk %}?label={{label.pk}}" style="background-color: {{label.color}}; color: {{label.text_color}};" title="{{label.description}}">{{label.name}}</a>
     {% endfor %}
   </div>
 {% else %}

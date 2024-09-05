@@ -141,7 +141,7 @@ urlpatterns = [
     ),
     # assessment labels
     path(
-        "labeled-items/<int:pk>/",
+        "<int:pk>/labeled-items/",
         views.LabeledItemList.as_view(),
         name="labeled-items",
     ),

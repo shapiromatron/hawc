@@ -1377,9 +1377,6 @@ class Label(AssessmentRootMixin, MP_Node):
         else:
             return f"{'━ ' * (self.depth - 1)}{self.name}"
 
-    def get_labeled_items_url(self):
-        return reverse("assessment:labeled-items", args=[self.pk])
-
     def get_absolute_url(self):
         return reverse("assessment:label-htmx", args=[self.pk, "read"])
 
