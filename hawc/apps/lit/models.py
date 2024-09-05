@@ -23,8 +23,6 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from hawc.apps.udf.models import TagBinding, TagUDFContent
-
 from ...constants import ColorblindColors
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -37,6 +35,7 @@ from ..common.models import (
     NonUniqueTagBase,
 )
 from ..myuser.models import HAWCUser
+from ..udf.models import TagBinding, TagUDFContent
 from . import constants, managers, tasks
 
 logger = logging.getLogger(__name__)

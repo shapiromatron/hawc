@@ -2,10 +2,10 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Prefetch
 
-from hawc.apps.assessment.models import Assessment
-from hawc.apps.lit.constants import DOI_EXACT, ReferenceDatabase
-from hawc.apps.lit.models import Identifiers, Reference
-from hawc.services.utils.doi import try_get_doi
+from .....services.utils.doi import try_get_doi
+from ....assessment.models import Assessment
+from ....lit.constants import DOI_EXACT, ReferenceDatabase
+from ....lit.models import Identifiers, Reference
 
 
 class Command(BaseCommand):

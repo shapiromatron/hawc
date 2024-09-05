@@ -2,7 +2,7 @@
 
 import logging
 
-from hawc.constants import AuthProvider
+from ...constants import AuthProvider
 
 from .dev import *
 
