@@ -81,8 +81,9 @@ const createSectionRow = function() {
     };
 
 class PrismaStore {
-    constructor(rootStore) {
+    constructor(rootStore, count_data) {
         this.root = rootStore;
+        this.count_data = count_data
     }
     @observable settings = null;
 
