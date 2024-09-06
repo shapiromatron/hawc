@@ -14,7 +14,7 @@ class TaskForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        prefix = kwargs.get("instance").pk if "instance" in kwargs else "-1"
+        prefix = f"task-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         self.fields["owner"].queryset = self.instance.study.assessment.pms_and_team_users()
 

@@ -538,7 +538,7 @@ class WorkflowForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
-        prefix = kwargs.get("instance").pk if "instance" in kwargs else "-1"
+        prefix = f"workflow-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if assessment:
             self.instance.assessment = assessment

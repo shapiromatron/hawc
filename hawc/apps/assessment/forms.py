@@ -341,7 +341,7 @@ class AttachmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop("parent", None)
-        prefix = kwargs.get("instance").pk if "instance" in kwargs else "-1"
+        prefix = f"attachment-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if obj:
             self.instance.content_type = ContentType.objects.get_for_model(obj)

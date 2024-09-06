@@ -73,7 +73,7 @@ class ChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -99,7 +99,7 @@ class ExposureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"exposure-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        prefix = f"exposure-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -127,7 +127,7 @@ class ExposureLevelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"exposurelvl-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        prefix = f"exposurelevel-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -175,7 +175,7 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"adjustmentfactor-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        prefix = f"adjustmentfactor-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -207,7 +207,7 @@ class OutcomeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"outcome-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        prefix = f"outcome-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -239,7 +239,7 @@ class DataExtractionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"extraction-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        prefix = f"dataextraction-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -249,7 +249,6 @@ class DataExtractionForm(forms.ModelForm):
 
     def clean(self):
         data = super().clean()
-
         variance_type = data["variance_type"]
         variance = data["variance"]
         if variance and variance_type == constants.VarianceType.NA:
