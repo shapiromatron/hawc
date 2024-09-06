@@ -4,8 +4,6 @@ import {deleteArrayElement} from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-import defaultSettings from "../prisma/PrismaDefaultSettings";
-
 const createSectionRow = function() {
         return {
             key: h.randomString(),
@@ -84,11 +82,19 @@ class PrismaStore {
     constructor(rootStore, count_data) {
         this.root = rootStore;
         this.count_data = count_data
+        console.log(count_data)
     }
     @observable settings = null;
 
     getDefaultSettings() {
-        return defaultSettings;
+        return {
+            title: "Prisma Visual",
+            sections: [],
+            boxes: [],
+            bulleted_lists: [],
+            cards: [],
+            arrows: [],
+        };
     }
 
     @action.bound changeSettings(path, value) {
@@ -130,13 +136,13 @@ class PrismaStore {
     }
 
     @action.bound getCountOptions() {
-        const tag_options = this.count_data.map(tag => {
-                return {id: tag.id, label: "TAG | " + tag.name}
+        const tag_options = this.count_data.tags.map(tag => {
+                return {id: "tag_" + tag.id, label: "TAG | " + tag.nested_name}
             });
-        const search_options = this.count_data.map(search => {
-            return { id: search.id, label: "SEARCH | " + search.name }
+        const search_options = this.count_data.searches.map(search => {
+            return { id: "search_" + search.id, label: "SEARCH | " + search.title }
         });
-        const options = Object.assign({}, tag_options, search_options);
+        const options = Object.assign([], tag_options, search_options);
         options.unshift({ id: NULL_VALUE, label: NULL_VALUE });
         return options;
     }
