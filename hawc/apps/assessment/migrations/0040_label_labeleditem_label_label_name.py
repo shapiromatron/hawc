@@ -8,7 +8,7 @@ import hawc.apps.common.models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0038_alter_assessmentdetail_qa_id"),
+        ("assessment", "0039_remove_assessment_enable_summary_text"),
         ("contenttypes", "0002_remove_content_type_name"),
     ]
 
