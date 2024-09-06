@@ -161,7 +161,7 @@ class BulletedListsRow extends EditableRow {
                             <SelectInput
                                 name={`${key}-tag-${index}`}
                                 value={row.tag}
-                                label="Tag related to data in this list"
+                                label="Add references related to this tag or import"
                                 handleSelect={value =>
                                     changeArraySettings(key, index, "tag", value)
                                 }

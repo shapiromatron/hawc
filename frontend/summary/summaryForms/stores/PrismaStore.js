@@ -140,7 +140,7 @@ class PrismaStore {
                 return {id: "tag_" + tag.id, label: "TAG | " + tag.nested_name}
             });
         const search_options = this.count_data.searches.map(search => {
-            return { id: "search_" + search.id, label: "SEARCH | " + search.title }
+            return { id: "search_" + search.id, label: "IMPORT | " + search.title }
         });
         const options = Object.assign([], tag_options, search_options);
         options.unshift({ id: NULL_VALUE, label: NULL_VALUE });
