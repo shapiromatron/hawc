@@ -2,7 +2,7 @@
 name = "hawc"
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
-readme = "README.rst"
+readme = "README.md"
 dynamic = ["version", "description"]
 keywords = [
   "data visualization",
@@ -18,7 +18,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
   # web application
-  "Django~=5.0.7",
+  "Django~=5.1",
   "django-crispy-forms==2.2",
   "crispy-bootstrap4==2024.1",
   "django-filter==24.2",
@@ -137,7 +137,7 @@ exclude = [
 line-length = 100
 target-version = "py311"
 lint.select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "RUF"]
-lint.ignore = ["E501", "B904", "B007", "S308", "S113", "S314", "S603", "S607", "RUF012", "RUF015"]
+lint.ignore = ["E501", "S308", "S314", "S603", "RUF012", "RUF015"]
 lint.unfixable = ["F401", "F841"]
 
 [tool.ruff.lint.isort]

@@ -8,6 +8,7 @@ import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.core.files.storage import FileSystemStorage
@@ -177,7 +178,7 @@ class AssessmentRootMixin:
                 if node.depth > last_depth:
                     pass
                 else:
-                    for i in range(last_depth - node.depth + 1):
+                    for _i in range(last_depth - node.depth + 1):
                         names.pop()
 
                 names.append(node.name)
@@ -383,8 +384,8 @@ class AssessmentRootMixin:
             assessment_id = self.get_assessment_id()
             Assessment = apps.get_model("assessment", "Assessment")
             return Assessment.objects.get(id=assessment_id)
-        except Exception:
-            raise self.__class__.DoesNotExist()
+        except Exception as exc:
+            raise self.__class__.DoesNotExist() from exc
 
     def moveWithinSiblingsToIndex(self, newIndex):
         siblings = list(self.get_siblings())
@@ -650,3 +651,7 @@ def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dic
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())
+
+
+def search_query(value: str) -> SearchQuery:
+    return SearchQuery(value, search_type="websearch", config="english")

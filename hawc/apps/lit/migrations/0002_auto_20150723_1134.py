@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
             options={
                 "ordering": ["-last_updated"],
                 "get_latest_by": "last_updated",
-                "verbose_name_plural": "searches",
+                "verbose_name_plural": "searches / imports",
             },
         ),
     ]

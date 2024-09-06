@@ -915,6 +915,9 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     font-size: .8em;
     font-weight: 400;
 }
+.font-size-regular {
+    font-size: 1rem;
+}
 .m-xs {
     margin: 0.1rem !important;
 }

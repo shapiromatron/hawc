@@ -11,7 +11,7 @@ class AssessmentAutocomplete(BaseAutocomplete):
 @register
 class DSSToxAutocomplete(BaseAutocomplete):
     model = models.DSSTox
-    search_fields = ["dtxsid", "content__preferredName", "content__casrn"]
+    search_fields = ["search"]
 
     def get_result(self, obj):
         result = super().get_result(obj)

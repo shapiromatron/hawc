@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from reversion.admin import VersionAdmin
-from treebeard.admin import TreeAdmin
-from treebeard.forms import movenodeform_factory
 
 from . import models
 
@@ -49,15 +47,6 @@ class DataPivotAdmin(admin.ModelAdmin):
 
 class DataPivotQueryAdmin(DataPivotAdmin):
     list_filter = ("published", "evidence_type")
-
-
-@admin.register(models.SummaryText)
-class SummaryTextAdmin(TreeAdmin):
-    list_display = (
-        "title",
-        "created",
-    )
-    form = movenodeform_factory(models.SummaryText)
 
 
 @admin.register(models.SummaryTable)
