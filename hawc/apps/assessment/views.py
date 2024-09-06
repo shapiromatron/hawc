@@ -933,7 +933,6 @@ class LabelList(BaseList):
 class LabeledItemList(BaseFilterList):
     parent_model = models.Assessment
     model = models.LabeledItem
-    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
     template_name = "assessment/labeleditem_list.html"
     filterset_class = filterset.LabeledItemFilterset
 
@@ -1023,7 +1022,9 @@ class LabelItem(HtmxView):
         return handler(request, *args, **kwargs)
 
     def label(self, request: HttpRequest, *args, **kwargs):
-        context = dict(content_type=self.content_type, object_id=self.object_id)
+        context = dict(
+            content_type=self.content_type, object_id=self.object_id, assessment=self.assessment
+        )
         if request.method == "GET":
             form = forms.LabelItemForm(
                 data=dict(

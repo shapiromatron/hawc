@@ -68,7 +68,7 @@ class SummaryTableList(BaseFilterList):
             return dict(
                 main_field="title",
                 appended_fields=["type", "label"],
-                dynamic_fields=["title", "type"],
+                dynamic_fields=["title", "type", "label"],
             )
 
 

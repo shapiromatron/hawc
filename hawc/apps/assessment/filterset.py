@@ -228,7 +228,11 @@ class LabeledItemFilterset(BaseFilterSet):
 
     def create_form(self):
         form = super().create_form()
-        form.fields["label"].set_filters({"assessment_id": self.assessment.id})
         form.fields["label"].widget.attrs.update({"data-placeholder": "Filter by labels"})
+        form.fields["label"].set_filters(
+            {"assessment_id": self.assessment.id, "published": True}
+            if not self.perms["edit"]
+            else {"assessment_id": self.assessment.id}
+        )
         form.fields["label"].widget.attrs["size"] = 1
         return form

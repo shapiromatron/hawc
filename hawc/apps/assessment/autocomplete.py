@@ -69,7 +69,7 @@ class AssessmentValueAutocomplete(BaseAutocomplete):
 @register
 class LabelAutocomplete(BaseAutocomplete):
     model = models.Label
-    filter_fields = ["assessment_id"]
+    filter_fields = ["assessment_id", "published"]
 
     @classmethod
     def get_base_queryset(cls, filters: dict | None = None):
