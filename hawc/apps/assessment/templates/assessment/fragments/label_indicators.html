@@ -5,7 +5,7 @@
     hx-swap-oob="outerHTML"
   >
     {% for label in labels %}
-      <a class="label m-1 flex-shrink-0" href="{% url 'assessment:labeled-items' assessment.pk %}?label={{label.pk}}" style="background-color: {{label.color}}; color: {{label.text_color}};" title="{{label.description}}">{{label.name}}</a>
+      {% include "assessment/fragments/label.html" with big=True anchor_tag=True %}
     {% endfor %}
   </div>
 {% else %}

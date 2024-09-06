@@ -23,7 +23,7 @@ def get(dictionary: dict, key: str):
 
 
 @register.filter
-def verbose_name(instance):
+def model_verbose_name(instance):
     return instance._meta.verbose_name
 
 

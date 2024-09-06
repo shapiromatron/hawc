@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.http import (
@@ -45,6 +46,7 @@ from ..common.views import (
 )
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
+from ..summary.models import DataPivotQuery, DataPivotUpload, SummaryTable, Visual
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
@@ -947,6 +949,17 @@ class LabeledItemList(BaseFilterList):
             super()
             .get_queryset()
             .select_related("label")
+            .prefetch_related(
+                GenericPrefetch(
+                    "content_object",
+                    [
+                        Visual.objects.all(),
+                        DataPivotUpload.objects.all(),
+                        DataPivotQuery.objects.all(),
+                        SummaryTable.objects.all(),
+                    ],
+                )
+            )
             .order_by("content_type", "object_id")
             .distinct("content_type", "object_id")
         )

@@ -14,15 +14,15 @@
     {% for object in object_list %}
       {% if object.content_object.published or obj_perms.edit %}
         <a class="list-group-item clickable text-dark d-flex p-0" href="{{object.content_object.get_absolute_url}}">
-          <div class="col-auto bg-light py-2 font-weight-light text-center" style="width: 10rem;">{{object.content_object|verbose_name|title}}</div>
+          <div class="col-auto bg-light py-2 font-weight-light text-center" style="width: 10rem;">{{object.content_object|model_verbose_name|title}}</div>
           <div class="col py-2 d-flex align-items-center flex-wrap">
             <div class="flex-shrink-0 mr-2">{{object.content_object}}</div>
             {% if obj_perms.edit %}
-              <i class="text-secondary fa fa-{{ object.content_object.published|yesno:'eye,eye-slash' }} px-1 mr-2" title="{{object.content_object|verbose_name|title}} is {{ object.content_object.published|yesno:'published,unpublished' }}"></i>
+              <i class="text-secondary fa fa-{{ object.content_object.published|yesno:'eye,eye-slash' }} px-1 mr-2" title="{{object.content_object|model_verbose_name|title}} is {{ object.content_object.published|yesno:'published,unpublished' }}"></i>
             {% endif %}
             {% for labeled_item in object.content_object.labels.all %}
               {% if labeled_item.label.published or obj_perms.edit %}
-                <div class="tny mr-2 label flex-shrink-0 my-1" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}" label_id="{{labeled_item.label.pk}}">{{labeled_item.label.name}}</div>
+                {% include "assessment/fragments/label.html" with label=labeled_item.label %}
               {% endif %}
             {% endfor %}
           </div>
@@ -38,7 +38,7 @@
   <script type="text/javascript">
     $(document).ready(() => {
       $(".label").click(function(e) {
-        url = `${window.location.pathname}?label=${$(this).attr("label_id")}`;
+        url = $(this).attr("label_url")
         window.location = url
         e.preventDefault();
       });

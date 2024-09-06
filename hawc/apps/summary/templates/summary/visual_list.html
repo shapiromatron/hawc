@@ -28,13 +28,13 @@
               <a class="text-nowrap" href="{{visual.get_absolute_url}}">{{visual.title}}</a>
               <div class="d-flex flex-wrap">
                 {% for labeled_item in visual.visible_labels %}
-                  <a class="tny m-1 label text-nowrap" href="{% url 'assessment:labeled-items' assessment.pk %}?label={{labeled_item.label.pk}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
+                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                 {% endfor %}
                 {% for labeled_item in visual.datapivotquery.visible_query_labels %}
-                  <a class="tny m-1 label text-nowrap" href="{% url 'assessment:labeled-items' assessment.pk %}?label={{labeled_item.label.pk}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
+                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                 {% endfor %}
                 {% for labeled_item in visual.datapivotupload.visible_upload_labels %}
-                  <a class="tny m-1 label text-nowrap" href="{% url 'assessment:labeled-items' assessment.pk %}?label={{labeled_item.label.pk}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
+                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}  
                 {% endfor %}
               </div>
               {% if not visual.published %}

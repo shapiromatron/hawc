@@ -1344,8 +1344,6 @@ class Label(AssessmentRootMixin, MP_Node):
     cache_template_taglist = "assessment.label.labellist.assessment-{0}"
     cache_template_tagtree = "assessment.label.labeltree.assessment-{0}"
 
-    BREADCRUMB_PARENT = "assessment"
-
     class Meta:
         constraints = [models.UniqueConstraint(fields=["assessment", "name"], name="label_name")]
 
