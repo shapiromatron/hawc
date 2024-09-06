@@ -73,7 +73,8 @@ class ChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
@@ -98,7 +99,8 @@ class ExposureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"exposure-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
@@ -125,7 +127,8 @@ class ExposureLevelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"exposurelvl-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
         self.fields["chemical"].queryset = self.instance.design.chemicals.all()
@@ -172,7 +175,8 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"adjustmentfactor-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
@@ -203,7 +207,8 @@ class OutcomeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"outcome-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
@@ -234,7 +239,8 @@ class DataExtractionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"extraction-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
         self.fields["outcome"].queryset = self.instance.design.outcomes.all()

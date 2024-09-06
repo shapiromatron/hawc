@@ -87,7 +87,8 @@ class CauseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"cause-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.study = design.study
 
@@ -125,7 +126,8 @@ class EffectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"effect-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.study = design.study
 
@@ -149,7 +151,8 @@ class ResultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"result-{kwargs.get("instance").pk if "instance" in kwargs else "-1"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
         self.fields["cause"].queryset = self.fields["cause"].queryset.filter(
