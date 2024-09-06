@@ -34,7 +34,7 @@
                   {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                 {% endfor %}
                 {% for labeled_item in visual.datapivotupload.visible_upload_labels %}
-                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}  
+                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                 {% endfor %}
               </div>
               {% if not visual.published %}
