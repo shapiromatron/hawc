@@ -5,10 +5,7 @@
   <h2>{{first_log}}s</h2>
 
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col width="30%">
-      <col width="70%">
-    </colgroup>
+    {% bs4_colgroup '30,70' %}
     <tbody>
 
       <tr>
@@ -40,18 +37,8 @@
   <h3>Logs</h3>
 
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col width="20%" />
-      <col width="20%" />
-      <col width="60%" />
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Timestamp</th>
-        <th>User</th>
-        <th>Message</th>
-      </tr>
-    </thead>
+    {% bs4_colgroup '20,20,60' %}
+    {% bs4_thead 'Timestamp,User,Message' %}
     <tbody>
       {% for event in object_list %}
         <tr>

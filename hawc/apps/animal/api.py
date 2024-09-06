@@ -14,7 +14,7 @@ from ..assessment.api import (
 )
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..common.api.utils import get_published_only
-from ..common.helper import FlatExport, cacheable
+from ..common.helper import FlatExport, cacheable, try_parse_list_ints
 from ..common.renderers import PandasRenderers
 from ..common.serializers import ExportQuerySerializer, UnusedSerializer
 from ..common.views import create_object_log
@@ -29,7 +29,11 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
 
     def get_endpoint_queryset(self, request):
         published_only = get_published_only(self.assessment, request)
-        return models.Endpoint.objects.get_qs(self.assessment).published_only(published_only)
+        study_ids = try_parse_list_ints(request.query_params.get("study_ids"))
+        qs = models.Endpoint.objects.get_qs(self.assessment).published_only(published_only)
+        if study_ids:
+            qs = qs.filter(animal_group__experiment__study__in=study_ids)
+        return qs
 
     @action(
         detail=True,

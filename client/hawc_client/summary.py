@@ -22,7 +22,6 @@ class SummaryClient(BaseClient):
                 - assessment (int): assessment ID
                 - prefilters (dict): object prefilters (must be valid JSON)
                 - caption (str): Visual caption
-                - sort_order (str): how results are sorted
 
         Returns:
             dict: The resulting object, if create was successful
@@ -45,7 +44,6 @@ class SummaryClient(BaseClient):
                 - assessment (int): assessment ID
                 - prefilters (dict): object prefilters (must be valid JSON)
                 - caption (str): Visual caption
-                - sort_order (str): how results are sorted
 
         Returns:
             dict: The resulting object, if create was successful
@@ -73,7 +71,7 @@ class SummaryClient(BaseClient):
             visual_id (int): ID of the visual to read
 
         Returns:
-            dict: The result object, if get was successful
+            Response: A response object, which contains the visual if successful.
         """
         url = f"{self.session.root_url}/summary/api/visual/{visual_id}/"
         return self.session.get(url)
@@ -158,7 +156,7 @@ class SummaryClient(BaseClient):
             visual_id (int): ID of the visual to read
 
         Returns:
-            dict: object, if successful
+            Response: A response object, which contains the visual if successful.
 
         """
         url = f"{self.session.root_url}/summary/api/data_pivot_query/{datapivot_id}/"

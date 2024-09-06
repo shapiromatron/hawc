@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from ..assessment.models import DSSTox
 from ..common.helper import SerializerHelper
-from ..common.models import NumericTextField
+from ..common.models import NumericTextField, clone_name
 from ..epi.models import Country
 from ..study.models import Study
 from . import constants, managers
@@ -146,7 +146,7 @@ class Chemical(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -210,7 +210,7 @@ class Exposure(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -320,7 +320,7 @@ class ExposureLevel(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -372,7 +372,7 @@ class Outcome(models.Model):
 
     def clone(self):
         self.id = None
-        self.endpoint = f"{self.endpoint} (2)"
+        self.endpoint = clone_name(self, "endpoint")
         self.save()
         return self
 
@@ -412,7 +412,7 @@ class AdjustmentFactor(models.Model):
 
     def clone(self):
         self.id = None
-        self.name = f"{self.name} (2)"
+        self.name = clone_name(self, "name")
         self.save()
         return self
 
@@ -553,6 +553,7 @@ class DataExtraction(models.Model):
 
     def clone(self):
         self.id = None
+        self.exposure_rank += 1
         self.save()
         return self
 

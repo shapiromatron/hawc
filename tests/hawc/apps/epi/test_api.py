@@ -46,7 +46,6 @@ class TestEpiAssessmentViewSet:
             assert team_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        rewrite_data_files = True
         # published
         fn = "api-epi-assessment-export-unpublished-False.json"
         url = reverse("epi:api:assessment-export", args=(db_keys.assessment_final,))

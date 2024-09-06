@@ -1,17 +1,6 @@
 from django.apps import apps
-from treebeard.mp_tree import MP_NodeQuerySet
 
 from ..common.models import BaseManager
-
-
-class SummaryTextManager(BaseManager):
-    assessment_relation = "assessment"
-
-    """Custom manager for nodes in a Materialized Path tree."""
-
-    def get_queryset(self):
-        """Sets the custom queryset as the default."""
-        return MP_NodeQuerySet(self.model).order_by("path")
 
 
 class SummaryTableManager(BaseManager):

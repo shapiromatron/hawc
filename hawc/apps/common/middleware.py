@@ -1,5 +1,6 @@
 import logging
 import re
+import threading
 from urllib.parse import urlparse
 
 from django.http import HttpRequest, HttpResponse
@@ -92,3 +93,21 @@ class CsrfRefererCheckMiddleware:
         response = self.get_response(request)
 
         return response
+
+
+_local_thread = threading.local()
+
+
+class ThreadLocalMiddleware:
+    """Allow fetching the current request and user from the current thread.
+
+    Note that this may not be accurate given how the django WSGI application is deployed, but
+    should work fine using gunicorn and standard workers.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest):
+        _local_thread.request = request
+        return self.get_response(request)

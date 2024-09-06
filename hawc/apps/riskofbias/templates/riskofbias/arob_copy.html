@@ -3,13 +3,13 @@
 {% block content %}
   {% crispy form %}
   <div id='extra_content' class='hidden'>
-    <div class="alert alert-warning">
+    {% alert type="warning" %}
       <h4>Warning!</h4>
       <p>Copying this approach from another assessment will delete all {{assessment.get_rob_name_display|lower}}
         information currently saved in this assessment. This includes all domains and metrics
         which currently exist, as well as any completed evaluations for studies already assessed.</p>
       <p>It does not change the assessment which the approach is copied from.</p>
-    </div>
+    {% endalert %}
   </div>
 {% endblock %}
 

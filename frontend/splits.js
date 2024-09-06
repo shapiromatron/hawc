@@ -61,9 +61,6 @@ const startup = (name, cb) => {
         case "summaryInteractivityStartup":
             import("./summary/interactivity/index.js").then(app => cb(app.default));
             break;
-        case "summaryTextStartup":
-            import("./summary/summaryText/index.js").then(app => cb(app.default));
-            break;
         case "textCleanupStartup":
             import("./shared/textCleanup/index.js").then(app => cb(app.default));
             break;

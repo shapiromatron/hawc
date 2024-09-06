@@ -44,12 +44,22 @@ class DataPivot {
     }
 
     static get_object(pk, callback) {
-        const url = `/summary/api/data_pivot/${pk}/`;
+        const url = `/summary/api/data_pivot/${pk}/`,
+            handleError = err => {
+                $("#loading_div").hide();
+                handleVisualError(err, $("#dp_display"));
+            };
 
         fetch(url, h.fetchGet)
             .then(d => d.json())
             .then(d => {
                 fetch(d.data_url, h.fetchGet)
+                    .then(resp => {
+                        if (!resp.ok) {
+                            throw Error(`Invalid server response: ${resp.status}`);
+                        }
+                        return resp;
+                    })
                     .then(d => d.text())
                     .then(data => d3.tsvParse(data))
                     .then(data => {
@@ -58,9 +68,9 @@ class DataPivot {
                             callback(dp);
                         }
                     })
-                    .catch(err => handleVisualError(err, null));
+                    .catch(handleError);
             })
-            .catch(err => handleVisualError(err, null));
+            .catch(handleError);
     }
 
     static displayAsModal(id) {

@@ -19,7 +19,14 @@ export default {
     startupReferenceTable(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             references = Reference.array(config.references, tagtree, false);
-        ReactDOM.render(<ReferenceTable references={references} showActions={false} />, el);
+        ReactDOM.render(
+            <ReferenceTable
+                references={references}
+                showActions={false}
+                tagUDFContents={config.tag_binding_contents}
+            />,
+            el
+        );
     },
     startupReferenceDetail(el, config) {
         let tagtree = new TagTree(config.tags[0]),
@@ -28,6 +35,7 @@ export default {
                 showActions: config.canEdit,
                 actionsBtnClassName: "btn-primary",
                 expanded: true,
+                tagUDFContents: config.tag_binding_contents,
             };
 
         ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);

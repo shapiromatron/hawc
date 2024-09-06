@@ -1,4 +1,8 @@
+from django.db.models import QuerySet
+from django_filters.filterset import FilterSet
+from django_filters.utils import translate_validation
 from rest_framework import exceptions, filters
+from rest_framework.request import Request
 
 from ..helper import try_parse_list_ints
 
@@ -30,3 +34,24 @@ class CleanupBulkIdFilter(filters.BaseFilterBackend):
                 raise exceptions.PermissionDenied()
 
         return queryset
+
+
+def filtered_qs(
+    queryset: QuerySet, filterset_cls: type[FilterSet], request: Request, **kw
+) -> QuerySet:
+    """
+    Filter a queryset based on a FilterSet and a DRF request.
+
+    This is a utility method to add filtering to custom ViewSet actions, it is adapted from the
+    `django_filters.rest_framework.FilterSet` used for standard ViewSet operations.
+
+    Args:
+        queryset (QuerySet): the queryset to filter
+        filterset_cls (type[filters.FilterSet]): a FilterSet class
+        request (Request): a rest framework request
+        **kw: any additional arguments provided to FilterSet class constructor
+    """
+    filterset = filterset_cls(data=request.query_params, queryset=queryset, request=request, **kw)
+    if not filterset.is_valid():
+        raise translate_validation(filterset.errors)
+    return filterset.qs

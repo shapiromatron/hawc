@@ -1,11 +1,10 @@
 import pandas as pd
 from django.db.models import CharField, F, Func, QuerySet, Value
 
-from hawc.apps.common.helper import FlatFileExporter
-from hawc.apps.riskofbias.models import RiskOfBiasScore
-
 from ..common.exports import Exporter, ModelExport
+from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
+from ..riskofbias.models import RiskOfBiasScore
 from ..study.exports import StudyExport
 from . import constants
 
