@@ -33,6 +33,7 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             section: "",
+            tag: NULL_VALUE,
         };
     },
     createBulletedListRow = function() {
@@ -49,6 +50,7 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             box: "",
+            tag: NULL_VALUE,
         };
     },
     createCardRow = function() {
@@ -65,16 +67,18 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             box: "",
+            tag: NULL_VALUE,
         };
     },
     createArrowRow = function() {
         return {
             key: h.randomString(),
-            source: "",
             dest: "",
             width: 0,
             type: 0,
             color: "",
+            source: NULL_VALUE,
+            destination: NULL_VALUE,
         };
     };
 
