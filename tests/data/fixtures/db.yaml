@@ -1398,6 +1398,54 @@
     deprecated_on: null
     created_on: 2020-08-12 14:10:38.555965+00:00
     last_updated: 2020-08-12 14:10:38.555990+00:00
+- model: vocab.term
+  pk: 7000
+  fields:
+    uid: 7000
+    namespace: 2
+    parent: null
+    type: 1
+    name: systemic
+    notes: ''
+    deprecated_on: null
+    created_on: 2024-06-27 13:35:52.679511-05
+    last_updated: 2024-06-27 13:35:52.679511-05
+- model: vocab.term
+  pk: 7001
+  fields:
+    uid: 7001
+    namespace: 2
+    parent: 7000
+    type: 3
+    name: pathology microscopic
+    notes: ''
+    deprecated_on: null
+    created_on: 2024-06-27 13:35:52.692058-05
+    last_updated: 2024-06-27 13:35:52.692058-05
+- model: vocab.term
+  pk: 7002
+  fields:
+    uid: 7002
+    namespace: 2
+    parent: 7001
+    type: 4
+    name: eye
+    notes: ''
+    deprecated_on: null
+    created_on: 2024-06-27 13:35:52.692058-05
+    last_updated: 2024-06-27 13:35:52.692058-05
+- model: vocab.term
+  pk: 7003
+  fields:
+    uid: 7003
+    namespace: 2
+    parent: 7002
+    type: 5
+    name: dysplasia
+    notes: ''
+    deprecated_on: null
+    created_on: 2024-06-27 13:35:52.692058-05
+    last_updated: 2024-06-27 13:35:52.692058-05
 - model: vocab.entity
   pk: 1
   fields:
