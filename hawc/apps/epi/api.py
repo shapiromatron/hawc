@@ -274,8 +274,8 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
         if dtxsid := request.data.get("dtxsid"):
             try:
                 DSSTox.objects.get(dtxsid=dtxsid)
-            except DSSTox.DoesNotExist:
-                raise ValidationError(f"{dtxsid} does not exist in HAWC")
+            except DSSTox.DoesNotExist as err:
+                raise ValidationError(f"{dtxsid} does not exist in HAWC") from err
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):

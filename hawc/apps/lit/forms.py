@@ -70,8 +70,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        for fld in ("keyword_list_1", "keyword_list_2", "keyword_list_3"):
-            self.fields[fld].widget.attrs["rows"] = 3
+        helper.set_textarea_height(("keyword_list_1", "keyword_list_2", "keyword_list_3"))
         helper.add_row("conflict_resolution", 2, "col-md-6")
         helper.add_row("name_list_1", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
         helper.add_row("name_list_2", 3, ["col-md-3 pr-3", "col-md-2 px-2", "col-md-7 pl-3"])
@@ -181,10 +180,10 @@ class ImportForm(SearchForm):
         try:
             # convert to a set, then a list to remove duplicate ids
             ids = list(set(int(el) for el in search_string.split(",")))
-        except ValueError:
+        except ValueError as err:
             raise forms.ValidationError(
                 "Must be a comma-separated list of positive integer identifiers"
-            )
+            ) from err
 
         if len(ids) == 0 or any([el < 0 for el in ids]):
             raise forms.ValidationError("At least one positive identifier must exist")
@@ -285,7 +284,7 @@ class RisImportForm(SearchForm):
             try:
                 self._references = ris.RisImporter(f).references
             except ValueError as err:
-                raise forms.ValidationError(str(err))
+                raise forms.ValidationError(str(err)) from err
 
         # ensure at least one reference exists
         if len(self._references) == 0:
@@ -462,11 +461,6 @@ class ReferenceForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if fld in ["title", "authors_short", "authors", "journal"]:
-                widget.attrs["rows"] = 3
-
         inputs = {
             "legend_text": "Update reference details",
             "help_text": "Update reference information which was fetched from database or reference upload.",
@@ -474,7 +468,7 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("title", "authors_short", "authors", "journal"))
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
         helper.add_row("doi_id", 3, "col-md-4")
@@ -548,8 +542,6 @@ class WorkflowForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
 
-        self.fields["description"].widget.attrs["rows"] = 2
-
         tags = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment.id)
         for field in ["admission_tags", "removal_tags"]:
             self.fields[field].queryset = tags
@@ -570,6 +562,7 @@ class WorkflowForm(forms.ModelForm):
     @property
     def helper(self):
         helper = BaseFormHelper(self)
+        helper.set_textarea_height(("description",), 2)
         helper.form_tag = False
         helper.layout = cfl.Layout(
             cfl.Row(
@@ -670,7 +663,7 @@ class ReferenceExcelUploadForm(forms.Form):
             df = pd.read_excel(fn.file)
         except Exception as e:
             logger.warning(e)
-            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR) from e
 
         # check column names
         if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
@@ -678,8 +671,8 @@ class ReferenceExcelUploadForm(forms.Form):
 
         try:
             hawc_ids = df["HAWC ID"].astype(int).tolist()
-        except pd.errors.IntCastingNaNError:
-            raise forms.ValidationError("HAWC IDs must be integers.")
+        except pd.errors.IntCastingNaNError as err:
+            raise forms.ValidationError("HAWC IDs must be integers.") from err
 
         # check valid HAWC IDs
         qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)

@@ -1,3 +1,4 @@
+import pandas as pd
 from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import exceptions, mixins, status, viewsets
@@ -16,12 +17,13 @@ class VocabTermViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
     lookup_value_regex = re_digits
-    name = None
-    namespace = None
-    dataframe = None
+    filename: str = ""
+    namespace: constants.VocabularyNamespace
 
     def get_queryset(self) -> QuerySet:
         return models.Term.objects.filter(namespace=self.namespace, deprecated_on__isnull=True)
+
+    def get_df(self) -> pd.DataFrame: ...
 
     def filter_qs(self, request: Request, type: constants.VocabularyTermType) -> QuerySet:
         term: str | None = request.query_params.get("term")
@@ -36,8 +38,7 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
     def nested(self, request: Request):
-        df = self.dataframe
-        return FlatExport.api_response(df=df, filename=self.name)
+        return FlatExport.api_response(df=self.get_df(), filename=self.filename)
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
@@ -78,8 +79,8 @@ class VocabTermViewSet(viewsets.GenericViewSet):
                 namespace=self.namespace,
                 deprecated_on__isnull=True,
             )
-        except models.Term.DoesNotExist:
-            raise exceptions.NotFound()
+        except models.Term.DoesNotExist as err:
+            raise exceptions.NotFound() from err
         return Response(term.vocab_endpoint_name())
 
     @action(detail=True, methods=("post",), url_path="related-entity")
@@ -94,15 +95,19 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 
 
 class EhvTermViewSet(VocabTermViewSet):
-    name = "ehv"
+    filename = "ehv"
     namespace = constants.VocabularyNamespace.EHV
-    dataframe = models.Term.ehv_dataframe()
+
+    def get_df(self) -> pd.DataFrame:
+        return models.Term.ehv_dataframe()
 
 
-class ToxrefTermViewSet(VocabTermViewSet):
-    name = "toxref"
-    namespace = constants.VocabularyNamespace.ToxRef
-    dataframe = models.Term.toxref_dataframe()
+class ToxRefDBTermViewSet(VocabTermViewSet):
+    filename = "toxrefdb"
+    namespace = constants.VocabularyNamespace.ToxRefDB
+
+    def get_df(self) -> pd.DataFrame:
+        return models.Term.toxrefdb_dataframe()
 
 
 class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

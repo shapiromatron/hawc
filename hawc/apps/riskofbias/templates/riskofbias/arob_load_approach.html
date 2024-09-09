@@ -3,12 +3,12 @@
 {% block content %}
   {% crispy form %}
   <div id='extra_content' class="hidden">
-    <div class="alert alert-warning">
+    {% alert type="warning" %}
       <h4>Warning!</h4>
       <p>Loading this approach will delete all {{assessment.get_rob_name_display|lower}}
         information currently saved in this assessment. This includes all domains and metrics
         which currently exist, as well as any completed evaluations for studies already assessed.</p>
-    </div>
+    {% endalert %}
   </div>
   <div id="detail_display" class="hidden"></div>
   <div id="detail_library" class="hidden">

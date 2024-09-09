@@ -12,7 +12,7 @@
   <ul class="list-unstyled">
     {% for object in object_list %}
       <li>
-        <span class="badge badge-primary">Depth {{ object.depth}}</span>&ensp;{{object.nested_text}}&ensp;<span class="badge badge-secondary">{{object.id}}</span>
+        <span class="badge badge-primary">Depth {{ object.depth}}</span>&ensp;{{object.nested_text}}{% if object.deprecated_on %}&ensp;<span class="badge badge-warning" title="{{object.deprecated_on|date:"d M Y"}}">Deprecated</span>{% endif %}&ensp;<span class="badge badge-secondary">{{object.id}}</span>
       </li>
     {% empty %}
       <li>No terms found!</li>

@@ -45,11 +45,6 @@ class IVChemicalForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -64,7 +59,7 @@ class IVChemicalForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("cas", 2, "col-md-6")
         helper.add_row("cas_inferred", 2, "col-md-6")
         helper.add_row("source", 3, "col-md-4")
@@ -127,11 +122,6 @@ class IVCellTypeForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -146,7 +136,7 @@ class IVCellTypeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("species", 3, "col-md-4")
         helper.add_row("cell_type", 2, "col-md-6")
         helper.add_row("tissue", 2, "col-md-6")
@@ -204,11 +194,6 @@ class IVExperimentForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -223,7 +208,7 @@ class IVExperimentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("transfection", 2, "col-md-6")
         helper.add_row("dosing_notes", 2, "col-md-6")
@@ -320,17 +305,12 @@ class IVEndpointForm(forms.ModelForm):
         data = self.cleaned_data["additional_fields"]
         try:
             json.loads(data)
-        except ValueError:
-            raise forms.ValidationError("Must be valid JSON.")
+        except ValueError as err:
+            raise forms.ValidationError("Must be valid JSON.") from err
         return data
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -345,7 +325,7 @@ class IVEndpointForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("chemical", 2, "col-md-6")
         helper.add_row("assay_type", 2, "col-md-6")

@@ -1,4 +1,4 @@
-<tr hx-target="this" hx-swap="outerHTML">
+<tr hx-target="this" hx-swap="outerHTML" class="attachment-detail-row">
   <td>
     <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
     {% if canEdit or permissions.edit %}
@@ -10,17 +10,19 @@
   <td>{{object.description|safe}}</td>
   {% if action == 'delete' %}
     <td>
-      <form class="alert alert-danger">
-        {% csrf_token %}
-        <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
-        <div class="d-flex">
-          <button class="btn btn-sm btn-danger"
-                  hx-post="{{ object.get_delete_url }}"
-                  hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
-          <button class="btn btn-sm btn-light ml-2"
-                  hx-get="{{ object.get_absolute_url }}">Cancel</button>
-        </div>
-      </form>
+      {% alert %}
+        <form>
+          {% csrf_token %}
+          <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
+          <div class="d-flex">
+            <button class="btn btn-sm btn-danger"
+                    hx-post="{{ object.get_delete_url }}"
+                    hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+            <button class="btn btn-sm btn-light ml-2"
+                    hx-get="{{ object.get_absolute_url }}">Cancel</button>
+          </div>
+        </form>
+      {% endalert %}
     </td>
   {% elif canEdit or permissions.edit %}
     <td>

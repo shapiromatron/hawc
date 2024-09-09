@@ -49,6 +49,18 @@ class TestAssessmentViewSet:
         )
         self._test_flat_export(rewrite_data_files, fn, url)
 
+    def test_export_study_filter(self, db_keys):
+        url = (
+            reverse("animal:api:assessment-full-export", args=(db_keys.assessment_final,))
+            + "?format=json?"
+        )
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        resp = client.get(url, data={"study_ids": 7}, format="application/json")
+        assert len(resp.json()) == 25
+        resp = client.get(url, data={"study_ids": 6}, format="application/json")
+        assert len(resp.json()) == 0
+
     def test_missing_dosing_regime(self, rewrite_data_files: bool, db_keys):
         # create an animal group/endpoint with no dosing regime and make sure the export doesn't cause a 500 error
         fn = "api-animal-assessment-full-export-missing-dr.json"

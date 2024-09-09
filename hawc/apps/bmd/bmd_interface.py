@@ -37,7 +37,7 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
         raise ValueError(f"Cannot create BMDS dataset for this data type: {endpoint.data_type}")
 
     # drop doses from the top
-    for i in range(n_drop_doses):
+    for _i in range(n_drop_doses):
         [lst.pop() for lst in kwargs.values()]
 
     return Cls(**kwargs)

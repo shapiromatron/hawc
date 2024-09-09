@@ -11,32 +11,35 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - python-requests/2.31.0
+      - python-requests/2.32.3
       x-api-key:
       - <omitted>
     method: GET
     uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID123456789
   response:
     body:
-      string: "{\n  \"title\" : \"Not found \",\n  \"status\" : 404,\n  \"detail\"
-        : \"dtxsid with value DTXSID123456789 not found.\"\n}"
+      string: "{\n  \"type\" : \"about:blank\",\n  \"title\" : \"Bad Request\",\n
+        \ \"status\" : 400,\n  \"detail\" : \"dtxsid with value DTXSID123456789 not
+        found.\",\n  \"instance\" : \"/chemical/detail/search/by-dtxsid/DTXSID123456789\"\n}"
     headers:
+      Cache-Control:
+      - max-age=0, must-revalidate, no-transform
       Connection:
       - keep-alive
       Content-Type:
       - application/problem+json
       Date:
-      - Tue, 20 Feb 2024 16:42:06 GMT
+      - Tue, 03 Sep 2024 20:50:08 GMT
       Strict-Transport-Security:
       - max-age=31536000
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 e5bd532dbdee524acdf00690205f3b5a.cloudfront.net (CloudFront)
+      - 1.1 88b63cb2f8aab28c7291262ffc15282e.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - kyZt868Rilh9oKgLEPVNb6I6HbH_-5UhsyWkMjtRSUiHlCQx_EU4PA==
+      - zITufJi9d_sK9V-uxUTU4gIqdyJwufV_Lfde2ynfDwywcRVhQTVwag==
       X-Amz-Cf-Pop:
-      - EWR53-P1
+      - IAD89-C1
       X-Cache:
       - Error from cloudfront
       X-Content-Type-Options:
@@ -44,10 +47,10 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Vcap-Request-Id:
-      - 4a2bca0e-8c25-492c-7afa-34e11b0ca2d6
-      X-XSS-Protection:
+      - 52352f2b-eb93-474c-5057-12e41675ffcc
+      X-Xss-Protection:
       - 1; mode=block
     status:
-      code: 404
-      message: Not Found
+      code: 400
+      message: Bad Request
 version: 1

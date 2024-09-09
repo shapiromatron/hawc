@@ -44,10 +44,6 @@
 .unstyled-action-button {
     color: var(--epa-primary);
 }
-/* override environment banner position */
-.env-banner {
-    margin: 0 10% 0 70%;
-}
 
 /* Sidebar  */
 .sidebar {

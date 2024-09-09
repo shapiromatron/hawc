@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 # First-group is rest of reference; second-group are initials
 # with optional second initial (middle-name) with optional periods
@@ -40,3 +41,11 @@ def get_author_short_text(authors: list[str]) -> str:
         return "{}, {}, and {}".format(*authors)
     else:  # >3 authors
         return f"{authors[0]} et al."
+
+
+def get_first(d: dict, keys: list[str], default: Any = None) -> Any:
+    # return the first matching key in a dictionary, else the default
+    for key in keys:
+        if key in d:
+            return d[key]
+    return default

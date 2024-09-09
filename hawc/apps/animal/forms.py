@@ -53,12 +53,6 @@ class ExperimentForm(ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -484,19 +478,9 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
         helper.form_id = "endpoint"
-
-        self.fields["diagnostic"].widget.attrs["rows"] = 2
-        for fld in ("results_notes", "endpoint_notes", "power_notes"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
+        helper.set_textarea_height(("diagnostic",), 2)
+        helper.set_textarea_height(("results_notes", "endpoint_notes", "power_notes"), 3)
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"),
             cfl.Div(id="vocab"),

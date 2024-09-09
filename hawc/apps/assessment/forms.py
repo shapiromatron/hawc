@@ -11,10 +11,7 @@ from django.db import transaction
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
-from hawc.apps.assessment import constants
-from hawc.apps.study.models import Study
-from hawc.services.epa.dsstox import DssSubstance
-
+from ...services.epa.dsstox import DssSubstance
 from ..common.auth.turnstile import Turnstile
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
@@ -26,7 +23,8 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
-from . import autocomplete, models
+from ..study.models import Study
+from . import autocomplete, constants, models
 
 
 class AssessmentForm(forms.ModelForm):
@@ -155,7 +153,6 @@ class AssessmentDetailForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["extra"].widget.attrs["rows"] = 3
         cancel_url = (
             self.instance.get_absolute_url()
             if self.instance.id
@@ -164,6 +161,7 @@ class AssessmentDetailForm(forms.ModelForm):
         helper = BaseFormHelper(
             self, legend_text=self.LEGEND, help_text=self.HELP_TEXT, cancel_url=cancel_url
         )
+        helper.set_textarea_height(("extra",), 3)
         helper.add_row("project_type", 3, "col-md-4")
         helper.add_row("peer_review_status", 3, "col-md-4")
         helper.add_row("report_id", 3, "col-md-4")
@@ -240,9 +238,6 @@ class AssessmentValueForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["comments", "basis", "extra"]:
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(
                 self,
@@ -258,6 +253,8 @@ class AssessmentValueForm(forms.ModelForm):
                 help_text=self.CREATE_HELP_TEXT,
                 cancel_url=self.instance.assessment.get_absolute_url(),
             )
+
+        helper.set_textarea_height(("comments", "basis", "extra"), 3)
         helper.add_row("evaluation_type", 2, "col-md-6")
         helper.add_row("value_type", 4, "col-md-3")
         helper.add_row("confidence", 3, "col-md-4")
@@ -299,7 +296,6 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_bmd",
             "enable_summary_tables",
             "enable_visuals",
-            "enable_summary_text",
             "enable_downloads",
             "noel_name",
             "rob_name",
@@ -331,7 +327,7 @@ class AssessmentModulesForm(forms.ModelForm):
         )
         helper.add_row("enable_literature_review", 3, "col-lg-4")
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
-        helper.add_row("enable_visuals", 3, "col-lg-4")
+        helper.add_row("enable_visuals", 2, "col-lg-6")
         helper.add_row("noel_name", 3, "col-lg-4")
         helper.add_row("epi_version", 1, "col-lg-4")
         return helper

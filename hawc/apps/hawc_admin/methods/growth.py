@@ -5,13 +5,12 @@ from django.db.models import Count
 from django.db.models.functions import Trunc
 from plotly.graph_objs._figure import Figure
 
-from hawc.apps.animal.models import Endpoint
-from hawc.apps.assessment.models import Assessment
-from hawc.apps.lit.models import Reference
-from hawc.apps.myuser.models import HAWCUser
-from hawc.apps.study.models import Study
-from hawc.apps.summary.models import Visual
-
+from ...animal.models import Endpoint
+from ...assessment.models import Assessment
+from ...lit.models import Reference
+from ...myuser.models import HAWCUser
+from ...study.models import Study
+from ...summary.models import Visual
 from .constants import DurationGrouper, GrowthModels
 
 

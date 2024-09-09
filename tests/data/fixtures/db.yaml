@@ -529,10 +529,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: summarytext
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
     model: visual
 - model: contenttypes.contenttype
   fields:
@@ -594,6 +590,14 @@
   fields:
     app_label: docs
     model: documentationpagetag
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: workflow
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: tagudfcontent
 - model: auth.permission
   fields:
     name: Can access Wagtail admin
@@ -1025,7 +1029,6 @@
     - wagtailcore
     - page
     object_id: '3'
-    submitted_for_moderation: false
     created_at: 2023-11-22 14:56:19.464008+00:00
     user:
     - admin@hawcproject.org
@@ -1075,7 +1078,6 @@
     - wagtailcore
     - page
     object_id: '4'
-    submitted_for_moderation: false
     created_at: 2023-11-22 14:57:48.850356+00:00
     user:
     - admin@hawcproject.org
@@ -1124,7 +1126,6 @@
     - wagtailcore
     - page
     object_id: '5'
-    submitted_for_moderation: false
     created_at: 2023-11-22 14:58:09.626465+00:00
     user:
     - admin@hawcproject.org
@@ -1173,7 +1174,6 @@
     - add_page
     - wagtailcore
     - page
-    permission_type: add
 - model: wagtailcore.grouppagepermission
   pk: 2
   fields:
@@ -1184,7 +1184,6 @@
     - change_page
     - wagtailcore
     - page
-    permission_type: change
 - model: wagtailcore.grouppagepermission
   pk: 3
   fields:
@@ -1195,7 +1194,6 @@
     - publish_page
     - wagtailcore
     - page
-    permission_type: publish
 - model: wagtailcore.grouppagepermission
   pk: 4
   fields:
@@ -1206,7 +1204,6 @@
     - add_page
     - wagtailcore
     - page
-    permission_type: add
 - model: wagtailcore.grouppagepermission
   pk: 5
   fields:
@@ -1217,7 +1214,6 @@
     - change_page
     - wagtailcore
     - page
-    permission_type: change
 - model: wagtailcore.grouppagepermission
   pk: 6
   fields:
@@ -1228,7 +1224,6 @@
     - lock_page
     - wagtailcore
     - page
-    permission_type: lock
 - model: wagtailcore.grouppagepermission
   pk: 7
   fields:
@@ -1239,7 +1234,6 @@
     - unlock_page
     - wagtailcore
     - page
-    permission_type: unlock
 - model: wagtailcore.pageviewrestriction
   pk: 1
   fields:
@@ -1475,64 +1469,36 @@
   pk: DTXSID6026296
   fields:
     content:
+      id: FD70373DEB12FD6675FDFD64FDFDFD0E3AFD53FD74784AFD5AFD1136FD
       casrn: 7732-18-5
       dtxcid: DTXCID106296
       dtxsid: DTXSID6026296
       smiles: O
-      infoMsg: null
-      synGsid: 26296
-      synType: DSSTox_Substance_Id
-      checksum: NA
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
-      molWeight: 18.015
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
-      molFormula: H2O
-      warningMsg: null
-      processedAs: LOOKUP
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
-      collidingGsid: null
-      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      inchikey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      iupacName: Water
       preferredName: Water
-      synIdentifier: DTXSID6026296
-      collidingCasrn: null
-      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      origIdentifier: DTXSID6026296
-      trimmedWhitespace: false
-      trimmedLeadingZeros: false
-      reformattedIdentifier: false
-      collidingPreferredName: null
+      compoundId: 6296
+      molFormula: H2O
+      pubchemCid: 962
+      inchiString: 'InChI=1S/H2O/h1H2'
     created: 2020-08-12 19:34:12.687630+00:00
     last_updated: 2020-08-12 19:34:12.687630+00:00
 - model: assessment.dsstox
   pk: DTXSID7020970
   fields:
     content:
+      id: FDFD541B510CFD2C5064FD1FFDFD06FD40FD111324FDFD7D29FD0F74FD4EFD
       casrn: 1836-75-5
       dtxcid: DTXCID30970
       dtxsid: DTXSID7020970
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
-      infoMsg: null
-      synGsid: 20970
-      synType: DSSTox_Substance_Id
-      checksum: NA
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
-      molWeight: 284.09
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
-      molFormula: C12H7Cl2NO3
-      warningMsg: null
-      processedAs: LOOKUP
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
-      collidingGsid: null
-      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      inchikey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      iupacName: 2,4-Dichloro-1-(4-nitrophenoxy)benzene
       preferredName: Nitrofen
-      synIdentifier: DTXSID7020970
-      collidingCasrn: null
-      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      origIdentifier: DTXSID7020970
-      trimmedWhitespace: false
-      trimmedLeadingZeros: false
-      reformattedIdentifier: false
-      collidingPreferredName: null
+      compoundId: 970
+      molFormula: C12H7Cl2NO3
+      pubchemCid: 15787
+      inchiString: 'InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H'
     created: 2020-08-12 19:45:56.718230+00:00
     last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
@@ -1556,7 +1522,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -1598,7 +1563,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: ''
@@ -1638,7 +1602,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: false
     enable_downloads: true
     conflicts_of_interest: <p>The authors report no conflicts of interest.</p>
     funding_source: 'US EPA'
@@ -1678,7 +1641,6 @@
     enable_bmd: true
     enable_summary_tables: true
     enable_visuals: true
-    enable_summary_text: true
     enable_downloads: true
     conflicts_of_interest: ''
     funding_source: ''
@@ -2779,6 +2741,14 @@
     numchild: 0
     name: Tier III Demo
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 40
+  fields:
+    path: '99990001'
+    depth: 2
+    numchild: 0
+    name: Orphan
+    slug: orphan
 - model: lit.referencetags
   pk: 2
   fields:
@@ -2804,6 +2774,11 @@
   fields:
     tag: 33
     content_object: 11
+- model: lit.referencetags
+  pk: 7
+  fields:
+    tag: 33
+    content_object: 13
 - model: lit.reference
   pk: 1
   fields:
@@ -3180,11 +3155,20 @@
     - 2
     identifiers:
     - 9
-- model: lit.userreferencetags
-  pk: 1
+- model: lit.reference
+  pk: 13
   fields:
-    tag: 33
-    content_object: 1
+    assessment: 4
+    title: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
+    year: 2024
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2024-06-14 14:23:16.370427+00:00
+    last_updated: 2024-06-14 20:14:41.479008+00:00
+    block_id: null
 - model: lit.userreferencetags
   pk: 2
   fields:
@@ -3236,6 +3220,61 @@
     is_resolved: false
     created: 2022-10-27 21:37:16.158160+00:00
     last_updated: 2022-10-27 21:40:28.356071+00:00
+- model: lit.workflowadmissiontags
+  pk: 2
+  fields:
+    tag: 23
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 4
+  fields:
+    tag: 24
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 5
+  fields:
+    tag: 25
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 6
+  fields:
+    tag: 26
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 7
+  fields:
+    tag: 27
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 8
+  fields:
+    tag: 28
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 9
+  fields:
+    tag: 29
+    content_object: 1
+- model: lit.workflowremovaltags
+  pk: 10
+  fields:
+    tag: 30
+    content_object: 1
+- model: lit.workflow
+  pk: 1
+  fields:
+    assessment: 2
+    title: Test Workflow
+    description: References that have been tagged for inclusion and are ready for
+      more specific tagging.
+    link_tagging: true
+    link_conflict_resolution: true
+    admission_tags_descendants: false
+    removal_tags_descendants: false
+    created: 2024-06-24 20:30:11.688206+00:00
+    last_updated: 2024-06-24 20:30:32.920691+00:00
+    admission_source: []
+    removal_source: []
 - model: study.study
   pk: 1
   fields:
@@ -9725,126 +9764,6 @@
     notes: ''
     adjustment_factors:
     - 1
-- model: summary.summarytext
-  pk: 1
-  fields:
-    path: '0001'
-    depth: 1
-    numchild: 2
-    assessment: 2
-    title: assessment-2
-    slug: assessment-2-slug
-    text: Root-level text
-    created: 2020-02-27 20:35:25.660031+00:00
-    last_updated: 2020-02-27 20:35:25.660075+00:00
-- model: summary.summarytext
-  pk: 2
-  fields:
-    path: '0002'
-    depth: 1
-    numchild: 0
-    assessment: 1
-    title: assessment-1
-    slug: assessment-1-slug
-    text: Root-level text
-    created: 2020-02-27 20:35:25.667126+00:00
-    last_updated: 2020-02-27 20:35:25.667163+00:00
-- model: summary.summarytext
-  pk: 3
-  fields:
-    path: '0003'
-    depth: 1
-    numchild: 0
-    assessment: 3
-    title: assessment-3
-    slug: assessment-3-slug
-    text: Root-level text
-    created: 2020-04-10 17:45:45.143229+00:00
-    last_updated: 2020-04-10 17:45:45.143229+00:00
-- model: summary.summarytext
-  pk: 4
-  fields:
-    path: '00010001'
-    depth: 2
-    numchild: 2
-    assessment: 2
-    title: '1'
-    slug: '1'
-    text: <p>Level 1 text.</p>
-    created: 2020-11-25 20:22:28.807081+00:00
-    last_updated: 2020-11-25 20:23:38.366594+00:00
-- model: summary.summarytext
-  pk: 5
-  fields:
-    path: '00010003'
-    depth: 2
-    numchild: 0
-    assessment: 2
-    title: '2'
-    slug: '2'
-    text: <p>Level 2 text.</p>
-    created: 2020-11-25 20:22:42.083087+00:00
-    last_updated: 2020-11-25 20:23:43.154300+00:00
-- model: summary.summarytext
-  pk: 6
-  fields:
-    path: '000100010001'
-    depth: 3
-    numchild: 0
-    assessment: 2
-    title: 1a
-    slug: 1a
-    text: <p>Level 1A text.</p>
-    created: 2020-11-25 20:24:01.021842+00:00
-    last_updated: 2020-11-25 20:24:01.021887+00:00
-- model: summary.summarytext
-  pk: 7
-  fields:
-    path: '000100010002'
-    depth: 3
-    numchild: 2
-    assessment: 2
-    title: 1b
-    slug: 1b
-    text: <p>Level 1B text.</p>
-    created: 2020-11-25 20:24:16.857811+00:00
-    last_updated: 2020-11-25 20:24:23.483729+00:00
-- model: summary.summarytext
-  pk: 8
-  fields:
-    path: '0001000100020001'
-    depth: 4
-    numchild: 0
-    assessment: 2
-    title: 1-B-alpha
-    slug: 1-B-alpha
-    text: <p>Level 1-B-alpha text.</p>
-    created: 2020-11-25 20:25:04.079740+00:00
-    last_updated: 2020-11-25 20:25:04.079763+00:00
-- model: summary.summarytext
-  pk: 9
-  fields:
-    path: '0001000100020002'
-    depth: 4
-    numchild: 0
-    assessment: 2
-    title: 1-B-beta
-    slug: 1-B-beta
-    text: <p>Level 1-B-beta text.</p>
-    created: 2020-11-25 20:25:37.723914+00:00
-    last_updated: 2020-11-25 20:25:37.723938+00:00
-- model: summary.summarytext
-  pk: 10
-  fields:
-    path: '0004'
-    depth: 1
-    numchild: 0
-    assessment: 4
-    title: assessment-4
-    slug: assessment-4-slug
-    text: Root-level text
-    created: 2022-10-27 21:02:29.800145+00:00
-    last_updated: 2022-10-27 21:02:29.800198+00:00
 - model: summary.summarytable
   pk: 1
   fields:
@@ -10148,10 +10067,9 @@
     prefilters:
       studies:
       - 1
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17,"sort_order":"short_citation"}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:32:30.901597+00:00
     last_updated: 2020-02-27 20:33:06.585979+00:00
     endpoints: []
@@ -10170,7 +10088,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}
     caption: ''
     published: false
-    sort_order: short_citation
     created: 2020-02-27 20:34:17.606164+00:00
     last_updated: 2020-02-27 20:34:17.606186+00:00
     endpoints: []
@@ -10186,10 +10103,9 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30,"sort_order":"short_citation"}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:35:41.634588+00:00
     last_updated: 2020-05-08 19:36:41.324440+00:00
     endpoints: []
@@ -10209,7 +10125,6 @@
       filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}
     caption: <p>example</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:19.255703+00:00
     last_updated: 2020-05-08 19:37:19.255730+00:00
     endpoints: []
@@ -10228,7 +10143,6 @@
     settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:37:44.283008+00:00
     last_updated: 2020-05-08 19:38:48.445082+00:00
     endpoints: []
@@ -10245,7 +10159,6 @@
     settings: {"root_node": 11, "required_tags": [], "pruned_tags": [], "hide_empty_tag_nodes": false, "height": 500, "width": 1280, "show_legend": true, "show_counts": true}
     caption: <p>caption</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:43:09.448597+00:00
     last_updated: 2020-05-08 19:43:09.448621+00:00
     endpoints: []
@@ -10265,7 +10178,6 @@
       ":embed=y"], "filters": []}
     caption: <p>iris (flowers)</p>
     published: true
-    sort_order: short_citation
     created: 2020-05-08 19:45:29.985823+00:00
     last_updated: 2020-05-08 19:45:29.985848+00:00
     endpoints: []
@@ -10282,7 +10194,6 @@
     settings: {"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_counts": 1, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic":"and"}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 14:25:27.528283+00:00
     last_updated: 2020-11-25 14:29:33.991892+00:00
     endpoints: []
@@ -10299,7 +10210,6 @@
     settings: {"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2023-05-19 14:25:27.528283+00:00
     last_updated: 2023-05-19 14:25:27.528283+00:00
     endpoints: []
@@ -10316,7 +10226,6 @@
     settings: {}
     caption: ''
     published: true
-    sort_order: short_citation
     created: 2020-11-25 18:32:07.260499+00:00
     last_updated: 2020-11-25 18:35:00.094667+00:00
     endpoints:
@@ -10333,7 +10242,7 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}
+    settings: {"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16,"sort_order":"short_citation"}
     caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
       an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
       a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
@@ -10345,7 +10254,6 @@
       class="smart-tag active" data-pk="2" data-type="data_pivot">This is an inline
       data pivot.</div>
     published: true
-    sort_order: short_citation
     created: 2020-11-26 03:21:03.883675+00:00
     last_updated: 2020-11-26 03:25:56.660522+00:00
     endpoints: []
@@ -10365,7 +10273,6 @@
     caption: Hello caption.
     image: "summary/visual/images/iris.png"
     published: true
-    sort_order: short_citation
     created: 2023-11-15 14:25:27.528283+00:00
     last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
@@ -11187,14 +11094,14 @@
 - model: udf.TagBinding
   pk: 1
   fields:
-    assessment: 1
-    tag: 2
+    assessment: 4
+    tag: 32
     form: 1
     creator:
     - pm@hawcproject.org
     created: 2023-09-17 04:10:29.880052+00:00
     last_updated: 2023-09-17 04:15:33.309627+00:00
-- model: udf.modeludfcontent
+- model: udf.ModelUDFContent
   pk: 1
   fields:
     model_binding: 1
@@ -11207,6 +11114,16 @@
       field2: 123
     created: 2024-03-12 15:19:07.533314+00:00
     last_updated: 2024-03-12 15:19:07.533329+00:00
+- model: udf.TagUDFContent
+  pk: 1
+  fields:
+    reference: 13
+    tag_binding: 1
+    content:
+      field1: testing
+      field2: 321
+    created: 2024-05-08 12:21:07.533314+00:00
+    last_updated:  2024-05-08 12:21:07.533314+00:00
 - model: reversion.revision
   pk: 1
   fields:

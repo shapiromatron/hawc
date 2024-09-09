@@ -6,8 +6,8 @@ from subprocess import CalledProcessError
 
 from django.urls import reverse_lazy
 
-from hawc.constants import AuthProvider, FeatureFlags
-from hawc.services.utils.git import Commit
+from ...constants import AuthProvider, FeatureFlags
+from ...services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -87,6 +87,7 @@ MIDDLEWARE = (
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
+    "hawc.apps.common.middleware.ThreadLocalMiddleware",
 )
 
 # Install applications
@@ -328,6 +329,9 @@ PUBMED_MAX_QUERY_SIZE = 10000
 
 # CCTE API key
 CCTE_API_KEY = os.getenv("CCTE_API_KEY")
+
+# HERO API key
+HERO_API_KEY = os.getenv("HERO_API_KEY")
 
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

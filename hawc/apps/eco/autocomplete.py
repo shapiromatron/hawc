@@ -26,13 +26,20 @@ class EcoregionAutocomplete(BaseAutocomplete):
     search_fields = ["value"]
 
     def get_queryset(self):
-        return super().get_queryset().filter(category=constants.VocabCategories.ECOREGION)
+        return (
+            super()
+            .get_queryset()
+            .filter(category=constants.VocabCategories.ECOREGION, deprecated_on__isnull=True)
+        )
 
 
 @register
 class NestedTermAutocomplete(BaseAutocomplete):
     model = models.NestedTerm
     search_fields = ("id", "name")
+
+    def get_queryset(self):
+        return super().get_queryset().filter(deprecated_on__isnull=True)
 
     def get_result_label(self, obj):
         return f"{obj.label()} ({obj.id})"
