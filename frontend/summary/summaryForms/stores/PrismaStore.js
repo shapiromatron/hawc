@@ -4,8 +4,6 @@ import {deleteArrayElement} from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-import defaultSettings from "../prisma/PrismaDefaultSettings";
-
 const createSectionRow = function() {
         return {
             key: h.randomString(),
@@ -35,6 +33,7 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             section: "",
+            tag: NULL_VALUE,
         };
     },
     createBulletedListRow = function() {
@@ -51,6 +50,7 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             box: "",
+            tag: NULL_VALUE,
         };
     },
     createCardRow = function() {
@@ -67,27 +67,37 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             box: "",
+            tag: NULL_VALUE,
         };
     },
     createArrowRow = function() {
         return {
             key: h.randomString(),
-            source: "",
             dest: "",
             width: 0,
             type: 0,
             color: "",
+            source: NULL_VALUE,
+            destination: NULL_VALUE,
         };
     };
 
 class PrismaStore {
-    constructor(rootStore) {
+    constructor(rootStore, data) {
         this.root = rootStore;
+        this.data = data;
     }
     @observable settings = null;
 
     getDefaultSettings() {
-        return defaultSettings;
+        return {
+            title: "Prisma Visual",
+            sections: [],
+            boxes: [],
+            bulleted_lists: [],
+            cards: [],
+            arrows: [],
+        };
     }
 
     @action.bound changeSettings(path, value) {
@@ -128,9 +138,14 @@ class PrismaStore {
         this.settings.arrows.push(createArrowRow());
     }
 
-    @action.bound getTagOptions() {
-        // TODO: get tag options from assessment
-        return [{id: 1, label: "test"}];
+    @action.bound getFilterOptions() {
+        const tag_options = this.data.tags.map(tag => {
+                return {id: "tag_" + tag.id, label: `TAG | ${tag.nested_name}`};
+            }),
+            search_options = this.data.searches.map(search => {
+                return {id: "search_" + search.id, label: `SEARCH/IMPORT | ${search.title}`};
+            });
+        return _.flatten([{id: NULL_VALUE, label: NULL_VALUE}, tag_options, search_options]);
     }
 
     @action.bound getArrowOptions() {

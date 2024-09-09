@@ -12,7 +12,7 @@ class ExploratoryHeatmap {
 class Prisma {
     constructor(config) {
         this.base = new BaseStore(this, config);
-        this.subclass = new PrismaStore(this);
+        this.subclass = new PrismaStore(this, config.prisma_data);
     }
 }
 
