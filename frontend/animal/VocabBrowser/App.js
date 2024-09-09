@@ -2,6 +2,7 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import Alert from "shared/components/Alert";
 
 import EhvTable from "./EhvBrowser/Table";
 import ToxRefDBTable from "./ToxRefDBBrowser/Table";
@@ -22,23 +23,23 @@ class App extends Component {
     render() {
         const tables = {ehv: EhvTable, toxrefdb: ToxRefDBTable},
             Table = tables[this.props.store.config.vocab];
-
+        if (_.isUndefined(Table)) {
+            return <Alert message={"ERROR - unknown vocabulary"} />;
+        }
         return (
-            <>
-                <div className="input-group">
-                    <input
-                        id="searchQuery"
-                        className="form-control"
-                        type="text"
-                        value={this.state.query}
-                        onChange={e => {
-                            this.setState({query: e.target.value});
-                            this.updateQuery();
-                        }}
-                    />
-                </div>
-                {_.isUndefined(Table) ? <p>ERROR - unknown vocabulary</p> : <Table />}
-            </>
+            <div className="input-group">
+                <input
+                    id="searchQuery"
+                    className="form-control"
+                    type="text"
+                    value={this.state.query}
+                    onChange={e => {
+                        this.setState({query: e.target.value});
+                        this.updateQuery();
+                    }}
+                />
+                <Table />
+            </div>
         );
     }
 }
