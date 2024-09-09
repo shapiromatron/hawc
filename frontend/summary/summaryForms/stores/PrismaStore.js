@@ -79,9 +79,9 @@ const createSectionRow = function() {
     };
 
 class PrismaStore {
-    constructor(rootStore, count_data) {
+    constructor(rootStore, data) {
         this.root = rootStore;
-        this.count_data = count_data;
+        this.data = data;
     }
     @observable settings = null;
 
@@ -134,16 +134,14 @@ class PrismaStore {
         this.settings.arrows.push(createArrowRow());
     }
 
-    @action.bound getCountOptions() {
-        const tag_options = this.count_data.tags.map(tag => {
-            return {id: "tag_" + tag.id, label: "TAG | " + tag.nested_name};
-        });
-        const search_options = this.count_data.searches.map(search => {
-            return {id: "search_" + search.id, label: "IMPORT | " + search.title};
-        });
-        const options = Object.assign([], tag_options, search_options);
-        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
-        return options;
+    @action.bound getFilterOptions() {
+        const tag_options = this.data.tags.map(tag => {
+                return {id: "tag_" + tag.id, label: `TAG | ${tag.nested_name}`};
+            }),
+            search_options = this.data.searches.map(search => {
+                return {id: "search_" + search.id, label: `SEARCH/IMPORT | ${search.title}`};
+            });
+        return _.flatten([{id: NULL_VALUE, label: NULL_VALUE}, tag_options, search_options]);
     }
 
     @action.bound getArrowOptions() {

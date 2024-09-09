@@ -67,7 +67,11 @@ class BoxesRow extends EditableRow {
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings, getLinkingOptions, getCountOptions} = this.props.store.subclass;
+        const {
+            changeArraySettings,
+            getLinkingOptions,
+            getFilterOptions,
+        } = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -166,12 +170,12 @@ class BoxesRow extends EditableRow {
                             <SelectInput
                                 name={`${key}-tag-${index}`}
                                 value={row.tag}
-                                label="Add references related to this tag or import"
+                                label="Add references related to this tag, search, or import"
                                 handleSelect={value =>
                                     changeArraySettings(key, index, "tag", value)
                                 }
                                 multiple={false}
-                                choices={getCountOptions()}
+                                choices={getFilterOptions()}
                             />
                         </div>
                         <div className="form-row justify-content-center">
