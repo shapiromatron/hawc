@@ -28,7 +28,7 @@ class VocabBrowse(TemplateView):
             cache_duration=settings.CACHE_10_MIN,
         )
 
-    def get_data() -> pd.DataFrame: ...
+    def get_data(self) -> pd.DataFrame: ...
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,14 +42,14 @@ class EhvBrowse(VocabBrowse):
     template_name = "vocab/ehv_browse.html"
     vocab_context = "Environmental Health Vocabulary"
 
-    def get_data() -> pd.DataFrame:
+    def get_data(self) -> pd.DataFrame:
         return models.Term.ehv_dataframe().to_csv(index=False)
 
 
 class ToxRefDBBrowse(VocabBrowse):
-    vocab_name = "toxreffb"
-    template_name = "vocab/toxreffb_browse.html"
+    vocab_name = "toxrefdb"
+    template_name = "vocab/toxrefdb_browse.html"
     vocab_context = "ToxRefDB Vocabulary"
 
-    def get_data() -> pd.DataFrame:
+    def get_data(self) -> pd.DataFrame:
         return models.Term.toxrefdb_dataframe().to_csv(index=False)

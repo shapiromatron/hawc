@@ -20,7 +20,7 @@ class App extends Component {
     }
 
     render() {
-        const tables = {ehv: EhvTable, toxref: ToxRefDBTable},
+        const tables = {ehv: EhvTable, toxrefdb: ToxRefDBTable},
             Table = tables[this.props.store.config.vocab];
 
         return (
