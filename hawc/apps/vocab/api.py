@@ -1,3 +1,4 @@
+import pandas as pd
 from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import exceptions, mixins, status, viewsets
@@ -12,15 +13,17 @@ from ..common.serializers import check_ids
 from . import constants, models, serializers
 
 
-class EhvTermViewSet(viewsets.GenericViewSet):
+class VocabTermViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.SimpleTermSerializer
     permission_classes = [IsAuthenticated]
     lookup_value_regex = re_digits
+    filename: str = ""
+    namespace: constants.VocabularyNamespace
 
     def get_queryset(self) -> QuerySet:
-        return models.Term.objects.filter(
-            namespace=constants.VocabularyNamespace.EHV, deprecated_on__isnull=True
-        )
+        return models.Term.objects.filter(namespace=self.namespace, deprecated_on__isnull=True)
+
+    def get_df(self) -> pd.DataFrame: ...
 
     def filter_qs(self, request: Request, type: constants.VocabularyTermType) -> QuerySet:
         term: str | None = request.query_params.get("term")
@@ -35,8 +38,7 @@ class EhvTermViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
     def nested(self, request: Request):
-        df = models.Term.ehv_dataframe()
-        return FlatExport.api_response(df=df, filename="ehv")
+        return FlatExport.api_response(df=self.get_df(), filename=self.filename)
 
     @action(detail=False)
     def system(self, request: Request) -> Response:
@@ -74,12 +76,12 @@ class EhvTermViewSet(viewsets.GenericViewSet):
             term = models.Term.objects.get(
                 id=pk,
                 type=constants.VocabularyTermType.endpoint_name,
-                namespace=constants.VocabularyNamespace.EHV,
+                namespace=self.namespace,
                 deprecated_on__isnull=True,
             )
         except models.Term.DoesNotExist as err:
             raise exceptions.NotFound() from err
-        return Response(term.ehv_endpoint_name())
+        return Response(term.vocab_endpoint_name())
 
     @action(detail=True, methods=("post",), url_path="related-entity")
     def related_entity(self, request: Request, pk: int | None = None) -> Response:
@@ -90,6 +92,22 @@ class EhvTermViewSet(viewsets.GenericViewSet):
         entity.terms.add(term, through_defaults={"notes": request.data.get("notes", "")})
         serializer = self.get_serializer(entity.terms.all(), many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class EhvTermViewSet(VocabTermViewSet):
+    filename = "ehv"
+    namespace = constants.VocabularyNamespace.EHV
+
+    def get_df(self) -> pd.DataFrame:
+        return models.Term.ehv_dataframe()
+
+
+class ToxRefDBTermViewSet(VocabTermViewSet):
+    filename = "toxrefdb"
+    namespace = constants.VocabularyNamespace.ToxRefDB
+
+    def get_df(self) -> pd.DataFrame:
+        return models.Term.toxrefdb_dataframe()
 
 
 class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
