@@ -19,10 +19,7 @@ class VocabBrowse(TemplateView):
             return WebappConfig(
                 app="animalStartup",
                 page="vocabBrowserStartup",
-                data={
-                    "vocab": self.vocab_name,
-                    "data": self.data,
-                },
+                data={"vocab": self.vocab_name, "data": self.get_data()},
             ).model_dump_json()
 
         return cacheable(
@@ -48,10 +45,11 @@ class EhvBrowse(VocabBrowse):
     def get_data() -> pd.DataFrame:
         return models.Term.ehv_dataframe().to_csv(index=False)
 
-class ToxrefBrowse(VocabBrowse):
-    vocab_name = "toxref"
-    template_name = "vocab/toxref_browse.html"
-    vocab_context = "ToxRef Database Vocabulary"
+
+class ToxRefDBBrowse(VocabBrowse):
+    vocab_name = "toxreffb"
+    template_name = "vocab/toxreffb_browse.html"
+    vocab_context = "ToxRefDB Vocabulary"
 
     def get_data() -> pd.DataFrame:
         return models.Term.toxrefdb_dataframe().to_csv(index=False)

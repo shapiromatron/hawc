@@ -72,9 +72,9 @@ class TestEhvTermViewSet:
 
 
 @pytest.mark.django_db
-class TestToxrefTermViewSet:
+class TestToxRefDBTermViewSet:
     def test_permissions(self):
-        url = reverse("vocab:api:toxref-system")
+        url = reverse("vocab:api:toxrefdb-system")
         anon_client = APIClient()
         auth_client = APIClient()
         assert auth_client.login(username="team@hawcproject.org", password="pw") is True
@@ -87,13 +87,13 @@ class TestToxrefTermViewSet:
 
         test_cases = [
             # test urls resolve
-            (reverse("vocab:api:toxref-system"), [{"id": 7000, "name": "systemic"}]),
-            (reverse("vocab:api:toxref-effect"), [{"id": 7001, "name": "pathology microscopic"}]),
+            (reverse("vocab:api:toxrefdb-system"), [{"id": 7000, "name": "systemic"}]),
+            (reverse("vocab:api:toxrefdb-effect"), [{"id": 7001, "name": "pathology microscopic"}]),
             (
-                reverse("vocab:api:toxref-effect-subtype"),
+                reverse("vocab:api:toxrefdb-effect-subtype"),
                 [{"id": 7002, "name": "eye"}],
             ),
-            (reverse("vocab:api:toxref-endpoint-name"), [{"id": 7003, "name": "dysplasia"}]),
+            (reverse("vocab:api:toxrefdb-endpoint-name"), [{"id": 7003, "name": "dysplasia"}]),
         ]
 
         for url, resp in test_cases:
@@ -102,7 +102,7 @@ class TestToxrefTermViewSet:
     def test_nested(self):
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("vocab:api:toxref-nested") + "?format=csv"
+        url = reverse("vocab:api:toxrefdb-nested") + "?format=csv"
         resp = client.get(url)
         assert resp.status_code == 200
         data = resp.content.decode().split("\n")
@@ -119,18 +119,18 @@ class TestToxrefTermViewSet:
         test_cases = [
             # test term lookup
             (
-                reverse("vocab:api:toxref-endpoint-name") + "?term=dysplasia",
+                reverse("vocab:api:toxrefdb-endpoint-name") + "?term=dysplasia",
                 [{"id": 7003, "name": "dysplasia"}],
             ),
-            (reverse("vocab:api:toxref-endpoint-name") + "?term=NONE", []),
+            (reverse("vocab:api:toxrefdb-endpoint-name") + "?term=NONE", []),
             # test parent lookup
             (
-                reverse("vocab:api:toxref-endpoint-name") + "?parent=7002",
+                reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=7002",
                 [{"id": 7003, "name": "dysplasia"}],
             ),
-            (reverse("vocab:api:toxref-endpoint-name") + "?parent=7001", []),
+            (reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=7001", []),
             (
-                reverse("vocab:api:toxref-endpoint-name") + "?parent=text",
+                reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=text",
                 [{"id": 7003, "name": "dysplasia"}],
             ),
         ]
