@@ -8,10 +8,8 @@ from . import models
 
 
 class VocabBrowse(TemplateView):
-    vocab_name = None
-    template_name = None
-    vocab_context = None
-    data = None
+    vocab_name: str
+    vocab_context: str
 
     def _get_config(self) -> str:
         # get EHV in json; use cache if possible
@@ -23,9 +21,7 @@ class VocabBrowse(TemplateView):
             ).model_dump_json()
 
         return cacheable(
-            get_app_config,
-            f"{self.vocab_name}-dataframe-json",
-            cache_duration=settings.CACHE_10_MIN,
+            get_app_config, f"{self.vocab_name}-df-json", cache_duration=settings.CACHE_10_MIN
         )
 
     def get_data(self) -> pd.DataFrame: ...
