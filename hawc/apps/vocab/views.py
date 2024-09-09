@@ -1,3 +1,4 @@
+import pandas as pd
 from django.conf import settings
 from django.views.generic import TemplateView
 
@@ -30,6 +31,8 @@ class VocabBrowse(TemplateView):
             cache_duration=settings.CACHE_10_MIN,
         )
 
+    def get_data() -> pd.DataFrame: ...
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["config"] = self._get_config()
@@ -41,11 +44,14 @@ class EhvBrowse(VocabBrowse):
     vocab_name = "ehv"
     template_name = "vocab/ehv_browse.html"
     vocab_context = "Environmental Health Vocabulary"
-    data = models.Term.ehv_dataframe().to_csv(index=False)
 
+    def get_data() -> pd.DataFrame:
+        return models.Term.ehv_dataframe().to_csv(index=False)
 
 class ToxrefBrowse(VocabBrowse):
     vocab_name = "toxref"
     template_name = "vocab/toxref_browse.html"
     vocab_context = "ToxRef Database Vocabulary"
-    data = models.Term.toxref_dataframe().to_csv(index=False)
+
+    def get_data() -> pd.DataFrame:
+        return models.Term.toxrefdb_dataframe().to_csv(index=False)

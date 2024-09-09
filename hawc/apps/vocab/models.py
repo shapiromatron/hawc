@@ -49,8 +49,8 @@ class Term(models.Model):
         return df
 
     @classmethod
-    def toxref_dataframe(cls) -> pd.DataFrame:
-        vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRef)
+    def toxrefdb_dataframe(cls) -> pd.DataFrame:
+        vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRefDB)
 
         term_data = [
             {"df": vocab_data["effect"], "left_on": "system_term_id"},
