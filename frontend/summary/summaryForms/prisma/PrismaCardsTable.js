@@ -151,7 +151,7 @@ class CardsRow extends EditableRow {
                             />
                             <SelectInput
                                 name={`${key}-box-${index}`}
-                                value={row.section}
+                                value={row.box}
                                 label="Box"
                                 handleSelect={value =>
                                     changeArraySettings(key, index, "box", value)
