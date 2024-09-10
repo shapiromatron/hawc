@@ -58,6 +58,10 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### [2024-2](https://pypi.org/project/hawc-client/2024.2/) (July 2024)
+
+* Minor documentation and docstring updates
+
 #### [2024-1](https://pypi.org/project/hawc-client/2024.1/) (February 2024)
 
 * Add new interactive client for downloading visual and data pivots images

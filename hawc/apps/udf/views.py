@@ -11,12 +11,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common import dynamic_forms
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
-from ..common.views import (
-    BaseList,
-    LoginRequiredMixin,
-    MessageMixin,
-    htmx_required,
-)
+from ..common.views import BaseList, LoginRequiredMixin, MessageMixin, htmx_required
 from ..lit.models import ReferenceFilterTag
 from . import constants, forms, models
 

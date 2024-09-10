@@ -12,11 +12,15 @@
   <script>
     $(window).ready(function() {
       $("#schema-preview-btn").on("click", function() {
-        $("#schema-preview-frame").removeClass('show');
+        $("#schema-preview-fieldset").removeClass('show');
+      });
+      $("#submit-id-save").on("click", function() {
+        // disable so that the required fields on a UDF preview aren't checked in form validation
+        $("#schema-preview-fieldset").attr('disabled', true);
       });
       $("#schema-preview-btn").on("htmx:afterOnLoad", function() {
         window.app.HAWCUtils.dynamicFormListeners();
-        $("#schema-preview-frame").collapse("show");
+        $("#schema-preview-fieldset").collapse("show").attr('disabled', false);
       });
       $('#load-example').on("click", function(e){
         e.preventDefault();

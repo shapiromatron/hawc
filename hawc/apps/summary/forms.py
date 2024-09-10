@@ -32,16 +32,6 @@ from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
 
-class SummaryTextForm(forms.ModelForm):
-    class Meta:
-        model = models.SummaryText
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-
-
 class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
@@ -139,32 +129,14 @@ class VisualForm(forms.ModelForm):
         visual_type = kwargs.pop("visual_type", None)
         evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
-        if "settings" in self.fields:
-            self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
-        if self.instance.visual_type not in [
-            constants.VisualType.BIOASSAY_AGGREGATION,
-            constants.VisualType.ROB_HEATMAP,
-            constants.VisualType.LITERATURE_TAGTREE,
-            constants.VisualType.EXTERNAL_SITE,
-            constants.VisualType.EXPLORE_HEATMAP,
-            constants.VisualType.PLOTLY,
-            constants.VisualType.IMAGE,
-            constants.VisualType.PRISMA,
-        ]:
-            self.fields["sort_order"].widget = forms.HiddenInput()
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
 
     def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -185,7 +157,8 @@ class VisualForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        if "settings" in self.fields:
+            helper.set_textarea_height(("settings",), n_rows=2)
         helper.form_id = "visualForm"
         return helper
 
@@ -263,7 +236,6 @@ class EndpointAggregationForm(VisualForm):
             "settings",
             "prefilters",
             "studies",
-            "sort_order",
             "image",
         )
 
@@ -666,8 +638,8 @@ def get_visual_form(visual_type):
             constants.VisualType.IMAGE: ImageVisualForm,
             constants.VisualType.PRISMA: PrismaVisualForm,
         }[visual_type]
-    except Exception:
-        raise ValueError()
+    except Exception as exc:
+        raise ValueError() from exc
 
 
 class DataPivotForm(forms.ModelForm):
@@ -677,14 +649,8 @@ class DataPivotForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
         self.helper = self.setHelper()
-        self.fields["settings"].widget.attrs["rows"] = 2
 
     def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -705,7 +671,7 @@ class DataPivotForm(forms.ModelForm):
                 inputs["legend_text"] += f" ({self.instance.get_evidence_type_display()})"
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height(("settings",), n_rows=2)
         helper.form_id = "dataPivotForm"
         return helper
 

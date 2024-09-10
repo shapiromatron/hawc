@@ -13,17 +13,14 @@
     </div>
   {% endif %}
   <table class="table table-sm table-striped">
-    <colgroup>
-      <col style="width: 30%;">
-      <col style="width: 70%;">
-    </colgroup>
+    {% bs4_colgroup '30,70' %}
     <tbody>
       {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
       {% optional_table_row "System or health effect basis" object.system %}
       {% optional_table_row "Value type" object.get_value_type_display %}
       <tr>
         <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
-        <td>{{object.value}} {{object.value_unit|default:""}}</td>
+        <td>{{object.value|default:""|e_notation}} {{object.value_unit|default:""}}</td>
       </tr>
       {% if object.confidence %}
         <tr>
@@ -37,7 +34,7 @@
       {% if object.pod_value %}
         <tr>
           <th>POD Value</th>
-          <td>{{object.pod_value|default:""}} {{object.pod_unit|default:""}}</td>
+          <td>{{object.pod_value|default:""|e_notation}} {{object.pod_unit|default:""}}</td>
         </tr>
       {% endif %}
       {% if object.show_noncancer_fields %}
@@ -66,15 +63,15 @@
     </tbody>
   </table>
   {% if obj_perms.edit and object.check_calculated_value.show_warning %}
-    {% alert warning %}
+    {% alert type="warning" %}
       <p><b>Note: this message only appears to team members and higher.</b></p>
       <p>
-        The calculated {{object.get_value_type_display}} ({{object.check_calculated_value.calculated_value|stringformat:'.3g'}} {{object.value_unit|default:""}}), is > {{object.check_calculated_value.tolerance|percentage}} different than the reported value ({{object.value}} {{object.value_unit|default:""}}). The calculated value was generated using the formula POD / UF, or {{object.pod_value}} / {{object.uncertainty}} = {{object.check_calculated_value.calculated_value|stringformat:'.3g'}}. This difference may be due to the level of precision the {{object.get_value_type_display}} is reported, but please review in case of an error.
+        The calculated {{object.get_value_type_display}} ({{object.check_calculated_value.calculated_value|e_notation}} {{object.value_unit|default:""}}), is > {{object.check_calculated_value.tolerance|percentage}} different than the reported value ({{object.value}} {{object.value_unit|default:""}}). The calculated value was generated using the formula POD / UF, or {{object.pod_value}} / {{object.uncertainty}} = {{object.check_calculated_value.calculated_value|e_notation}}. This difference may be due to the level of precision the {{object.get_value_type_display}} is reported, but please review in case of an error.
       </p>
     {% endalert %}
   {% endif %}
 {% endblock %}
 
 {% block extrajs %}
-  {% if object.adaf %}{% include "common/helptext_popup_js.html" %}{% endif %}
+  {% include "common/helptext_popup_js.html" %}
 {% endblock %}

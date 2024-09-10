@@ -1,12 +1,9 @@
-<tr hx-target="this" hx-swap="outerHTML" class="eco-obj-row {{action}}" id="effect-{{object.id}}">
+<tr hx-target="this" hx-swap="outerHTML" class="eco-obj-row {{action}} effect-{{object.id}}">
   <td>{{object.name}}</td>
   <td>{{object.term.name}}</td>
   <td>{{object.species }}</td>
   <td>{{object.units }}</td>
   <td>{{object.as_reported }}</td>
   <td>{{object.comments }}</td>
-  {% include "eco/fragments/_object_row.html" with model="effect" %}
+  {% include "common/fragments/_object_row.html" with app="eco" model="effect" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden eco-edit-row effect-edit-row" hx-target="this"></tr>
-{% endif %}

@@ -37,7 +37,7 @@ class Term(models.Model):
 
     @classmethod
     def vocab_dataframe(cls, namespace) -> pd.DataFrame:
-        dataframes = {1: cls.ehv_dataframe(), 2: cls.toxref_dataframe()}
+        dataframes = {1: cls.ehv_dataframe(), 2: cls.toxrefdb_dataframe()}
         return dataframes[namespace]
 
     @classmethod
@@ -54,8 +54,8 @@ class Term(models.Model):
         return df
 
     @classmethod
-    def toxref_dataframe(cls) -> pd.DataFrame:
-        vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRef)
+    def toxrefdb_dataframe(cls) -> pd.DataFrame:
+        vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRefDB)
 
         term_data = [
             {"df": vocab_data["effect"], "left_on": "system_term_id"},
@@ -111,6 +111,7 @@ class Term(models.Model):
             "effect_subtype": effect_subtype_df,
             "endpoint_name": endpoint_name_df,
         }
+
         return data
 
     def merge_data(df, data):

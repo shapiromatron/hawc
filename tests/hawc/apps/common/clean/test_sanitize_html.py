@@ -1,4 +1,5 @@
 """Test HTML cleanup."""
+
 from hawc.apps.common.clean.sanitize_html import clean_html
 
 

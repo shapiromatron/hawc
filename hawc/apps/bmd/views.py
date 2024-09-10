@@ -42,8 +42,10 @@ class SessionCreate(RedirectView):
             raise PermissionDenied()
         try:
             obj = models.Session.create_new(self.object)
-        except ValueError:
-            raise BadRequest("Assessment BMDS version is unsupported, can't create a new session.")
+        except ValueError as exc:
+            raise BadRequest(
+                "Assessment BMDS version is unsupported, can't create a new session."
+            ) from exc
         return obj.get_update_url()
 
 

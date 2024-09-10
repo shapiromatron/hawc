@@ -235,16 +235,23 @@ class TestVerifyEmail:
     def test_workflow(self, settings):
         settings.EMAIL_VERIFICATION_REQUIRED = True
         user = models.HAWCUser.objects.get(email="reviewer@hawcproject.org")
+        client = Client()
+        url = user.create_email_verification_url()
+
         user.email_verified_on = None
         user.save()
 
-        url = user.create_email_verification_url()
-        client = Client()
-        resp = client.get(url, follow=True)
-        assert resp.status_code == 200
-
+        resp = check_200(client, url)
+        assertTemplateUsed(resp, "myuser/verify_email.html")
         user.refresh_from_db()
+        assert user.email_verified_on is None
+
+        resp = client.post(url)
+        user.refresh_from_db()
+        assert resp.status_code == 302
+        assert resp.url == str(settings.LOGIN_URL)
         assert user.email_verified_on is not None
+
         settings.EMAIL_VERIFICATION_REQUIRED = False
 
 

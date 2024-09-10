@@ -7,8 +7,5 @@
     {% endfor %}
   </td>
   <td>{{object.comments|default:"-"}}</td>
-  {% include "epiv2/fragments/_object_row.html" with model="adjustmentfactor" %}
+  {% include "common/fragments/_object_row.html" with app="epiv2" model="adjustmentfactor" %}
 </tr>
-{% if action == 'create' or action == 'clone' %}
-  <tr class="hidden adjustmentfactor-edit-row" hx-target="this"></tr>
-{% endif %}

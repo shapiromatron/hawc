@@ -12,6 +12,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="term",
             name="namespace",
-            field=models.PositiveSmallIntegerField(choices=[(1, "EHV"), (2, "ToxRef")], default=1),
+            field=models.PositiveSmallIntegerField(
+                choices=[(1, "EHV"), (2, "ToxRefDB")], default=1
+            ),
         ),
     ]

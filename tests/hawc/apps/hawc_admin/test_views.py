@@ -3,7 +3,7 @@ from django.http.response import HttpResponse
 from django.test import RequestFactory
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
-from wagtail.admin.views.account import BaseSettingsPanel, NameEmailSettingsPanel, account
+from wagtail.admin.views.account import AccountView, BaseSettingsPanel, NameEmailSettingsPanel
 
 from hawc.apps.myuser.models import HAWCUser
 
@@ -97,8 +97,10 @@ class TestWagtailAccounts:
         factory = RequestFactory()
         request = factory.get("/admin/cms/account/")
         request.user = HAWCUser.objects.filter(is_superuser=True).first()
-        response = account(request)
-        for panel_set in response.context_data["panels_by_tab"].values():
+        view = AccountView()
+        view.setup(request)
+        context = view.get_context_data()
+        for panel_set in context["panels_by_tab"].values():
             for panel in panel_set:
                 assert isinstance(panel, BaseSettingsPanel)
                 assert not isinstance(panel, NameEmailSettingsPanel)

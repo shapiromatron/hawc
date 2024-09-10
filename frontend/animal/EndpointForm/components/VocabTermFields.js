@@ -15,39 +15,36 @@ class VocabTermFields extends Component {
             helpText = termFields.helpText,
             helpTextName = store.canUseControlledVocabulary
                 ? helpText.endpoint_name
-                : defaultHelpText.endpoint_name;
+                : defaultHelpText.endpoint_name,
+            rowClass = label.organ ? "col-md-3" : "col-md-4";
         return (
             <>
-                {label.endpoint_name != null && (
-                    <TermSelector
-                        name={"name"}
-                        label={label.endpoint_name}
-                        helpText={helpTextName}
-                        popupHelpText={helpText.endpoint_name_popup}
-                        termIdField={"name_term_id"}
-                        termTextField={"name"}
-                        parentIdField={termParent.endpoint_name_parent}
-                        parentRequired={true}
-                        idLookupAction={store.endpointNameLookup}
-                    />
-                )}
+                <TermSelector
+                    name={"name"}
+                    label={label.endpoint_name}
+                    helpText={helpTextName}
+                    popupHelpText={helpText.endpoint_name_popup}
+                    termIdField={"name_term_id"}
+                    termTextField={"name"}
+                    parentIdField={termParent.endpoint_name_parent}
+                    parentRequired={true}
+                    idLookupAction={store.endpointNameLookup}
+                />
 
                 <div className="row">
-                    {label.system != null && (
-                        <div className="col-md-3">
-                            <TermSelector
-                                name={"system"}
-                                label={label.system}
-                                helpText={helpText.system}
-                                popupHelpText={helpText.system_popup}
-                                termIdField={"system_term_id"}
-                                termTextField={"system"}
-                                parentRequired={false}
-                            />
-                        </div>
-                    )}
-                    {label.organ != null && (
-                        <div className="col-md-3">
+                    <div className={rowClass}>
+                        <TermSelector
+                            name={"system"}
+                            label={label.system}
+                            helpText={helpText.system}
+                            popupHelpText={helpText.system_popup}
+                            termIdField={"system_term_id"}
+                            termTextField={"system"}
+                            parentRequired={false}
+                        />
+                    </div>
+                    {label.organ ? (
+                        <div className={rowClass}>
                             <TermSelector
                                 name={"organ"}
                                 label={label.organ ? label.organ : ""}
@@ -59,35 +56,31 @@ class VocabTermFields extends Component {
                                 parentRequired={true}
                             />
                         </div>
-                    )}
-                    {label.effect != null && (
-                        <div className="col-md-3">
-                            <TermSelector
-                                name={"effect"}
-                                label={label.effect}
-                                helpText={helpText.effect}
-                                popupHelpText={helpText.effect_popup}
-                                termIdField={"effect_term_id"}
-                                termTextField={"effect"}
-                                parentIdField={termParent.effect_parent}
-                                parentRequired={true}
-                            />
-                        </div>
-                    )}
-                    {label.effect_subtype != null && (
-                        <div className="col-md-3">
-                            <TermSelector
-                                name={"effect_subtype"}
-                                label={label.effect_subtype}
-                                helpText={helpText.effect_subtype}
-                                popupHelpText={helpText.effect_subtype_popup}
-                                termIdField={"effect_subtype_term_id"}
-                                termTextField={"effect_subtype"}
-                                parentIdField={termParent.effect_subtype_parent}
-                                parentRequired={true}
-                            />
-                        </div>
-                    )}
+                    ) : null}
+                    <div className={rowClass}>
+                        <TermSelector
+                            name={"effect"}
+                            label={label.effect}
+                            helpText={helpText.effect}
+                            popupHelpText={helpText.effect_popup}
+                            termIdField={"effect_term_id"}
+                            termTextField={"effect"}
+                            parentIdField={termParent.effect_parent}
+                            parentRequired={true}
+                        />
+                    </div>
+                    <div className={rowClass}>
+                        <TermSelector
+                            name={"effect_subtype"}
+                            label={label.effect_subtype}
+                            helpText={helpText.effect_subtype}
+                            popupHelpText={helpText.effect_subtype_popup}
+                            termIdField={"effect_subtype_term_id"}
+                            termTextField={"effect_subtype"}
+                            parentIdField={termParent.effect_subtype_parent}
+                            parentRequired={true}
+                        />
+                    </div>
                 </div>
             </>
         );

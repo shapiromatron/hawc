@@ -75,23 +75,23 @@ mkdocs serve -a localhost:8010
 goto :eof
 
 :lint
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 npm --prefix .\frontend run lint
 djhtml --tabwidth 2 --check hawc
 goto :eof
 
 :format
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 npm --prefix .\frontend run format
 djhtml --tabwidth 2 hawc
 goto :eof
 
 :lint-py
-ruff format . --check && ruff .
+ruff format . --check && ruff check .
 goto :eof
 
 :format-py
-ruff format . && ruff . --fix --show-fixes
+ruff format . && ruff check . --fix --show-fixes
 goto :eof
 
 :lint-js

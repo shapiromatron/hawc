@@ -362,9 +362,7 @@ class AssessmentDownloads(BaseDetail):
     def get_context_data(self, **kwargs):
         kwargs.update(
             EpiVersion=constants.EpiVersion,
-        )
-        kwargs["allow_unpublished"] = self.assessment.user_is_team_member_or_higher(
-            self.request.user
+            allow_unpublished=self.assessment.user_is_team_member_or_higher(self.request.user),
         )
         return super().get_context_data(**kwargs)
 
@@ -437,7 +435,6 @@ class AttachmentViewSet(HtmxViewSet):
     model = models.Attachment
     form_fragment = "assessment/fragments/attachment_edit_row.html"
     detail_fragment = "assessment/fragments/attachment_row.html"
-    list_fragment = "assessment/fragments/attachment_list.html"
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -458,11 +455,7 @@ class AttachmentViewSet(HtmxViewSet):
                 template = self.detail_fragment
         else:
             form = forms.AttachmentForm()
-            template = self.list_fragment
         context = self.get_context_data(form=form)
-        context["object_list"] = models.Attachment.objects.get_attachments(
-            request.item.assessment, False
-        )
         return render(request, template, context)
 
     @action(methods=("get", "post"), permission=can_edit)
@@ -714,8 +707,8 @@ class LogObjectList(ListView):
     def dispatch(self, request, *args, **kwargs):
         try:
             content_type = ContentType.objects.get_for_id(kwargs["content_type"])
-        except ObjectDoesNotExist:
-            raise Http404()
+        except ObjectDoesNotExist as exc:
+            raise Http404() from exc
         first_log = self.model.objects.filter(**self.kwargs).first()
         if not first_log:
             first_log = self.model(content_type=content_type, object_id=kwargs["object_id"])
