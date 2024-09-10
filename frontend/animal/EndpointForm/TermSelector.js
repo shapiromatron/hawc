@@ -32,7 +32,7 @@ class TermSelector extends Component {
                 store,
                 parentRequired,
             } = this.props,
-            {object, debug, vocabulary_display} = store.config,
+            {object, vocabulary_display} = store.config,
             useControlledVocabulary = store.useControlledVocabulary[termTextField],
             currentId = object[termIdField],
             currentText = object[termTextField],
@@ -135,13 +135,6 @@ class TermSelector extends Component {
                     <small
                         className="form-text text-muted"
                         dangerouslySetInnerHTML={{__html: helpText}}></small>
-                ) : null}
-                {debug ? (
-                    <ul>
-                        <li>termId: {currentId}</li>
-                        <li>text: {currentText}</li>
-                        <li>parent: {object[parentIdField]}</li>
-                    </ul>
                 ) : null}
             </div>
         );

@@ -808,7 +808,6 @@ class Endpoint(BaseEndpoint):
     def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
         return json.dumps(
             {
-                "debug": False,
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_url": assessment.get_vocabulary_url(),
                 "vocabulary_display": assessment.get_vocabulary_display(),
