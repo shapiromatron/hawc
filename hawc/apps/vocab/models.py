@@ -36,6 +36,14 @@ class Term(models.Model):
         return reverse("admin:vocab_term_change", args=(self.id,))
 
     @classmethod
+    def vocab_dataframe(cls, namespace: constants.VocabularyNamespace) -> pd.DataFrame:
+        dataframes = {
+            constants.VocabularyNamespace.EHV: cls.ehv_dataframe,
+            constants.VocabularyNamespace.ToxRefDB: cls.toxrefdb_dataframe,
+        }
+        return dataframes[namespace]()
+
+    @classmethod
     def ehv_dataframe(cls) -> pd.DataFrame:
         vocab_data = cls.vocab_data(constants.VocabularyNamespace.EHV)
         term_data = [
@@ -44,23 +52,21 @@ class Term(models.Model):
             {"df": vocab_data["effect_subtype"], "left_on": "effect_term_id"},
             {"df": vocab_data["endpoint_name"], "left_on": "effect_subtype_term_id"},
         ]
-
         df = cls.merge_data(vocab_data["system"], term_data)
         return df
 
     @classmethod
     def toxrefdb_dataframe(cls) -> pd.DataFrame:
         vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRefDB)
-
         term_data = [
             {"df": vocab_data["effect"], "left_on": "system_term_id"},
             {"df": vocab_data["effect_subtype"], "left_on": "effect_term_id"},
             {"df": vocab_data["endpoint_name"], "left_on": "effect_subtype_term_id"},
         ]
-
         df = cls.merge_data(vocab_data["system"], term_data)
         return df
 
+    @staticmethod
     def vocab_data(namespace) -> dict:
         cols = ("id", "type", "parent_id", "name")
         all_df = pd.DataFrame(
@@ -109,6 +115,7 @@ class Term(models.Model):
 
         return data
 
+    @staticmethod
     def merge_data(df, data):
         # merge df queries based on relevant hierarchy
         for term in data:
@@ -119,19 +126,34 @@ class Term(models.Model):
         df = df.sort_values(by=[term["left_on"] for term in data]).reset_index(drop=True)
         return df
 
-    def vocab_endpoint_name(self) -> dict:
-        return {
-            "system": self.parent.parent.parent.parent.name,
-            "organ": self.parent.parent.parent.name,
-            "effect": self.parent.parent.name,
-            "effect_subtype": self.parent.name,
-            "name": self.name,
-            "system_term_id": self.parent.parent.parent.parent.id,
-            "organ_term_id": self.parent.parent.parent.id,
-            "effect_term_id": self.parent.parent.id,
-            "effect_subtype_term_id": self.parent.id,
-            "name_term_id": self.id,
-        }
+    def inheritance(self) -> dict:
+        if self.namespace == constants.VocabularyNamespace.EHV:
+            return {
+                "system": self.parent.parent.parent.parent.name,
+                "organ": self.parent.parent.parent.name,
+                "effect": self.parent.parent.name,
+                "effect_subtype": self.parent.name,
+                "name": self.name,
+                "system_term_id": self.parent.parent.parent.parent.id,
+                "organ_term_id": self.parent.parent.parent.id,
+                "effect_term_id": self.parent.parent.id,
+                "effect_subtype_term_id": self.parent.id,
+                "name_term_id": self.id,
+            }
+        elif self.namespace == constants.VocabularyNamespace.ToxRefDB:
+            return {
+                "system": self.parent.parent.parent.name,
+                "organ": None,
+                "effect": self.parent.parent.name,
+                "effect_subtype": self.parent.name,
+                "name": self.name,
+                "system_term_id": self.parent.parent.parent.id,
+                "organ_term_id": None,
+                "effect_term_id": self.parent.parent.id,
+                "effect_subtype_term_id": self.parent.id,
+                "name_term_id": self.id,
+            }
+        raise ValueError(f"Invalid namespace: {self.namespace}")
 
 
 class Entity(models.Model):

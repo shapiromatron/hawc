@@ -453,14 +453,9 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
         if vocab_enabled:
             vocab_id = self.instance.assessment.vocabulary
             vocab_url = VocabularyNamespace(vocab_id).display_url
-            vocab = f"""&nbsp;The <a href="{vocab_url}">
-                {VocabularyNamespace(vocab_id).display_name}</a> is enabled for this assessment. Browse to view
-                controlled terms, and whenever possible please use these terms."""
+            vocab = f"""The <a href="{vocab_url}">{VocabularyNamespace(vocab_id).display_name}</a> is enabled for this assessment. Browse to view controlled terms, and whenever possible please use these terms."""
         else:
-            vocab = f"""&nbsp;A controlled vocabulary is not enabled for this assessment.
-                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}"></a>
-                  to see if this vocabulary would be a good fit for your
-                assessment. If it is, consider updating the assessment to use this vocabulary."""
+            vocab = f"""A controlled vocabulary is not enabled for this assessment. However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">EHV</a> to see if this vocabulary would be a good fit for your assessment."""
 
         if self.instance.id:
             inputs = {
@@ -471,9 +466,7 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
         else:
             inputs = {
                 "legend_text": "Create new endpoint",
-                "help_text": f"""Create a new endpoint. An endpoint may should describe one
-                    measure-of-effect which was measured in the study. It may
-                    or may not contain quantitative data.{vocab}""",
+                "help_text": f"""Create a new endpoint. An endpoint should describe one measure-of-effect in the study. It may or may not contain quantitative data. {vocab}""",
                 "cancel_url": self.instance.animal_group.get_absolute_url(),
             }
 

@@ -19,19 +19,17 @@ class VocabTermFields extends Component {
             rowClass = label.organ ? "col-md-3" : "col-md-4";
         return (
             <>
-                {label.endpoint_name ? (
-                    <TermSelector
-                        name={"name"}
-                        label={label.endpoint_name}
-                        helpText={helpTextName}
-                        popupHelpText={helpText.endpoint_name_popup}
-                        termIdField={"name_term_id"}
-                        termTextField={"name"}
-                        parentIdField={termParent.endpoint_name_parent}
-                        parentRequired={true}
-                        idLookupAction={store.endpointNameLookup}
-                    />
-                ) : null}
+                <TermSelector
+                    name={"name"}
+                    label={label.endpoint_name}
+                    helpText={helpTextName}
+                    popupHelpText={helpText.endpoint_name_popup}
+                    termIdField={"name_term_id"}
+                    termTextField={"name"}
+                    parentIdField={termParent.endpoint_name_parent}
+                    parentRequired={true}
+                    idLookupAction={store.endpointNameLookup}
+                />
 
                 <div className="row">
                     <div className={rowClass}>
