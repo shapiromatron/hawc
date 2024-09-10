@@ -811,7 +811,6 @@ class Endpoint(BaseEndpoint):
         return json.dumps(
             {
                 "vocabulary": vocab.value if vocab else None,
-                "vocabulary_api": vocab.api_root if vocab else None,
                 "vocabulary_display": vocab.display_name if vocab else None,
                 "object": {
                     "system": form["system"].value() or "",

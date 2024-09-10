@@ -9,6 +9,8 @@ const termUrlLookupMap = {
         "effect_term_id-2": "/vocab/api/toxrefdb/effect/?format=json",
         "effect_subtype_term_id-2": "/vocab/api/toxrefdb/effect_subtype/?format=json",
         "name_term_id-2": "/vocab/api/toxrefdb/endpoint_name/?format=json",
+        "id-lookup-1": "/vocab/api/ehv/:id/endpoint-name-lookup/",
+        "id-lookup-2": "/vocab/api/toxrefdb/:id/endpoint-name-lookup/",
     },
     termUrlLookup = function(term, vocab) {
         return termUrlLookupMap[`${term}-${vocab}`];

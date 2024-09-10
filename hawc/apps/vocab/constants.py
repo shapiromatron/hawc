@@ -16,14 +16,6 @@ class VocabularyNamespace(IntegerChoices):
         return [(item, item.display_name) for item in cls]
 
     @property
-    def api_root(self) -> str:
-        match self:
-            case self.EHV:
-                return reverse("vocab:api:ehv-endpoint-name-lookup", args=(9999,))
-            case self.ToxRefDB:
-                return reverse("vocab:api:toxrefdb-endpoint-name-lookup", args=(9999,))
-
-    @property
     def display_url(self) -> str:
         match self:
             case self.EHV:
