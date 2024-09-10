@@ -187,14 +187,13 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
 
     @action(
         detail=True,
+        url_path="bmds-export",
         action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
         renderer_classes=PandasRenderers,
     )
     def bmds_export(self, request, pk):
         self.assessment = self.get_object()
-        exporter = exports.EndpointBMDSExport(
-            self.assessment.pk,
-        )
+        exporter = exports.EndpointBmdsExport(self.assessment.pk)
         return Response(exporter.build_export())
 
 

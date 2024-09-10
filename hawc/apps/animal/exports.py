@@ -268,7 +268,7 @@ class EndpointExport(ModelExport):
         return df
 
 
-class EndpointBMDSExport(FlatFileExporter):
+class EndpointBmdsExport(FlatFileExporter):
     def __init__(self, assessment_id: int, **kwargs):
         self.assessment_id = assessment_id
         self.filename = f"HAWC-{assessment_id}_bmds_export"
