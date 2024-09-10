@@ -124,31 +124,34 @@ class Term(models.Model):
         df = df.sort_values(by=[term["left_on"] for term in data]).reset_index(drop=True)
         return df
 
-    def ehv_endpoint_name(self) -> dict:
-        return {
-            "system": self.parent.parent.parent.parent.name,
-            "organ": self.parent.parent.parent.name,
-            "effect": self.parent.parent.name,
-            "effect_subtype": self.parent.name,
-            "name": self.name,
-            "system_term_id": self.parent.parent.parent.parent.id,
-            "organ_term_id": self.parent.parent.parent.id,
-            "effect_term_id": self.parent.parent.id,
-            "effect_subtype_term_id": self.parent.id,
-            "name_term_id": self.id,
-        }
-
-    def toxrefdb_endpoint_name(self) -> dict:
-        return {
-            "system": self.parent.parent.parent.name,
-            "effect": self.parent.parent.name,
-            "effect_subtype": self.parent.name,
-            "name": self.name,
-            "system_term_id": self.parent.parent.parent.id,
-            "effect_term_id": self.parent.parent.id,
-            "effect_subtype_term_id": self.parent.id,
-            "name_term_id": self.id,
-        }
+    def inheritance(self) -> dict:
+        if self.namespace == constants.VocabularyNamespace.EHV:
+            return {
+                "system": self.parent.parent.parent.parent.name,
+                "organ": self.parent.parent.parent.name,
+                "effect": self.parent.parent.name,
+                "effect_subtype": self.parent.name,
+                "name": self.name,
+                "system_term_id": self.parent.parent.parent.parent.id,
+                "organ_term_id": self.parent.parent.parent.id,
+                "effect_term_id": self.parent.parent.id,
+                "effect_subtype_term_id": self.parent.id,
+                "name_term_id": self.id,
+            }
+        elif self.namespace == constants.VocabularyNamespace.ToxRefDB:
+            return {
+                "system": self.parent.parent.parent.name,
+                "organ": None,
+                "effect": self.parent.parent.name,
+                "effect_subtype": self.parent.name,
+                "name": self.name,
+                "system_term_id": self.parent.parent.parent.id,
+                "organ_term_id": None,
+                "effect_term_id": self.parent.parent.id,
+                "effect_subtype_term_id": self.parent.id,
+                "name_term_id": self.id,
+            }
+        raise ValueError(f"Invalid namespace: {self.namespace}")
 
 
 class Entity(models.Model):

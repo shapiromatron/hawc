@@ -72,16 +72,19 @@ class VocabTermViewSet(viewsets.GenericViewSet):
 
     @action(detail=True, url_path="endpoint-name-lookup")
     def endpoint_name_lookup(self, request: Request, pk: int) -> Response:
-        try:
-            term = models.Term.objects.get(
+        term = (
+            models.Term.objects.filter(
                 id=pk,
                 type=constants.VocabularyTermType.endpoint_name,
                 namespace=self.namespace,
                 deprecated_on__isnull=True,
             )
-        except models.Term.DoesNotExist as err:
-            raise exceptions.NotFound() from err
-        return Response(term.vocab_endpoint_name())
+            .select_related("parent__parent__parent__parent")
+            .first()
+        )
+        if term is None:
+            raise exceptions.NotFound()
+        return Response(term.inheritance())
 
     @action(detail=True, methods=("post",), url_path="related-entity")
     def related_entity(self, request: Request, pk: int | None = None) -> Response:

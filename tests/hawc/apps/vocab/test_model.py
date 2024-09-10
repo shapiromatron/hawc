@@ -1,5 +1,6 @@
 import pytest
 
+from hawc.apps.vocab.constants import VocabularyNamespace
 from hawc.apps.vocab.models import Entity, Term
 
 
@@ -14,15 +15,17 @@ class TestTerm:
         assert str(term) == "ToxRefDB::effect_subtype::eye"
         assert term.get_admin_edit_url() == "/admin/vocab/term/7002/change/"
 
-    def test_ehv_endpoint(self):
+    def test_inheritance(self):
+        # ehv
         term = Term.objects.get(id=5)
-        endpoint = term.ehv_endpoint_name()
+        endpoint = term.inheritance()
+        assert term.namespace == VocabularyNamespace.EHV
         assert endpoint["name"] == "Fatty Acid Balance"
         assert endpoint["system"] == "Cardiovascular"
-
-    def test_toxrefdb_endpoint(self):
+        # toxrefdb
         term = Term.objects.get(id=7003)
-        endpoint = term.toxrefdb_endpoint_name()
+        endpoint = term.inheritance()
+        assert term.namespace == VocabularyNamespace.ToxRefDB
         assert endpoint["name"] == "dysplasia"
         assert endpoint["system"] == "systemic"
 
