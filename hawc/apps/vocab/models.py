@@ -36,9 +36,12 @@ class Term(models.Model):
         return reverse("admin:vocab_term_change", args=(self.id,))
 
     @classmethod
-    def vocab_dataframe(cls, namespace) -> pd.DataFrame:
-        dataframes = {1: cls.ehv_dataframe(), 2: cls.toxrefdb_dataframe()}
-        return dataframes[namespace]
+    def vocab_dataframe(cls, namespace: constants.VocabularyNamespace) -> pd.DataFrame:
+        dataframes = {
+            constants.VocabularyNamespace.EHV: cls.ehv_dataframe,
+            constants.VocabularyNamespace.ToxRefDB: cls.toxrefdb_dataframe,
+        }
+        return dataframes[namespace]()
 
     @classmethod
     def ehv_dataframe(cls) -> pd.DataFrame:
@@ -49,20 +52,17 @@ class Term(models.Model):
             {"df": vocab_data["effect_subtype"], "left_on": "effect_term_id"},
             {"df": vocab_data["endpoint_name"], "left_on": "effect_subtype_term_id"},
         ]
-
         df = cls.merge_data(vocab_data["system"], term_data)
         return df
 
     @classmethod
     def toxrefdb_dataframe(cls) -> pd.DataFrame:
         vocab_data = cls.vocab_data(constants.VocabularyNamespace.ToxRefDB)
-
         term_data = [
             {"df": vocab_data["effect"], "left_on": "system_term_id"},
             {"df": vocab_data["effect_subtype"], "left_on": "effect_term_id"},
             {"df": vocab_data["endpoint_name"], "left_on": "effect_subtype_term_id"},
         ]
-
         df = cls.merge_data(vocab_data["system"], term_data)
         return df
 
@@ -138,7 +138,7 @@ class Term(models.Model):
             "name_term_id": self.id,
         }
 
-    def toxref_endpoint_name(self) -> dict:
+    def toxrefdb_endpoint_name(self) -> dict:
         return {
             "system": self.parent.parent.parent.name,
             "effect": self.parent.parent.name,

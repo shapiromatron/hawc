@@ -481,13 +481,11 @@ class EndpointManager(BaseManager):
     @transaction.atomic
     def update_terms(self, objs: list[dict], assessment: Assessment) -> list:
         """
-        Updates all of the terms and respective text fields
-        for a list of endpoints based on the given name term.
-        All endpoints must be from the same assessment.
+        Updates all of the terms and respective text fields for a list of endpoints based on the
+        given name term. All endpoints must be from the same assessment.
 
         Args:
-            objs (list[dict]): List of endpoint dicts, where each dict has
-                for keys 'id' and 'name_term_id'
+            objs (list[dict]): Endpoint dicts, where each dict has keys "id" and "name_term_id"
             assessment (Assessment): Assessment for endpoints
 
         Returns:

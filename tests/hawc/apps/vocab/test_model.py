@@ -20,9 +20,9 @@ class TestTerm:
         assert endpoint["name"] == "Fatty Acid Balance"
         assert endpoint["system"] == "Cardiovascular"
 
-    def test_toxref_endpoint(self):
+    def test_toxrefdb_endpoint(self):
         term = Term.objects.get(id=7003)
-        endpoint = term.toxref_endpoint_name()
+        endpoint = term.toxrefdb_endpoint_name()
         assert endpoint["name"] == "dysplasia"
         assert endpoint["system"] == "systemic"
 
