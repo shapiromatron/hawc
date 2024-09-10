@@ -92,7 +92,9 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator('input[name="exposurelevel-new-name"]').click()
         page.locator('input[name="exposurelevel-new-name"]').fill("water adult serum")
         page.locator('select[name="exposurelevel-new-chemical"]').select_option(label="water")
-        page.locator('select[name="exposurelevel-new-exposure_measurement"]').select_option(label="adult serum")
+        page.locator('select[name="exposurelevel-new-exposure_measurement"]').select_option(
+            label="adult serum"
+        )
 
         with page.expect_response(re.compile(r"/epidemiology/exposurelevel/\d+/create/")) as resp:
             page.locator("#exposurelevel-save").click()
@@ -142,7 +144,9 @@ class TestEpiV2(PlaywrightTestCase):
         assert resp.value.ok is True
 
         page.locator('input[name="adjustmentfactor-new-name"]').fill("B")
-        page.locator('textarea[name="adjustmentfactor-new-description"]').fill("three, separate, items")
+        page.locator('textarea[name="adjustmentfactor-new-description"]').fill(
+            "three, separate, items"
+        )
 
         with page.expect_response(
             re.compile(r"/epidemiology/adjustmentfactor/\d+/create/")
@@ -167,7 +171,9 @@ class TestEpiV2(PlaywrightTestCase):
         page.locator('select[name="dataextraction-new-outcome"]').select_option(
             label="asthma within previous 10 years"
         )
-        page.locator('select[name="dataextraction-new-exposure_level"]').select_option(label="water adult serum")
+        page.locator('select[name="dataextraction-new-exposure_level"]').select_option(
+            label="water adult serum"
+        )
         page.locator('input[name="dataextraction-new-effect_estimate"]').fill("0")
         page.locator('input[name="dataextraction-new-group"]').fill("Group Z")
         page.locator('select[name="dataextraction-new-factors"]').select_option("6")
