@@ -47,7 +47,7 @@ class TestEpiV2(PlaywrightTestCase):
             page.locator("text=Chemicals Add Row >> button").click()
         assert resp.value.ok is True
 
-        page.locator('select[name="name"]+span.select2-container').click()
+        page.locator('select[name="chemical-new-name"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("water")
 
         with page.expect_response(re.compile(r"/epidemiology/chemical/\d+/create/")) as resp:
@@ -68,8 +68,8 @@ class TestEpiV2(PlaywrightTestCase):
             page.locator("text=Exposure Measurements Add Row >> button").click()
         assert resp.value.ok is True
 
-        page.locator('input[name="name"]').fill("adult serum")
-        page.locator('select[name="measurement_type_0"]').select_option(label="Food")
+        page.locator('input[name="exposure-new-name"]').fill("adult serum")
+        page.locator('select[name="exposure-new-measurement_type_0"]').select_option(label="Food")
 
         with page.expect_response(re.compile(r"/epidemiology/exposure/\d+/create/")) as resp:
             page.locator("#exposure-save").click()
@@ -89,10 +89,10 @@ class TestEpiV2(PlaywrightTestCase):
             page.locator("text=Exposure Levels Add Row >> button").click()
         assert resp.value.ok is True
 
-        page.locator('input[name="name"]').click()
-        page.locator('input[name="name"]').fill("water adult serum")
-        page.locator('select[name="chemical"]').select_option(label="water")
-        page.locator('select[name="exposure_measurement"]').select_option(label="adult serum")
+        page.locator('input[name="exposurelevel-new-name"]').click()
+        page.locator('input[name="exposurelevel-new-name"]').fill("water adult serum")
+        page.locator('select[name="exposurelevel-new-chemical"]').select_option(label="water")
+        page.locator('select[name="exposurelevel-new-exposure_measurement"]').select_option(label="adult serum")
 
         with page.expect_response(re.compile(r"/epidemiology/exposurelevel/\d+/create/")) as resp:
             page.locator("#exposurelevel-save").click()
@@ -112,10 +112,10 @@ class TestEpiV2(PlaywrightTestCase):
             page.locator("text=Outcomes Add Row >> button").click()
         assert resp.value.ok is True
 
-        page.locator('select[name="system"]').select_option("IM")
-        page.locator('select[name="effect"]+span.select2-container').click()
+        page.locator('select[name="outcome-new-system"]').select_option("IM")
+        page.locator('select[name="outcome-new-effect"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("asthma 2")
-        page.locator('select[name="endpoint"]+span.select2-container').click()
+        page.locator('select[name="outcome-new-endpoint"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("asthma within previous 10 years")
 
         # for some reason, issues using `click()`; fallback to keyboard operations
@@ -141,8 +141,8 @@ class TestEpiV2(PlaywrightTestCase):
             page.locator("text=Adjustment Factors Add Row >> button").click()
         assert resp.value.ok is True
 
-        page.locator('input[name="name"]').fill("B")
-        page.locator('textarea[name="description"]').fill("three, separate, items")
+        page.locator('input[name="adjustmentfactor-new-name"]').fill("B")
+        page.locator('textarea[name="adjustmentfactor-new-description"]').fill("three, separate, items")
 
         with page.expect_response(
             re.compile(r"/epidemiology/adjustmentfactor/\d+/create/")
@@ -164,13 +164,13 @@ class TestEpiV2(PlaywrightTestCase):
         # Data Extraction
         with page.expect_response(re.compile(r"/epidemiology/dataextraction/\d+/create/")) as resp:
             page.locator("text=Data Extractions Add Row >> button").click()
-        page.locator('select[name="outcome"]').select_option(
+        page.locator('select[name="dataextraction-new-outcome"]').select_option(
             label="asthma within previous 10 years"
         )
-        page.locator('select[name="exposure_level"]').select_option(label="water adult serum")
-        page.locator('input[name="effect_estimate"]').fill("0")
-        page.locator('input[name="group"]').fill("Group Z")
-        page.locator('select[name="factors"]').select_option("6")
+        page.locator('select[name="dataextraction-new-exposure_level"]').select_option(label="water adult serum")
+        page.locator('input[name="dataextraction-new-effect_estimate"]').fill("0")
+        page.locator('input[name="dataextraction-new-group"]').fill("Group Z")
+        page.locator('select[name="dataextraction-new-factors"]').select_option("6")
 
         with page.expect_response(re.compile(r"/epidemiology/dataextraction/\d+/create/")) as resp:
             page.locator("#dataextraction-save").click()
