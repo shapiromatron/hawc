@@ -1,4 +1,5 @@
 from django.db.models import IntegerChoices
+from django.urls import reverse_lazy
 from django.utils.functional import classproperty
 
 
@@ -17,7 +18,7 @@ class VocabularyNamespace(IntegerChoices):
 
     @classproperty
     def display_urls(cls) -> dict:
-        return {1: "EHV", 2: "ToxRef"}
+        return {1: reverse_lazy("vocab:ehv-browse"), 2: reverse_lazy("vocab:toxrefdb-browse")}
 
     @classmethod
     def display_choices(cls) -> list:

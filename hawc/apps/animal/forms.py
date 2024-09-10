@@ -453,7 +453,7 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
         if vocab_enabled:
             vocab_id = self.instance.assessment.vocabulary
             vocab_url = VocabularyNamespace(vocab_id).display_url
-            vocab = f"""&nbsp;The <a href="{reverse(f'vocab:{vocab_url}-browse')}">
+            vocab = f"""&nbsp;The <a href="{vocab_url}">
                 {VocabularyNamespace(vocab_id).display_name}</a> is enabled for this assessment. Browse to view
                 controlled terms, and whenever possible please use these terms."""
         else:
