@@ -367,7 +367,7 @@ class EndpointBMDSExport(FlatFileExporter):
 
         df4 = (
             responses.set_index("endpoint_id")
-            .loc[df3.index.values]
+            .loc[np.unique(df3.index.values)]
             .drop(columns=["dose_regime_id", "dose_group_id"])
             .groupby(["endpoint_id"])
             .agg(list)
@@ -409,7 +409,7 @@ class EndpointBMDSExport(FlatFileExporter):
 
         df4 = (
             responses.set_index("endpoint_id")
-            .loc[df3.index.values]
+            .loc[np.unique(df3.index.values)]
             .drop(columns=["dose_regime_id", "dose_group_id"])
             .groupby(["endpoint_id"])
             .agg(list)
