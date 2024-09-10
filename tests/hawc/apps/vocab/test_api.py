@@ -89,10 +89,7 @@ class TestToxRefDBTermViewSet:
             # test urls resolve
             (reverse("vocab:api:toxrefdb-system"), [{"id": 7000, "name": "systemic"}]),
             (reverse("vocab:api:toxrefdb-effect"), [{"id": 7001, "name": "pathology microscopic"}]),
-            (
-                reverse("vocab:api:toxrefdb-effect-subtype"),
-                [{"id": 7002, "name": "eye"}],
-            ),
+            (reverse("vocab:api:toxrefdb-effect-subtype"), [{"id": 7002, "name": "eye"}]),
             (reverse("vocab:api:toxrefdb-endpoint-name"), [{"id": 7003, "name": "dysplasia"}]),
         ]
 

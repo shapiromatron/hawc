@@ -448,15 +448,18 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
 
     @property
     def helper(self):
-        vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
+        vocab_enabled = self.instance.assessment.vocabulary is not None
+
         if vocab_enabled:
-            vocab = f"""&nbsp;The <a href="{reverse('vocab:ehv-browse')}">Environmental
-                Health Vocabulary (EHV)</a> is enabled for this assessment. Browse to view
+            vocab_id = self.instance.assessment.vocabulary
+            vocab_url = VocabularyNamespace(vocab_id).display_url
+            vocab = f"""&nbsp;The <a href="{vocab_url}">
+                {VocabularyNamespace(vocab_id).display_name}</a> is enabled for this assessment. Browse to view
                 controlled terms, and whenever possible please use these terms."""
         else:
             vocab = f"""&nbsp;A controlled vocabulary is not enabled for this assessment.
-                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">Environmental
-                Health Vocabulary (EHV)</a> to see if this vocabulary would be a good fit for your
+                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}"></a>
+                  to see if this vocabulary would be a good fit for your
                 assessment. If it is, consider updating the assessment to use this vocabulary."""
 
         if self.instance.id:
