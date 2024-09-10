@@ -366,12 +366,8 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.project_manager_or_higher(user)
 
-    def get_vocabulary_display(self) -> str:
-        # override default method
-        if self.vocabulary:
-            return VocabularyNamespace(self.vocabulary).display_name
-        else:
-            return ""
+    def get_vocabulary_display(self) -> str | None:
+        return VocabularyNamespace(self.vocabulary).display_name if self.vocabulary else None
 
     def get_noel_names(self) -> NoelNames:
         if self.noel_name == constants.NoelName.NEL:

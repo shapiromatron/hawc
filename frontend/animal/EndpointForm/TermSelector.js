@@ -32,10 +32,11 @@ class TermSelector extends Component {
                 store,
                 parentRequired,
             } = this.props,
-            {object, debug, vocabulary_display} = store.config,
+            {object, vocabulary_display} = store.config,
             useControlledVocabulary = store.useControlledVocabulary[termTextField],
             currentId = object[termIdField],
-            currentText = object[termTextField];
+            currentText = object[termTextField],
+            currentVocabulary = store.config.vocabulary;
 
         return (
             <div className="form-group">
@@ -49,9 +50,7 @@ class TermSelector extends Component {
                                 style={{maxWidth: 130}}
                                 value={this.state.idLookupValue}
                                 onChange={event =>
-                                    this.setState({
-                                        idLookupValue: parseInt(event.target.value),
-                                    })
+                                    this.setState({idLookupValue: parseInt(event.target.value)})
                                 }
                             />
                             <div className="input-group-append">
@@ -71,7 +70,7 @@ class TermSelector extends Component {
                 {popupHelpText ? <HelpTextPopup content={popupHelpText} title={label} /> : null}
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
-                        url={termUrlLookup[termIdField]}
+                        url={termUrlLookup(termIdField, currentVocabulary)}
                         onChange={(id, text) => {
                             store.setObjectField(termIdField, id);
                             store.setObjectField(termTextField, text);
@@ -134,13 +133,6 @@ class TermSelector extends Component {
                     <small
                         className="form-text text-muted"
                         dangerouslySetInnerHTML={{__html: helpText}}></small>
-                ) : null}
-                {debug ? (
-                    <ul>
-                        <li>termId: {currentId}</li>
-                        <li>text: {currentText}</li>
-                        <li>parent: {object[parentIdField]}</li>
-                    </ul>
                 ) : null}
             </div>
         );

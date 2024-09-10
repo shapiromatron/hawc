@@ -1,5 +1,5 @@
 from django.db.models import IntegerChoices
-from django.utils.functional import classproperty
+from django.urls import reverse
 
 
 class VocabularyNamespace(IntegerChoices):
@@ -9,18 +9,27 @@ class VocabularyNamespace(IntegerChoices):
     """
 
     EHV = 1, "EHV"
-
-    @classproperty
-    def display_dict(cls) -> dict:
-        return {1: "EPA Environmental health vocabulary"}
+    ToxRefDB = 2, "ToxRefDB"
 
     @classmethod
     def display_choices(cls) -> list:
-        return [(key, value) for key, value in cls.display_dict.items()]
+        return [(item, item.display_name) for item in cls]
+
+    @property
+    def display_url(self) -> str:
+        match self:
+            case self.EHV:
+                return reverse("vocab:ehv-browse")
+            case self.ToxRefDB:
+                return reverse("vocab:toxrefdb-browse")
 
     @property
     def display_name(self) -> str:
-        return self.display_dict[self.value]
+        match self:
+            case self.EHV:
+                return "EPA Environmental health vocabulary"
+            case self.ToxRefDB:
+                return "EPA ToxRefDB vocabulary"
 
 
 class VocabularyTermType(IntegerChoices):
