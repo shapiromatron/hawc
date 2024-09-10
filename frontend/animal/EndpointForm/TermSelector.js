@@ -36,7 +36,7 @@ class TermSelector extends Component {
             useControlledVocabulary = store.useControlledVocabulary[termTextField],
             currentId = object[termIdField],
             currentText = object[termTextField],
-            currentVocabularyUrl = store.config.vocabulary_url;
+            currentVocabulary = store.config.vocabulary;
 
         return (
             <div className="form-group">
@@ -72,7 +72,7 @@ class TermSelector extends Component {
                 {popupHelpText ? <HelpTextPopup content={popupHelpText} title={label} /> : null}
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
-                        url={termUrlLookup(termIdField, currentVocabularyUrl)}
+                        url={termUrlLookup(termIdField, currentVocabulary)}
                         onChange={(id, text) => {
                             store.setObjectField(termIdField, id);
                             store.setObjectField(termTextField, text);
