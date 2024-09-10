@@ -66,6 +66,7 @@ class Term(models.Model):
         df = cls.merge_data(vocab_data["system"], term_data)
         return df
 
+    @staticmethod
     def vocab_data(namespace) -> dict:
         cols = ("id", "type", "parent_id", "name")
         all_df = pd.DataFrame(
@@ -114,6 +115,7 @@ class Term(models.Model):
 
         return data
 
+    @staticmethod
     def merge_data(df, data):
         # merge df queries based on relevant hierarchy
         for term in data:
