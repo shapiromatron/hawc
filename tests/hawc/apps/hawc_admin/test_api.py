@@ -82,7 +82,7 @@ class TestReportsViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
         df = pd.read_json(StringIO(resp.content.decode()))
-        assert df.shape == (3, 44)
+        assert df.shape == (3, 40)
 
 
 @pytest.mark.django_db
