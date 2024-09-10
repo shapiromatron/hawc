@@ -269,32 +269,38 @@ class EndpointExport(ModelExport):
 
 
 class EndpointBmdsExport(FlatFileExporter):
-    def __init__(self, assessment_id: int, **kwargs):
-        self.assessment_id = assessment_id
+    def __init__(self, assessment_id: int, published_only: bool = True):
         self.filename = f"HAWC-{assessment_id}_bmds_export"
-        self.kwargs = kwargs
+        self.assessment_id = assessment_id
+        self.published_only = published_only
 
-    def get_dose_groups(self, assessment_id: int) -> pd.DataFrame:
+    def get_dose_groups(self) -> pd.DataFrame:
+        filters = dict(
+            dose_regime__dosed_animals__experiment__study__assessment_id=self.assessment_id
+        )
+        if self.published_only:
+            filters.update(dose_regime__dosed_animals__experiment__study__published=True)
         qs = (
-            models.DoseGroup.objects.filter(
-                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
-            )
+            models.DoseGroup.objects.filter(**filters)
             .values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
             .order_by("dose_regime_id", "dose_units_id", "dose_group_id")
         )
         return pd.DataFrame(data=qs)
 
-    def get_dichotomous_response(self, assessment_id: int) -> pd.DataFrame:
+    def get_dichotomous_response(self) -> pd.DataFrame:
+        filters = dict(
+            endpoint__assessment_id=self.assessment_id,
+            endpoint__data_type__in=[
+                constants.DataType.DICHOTOMOUS,
+                constants.DataType.DICHOTOMOUS_CANCER,
+            ],
+            n__gt=0,
+            incidence__isnull=False,
+        )
+        if self.published_only:
+            filters.update(endpoint__animal_group__experiment__study__published=True)
         qs = (
-            models.EndpointGroup.objects.filter(
-                endpoint__assessment_id=assessment_id,
-                endpoint__data_type__in=[
-                    constants.DataType.DICHOTOMOUS,
-                    constants.DataType.DICHOTOMOUS_CANCER,
-                ],
-                n__gt=0,
-                incidence__isnull=False,
-            )
+            models.EndpointGroup.objects.filter(**filters)
             .values(
                 "endpoint_id",
                 "dose_group_id",
@@ -306,15 +312,18 @@ class EndpointBmdsExport(FlatFileExporter):
         )
         return pd.DataFrame(data=qs)
 
-    def get_continuous_response(self, assessment_id: int) -> pd.DataFrame:
+    def get_continuous_response(self) -> pd.DataFrame:
+        filters = dict(
+            endpoint__assessment_id=self.assessment_id,
+            endpoint__data_type=constants.DataType.CONTINUOUS,
+            n__gt=0,
+            response__isnull=False,
+            variance__isnull=False,
+        )
+        if self.published_only:
+            filters.update(endpoint__animal_group__experiment__study__published=True)
         qs = (
-            models.EndpointGroup.objects.filter(
-                endpoint__assessment_id=assessment_id,
-                endpoint__data_type=constants.DataType.CONTINUOUS,
-                n__gt=0,
-                response__isnull=False,
-                variance__isnull=False,
-            )
+            models.EndpointGroup.objects.filter(**filters)
             .annotate(
                 stdev=Case(
                     When(endpoint__variance_type=constants.VarianceType.SD, then=F("variance")),
@@ -428,9 +437,9 @@ class EndpointBmdsExport(FlatFileExporter):
         return results
 
     def build_df(self):
-        doses = self.get_dose_groups(self.assessment_id)
-        responses_c = self.get_continuous_response(self.assessment_id)
-        responses_d = self.get_dichotomous_response(self.assessment_id)
+        doses = self.get_dose_groups()
+        responses_c = self.get_continuous_response()
+        responses_d = self.get_dichotomous_response()
         c_datasets = self.get_continuous_datasets(doses, responses_c)
         d_datasets = self.get_dichotomous_datasets(doses, responses_d)
         return pd.DataFrame.from_records(c_datasets + d_datasets)

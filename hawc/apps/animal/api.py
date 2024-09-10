@@ -193,7 +193,8 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
     )
     def bmds_export(self, request, pk):
         self.assessment = self.get_object()
-        exporter = exports.EndpointBmdsExport(self.assessment.pk)
+        published_only = get_published_only(self.assessment, request)
+        exporter = exports.EndpointBmdsExport(self.assessment.pk, published_only=published_only)
         return Response(exporter.build_export())
 
 
