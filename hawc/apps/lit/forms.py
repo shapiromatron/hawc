@@ -180,10 +180,10 @@ class ImportForm(SearchForm):
         try:
             # convert to a set, then a list to remove duplicate ids
             ids = list(set(int(el) for el in search_string.split(",")))
-        except ValueError:
+        except ValueError as err:
             raise forms.ValidationError(
                 "Must be a comma-separated list of positive integer identifiers"
-            )
+            ) from err
 
         if len(ids) == 0 or any([el < 0 for el in ids]):
             raise forms.ValidationError("At least one positive identifier must exist")
@@ -284,7 +284,7 @@ class RisImportForm(SearchForm):
             try:
                 self._references = ris.RisImporter(f).references
             except ValueError as err:
-                raise forms.ValidationError(str(err))
+                raise forms.ValidationError(str(err)) from err
 
         # ensure at least one reference exists
         if len(self._references) == 0:
@@ -663,7 +663,7 @@ class ReferenceExcelUploadForm(forms.Form):
             df = pd.read_excel(fn.file)
         except Exception as e:
             logger.warning(e)
-            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR)
+            raise forms.ValidationError(self.EXCEL_FORMAT_ERROR) from e
 
         # check column names
         if df.columns.tolist() != ["HAWC ID", "Full text URL"]:
@@ -671,8 +671,8 @@ class ReferenceExcelUploadForm(forms.Form):
 
         try:
             hawc_ids = df["HAWC ID"].astype(int).tolist()
-        except pd.errors.IntCastingNaNError:
-            raise forms.ValidationError("HAWC IDs must be integers.")
+        except pd.errors.IntCastingNaNError as err:
+            raise forms.ValidationError("HAWC IDs must be integers.") from err
 
         # check valid HAWC IDs
         qs = models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=hawc_ids)

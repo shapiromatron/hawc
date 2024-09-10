@@ -27,7 +27,7 @@ def validate(turnstile_response: str, user_ip: str | None = None) -> SiteVerifyR
     model = SiteVerifyRequest(
         secret=settings.TURNSTILE_KEY, response=turnstile_response, remoteip=user_ip
     )
-    resp = requests.post(url, data=model.model_dump())
+    resp = requests.post(url, data=model.model_dump(), timeout=15)
     if resp.status_code != 200:
         model = SiteVerifyResponse(success=False, hostname=None)
         model.error_codes.extend(

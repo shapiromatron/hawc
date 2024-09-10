@@ -34,7 +34,7 @@ def test_throttle(db_keys):
     factory = APIClient()
 
     throttled = False
-    for i in range(10):
+    for _i in range(10):
         response = factory.post(
             url, {"username": db_keys.pm_user.email, "password": "wrong-password"}
         )

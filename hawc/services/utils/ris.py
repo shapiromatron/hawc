@@ -139,8 +139,8 @@ class ReferenceParser:
             return None
         try:
             return int(value)
-        except ValueError:
-            raise ValueError(f"Invalid year: {value}")
+        except ValueError as err:
+            raise ValueError(f"Invalid year: {value}") from err
 
     def get_doi(self, val) -> str | None:
         doi = self.content.get("doi", None)
@@ -151,8 +151,8 @@ class ReferenceParser:
     def get_id(self, val) -> int:
         try:
             return int(val)
-        except (TypeError, ValueError):
-            raise ValueError(self.ID_MISSING)
+        except (TypeError, ValueError) as err:
+            raise ValueError(self.ID_MISSING) from err
 
     def _get_field(self, fields, default):
         for fld in fields:

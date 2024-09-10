@@ -1,4 +1,4 @@
-from hawc.services.utils.authors import get_author_short_text, normalize_author
+from hawc.services.utils.authors import get_author_short_text, get_first, normalize_author
 
 
 class TestNormalizeAuthors:
@@ -61,3 +61,10 @@ def test_get_author_short_text():
 
     # 4 test
     assert get_author_short_text(["Smith J"] * 4) == "Smith J et al."
+
+
+def test_get_first():
+    assert get_first({"foo": 1}, ["foo"]) == 1
+    assert get_first({"foo": 1}, ["bar", "foo"]) == 1
+    assert get_first({"foo": 1}, ["baz"]) is None
+    assert get_first({"foo": 1}, ["baz"], -9999) == -9999

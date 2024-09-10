@@ -17,11 +17,11 @@ class DssToxDetailTable extends Component {
                         <tbody>
                             <tr>
                                 <td rowSpan={5}>
-                                    <a href={data.img_url}>
+                                    <a href={data.image_url}>
                                         <img
                                             alt="chemical structure image"
                                             style={{width: 150}}
-                                            src={data.img_url}
+                                            src={data.image_url}
                                         />
                                     </a>
                                 </td>
