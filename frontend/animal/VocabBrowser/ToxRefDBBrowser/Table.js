@@ -1,4 +1,4 @@
-import {helpText} from "animal/EndpointForm/constants";
+import {toxRefDBFields} from "animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -13,6 +13,7 @@ class Table extends Component {
     render() {
         const {filteredDataset, query} = this.props.store,
             regex = query.length > 0 ? new RegExp(h.escapeRegexString(query), "gi") : null,
+            helpText = toxRefDBFields.helpText,
             highlightedSpan = text => {
                 return regex ? (
                     <span
@@ -35,32 +36,38 @@ class Table extends Component {
                 {filteredDataset.length > 0 ? (
                     <table className="table table-sm table-striped">
                         <colgroup>
-                            <col width="20%" />
-                            <col width="20%" />
-                            <col width="20%" />
-                            <col width="20%" />
+                            <col width="25%" />
+                            <col width="25%" />
+                            <col width="25%" />
+                            <col width="25%" />
                         </colgroup>
                         <thead>
                             <tr>
                                 <th>
-                                    System
-                                    <HelpTextPopup title="System" content={helpText.system_popup} />
-                                </th>
-                                <th>
-                                    Effect
-                                    <HelpTextPopup title="Effect" content={helpText.effect_popup} />
-                                </th>
-                                <th>
-                                    Effect subtype
+                                    Endpoint Category
                                     <HelpTextPopup
-                                        title="Effect subtype"
+                                        title="Endpoint Category"
+                                        content={helpText.system_popup}
+                                    />
+                                </th>
+                                <th>
+                                    Endpoint Type
+                                    <HelpTextPopup
+                                        title="Endpoint Type"
+                                        content={helpText.effect_popup}
+                                    />
+                                </th>
+                                <th>
+                                    Endpoint Target
+                                    <HelpTextPopup
+                                        title="Endpoint Target"
                                         content={helpText.effect_subtype_popup}
                                     />
                                 </th>
                                 <th>
-                                    Endpoint/Outcome
+                                    Effect Description
                                     <HelpTextPopup
-                                        title="Endpoint/Outcome"
+                                        title="Effect Description"
                                         content={helpText.endpoint_name_popup}
                                     />
                                 </th>

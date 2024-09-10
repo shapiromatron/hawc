@@ -1,18 +1,17 @@
-import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import Terms from "./components/VocabTermFields";
-import {ehvFields, toxrefFields} from "./constants";
+import {ehvFields, toxRefDBFields} from "./constants";
 
 @inject("store")
 @observer
 class App extends Component {
     render() {
-        const vocabFields = {ehv: ehvFields, toxref: toxrefFields},
-            fields = vocabFields[this.props.store.config.vocabulary_url];
-        return <Terms termFields={_.isUndefined(fields) ? ehvFields : fields} />;
+        const vocabFields = {null: ehvFields, 1: ehvFields, 2: toxRefDBFields},
+            fields = vocabFields[this.props.store.config.vocabulary];
+        return <Terms termFields={fields} />;
     }
 }
 App.propTypes = {

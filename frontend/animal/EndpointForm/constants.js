@@ -63,7 +63,7 @@ const termUrlLookup = function(term, vocab_url) {
             will automatically populate. Please use a controlled vocabulary term if possible.`,
         },
     },
-    toxrefFields = {
+    toxRefDBFields = {
         label: {
             system: "Endpoint Category",
             effect: "Endpoint Type",
@@ -116,4 +116,4 @@ const termUrlLookup = function(term, vocab_url) {
         <a href="/vocab/ehv/">EHV</a> and <a href="/vocab/toxref/">ToxRef</a>. Please use a controlled vocabulary term if possible.`,
     };
 
-export {defaultHelpText, ehvFields, termUrlLookup, textUrlLookup, toxrefFields};
+export {defaultHelpText, ehvFields, termUrlLookup, textUrlLookup, toxRefDBFields};
