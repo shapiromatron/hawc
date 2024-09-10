@@ -71,7 +71,7 @@ const termUrlLookupMap = {
         },
     },
     defaultHelpText = {
-        endpoint_name: `An observable or measurable biological change used as an index of a potential health effect of an exposure. Endpoint may also be referred to as effect or outcome. For a searchable list of Environment Health Vocabulary terms, see the <a href="/vocab/ehv/">EHV</a> and <a href="/vocab/toxrefdb/">ToxRefDB</a>. Please use a controlled vocabulary term if possible.`,
+        endpoint_name: `An observable or measurable biological change used as an index of a potential health effect of an exposure. Endpoint may also be referred to as effect or outcome. For a searchable list of terms, see the <a href="/vocab/ehv/">EHV</a> or <a href="/vocab/toxrefdb/">ToxRefDB</a>. Please use a controlled vocabulary term if possible.`,
     };
 
 export {defaultHelpText, ehvFields, termUrlLookup, textUrlLookup, toxRefDBFields};
