@@ -50,9 +50,7 @@ class TermSelector extends Component {
                                 style={{maxWidth: 130}}
                                 value={this.state.idLookupValue}
                                 onChange={event =>
-                                    this.setState({
-                                        idLookupValue: parseInt(event.target.value),
-                                    })
+                                    this.setState({idLookupValue: parseInt(event.target.value)})
                                 }
                             />
                             <div className="input-group-append">
