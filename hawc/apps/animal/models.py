@@ -21,6 +21,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..study.models import Study
+from ..vocab.constants import VocabularyNamespace
 from ..vocab.models import Term
 from . import constants, managers
 
@@ -806,11 +807,12 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
+        vocab = VocabularyNamespace(assessment.vocabulary) if assessment.vocabulary else None
         return json.dumps(
             {
-                "vocabulary": assessment.vocabulary,
-                "vocabulary_url": assessment.get_vocabulary_url(),
-                "vocabulary_display": assessment.get_vocabulary_display(),
+                "vocabulary": vocab.value if vocab else None,
+                "vocabulary_api": vocab.api_root if vocab else None,
+                "vocabulary_display": vocab.display_name if vocab else None,
                 "object": {
                     "system": form["system"].value() or "",
                     "organ": form["organ"].value() or "",
