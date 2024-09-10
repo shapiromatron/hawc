@@ -147,7 +147,7 @@ class AnimalClient(BaseClient):
         return data
 
     def bmds_endpoints(self, assessment_id: int) -> pd.DataFrame:
-        url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/bmds_export/"
+        url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/bmds-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
