@@ -84,11 +84,11 @@ class ArrowsRow extends EditableRow {
                                 choices={getArrowOptions()}
                             />
                             <SelectInput
-                                name={`${key}-dest-${index}`}
-                                value={row.dest}
+                                name={`${key}-destination-${index}`}
+                                value={row.destination}
                                 label="Destination"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "dest", value)
+                                    changeArraySettings(key, index, "destination", value)
                                 }
                                 multiple={false}
                                 choices={getArrowOptions()}

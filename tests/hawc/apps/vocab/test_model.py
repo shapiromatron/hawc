@@ -1,5 +1,6 @@
 import pytest
 
+from hawc.apps.vocab.constants import VocabularyNamespace
 from hawc.apps.vocab.models import Entity, Term
 
 
@@ -9,6 +10,24 @@ class TestTerm:
         term = Term.objects.get(id=1)
         assert str(term) == "EHV::system::Cardiovascular"
         assert term.get_admin_edit_url() == "/admin/vocab/term/1/change/"
+
+        term = Term.objects.get(id=7002)
+        assert str(term) == "ToxRefDB::effect_subtype::eye"
+        assert term.get_admin_edit_url() == "/admin/vocab/term/7002/change/"
+
+    def test_inheritance(self):
+        # ehv
+        term = Term.objects.get(id=5)
+        endpoint = term.inheritance()
+        assert term.namespace == VocabularyNamespace.EHV
+        assert endpoint["name"] == "Fatty Acid Balance"
+        assert endpoint["system"] == "Cardiovascular"
+        # toxrefdb
+        term = Term.objects.get(id=7003)
+        endpoint = term.inheritance()
+        assert term.namespace == VocabularyNamespace.ToxRefDB
+        assert endpoint["name"] == "dysplasia"
+        assert endpoint["system"] == "systemic"
 
 
 @pytest.mark.django_db
