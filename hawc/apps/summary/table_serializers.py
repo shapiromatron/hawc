@@ -3,8 +3,7 @@ import json
 import pandas as pd
 from rest_framework import serializers
 
-from hawc.tools.tables.set.constants import DataSourceChoices
-
+from ...tools.tables.set.constants import DataSourceChoices
 from ..animal import models as animal_models
 from ..assessment.models import Assessment
 from ..common.helper import int_or_float
