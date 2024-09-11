@@ -3,9 +3,12 @@ import pandas as pd
 from ..common.exports import Exporter, ModelExport
 
 
-def expand_content(df: pd.DataFrame, content_column: str) -> pd.DataFrame:
+def expand_content(df: pd.DataFrame, content_column: str, prefix: str = "") -> pd.DataFrame:
     # expand JSON representation into individual columns
-    return pd.DataFrame(data=list(df[content_column].values)).add_prefix(f"{content_column}-field-")
+    df2 = df[content_column].dropna()
+    return pd.DataFrame(data=list(df2.values), index=df2.index).add_prefix(
+        prefix if prefix else f"{content_column}-field-"
+    )
 
 
 class ContentTypeExport(ModelExport):

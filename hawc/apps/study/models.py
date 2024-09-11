@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
@@ -12,6 +13,7 @@ from reversion import revisions as reversion
 from ..assessment.models import Communication
 from ..common.helper import SerializerHelper
 from ..lit.models import Reference
+from ..udf.models import ModelUDFContent
 from . import constants, managers
 
 logger = logging.getLogger(__name__)
@@ -113,6 +115,8 @@ class Study(Reference):
         default=True,
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
+
+    udf_content = GenericRelation(ModelUDFContent, related_query_name="study")
 
     BREADCRUMB_PARENT = "assessment"
 

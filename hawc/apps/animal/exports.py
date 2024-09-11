@@ -15,6 +15,7 @@ from ..common.helper import FlatFileExporter, cleanHTML
 from ..common.models import sql_display, sql_format, str_m2m
 from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
+from ..udf.exports import ModelUDFContentExport
 from . import constants, models
 
 
@@ -472,6 +473,11 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                 "animal_group__experiment__study",
                 include=("id", "short_citation", "study_identifier", "published"),
             ),
+            ModelUDFContentExport(
+                "study_udf_content",
+                "animal_group__experiment__study__udf_content",
+                include=("content",),
+            ),
             ExperimentExport(
                 "experiment",
                 "animal_group__experiment",
@@ -524,6 +530,11 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                     "expected_adversity_direction",
                     "response_units",
                 ),
+            ),
+            ModelUDFContentExport(
+                "endpoint_udf_content",
+                "udf_content",
+                include=("content",),
             ),
             EndpointGroupExport(
                 "endpoint_group",
@@ -830,6 +841,11 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         df = self.handle_incidence_summary(df)
 
         df = df.rename(
+            lambda x: x.replace("_udf_content-content-field-", " "),
+            axis="columns",
+        )
+
+        df = df.rename(
             columns={
                 "study-id": "study id",
                 "study-short_citation": "study name",
@@ -878,6 +894,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         )
         df = df.drop(
             columns=[
+                "endpoint_udf_content-content",
+                "study_udf_content-content",
                 "endpoint-observation_time",
                 "dose_group-id",
                 "dose_group-dose_group_id",
@@ -906,6 +924,11 @@ class EndpointFlatDataPivotExporter(Exporter):
                 "study",
                 "animal_group__experiment__study",
                 include=("id", "short_citation", "study_identifier", "published"),
+            ),
+            ModelUDFContentExport(
+                "study_udf_content",
+                "animal_group__experiment__study__udf_content",
+                include=("content",),
             ),
             ExperimentExport(
                 "experiment",
@@ -959,6 +982,11 @@ class EndpointFlatDataPivotExporter(Exporter):
                     "expected_adversity_direction",
                     "response_units",
                 ),
+            ),
+            ModelUDFContentExport(
+                "endpoint_udf_content",
+                "udf_content",
+                include=("content",),
             ),
             EndpointGroupExport(
                 "endpoint_group",
@@ -1127,6 +1155,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         df = df.drop_duplicates(subset="endpoint-id")
 
         df = df.rename(
+            lambda x: x.replace("_udf_content-content-field-", " "),
+            axis="columns",
+        )
+
+        df = df.rename(
             columns={
                 "study-id": "study id",
                 "study-short_citation": "study name",
@@ -1163,6 +1196,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         )
         df = df.drop(
             columns=[
+                "endpoint_udf_content-content",
+                "study_udf_content-content",
                 "endpoint_group-stdev",
                 "percent lower ci",
                 "percent affected",
