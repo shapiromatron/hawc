@@ -14,11 +14,10 @@ from django.utils.timezone import now
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
-from hawc.refml import tags as refmltags
-from hawc.services.utils.doi import get_doi_from_identifier
-
+from ...refml import tags as refmltags
 from ...services.epa import hero
 from ...services.nih import pubmed
+from ...services.utils.doi import get_doi_from_identifier
 from ..assessment.managers import published
 from ..common.helper import flatten
 from ..common.models import BaseManager, replace_null, search_query, str_m2m

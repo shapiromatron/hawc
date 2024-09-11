@@ -1,8 +1,7 @@
 from django.contrib import admin
 from treebeard.admin import TreeAdmin
 
-from hawc.apps.common.admin import admin_edit_link
-
+from ..common.admin import admin_edit_link
 from . import forms, models
 
 
