@@ -29,11 +29,6 @@ urlpatterns = [
         views.LiteratureAssessmentUpdate.as_view(),
         name="literature_assessment_update",
     ),
-    path(
-        "assessment/<int:pk>/venn/",
-        views.VennView.as_view(),
-        name="venn",
-    ),
     # Reference-level details
     path("reference/<int:pk>/", views.RefDetail.as_view(), name="ref_detail"),
     path("reference/<int:pk>/update/", views.RefEdit.as_view(), name="ref_edit"),

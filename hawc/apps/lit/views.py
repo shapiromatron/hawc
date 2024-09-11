@@ -692,7 +692,7 @@ def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
 
 class SearchTagsVisualization(BaseDetail):
     model = models.Search
-    template_name = "lit/reference_visual.html"
+    template_name = "lit/reference_search_visual.html"
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(
@@ -1016,7 +1016,27 @@ class RefVisualization(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        self.set_venn_data(context)
         return context
+
+    def set_venn_data(self, context: dict):
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        form = forms.VennForm(
+            assessment=self.assessment,
+            tags=tags,
+            data=self.request.GET if self.request.GET else None,
+            initial=dict(tag1=tags[0], tag2=tags[1]),
+        )
+        context.update(
+            venn=dict(
+                form=form,
+                app=WebappConfig(
+                    app="litStartup",
+                    page="startupVenn",
+                    data=form.get_venn() if form.is_valid() else {"sets": []},
+                ).model_dump(),
+            )
+        )
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_viz_app_startup(self, context)
@@ -1215,17 +1235,6 @@ class VennView(BaseDetail):
     template_name = "venn.html"
 
     def get_context_data(self, **kw):
-        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
-        form = forms.VennForm(
-            assessment=self.assessment,
-            tags=tags,
-            data=self.request.GET if self.request.GET else None,
-            initial=dict(tag1=tags[0], tag2=tags[1]),
-        )
-        kw.update(
-            form=form,
-            data=form.get_venn() if form.is_valid() else {"sets": []},
-        )
         return super().get_context_data(**kw)
 
     def get_app_config(self, context) -> WebappConfig:

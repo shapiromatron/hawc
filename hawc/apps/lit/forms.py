@@ -797,14 +797,11 @@ class VennForm(forms.Form):
 
     @property
     def helper(self):
-        inputs = {
-            "legend_text": "Update reference details",
-            "help_text": "Update reference information which was fetched from database or reference upload.",
-            "cancel_url": reverse_lazy("lit:overview", args=(self.assessment.id,)),
-        }
+        inputs = {"form_actions": [cfl.Submit("Submit", "Submit")]}
         helper = BaseFormHelper(self, **inputs)
         helper.add_row("tag1", 4, "col-md-3")
         helper.form_method = "GET"
+        helper.attrs.update(**{"hx-get": ".", "hx-trigger": "submit"})
         return helper
 
     def get_venn(self):
