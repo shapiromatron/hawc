@@ -354,16 +354,16 @@ class EndpointBmdsExport(FlatFileExporter):
         if responses.empty or doses.empty:
             return []
 
-        df1 = (
+        responses_df = (
             responses[["endpoint_id", "dose_regime_id", "dose_group_id"]]
             .drop_duplicates()
             .set_index(["dose_regime_id", "dose_group_id"])
         )
 
-        df2 = doses.set_index(["dose_regime_id", "dose_group_id"])
+        doses_df = doses.set_index(["dose_regime_id", "dose_group_id"])
 
-        df3 = (
-            df1.merge(df2, how="inner", left_index=True, right_index=True)
+        dose_response_df = (
+            responses_df.merge(doses_df, how="inner", left_index=True, right_index=True)
             .reset_index()
             .sort_values(["endpoint_id", "dose_units__name", "dose_group_id"])
             .drop(columns=["dose_regime_id", "dose_group_id"])
@@ -374,18 +374,18 @@ class EndpointBmdsExport(FlatFileExporter):
             .rename(columns={"dose_units__name": "units", "dose": "doses"})
         )
 
-        df4 = (
+        endpoint_dose_response_df = (
             responses.set_index("endpoint_id")
-            .loc[np.unique(df3.index.values)]
+            .loc[np.unique(dose_response_df.index.values)]
             .drop(columns=["dose_regime_id", "dose_group_id"])
             .groupby(["endpoint_id"])
             .agg(list)
             .assign(dtype="D")
             .reset_index()
         )
-        results = df4.to_dict(orient="records")
+        results = endpoint_dose_response_df.to_dict(orient="records")
         for result in results:
-            d = df3.loc[result["endpoint_id"]]
+            d = dose_response_df.loc[result["endpoint_id"]]
             if isinstance(d, pd.Series):
                 d = d.to_frame().T
             result["doses"] = {d["units"]: d["doses"] for d in d.to_dict(orient="records")}
@@ -396,16 +396,16 @@ class EndpointBmdsExport(FlatFileExporter):
         if responses.empty or doses.empty:
             return []
 
-        df1 = (
+        responses_df = (
             responses[["endpoint_id", "dose_regime_id", "dose_group_id"]]
             .drop_duplicates()
             .set_index(["dose_regime_id", "dose_group_id"])
         )
 
-        df2 = doses.set_index(["dose_regime_id", "dose_group_id"])
+        doses_df = doses.set_index(["dose_regime_id", "dose_group_id"])
 
-        df3 = (
-            df1.merge(df2, how="inner", left_index=True, right_index=True)
+        dose_response_df = (
+            responses_df.merge(doses_df, how="inner", left_index=True, right_index=True)
             .reset_index()
             .sort_values(["endpoint_id", "dose_units__name", "dose_group_id"])
             .drop(columns=["dose_regime_id", "dose_group_id"])
@@ -416,9 +416,9 @@ class EndpointBmdsExport(FlatFileExporter):
             .rename(columns={"dose_units__name": "units", "dose": "doses"})
         )
 
-        df4 = (
+        endpoint_dose_response_df = (
             responses.set_index("endpoint_id")
-            .loc[np.unique(df3.index.values)]
+            .loc[np.unique(dose_response_df.index.values)]
             .drop(columns=["dose_regime_id", "dose_group_id"])
             .groupby(["endpoint_id"])
             .agg(list)
@@ -426,10 +426,10 @@ class EndpointBmdsExport(FlatFileExporter):
             .reset_index()
         )
 
-        results = df4.to_dict(orient="records")
+        results = endpoint_dose_response_df.to_dict(orient="records")
 
         for result in results:
-            d = df3.loc[result["endpoint_id"]]
+            d = dose_response_df.loc[result["endpoint_id"]]
             if isinstance(d, pd.Series):
                 d = d.to_frame().T
             result["doses"] = {d["units"]: d["doses"] for d in d.to_dict(orient="records")}
