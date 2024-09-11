@@ -1,9 +1,8 @@
 import pandas as pd
 from pydantic import BaseModel, Field, conint
 
-from hawc.apps.riskofbias.constants import SCORE_SHADES, SCORE_SYMBOLS
-from hawc.apps.summary.table_serializers import StudyEvaluationSerializer
-
+from ....apps.riskofbias.constants import SCORE_SHADES, SCORE_SYMBOLS
+from ....apps.summary.table_serializers import StudyEvaluationSerializer
 from ..base import BaseCell, BaseCellGroup, BaseTable
 from ..generic import GenericCell
 from ..parser import QuillParser, color_background, tag_wrapper

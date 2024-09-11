@@ -13,13 +13,11 @@ from plotly.graph_objs._figure import Figure
 from plotly.io import from_json
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
-from treebeard.mp_tree import MP_Node
 
-from hawc.tools.tables.ept import EvidenceProfileTable
-from hawc.tools.tables.generic import BaseTable, GenericTable
-from hawc.tools.tables.parser import QuillParser
-from hawc.tools.tables.set import StudyEvaluationTable
-
+from ...tools.tables.ept import EvidenceProfileTable
+from ...tools.tables.generic import BaseTable, GenericTable
+from ...tools.tables.parser import QuillParser
+from ...tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
@@ -37,66 +35,13 @@ from ..epi.exports import OutcomeDataPivot
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
+from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
 
 logger = logging.getLogger(__name__)
-
-
-class SummaryText(MP_Node):
-    objects = managers.SummaryTextManager()
-
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
-    title = models.CharField(max_length=128)
-    slug = models.SlugField(
-        verbose_name="URL Name",
-        help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
-        unique=True,
-    )
-    text = models.TextField(default="")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    BREADCRUMB_PARENT = "assessment"
-
-    class Meta:
-        verbose_name_plural = "Summary Text Descriptions"
-        unique_together = (
-            ("assessment", "title"),
-            ("assessment", "slug"),
-        )
-
-    def __str__(self):
-        return self.title
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
-    @classmethod
-    def get_assessment_root_node(cls, assessment_id):
-        return SummaryText.objects.get(title=f"assessment-{assessment_id}")
-
-    @classmethod
-    def get_assessment_queryset(cls, assessment_id):
-        return cls.get_assessment_root_node(assessment_id).get_descendants()
-
-    @classmethod
-    def build_default(cls, assessment):
-        assessment = SummaryText.add_root(
-            assessment=assessment,
-            title=f"assessment-{assessment.pk}",
-            slug=f"assessment-{assessment.pk}-slug",
-            text="Root-level text",
-        )
-
-    def get_absolute_url(self):
-        return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
-
-    def get_assessment(self):
-        return self.assessment
 
 
 class SummaryTable(models.Model):
@@ -430,6 +375,30 @@ class Visual(models.Model):
         ]
         datasets.extend(additional_datasets)
         return HeatmapDatasets(datasets=datasets)
+
+    @classmethod
+    def get_prisma_data(cls, assessment: Assessment) -> str:
+        return json.dumps(
+            {
+                "reference_tag_pairs": list(
+                    Reference.objects.tag_pairs(assessment.references.all())
+                ),
+                "reference_search_pairs": list(
+                    Reference.searches.through.objects.filter(
+                        reference_id__in=assessment.references.all()
+                    ).values("search_id", "reference_id")
+                ),
+                "searches": list(
+                    Search.objects.filter(assessment_id=assessment.id).values("id", "title")
+                ),
+                "tags": list(
+                    ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")
+                ),
+                "references": list(
+                    Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
+                ),
+            }
+        )
 
     @staticmethod
     def get_dose_units():
@@ -827,7 +796,6 @@ class DataPivotQuery(DataPivot):
             raise ValueError("Unknown type")
 
 
-reversion.register(SummaryText)
 reversion.register(SummaryTable)
 reversion.register(DataPivot)
 reversion.register(DataPivotUpload)

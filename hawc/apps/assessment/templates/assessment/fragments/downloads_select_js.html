@@ -4,10 +4,8 @@
       var format = $(this).val(),
           url = $(`#${this.id}-url`).attr("href");
       if (format && url) {
-        var format_idx = url.indexOf("format="),
-            help_text = format === "xlsx" ? "Excel Spreadsheet" : `${format.toUpperCase()} file`;
+        var format_idx = url.indexOf("format=");
         $(`#${this.id}-url`).attr("href", url.replace(/format=(\w+)/, `format=${format}`));
-        $(`#${this.id}-fmt-text`).text(help_text)
       }
       return false;
     });

@@ -1,4 +1,4 @@
-<div class="alert alert-danger my-2">
+{% alert classes="my-2" %}
   <h4><i class="fa fa-exclamation-triangle"></i>&nbsp;Delete this {{name}}?</h4>
   <p>{{notes}}</p>
 
@@ -14,7 +14,7 @@
     <a href="{{cancel_url}}" class="btn btn-light ml-2">Cancel</a>
     {% csrf_token %}
   </form>
-</div>
+{% endalert %}
 
 {% if confirm %}
   <script>

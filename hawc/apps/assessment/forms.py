@@ -11,10 +11,7 @@ from django.db import transaction
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
-from hawc.apps.assessment import constants
-from hawc.apps.study.models import Study
-from hawc.services.epa.dsstox import DssSubstance
-
+from ...services.epa.dsstox import DssSubstance
 from ..common.auth.turnstile import Turnstile
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
@@ -26,7 +23,8 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
-from . import autocomplete, models
+from ..study.models import Study
+from . import autocomplete, constants, models
 
 
 class AssessmentForm(forms.ModelForm):
@@ -298,7 +296,6 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_bmd",
             "enable_summary_tables",
             "enable_visuals",
-            "enable_summary_text",
             "enable_downloads",
             "noel_name",
             "rob_name",
@@ -330,7 +327,7 @@ class AssessmentModulesForm(forms.ModelForm):
         )
         helper.add_row("enable_literature_review", 3, "col-lg-4")
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
-        helper.add_row("enable_visuals", 3, "col-lg-4")
+        helper.add_row("enable_visuals", 2, "col-lg-6")
         helper.add_row("noel_name", 3, "col-lg-4")
         helper.add_row("epi_version", 1, "col-lg-4")
         return helper
