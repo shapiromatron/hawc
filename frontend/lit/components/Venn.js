@@ -163,11 +163,14 @@ const renderPlot = function(el, data) {
             svg.selectAll("text.intersection")
                 .data(intersections)
                 .join("text")
-                .attr("class", "intersection")
+                .attr("class", "intersection cursor-pointer")
                 .attr("x", d => d.x)
                 .attr("y", d => d.y)
                 .style("text-anchor", "middle")
                 .text((d, i) => d.text)
+                .on("click", function(e, d) {
+                    console.log(d.ids);
+                })
                 .append("svg:title")
                 .text(d => d.hover);
         },
@@ -181,36 +184,38 @@ const renderPlot = function(el, data) {
     }
 
     if (nSets === 2) {
-        const a = data.sets[0].name,
-            b = data.sets[1].name;
+        const a = data.sets[0],
+            b = data.sets[1];
         make(el, {
             width,
             height,
             labels: [
-                {x: 120, y: 70, text: a, anchor: "end"},
-                {x: 470, y: 70, text: b, anchor: "start"},
+                {x: 120, y: 70, text: a.name, anchor: "end"},
+                {x: 470, y: 70, text: b.name, anchor: "start"},
             ],
             ellipses: [
                 {cx: 200, cy: 220, fill: "red", rx: 150, ry: 150},
                 {cx: 400, cy: 220, fill: "blue", rx: 150, ry: 150},
             ],
             intersections: [
-                {x: 180, y: 220, text: sets.a.length, hover: a},
-                {x: 300, y: 220, text: sets.ab.length, hover: `${a} ∩ ${b}`},
-                {x: 420, y: 220, text: sets.b.length, hover: b},
+                /* eslint-disable */
+                {x: 180, y: 220, ids: [a.id], text: sets.a.length, hover: a.name},
+                {x: 420, y: 220, ids: [b.id], text: sets.b.length, hover: b.name},
+                {x: 300, y: 220, ids: [a.id, b.id], text: sets.ab.length,hover: `${a.name} ∩ ${b.name}`},
+                /* eslint-enable */
             ],
         });
     } else if (nSets === 3) {
-        const a = data.sets[0].name,
-            b = data.sets[1].name,
-            c = data.sets[2].name;
+        const a = data.sets[0],
+            b = data.sets[1],
+            c = data.sets[2];
         make(el, {
             width,
             height,
             labels: [
-                {x: 410, y: 70, text: a, anchor: "start"},
-                {x: 130, y: 350, text: b, anchor: "end"},
-                {x: 470, y: 350, text: c, anchor: "start"},
+                {x: 410, y: 70, text: a.name, anchor: "start"},
+                {x: 130, y: 350, text: b.name, anchor: "end"},
+                {x: 470, y: 350, text: c.name, anchor: "start"},
             ],
             ellipses: [
                 {cx: 230, cy: 265, fill: "red", rx: 120, ry: 120},
@@ -218,80 +223,57 @@ const renderPlot = function(el, data) {
                 {cx: 300, cy: 135, fill: "blue", rx: 120, ry: 120},
             ],
             intersections: [
-                {x: 300, y: 95, text: sets.a.length, hover: a},
-                {x: 185, y: 310, text: sets.b.length, hover: b},
-                {x: 415, y: 310, text: sets.c.length, hover: c},
-                {x: 300, y: 225, text: sets.abc.length, hover: `${a} ∩ ${b} ∩ ${c}`},
-                {x: 245, y: 190, text: sets.ab.length, hover: `${a} ∩ ${b}`},
-                {x: 355, y: 190, text: sets.ac.length, hover: `${a} ∩ ${c}`},
-                {x: 300, y: 300, text: sets.bc.length, hover: `${b} ∩ ${c}`},
+                /* eslint-disable */
+                {x: 300, y: 95, ids: [a.id], text: sets.a.length, hover: a.name},
+                {x: 185, y: 310, ids: [b.id], text: sets.b.length, hover: b.name},
+                {x: 415, y: 310, ids: [c.id], text: sets.c.length, hover: c.name},
+                {x: 300, y: 225, ids: [a.id, b.id, c.id], text: sets.abc.length, hover: `${a.name} ∩ ${b.name} ∩ ${c.name}`},
+                {x: 245, y: 190, ids: [a.id, b.id], text: sets.ab.length, hover: `${a.name} ∩ ${b.name}`},
+                {x: 355, y: 190, ids: [a.id, c.id], text: sets.ac.length, hover: `${a.name} ∩ ${c.name}`},
+                {x: 300, y: 300, ids: [b.id, c.id], text: sets.bc.length, hover: `${b.name} ∩ ${c.name}`},
+                /* eslint-enable */
             ],
         });
     } else if (nSets === 4) {
-        const a = data.sets[0].name,
-            b = data.sets[1].name,
-            c = data.sets[2].name,
-            d = data.sets[3].name;
+        const a = data.sets[0],
+            b = data.sets[1],
+            c = data.sets[2],
+            d = data.sets[3];
         make(el, {
             width,
             height,
             labels: [
-                {x: 160, y: 40, text: data.sets[0].name, anchor: "middle"},
-                {x: 430, y: 40, text: data.sets[1].name, anchor: "middle"},
-                {x: 140, y: 330, text: data.sets[2].name, anchor: "end"},
-                {x: 455, y: 330, text: data.sets[3].name, anchor: "start"},
+                {x: 160, y: 40, text: a.name, anchor: "middle"},
+                {x: 430, y: 40, text: b.name, anchor: "middle"},
+                {x: 140, y: 330, text: c.name, anchor: "end"},
+                {x: 455, y: 330, text: d.name, anchor: "start"},
             ],
             ellipses: [
-                {
-                    cx: 305,
-                    cy: 195,
-                    rx: 110,
-                    ry: 180,
-                    t: "rotate(-50, 305, 195)",
-                    fill: "orange",
-                },
-                {
-                    cx: 295,
-                    cy: 195,
-                    rx: 110,
-                    ry: 180,
-                    t: "rotate( 50, 295, 195)",
-                    fill: "green",
-                },
-
-                {
-                    cx: 230,
-                    cy: 230,
-                    rx: 110,
-                    ry: 180,
-                    t: "rotate(-50, 230, 230)",
-                    fill: "red",
-                },
-                {
-                    cx: 370,
-                    cy: 230,
-                    rx: 110,
-                    ry: 180,
-                    t: "rotate( 50, 370, 230)",
-                    fill: "blue",
-                },
+                /* eslint-disable */
+                {cx: 305, cy: 195, rx: 110, ry: 180, t: "rotate(-50, 305, 195)", fill: "orange"},
+                {cx: 295, cy: 195, rx: 110, ry: 180, t: "rotate( 50, 295, 195)", fill: "green"},
+                {cx: 230, cy: 230, rx: 110, ry: 180, t: "rotate(-50, 230, 230)", fill: "red"},
+                {cx: 370, cy: 230, rx: 110, ry: 180, t: "rotate( 50, 370, 230)", fill: "blue"},
+                /* eslint-enable */
             ],
             intersections: [
-                {x: 230, y: 80, text: sets.a.length, hover: a},
-                {x: 370, y: 80, text: sets.b.length, hover: b},
-                {x: 120, y: 190, text: sets.c.length, hover: c},
-                {x: 480, y: 190, text: sets.d.length, hover: d},
-                {x: 300, y: 110, text: sets.ab.length, hover: `${a} ∩ ${b}`},
-                {x: 180, y: 120, text: sets.ac.length, hover: `${a} ∩ ${c}`},
-                {x: 420, y: 280, text: sets.ad.length, hover: `${a} ∩ ${d}`},
-                {x: 300, y: 360, text: sets.cd.length, hover: `${c} ∩ ${d}`},
-                {x: 180, y: 280, text: sets.bc.length, hover: `${b} ∩ ${c}`},
-                {x: 415, y: 120, text: sets.bd.length, hover: `${b} ∩ ${d}`},
-                {x: 220, y: 180, text: sets.abc.length, hover: `${a} ∩ ${b} ∩ ${c}`},
-                {x: 380, y: 180, text: sets.abd.length, hover: `${a} ∩ ${b} ∩ ${d}`},
-                {x: 250, y: 320, text: sets.acd.length, hover: `${a} ∩ ${c} ∩ ${d}`},
-                {x: 350, y: 320, text: sets.bcd.length, hover: `${b} ∩ ${c} ∩ ${d}`},
-                {x: 300, y: 250, text: sets.abcd.length, hover: `${a} ∩ ${b} ∩ ${c} ∩ ${d}`},
+                /* eslint-disable */
+                {x: 230, y: 80, text: sets.a.length, ids: [a.id], hover: a.name},
+                {x: 370, y: 80, text: sets.b.length, ids: [b.id], hover: b.name},
+                {x: 120, y: 190, text: sets.c.length, ids: [c.id], hover: c.name},
+                {x: 480, y: 190, text: sets.d.length, ids: [d.id], hover: d.name},
+                {x: 300, y: 110, text: sets.ab.length, ids: [a.id, b.id], hover: `${a.name} ∩ ${b.name}`},
+                {x: 180, y: 120, text: sets.ac.length, ids: [a.id, c.id], hover: `${a.name} ∩ ${c.name}`},
+                {x: 420, y: 280, text: sets.ad.length, ids: [a.id, d.id], hover: `${a.name} ∩ ${d.name}`},
+                {x: 180, y: 280, text: sets.bc.length, ids: [b.id, c.id], hover: `${b.name} ∩ ${c.name}`},
+                {x: 415, y: 120, text: sets.bd.length, ids: [b.id, d.id], hover: `${b.name} ∩ ${d.name}`},
+                {x: 300, y: 360, text: sets.cd.length, ids: [c.id, d.id], hover: `${c.name} ∩ ${d.name}`},
+                {x: 220, y: 180, text: sets.abc.length, ids: [a.id, b.id, c.id], hover: `${a.name} ∩ ${b.name} ∩ ${c.name}`},
+                {x: 380, y: 180, text: sets.abd.length, ids: [a.id, b.id, d.id], hover: `${a.name} ∩ ${b.name} ∩ ${d.name}`},
+                {x: 250, y: 320, text: sets.acd.length, ids: [a.id, c.id, d.id], hover: `${a.name} ∩ ${c.name} ∩ ${d.name}`},
+                {x: 350, y: 320, text: sets.bcd.length, ids: [b.id, c.id, d.id], hover: `${b.name} ∩ ${c.name} ∩ ${d.name}`},
+                {x: 300, y: 250, text: sets.abcd.length, ids: [a.id, b.id, c.id, d.id], hover: `${a.name} ∩ ${b.name} ∩ ${c.name} ∩ ${d.name}`},
+                /* eslint-enable */
             ],
         });
     } else {

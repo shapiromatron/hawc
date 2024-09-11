@@ -812,6 +812,7 @@ class VennForm(forms.Form):
                 sets.append(
                     dict(
                         name=tag.name,
+                        id=tag.id,
                         values=list(
                             models.Reference.objects.filter(
                                 tags__path__startswith=tag.path
