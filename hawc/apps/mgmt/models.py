@@ -26,6 +26,9 @@ class TaskType(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class TaskStatus(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
@@ -41,6 +44,21 @@ class TaskStatus(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        """Alter model terminal status"""
+        if (
+            self.value == constants.TaskStatus.COMPLETED
+            or self.value == constants.TaskStatus.ABANDONED
+        ):
+            self.terminal_status = True
+        else:
+            self.terminal_status = False
+
+        super().save(*args, **kwargs)
+
 
 class TaskTrigger(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)  # is this actually needed
@@ -54,6 +72,9 @@ class TaskTrigger(models.Model):
     event = models.PositiveSmallIntegerField(choices=constants.StartTaskTriggerEvent)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.event}"
 
 
 class Task(models.Model):
@@ -82,7 +103,7 @@ class Task(models.Model):
         )
 
     def __str__(self):
-        return f"{self.study}: {self.type.name}"
+        return f"{self.study}: {self.type}"
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -115,13 +136,13 @@ class Task(models.Model):
         """Save task as started by user if currently not started."""
         if not self.started:
             self.owner = user
-            logger.info(f'Starting "{self.type.name}" task {self.id}')
+            logger.info(f'Starting "{self.type}" task {self.id}')
             self.save()
 
     def stop_if_started(self):
         """Stop task if currently started."""
         if self.started:
-            logger.info(f'Stopping "{self.type.name}" task {self.id}')
+            logger.info(f'Stopping "{self.type}" task {self.id}')
             self.save()
 
     @classmethod

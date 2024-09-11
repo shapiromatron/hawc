@@ -16,16 +16,26 @@ class TaskStatus(models.IntegerChoices):
 
     @classmethod
     def extra_choices(cls):
-        return [(990, "Active"), (995, "Inactive"), *cls.choices]
+        return [(990, "Active"), (995, "Inactive")]
 
     @classmethod
     def filter_extra(cls, value: int) -> models.Q:
         if value == 990:
-            return models.Q(status__in=[10, 20])
+            return models.Q(status__terminal_status=False)
         elif value == 995:
-            return models.Q(status__in=[30, 40])
+            return models.Q(status__terminal_status=True)
         else:
             return models.Q(status=value)
+
+    @classmethod
+    def status_colors(cls, value: int):
+        colors = {
+            10: "#CFCFCF",
+            20: "#FFCC00",
+            30: "#00CC00",
+            40: "#CC3333",
+        }
+        return colors.get(value)
 
 
 class StartTaskTriggerEvent(models.IntegerChoices):

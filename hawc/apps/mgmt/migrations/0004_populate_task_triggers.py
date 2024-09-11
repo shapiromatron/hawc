@@ -21,7 +21,6 @@ def add_task_triggers(apps, schema_editor):
 
     task_types = TaskType.objects.all()
     statuses = TaskStatus.objects.all()
-    trigger_events = []
 
     # iterate through all current studies
     for study in Study.objects.all():
@@ -43,18 +42,14 @@ def add_task_triggers(apps, schema_editor):
                 next_status = statuses.get(assessment=study.assessment, name=next_status_name)
 
                 # create a trigger associated with the study assessment, task types, and statuses
-                trigger_events.append(
-                    TaskTrigger(
-                        assessment=study.assessment,
-                        task_type=type,
-                        current_status=curr_status,
-                        next_status=next_status,
-                        event=trigger,
-                    )
+                TaskTrigger.objects.get_or_create(
+                    assessment=study.assessment,
+                    task_type=type,
+                    current_status=curr_status,
+                    next_status=next_status,
+                    event=trigger,
                 )
                 count += 1
-
-    TaskTrigger.objects.bulk_create(trigger_events)
 
 
 class Migration(migrations.Migration):

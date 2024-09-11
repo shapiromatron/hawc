@@ -36,9 +36,10 @@ class TaskFilterSet(BaseFilterSet):
         help_text="Data type for full-text extraction",
         empty_label="- Data Type -",
     )
-    type = df.ChoiceFilter(
+    type = df.ModelChoiceFilter(
+        queryset=models.TaskType.objects.none(),
+        method="filter_type",
         empty_label="- Type -",
-        choices=constants.TaskType.choices,
     )
     owner = df.ModelChoiceFilter(
         label="Assigned user",
@@ -46,9 +47,10 @@ class TaskFilterSet(BaseFilterSet):
         help_text="Includes all tasks for a study where a user has at least one assignment",
         empty_label="- User -",
     )
+    # The status search filter is now dynamic. To continue displaying the 'active' and 'inactive'
+    # search options, it can't use the ModelChoiceFilter that 'type' now uses.
     status = df.ChoiceFilter(
         empty_label="- Status -",
-        choices=constants.TaskStatus.extra_choices(),
         method="filter_status",
     )
     order_by = TaskOrderingFilter(
@@ -75,10 +77,23 @@ class TaskFilterSet(BaseFilterSet):
     def filter_data_type(self, queryset, name, value):
         return queryset.filter(**{f"study__{value}": True})
 
+    def filter_type(self, queryset, name, value):
+        return queryset.filter(type=value)
+
     def filter_status(self, queryset, name, value):
         return queryset.filter(constants.TaskStatus.filter_extra(int(value)))
 
+    def get_status_choices(self, assessment):
+        model_choices = models.TaskStatus.objects.filter(assessment=assessment).values_list(
+            "id", "name"
+        )
+        extra_choices = constants.TaskStatus.extra_choices()
+        return list(model_choices) + extra_choices
+
     def create_form(self):
+        self.filters["status"].extra.update({"choices": self.get_status_choices(self.assessment)})
+
         form = super().create_form()
+        form.fields["type"].queryset = models.TaskType.objects.filter(assessment=self.assessment)
         form.fields["owner"].queryset = self.assessment.pms_and_team_users()
         return form

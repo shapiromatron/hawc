@@ -27,7 +27,7 @@
     "task-owner_email": "team@hawcproject.org",
     "task-owner_id": 3.0,
     "task-started": null,
-    "task-status": 3,
+    "task-status": 1,
     "task-status_display": "?",
     "task-type": 1,
     "task-type_display": "?"
@@ -60,7 +60,7 @@
     "task-owner_email": "team@hawcproject.org",
     "task-owner_id": 3.0,
     "task-started": null,
-    "task-status": 2,
+    "task-status": 1,
     "task-status_display": "?",
     "task-type": 2,
     "task-type_display": "?"

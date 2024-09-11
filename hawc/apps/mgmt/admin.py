@@ -24,10 +24,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 @admin.register(models.TaskType)
 class TaskTypeAdmin(admin.ModelAdmin):
-    search_fields = (
-        "owner__email",
-        "owner__last_name",
-    )
+    search_fields = ("assessment__name", "assessment__id", "name")
     list_display = (
         "assessment",
         "name",
@@ -36,14 +33,12 @@ class TaskTypeAdmin(admin.ModelAdmin):
         "created",
         "last_updated",
     )
+    list_select_related = ("assessment",)
 
 
 @admin.register(models.TaskStatus)
 class TaskStatusAdmin(admin.ModelAdmin):
-    search_fields = (
-        "owner__email",
-        "owner__last_name",
-    )
+    search_fields = ("assessment__name", "assessment__id", "name")
     list_display = (
         "assessment",
         "name",
@@ -59,10 +54,7 @@ class TaskStatusAdmin(admin.ModelAdmin):
 
 @admin.register(models.TaskTrigger)
 class TaskTriggerAdmin(admin.ModelAdmin):
-    search_fields = (
-        "owner__email",
-        "owner__last_name",
-    )
+    search_fields = ("task_type__name", "current_status__name", "event")
     list_display = (
         "task_type",
         "current_status",

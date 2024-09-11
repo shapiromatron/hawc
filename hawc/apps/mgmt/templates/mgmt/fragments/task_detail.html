@@ -6,14 +6,14 @@
     <span>{{ object.study.created|date:"SHORT_DATE_FORMAT" }}</span>
   </td>
   <td>
-    <span>{{ object.type.name }}</span>
+    <span>{{ object.type }}</span>
   </td>
   <td>
     {{object.owner|default:"---"}}
   </td>
   <td>
     <i class="fa fa-circle mgmt-circle s{{ object.status.order }}"></i>
-    {{ object.status.name }}
+    {{ object.status }}
   </td>
   <td>
     <div class="d-flex">
