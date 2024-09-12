@@ -1,1 +1,1 @@
-<ul>{% for ref in qs %}<li><a href="{{ref.get_absolute_url}}">{{ref.year|default:""}}.{{ref.title}}</a></li>{% endfor %}</ul>
+<div class="list-group" style="max-height: 50vh; overflow-y:auto">{% for ref in qs %}<a href="{{ref.get_absolute_url}}" rel="noopener noreferrer" target="_blank" class="list-group-item list-group-item-action">{{ref.ref_full_citation}}</a>{%empty%}<div class="list-group-item"><i>No references found.</i></div>{% endfor %}</div>

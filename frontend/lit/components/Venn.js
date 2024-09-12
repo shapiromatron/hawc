@@ -1,9 +1,11 @@
 import * as d3 from "d3";
 import PropTypes from "prop-types";
 import React from "react";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
-const renderPlot = function(el, detailEl, data) {
+const renderPlot = function(el, detailEl, detailHeader, data) {
     const compareSets = function(data) {
             if (data.sets.length == 2) {
                 const a = new Set(data.sets[0].values),
@@ -128,23 +130,17 @@ const renderPlot = function(el, detailEl, data) {
             }
         },
         make = function(el, {width, height, labels, ellipses, intersections}) {
-            const svg = d3
-                .select(el)
-                .append("svg")
-                .attr("viewBox", [0, 0, width, height])
-                .attr("width", width)
-                .attr("height", height)
-                .attr("style", "border: 1px solid #efefef;");
-
-            svg.selectAll("text.lbl")
-                .data(labels)
-                .join("text")
-                .attr("class", "lbl")
-                .attr("x", d => d.x)
-                .attr("y", d => d.y)
-                .style("text-anchor", d => d.anchor)
-                .style("font-weight", "bold")
-                .text(d => d.text);
+            const handleDrag = HAWCUtils.updateDragLocationXY(function(x, y) {
+                    d3.select(this)
+                        .selectAll("tspan")
+                        .attr("x", x)
+                        .attr("y", y);
+                }),
+                svg = d3
+                    .select(el)
+                    .append("svg")
+                    .attr("viewBox", [0, 0, width, height])
+                    .attr("style", "border: 1px solid #efefef; width: 100%");
 
             svg.selectAll("ellipses")
                 .data(ellipses)
@@ -160,6 +156,20 @@ const renderPlot = function(el, detailEl, data) {
                 .style("fill-opacity", 0.3)
                 .style("stroke-opacity", 0.5);
 
+            svg.selectAll("text.lbl")
+                .data(labels)
+                .join("text")
+                .attr("class", "lbl cursor-pointer")
+                .attr("x", d => d.x)
+                .attr("y", d => d.y)
+                .style("text-anchor", d => d.anchor)
+                .style("font-weight", "bold")
+                .text(d => d.text)
+                .call(handleDrag)
+                .each(function() {
+                    HAWCUtils.wrapText(this, 130);
+                });
+
             svg.selectAll("text.intersection")
                 .data(intersections)
                 .join("text")
@@ -169,11 +179,13 @@ const renderPlot = function(el, detailEl, data) {
                 .style("text-anchor", "middle")
                 .text((d, i) => d.text)
                 .on("click", function(e, d) {
+                    detailHeader.innerText = d.hover;
+                    detailEl.innerText = "Loading...";
                     const formData = new FormData();
                     formData.append("ids", d.ids.join(","));
                     fetch(data.url, h.fetchPostForm(data.csrf, formData))
                         .then(resp => resp.text())
-                        .then(d => (detailEl.innerHTML = d));
+                        .then(html => (detailEl.innerHTML = html));
                 })
                 .append("svg:title")
                 .text(d => d.hover);
@@ -288,17 +300,33 @@ const renderPlot = function(el, detailEl, data) {
 class Venn extends React.Component {
     componentDidMount() {
         const el = document.getElementById(this.divId),
-            detailEl = document.getElementById(this.detailId);
-        renderPlot(el, detailEl, this.props.data);
+            detailEl = document.getElementById(this.detailId),
+            detailHeader = document.getElementById(this.detailHeader);
+        renderPlot(el, detailEl, detailHeader, this.props.data);
     }
     render() {
         this.divId = h.randomString();
         this.detailId = h.randomString();
+        this.detailHeader = h.randomString();
         return (
-            <>
-                <div id={this.divId}></div>
-                <div id={this.detailId}></div>
-            </>
+            <div className="row py-3">
+                <div className="col-lg-6">
+                    <h3>
+                        Venn Diagram
+                        <HelpTextPopup
+                            title="Venn Diagram"
+                            content={
+                                "Select two or more tags to build a venn diagram. Drag labels to move. Click a number to show references."
+                            }
+                        />
+                    </h3>
+                    <div id={this.divId}></div>
+                </div>
+                <div className="col-lg-6">
+                    <h3 id={this.detailHeader}></h3>
+                    <div id={this.detailId}></div>
+                </div>
+            </div>
         );
     }
 }

@@ -802,6 +802,7 @@ class VennForm(forms.Form):
         helper.add_row("tag1", 4, "col-md-3")
         helper.form_method = "GET"
         helper.attrs.update(**{"hx-get": ".", "hx-trigger": "submit"})
+        helper.form_class = "border edit-form-background p-3"
         return helper
 
     def get_venn(self):
