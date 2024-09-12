@@ -15,7 +15,7 @@ from django.views.generic import TemplateView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, tryParseInt
+from ..common.helper import WebappConfig, try_parse_list_ints, tryParseInt
 from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
@@ -1033,7 +1033,12 @@ class RefVisualization(BaseDetail):
                 app=WebappConfig(
                     app="litStartup",
                     page="startupVenn",
-                    data=form.get_venn() if form.is_valid() else {"sets": []},
+                    data={
+                        "sets": form.get_venn() if form.is_valid() else [],
+                        "csrf": get_token(self.request),
+                        "url": reverse("lit:interactive", args=(self.assessment.id,))
+                        + "?action=venn_reference_list",
+                    },
                 ).model_dump(),
             )
         )
@@ -1228,3 +1233,20 @@ class WorkflowViewSet(HtmxViewSet):
         form = forms.WorkflowForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, self.form_fragment, context)
+
+
+class AssessmentInteractive(HtmxView):
+    actions = {"venn_reference_list"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.user_can_view_object(request.user):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def venn_reference_list(self, request, *args, **kwargs):
+        ids = try_parse_list_ints(request.POST.get("ids"))
+        context = {
+            "qs": models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=ids)
+        }
+        return render(request, "lit/components/venn_reference_list.html", context=context)

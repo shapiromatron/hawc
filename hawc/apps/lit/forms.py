@@ -820,4 +820,4 @@ class VennForm(forms.Form):
                         ),
                     )
                 )
-        return {"sets": sets}
+        return sets

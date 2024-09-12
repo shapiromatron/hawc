@@ -6,6 +6,7 @@ from typing import Any
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import (
+    Http404,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseNotAllowed,
@@ -206,6 +207,9 @@ class HtmxView(View):
 
     actions: set[str]
     default_action: str = "index"
+
+    def index(self, request: HttpRequest, *args, **kwargs):
+        raise Http404()
 
     def get_handler(self, request: HttpRequest):
         request.action = request.GET.get("action", "")

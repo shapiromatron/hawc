@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import h from "shared/utils/helpers";
 
-const renderPlot = function(el, data) {
+const renderPlot = function(el, detailEl, data) {
     const compareSets = function(data) {
             if (data.sets.length == 2) {
                 const a = new Set(data.sets[0].values),
@@ -169,7 +169,11 @@ const renderPlot = function(el, data) {
                 .style("text-anchor", "middle")
                 .text((d, i) => d.text)
                 .on("click", function(e, d) {
-                    console.log(d.ids);
+                    const formData = new FormData();
+                    formData.append("ids", d.ids.join(","));
+                    fetch(data.url, h.fetchPostForm(data.csrf, formData))
+                        .then(resp => resp.text())
+                        .then(d => (detailEl.innerHTML = d));
                 })
                 .append("svg:title")
                 .text(d => d.hover);
@@ -199,9 +203,9 @@ const renderPlot = function(el, data) {
             ],
             intersections: [
                 /* eslint-disable */
-                {x: 180, y: 220, ids: [a.id], text: sets.a.length, hover: a.name},
-                {x: 420, y: 220, ids: [b.id], text: sets.b.length, hover: b.name},
-                {x: 300, y: 220, ids: [a.id, b.id], text: sets.ab.length,hover: `${a.name} ∩ ${b.name}`},
+                {x: 180, y: 220, ids: sets.a, text: sets.a.length, hover: a.name},
+                {x: 420, y: 220, ids: sets.b, text: sets.b.length, hover: b.name},
+                {x: 300, y: 220, ids: sets.ab, text: sets.ab.length,hover: `${a.name} ∩ ${b.name}`},
                 /* eslint-enable */
             ],
         });
@@ -224,13 +228,13 @@ const renderPlot = function(el, data) {
             ],
             intersections: [
                 /* eslint-disable */
-                {x: 300, y: 95, ids: [a.id], text: sets.a.length, hover: a.name},
-                {x: 185, y: 310, ids: [b.id], text: sets.b.length, hover: b.name},
-                {x: 415, y: 310, ids: [c.id], text: sets.c.length, hover: c.name},
-                {x: 300, y: 225, ids: [a.id, b.id, c.id], text: sets.abc.length, hover: `${a.name} ∩ ${b.name} ∩ ${c.name}`},
-                {x: 245, y: 190, ids: [a.id, b.id], text: sets.ab.length, hover: `${a.name} ∩ ${b.name}`},
-                {x: 355, y: 190, ids: [a.id, c.id], text: sets.ac.length, hover: `${a.name} ∩ ${c.name}`},
-                {x: 300, y: 300, ids: [b.id, c.id], text: sets.bc.length, hover: `${b.name} ∩ ${c.name}`},
+                {x: 300, y: 95, ids: sets.a, text: sets.a.length, hover: a.name},
+                {x: 185, y: 310, ids: sets.b, text: sets.b.length, hover: b.name},
+                {x: 415, y: 310, ids: sets.c, text: sets.c.length, hover: c.name},
+                {x: 300, y: 225, ids: sets.abc, text: sets.abc.length, hover: `${a.name} ∩ ${b.name} ∩ ${c.name}`},
+                {x: 245, y: 190, ids: sets.ab, text: sets.ab.length, hover: `${a.name} ∩ ${b.name}`},
+                {x: 355, y: 190, ids: sets.ac, text: sets.ac.length, hover: `${a.name} ∩ ${c.name}`},
+                {x: 300, y: 300, ids: sets.bc, text: sets.bc.length, hover: `${b.name} ∩ ${c.name}`},
                 /* eslint-enable */
             ],
         });
@@ -258,21 +262,21 @@ const renderPlot = function(el, data) {
             ],
             intersections: [
                 /* eslint-disable */
-                {x: 230, y: 80, text: sets.a.length, ids: [a.id], hover: a.name},
-                {x: 370, y: 80, text: sets.b.length, ids: [b.id], hover: b.name},
-                {x: 120, y: 190, text: sets.c.length, ids: [c.id], hover: c.name},
-                {x: 480, y: 190, text: sets.d.length, ids: [d.id], hover: d.name},
-                {x: 300, y: 110, text: sets.ab.length, ids: [a.id, b.id], hover: `${a.name} ∩ ${b.name}`},
-                {x: 180, y: 120, text: sets.ac.length, ids: [a.id, c.id], hover: `${a.name} ∩ ${c.name}`},
-                {x: 420, y: 280, text: sets.ad.length, ids: [a.id, d.id], hover: `${a.name} ∩ ${d.name}`},
-                {x: 180, y: 280, text: sets.bc.length, ids: [b.id, c.id], hover: `${b.name} ∩ ${c.name}`},
-                {x: 415, y: 120, text: sets.bd.length, ids: [b.id, d.id], hover: `${b.name} ∩ ${d.name}`},
-                {x: 300, y: 360, text: sets.cd.length, ids: [c.id, d.id], hover: `${c.name} ∩ ${d.name}`},
-                {x: 220, y: 180, text: sets.abc.length, ids: [a.id, b.id, c.id], hover: `${a.name} ∩ ${b.name} ∩ ${c.name}`},
-                {x: 380, y: 180, text: sets.abd.length, ids: [a.id, b.id, d.id], hover: `${a.name} ∩ ${b.name} ∩ ${d.name}`},
-                {x: 250, y: 320, text: sets.acd.length, ids: [a.id, c.id, d.id], hover: `${a.name} ∩ ${c.name} ∩ ${d.name}`},
-                {x: 350, y: 320, text: sets.bcd.length, ids: [b.id, c.id, d.id], hover: `${b.name} ∩ ${c.name} ∩ ${d.name}`},
-                {x: 300, y: 250, text: sets.abcd.length, ids: [a.id, b.id, c.id, d.id], hover: `${a.name} ∩ ${b.name} ∩ ${c.name} ∩ ${d.name}`},
+                {x: 230, y: 80, text: sets.a.length, ids: sets.a, hover: a.name},
+                {x: 370, y: 80, text: sets.b.length, ids: sets.b, hover: b.name},
+                {x: 120, y: 190, text: sets.c.length, ids: sets.c, hover: c.name},
+                {x: 480, y: 190, text: sets.d.length, ids: sets.d, hover: d.name},
+                {x: 300, y: 110, text: sets.ab.length, ids: sets.ab, hover: `${a.name} ∩ ${b.name}`},
+                {x: 180, y: 120, text: sets.ac.length, ids: sets.ac, hover: `${a.name} ∩ ${c.name}`},
+                {x: 420, y: 280, text: sets.ad.length, ids: sets.ad, hover: `${a.name} ∩ ${d.name}`},
+                {x: 180, y: 280, text: sets.bc.length, ids: sets.bc, hover: `${b.name} ∩ ${c.name}`},
+                {x: 415, y: 120, text: sets.bd.length, ids: sets.bd, hover: `${b.name} ∩ ${d.name}`},
+                {x: 300, y: 360, text: sets.cd.length, ids: sets.cd, hover: `${c.name} ∩ ${d.name}`},
+                {x: 220, y: 180, text: sets.abc.length, ids: sets.abc, hover: `${a.name} ∩ ${b.name} ∩ ${c.name}`},
+                {x: 380, y: 180, text: sets.abd.length, ids: sets.abd, hover: `${a.name} ∩ ${b.name} ∩ ${d.name}`},
+                {x: 250, y: 320, text: sets.acd.length, ids: sets.acd, hover: `${a.name} ∩ ${c.name} ∩ ${d.name}`},
+                {x: 350, y: 320, text: sets.bcd.length, ids: sets.bcd, hover: `${b.name} ∩ ${c.name} ∩ ${d.name}`},
+                {x: 300, y: 250, text: sets.abcd.length, ids: sets.abcd, hover: `${a.name} ∩ ${b.name} ∩ ${c.name} ∩ ${d.name}`},
                 /* eslint-enable */
             ],
         });
@@ -283,12 +287,19 @@ const renderPlot = function(el, data) {
 
 class Venn extends React.Component {
     componentDidMount() {
-        const el = document.getElementById(this.divId);
-        renderPlot(el, this.props.data);
+        const el = document.getElementById(this.divId),
+            detailEl = document.getElementById(this.detailId);
+        renderPlot(el, detailEl, this.props.data);
     }
     render() {
         this.divId = h.randomString();
-        return <div id={this.divId}></div>;
+        this.detailId = h.randomString();
+        return (
+            <>
+                <div id={this.divId}></div>
+                <div id={this.detailId}></div>
+            </>
+        );
     }
 }
 Venn.propTypes = {

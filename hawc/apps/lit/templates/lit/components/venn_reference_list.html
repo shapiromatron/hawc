@@ -1,0 +1,1 @@
+<ul>{% for ref in qs %}<li><a href="{{ref.get_absolute_url}}">{{ref.year|default:""}}.{{ref.title}}</a></li>{% endfor %}</ul>
