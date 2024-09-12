@@ -163,6 +163,10 @@ class PrismaStore {
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
     }
+
+    @computed get settingsHash() {
+        return h.hashString(JSON.stringify(this.settings));
+    }
 }
 
 export default PrismaStore;

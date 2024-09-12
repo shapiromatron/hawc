@@ -1,8 +1,9 @@
 import BaseVisual from "./BaseVisual";
+import PrismaStore from "summary/summaryForms/stores/PrismaStore";
 
 const startupPrismaAppRender = function (el, settings, datastore, options) {
-    // should just use PrismaStore?
-    const store = new PrismaDatastore(settings, datastore, options);
+
+    const store = new PrismaDataStore(settings, datastore, options);
     try {
         if (store.withinRenderableBounds) {
             store.initialize();
@@ -24,8 +25,7 @@ class PrismaComponent extends Component {
     componentDidMount() {
         const { store } = this.props,
             id = store.settingsHash,
-            el = document.getElementById(id),
-            tooltipEl = document.getElementById(`tooltip-${id}`);
+            el = document.getElementById(id);
 
         if (el) {
             new PrismaPlot(store, this.props.options).render(el, tooltipEl);
