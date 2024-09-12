@@ -49,8 +49,8 @@ async def get_svg_image(page, timeout_ms) -> BytesIO:
 
     try:
         await expect(download_button.or_(error_alert)).to_be_visible(timeout=timeout_ms)
-    except AssertionError:
-        raise TimeoutError(f"Timeout - exceeded {timeout_ms}ms")
+    except AssertionError as err:
+        raise TimeoutError(f"Timeout - exceeded {timeout_ms}ms") from err
 
     if await error_alert.is_visible():
         error_text = await error_alert.inner_text()

@@ -115,3 +115,13 @@ def debug_badge(text: str):
         '<span title="Click to copy text to clipboard" class="badge badge-dark px-1 mx-1 cursor-pointer debug-badge hidden">{}</span>',
         text,
     )
+
+
+@register.filter
+def e_notation(value: str) -> str:
+    """Format large and small floating point numbers"""
+    if not isinstance(value, int | float):
+        return str(value)
+    if abs(value) <= 1e-5 or abs(value) >= 1e5:
+        return f"{value:.2e}"
+    return f"{value:g}"

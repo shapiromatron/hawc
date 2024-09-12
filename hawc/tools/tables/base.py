@@ -96,8 +96,8 @@ class BaseTable(BaseCellGroup):
                         if table_cells[cell.row + i][cell.column + j]:
                             raise ValueError(f"Cell overlap at {cell}")
                         table_cells[cell.row + i][cell.column + j] = True
-            except IndexError:
-                raise ValueError(f"{cell} outside of table bounds")
+            except IndexError as err:
+                raise ValueError(f"{cell} outside of table bounds") from err
 
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))

@@ -362,8 +362,8 @@ class HAWCPasswordResetForm(PasswordResetForm):
         email = self.cleaned_data.get("email")
         try:
             models.HAWCUser.objects.get(email=email)
-        except models.HAWCUser.DoesNotExist:
-            raise forms.ValidationError("Email address not found")
+        except models.HAWCUser.DoesNotExist as err:
+            raise forms.ValidationError("Email address not found") from err
 
         return email
 

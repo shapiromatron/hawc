@@ -278,6 +278,7 @@ class DSSXToxAdmin(admin.ModelAdmin):
         "get_exposures",
         "get_ivchemicals",
     )
+    list_filter = ("last_updated",)
     search_fields = ("dtxsid", "content__casrn", "content__preferredName")
 
     def get_queryset(self, request):
