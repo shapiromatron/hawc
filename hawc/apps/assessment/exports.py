@@ -1,5 +1,5 @@
 from ..common.exports import Exporter, ModelExport
-from ..common.models import sql_display, str_m2m
+from ..common.models import arr_m2m, sql_display, str_m2m
 from . import constants
 
 
@@ -23,6 +23,7 @@ class AssessmentValueExport(ModelExport):
             "evidence": "evidence",
             "tumor_type": "tumor_type",
             "extrapolation_method": "extrapolation_method",
+            "study_ids": "studies__id",
             "study_short_citations": "studies__short_citation",
             "comments": "comments",
             "extra": "extra",
@@ -39,6 +40,7 @@ class AssessmentValueExport(ModelExport):
             "uncertainty_display": sql_display(
                 query_prefix + "uncertainty", constants.UncertaintyChoices
             ),
+            "studies__id": arr_m2m(query_prefix + "studies__id"),
             "studies__short_citation": str_m2m(query_prefix + "studies__short_citation"),
         }
 

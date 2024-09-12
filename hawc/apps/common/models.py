@@ -7,7 +7,7 @@ from html import unescape
 import pandas as pd
 from django.apps import apps
 from django.conf import settings
-from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
@@ -573,6 +573,19 @@ def str_m2m(field: str, delimiter: str = "|", default: str = "", **kw):
         default (str, optional): The default value to use; defaults to "".
     """
     return StringAgg(field, delimiter=delimiter, distinct=True, default=Value(default), **kw)
+
+
+def arr_m2m(field: str, default: list | None = None, **kw):
+    """Generate a list aggregation of a m2m field.
+
+    The resulting aggregation must be saved to an annotation on the QuerySet;
+    you cannot use directly on a values_list (but you can use after annotation).
+
+    Args:
+        field (str): The field name to aggregate
+        default (str, optional): The default value to use; defaults to None.
+    """
+    return ArrayAgg(field, distinct=True, default=Value(default), **kw)
 
 
 def to_display(series: pd.Series, Choice: type[Choices]) -> pd.Series:
