@@ -328,3 +328,38 @@ class ContentAdmin(VersionAdmin):
         "created",
         "last_updated",
     )
+
+
+@admin.register(models.Label)
+class LabelAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "assessment",
+        "published",
+        "created",
+        "last_updated",
+    )
+    readonly_fields = ("id",)
+    search_fields = ("name",)
+
+
+@admin.register(models.LabeledItem)
+class LabeledItemAdmin(admin.ModelAdmin):
+    list_select_related = ("content_type",)
+    list_display = (
+        "id",
+        "label",
+        "content_object",
+        "created",
+        "last_updated",
+    )
+    readonly_fields = ("id",)
+    search_fields = (
+        "label",
+        "content_object",
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("content_object")
