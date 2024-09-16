@@ -4,7 +4,7 @@ from django.db.models import Exists, OuterRef, Prefetch, Q
 
 from ..assessment.autocomplete import LabelAutocomplete
 from ..assessment.constants import RobName
-from ..assessment.models import Label, LabeledItem
+from ..assessment.models import LabeledItem
 from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
@@ -92,12 +92,6 @@ class VisualFilterSet(BaseFilterSet):
                 for value, label in choices
             ]
         return choices
-
-    def get_label_choices(self):
-        labels = Label.get_assessment_qs(self.assessment.pk)
-        if not self.perms["edit"]:
-            labels = labels.filter(published=True)
-        return [(label.pk, label.get_nested_name()) for label in labels]
 
     def create_form(self):
         form = super().create_form()
@@ -247,12 +241,6 @@ class SummaryTableFilterSet(BaseFilterSet):
             )
             queryset = queryset.filter(Exists(subquery))
         return queryset
-
-    def get_label_choices(self):
-        labels = Label.get_assessment_qs(self.assessment.pk)
-        if not self.perms["edit"]:
-            labels = labels.filter(published=True)
-        return [(label.pk, label.get_nested_name()) for label in labels]
 
     def create_form(self):
         form = super().create_form()
