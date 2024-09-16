@@ -676,7 +676,7 @@ class LabelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment", None)
-        prefix = kwargs.get("instance").pk if "instance" in kwargs else "-1"
+        prefix = f"label-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if assessment:
             self.instance.assessment = assessment
