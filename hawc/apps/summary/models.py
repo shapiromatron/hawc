@@ -15,11 +15,10 @@ from plotly.io import from_json
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from hawc.tools.tables.ept import EvidenceProfileTable
-from hawc.tools.tables.generic import BaseTable, GenericTable
-from hawc.tools.tables.parser import QuillParser
-from hawc.tools.tables.set import StudyEvaluationTable
-
+from ...tools.tables.ept import EvidenceProfileTable
+from ...tools.tables.generic import BaseTable, GenericTable
+from ...tools.tables.parser import QuillParser
+from ...tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
@@ -37,6 +36,7 @@ from ..epi.exports import OutcomeDataPivot
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
+from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
@@ -378,6 +378,30 @@ class Visual(models.Model):
         ]
         datasets.extend(additional_datasets)
         return HeatmapDatasets(datasets=datasets)
+
+    @classmethod
+    def get_prisma_data(cls, assessment: Assessment) -> str:
+        return json.dumps(
+            {
+                "reference_tag_pairs": list(
+                    Reference.objects.tag_pairs(assessment.references.all())
+                ),
+                "reference_search_pairs": list(
+                    Reference.searches.through.objects.filter(
+                        reference_id__in=assessment.references.all()
+                    ).values("search_id", "reference_id")
+                ),
+                "searches": list(
+                    Search.objects.filter(assessment_id=assessment.id).values("id", "title")
+                ),
+                "tags": list(
+                    ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")
+                ),
+                "references": list(
+                    Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
+                ),
+            }
+        )
 
     @staticmethod
     def get_dose_units():

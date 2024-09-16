@@ -2,7 +2,7 @@
 
 import logging
 
-from hawc.constants import AuthProvider
+from ...constants import AuthProvider
 
 from .dev import *
 
@@ -40,5 +40,8 @@ ACCEPT_LICENSE_REQUIRED = True
 EXTERNAL_CONTACT_US = None
 EXTERNAL_ABOUT = None
 EXTERNAL_RESOURCES = None
+
+if HERO_API_KEY is None:
+    HERO_API_KEY = "secret"
 
 logging.disable(logging.CRITICAL)

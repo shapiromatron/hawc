@@ -12,10 +12,7 @@ from django.db import transaction
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
-from hawc.apps.assessment import constants
-from hawc.apps.study.models import Study
-from hawc.services.epa.dsstox import DssSubstance
-
+from ...services.epa.dsstox import DssSubstance
 from ..common.auth.turnstile import Turnstile
 from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
 from ..common.forms import (
@@ -27,7 +24,8 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
-from . import autocomplete, models
+from ..study.models import Study
+from . import autocomplete, constants, models
 
 
 class AssessmentForm(forms.ModelForm):

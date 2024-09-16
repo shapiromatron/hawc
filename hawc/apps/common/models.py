@@ -8,6 +8,7 @@ import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import FileSystemStorage
@@ -659,3 +660,8 @@ class ColorField(models.CharField):
                 **kwargs,
             }
         )
+
+
+def search_query(value: str) -> SearchQuery:
+    return SearchQuery(value, search_type="websearch", config="english")
+

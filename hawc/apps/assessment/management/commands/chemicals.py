@@ -5,8 +5,8 @@ from typing import Any
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from hawc.apps.assessment.models import DSSTox
-from hawc.services.epa.dsstox import DssSubstance
+from .....services.epa.dsstox import DssSubstance
+from ...models import DSSTox
 
 
 def _dict_hash(dict: dict[str, Any]) -> str:
@@ -30,14 +30,15 @@ class Command(BaseCommand):
     def _refresh(self):
         updates = []
         for dsstox in DSSTox.objects.all().order_by("dtxsid").iterator():
-            self.stdout.write(f"Refreshing {dsstox.dtxsid}")
+            self.stdout.write(f"Checking {dsstox.dtxsid}")
             new_dsstox = DssSubstance.create_from_dtxsid(dsstox.dtxsid)
-            existing_content = dsstox.content
-            if _dict_hash(existing_content) != _dict_hash(new_dsstox.content):
+            if _dict_hash(dsstox.content) != _dict_hash(new_dsstox.content):
                 dsstox.content = new_dsstox.content
                 updates.append(dsstox)
         if updates:
+            ids = ", ".join([d.dtxsid for d in updates])
             DSSTox.objects.bulk_update(updates, ["content"])
+            self.stdout.write(f"Updated {ids}")
 
     @transaction.atomic
     def handle(self, *args, **options):
