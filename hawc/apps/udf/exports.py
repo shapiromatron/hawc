@@ -32,7 +32,7 @@ class ModelUDFContentExport(ModelExport):
     def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
         if df.shape[0] > 0:
             df2 = expand_content(df, content_column=self.get_column_name("content"))
-            df = df.merge(df2, left_index=True, right_index=True)
+            df = pd.merge(df, df2, how="left", left_index=True, right_index=True)
         return df
 
 
