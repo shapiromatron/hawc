@@ -664,4 +664,3 @@ class ColorField(models.CharField):
 
 def search_query(value: str) -> SearchQuery:
     return SearchQuery(value, search_type="websearch", config="english")
-

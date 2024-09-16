@@ -264,4 +264,3 @@ class AssessmentValueFilterSet(df.FilterSet):
     class Meta:
         model = models.AssessmentValue
         fields = ("value_type",)
-
