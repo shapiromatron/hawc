@@ -456,6 +456,9 @@ def test_get_200():
         reverse("assessment:close_window"),
         reverse("assessment:clean_study_metrics", args=(main,)),
         reverse("assessment:bulk-publish", args=(main,)),
+        reverse("assessment:labeled-items", args=(main,)),
+        reverse("assessment:labels", args=(main,)),
+        reverse("assessment:bulk-publish", args=(main,)),
     ]
     for url in urls:
         check_200(client, url)
