@@ -22,6 +22,11 @@ def get(dictionary: dict, key: str):
     return dictionary.get(key)
 
 
+@register.filter
+def model_verbose_name(instance):
+    return instance._meta.verbose_name
+
+
 @register.simple_tag
 def audit_url(object):
     ct = ContentType.objects.get_for_model(object.__class__)

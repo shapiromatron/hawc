@@ -26,6 +26,11 @@
   <script type="text/javascript">
     $(window).ready(function() {
       window.app.HAWCUtils.addScrollHtmx("label-edit-row", "label-row", "label-conf-delete");
+      $(".label").click(function(e) {
+        url = $(this).attr("label_url");
+        window.location = url
+        e.stopPropagation();
+      });
     });
   </script>
 {% endblock %}

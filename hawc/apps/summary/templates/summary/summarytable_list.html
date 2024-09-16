@@ -28,7 +28,7 @@
               <div class="d-flex">
                 <a href="{{object.get_absolute_url}}">{{object.title}}</a>
                 {% for labeled_item in object.visible_labels %}
-                  <div class="tny mx-1 label label-clip" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</div>
+                  <a class="tny mx-1 label label-clip"  href="{% url 'assessment:labeled-items' assessment.pk %}?label={{labeled_item.label.pk}}" style="background-color: {{labeled_item.label.color}}; color: {{labeled_item.label.text_color}};" title="{{labeled_item.label.description}}">{{labeled_item.label.name}}</a>
                 {% endfor %}
               </div>
               {% if obj_perms.edit and not object.published %}

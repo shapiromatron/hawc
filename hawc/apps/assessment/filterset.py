@@ -1,10 +1,12 @@
 import django_filters as df
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, TextField
+from django.db.models.functions import Concat
 from django.urls import reverse
 
 from ..common.filterset import (
     ArrowOrderingFilter,
+    AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
     InlineFilterForm,
@@ -12,6 +14,7 @@ from ..common.filterset import (
 from ..common.helper import new_window_a
 from ..myuser.models import HAWCUser
 from . import models
+from .autocomplete import LabelAutocomplete
 from .constants import PublishedStatus
 
 
@@ -165,3 +168,71 @@ class LogFilterSet(BaseFilterSet):
 
 class EffectTagFilterSet(df.FilterSet):
     name = df.CharFilter(lookup_expr="icontains")
+
+
+class LabeledItemFilterset(BaseFilterSet):
+    name = df.CharFilter(
+        method="filter_title",
+        label="Object Name",
+        help_text="Filter by object name",
+    )
+    label = AutocompleteModelMultipleChoiceFilter(
+        autocomplete_class=LabelAutocomplete,
+        method="filter_labels",
+    )
+
+    class Meta:
+        model = models.LabeledItem
+        form = InlineFilterForm
+        fields = ("name", "label")
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.filter(label__assessment=self.assessment)
+
+    def filter_title(self, queryset, name, value):
+        if not value:
+            return queryset
+        query = (
+            Q(summary_table__title__icontains=value)
+            | Q(visual__title__icontains=value)
+            | Q(datapivot_query__title__icontains=value)
+            | Q(datapivot_upload__title__icontains=value)
+        )
+        return queryset.filter(query)
+
+    def filter_labels(self, queryset, name, value):
+        if not value:
+            return queryset
+        queryset = queryset.annotate(
+            object_info=Concat("content_type", "object_id", output_field=TextField()),
+        )  # annotate each in the list with content_type + object_id to create a unique field
+        matching_objects = None
+        for label in value:
+            if (
+                not matching_objects or len(matching_objects) > 0
+            ):  # quit early if we run out of matching objects
+                objects_with_label = (
+                    queryset.filter(
+                        label__path__startswith=label.path, label__depth__gte=label.depth
+                    )
+                    .values_list("object_info", flat=True)
+                    .distinct()
+                )
+                matching_objects = (
+                    matching_objects.intersection(objects_with_label)
+                    if matching_objects
+                    else set(objects_with_label)
+                )  # only filtering for objects matching all labels
+        return queryset.filter(object_info__in=matching_objects)
+
+    def create_form(self):
+        form = super().create_form()
+        form.fields["label"].widget.attrs.update({"data-placeholder": "Filter by labels"})
+        form.fields["label"].set_filters(
+            {"assessment_id": self.assessment.id, "published": True}
+            if not self.perms["edit"]
+            else {"assessment_id": self.assessment.id}
+        )
+        form.fields["label"].widget.attrs["size"] = 1
+        return form

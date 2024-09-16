@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.prefetch import GenericPrefetch
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.http import (
@@ -45,6 +46,7 @@ from ..common.views import (
 )
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
+from ..summary.models import DataPivotQuery, DataPivotUpload, SummaryTable, Visual
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
@@ -930,6 +932,39 @@ class LabelList(BaseList):
         return context
 
 
+class LabeledItemList(BaseFilterList):
+    parent_model = models.Assessment
+    model = models.LabeledItem
+    template_name = "assessment/labeleditem_list.html"
+    filterset_class = filterset.LabeledItemFilterset
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="name",
+            appended_fields=["label"],
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("label")
+            .prefetch_related(
+                GenericPrefetch(
+                    "content_object",
+                    [
+                        Visual.objects.all(),
+                        DataPivotUpload.objects.all(),
+                        DataPivotQuery.objects.all(),
+                        SummaryTable.objects.all(),
+                    ],
+                )
+            )
+            .order_by("content_type", "object_id")
+            .distinct("content_type", "object_id")
+        )
+
+
 class LabelViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete"}
     parent_model = models.Assessment
@@ -1000,7 +1035,9 @@ class LabelItem(HtmxView):
         return handler(request, *args, **kwargs)
 
     def label(self, request: HttpRequest, *args, **kwargs):
-        context = dict(content_type=self.content_type, object_id=self.object_id)
+        context = dict(
+            content_type=self.content_type, object_id=self.object_id, assessment=self.assessment
+        )
         if request.method == "GET":
             form = forms.LabelItemForm(
                 data=dict(
@@ -1033,6 +1070,7 @@ class LabelItem(HtmxView):
         context = dict(
             content_type=self.content_type,
             object_id=self.object_id,
+            assessment=self.assessment,
             labels=labels,
             oob=True,
         )

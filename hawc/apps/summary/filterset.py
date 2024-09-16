@@ -2,9 +2,14 @@ import django_filters as df
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Exists, OuterRef, Prefetch, Q
 
+from ..assessment.autocomplete import LabelAutocomplete
 from ..assessment.constants import RobName
-from ..assessment.models import Label, LabeledItem
-from ..common.filterset import BaseFilterSet, InlineFilterForm
+from ..assessment.models import LabeledItem
+from ..common.filterset import (
+    AutocompleteModelMultipleChoiceFilter,
+    BaseFilterSet,
+    InlineFilterForm,
+)
 from . import constants, models
 
 
@@ -21,11 +26,9 @@ class VisualFilterSet(BaseFilterSet):
         help_text="Type of visualization to display",
         empty_label="All visual types",
     )
-    label = df.ChoiceFilter(
-        method="filter_label",
-        label="Applied label",
-        help_text="Visualizations with label applied",
-        empty_label="All labels",
+    label = AutocompleteModelMultipleChoiceFilter(
+        autocomplete_class=LabelAutocomplete,
+        method="filter_labels",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
@@ -59,19 +62,20 @@ class VisualFilterSet(BaseFilterSet):
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
 
-    def filter_label(self, queryset, name, value):
+    def filter_labels(self, queryset, name, value):
         if not value:
             return queryset
-        label = Label.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.Visual)
-        subquery = LabeledItem.objects.filter(
-            **(dict(label__published=True) if not self.perms["edit"] else dict()),
-            label__path__startswith=label.path,
-            label__depth__gte=label.depth,
-            content_type=content_type,
-            object_id=OuterRef("pk"),
-        )
-        return queryset.filter(Exists(subquery))
+        for label in value:
+            subquery = LabeledItem.objects.filter(
+                **(dict(label__published=True) if not self.perms["edit"] else dict()),
+                label__path__startswith=label.path,
+                label__depth__gte=label.depth,
+                content_type=content_type,
+                object_id=OuterRef("pk"),
+            )
+            queryset = queryset.filter(Exists(subquery))
+        return queryset
 
     def get_type_choices(self):
         choices = (
@@ -89,16 +93,18 @@ class VisualFilterSet(BaseFilterSet):
             ]
         return choices
 
-    def get_label_choices(self):
-        labels = Label.get_assessment_qs(self.assessment.pk)
-        if not self.perms["edit"]:
-            labels = labels.filter(published=True)
-        return [(label.pk, label.get_nested_name()) for label in labels]
-
     def create_form(self):
         form = super().create_form()
         form.fields["type"].choices = self.get_type_choices()
-        form.fields["label"].choices = self.get_label_choices()
+        form.fields["label"].set_filters(
+            {"assessment_id": self.assessment.id, "published": True}
+            if not self.perms["edit"]
+            else {"assessment_id": self.assessment.id}
+        )
+        form.fields["label"].widget.attrs.update(
+            {"data-placeholder": "Visualizations with label applied"}
+        )
+        form.fields["label"].widget.attrs["size"] = 1
         return form
 
 
@@ -136,21 +142,22 @@ class DataPivotFilterSet(VisualFilterSet):
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("datapivotquery", "datapivotupload")
 
-    def filter_label(self, queryset, name, value):
+    def filter_labels(self, queryset, name, value):
         if not value:
             return queryset
-        label = Label.objects.get(pk=value)
         content_types = ContentType.objects.get_for_models(
             models.DataPivot, models.DataPivotQuery, models.DataPivotUpload
         ).values()
-        subquery = LabeledItem.objects.filter(
-            **(dict(label__published=True) if not self.perms["edit"] else dict()),
-            label__path__startswith=label.path,
-            label__depth__gte=label.depth,
-            content_type__in=content_types,
-            object_id=OuterRef("pk"),
-        )
-        return queryset.filter(Exists(subquery))
+        for label in value:
+            subquery = LabeledItem.objects.filter(
+                **(dict(label__published=True) if not self.perms["edit"] else dict()),
+                label__path__startswith=label.path,
+                label__depth__gte=label.depth,
+                content_type__in=content_types,
+                object_id=OuterRef("pk"),
+            )
+            queryset = queryset.filter(Exists(subquery))
+        return queryset
 
     def get_type_choices(self):
         choice_options = (
@@ -188,11 +195,9 @@ class SummaryTableFilterSet(BaseFilterSet):
         help_text="Type of summary table to display",
         empty_label="All table types",
     )
-    label = df.ChoiceFilter(
-        method="filter_label",
-        label="Applied label",
-        help_text="Visualizations with label applied",
-        empty_label="All labels",
+    label = AutocompleteModelMultipleChoiceFilter(
+        autocomplete_class=LabelAutocomplete,
+        method="filter_labels",
     )
     published = df.ChoiceFilter(
         choices=[(True, "Published only"), (False, "Unpublished only")],
@@ -222,25 +227,20 @@ class SummaryTableFilterSet(BaseFilterSet):
             query &= Q(published=True)
         return queryset.filter(query).order_by("id")
 
-    def filter_label(self, queryset, name, value):
+    def filter_labels(self, queryset, name, value):
         if not value:
             return queryset
-        label = Label.objects.get(pk=value)
         content_type = ContentType.objects.get_for_model(models.SummaryTable)
-        subquery = LabeledItem.objects.filter(
-            **(dict(label__published=True) if not self.perms["edit"] else dict()),
-            label__path__startswith=label.path,
-            label__depth__gte=label.depth,
-            content_type=content_type,
-            object_id=OuterRef("pk"),
-        )
-        return queryset.filter(Exists(subquery))
-
-    def get_label_choices(self):
-        labels = Label.get_assessment_qs(self.assessment.pk)
-        if not self.perms["edit"]:
-            labels = labels.filter(published=True)
-        return [(label.pk, label.get_nested_name()) for label in labels]
+        for label in value:
+            subquery = LabeledItem.objects.filter(
+                **(dict(label__published=True) if not self.perms["edit"] else dict()),
+                label__path__startswith=label.path,
+                label__depth__gte=label.depth,
+                content_type=content_type,
+                object_id=OuterRef("pk"),
+            )
+            queryset = queryset.filter(Exists(subquery))
+        return queryset
 
     def create_form(self):
         form = super().create_form()
@@ -251,6 +251,12 @@ class SummaryTableFilterSet(BaseFilterSet):
         )
         choices = [constants.TableType(choice) for choice in sorted(set(choices))]
         form.fields["type"].choices = [(choice.value, choice.label) for choice in choices]
-        form.fields["label"].choices = self.get_label_choices()
+        form.fields["label"].set_filters(
+            {"assessment_id": self.assessment.id, "published": True}
+            if not self.perms["edit"]
+            else {"assessment_id": self.assessment.id}
+        )
+        form.fields["label"].widget.attrs.update({"data-placeholder": "Tables with label applied"})
+        form.fields["label"].widget.attrs["size"] = 1
 
         return form
