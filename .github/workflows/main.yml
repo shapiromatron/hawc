@@ -1,12 +1,13 @@
 name: ci-checks
 
-# run on all pull requests and on select branch pushes
 on:
   pull_request:
   push:
     branches:
       - main
-      - next
+  schedule:
+    - cron: '30 3 1 */1 *'  # At 03:30 on the 1st of every month
+  workflow_dispatch:
 
 jobs:
   backend:
