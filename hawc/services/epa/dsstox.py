@@ -2,8 +2,9 @@ import logging
 import re
 from typing import NamedTuple, Self
 
-import requests
 from django.conf import settings
+
+from ..utils.sessions import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +53,9 @@ class DssSubstance(NamedTuple):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
         if settings.CCTE_API_KEY is None and settings.IS_TESTING is False:
             raise ValueError("Missing API key")
-        response = requests.get(
+        session = get_session(headers={"x-api-key": settings.CCTE_API_KEY})
+        response = session.get(
             f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}",
-            headers={"x-api-key": settings.CCTE_API_KEY, "Content-Type": "application/json"},
             timeout=15,
         )
         response_dict = response.json()
