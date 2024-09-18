@@ -34,96 +34,23 @@ const renderPlot = function(el, detailEl, detailHeader, data) {
                     c = new Set(data.sets[2].values),
                     d = new Set(data.sets[3].values);
                 return {
-                    a: [
-                        ...a
-                            .difference(b)
-                            .difference(c)
-                            .difference(d),
-                    ],
-                    b: [
-                        ...b
-                            .difference(c)
-                            .difference(d)
-                            .difference(a),
-                    ],
-                    c: [
-                        ...c
-                            .difference(d)
-                            .difference(a)
-                            .difference(b),
-                    ],
-                    d: [
-                        ...d
-                            .difference(a)
-                            .difference(b)
-                            .difference(c),
-                    ],
-                    ab: [
-                        ...a
-                            .intersection(b)
-                            .difference(c)
-                            .difference(d),
-                    ],
-                    ac: [
-                        ...a
-                            .intersection(c)
-                            .difference(b)
-                            .difference(d),
-                    ],
-                    ad: [
-                        ...a
-                            .intersection(d)
-                            .difference(b)
-                            .difference(c),
-                    ],
-                    bc: [
-                        ...b
-                            .intersection(c)
-                            .difference(d)
-                            .difference(a),
-                    ],
-                    bd: [
-                        ...b
-                            .intersection(d)
-                            .difference(a)
-                            .difference(c),
-                    ],
-                    cd: [
-                        ...c
-                            .intersection(d)
-                            .difference(a)
-                            .difference(b),
-                    ],
-                    abc: [
-                        ...a
-                            .intersection(b)
-                            .intersection(c)
-                            .difference(d),
-                    ],
-                    abd: [
-                        ...a
-                            .intersection(b)
-                            .intersection(d)
-                            .difference(c),
-                    ],
-                    acd: [
-                        ...a
-                            .intersection(c)
-                            .intersection(d)
-                            .difference(b),
-                    ],
-                    bcd: [
-                        ...b
-                            .intersection(c)
-                            .intersection(d)
-                            .difference(a),
-                    ],
-                    abcd: [
-                        ...a
-                            .intersection(b)
-                            .intersection(c)
-                            .intersection(d),
-                    ],
+                    /* eslint-disable */
+                    a: [...a.difference(b).difference(c).difference(d)],
+                    b: [...b.difference(c).difference(d).difference(a)],
+                    c: [...c.difference(d).difference(a).difference(b)],
+                    d: [...d.difference(a).difference(b).difference(c)],
+                    ab: [...a.intersection(b).difference(c).difference(d)],
+                    ac: [...a.intersection(c).difference(b).difference(d)],
+                    ad: [...a.intersection(d).difference(b).difference(c)],
+                    bc: [...b.intersection(c).difference(d).difference(a)],
+                    bd: [...b.intersection(d).difference(a).difference(c)],
+                    cd: [...c.intersection(d).difference(a).difference(b)],
+                    abc: [...a.intersection(b).intersection(c).difference(d)],
+                    abd: [...a.intersection(b).intersection(d).difference(c)],
+                    acd: [...a.intersection(c).intersection(d).difference(b)],
+                    bcd: [...b.intersection(c).intersection(d).difference(a)],
+                    abcd: [...a.intersection(b).intersection(c).intersection(d)],
+                    /* eslint-enable */
                 };
             } else {
                 return 0;
